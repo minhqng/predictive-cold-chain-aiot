@@ -1,0 +1,28 @@
+# Local environment secrets (templates such as infra/.env.example stay versioned).
+.env
+.env.*
+!.env.example
+
+# Python artifacts and local environments.
+**/__pycache__/
+**/*.py[cod]
+**/.venv/
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+**/.coverage
+**/htmlcov/
+
+# ESP-IDF build output.
+firmware/build/
+
+# Future frontend dependency and build output.
+frontend/node_modules/
+frontend/dist/
+frontend/.next/
+
+# Local runtime noise.
+*.log
+.DS_Store
+Thumbs.db
+.idea/

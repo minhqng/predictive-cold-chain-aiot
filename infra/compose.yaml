@@ -1,0 +1,35 @@
+name: coldguard
+
+services:
+  postgres:
+    image: timescale/timescaledb:2.30.2-pg16
+    restart: "no"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-coldguard}
+      POSTGRES_USER: ${POSTGRES_USER:-coldguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coldguard_dev_only}
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - coldguard_pgdata:/var/lib/postgresql/data
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro,z
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-coldguard} -d $${POSTGRES_DB:-coldguard}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mosquitto:
+    image: eclipse-mosquitto:2.1.2-alpine
+    restart: "no"
+    ports:
+      - "127.0.0.1:1883:1883"
+    volumes:
+      - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro,z
+      - coldguard_mosquitto_data:/mosquitto/data
+      - coldguard_mosquitto_log:/mosquitto/log
+
+volumes:
+  coldguard_pgdata:
+  coldguard_mosquitto_data:
+  coldguard_mosquitto_log:
