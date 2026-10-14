@@ -17,6 +17,8 @@ import uuid
 
 import paho.mqtt.client as mqtt
 import pytest
+from paho.mqtt.packettypes import PacketTypes
+from paho.mqtt.reasoncodes import ReasonCode
 
 from coldguard_backend.mqtt_consumer import reason_failed
 from tests.mqtt_testkit import has_test_mqtt, mqtt_params, wait_for
@@ -28,6 +30,17 @@ needs_real_broker = pytest.mark.skipif(
 
 DEVICE_TELEMETRY = "coldguard/coldguard-001/telemetry"
 DEVICE_COMMAND = "coldguard/coldguard-001/command"
+
+# MQTT 5 SUBACK success codes: the only grant outcomes that prove the
+# broker accepted the subscription. Every other defined SUBACK code is
+# a refusal (128 Unspecified error, 131 Implementation specific error,
+# 135 Not authorized, 143 Topic Filter invalid, ... — all >= 0x80).
+_SUBACK_GRANTED_CODES = frozenset({0, 1, 2})
+
+
+def _is_suback_granted(granted: list[int]) -> bool:
+    """True only when every SUBACK code is a genuine Granted QoS 0/1/2."""
+    return bool(granted) and all(code in _SUBACK_GRANTED_CODES for code in granted)
 
 
 def _reason_failed(reason) -> bool:
@@ -111,7 +124,7 @@ class _Probe:
             with self._sub_mu:
                 self._sub_locks.pop(mid, None)
         granted = self._sub_grants.get(mid, [])
-        assert granted and all(code != 128 for code in granted), (
+        assert _is_suback_granted(granted), (
             f"broker refused subscription to {topic!r}: granted={granted}"
         )
 
@@ -222,3 +235,20 @@ def test_backend_cannot_spoof_device_telemetry(backend):
         ), "backend ingestion identity spoofed device telemetry"
     finally:
         subscriber.close()
+
+
+def test_suback_grant_predicate_accepts_only_granted_qos():
+    """F-01 negative proof: genuine grants pass, refusals fail (no broker)."""
+    for code in (0, 1, 2):
+        assert _is_suback_granted([code]) is True
+        rc = ReasonCode(PacketTypes.SUBACK, identifier=code)
+        assert _is_suback_granted([_Probe._granted_value(rc)]) is True
+        assert rc.is_failure is False
+    assert _is_suback_granted([0, 1, 2]) is True
+    for code in (128, 131, 135, 143):
+        assert _is_suback_granted([code]) is False
+        rc = ReasonCode(PacketTypes.SUBACK, identifier=code)
+        assert rc.is_failure is True
+        assert _is_suback_granted([_Probe._granted_value(rc)]) is False
+    assert _is_suback_granted([]) is False
+    assert _is_suback_granted([1, 135]) is False
