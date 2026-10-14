@@ -51,3 +51,21 @@ def test_safe_summary_redacts_password():
     summary = config.safe_summary()
     assert "s3cret-value" not in str(summary)
     assert "redacted" in summary["postgres"]
+
+
+def test_mqtt_credentials_default_to_empty_and_load_from_env():
+    assert ColdGuardConfig.load(env={}).mqtt_username == ""
+    config = ColdGuardConfig.load(
+        env={"MQTT_USERNAME": "backend-ingest", "MQTT_PASSWORD": "mqtt-s3cret"}
+    )
+    assert config.mqtt_username == "backend-ingest"
+    assert config.mqtt_password == "mqtt-s3cret"
+
+
+def test_safe_summary_redacts_mqtt_password_but_names_principal():
+    config = ColdGuardConfig.load(
+        env={"MQTT_USERNAME": "backend-ingest", "MQTT_PASSWORD": "mqtt-s3cret"}
+    )
+    summary = config.safe_summary()
+    assert "mqtt-s3cret" not in str(summary)
+    assert "backend-ingest" in summary["mqtt"]

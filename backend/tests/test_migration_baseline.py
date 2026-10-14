@@ -1,14 +1,21 @@
-"""Migration baseline proof against real PostgreSQL/Timescale (C-W01-04).
+"""Migration baseline proof against real PostgreSQL/Timescale (C-W01-04,
+evolved by C-W02-04).
 
 Runs only when COLDGUARD_TEST_DATABASE_URL is set, against a real
 provider (never SQLite, never mocked). Proves: upgrade from an empty
 database reaches the expected head, the head is persisted in
-``alembic_version``, no application tables were created by the skeletal
-baseline, and re-applying upgrade-to-head is safe.
+``alembic_version``, only the reviewed application tables exist, and
+re-applying upgrade-to-head is safe.
+
+C-W02 evolution note: the expected head moved 0001 → 0002 and the
+reviewed ``telemetry_raw`` table (revision 0002, C-W02-04) is now part
+of the expected schema. The W01 "no domain tables" assertion is
+superseded by that reviewed revision; the W01→W02 upgrade path itself
+is proven in ``test_migration_w02.py``.
 
 Defects detected: a baseline revision that cannot apply from empty, a
-drifted expected head, or a baseline that silently creates domain
-tables reserved for later slices.
+drifted expected head, or unreviewed tables outside the migration
+history.
 """
 
 import os
@@ -19,7 +26,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0001"
+EXPECTED_HEAD = "0002"
 
 needs_real_db = pytest.mark.skipif(
     not os.environ.get("COLDGUARD_TEST_DATABASE_URL"),
@@ -51,7 +58,7 @@ def test_baseline_upgrades_from_empty_and_persists_head():
     finally:
         engine.dispose()
     assert head == EXPECTED_HEAD
-    assert tables == {"alembic_version"}
+    assert tables == {"alembic_version", "telemetry_raw"}
 
 
 @needs_real_db

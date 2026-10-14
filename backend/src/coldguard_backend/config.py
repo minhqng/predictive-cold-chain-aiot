@@ -31,7 +31,7 @@ DEFAULT_PROFILE = "dev"
 
 _ENV_PREFIX_DOC = (
     "COLDGUARD_PROFILE, POSTGRES_HOST/PORT/DB/USER/PASSWORD, "
-    "MQTT_HOST/PORT, BACKEND_HOST/PORT"
+    "MQTT_HOST/PORT/USERNAME/PASSWORD, COLDGUARD_MQTT_INGEST, BACKEND_HOST/PORT"
 )
 
 
@@ -70,6 +70,8 @@ class ColdGuardConfig:
     postgres_password: str
     mqtt_host: str
     mqtt_port: int
+    mqtt_username: str
+    mqtt_password: str
     backend_host: str
     backend_port: int
 
@@ -94,6 +96,8 @@ class ColdGuardConfig:
             postgres_password=_get(source, "POSTGRES_PASSWORD", "coldguard_dev_only"),
             mqtt_host=_non_empty(source, "MQTT_HOST", "localhost"),
             mqtt_port=_port(source, "MQTT_PORT", 1883),
+            mqtt_username=_get(source, "MQTT_USERNAME", ""),
+            mqtt_password=_get(source, "MQTT_PASSWORD", ""),
             backend_host=_non_empty(source, "BACKEND_HOST", "127.0.0.1"),
             backend_port=_port(source, "BACKEND_PORT", 8000),
         )
@@ -108,11 +112,16 @@ class ColdGuardConfig:
 
     def safe_summary(self) -> dict[str, str]:
         """Redacted diagnostic summary; safe to log."""
+        mqtt_auth = (
+            f"user {self.mqtt_username!r} (password redacted)"
+            if self.mqtt_username
+            else "anonymous (no MQTT_USERNAME configured)"
+        )
         return {
             "profile": self.profile,
             "postgres": f"{self.postgres_host}:{self.postgres_port}/{self.postgres_db}"
             f" as {self.postgres_user} (password redacted)",
-            "mqtt": f"{self.mqtt_host}:{self.mqtt_port}",
+            "mqtt": f"{self.mqtt_host}:{self.mqtt_port} as {mqtt_auth}",
             "backend": f"{self.backend_host}:{self.backend_port}",
             "env_vars": _ENV_PREFIX_DOC,
         }
