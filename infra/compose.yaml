@@ -29,6 +29,32 @@ services:
       - coldguard_mosquitto_data:/mosquitto/data
       - coldguard_mosquitto_log:/mosquitto/log
 
+  backend:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile
+    restart: "no"
+    # Container networking: services reach each other by Compose service
+    # name. Host defaults (localhost) from .env.example are overridden
+    # here; see backend/src/coldguard_backend/config.py.
+    environment:
+      COLDGUARD_PROFILE: ${COLDGUARD_PROFILE:-dev}
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: ${POSTGRES_DB:-coldguard}
+      POSTGRES_USER: ${POSTGRES_USER:-coldguard}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coldguard_dev_only}
+      MQTT_HOST: mosquitto
+      MQTT_PORT: 1883
+    ports:
+      - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
+    healthcheck:
+      test: ["CMD-SHELL", ".venv/bin/python -c \"import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health')\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
 volumes:
   coldguard_pgdata:
   coldguard_mosquitto_data:

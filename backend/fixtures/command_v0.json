@@ -1,0 +1,18 @@
+{
+  "note": "SYNTHETIC fixture v0 for Member C W01 handoff. A command request, not an executed command: device-side validation, TTL enforcement and physical verification still apply. Wire schema_version is 1 per Doc 02. Publish on coldguard/coldguard-001/command (QoS 1, retain=false, never retained).",
+  "schema_version": 1,
+  "command_id": "cmd-w01-0001",
+  "device_id": "coldguard-001",
+  "created_at": "2026-10-14T07:00:00Z",
+  "expires_at": "2026-10-14T07:01:00Z",
+  "controller_id": "PREDICTIVE",
+  "policy_version": "policy-w01-fixture",
+  "prediction_id": "pred-w01-0001",
+  "run_id": "CG-S2-A-001",
+  "expected_twin_version": 41,
+  "reason_code": "PREDICTED_CRITICAL",
+  "action": {
+    "cooling": "ON",
+    "duty": 1.0
+  }
+}
