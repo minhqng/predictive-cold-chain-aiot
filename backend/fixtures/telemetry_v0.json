@@ -1,0 +1,42 @@
+{
+  "note": "SYNTHETIC fixture v0 for Member C W01 handoff. Not a physical measurement or calibration result. Wire schema_version is 1 per Doc 02; 'v0' names this development slice. Publish on coldguard/coldguard-001/telemetry (QoS 1, retain=false).",
+  "schema_version": 1,
+  "device_id": "coldguard-001",
+  "boot_id": "boot-w01-fixture-001",
+  "seq": 12345,
+  "captured_at": "2026-10-14T07:00:00Z",
+  "uptime_ms": 1234567,
+  "run_id": "CG-S2-A-001",
+  "hardware_config_id": "CG-HW-001",
+  "firmware_version": "fw-w01-fixture",
+  "calibration_id": null,
+  "thermal": {
+    "t1": 7.1,
+    "t2": 7.4,
+    "t3": 7.8
+  },
+  "environment": {
+    "t_air": 7.5,
+    "rh": 84.2
+  },
+  "door": {
+    "state": "CLOSED"
+  },
+  "electrical": {
+    "voltage_v": 11.9,
+    "current_a": 10.8,
+    "power_w": 128.5,
+    "energy_wh": 42.0
+  },
+  "actuation": {
+    "cooling": "ON",
+    "duty": 1.0
+  },
+  "quality": {
+    "thermal": "VALID",
+    "environment": "VALID",
+    "electrical": "VALID",
+    "overall": "VALID",
+    "device_mode": "ONLINE_NORMAL"
+  }
+}

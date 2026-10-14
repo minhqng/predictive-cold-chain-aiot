@@ -11,10 +11,81 @@ electrical and thermal evidence.
 
 ## Current Status
 
-`W01 — Repository Foundation / Technical Skeleton`. Only skeleton code exists:
-a minimal ESP-IDF app entry, a FastAPI `/health` endpoint, importable ML and
-control packages, and local Mosquitto/TimescaleDB Compose definitions. No
-sensing, persistence, prediction, or control logic is implemented yet.
+`C-W01 — Backend contracts and reproducible runtime` (Member C). What
+actually runs: a three-service Compose stack (Mosquitto broker,
+PostgreSQL/TimescaleDB, FastAPI backend with an honest liveness-only
+`/health`), a validated Alembic migration baseline (revision `0001`, no
+domain tables yet), machine-testable telemetry/command fixtures
+(`backend/fixtures/`, wire `schema_version` 1, single cooling branch),
+and a typed `dev` / `integration` / `experiment` configuration policy.
+No telemetry ingestion, persistence logic, Digital Twin, prediction, or
+control exists yet; those start in W02+.
+
+## Backend Architecture (Member C, W01)
+
+One deployable modular FastAPI monolith. Real modules today:
+
+```text
+backend/src/coldguard_backend/
+├── main.py        # api: FastAPI app, liveness-only GET /health
+├── config.py      # configuration: profiles, env precedence, validation
+├── contracts.py   # wire contracts: Telemetry / Command validation
+└── migrations/   # Alembic baseline revision 0001 (no domain tables)
+```
+
+Future logical boundaries (not yet packages; see Doc 05C weeks 02+):
+
+```text
+ingestion → twin → experiments → prediction → policy adapter
+→ commands → api → observability
+```
+
+Dependency direction stays: policy adapter never redefines control
+decisions (Member D), ingestion never makes ML/control own the
+database, and the backend never owns physical measurement semantics
+(Member A).
+
+## MQTT / Contract Handoff
+
+Canonical topics (Doc 02): `coldguard/{device_id}/telemetry`,
+`.../event`, `.../state`, `.../command`, `.../command_ack`, `.../health`.
+Telemetry QoS 1 (duplicates possible; future dedup key is
+`device_id + boot_id + seq`), commands QoS 1 with `retain=false` and
+payload `expires_at`. A command request is not an execution; an ACK is
+not physical success.
+
+- Member A (firmware): topics above plus
+  `backend/fixtures/telemetry_v0.json` and `command_v0.json` for field
+  semantics and device identity.
+- Member B (data): provisional measurement fields, quality/missing
+  representation and run/hardware/calibration identity in the telemetry
+  fixture; wire names differ deliberately from future normalized DB
+  names.
+- Member D (control): command shape, provenance/expiry fields and the
+  policy-adapter boundary; device-side safety enforcement stays with
+  firmware.
+
+## Configuration Profiles
+
+`COLDGUARD_PROFILE` is one of `dev`, `integration`, `experiment`
+(anything else is rejected). Host runtimes default to `localhost`
+services; inside Compose the backend uses service names (`postgres`,
+`mosquitto`) via `infra/compose.yaml` overrides. The committed
+`.env.example` starts the stack without an untracked `.env`; real
+secrets must never be committed.
+
+## Backend Migrations
+
+From `backend/` (uses `DATABASE_URL` when set, else validated config):
+
+```bash
+uv run --locked alembic -c alembic.ini upgrade head
+uv run --locked alembic -c alembic.ini current   # expect: 0001 (head)
+```
+
+Timescale extension ownership stays with
+`infra/postgres/init/001_extensions.sql` (`CREATE EXTENSION IF NOT
+EXISTS`); migrations never manage extension-owned objects.
 
 ## Repository Layout
 
