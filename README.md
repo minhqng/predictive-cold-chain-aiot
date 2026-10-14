@@ -11,24 +11,25 @@ electrical and thermal evidence.
 
 ## Current Status
 
-`C-W02 — MQTT ingestion and raw persistence` (Member C). What actually
-runs: the W01 three-service Compose stack, now with an authenticated
-Mosquitto profile (per-principal password file provisioned by
-`infra/mosquitto/provision-dev.sh`, device-scoped ACL, anonymous
-denied, TLS-ready structure without deployed TLS), a deterministic
-synthetic device (`backend/src/coldguard_backend/simulator.py`
-publishing telemetry/event/state/health with canonical QoS/retain), a
-real backend MQTT subscriber running inside the FastAPI process
-(`mqtt_consumer.py`, single consumer, fail-fast auth errors, DB commit
-as the durability boundary), and the `telemetry_raw` evidence table
-(migration `0002`: exact wire text, JSONB projection, SHA-256,
-preliminary status, diagnostics; valid and malformed payloads
-retained). Proven by a 1,000-message Mosquitto→backend→PostgreSQL run
-with no unexplained application-level loss (`backend/scripts/proof_1000.py`).
-No normalized telemetry, dedup enforcement, Digital Twin, prediction,
-or control exists yet; those start in W03+.
+`C-W03 — validated and idempotent telemetry ingestion` (Member C).
+What actually runs: the W02 authenticated stack, plus strict runtime
+schema validation (exact wire types, supported schema, timezone-aware
+event time, quality contract, no lax-coercion rescue), topic/device
+identity agreement (`REJECTED_TOPIC_MISMATCH` evidence, never a
+normalized sample on disagreement), the single-branch normalized
+`telemetry` table (migration `0003`: regular PostgreSQL table with
+`UNIQUE(device_id, boot_id, seq)` + `ON CONFLICT DO NOTHING`,
+`raw_id` provenance, no hypertable by design), raw-before-derived
+ingestion with exact-vs-conflicting replay classification and
+observable metrics, and a SUBACK-synchronized test harness. Proven by
+a duplicate-heavy Mosquitto→backend→PostgreSQL run (150 deliveries /
+50 identities / 50 samples / 100 exact duplicates, conflict
+preservation, 5 rejection classes;
+`backend/scripts/proof_w03_duplicates.py`) and the still-green
+1,000-message W02 proof (`backend/scripts/proof_1000.py`). No Digital
+Twin, prediction, or control exists yet; those start in W04+.
 
-## Backend Architecture (Member C, W01)
+## Backend Architecture (Member C, W03)
 
 One deployable modular FastAPI monolith. Real modules today:
 
@@ -37,10 +38,13 @@ backend/src/coldguard_backend/
 ├── main.py        # api: FastAPI app, GET /health + MQTT consumer lifespan
 ├── config.py      # configuration: profiles, env precedence, validation
 ├── contracts.py   # wire contracts: Telemetry / Command validation
+├── validation.py  # strict runtime validation + topic/device identity
 ├── simulator.py   # synthetic device: deterministic finite-run publisher
-├── mqtt_consumer.py # ingestion: real subscriber → telemetry_raw
+├── mqtt_consumer.py # ingestion: real subscriber → raw + normalized
 ├── raw_store.py   # persistence: classification + durable raw writes
-└── migrations/   # Alembic revisions 0001 (baseline) + 0002 (telemetry_raw)
+├── normalized_store.py # normalized telemetry + ON CONFLICT idempotency
+├── ingest.py      # orchestration: raw-before-derived + metrics
+└── migrations/   # Alembic 0001 (baseline) + 0002 (telemetry_raw) + 0003 (telemetry)
 ```
 
 Future logical boundaries (not yet packages; see Doc 05C weeks 02+):
@@ -121,7 +125,7 @@ From `backend/` (uses `DATABASE_URL` when set, else validated config):
 
 ```bash
 uv run --locked alembic -c alembic.ini upgrade head
-uv run --locked alembic -c alembic.ini current   # expect: 0002 (head)
+uv run --locked alembic -c alembic.ini current   # expect: 0003 (head)
 ```
 
 Timescale extension ownership stays with

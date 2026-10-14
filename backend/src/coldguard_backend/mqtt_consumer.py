@@ -1,28 +1,34 @@
-"""Real backend MQTT subscriber with durable raw persistence (C-W02-03).
+"""Real backend MQTT subscriber with validated normalized persistence (C-W03).
 
 One consumer instance per backend process (see ``main.lifespan``): it
 subscribes through the real broker as the ``backend-ingest`` principal
-and writes every received message to ``telemetry_raw`` via
-:func:`coldguard_backend.raw_store.store_raw`.
+and ingests every received message via
+:func:`coldguard_backend.ingest.ingest_message` — raw evidence commits
+first, then (iff strictly valid with topic/device agreement) the
+normalized sample commits under database-arbitrated idempotency.
 
 Durability boundary, stated honestly:
 
 * ``paho-mqtt`` 2.1.0 sends the QoS 1 PUBACK after :meth:`on_message`
   returns (automatic acknowledgement; the library additionally offers
   ``manual_ack``/``Client.ack`` deferred acknowledgement, which this
-  W02 consumer intentionally does not use). Automatic acknowledgement
+  consumer intentionally does not use). Automatic acknowledgement
   is a W02 trade-off, not a durability proof: the authority for
-  "durably processed" is therefore the database transaction commit
-  inside ``store_raw``, not the PUBACK. No outage-window zero-loss is
-  claimed; deferred acknowledgement with MQTT session/persistence
-  semantics may be evaluated in the owning future milestone. MQTT
-  acknowledgement and database commit remain distinct facts.
-* If the DB insert fails, the failure is counted, logged with topic
-  context, and the exception is contained so the network loop survives;
-  the broker may redeliver, which lands as a separate observable raw
-  row (W02 keeps duplicates visible; W03 owns dedup). A message is
-  never reported as persisted unless its transaction committed.
-* No application exactly-once claim is made from MQTT QoS 1.
+  "durably processed" is therefore the database transaction commit,
+  not the PUBACK. No outage-window zero-loss is claimed; deferred
+  acknowledgement with MQTT session/persistence semantics may be
+  evaluated in the owning future milestone. MQTT acknowledgement and
+  database commit remain distinct facts.
+* Raw and normalized commits are separate local transactions
+  (raw-before-derived): if normalized processing fails, the raw row is
+  already committed and the failure is counted with topic context —
+  never a silent rollback of required evidence. A message is never
+  reported as persisted unless its raw transaction committed.
+* No application exactly-once claim is made from MQTT QoS 1. What is
+  claimed: duplicate deliveries that reach the database converge to
+  one authoritative normalized sample via ``UNIQUE(device_id,
+  boot_id, seq)`` + ``ON CONFLICT DO NOTHING`` (C-W03-04), with
+  exact-vs-conflicting replay classification and observable metrics.
 
 Lifecycle: :meth:`start` connects (failing fast with a distinguishable
 error for refused credentials vs. unreachable broker), subscribes, and
@@ -45,7 +51,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.engine import Engine
 
 from coldguard_backend.config import ColdGuardConfig
-from coldguard_backend.raw_store import store_raw
+from coldguard_backend.ingest import IngestMetrics, ingest_message
 
 log = logging.getLogger(__name__)
 
@@ -105,6 +111,9 @@ class MqttIngestConsumer:
         self.received_count = 0
         self.persisted_count = 0
         self.error_count = 0
+        # W03 observable accounting (process-local; resets on restart —
+        # durable truth is direct database inspection, never these).
+        self.metrics = IngestMetrics()
 
     # -- construction -------------------------------------------------
 
@@ -227,11 +236,12 @@ class MqttIngestConsumer:
             log.error("mqtt message dropped: consumer engine unavailable")
             return
         try:
-            stored = store_raw(
+            outcome = ingest_message(
                 engine,
                 topic=message.topic,
                 payload=bytes(message.payload),
                 received_at=received_at,
+                metrics=self.metrics,
             )
         except Exception:  # noqa: BLE001 - contained, counted, observable
             with self._lock:
@@ -250,9 +260,10 @@ class MqttIngestConsumer:
         with self._lock:
             self.persisted_count += 1
         log.debug(
-            "raw persisted: id=%s status=%s topic=%s",
-            stored["id"],
-            stored["ingest_status"],
+            "ingested: raw_id=%s raw_status=%s normalized=%s topic=%s",
+            outcome["raw_id"],
+            outcome["raw_status"],
+            outcome["normalized"],
             message.topic,
         )
 
@@ -260,9 +271,17 @@ class MqttIngestConsumer:
 
     def snapshot(self) -> dict[str, int | bool]:
         with self._lock:
-            return {
+            base: dict[str, int | bool] = {
                 "running": self._running,
                 "received": self.received_count,
                 "persisted": self.persisted_count,
                 "errors": self.error_count,
             }
+        # W03 duplicate/rejection accounting (process-local counters;
+        # durable proof is database inspection, see ingest module note).
+        # Consumer-level received/persisted/errors stay authoritative;
+        # only the normalized/rejection breakdown is merged in.
+        for key, value in self.metrics.snapshot().items():
+            if key not in ("received", "raw_persisted", "raw_errors"):
+                base[key] = value
+        return base

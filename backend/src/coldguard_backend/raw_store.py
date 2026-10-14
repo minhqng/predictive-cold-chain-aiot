@@ -17,18 +17,21 @@ Design notes, all load-bearing:
   UTF-8/JSON, or that fails the W01 wire contracts, is still stored
   with a truthful status and diagnostics. Nullable identity columns
   exist precisely so such rows survive.
-* Statuses are preliminary (W02), not verdicts. ``RECEIVED_VALID`` means
-  "wire-shape valid per the W01 contracts"; full semantic validation
-  (topic/device agreement, schema policy) and normalized authority
-  belong to W03. Non-telemetry device-data families are stored as
+* Statuses are classification verdicts. ``RECEIVED_VALID`` means
+  strictly validated per the canonical wire model *and* topic/device
+  agreement proven — the only status that yields a normalized sample.
+  ``REJECTED_TOPIC_MISMATCH`` is wire-valid but untrusted identity
+  evidence. Non-telemetry device-data families are stored as
   ``RECEIVED_OBSERVED``: received and retained, family validation
-  deferred to the owning slice. Nothing here is a validated physical
-  sample and nothing here updates a twin (W04).
-* No uniqueness yet. Duplicate QoS 1 deliveries land as separate rows
-  so retransmission is *observable*. The canonical
+  deferred to the owning slice. Nothing here is a Twin update (W04).
+* No uniqueness on raw deliveries. Duplicate QoS 1 deliveries land
+  as separate rows so retransmission is *observable*. The canonical
   ``UNIQUE(device_id, boot_id, seq)`` enforcement with ``ON CONFLICT``
-  handling is owned by C-W03-04; adding it here would silently discard
-  the duplicate evidence W03 must reason about.
+  handling lives on the normalized ``telemetry`` table (C-W03-04):
+  raw is the delivery-attempt log, normalized is the authoritative
+  sample authority. Adding a raw UNIQUE constraint would silently
+  discard the duplicate evidence and fail upgrades on valid W02
+  databases that already contain repeated observations.
 """
 
 from __future__ import annotations
@@ -38,7 +41,6 @@ import json
 from datetime import datetime, timezone
 from typing import Any
 
-from pydantic import ValidationError
 from sqlalchemy import (
     JSON,
     BigInteger,
@@ -55,12 +57,21 @@ from sqlalchemy import (
 from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.engine import Connection
 
-from coldguard_backend.contracts import Telemetry
+from coldguard_backend.validation import (
+    looks_like_telemetry_topic,
+    topic_device_id,
+    validate_telemetry_payload,
+    validate_topic_identity,
+)
 
 RECEIVED_VALID = "RECEIVED_VALID"
 RECEIVED_INVALID_SCHEMA = "RECEIVED_INVALID_SCHEMA"
 RECEIVED_MALFORMED_JSON = "RECEIVED_MALFORMED_JSON"
 RECEIVED_OBSERVED = "RECEIVED_OBSERVED"
+# C-W03-02: wire-shape valid but topic device segment disagrees with
+# payload device_id (or the telemetry namespace is malformed). Stored
+# as raw evidence with diagnostics; never yields a normalized sample.
+REJECTED_TOPIC_MISMATCH = "REJECTED_TOPIC_MISMATCH"
 
 INGEST_STATUSES = frozenset(
     {
@@ -68,6 +79,7 @@ INGEST_STATUSES = frozenset(
         RECEIVED_INVALID_SCHEMA,
         RECEIVED_MALFORMED_JSON,
         RECEIVED_OBSERVED,
+        REJECTED_TOPIC_MISMATCH,
     }
 )
 
@@ -151,6 +163,14 @@ def classify_raw(topic: str, payload: bytes) -> dict[str, Any]:
     Returns the row fields (minus id/created_at/backend_received_at).
     Pure function: the unit-testable home of the W02/W03 validation
     boundary decision.
+
+    W03 strictness (C-W03-01/02): telemetry payloads pass exact-type
+    pre-checks (no lax-coercion rescue), supported-schema enforcement,
+    timezone-aware event time, the W01 quality contract, and
+    topic/payload device agreement. A wire-valid payload on a
+    mismatched or malformed telemetry topic is stored as
+    ``REJECTED_TOPIC_MISMATCH`` — visible evidence, never a normalized
+    sample.
     """
     sha256 = hashlib.sha256(payload).hexdigest()
     try:
@@ -203,18 +223,37 @@ def classify_raw(topic: str, payload: bytes) -> dict[str, Any]:
             "ingest_status": RECEIVED_OBSERVED,
             "validation_errors": None,
         }
-    try:
-        telemetry = Telemetry.model_validate(parsed)
-    except ValidationError as exc:
+    if looks_like_telemetry_topic(topic) and topic_device_id(topic) is None:
+        # Malformed telemetry namespace (wrong prefix, empty/wildcard
+        # device segment, extra path elements): diagnosable evidence,
+        # never a normalized physical sample.
+        identity = _best_effort_identity(parsed)
+        return {
+            **identity,
+            "topic": topic,
+            "raw_payload": text,
+            "raw_json": parsed if isinstance(parsed, (dict, list)) else None,
+            "payload_sha256": sha256,
+            "ingest_status": REJECTED_TOPIC_MISMATCH,
+            "validation_errors": [
+                {
+                    "code": "MALFORMED_TOPIC",
+                    "loc": "topic",
+                    "message": f"telemetry topic {topic!r} is not "
+                    "coldguard/{device_id}/telemetry with a valid device segment",
+                }
+            ],
+            "run_id": identity["run_id"],
+        }
+    validated, strict_errors = validate_telemetry_payload(parsed)
+    if validated is None:
         identity = _best_effort_identity(parsed)
         errors = [
-            {
-                "code": "SCHEMA_VIOLATION",
-                "loc": ".".join(str(part) for part in err.get("loc", ())),
-                "message": str(err.get("msg", ""))[:500],
-            }
-            for err in exc.errors()[:_MAX_ERRORS]
+            {**err, "message": str(err.get("message", ""))[:500]}
+            for err in strict_errors[:_MAX_ERRORS]
         ]
+        # Distinguish unsupported-schema diagnostics while keeping the
+        # stable invalid-schema status for all wire-shape failures.
         return {
             **identity,
             "topic": topic,
@@ -225,6 +264,26 @@ def classify_raw(topic: str, payload: bytes) -> dict[str, Any]:
             "validation_errors": errors,
             "run_id": identity["run_id"],
         }
+    topic_errors = validate_topic_identity(topic, validated)
+    if topic_errors:
+        # Wire-shape valid but topic/device agreement failed: the
+        # backend proves agreement only (broker ACL owns authentication;
+        # see validation module trust-boundary note).
+        return {
+            "device_id": validated.device_id,
+            "boot_id": validated.boot_id,
+            "seq": validated.seq,
+            "topic": topic,
+            "schema_version": validated.schema_version,
+            "captured_at": validated.captured_at,
+            "raw_payload": text,
+            "raw_json": parsed,
+            "payload_sha256": sha256,
+            "ingest_status": REJECTED_TOPIC_MISMATCH,
+            "validation_errors": topic_errors,
+            "run_id": validated.run_id,
+        }
+    telemetry = validated
     return {
         "device_id": telemetry.device_id,
         "boot_id": telemetry.boot_id,

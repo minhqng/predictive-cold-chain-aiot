@@ -17,6 +17,8 @@ import uuid
 
 import paho.mqtt.client as mqtt
 import pytest
+from paho.mqtt.packettypes import PacketTypes
+from paho.mqtt.reasoncodes import ReasonCode
 
 from coldguard_backend.mqtt_consumer import reason_failed
 from tests.mqtt_testkit import has_test_mqtt, mqtt_params, wait_for
@@ -28,6 +30,17 @@ needs_real_broker = pytest.mark.skipif(
 
 DEVICE_TELEMETRY = "coldguard/coldguard-001/telemetry"
 DEVICE_COMMAND = "coldguard/coldguard-001/command"
+
+# MQTT 5 SUBACK success codes: the only grant outcomes that prove the
+# broker accepted the subscription. Every other defined SUBACK code is
+# a refusal (128 Unspecified error, 131 Implementation specific error,
+# 135 Not authorized, 143 Topic Filter invalid, ... — all >= 0x80).
+_SUBACK_GRANTED_CODES = frozenset({0, 1, 2})
+
+
+def _is_suback_granted(granted: list[int]) -> bool:
+    """True only when every SUBACK code is a genuine Granted QoS 0/1/2."""
+    return bool(granted) and all(code in _SUBACK_GRANTED_CODES for code in granted)
 
 
 def _reason_failed(reason) -> bool:
@@ -44,6 +57,12 @@ class _Probe:
         self.failures: list[str] = []
         self.received: list[tuple[str, bytes]] = []
         self.publish_results: list[str] = []
+        # SUBACK tracking: mid -> (event, granted codes). A subscribe()
+        # return only means the SUBSCRIBE packet was queued; the broker
+        # has processed it only after the matching SUBACK arrives.
+        self._sub_locks: dict[int, threading.Event] = {}
+        self._sub_grants: dict[int, list[int]] = {}
+        self._sub_mu = threading.Lock()
         self.client = mqtt.Client(
             mqtt.CallbackAPIVersion.VERSION2, protocol=mqtt.MQTTv5
         )
@@ -53,6 +72,7 @@ class _Probe:
         self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
         self.client.on_publish = self._on_publish
+        self.client.on_subscribe = self._on_subscribe
         self.client.connect(params["host"], params["port"], keepalive=15)
         self.client.loop_start()
 
@@ -72,9 +92,41 @@ class _Probe:
     def _on_publish(self, client, userdata, mid, reason_code=None, properties=None):
         self.publish_results.append(str(reason_code))
 
+    @staticmethod
+    def _granted_value(code) -> int:
+        value = getattr(code, "value", code)
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return 128
+
+    def _on_subscribe(self, client, userdata, mid, reason_codes, properties=None):
+        granted = [self._granted_value(code) for code in (reason_codes or [])]
+        with self._sub_mu:
+            self._sub_grants[mid] = granted
+            event = self._sub_locks.get(mid)
+        if event is not None:
+            event.set()
+
     def subscribe(self, topic: str) -> None:
         assert self.connected.wait(timeout=10), "probe never connected"
-        self.client.subscribe(topic, qos=1)
+        result, mid = self.client.subscribe(topic, qos=1)
+        assert result == mqtt.MQTT_ERR_SUCCESS, f"subscribe call failed: rc={result}"
+        event = threading.Event()
+        with self._sub_mu:
+            self._sub_locks[mid] = event
+        try:
+            assert event.wait(timeout=10), (
+                f"SUBACK never arrived for subscribe mid={mid} topic={topic!r}; "
+                "publishing now would race broker-side subscription setup"
+            )
+        finally:
+            with self._sub_mu:
+                self._sub_locks.pop(mid, None)
+        granted = self._sub_grants.get(mid, [])
+        assert _is_suback_granted(granted), (
+            f"broker refused subscription to {topic!r}: granted={granted}"
+        )
 
     def publish_sync(self, topic: str, payload: bytes) -> None:
         assert self.connected.wait(timeout=10), "probe never connected"
@@ -183,3 +235,20 @@ def test_backend_cannot_spoof_device_telemetry(backend):
         ), "backend ingestion identity spoofed device telemetry"
     finally:
         subscriber.close()
+
+
+def test_suback_grant_predicate_accepts_only_granted_qos():
+    """F-01 negative proof: genuine grants pass, refusals fail (no broker)."""
+    for code in (0, 1, 2):
+        assert _is_suback_granted([code]) is True
+        rc = ReasonCode(PacketTypes.SUBACK, identifier=code)
+        assert _is_suback_granted([_Probe._granted_value(rc)]) is True
+        assert rc.is_failure is False
+    assert _is_suback_granted([0, 1, 2]) is True
+    for code in (128, 131, 135, 143):
+        assert _is_suback_granted([code]) is False
+        rc = ReasonCode(PacketTypes.SUBACK, identifier=code)
+        assert rc.is_failure is True
+        assert _is_suback_granted([_Probe._granted_value(rc)]) is False
+    assert _is_suback_granted([]) is False
+    assert _is_suback_granted([1, 135]) is False
