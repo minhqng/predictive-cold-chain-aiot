@@ -44,6 +44,12 @@ class _Probe:
         self.failures: list[str] = []
         self.received: list[tuple[str, bytes]] = []
         self.publish_results: list[str] = []
+        # SUBACK tracking: mid -> (event, granted codes). A subscribe()
+        # return only means the SUBSCRIBE packet was queued; the broker
+        # has processed it only after the matching SUBACK arrives.
+        self._sub_locks: dict[int, threading.Event] = {}
+        self._sub_grants: dict[int, list[int]] = {}
+        self._sub_mu = threading.Lock()
         self.client = mqtt.Client(
             mqtt.CallbackAPIVersion.VERSION2, protocol=mqtt.MQTTv5
         )
@@ -53,6 +59,7 @@ class _Probe:
         self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
         self.client.on_publish = self._on_publish
+        self.client.on_subscribe = self._on_subscribe
         self.client.connect(params["host"], params["port"], keepalive=15)
         self.client.loop_start()
 
@@ -72,9 +79,41 @@ class _Probe:
     def _on_publish(self, client, userdata, mid, reason_code=None, properties=None):
         self.publish_results.append(str(reason_code))
 
+    @staticmethod
+    def _granted_value(code) -> int:
+        value = getattr(code, "value", code)
+        try:
+            return int(value)
+        except (TypeError, ValueError):
+            return 128
+
+    def _on_subscribe(self, client, userdata, mid, reason_codes, properties=None):
+        granted = [self._granted_value(code) for code in (reason_codes or [])]
+        with self._sub_mu:
+            self._sub_grants[mid] = granted
+            event = self._sub_locks.get(mid)
+        if event is not None:
+            event.set()
+
     def subscribe(self, topic: str) -> None:
         assert self.connected.wait(timeout=10), "probe never connected"
-        self.client.subscribe(topic, qos=1)
+        result, mid = self.client.subscribe(topic, qos=1)
+        assert result == mqtt.MQTT_ERR_SUCCESS, f"subscribe call failed: rc={result}"
+        event = threading.Event()
+        with self._sub_mu:
+            self._sub_locks[mid] = event
+        try:
+            assert event.wait(timeout=10), (
+                f"SUBACK never arrived for subscribe mid={mid} topic={topic!r}; "
+                "publishing now would race broker-side subscription setup"
+            )
+        finally:
+            with self._sub_mu:
+                self._sub_locks.pop(mid, None)
+        granted = self._sub_grants.get(mid, [])
+        assert granted and all(code != 128 for code in granted), (
+            f"broker refused subscription to {topic!r}: granted={granted}"
+        )
 
     def publish_sync(self, topic: str, payload: bytes) -> None:
         assert self.connected.wait(timeout=10), "probe never connected"
