@@ -26,6 +26,10 @@ services:
       - "127.0.0.1:1883:1883"
     volumes:
       - ./mosquitto/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro,z
+      - ./mosquitto/acl.conf:/mosquitto/config/acl.conf:ro,z
+      # Provisioned by infra/mosquitto/provision-dev.sh; git-ignored,
+      # never committed. The broker fails closed without it.
+      - ./mosquitto/passwd:/mosquitto/config/passwd:ro,z
       - coldguard_mosquitto_data:/mosquitto/data
       - coldguard_mosquitto_log:/mosquitto/log
 
@@ -46,6 +50,12 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-coldguard_dev_only}
       MQTT_HOST: mosquitto
       MQTT_PORT: 1883
+      # Backend MQTT ingestion identity (C-W02-03). Must match a principal
+      # provisioned by infra/mosquitto/provision-dev.sh. The ingestion
+      # consumer starts only when COLDGUARD_MQTT_INGEST is true.
+      COLDGUARD_MQTT_INGEST: ${COLDGUARD_MQTT_INGEST:-true}
+      MQTT_USERNAME: ${MOSQUITTO_BACKEND_USER:-backend-ingest}
+      MQTT_PASSWORD: ${MOSQUITTO_BACKEND_PASSWORD:-backend_dev_only}
     ports:
       - "127.0.0.1:${BACKEND_PORT:-8000}:8000"
     healthcheck:

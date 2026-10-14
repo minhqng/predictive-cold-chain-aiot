@@ -3,9 +3,15 @@
 .env.*
 !.env.example
 
+# Provisioned broker credentials (C-W02-01): generated per checkout by
+# infra/mosquitto/provision-dev.sh, never committed.
+infra/mosquitto/passwd
+infra/mosquitto/passwd.tmp
+
 # Python artifacts and local environments.
 **/__pycache__/
 **/*.py[cod]
+**/*.egg-info/
 **/.venv/
 **/.pytest_cache/
 **/.mypy_cache/

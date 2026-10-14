@@ -11,15 +11,22 @@ electrical and thermal evidence.
 
 ## Current Status
 
-`C-W01 — Backend contracts and reproducible runtime` (Member C). What
-actually runs: a three-service Compose stack (Mosquitto broker,
-PostgreSQL/TimescaleDB, FastAPI backend with an honest liveness-only
-`/health`), a validated Alembic migration baseline (revision `0001`, no
-domain tables yet), machine-testable telemetry/command fixtures
-(`backend/fixtures/`, wire `schema_version` 1, single cooling branch),
-and a typed `dev` / `integration` / `experiment` configuration policy.
-No telemetry ingestion, persistence logic, Digital Twin, prediction, or
-control exists yet; those start in W02+.
+`C-W02 — MQTT ingestion and raw persistence` (Member C). What actually
+runs: the W01 three-service Compose stack, now with an authenticated
+Mosquitto profile (per-principal password file provisioned by
+`infra/mosquitto/provision-dev.sh`, device-scoped ACL, anonymous
+denied, TLS-ready structure without deployed TLS), a deterministic
+synthetic device (`backend/src/coldguard_backend/simulator.py`
+publishing telemetry/event/state/health with canonical QoS/retain), a
+real backend MQTT subscriber running inside the FastAPI process
+(`mqtt_consumer.py`, single consumer, fail-fast auth errors, DB commit
+as the durability boundary), and the `telemetry_raw` evidence table
+(migration `0002`: exact wire text, JSONB projection, SHA-256,
+preliminary status, diagnostics; valid and malformed payloads
+retained). Proven by a 1,000-message Mosquitto→backend→PostgreSQL run
+with no unexplained application-level loss (`backend/scripts/proof_1000.py`).
+No normalized telemetry, dedup enforcement, Digital Twin, prediction,
+or control exists yet; those start in W03+.
 
 ## Backend Architecture (Member C, W01)
 
@@ -27,10 +34,13 @@ One deployable modular FastAPI monolith. Real modules today:
 
 ```text
 backend/src/coldguard_backend/
-├── main.py        # api: FastAPI app, liveness-only GET /health
+├── main.py        # api: FastAPI app, GET /health + MQTT consumer lifespan
 ├── config.py      # configuration: profiles, env precedence, validation
 ├── contracts.py   # wire contracts: Telemetry / Command validation
-└── migrations/   # Alembic baseline revision 0001 (no domain tables)
+├── simulator.py   # synthetic device: deterministic finite-run publisher
+├── mqtt_consumer.py # ingestion: real subscriber → telemetry_raw
+├── raw_store.py   # persistence: classification + durable raw writes
+└── migrations/   # Alembic revisions 0001 (baseline) + 0002 (telemetry_raw)
 ```
 
 Future logical boundaries (not yet packages; see Doc 05C weeks 02+):
@@ -49,10 +59,41 @@ database, and the backend never owns physical measurement semantics
 
 Canonical topics (Doc 02): `coldguard/{device_id}/telemetry`,
 `.../event`, `.../state`, `.../command`, `.../command_ack`, `.../health`.
-Telemetry QoS 1 (duplicates possible; future dedup key is
-`device_id + boot_id + seq`), commands QoS 1 with `retain=false` and
-payload `expires_at`. A command request is not an execution; an ACK is
-not physical success.
+Telemetry QoS 1 (duplicates possible; dedup key is
+`device_id + boot_id + seq`, enforced in W03 — W02 keeps duplicate
+deliveries as separate observable raw rows), commands QoS 1 with
+`retain=false` and payload `expires_at`. A command request is not an
+execution; an ACK is not physical success; a PUBACK is not a DB commit.
+
+Broker access (provision first, then start):
+
+```bash
+infra/mosquitto/provision-dev.sh   # salted-hash passwd file, git-ignored
+docker compose -f infra/compose.yaml --env-file infra/.env.example up -d --build
+```
+
+Principals: `device-coldguard-001` publishes its own
+telemetry/event/state/command_ack/health and reads its command;
+`backend-ingest` subscribes device data only and cannot publish.
+Anonymous access is denied; the device cannot publish commands or
+foreign namespaces. Listener stays on `127.0.0.1:1883` (dev-safe);
+TLS is structure-ready, not deployed.
+
+Synthetic-to-raw workflow (real broker → real consumer → real DB):
+
+```bash
+(cd backend && uv run --locked alembic -c alembic.ini upgrade head)
+(cd backend && uv run --locked --extra test python \
+  -m coldguard_backend.simulator --boot-id boot-manual-001 \
+  --run-id CG-MANUAL-001 --count 10)
+(cd backend && DATABASE_URL=... MQTT_HOST=localhost \
+  uv run --locked --extra test python scripts/proof_1000.py)
+```
+
+Raw statuses are preliminary W02 evidence (`RECEIVED_VALID` means
+wire-shape valid, not a validated physical sample): `RECEIVED_VALID` /
+`RECEIVED_INVALID_SCHEMA` / `RECEIVED_MALFORMED_JSON` /
+`RECEIVED_OBSERVED` (non-telemetry families, validation deferred).
 
 - Member A (firmware): topics above plus
   `backend/fixtures/telemetry_v0.json` and `command_v0.json` for field
@@ -80,7 +121,7 @@ From `backend/` (uses `DATABASE_URL` when set, else validated config):
 
 ```bash
 uv run --locked alembic -c alembic.ini upgrade head
-uv run --locked alembic -c alembic.ini current   # expect: 0001 (head)
+uv run --locked alembic -c alembic.ini current   # expect: 0002 (head)
 ```
 
 Timescale extension ownership stays with
