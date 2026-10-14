@@ -7,11 +7,16 @@ and writes every received message to ``telemetry_raw`` via
 
 Durability boundary, stated honestly:
 
-* ``paho-mqtt`` acknowledges QoS 1 deliveries at the MQTT protocol
-  level (PUBACK) before :meth:`on_message` runs; the client library
-  offers no deferred-acknowledgement hook. The authority for "durably
-  processed" is therefore the database transaction commit inside
-  ``store_raw``, not the PUBACK.
+* ``paho-mqtt`` 2.1.0 sends the QoS 1 PUBACK after :meth:`on_message`
+  returns (automatic acknowledgement; the library additionally offers
+  ``manual_ack``/``Client.ack`` deferred acknowledgement, which this
+  W02 consumer intentionally does not use). Automatic acknowledgement
+  is a W02 trade-off, not a durability proof: the authority for
+  "durably processed" is therefore the database transaction commit
+  inside ``store_raw``, not the PUBACK. No outage-window zero-loss is
+  claimed; deferred acknowledgement with MQTT session/persistence
+  semantics may be evaluated in the owning future milestone. MQTT
+  acknowledgement and database commit remain distinct facts.
 * If the DB insert fails, the failure is counted, logged with topic
   context, and the exception is contained so the network loop survives;
   the broker may redeliver, which lands as a separate observable raw
@@ -235,7 +240,9 @@ class MqttIngestConsumer:
             # topic + length is enough for triage.
             log.exception(
                 "raw persistence failed: topic=%s bytes=%d; "
-                "message NOT acknowledged as processed",
+                "db commit absent, failure counted; auto-ack enabled so "
+                "delivery may still be acknowledged after callback "
+                "returns and the message may be unavailable for replay",
                 message.topic,
                 len(message.payload or b""),
             )
