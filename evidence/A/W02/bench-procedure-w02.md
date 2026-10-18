@@ -9,20 +9,29 @@ Thứ tự đề xuất: **B1 → B2 → B3 → B4 → B5**. Tổng thời gian 
 
 ---
 
-## B0. Biên dịch firmware (một lần)
+## B0. Nạp firmware (build đã xong trên CI)
 
-Máy hiện tại không có ESP-IDF/Docker. Trên máy có Docker:
+Firmware W02 **đã được biên dịch thật** trên GitHub Actions (ESP-IDF v6.1, target
+`esp32s3`, SUCCESS — run URL, log và SHA-256 ở `build-report-w02.md`). B0 giờ chỉ còn là
+**nạp**; giữ nguyên cấu hình mặc định.
+
+Cách 1 — dùng artifact của CI (không cần Docker cục bộ): tải artifact
+`a-w02-espidf-build-report` từ run ghi trong `build-report-w02.md`, giải nén thư mục
+`artifacts/`, rồi flash bằng esptool (lệnh do chính build in ra):
+
+```bash
+python -m esptool --chip esp32s3 -b 460800 --before default-reset --after hard-reset write-flash --flash-mode dio --flash-size 2MB --flash-freq 80m 0x0 bootloader.bin 0x8000 partition-table.bin 0x10000 coldguard_firmware.bin
+```
+
+Cách 2 — build lại cục bộ nếu máy có Docker (đúng lệnh README gốc; lưu log nếu muốn):
 
 ```bash
 rm -rf /tmp/coldguard-firmware-build && mkdir -p /tmp/coldguard-firmware-build && cp -r firmware/. /tmp/coldguard-firmware-build/
 docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressif/idf:v6.1 bash -c "idf.py set-target esp32s3 && idf.py build"
 ```
 
-Lưu build log thành `evidence/A/W02/firmware-build.log`. Nạp firmware (esptool/flash), giữ
-nguyên cấu hình mặc định.
-
-> Nếu build lỗi: **báo ngay**, đừng cố sửa bằng cách bỏ qua — hồ sơ này chưa từng tuyên bố
-> firmware đã biên dịch được.
+> Bước này **không** cấp nguồn cho TEC hay bất kỳ tải nào — chỉ nạp firmware và mở serial
+> monitor cho các bước sau.
 
 ---
 

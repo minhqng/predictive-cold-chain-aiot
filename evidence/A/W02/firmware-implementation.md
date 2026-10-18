@@ -63,7 +63,7 @@ ngược hành vi của phiên bench cũ.
 
 ## 4. Kết quả kiểm tra trên máy hiện tại
 
-Lần chạy thật cuối cùng (sau commit firmware `0eb1f8a9731e4810304332910df168ce30de30b5`):
+Lần chạy thật cuối cùng (sau commit firmware `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc`):
 
 ```text
 py firmware/tools/run_all_checks.py
@@ -79,12 +79,16 @@ Hardware still pending: BME280, physical sensor labeling, H0 mechanical.
 
 Số lượng thật của chính lần chạy này: `Ran 57 tests … OK` (57 unittest công cụ), `STATIC FIRMWARE CHECK: PASS (39 checks)`, và validator in `W02 STRUCTURE PASS: 14 required files; …; ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); …`. Các con số này lấy từ output thật, không sao chép từ lần chạy cũ.
 
+Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitHub Actions: **SUCCESS**, 0 cảnh báo — toàn bộ tham chiếu (run URL, log, artifact, SHA-256, lỗi build đầu và cách sửa) nằm ở `build-report-w02.md`. Dòng nhắc *"no check here compiles the firmware"* trong output trên là **nguyên văn của công cụ** (công cụ không đổi): nó nói đúng về `run_all_checks.py`, còn bản thân firmware đã được biên dịch thật bởi CI.
+
 ## 5. Giới hạn đã khai báo (không giấu)
 
-1. **Chưa biên dịch.** Máy này không có ESP-IDF, không có Docker, không có trình biên dịch C.
-   Lệnh build chính thức nằm trong README gốc repo (image `espressif/idf:v6.1`,
-   `idf.py set-target esp32s3 && idf.py build`). Cho tới khi có build log, mọi tuyên bố
-   "firmware chạy được" đều **chưa** có cơ sở.
+1. **Đã biên dịch thật trên CI — nhưng chỉ dừng ở đó.** Máy cục bộ không có ESP-IDF, không
+   có Docker, không có trình biên dịch C; vì vậy build chạy trên GitHub Actions bằng đúng
+   image README gốc (`espressif/idf:v6.1`, `idf.py set-target esp32s3 && idf.py build`).
+   Kết quả: **SUCCESS**, 0 cảnh báo, `coldguard_firmware.bin` = `0x31360` bytes — chi tiết
+   ở `build-report-w02.md`. Tuyên bố "firmware chạy được" vẫn **chưa** có cơ sở: chưa nạp,
+   chưa chạy lần nào.
 2. **Chưa nạp, chưa chạy.** Không có log `#CG SAMPLE` / `#CG DOOR_EDGE` nào là thật.
 3. **Không cài ROM search.** Bus không được quét để phát hiện thiết bị 1-Wire lạ; identity
    vẫn an toàn (đọc theo ROM cố định) nhưng "có thiết bị thứ 5 trên bus" sẽ **không** bị
@@ -97,10 +101,11 @@ Số lượng thật của chính lần chạy này: `Ran 57 tests … OK` (57 u
    vẫn chứng minh được danh tính ROM→vai trò qua từng boot, chỉ là số thứ tự boot không liên tục.
    Công cụ `cg_verify_reboots.py` vì thế đòi `boot_id` phân biệt + `boot_count` tăng dần:
    dán lặp một khối boot 5 lần **không** thể giả thành 5 reboot (`BOOT_METADATA_INVALID`).
-6. **Test hành vi là mô hình Python + kiểm tra tĩnh, không phải C đã biên dịch.** Máy hiện tại
-   không có trình biên dịch C; các test parser/thống kê/debounce chạy trên mô hình, còn ràng
-   buộc của mã C được giữ bằng `cg_check_firmware.py`. Khi có CI biên dịch (W03+), nên bổ sung
-   golden-run trên target để thay thế dần hai lớp này.
+6. **Test hành vi là mô hình Python + kiểm tra tĩnh — nay đã có thêm lớp compile thật.** Các
+   test parser/thống kê/debounce chạy trên mô hình; ràng buộc của mã C được giữ bằng
+   `cg_check_firmware.py`; lớp thứ ba — **biên dịch thật** bằng ESP-IDF v6.1 trên CI — đã
+   hoàn tất (`build-report-w02.md`, SUCCESS, 0 cảnh báo). Cái còn thiếu là **golden-run trên
+   target** (chạy trên board thật); nên bổ sung trong W03+ để thay thế dần hai lớp mô hình.
 
 ## 6. Bước chạy thật còn lại
 

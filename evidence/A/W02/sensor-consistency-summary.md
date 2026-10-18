@@ -65,7 +65,7 @@ Trong ảnh `w02_rom_enumeration_4_devices.png` (một lần chạy khác), `DS3
 | Thứ tự cột thứ 2 | **CHƯA xác minh** | Cột 2 trùng giá trị với cột 1 (`592,592`). Có thể là giây trôi qua, nhưng **chưa được chú thích** trong ảnh. |
 | Ý nghĩa cột cuối (`…,4,1`) | **CHƯA xác minh** | Hằng số `1` trong các dòng hiển thị. Không có chú thích; **không** được dùng như `door_state` hay bất kỳ ngữ nghĩa nào cho tới khi có nguồn xác nhận. |
 | Tính nhất quán dài hạn / drift | **KHÔNG đo** | Chỉ có một cửa sổ ~10 phút trong một phiên. |
-| Nguồn firmware đã chạy | **KHÔNG có trong repo** | Sketch bench W02 in ra summary không nằm trong `firmware/` (`NOT_IN_REPO`). Repo nay có firmware W02 chính thức (`firmware/main/`, 7 module C, commit `0eb1f8a9…`) nhưng bản đó **không** phải nguồn của summary/3 ảnh này. |
+| Nguồn firmware đã chạy | **KHÔNG có trong repo** | Sketch bench W02 in ra summary không nằm trong `firmware/` (`NOT_IN_REPO`). Repo nay có firmware W02 chính thức (`firmware/main/`, 7 module C; commit firmware nay `2a5a0da…`, đã build thật trên CI) nhưng bản đó **không** phải nguồn của summary/3 ảnh này. |
 | Ảnh setup bench | **KHÔNG có** | Không có ảnh hay ghi chú mô tả vị trí đặt 4 đầu dò trong lần đo này. |
 
 ## 7. Điều kiện để đóng `A-W02-05`
