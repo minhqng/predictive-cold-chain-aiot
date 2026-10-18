@@ -1,6 +1,6 @@
 # [A-W02] Sensor Foundation, ROM Mapping and Bench Evidence
 
-> **⚠️ W02 NOT PASS — READ FIRST.** Bộ chứng cứ này là `W02_PARTIAL_EVIDENCE`, **không** phải nghiệm thu W02. Mở PR này **không** đồng nghĩa W02 đã PASS. Lần cập nhật gần nhất bổ sung **firmware W02 trong repo + bộ công cụ/test** (không cần phần cứng) cho `A-W02-03/04/07`; firmware **chưa** được biên dịch và **chưa** chạy trên board. Hai hạng mục còn treo: `A-W02-06` BME280 (`PENDING_TEST`) và `A-W02-01` H0 mechanical (`DEFERRED`, chờ trưởng nhóm quyết định lịch).
+> **⚠️ W02 NOT PASS — READ FIRST.** Bộ chứng cứ này là `W02_PARTIAL_EVIDENCE`, **không** phải nghiệm thu W02. Mở PR này **không** đồng nghĩa W02 đã PASS. Lần cập nhật gần nhất bổ sung **build ESP-IDF thật trên CI** (image `espressif/idf:v6.1`, target `esp32s3`, **SUCCESS**, 0 cảnh báo — `build-report-w02.md`) sau khi sửa requirements GPIO; firmware **đã biên dịch** nhưng **chưa** nạp và **chưa** chạy trên board. Hai hạng mục còn treo: `A-W02-06` BME280 (`PENDING_TEST`) và `A-W02-01` H0 mechanical (`DEFERRED`, chờ trưởng nhóm quyết định lịch).
 
 **Base:** `main` · **Head:** `feat/a-w02-sensor-foundation` · **Loại:** NORMAL PR (Ready for Review — không phải Draft)
 **Issue/pack:** `A-W02-01` … `A-W02-07`
@@ -8,14 +8,14 @@
 **Reviewer bắt buộc:** Member D (`docs/04 §3.3`: physical wiring / pin / sensing)
 **Hardware config affected?:** Chưa — `hardware_config_id` vẫn `NOT_ASSIGNED`. PR này ghi nhận danh tính cảm biến, không thay đổi BOM freeze.
 **Evidence path:** `evidence/A/W02/`
-**Trạng thái W02:** **`W02_PARTIAL_EVIDENCE` — KHÔNG phải W02 PASS.** Mở PR này **không** đồng nghĩa W02 đã nghiệm thu. Firmware W02 trong repo: `0eb1f8a9731e4810304332910df168ce30de30b5`.
+**Trạng thái W02:** **`W02_PARTIAL_EVIDENCE` — KHÔNG phải W02 PASS.** Mở PR này **không** đồng nghĩa W02 đã nghiệm thu. Firmware W02 trong repo: `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` — đã **biên dịch thật trên CI** (run 39117530768, SUCCESS; artifact + SHA-256: `build-report-w02.md`), **chưa** nạp và **chưa** chạy.
 
 ---
 
 ## 1. Member A đã hoàn thành những gì
 
 - **Bản đồ ROM → vai trò DS18B20** (`sensor-rom-map.yaml`): T1 gần cửa `287088CA00000051`, T2 trung tâm `28AEBF2200000006`, T3 đối diện cửa `28CBE9CA00000072`, và một đầu dò dự phòng `283BE5C9000000A9`. Trạng thái ghi đúng là `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING` — **đầu dò vật lý chưa được dán nhãn**, không tự nhận là đã xong. Bản đồ này nay **đã được ghi cứng vào firmware** và được đối chiếu tự động từng byte + CRC8.
-- **Firmware W02 trong repo** (`firmware/main/`, 7 module C): đọc DS18B20 theo ROM cố định (không phụ thuộc thứ tự discovery), một lần chuyển đổi dùng chung cho cả bus, vòng lặp ~1 Hz theo deadline với `uptime_ms` là thời điểm thật, `nan` khi đọc lỗi/mất đầu dò, MC-38 debounce cấu hình được + không đoán polarity, NVS `boot_count` + khối `#CG ROM` mỗi lần boot, và ép IBT-2 OFF ngay đầu `app_main`. Chi tiết: `firmware-implementation.md`.
+- **Firmware W02 trong repo** (`firmware/main/`, 7 module C): đọc DS18B20 theo ROM cố định (không phụ thuộc thứ tự discovery), một lần chuyển đổi dùng chung cho cả bus, vòng lặp ~1 Hz theo deadline với `uptime_ms` là thời điểm thật, `nan` khi đọc lỗi/mất đầu dò, MC-38 debounce cấu hình được + không đoán polarity, NVS `boot_count` + khối `#CG ROM` mỗi lần boot, và ép IBT-2 OFF ngay đầu `app_main`; nay **đã được biên dịch thật** trên GitHub Actions (ESP-IDF v6.1, `esp32s3`, SUCCESS, 0 cảnh báo — `build-report-w02.md`). Chi tiết: `firmware-implementation.md`.
 - **Công cụ kiểm chứng host** (`firmware/tools/`): parser log, xác minh reboot identity, dựng `sensor-consistency.csv`, dựng `door-test.csv` (bắt buộc `--open-level` do người vận hành quan sát), kiểm tra tĩnh firmware, và một lệnh gộp `run_all_checks.py`. 57 test `unittest` + 39 kiểm tra tĩnh đều PASS trên máy hiện tại.
 - **Tổng hợp inter-sensor consistency** (`sensor-consistency-summary.md`): bảng 600 mẫu/đầu dò, chênh lệch trung bình từng cặp và chênh lệch lớn nhất (0.603 °C, DS2 vs DS3), kèm phân tích vì sao các SD (0.018–0.031 °C) thấp hơn một bước lượng tử 12-bit. Ghi rõ đây là **consistency check, KHÔNG phải calibration**.
 - **Tổng hợp bài test cửa MC-38** (`door-test-summary.md`): đọc bộ đếm thô, kiểm tra số học `cycles = floor(transitions/2)`, và đối chiếu tiêu chí ≥20 chu kỳ (đạt 24).
@@ -67,7 +67,8 @@ Số liệu chi tiết (mean 29.882/30.214/29.611/29.935 °C; sd 0.028/0.031/0.0
 | Nguồn firmware sketch bench (sinh ra 3 ảnh) | **`NOT_IN_REPO`** | Repo nay có **firmware W02 chính thức mới** (`firmware/main/`), nhưng đó **không** phải nguồn của 3 ảnh — không dùng nó để suy ngược hành vi sketch cũ |
 | Error handling khi đọc DS18B20 lỗi/mất | **Đã implement — chưa chạy thật** | `nan` khi thiếu/CRC lỗi/85 °C power-on/ngoài dải; `VALID/DEGRADED/INVALID` theo docs/01 §6.8; chưa có bài test phần cứng rút một đầu dò |
 | `sensor-placement.png`, ảnh H0 | **MISSING** | Không vẽ lại từ trí nhớ, không tạo ảnh giả |
-| Biên dịch + nạp firmware | **CHƯA** | Máy hiện tại không có ESP-IDF, không có Docker, không có trình biên dịch C ⇒ chưa có build log, chưa nạp |
+| Biên dịch firmware | **PASS trên CI (ESP32-S3)** | GitHub Actions, image `espressif/idf:v6.1` + target `esp32s3`: **SUCCESS**, 0 cảnh báo, artifact + SHA-256 trong `build-report-w02.md`; máy cục bộ vẫn không có ESP-IDF/Docker |
+| Nạp + chạy firmware | **CHƯA** | Chưa flash, chưa mở serial, chưa có dòng `#CG …` thật nào |
 | Lệch số lượng đầu dò | **Chờ quyết định** | Canonical `SEN-H1-01` ghi 3 ROM; thực tế 4 đầu dò (kế thừa `CR-A-W01-04`) |
 | `hardware_config_id`, ngày review | **Chưa gán** | Cần leader gán. `firmware_commit` đã ghi SHA thật (xem mục đầu của body này) |
 
@@ -81,7 +82,7 @@ W02 chỉ có thể chuyển sang PASS khi tất cả các điều kiện sau đ
 4. `A-W02-07`: quan sát vật lý polarity + `door-test.csv` với `--open-level` + số cạnh thô/chu kỳ làm bằng chứng debounce.
 5. `A-W02-02`: dán nhãn vật lý T1/T2/T3 (+ SPARE), có ảnh nhãn; nâng trạng thái khỏi `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`.
 6. `A-W02-01`: quyết định của leader về H0 (giữ trong W02 hay dời sang giai đoạn hoàn thiện cơ khí hướng W07), kèm ảnh/checklist nếu chuyển.
-7. `A-W02-04`: đã đưa firmware W02 vào repo + ghi `firmware_commit`; **còn lại** là build log (`espressif/idf`) và một lần nạp/chạy thật. Nguồn sketch bench cũ vẫn `NOT_IN_REPO`.
+7. `A-W02-04`: đã đưa firmware W02 vào repo + ghi `firmware_commit`, và **build log đã có** (CI ESP-IDF v6.1, `esp32s3`, SUCCESS — `build-report-w02.md`); **còn lại** là một lần nạp/chạy thật. Nguồn sketch bench cũ vẫn `NOT_IN_REPO`.
 8. Leader xác nhận lệch số lượng đầu dò và gán `hardware_config_id` + ngày review.
 
 Thêm hai điều kiện về tiêu chí: leader xác nhận `A-W02-05` chỉ cần **consistency check** (không cần chuẩn truy vết) ở W02, và chấp nhận việc merge PR này khi W02 vẫn ở trạng thái `PARTIAL` (PR là để review hồ sơ, không phải để tuyên bố PASS).
@@ -102,7 +103,7 @@ Thêm hai điều kiện về tiêu chí: leader xác nhận `A-W02-05` chỉ c�
 3. Xác nhận lập luận vì sao `MC38 initial: HIGH` **không** đủ để freeze polarity.
 4. Kiểm tra tác động của việc hoãn H0 lên W04 và lên Gate G1 (phần nhiệt).
 5. Xác nhận PR này **không** tuyên bố bất kỳ trạng thái an toàn điện nào (không cấp nguồn TEC, không chạm dải dòng lớn).
-6. **Firmware W02 mới (lần cập nhật này):** `docs/04 §3.3` yêu cầu Member D review physical wiring/pin/sensing. Đề nghị D kiểm tra: chân GPIO theo `docs/01 §11.7` (GPIO10/21/33/34/35/36/37/5/6), thứ tự reset 1-Wire (≈480/70/410 µs), chọn 12-bit + 750 ms, ngưỡng/đếm debounce MC-38 (`CG_DOOR_DEBOUNCE_MS=50`), và logic `VALID/DEGRADED/INVALID`. **Lưu ý:** firmware **chưa** được biên dịch và **chưa** được nạp — review này là review mã nguồn, không phải review kết quả đo.
+6. **Firmware W02 mới (lần cập nhật này):** `docs/04 §3.3` yêu cầu Member D review physical wiring/pin/sensing. Đề nghị D kiểm tra: chân GPIO theo `docs/01 §11.7` (GPIO10/21/33/34/35/36/37/5/6), thứ tự reset 1-Wire (≈480/70/410 µs), chọn 12-bit + 750 ms, ngưỡng/đếm debounce MC-38 (`CG_DOOR_DEBOUNCE_MS=50`), và logic `VALID/DEGRADED/INVALID`. **Lưu ý:** firmware **đã** được biên dịch thật trên CI (`esp32s3`, SUCCESS) nhưng **chưa** được nạp/chạy — review này là review mã nguồn + kết quả compile, không phải review kết quả đo.
 
 ## 9. Cập nhật lần này: firmware W02 + công cụ kiểm chứng (không cần phần cứng)
 
@@ -118,18 +119,19 @@ Thêm hai điều kiện về tiêu chí: leader xác nhận `A-W02-05` chỉ c�
 | IBT-2 OFF trước mọi khởi tạo (docs/01 §11.8) | `firmware/main/cg_safety.c/.h` | Đã implement + kiểm tra tĩnh |
 | Parser log + 4 CLI + kiểm tra tĩnh + 1 lệnh gộp | `firmware/tools/` | 57 test + 39 check PASS |
 
-**Giới hạn đã khai báo, không giấu:** (1) firmware **chưa biên dịch** — máy này không có ESP-IDF/Docker/trình biên dịch C, lệnh build chính thức dùng image `espressif/idf` theo README gốc repo (vì vậy các test hành vi là mô hình Python + kiểm tra tĩnh, chưa có golden-run trên target); (2) **chưa** nạp và **chưa** chạy lần nào; (3) **không** cài ROM search ⇒ không phát hiện thiết bị 1-Wire lạ (identity vẫn an toàn vì đọc theo ROM cố định, và dòng `#CG ROMS` không in `unknown=` vì không có gì để đo); (4) BME280 **không** thuộc firmware W02. Quy trình bench còn lại nằm ở `bench-procedure-w02.md`.
+**Giới hạn đã khai báo, không giấu:** (1) firmware nay **đã được biên dịch thật trên CI** (ESP-IDF v6.1, `esp32s3`, SUCCESS — `build-report-w02.md`); máy cục bộ vẫn không có ESP-IDF/Docker nên các test hành vi vẫn là mô hình Python + kiểm tra tĩnh, **chưa** có golden-run trên target; (2) **chưa** nạp và **chưa** chạy lần nào; (3) **không** cài ROM search ⇒ không phát hiện thiết bị 1-Wire lạ (identity vẫn an toàn vì đọc theo ROM cố định, và dòng `#CG ROMS` không in `unknown=` vì không có gì để đo); (4) BME280 **không** thuộc firmware W02. Quy trình bench còn lại nằm ở `bench-procedure-w02.md`.
 
 ## 10. Kiểm tra đã chạy
 
 - `py firmware/tools/run_all_checks.py` → **3/3 PASS**: (a) 57 test `unittest` của công cụ, (b) 39 kiểm tra tĩnh firmware, (c) `validate_w02.py`.
+- **Build ESP-IDF thật (CI, không cần phần cứng):** GitHub Actions, image `espressif/idf:v6.1`, target `esp32s3` → **SUCCESS**, 0 cảnh báo, `coldguard_firmware.bin` = 0x31360 bytes — run [39117530768](https://github.com/minhqng/predictive-cold-chain-aiot/actions/runs/39117530768) (push) + [39117534103](https://github.com/minhqng/predictive-cold-chain-aiot/actions/runs/39117534103) (pull_request); chi tiết + SHA-256: `build-report-w02.md`. Run đầu (`39117011427`) **FAIL** vì thiếu `esp_driver_gpio` trong requirements — đã sửa tại commit `2a5a0da…` rồi build lại.
 - `py validate_w02.py` → **W02 STRUCTURE PASS**: 14 file bắt buộc, 4 bản ghi truy xuất nguồn được xác minh bằng kích thước + SHA-256 (3 ảnh gốc + 1 ghi chú archive), ROM map đúng 3 vai trò + 1 spare (mỗi đầu dò đều `physical_label: PENDING`), `firmware_commit` trỏ tới commit thật **chứa đủ 5 module W02** (`app_main.c`, `cg_onewire.c`, `cg_rom_map.c`, `cg_ds18b20.c`, `cg_door.c`) và ROM bytes trong `coldguard_config.h` khớp từng byte với `sensor-rom-map.yaml` (đọc từ chính commit bằng `git cat-file`/`git show`), `acceptance.md` bao phủ `A-W02-01…A-W02-07`, firmware static checks PASS.
 - Kiểm tra tĩnh firmware gồm: ROM trong `coldguard_config.h` khớp **từng byte** với `sensor-rom-map.yaml` và **CRC8 Dallas hợp lệ** cho cả 4 ROM (bắt lỗi chép sai ký tự); hàm đọc từng đầu dò **không** chứa bất kỳ token/call `convert` nào (không chỉ `CONVERT_T`); nhánh polarity `#if`/`#else` bị kiểm tra **ngữ nghĩa** (đảo nhánh vẫn bị từ chối); không có gán vai trò theo chỉ số vòng lặp; `CG_DOOR_POLARITY_CONFIRMED` vẫn `0`; `CG_DOOR_DEBOUNCE_MS`/`CG_SAMPLE_PERIOD_MS` là macro cấu hình; `#CG ROMS` không in `unknown=`; BME280 bị quét trong **mọi** `.c`/`.h` của `firmware/main`; thứ tự gọi an toàn trong `app_main`; `CMakeLists.txt` liệt kê đủ mọi file `.c`.
 - Test CLI end-to-end: thiếu `--open-level` ⇒ **mọi dòng dữ liệu CSV** mang `state=UNVERIFIED`, exit 1; `nan` ⇒ ô CSV rỗng (không bao giờ 0.0); < 600 mẫu hợp lệ ⇒ `WINDOW NOT USABLE` + exit 1; < 20 chu kỳ ⇒ exit 1; 5 khối boot dán lặp hoặc `boot_count=0` ⇒ `BOOT_METADATA_INVALID` + exit 1; capture cửa trải nhiều boot ⇒ từ chối cho tới khi có `--boot N`.
 - Băm lại archive gốc đối chiếu `source_archive_sha256` (xem `README.md` §Reproduction bước 4).
 - `git diff --cached --check` → không có lỗi whitespace/conflict marker.
-- **Phản biện độc lập vòng 2** (không do tác giả thực hiện; đọc trực tiếp firmware/công cụ của lần cập nhật này và chạy lại toàn bộ kiểm tra) đã phát hiện **BLOCKER F01–F04** (hồ sơ in output kiểm tra không tái lập được khi `firmware_commit` còn là placeholder) + **MAJOR F05** (đảo dấu chênh lệch cặp) + các MINOR F06–F14/N01–N06 — **tất cả đã được xử lý trong chính PR này** (F13 ghi nhận là giới hạn: máy không có trình biên dịch C nên test hành vi là mô hình + kiểm tra tĩnh; xem `firmware-implementation.md` §5.6). Vòng phản biện trước đó trên **lớp bằng chứng 3 ảnh** (đọc 3 ảnh gốc, băm lại archive, tính lại số dẫn xuất) ghi nhận không có BLOCKER/MAJOR trong phạm vi 3 ảnh.
-- **Không có test vật lý nào được chạy trong PR này; không có firmware nào được biên dịch hay nạp.**
+- **Phản biện độc lập vòng 2** (không do tác giả thực hiện; đọc trực tiếp firmware/công cụ của lần cập nhật này và chạy lại toàn bộ kiểm tra) đã phát hiện **BLOCKER F01–F04** (hồ sơ in output kiểm tra không tái lập được khi `firmware_commit` còn là placeholder) + **MAJOR F05** (đảo dấu chênh lệch cặp) + các MINOR F06–F14/N01–N06 — **tất cả đã được xử lý trong chính PR này** (F13 ghi nhận là giới hạn: test hành vi vẫn là mô hình + kiểm tra tĩnh; lớp **biên dịch thật** bằng ESP-IDF trên CI nay đã bổ sung — xem `firmware-implementation.md` §5.6). Vòng phản biện trước đó trên **lớp bằng chứng 3 ảnh** (đọc 3 ảnh gốc, băm lại archive, tính lại số dẫn xuất) ghi nhận không có BLOCKER/MAJOR trong phạm vi 3 ảnh.
+- **Không có test vật lý nào được chạy trong PR này; firmware đã được biên dịch trên CI nhưng chưa nạp và chưa chạy.**
 
 ## 11. Ngoài phạm vi
 

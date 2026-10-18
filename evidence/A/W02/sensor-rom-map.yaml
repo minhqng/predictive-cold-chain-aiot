@@ -17,7 +17,7 @@ schema: coldguard.sensor-rom-map/v0
 week: W02
 owner: member-a
 hardware_config_id: NOT_ASSIGNED        # chưa được leader gán (kế thừa W01)
-firmware_commit: 0eb1f8a9731e4810304332910df168ce30de30b5 # commit firmware W02 trong repo (map đã ghi cứng); xem thêm bench_sketch_source
+firmware_commit: 2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc # commit firmware W02 trong repo (map đã ghi cứng; CMakeLists sửa cho ESP-IDF v6.1 và đã build thật trên CI — build-report-w02.md); xem thêm bench_sketch_source
 bench_sketch_source: NOT_IN_REPO         # sketch bench sinh ra 3 ảnh: nguồn không nằm trong repo
 calibration_id: null
 rounds_used: []                          # chưa có run_id nào dùng mapping này
@@ -135,7 +135,7 @@ invariants_referenced:
 
 next_actions:
   - Dán nhãn vật lý T1/T2/T3 (và SPARE) lên dây/đầu dò, chụp ảnh nhãn + vị trí (bench-procedure-w02.md B4).
-  - Biên dịch firmware bằng image espressif/idf (B0) rồi chạy >= 5 chu kỳ reboot thật để đóng SEN-H1-02 (B1).
+  - Nạp firmware đã build (CI đã PASS: build-report-w02.md; B0) rồi chạy >= 5 chu kỳ reboot thật để đóng SEN-H1-02 (B1).
   - Chạy phiên >= 10 phút và dựng sensor-consistency.csv bằng công cụ để đóng phần CSV thô của SEN-H1-03 (B2).
   - Quan sát vật lý "cửa mở -> mức thô nào" rồi chạy công cụ door với --open-level; đóng SEN-H1-05 (B3).
   - Leader xác nhận lệch số lượng đầu dò (CR-A-W01-04) có được chấp nhận làm cấu hình W02 hay không.
