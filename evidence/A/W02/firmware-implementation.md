@@ -79,7 +79,7 @@ Hardware still pending: BME280, physical sensor labeling, H0 mechanical.
 
 Số lượng thật của chính lần chạy này: `Ran 57 tests … OK` (57 unittest công cụ), `STATIC FIRMWARE CHECK: PASS (39 checks)`, và validator in `W02 STRUCTURE PASS: 14 required files; …; ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); …`. Các con số này lấy từ output thật, không sao chép từ lần chạy cũ.
 
-Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitHub Actions: **SUCCESS**, 0 cảnh báo — toàn bộ tham chiếu (run URL, log, artifact, SHA-256, lỗi build đầu và cách sửa) nằm ở `build-report-w02.md`. Dòng nhắc *"no check here compiles the firmware"* trong output trên là **nguyên văn của công cụ** (công cụ không đổi): nó nói đúng về `run_all_checks.py`, còn bản thân firmware đã được biên dịch thật bởi CI.
+Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitHub Actions: **SUCCESS**, 0 cảnh báo — toàn bộ tham chiếu (run URL, log, artifact, SHA-256, lỗi build đầu và cách sửa) nằm ở `build-report-w02.md`. Dòng nhắc *"no check here compiles the firmware"* trong output trên là **nguyên văn của công cụ** (công cụ không đổi): nó nói đúng về `run_all_checks.py`, còn bản thân firmware đã được biên dịch thật bởi CI. Tương tự, dòng *"Hardware still pending: BME280, …"* cũng là **nguyên văn của công cụ** — công cụ **không được sửa** khi nhập bằng chứng BME280; với BME280, phần "hardware còn lại" nay là **tích hợp ESP-IDF + vị trí gá cuối** vì bài bench standalone đã xong (`acceptance.md §4.1`/`§11`).
 
 ## 5. Giới hạn đã khai báo (không giấu)
 
@@ -95,8 +95,11 @@ Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitH
    phát hiện ở W02. Vì vậy dòng `#CG ROMS` **không** in số thiết bị lạ: trường `unknown=`
    đã bị bỏ vì con số đó không thể đo được, và một con số không đo được sẽ trông như đã đo.
    Đây là giới hạn có chủ đích, không phải bất ngờ.
-4. **BME280 không thuộc firmware W02** (A-W02-06 đang `PENDING_PHYSICAL_TEST`): trong
-   `firmware/main/` chỉ có **định nghĩa chân** theo bảng pin canonical, **không** có driver I²C.
+4. **BME280 không thuộc firmware W02** — điều này **không đổi**: trong `firmware/main/`
+   chỉ có **định nghĩa chân** theo bảng pin canonical, **không** có driver I²C. Thiết bị
+   BME280 đã được xác minh phần cứng **bên ngoài firmware** bằng bài bench standalone
+   (sketch Arduino/Adafruit — `evidence/A/W02/bme280/`, `acceptance.md §4.1`); firmware
+   ESP-IDF **vẫn chưa** đọc BME280 và hồ sơ không được phép nói khác.
 5. **Chỉ số `boot_count` phụ thuộc NVS**: nếu xoá NVS/flash thì bộ đếm về lại 1 — log
    vẫn chứng minh được danh tính ROM→vai trò qua từng boot, chỉ là số thứ tự boot không liên tục.
    Công cụ `cg_verify_reboots.py` vì thế đòi `boot_id` phân biệt + `boot_count` tăng dần:

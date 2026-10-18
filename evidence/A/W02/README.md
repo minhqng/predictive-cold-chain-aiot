@@ -1,6 +1,6 @@
 # ColdGuard — Member A — W02 sensor foundation
 
-**Snapshot:** 2026-10-18 (cập nhật 2: build CI) · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **Build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **Firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO` · **Operator:** Member A (không ghi tên cá nhân trong repo)
+**Snapshot:** 2026-10-18 (cập nhật 3: build CI + BME280 bench) · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **Build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **BME280 bench (standalone):** `PASS — 403/403 mẫu` (`bme280/`) · **Firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO` · **Operator:** Member A (không ghi tên cá nhân trong repo)
 
 ## Phạm vi và thẩm quyền
 
@@ -33,7 +33,8 @@
 | `sensor-rom-map.yaml` | Ánh xạ ROM → vai trò T1/T2/T3 + SPARE; trạng thái `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; trạng thái từng test liên quan danh tính; nay khớp từng byte với firmware trong repo |
 | `firmware-implementation.md` | Firmware W02 trong repo: bản đồ module, grammar log, ràng buộc canonical ↔ kiểm tra tự động, kết quả chạy, và **các giới hạn đã khai báo** (đã biên dịch thật trên CI, chưa nạp/chạy, không có ROM search, BME280 ngoài phạm vi) |
 | `build-report-w02.md` | Build ESP-IDF thật trên GitHub Actions (image `espressif/idf:v6.1`, target `esp32s3`): run URL, log, artifact + SHA-256, lỗi build đầu và cách sửa, giới hạn của tuyên bố compile |
-| `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: nạp firmware đã build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, BME280 — kèm lệnh cụ thể và file phải sinh ra |
+| `bme280/` (×3) | Bằng chứng bench BME280 thật (ESP32-S3, sketch Arduino/Adafruit): log gốc + CSV 403/403 mẫu + báo cáo; SHA-256 ở `acceptance.md §4.1`/§11. **Không** phải firmware ESP-IDF |
+| `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: nạp firmware đã build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, vị trí gá BME280 cuối — kèm lệnh cụ thể và file phải sinh ra |
 | `sensor-consistency-summary.md` | `SEN-H1-03` / `A-W02-05`: bảng 600 mẫu/đầu dò, chênh lệch cặp, độ ổn định, và danh sách điều **không** chứng minh được |
 | `door-test-summary.md` | `SEN-H1-05` / `A-W02-07`: đọc bộ đếm MC-38, đối chiếu tiêu chí, lý do polarity và debounce còn `PENDING` |
 | `screenshot-provenance.csv` | Truy xuất nguồn từng ảnh: kích thước, SHA-256, file nguồn trong archive, nội dung, giới hạn |
@@ -51,9 +52,9 @@
 | `operator` | Member A (người vận hành vật lý; không ghi tên cá nhân trong repo) |
 | `hardware_config_id` | `NOT_ASSIGNED` — chưa được leader gán |
 | `firmware commit` | `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` → commit firmware W02 trong repo (`firmware/main/`, 7 module C; **không** phải nguồn của 3 ảnh; đã build thật trên CI — `build-report-w02.md`) · sketch bench sinh ra 3 ảnh: `NOT_IN_REPO` |
-| `test IDs` | `HW-H0-01`, `HW-H0-02` (chưa thực hiện), `SEN-H1-01` (partial), `SEN-H1-02` (not performed), `SEN-H1-03` (partial), `SEN-H1-04` (not performed), `SEN-H1-05` (partial) |
+| `test IDs` | `HW-H0-01`, `HW-H0-02` (chưa thực hiện), `SEN-H1-01` (partial), `SEN-H1-02` (not performed), `SEN-H1-03` (partial), `SEN-H1-04` (partial — bench BME280 standalone PASS; tích hợp ESP-IDF chưa), `SEN-H1-05` (partial) |
 | `setup` | Bench không cấp nguồn TEC; 4 đầu dò DS18B20 trên một bus 1-Wire; MC-38 nối vào board; Serial Monitor COM4 @ 115200, không bật timestamp |
-| `result` | ROM map 3 vai trò + 1 spare; 600/600 mẫu hợp lệ × 4 đầu dò; MC-38 24 chu kỳ; BME280 chưa đo |
+| `result` | ROM map 3 vai trò + 1 spare; 600/600 mẫu hợp lệ × 4 đầu dò; MC-38 24 chu kỳ; BME280 bench standalone PASS (403/403 mẫu, chip-ID `0x60`, I²C `0x76`) — chưa tích hợp ESP-IDF |
 | `pass/fail` | **`NOT PASS`** — `W02_PARTIAL_EVIDENCE` (chi tiết và blocker ở `acceptance.md`) |
 | `anomalies` | Lệch số lượng đầu dò 4 so với canonical 3; **khối `TEMPERATURE` đầu tiên trong ảnh enumeration bị thiếu một dòng có nhãn** (xem §“Bất thường quan sát được”); không có timestamp; không có CSV thô; không có log reboot; chưa freeze polarity MC-38; chưa có H0 |
 
@@ -68,7 +69,7 @@ Bảng này **không** phải nguồn trạng thái; trạng thái canonical n�
 | `A-W02-03` reboot identity proof | `IMPLEMENTED — HARDWARE RUN PENDING` (cơ chế + công cụ đã test tự động; chưa có log thật) |
 | `A-W02-04` acquisition implementation | `IMPLEMENTED — COMPILE VERIFIED (CI)` — `HARDWARE RUN PENDING` (firmware trong repo; build thật SUCCESS trên CI: `build-report-w02.md`; sketch bench cũ vẫn `RAW_EVIDENCE_PENDING`) |
 | `A-W02-05` inter-sensor consistency | `STATISTICS_VERIFIED_FROM_SCREENSHOT — RAW CSV MISSING` (công cụ dựng CSV đã sẵn sàng và đã test) |
-| `A-W02-06` BME280 | `PENDING_TEST — USER PLANS TO COMPLETE TONIGHT` |
+| `A-W02-06` BME280 | `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` (bài bench thật 403/403 mẫu — `bme280/`; vị trí gá cuối vẫn `PENDING_TEST`) |
 | `A-W02-07` MC-38 | `PARTIAL` — 24 chu kỳ ≥ 20; polarity + debounce thật vẫn chờ quan sát (firmware/tool đã không cho phép đoán) |
 
 ## Bất thường quan sát được (khai báo tường minh)
@@ -90,6 +91,7 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 7. Đọc `firmware-implementation.md` để biết firmware trong repo làm gì, đã được kiểm chứng tới đâu, và **chưa** làm gì.
 8. Đọc `acceptance.md` để biết chính xác hạng mục nào PASS/PARTIAL/PENDING và ai cần quyết định gì.
 9. Đọc `build-report-w02.md` để xem build ESP-IDF thật trên CI (run URL, log, artifact, SHA-256) và giới hạn của tuyên bố compile.
+10. Đối chiếu 3 tệp trong `bme280/` với SHA-256 ghi ở `acceptance.md §4.1`/`§11` (log gốc, CSV, báo cáo).
 
 ## Handoffs
 
@@ -100,7 +102,7 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 
 ## Cổng chất lượng W02
 
-**Chưa PASS.** Có ba nhóm bằng chứng thật (enumeration, consistency summary, door cycles), một bản đồ ROM vai trò đã ghi cứng vào firmware, một lớp công cụ + test tự động đã chạy PASS và **firmware đã được biên dịch thật trên CI** — nhưng vẫn thiếu dữ liệu thô, thiếu timestamp cho phiên cũ, thiếu BME280, thiếu log reboot, thiếu H0, và firmware **chưa** được nạp/chạy. Hồ sơ ở mức **PR-reviewable** với blocker nêu tường minh, không che giấu phần còn thiếu.
+**Chưa PASS.** Có bốn nhóm bằng chứng thật (enumeration, consistency summary, door cycles, **bench BME280**), một bản đồ ROM vai trò đã ghi cứng vào firmware, một lớp công cụ + test tự động đã chạy PASS và **firmware đã được biên dịch thật trên CI** — nhưng vẫn thiếu dữ liệu thô, thiếu timestamp cho phiên cũ, thiếu **tích hợp BME280 vào firmware ESP-IDF** (bài bench standalone đã xong), thiếu log reboot, thiếu H0, và firmware **chưa** được nạp/chạy. Hồ sơ ở mức **PR-reviewable** với blocker nêu tường minh, không che giấu phần còn thiếu.
 
 ### Phân biệt hai loại "đã xong" (quan trọng khi review)
 
@@ -108,4 +110,4 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 |---|---|---|
 | **Đã làm xong, có bằng chứng máy kiểm được** | Chạy lại được bằng một lệnh, kết quả khớp | Công cụ + test (`run_all_checks.py` 3/3 PASS: 57 test + 39 check tĩnh + validator hồ sơ); ROM map ↔ firmware ↔ CRC8; parser/CSV/debounce |
 | **Đã implement + compile thật, chưa chạy trên phần cứng** | Code có trong repo, logic đã được kiểm tra tĩnh và **đã biên dịch thật trên CI**, nhưng **chưa** nạp/đo | Firmware W02 (`A-W02-03/04/07` phần code; build: `build-report-w02.md`) |
-| **Chưa thể làm nếu không có phần cụ thể** | Cần người thao tác | 5 reboot, 10 phút consistency, polarity cửa, dán nhãn, BME280, H0 |
+| **Chưa thể làm nếu không có phần cụ thể** | Cần người thao tác | 5 reboot, 10 phút consistency, polarity cửa, dán nhãn, vị trí gá BME280 cuối, H0 |

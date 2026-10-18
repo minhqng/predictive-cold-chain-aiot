@@ -4,7 +4,8 @@ Danh sách này **chỉ** chứa việc không thể làm bằng code/dữ liệ
 bằng máy đã được làm trong `firmware/` và `firmware/tools/` (xem
 `firmware-implementation.md`).
 
-Thứ tự đề xuất: **B1 → B2 → B3 → B4 → B5**. Tổng thời gian bench ước tính ~25 phút
+Thứ tự đề xuất: **B0 → B1 → B2 → B3 → B4**; **B5 (BME280) bài bench đã xong** — chỉ còn
+phần vị trí gá cuối khi lắp cụm (xem cuối tệp). Tổng thời gian bench ước tính ~25 phút
 (không tính hàn/dán nhãn).
 
 ---
@@ -102,16 +103,20 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 
 ---
 
-## B5. BME280 (`A-W02-06`)
+## B5. BME280 (`A-W02-06`) — bài bench standalone ĐÃ XONG
 
-Chưa thuộc firmware W02 (driver I²C chưa nằm trong repo). Test tối thiểu cần ghi lại:
+Đã hoàn thành **ngoài firmware W02** (driver I²C chưa nằm trong repo): bài bench BME280
+trên ESP32-S3 bằng sketch Arduino/Adafruit — bằng chứng ở `bme280/` (log gốc + CSV 403
+mẫu + báo cáo; SHA-256 trong `acceptance.md §4.1`/§11). Đã xác nhận: I²C `0x76`,
+chip-ID `0x60`, `BME280_INIT=PASS`, T/RH/P đọc hợp lý, 403/403 mẫu hợp lệ.
 
-- I²C address đọc được (0x76/0x77),
-- chip-ID,
-- T/RH đọc được và mức hợp lý (so với nhiệt độ phòng),
-- vị trí gá không bị ESP32/V1 sấy nóng (ảnh + mô tả khoảng cách).
+Còn lại của `A-W02-06` (khi lắp cụm cuối):
 
-Kết quả thật → commit bổ sung **vào cùng PR** kèm ảnh/log; **không** đánh dấu PASS trước đó.
+- vị trí gá BME280 trong cụm + ảnh/mô tả khoảng cách tới ESP32/V1 (tự sấy nóng) ⇒ `PENDING_TEST`;
+- (tùy quyết định của leader) tích hợp driver BME280 vào firmware ESP-IDF W02 — hiện **không** thuộc phạm vi firmware.
+
+> Bài bench dùng sketch Arduino đã **ghi đè** firmware ESP-IDF trong MCU — trước khi chạy
+> B1–B4 phải **nạp lại firmware chính thức** (B0).
 
 ---
 

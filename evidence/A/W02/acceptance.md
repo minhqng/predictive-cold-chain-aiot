@@ -2,7 +2,7 @@
 
 Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của Member A. Các file khác trong `evidence/A/W02/` chỉ cung cấp bằng chứng và **không** lặp lại checklist.
 
-**Snapshot:** 2026-10-18 (cập nhật 2: build CI) · **Phiên bản hồ sơ:** W02 · **hardware_config_id:** `NOT_ASSIGNED` · **firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO`
+**Snapshot:** 2026-10-18 (cập nhật 3: build CI + BME280 bench) · **Phiên bản hồ sơ:** W02 · **hardware_config_id:** `NOT_ASSIGNED` · **firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **BME280 bench (ESP32-S3, standalone):** `PASS — 403/403 mẫu` (`bme280/`) · **firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO`
 
 **Trạng thái tổng: `W02 NOT PASS` — `W02_PARTIAL_EVIDENCE`.** Việc mở PR **không** đồng nghĩa W02 đã PASS. Việc firmware **biên dịch thành công trên CI** (§10) cũng **không** thay đổi trạng thái tổng: firmware chưa được nạp và chưa chạy trên board.
 
@@ -17,7 +17,7 @@ Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của M
 | **A-W02-03** | Reboot identity proof | ≥5 chu kỳ reboot/discovery giữ nguyên ROM→role | **Không có log thật.** Đã implement cơ chế: `#CG BOOT boot_id=… boot_count=…` (NVS) + khối `#CG ROM` mỗi lần boot + công cụ `firmware/tools/cg_verify_reboots.py` (đã test tự động: 5 boot ổn định + `boot_id` phân biệt + `boot_count` tăng dần → PASS; đổi ROM/thiếu vai trò/khối lặp/`boot_count` không tăng → FAIL) | **`IMPLEMENTED — HARDWARE RUN PENDING`** | Chạy 5 lần reset trên board và lưu log. **Không** được suy ra từ ảnh enumeration một phiên; **không** đánh dấu PASS trước khi có log thật |
 | **A-W02-04** | Acquisition implementation | Shared conversion → đọc từng ROM; snapshot ~1 Hz; xử lý lỗi đọc | Log bench (shared-conversion quan sát được: một khối in chứa cả 4 đầu dò + `Valid: 4/4`) · **firmware W02 đã được implement trong repo**: `firmware/main/cg_ds18b20.c` (broadcast `SKIP_ROM`+`CONVERT_T`, đọc theo ROM cố định, `nan` khi lỗi) · **đã biên dịch thật trên CI** (ESP-IDF v6.1, `esp32s3`, SUCCESS, 0 cảnh báo — `build-report-w02.md`) | **`IMPLEMENTED — COMPILE VERIFIED (CI) — HARDWARE RUN PENDING`** | 1) Cần một lần chạy thật để có log `#CG SAMPLE` có `uptime_ms` (nhịp ~1 Hz sẽ **đo được**, không còn là suy luận) — build đã xong, chỉ còn nạp/chạy; 2) **nguồn sketch bench** sinh ra 3 ảnh vẫn không nằm trong repo ⇒ shared conversion của *phiên bench cũ* vẫn `RAW_EVIDENCE_PENDING` |
 | **A-W02-05** | Inter-sensor consistency | ≥10 phút ở ~1 Hz; có mean, SD, chênh lệch cặp, chênh lệch lớn nhất | `w02_ds18b20_600_samples_summary.png`, `sensor-consistency-summary.md` (thống kê đã được reviewer độc lập tính lại: khớp 100%) · công cụ `firmware/tools/cg_build_sensor_csv.py` (đã test: 600 mẫu → CSV + mean/SD/pairwise/max; `nan` → ô rỗng; dưới `--min-samples` → `WINDOW NOT USABLE` + exit 1) | **`STATISTICS_VERIFIED_FROM_SCREENSHOT — RAW CSV MISSING`** | Thiếu `sensor-consistency.csv` thô của **phiên cũ** ⇒ không thể tính lại độc lập từ dữ liệu gốc; thiếu timestamp ⇒ nhịp/độ dài của phiên cũ vẫn là suy luận (phiên mới sẽ có `uptime_ms`). Điều kiện đặt đầu dò không được ghi lại. **Không** phải calibration (không có chuẩn truy vết) |
-| **A-W02-06** | BME280 | I²C address, T/RH hợp lý, không bị ESP32/V1 sấy nóng | **Không có** | **`PENDING_TEST — USER PLANS TO COMPLETE TONIGHT`** | Toàn bộ: chip-ID, I²C, T/RH, vị trí gá. Member A sẽ **bổ sung commit mới vào cùng PR** sau khi test thật |
+| **A-W02-06** | BME280 | I²C address, T/RH hợp lý, không bị ESP32/V1 sấy nóng | BME280 bench **thật** trên ESP32-S3 (sketch Arduino/Adafruit): `bme280/` — log gốc + CSV 403/403 mẫu `valid=1` + báo cáo; `BME280_INIT=PASS`, chip-ID `0x60`, I²C `0x76` (SDA GPIO21, SCL GPIO33); thống kê tính lại độc lập từ log | **`BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED`** | (1) **Tích hợp ESP-IDF:** firmware W02 **không** có driver BME280 (cố ý) — muốn "firmware chính thức đọc BME280" cần task riêng; (2) vị trí gá cuối + không bị ESP32/V1 sấy nóng ⇒ `PENDING_TEST`. **Không** đánh dấu A-W02-06 PASS đầy đủ |
 | **A-W02-07** | MC-38 | ≥20 chu kỳ mở/đóng; semantic OPEN/CLOSED khớp vật lý; transition tin cậy (debounce) | `w02_mc38_24_cycles.png`, `door-test-summary.md` · đã implement: `firmware/main/cg_door.c` (debounce cấu hình được `CG_DOOR_DEBOUNCE_MS=50`, đếm `raw_edges`/`discarded_edges`, ghi `#CG DOOR_EDGE` theo µs) + `firmware/tools/cg_build_door_csv.py` (bắt buộc `--open-level`; không có thì mọi `state=UNVERIFIED` và exit 1; capture trải nhiều boot bị từ chối cho tới khi chọn `--boot N`) | **`PARTIAL`** | Số chu kỳ **đạt** (24 ≥ 20, tính theo **bộ đếm của sketch bench cũ** — sketch `NOT_IN_REPO`, số hiển thị trên Serial Monitor của phiên đó). Còn thiếu: (1) `raw → OPEN/CLOSED` chưa được quan sát vật lý (`PENDING_POLARITY_CONFIRMATION`); (2) bằng chứng debounce trên phần cứng thật (số cạnh thô/chu kỳ) |
 
 ---
@@ -28,11 +28,11 @@ Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của M
 |---|---|---|
 | 3 unique stable ROMs | **`PARTIAL`** | Có 4 ROM **phân biệt** (thoả `PHY-DS-001` về tính duy nhất của 3 vai trò) và ba ROM này **đã được ghi cứng theo vai trò trong firmware** (không phụ thuộc thứ tự discovery); nhưng con số **không khớp** canonical "3" và tính **ổn định qua reboot** vẫn chưa có log thật |
 | no silent remap across reboot | **`IMPLEMENTED — HARDWARE RUN PENDING`** | Firmware W02 đọc theo ROM cố định (không dùng chỉ số discovery) và công cụ kiểm tra đã test tự động; **chưa** có log 5 reboot thật ⇒ chưa tuyên bố thoả |
-| BME responds | **`NOT TESTED`** | `A-W02-06` chờ test tối nay |
+| BME responds | **`BENCH VERIFIED (STANDALONE) — ESP-IDF INTEGRATION PENDING`** | Bài bench thật trên ESP32-S3 (sketch Arduino/Adafruit): `BME280_INIT=PASS`, chip-ID `0x60`, I²C `0x76`, T/RH/P đọc hợp lý, 403/403 mẫu hợp lệ — `bme280/`. **Chưa**: firmware ESP-IDF W02 đọc BME280 (firmware không có driver — cố ý) |
 | door semantic correct | **`IMPLEMENTED — POLARITY OBSERVATION PENDING`** | Firmware **không** giả định HIGH/LOW nào là OPEN (`CG_DOOR_POLARITY_CONFIRMED=0` ⇒ `UNVERIFIED`); công cụ **bắt buộc** `--open-level` do người vận hành quan sát. Chưa có quan sát vật lý ⇒ chưa tuyên bố thoả |
 | mechanical placement reproducible | **`NOT VERIFIED`** | `A-W02-01` hoãn; chưa có ảnh vị trí/đầu dò được dán nhãn |
 
-**Kết luận:** không tiêu chí nào trong hai bảng trên là `PASS` đầy đủ. Ba tiêu chí đã chuyển từ "chưa có gì" sang **đã implement + có công cụ kiểm chứng đã test tự động**, nhưng **chưa** chạy trên phần cứng.
+**Kết luận:** không tiêu chí nào trong hai bảng trên là `PASS` đầy đủ. Ba tiêu chí đã chuyển từ "chưa có gì" sang **đã implement + có công cụ kiểm chứng đã test tự động**; riêng "BME responds" nay có **bằng chứng bench phần cứng thật** (standalone, sketch Arduino/Adafruit — chưa tích hợp ESP-IDF); toàn bộ vẫn **chưa** từng chạy bằng **firmware ESP-IDF chính thức**.
 
 ---
 
@@ -44,6 +44,7 @@ Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của M
 | `sensor-rom-map.yaml` | **PRESENT (DRAFT)** | Có; trạng thái `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; nay khớp từng byte với `firmware/main/coldguard_config.h` (kiểm tra tự động) |
 | `sensor-placement.png` | **MISSING** | Không có bản vẽ/ảnh vị trí. **Không** được vẽ lại từ trí nhớ |
 | H1 serial log | **PARTIAL** | Chỉ có 3 ảnh chụp cửa sổ Serial Monitor, không có file log; timestamp bị tắt. Firmware mới in `uptime_ms` nên phiên sau sẽ có log có mốc thời gian thật |
+| Bằng chứng bench BME280 (`bme280/`) | **PRESENT — VERIFIED** | Log gốc + CSV 403/403 mẫu + báo cáo; thống kê tính lại độc lập từ log, CSV khớp từng dòng; SHA-256 ở §4.1/§11. **Không** phải firmware ESP-IDF (bài bench standalone) |
 | `sensor-consistency.csv` | **GENERATOR READY — REAL RUN PENDING** | Chưa có file; `firmware/tools/cg_build_sensor_csv.py` dựng CSV từ log thật (đã test tự động, `nan` → ô rỗng, dưới `--min-samples` → `WINDOW NOT USABLE` + exit 1) |
 | `door-test.csv` | **GENERATOR READY — REAL RUN PENDING** | Chưa có file; `firmware/tools/cg_build_door_csv.py` dựng CSV + thống kê dội (bắt buộc `--open-level`) |
 | Firmware W02 trong repo | **IMPLEMENTED — CI COMPILE PASS (ESP32-S3)** | `firmware/main/` (7 module C) + workflow `.github/workflows/a-w02-espidf-build.yml` (image `espressif/idf:v6.1`, README gốc). Build thật: **SUCCESS**, 0 cảnh báo, artifact + SHA-256 trong `build-report-w02.md`. Máy cục bộ vẫn không có ESP-IDF/Docker; firmware chưa được nạp |
@@ -57,10 +58,13 @@ Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của M
 
 ### 4.1 `A-W02-06` — BME280
 
-- **Trạng thái:** `PENDING_TEST — USER PLANS TO COMPLETE TONIGHT`.
-- **Hiện có:** không có kết quả chip-ID, không có kết quả I²C, không có T/RH.
-- **Cam kết:** Member A sẽ gửi **commit mới vào cùng PR này** sau khi test thật xong.
-- **Quy tắc:** **không** được đánh dấu PASS trước khi có kết quả thật. Việc review PR này **không** phải là phê duyệt BME280.
+- **Trạng thái:** `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED`.
+- **Bằng chứng (phần cứng thật, 2026-10-18):** bài bench BME280 **standalone** trên ESP32-S3 bằng sketch Arduino + thư viện Adafruit BME280 (COM4 @ 115200, SDA=GPIO21, SCL=GPIO33); I²C address `0x76`, chip-ID `0x60`, `CHIP_TYPE=BME280`, `BME280_INIT=PASS`; 403 mẫu liên tục 1–403, `valid=1` toàn bộ; `uptime_ms` 2 816→404 816 (402 khoảng, đều 1000 ms, tổng 402 giây); T 30.27–30.42 °C (mean 30.408, sd 0.017); RH 68.42–69.14 %RH (mean 68.513, sd 0.089); P 1011.97–1012.16 hPa (mean 1012.072, sd 0.037).
+- **Files:** `bme280/bme280-bench-original.txt` (13 795 bytes, SHA-256 `da24b6f0d487a4d677892e19c1299d18b207f5ad4f01d1b4635a475d8e606c23`), `bme280/bme280-bench.csv` (13 139 bytes, SHA-256 `5ccddec17820dfda06c552407792dbdf2dde45f8c133d4abb0053ee3665cf43a`), `bme280/bme280-bench-report.md` (2 519 bytes, SHA-256 `c587bf6fce926caaa603a04fb7f987d4903e09e64892c3c2643b213fb92d7813`). Nguồn: `ColdGuard_W02_BME280_Evidence.zip` (7 537 bytes, SHA-256 `f243817e6f3d8ebc3747aadad59e58b3324e2af6ebb75fa1accbb86a75082016`). Thống kê đã được **tính lại độc lập từ log gốc** và CSV **khớp từng dòng**.
+- **Điều bằng chứng này chứng minh:** thiết bị BME280 **tồn tại và đọc được** — I²C bus, chip-ID, nhiệt độ, độ ẩm, áp suất — với dữ liệu có mốc `uptime_ms` (không phải wall-clock).
+- **Điều bằng chứng này KHÔNG chứng minh:** firmware **ESP-IDF W02** đọc BME280 (firmware W02 **không** có driver BME280 — cố ý, xem `firmware-implementation.md` §5.4); độ chính xác/hiệu chuẩn; hoạt động trong buồng lạnh; vị trí lắp cuối. **Vẫn còn `PENDING_TEST`** cho vị trí gá cuối + xác nhận không bị ESP32/V1 sấy nóng.
+- **Cảnh báo vận hành:** sketch Arduino đã **ghi đè** firmware trong MCU ⇒ phải nạp lại firmware ESP-IDF (B0) trước các bài B1–B4.
+- **Quy tắc:** **không** đánh dấu A-W02-06 hay W02 PASS đầy đủ từ bằng chứng standalone này. Việc review PR này **không** phải là phê duyệt BME280 mức nghiệm thu.
 
 ### 4.2 `A-W02-01` — H0 mechanical
 
@@ -80,7 +84,7 @@ Tệp này là **nguồn trạng thái duy nhất** cho nghiệm thu W02 của M
 
 Không có blocker nào **chặn việc mở PR** (hồ sơ trung thực, không có tuyên bố sai). Các mục dưới đây **chặn W02 PASS**:
 
-- [ ] **`A-W02-06`:** kết quả BME280 thật (chip-ID, I²C address, T/RH hợp lý, vị trí gá) — commit bổ sung vào cùng PR.
+- [ ] **`A-W02-06`:** phần bench BME280 **đã xong** (xem §4.1); còn lại: (a) tích hợp BME280 vào firmware ESP-IDF W02 hoặc chốt phạm vi bằng văn bản với leader; (b) vị trí gá cuối + xác nhận không bị ESP32/V1 sấy nóng (khi lắp) — `PENDING_TEST`.
 - [ ] **`A-W02-03`:** chạy 5 lần reset trên board và lưu log; xác minh bằng `py firmware/tools/cg_verify_reboots.py <log>` (cơ chế + công cụ đã xong, chỉ còn lần chạy thật).
 - [ ] **`A-W02-05`:** chạy phiên ≥10 phút và dựng `sensor-consistency.csv` bằng công cụ (phiên cũ vẫn thiếu CSV thô ⇒ không tính lại được từ dữ liệu gốc).
 - [ ] **`A-W02-07`:** quan sát vật lý "cửa mở → mức thô nào" rồi chạy công cụ với `--open-level`; ghi lại số cạnh thô/chu kỳ làm bằng chứng debounce.
@@ -127,7 +131,7 @@ Không có blocker nào **chặn việc mở PR** (hồ sơ trung thực, không
 | Một lệnh chạy tất cả | `firmware/tools/run_all_checks.py` | 3/3 lớp PASS trên máy này (57 test + 39 check tĩnh + validator hồ sơ, sau commit firmware `2a5a0da…`) |
 | Build ESP-IDF thật (CI, không cần máy cục bộ) | `.github/workflows/a-w02-espidf-build.yml` | `espressif/idf:v6.1` + `esp32s3`, **SUCCESS**, 0 cảnh báo — run `39117530768` (chi tiết: `build-report-w02.md`) |
 
-**Chưa được làm và không được giả vờ đã làm:** nạp firmware, chạy bất kỳ bài test phần cứng nào, dán nhãn vật lý, test BME280. (Biên dịch firmware nay **đã làm được**: CI thật với ESP-IDF v6.1 — `build-report-w02.md`; máy cục bộ vẫn không có ESP-IDF/Docker.)
+**Chưa được làm và không được giả vờ đã làm:** nạp/chạy **firmware ESP-IDF chính thức** trên board, dán nhãn vật lý, và **tích hợp** BME280 vào firmware ESP-IDF (bài BME280 đã chạy là sketch Arduino standalone — xem §4.1). (Biên dịch firmware nay **đã làm được**: CI thật với ESP-IDF v6.1 — `build-report-w02.md`; máy cục bộ vẫn không có ESP-IDF/Docker.)
 
 **Trạng thái hiện tại: `W02_PARTIAL_EVIDENCE` — không phải `W02_PASS`.**
 
@@ -168,4 +172,16 @@ Vòng phản biện thứ hai — **không do tác giả thực hiện** — đ�
 - Chạy lại toàn bộ kiểm tra cục bộ (**57 test + 39 check tĩnh + validator = 3/3 PASS**) rồi build lại: **SUCCESS**, 0 cảnh báo, `coldguard_firmware.bin` = 0x31360 bytes (81% trống).
 - Bằng chứng đầy đủ (run URL, log, artifact, SHA-256, giới hạn): **`build-report-w02.md`**.
 - Toàn bộ `firmware/main/*.c`/`*.h` giữa `0eb1f8a…` và `2a5a0da…` là **giống hệt từng byte**; chỉ `CMakeLists.txt` đổi.
-- **Trạng thái tổng không đổi: `W02_PARTIAL_EVIDENCE` — NOT PASS.** Phần nạp + chạy thật vẫn `PENDING`; BME280 vẫn `PENDING_TEST`; 5 reboot vẫn `HARDWARE_RUN_PENDING`; CSV thô vẫn thiếu; nhãn vật lý vẫn `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; H0 vẫn `DEFERRED`.
+- **Trạng thái tổng không đổi: `W02_PARTIAL_EVIDENCE` — NOT PASS.** Phần nạp + chạy thật vẫn `PENDING`; BME280 khi đó vẫn `PENDING_TEST` (nay đã bench-verified standalone — xem §11); 5 reboot vẫn `HARDWARE_RUN_PENDING`; CSV thô vẫn thiếu; nhãn vật lý vẫn `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; H0 vẫn `DEFERRED`.
+
+---
+
+## 11. Cập nhật lần 3 (2026-10-18): bằng chứng bench BME280 thật
+
+- Nhập 3 tệp bằng chứng bench BME280 vào `bme280/`: `bme280-bench-original.txt` (log Serial Monitor gốc; 13 795 bytes; SHA-256 `da24b6f0d487a4d677892e19c1299d18b207f5ad4f01d1b4635a475d8e606c23`), `bme280-bench.csv` (403 dòng dữ liệu; 13 139 bytes; SHA-256 `5ccddec17820dfda06c552407792dbdf2dde45f8c133d4abb0053ee3665cf43a`), `bme280-bench-report.md` (2 519 bytes; SHA-256 `c587bf6fce926caaa603a04fb7f987d4903e09e64892c3c2643b213fb92d7813`) — nguồn: `ColdGuard_W02_BME280_Evidence.zip` (7 537 bytes; SHA-256 `f243817e6f3d8ebc3747aadad59e58b3324e2af6ebb75fa1accbb86a75082016`). Tệp gốc được sao chép **nguyên byte** (SHA-256 khớp lại sau khi copy) và blob trong repo được ghim bằng `bme280/.gitattributes` (`* -text !eol`) để git không chuẩn hoá line-ending — các hash trong bảng trên đúng cả khi clone.
+- Phương pháp (theo phiên test của người dùng): ESP32-S3, sketch Arduino + thư viện Adafruit BME280, COM4 @ 115200; SDA=GPIO21, SCL=GPIO33; I²C address `0x76`; chip-ID `0x60`; `CHIP_TYPE=BME280`; `BME280_INIT=PASS`.
+- Xác minh độc lập từ **log gốc** (đọc trực tiếp, tính lại toàn bộ thống kê + đối chiếu CSV từng dòng): 403 mẫu liên tục 1–403, **0 trùng/0 thiếu**, `valid=1` toàn bộ (không có dòng `valid=0`); `uptime_ms` 2 816 → 404 816 (402 khoảng, **đều 1000 ms**, tổng **402 giây**); T 30.27–30.42 °C (mean 30.408, sd mẫu 0.017); RH 68.42–69.14 %RH (mean 68.513, sd 0.089); P 1011.97–1012.16 hPa (mean 1012.072, sd 0.037) — **khớp 100%** với báo cáo đi kèm; CSV **khớp từng dòng** với log (0 sai lệch).
+- **`A-W02-06` → `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED`.** Đây là bài test **BME280 standalone** trên bàn, **không** phải firmware ESP-IDF W02 (firmware W02 **không** có driver BME280 — cố ý). Phần vị trí gá cuối + xác nhận không bị ESP32/V1 sấy nóng vẫn `PENDING_TEST`; hồ sơ **không** tuyên bố firmware ESP-IDF đã đọc BME280.
+- Giới hạn (khai báo tường minh): không chứng minh độ chính xác/hiệu chuẩn (không có chuẩn truy vết); không chứng minh hoạt động trong buồng lạnh hay tại vị trí lắp cuối; **không có wall-clock** — chỉ `uptime_ms` (thời gian từ lúc boot), không được suy diễn thành giờ thực; log chỉ mang `# TEST_STATUS=RUNNING` và **không** có dòng kết thúc — capture kết thúc tại mẫu 403; chưa có ảnh đấu dây/ngày giờ trong gói log.
+- **Cảnh báo vận hành:** sketch Arduino đã **ghi đè** firmware trong MCU ⇒ phải **nạp lại** firmware ESP-IDF chính thức (B0) trước các bài B1–B4.
+- **Trạng thái tổng không đổi: `W02_PARTIAL_EVIDENCE` — NOT PASS.**
