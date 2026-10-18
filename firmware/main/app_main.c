@@ -91,7 +91,16 @@ static void door_task(void *arg)
                 (unsigned long)s_door.discarded_edges);
         }
 
-        vTaskDelay(pdMS_TO_TICKS(CG_DOOR_POLL_MS));
+        /* pdMS_TO_TICKS rounds down: at a 100 Hz FreeRTOS tick a 5 ms poll
+         * becomes 0 ticks, and vTaskDelay(0) only yields to equal-priority
+         * tasks, so this priority-6 task would never let IDLE0 or the
+         * priority-5 sensor task run (observed on real hardware: task WDT
+         * spam on IDLE0 and zero #CG SAMPLE lines). One tick is the
+         * minimum real sleep; the door state machine measures debounce in
+         * esp_timer microseconds, so a coarser poll only widens edge-time
+         * granularity, never correctness. */
+        TickType_t wait_ticks = pdMS_TO_TICKS(CG_DOOR_POLL_MS);
+        vTaskDelay(wait_ticks > 0 ? wait_ticks : 1);
     }
 }
 
