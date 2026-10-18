@@ -92,3 +92,13 @@ MC38 initial: HIGH
 - [ ] Chạy firmware ESP-IDF thật + `door-test.csv` dựng bằng `cg_build_door_csv.py --open-level` từ log `#CG DOOR_EDGE`, kèm số cạnh thô/bị bỏ cho từng chu kỳ.
 
 **Trạng thái hiện tại của `A-W02-07`: `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` — polarity + debounce + ≥20 chu kỳ được chứng minh ở mức bench sketch; firmware ESP-IDF chưa chạy thật.**
+
+## 6. Cập nhật 7 (2026-10-18): firmware ESP-IDF đã nạp thật; polarity + DOOR_EDGE vẫn PENDING
+
+- Firmware `1b93f572` đã flash thật (3/3 region verified) và chạy thật (`espidf-run/`):
+  mỗi boot in `#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0` — đúng ý nghĩa
+  `CG_DOOR_POLARITY_CONFIRMED=0` trong `coldguard_config.h` (không sửa firmware; ánh xạ
+  polarity `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` vẫn ở mức hồ sơ bench của `mc38/`).
+- Trong phiên runtime 252 mẫu: `door_raw=1` bất động suốt phiên (cửa không bị thao tác),
+  **0 dòng `#CG DOOR_EDGE`** — không nâng `A-W02-07`; bài cửa firmware (B3) và
+  `door-test.csv` vẫn phải chạy riêng, sau đó mới đóng cờ.

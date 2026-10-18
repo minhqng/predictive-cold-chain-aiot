@@ -17,7 +17,7 @@ schema: coldguard.sensor-rom-map/v0
 week: W02
 owner: member-a
 hardware_config_id: NOT_ASSIGNED        # chưa được leader gán (kế thừa W01)
-firmware_commit: 2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc # commit firmware W02 trong repo (map đã ghi cứng; CMakeLists sửa cho ESP-IDF v6.1 và đã build thật trên CI — build-report-w02.md); xem thêm bench_sketch_source
+firmware_commit: 1b93f572ed3f06a3030292b2515fa38bcaf75ca7 # commit firmware W02 trong repo (map đã ghi cứng; lần cập nhật 7: + fix door-task vTaskDelay(0) ở app_main.c — đã build thật trên CI run 39134178842, flash thật trên board ESP32-S3 và 5 reboot identity PASS — espidf-run/); xem thêm bench_sketch_source
 bench_sketch_source: NOT_IN_REPO         # sketch bench sinh ra 3 ảnh: nguồn không nằm trong repo
 calibration_id: null
 rounds_used: []                          # chưa có run_id nào dùng mapping này

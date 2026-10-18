@@ -103,3 +103,28 @@ and checksums"), không sao chép tay; artifact GitHub được giữ 90 ngày.
 5. SHA-256 ở mục 3 khoá đúng artifact của run ghi ở mục 2; nếu build lại (dù cùng commit)
    thì byte có thể đổi (đường dẫn/timestamp trong ELF), khi đó phải cập nhật báo cáo —
    không được dán lại số cũ.
+
+## 7. Cập nhật lần 7 (2026-10-18): hai lần build SUCCESS bổ sung + flash thật
+
+- Sau nhập bằng chứng DS18B20 (cập nhật 5), run `39131281315` (head `a8f5c58`, merge
+  preview `3a8077b`) build **SUCCESS** — `coldguard_firmware.bin` 201 568 bytes, SHA-256
+  `3520e10a0d81c0d7fdbcf0d70ab63255871196b00df4ce97f7dace1c97003bd7`. Firmware này được
+  flash thật lên ESP32-S3 (MAC `e0:72:a1:bc:cf:4c`) trước và cho thấy **lỗi runtime**
+  (0 dòng `#CG ROM`/`#CG SAMPLE`, task watchdog IDLE0 dội — `vTaskDelay(0)` spin của
+  `door_task` khi tick 100 Hz — xem `firmware-implementation.md` §6).
+- Fix firmware: commit `1b93f572ed3f06a3030292b2515fa38bcaf75ca7` (`app_main.c` — 1 tick
+  tối thiểu cho poll của door task) + tool `cg_auto_reboot.py` (host-driven 5-reboot).
+  Build trên CI: run `39134178842` — **SUCCESS**; merge preview `44f4643` có tree firmware
+  **giống branch** (`git diff` rỗng).
+- SHA-256 artifact của run `39134178842` (khớp `30-artifacts.txt` của job — 3/3):
+  | File | SHA-256 |
+  |---|---|
+  | `bootloader.bin` (21 120 B) | `e393a32204ad9a2dede0c4789d71e9a3ee48ca837be0a674a9eec83c5601c669` |
+  | `coldguard_firmware.bin` (201 568 B) | `9a8f662c9589b62705f361cd9dde12880a3a51a721cfdb260ac46f31d0ae6c60` |
+  | `partition-table.bin` (3 072 B) | `7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820` |
+- Firmware `1b93f572` được **flash thật** (3/3 region hash verified) và chạy thật:
+  5 reboot identity **PASS** + 252 sample `#CG SAMPLE` ~1 Hz — toàn bộ evidence:
+  **`espidf-run/`** (`flash-provenance.md`, `reboot-verification.md`, `runtime-cadence.md`).
+- Từ đây tuyên bố trong mục 6 (giới hạn) đã **hết hữu lực một phần**: firmware đã nạp + chạy
+  thật (A-W02-03 + cadence A-W02-04 có bằng chứng thật); các mục còn thiếu chuyển sang
+  `acceptance.md` §5/§14 (door firmware run, CSV ≥600 mẫu, labeling, H0).
