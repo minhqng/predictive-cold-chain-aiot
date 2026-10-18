@@ -90,6 +90,12 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 4. Nếu polarity đã chốt, đổi `CG_DOOR_POLARITY_CONFIRMED 1` + `CG_DOOR_RAW_OPEN_LEVEL <mức>`
    trong `coldguard_config.h` (commit riêng, dẫn chiếu file `door-test.csv`).
 
+> **Trạng thái B3 sau lần cập nhật 4:** bài bench thô MC-38 tổng thời lượng 508 s (`mc38/`)
+> đã chốt polarity ở mức **bench**: `NEAR = LOW = CLOSED` / `FAR = HIGH = OPEN` (dòng
+> `# PHYSICAL` do người vận hành ghi trong log, khớp 48/48 cặp). Bước 1–3 (quan sát theo
+> độ chính xác `#CG DOOR_EDGE` của firmware) vẫn phải chạy sau khi nạp firmware ESP-IDF;
+> cờ `CG_DOOR_POLARITY_CONFIRMED` chỉ đóng sau đó (commit riêng, dẫn chiếu `door-test.csv`).
+
 ---
 
 ## B4. Dán nhãn vật lý (`A-W02-02`, cần cho leader review)

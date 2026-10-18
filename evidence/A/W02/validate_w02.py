@@ -360,6 +360,37 @@ for name in DECLARED_MISSING:
             "cập nhật acceptance.md hoặc bỏ file sai"
         )
 
+# 6b. Bằng chứng bench đã nhập -------------------------------------------------
+# Các blob bench thật (sketch Arduino standalone) được ghim bằng kích thước +
+# SHA-256; số liệu khớp với các hash khai báo trong báo cáo của từng thư mục
+# (`mc38/mc38-bench-report.md`, sau này là `ds18b20/`) và trong `acceptance.md`
+# §4.2/§12. Mismatch ⇒ bằng chứng đã bị sửa sau khi nhập.
+BENCH_BLOBS = [
+    ("mc38/mc38-bench-original.txt", 2401,
+     "38cdeef5f9bd6fb1e13b7183d0903ad48035dc15fdbc0a9c57e7c0b5c9fb4595"),
+    ("mc38/mc38-bench.csv", 1994,
+     "27690ac7a05d21dcc673dfa188e256ba5cb8e3c9e74d0d53e328f20929279619"),
+]
+bench_blob_hash_verified = 0
+for rel, nbytes, expected in BENCH_BLOBS:
+    target = ROOT / rel
+    if not target.is_file():
+        failures.append(f"bench evidence missing on disk: {rel}")
+        continue
+    if target.stat().st_size != nbytes:
+        failures.append(
+            f"{rel}: size mismatch (declared {nbytes}, "
+            f"on disk {target.stat().st_size})"
+        )
+        continue
+    if sha256_of(target) != expected:
+        failures.append(
+            f"{rel}: SHA-256 mismatch (declared {expected}, "
+            f"on disk {sha256_of(target)})"
+        )
+        continue
+    bench_blob_hash_verified += 1
+
 # 7. Firmware trong repo khớp hồ sơ -------------------------------------------
 checker = REPO_ROOT / "firmware" / "tools" / "cg_check_firmware.py"
 if not checker.is_file():
@@ -394,6 +425,8 @@ print(
     "W02 STRUCTURE PASS: "
     f"{len(REQUIRED_FILES)} required files; "
     f"{len(entries)} provenance records verified by size + SHA-256; "
+    f"{bench_blob_hash_verified}/{len(BENCH_BLOBS)} bench evidence blobs "
+    "verified by size + SHA-256 (mc38); "
     "ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); "
     "acceptance.md covers A-W02-01..A-W02-07; "
     "firmware static checks PASS."
