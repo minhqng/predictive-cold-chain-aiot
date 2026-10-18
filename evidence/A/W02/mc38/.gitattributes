@@ -1,0 +1,8 @@
+# Bảng bằng chứng bench MC-38 — giữ nguyên từng byte các tệp nhận từ người dùng.
+# Ghi đè `* text=auto eol=lf` gốc repo cho thư mục này: không chuẩn hoá line-ending
+# khi add/checkout, để SHA-256 ghi trong hồ sơ (`door-test-summary.md`,
+# `acceptance.md` §4.2/§12) đúng với blob trong repo.
+* -text !eol
+# Log gốc giữ CRLF như bản nhận ban đầu: CR cuối dòng là kết thúc dòng thật, không phải
+# lỗi whitespace (để `git diff --check` sạch).
+mc38-bench-original.txt whitespace=cr-at-eol

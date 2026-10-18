@@ -1,6 +1,6 @@
 # ColdGuard — Member A — W02 sensor foundation
 
-**Snapshot:** 2026-10-18 (cập nhật 3: build CI + BME280 bench) · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **Build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **BME280 bench (standalone):** `PASS — 403/403 mẫu` (`bme280/`) · **Firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO` · **Operator:** Member A (không ghi tên cá nhân trong repo)
+**Snapshot:** 2026-10-18 (cập nhật 4: build CI + BME280 bench + MC-38 bench thô) · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` · **Build ESP-IDF thật (CI):** `SUCCESS — esp32s3` (`build-report-w02.md`) · **BME280 bench (standalone):** `PASS — 403/403 mẫu` (`bme280/`) · **MC-38 bench thô (standalone):** `PASS — 48 cặp RAW/STABLE, 24 chu kỳ, polarity có dấu` (`mc38/`) · **Firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO` · **Operator:** Member A (không ghi tên cá nhân trong repo)
 
 ## Phạm vi và thẩm quyền
 
@@ -34,6 +34,7 @@
 | `firmware-implementation.md` | Firmware W02 trong repo: bản đồ module, grammar log, ràng buộc canonical ↔ kiểm tra tự động, kết quả chạy, và **các giới hạn đã khai báo** (đã biên dịch thật trên CI, chưa nạp/chạy, không có ROM search, BME280 ngoài phạm vi) |
 | `build-report-w02.md` | Build ESP-IDF thật trên GitHub Actions (image `espressif/idf:v6.1`, target `esp32s3`): run URL, log, artifact + SHA-256, lỗi build đầu và cách sửa, giới hạn của tuyên bố compile |
 | `bme280/` (×3) | Bằng chứng bench BME280 thật (ESP32-S3, sketch Arduino/Adafruit): log gốc + CSV 403/403 mẫu + báo cáo; SHA-256 ở `acceptance.md §4.1`/§11. **Không** phải firmware ESP-IDF |
+| `mc38/` (×3) | Bằng chứng bench MC-38 thật (ESP32-S3, sketch standalone): log thô 48 cặp RAW/STABLE + CSV dẫn xuất + báo cáo; polarity `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` có dấu trong log; SHA-256 ở `door-test-summary.md`/`acceptance.md §4.2`/§12. **Không** phải firmware ESP-IDF |
 | `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: nạp firmware đã build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, vị trí gá BME280 cuối — kèm lệnh cụ thể và file phải sinh ra |
 | `sensor-consistency-summary.md` | `SEN-H1-03` / `A-W02-05`: bảng 600 mẫu/đầu dò, chênh lệch cặp, độ ổn định, và danh sách điều **không** chứng minh được |
 | `door-test-summary.md` | `SEN-H1-05` / `A-W02-07`: đọc bộ đếm MC-38, đối chiếu tiêu chí, lý do polarity và debounce còn `PENDING` |
@@ -70,7 +71,7 @@ Bảng này **không** phải nguồn trạng thái; trạng thái canonical n�
 | `A-W02-04` acquisition implementation | `IMPLEMENTED — COMPILE VERIFIED (CI)` — `HARDWARE RUN PENDING` (firmware trong repo; build thật SUCCESS trên CI: `build-report-w02.md`; sketch bench cũ vẫn `RAW_EVIDENCE_PENDING`) |
 | `A-W02-05` inter-sensor consistency | `STATISTICS_VERIFIED_FROM_SCREENSHOT — RAW CSV MISSING` (công cụ dựng CSV đã sẵn sàng và đã test) |
 | `A-W02-06` BME280 | `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` (bài bench thật 403/403 mẫu — `bme280/`; vị trí gá cuối vẫn `PENDING_TEST`) |
-| `A-W02-07` MC-38 | `PARTIAL` — 24 chu kỳ ≥ 20; polarity + debounce thật vẫn chờ quan sát (firmware/tool đã không cho phép đoán) |
+| `A-W02-07` MC-38 | `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` — log thô 48 cặp RAW/STABLE (debounce 40 ms, 24 chu kỳ, polarity `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` có dấu trong log — `mc38/`); firmware ESP-IDF vẫn `PENDING` |
 
 ## Bất thường quan sát được (khai báo tường minh)
 
@@ -92,6 +93,7 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 8. Đọc `acceptance.md` để biết chính xác hạng mục nào PASS/PARTIAL/PENDING và ai cần quyết định gì.
 9. Đọc `build-report-w02.md` để xem build ESP-IDF thật trên CI (run URL, log, artifact, SHA-256) và giới hạn của tuyên bố compile.
 10. Đối chiếu 3 tệp trong `bme280/` với SHA-256 ghi ở `acceptance.md §4.1`/`§11` (log gốc, CSV, báo cáo).
+11. Đối chiếu tệp trong `mc38/` với SHA-256 ghi ở `acceptance.md §4.2`/`§12`: log gốc giữ nguyên byte (CRLF), CSV tái dựng được từ log bằng script xác minh (48/48 cặp +40 ms, bộ đếm 1..48, 24 chu kỳ).
 
 ## Handoffs
 

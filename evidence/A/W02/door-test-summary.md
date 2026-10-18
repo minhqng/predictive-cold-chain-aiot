@@ -3,6 +3,9 @@
 **Test mapping:** `SEN-H1-05` (`docs/03 §15`) · **Issue:** `A-W02-07` (`docs/05A §11`)
 **Nguồn:** `w02_mc38_24_cycles.png` (log chuyển mức) và `w02_rom_enumeration_4_devices.png` (trạng thái khởi tạo) — ảnh gốc do người dùng cung cấp.
 
+> **Cập nhật (2026-10-18) — dữ liệu thô MC-38 đã có tại `mc38/`.** Log bench thật 48 cặp `RAW/STABLE` (GPIO34, debounce 40 ms, tổng 508 s, có dòng chú thích vật lý `# PHYSICAL=NEAR raw=0 stable=0` / `# PHYSICAL=FAR raw=1 stable=1`) + CSV dẫn xuất đã được nhập nguyên byte vào `mc38/` và xác minh máy móc 48/48 cặp, 24 chu kỳ, ánh xạ **NEAR = LOW = CLOSED / FAR = HIGH = OPEN** (chi tiết và SHA-256: `mc38/mc38-bench-report.md`). Ảnh bên dưới giờ **chỉ còn vai trò truy vết phiên cũ**; phần debounce + polarity hiện được chứng minh bởi dữ liệu thô ở mức **bench**, còn việc firmware **ESP-IDF** chạy thật với `CG_DOOR_DEBOUNCE_MS=50` + `--open-level` của công cụ vẫn `PENDING`. Trạng thái: **`BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED`**.
+
+
 ## 1. Nguyên văn dòng log trong ảnh
 
 Ảnh `w02_mc38_24_cycles.png` (COM4, 115200 baud, `Show timestamp = OFF`):
@@ -83,9 +86,9 @@ MC38 initial: HIGH
 
 ## 6. Điều kiện để đóng `A-W02-07`
 
-- [ ] Freeze bảng `raw input → OPEN/CLOSED` với cấu hình đấu dây được ghi lại.
-- [ ] Lưu `door-test.csv` (mốc thời gian + mức thô + trạng thái suy ra) cho ≥20 chu kỳ.
-- [ ] Ghi lại thời gian chống dội đã chọn và lý do.
-- [ ] Chụp 1 ảnh có dấu vật lý (ví dụ dòng log chuyển trạng thái đúng lúc cửa vừa mở).
+- [x] Freeze bảng `raw input → OPEN/CLOSED` với cấu hình đấu dây được ghi lại — **đã có ở mức bench**: `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` (`mc38/mc38-bench-report.md §4`). Firmware W02 vẫn giữ `CG_DOOR_POLARITY_CONFIRMED=0` (không tự sửa cờ khi chưa chạy ESP-IDF thật).
+- [x] Lưu dữ liệu thô ≥20 chu kỳ — **đã có**: `mc38/mc38-bench.csv` (48 cặp cạnh có mốc ms; không phải `door-test.csv` schema ngưỡng `-c`).
+- [x] Ghi lại thời gian chống dội đã chọn và lý do — **đã có**: 40 ms (sketch bench, ghi trong log `# DEBOUNCE_MS=40`); firmware dùng `CG_DOOR_DEBOUNCE_MS=50` — sự khác biệt được khai báo.
+- [ ] Chạy firmware ESP-IDF thật + `door-test.csv` dựng bằng `cg_build_door_csv.py --open-level` từ log `#CG DOOR_EDGE`, kèm số cạnh thô/bị bỏ cho từng chu kỳ.
 
-**Trạng thái hiện tại của `A-W02-07`: `PARTIAL` — đạt số chu kỳ tối thiểu; polarity và debounce chưa chứng minh.**
+**Trạng thái hiện tại của `A-W02-07`: `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` — polarity + debounce + ≥20 chu kỳ được chứng minh ở mức bench sketch; firmware ESP-IDF chưa chạy thật.**
