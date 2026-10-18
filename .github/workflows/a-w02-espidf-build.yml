@@ -1,0 +1,135 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# Real ESP-IDF compile check for the ColdGuard W02 sensor foundation
+# (Member A). It reproduces the documented local procedure from the root
+# README: copy firmware/ into a scratch directory (so generated build/ and
+# sdkconfig never mix into the repository tree) and run
+# `idf.py set-target esp32s3 && idf.py build` inside the official
+# espressif/idf:v6.1 image (same image tag as the README command).
+#
+# This job touches no hardware: it does not flash anything, does not open
+# the serial port and does not drive any actuator output. A green run is
+# evidence of COMPILE PASS only, never of a bench or hardware pass (see
+# evidence/A/W02/ for the declared limits).
+name: A-W02 ESP-IDF build (esp32s3)
+
+on:
+  push:
+    branches:
+      - feat/a-w02-sensor-foundation
+    paths:
+      - "firmware/CMakeLists.txt"
+      - "firmware/main/**"
+      - ".github/workflows/a-w02-espidf-build.yml"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "firmware/CMakeLists.txt"
+      - "firmware/main/**"
+      - ".github/workflows/a-w02-espidf-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a-w02-espidf-build-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  espidf-build:
+    name: idf.py build (ESP32-S3, espressif/idf:v6.1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: espressif/idf:v6.1
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Record environment and source revision
+        run: |
+          mkdir -p "${GITHUB_WORKSPACE}/build-report"
+          cat > "${GITHUB_WORKSPACE}/build-report/idf-env.sh" <<'EOF'
+          # Make the ESP-IDF toolchain available whether or not the runner
+          # executed the image entrypoint (the entrypoint sources
+          # /opt/esp/idf/export.sh; the runner may override it).
+          if ! command -v idf.py >/dev/null 2>&1; then
+            . /opt/esp/idf/export.sh
+          fi
+          EOF
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          REPORT="${GITHUB_WORKSPACE}/build-report/environment.txt"
+          {
+            echo "source_commit=$(git rev-parse HEAD)"
+            echo "github_ref=${GITHUB_REF}"
+            echo "github_event=${GITHUB_EVENT_NAME}"
+            echo "runner=runs-on:ubuntu-latest"
+            echo "container_image=espressif/idf:v6.1"
+          } | tee "$REPORT"
+          echo "== idf.py --version ==" | tee -a "$REPORT"
+          idf.py --version 2>&1 | tee -a "$REPORT"
+          echo "== xtensa-esp32s3-elf-gcc --version (first line) ==" | tee -a "$REPORT"
+          xtensa-esp32s3-elf-gcc --version 2>&1 | head -n 1 | tee -a "$REPORT" || true
+          echo "== python --version ==" | tee -a "$REPORT"
+          python --version 2>&1 | tee -a "$REPORT"
+          echo "== cmake --version (first line) ==" | tee -a "$REPORT"
+          cmake --version 2>&1 | head -n 1 | tee -a "$REPORT"
+          echo "== idf.py path ==" | tee -a "$REPORT"
+          command -v idf.py | tee -a "$REPORT"
+
+      # Documented procedure (root README): build a scratch copy so the
+      # repository tree stays free of generated build output.
+      - name: Copy firmware to scratch directory
+        run: |
+          rm -rf /tmp/coldguard-firmware-build
+          mkdir -p /tmp/coldguard-firmware-build
+          cp -r firmware/. /tmp/coldguard-firmware-build/
+          find /tmp/coldguard-firmware-build -maxdepth 1 | sort
+
+      - name: Set target to esp32s3
+        run: |
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          cd /tmp/coldguard-firmware-build
+          idf.py set-target esp32s3 2>&1 | tee "${GITHUB_WORKSPACE}/build-report/10-set-target.log"
+
+      - name: Build firmware
+        run: |
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          cd /tmp/coldguard-firmware-build
+          set -o pipefail
+          idf.py build 2>&1 | tee "${GITHUB_WORKSPACE}/build-report/20-idf-py-build.log"
+
+      - name: Collect firmware artifacts and checksums
+        if: success()
+        run: |
+          OUT="${GITHUB_WORKSPACE}/build-report/artifacts"
+          mkdir -p "$OUT"
+          cd /tmp/coldguard-firmware-build
+          for f in \
+            build/coldguard_firmware.bin \
+            build/coldguard_firmware.elf \
+            build/coldguard_firmware.map \
+            build/flasher_args.json \
+            build/bootloader/bootloader.bin \
+            build/partition_table/partition-table.bin \
+          ; do
+            cp "$f" "$OUT"/ 2>/dev/null || echo "collect warning: missing $f"
+          done
+          cp sdkconfig "$OUT/sdkconfig" 2>/dev/null || echo "collect warning: missing sdkconfig"
+          test -s "$OUT/coldguard_firmware.bin" || { echo "coldguard_firmware.bin missing - cannot record a firmware artifact"; exit 1; }
+          ls -l "$OUT" | tee "${GITHUB_WORKSPACE}/build-report/30-artifacts.txt"
+          (cd "$OUT" && sha256sum ./* | tee -a "${GITHUB_WORKSPACE}/build-report/30-artifacts.txt")
+
+      - name: Upload build report and artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-w02-espidf-build-report
+          path: build-report/
+          if-no-files-found: warn
+          retention-days: 90
