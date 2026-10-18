@@ -67,7 +67,7 @@ def main() -> int:
     print(f"W02 CHECKS: {len(checks)}/{len(checks)} passed")
     print("Reminder: no check here compiles the firmware or touches hardware.")
     print("Compile check: Espressif idf docker build (see repository README).")
-    print("Hardware still pending: 5-reboot ESP-IDF run, firmware consistency run, physical labeling, H0 mechanical.")
+    print("Hardware still pending: firmware door-edge run (#CG DOOR_EDGE + door-test.csv), firmware consistency CSV (>=600 samples), physical labeling, H0 mechanical.")
     return 0
 
 

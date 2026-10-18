@@ -36,7 +36,8 @@
 | `bme280/` (×3) | Bằng chứng bench BME280 thật (ESP32-S3, sketch Arduino/Adafruit): log gốc + CSV 403/403 mẫu + báo cáo; SHA-256 ở `acceptance.md §4.1`/§11. **Không** phải firmware ESP-IDF |
 | `mc38/` (×3) | Bằng chứng bench MC-38 thật (ESP32-S3, sketch standalone): log thô 48 cặp RAW/STABLE + CSV dẫn xuất + báo cáo; polarity `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` có dấu trong log; SHA-256 ở `door-test-summary.md`/`acceptance.md §4.2`/§12. **Không** phải firmware ESP-IDF |
 | `ds18b20/` (×4) | Bằng chứng bench DS18B20 thật — phiên **620 mẫu** (ESP32-S3, sketch standalone): log thô + CSV 620/620 mẫu (619 s, đều 1000 ms) + báo cáo capture + xác minh độc lập; ROM discovery cùng-capture `PENDING` (dời sang bài 5 reboot); SHA-256 ở `acceptance.md §4.3`/§13. **Không** phải firmware ESP-IDF |
-| `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: nạp firmware đã build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, vị trí gá BME280 cuối — kèm lệnh cụ thể và file phải sinh ra |
+| `espidf-run/` | **Bằng chứng firmware ESP-IDF thật (cập nhật 7):** provenance flash (artifact run `39134178842`, commit `1b93f572`, 3/3 region hash verified, backup rollback 4 MB) · log raw **serial-reboot-original.log** (6 boot thật, banner `rst:0x15` 6/6) · verifier **REBOOT IDENTITY: PASS** (boot_id phân biệt, NVS `boot_count` 5→10) · thống kê runtime **252 mẫu `#CG SAMPLE` ~1 Hz** (interval mean 999.756 ms, VALID 252/252) |
+| `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: nạp firmware đã build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, vị trí gá BME280 cuối — kèm lệnh cụ thể và file phải sinh ra (**B0/B1 đã xong — cập nhật 7**) |
 | `sensor-consistency-summary.md` | `SEN-H1-03` / `A-W02-05`: phiên **620 mẫu** mới nhập (`ds18b20/`, thống kê tính lại, giới hạn ROM tường minh) + bảng 600 mẫu/đầu dò của phiên cũ, chênh lệch cặp, độ ổn định, danh sách điều **không** chứng minh được |
 | `door-test-summary.md` | `SEN-H1-05` / `A-W02-07`: đọc bộ đếm MC-38, đối chiếu tiêu chí, lý do polarity và debounce còn `PENDING` |
 | `screenshot-provenance.csv` | Truy xuất nguồn từng ảnh: kích thước, SHA-256, file nguồn trong archive, nội dung, giới hạn |
@@ -53,10 +54,10 @@
 | `date` | 2026-10-18 (ngày nhận và kiểm chứng archive; phiên bench do người dùng thực hiện trước đó) |
 | `operator` | Member A (người vận hành vật lý; không ghi tên cá nhân trong repo) |
 | `hardware_config_id` | `NOT_ASSIGNED` — chưa được leader gán |
-| `firmware commit` | `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc` → commit firmware W02 trong repo (`firmware/main/`, 7 module C; **không** phải nguồn của 3 ảnh; đã build thật trên CI — `build-report-w02.md`) · sketch bench sinh ra 3 ảnh: `NOT_IN_REPO` |
+| `firmware commit` | `1b93f572ed3f06a3030292b2515fa38bcaf75ca7` → commit firmware W02 trong repo (lần cập nhật 7 — fix door-task runtime spin; trước đó `2a5a0dac…`; đã **flash thật** trên board — `espidf-run/flash-provenance.md`) · sketch bench sinh ra 3 ảnh: `NOT_IN_REPO` |
 | `test IDs` | `HW-H0-01`, `HW-H0-02` (chưa thực hiện), `SEN-H1-01` (partial), `SEN-H1-02` (not performed), `SEN-H1-03` (partial), `SEN-H1-04` (partial — bench BME280 standalone PASS; tích hợp ESP-IDF chưa), `SEN-H1-05` (partial) |
 | `setup` | Bench không cấp nguồn TEC; 4 đầu dò DS18B20 trên một bus 1-Wire; MC-38 nối vào board; Serial Monitor COM4 @ 115200, không bật timestamp |
-| `result` | ROM map 3 vai trò + 1 spare; 600/600 mẫu hợp lệ × 4 đầu dò; MC-38 24 chu kỳ; BME280 bench standalone PASS (403/403 mẫu, chip-ID `0x60`, I²C `0x76`) — chưa tích hợp ESP-IDF |
+| `result` | ROM map 3 vai trò + 1 spare; **5 reboot identity PASS trên firmware thật** (6 boots, NVS `boot_count` 5→10, `espidf-run/`); **firmware runtime 252 mẫu `#CG SAMPLE` ~1 Hz đo được**; 620/620 mẫu hợp lệ × 4 đầu dò (bench sketch); MC-38 24 chu kỳ (bench sketch); BME280 bench standalone PASS (403/403 mẫu, chip-ID `0x60`, I²C `0x76`) — chưa tích hợp ESP-IDF |
 | `pass/fail` | **`NOT PASS`** — `W02_PARTIAL_EVIDENCE` (chi tiết và blocker ở `acceptance.md`) |
 | `anomalies` | Lệch số lượng đầu dò 4 so với canonical 3; **khối `TEMPERATURE` đầu tiên trong ảnh enumeration bị thiếu một dòng có nhãn** (xem §“Bất thường quan sát được”); không có timestamp; không có CSV thô; không có log reboot; chưa freeze polarity MC-38; chưa có H0 |
 
@@ -68,9 +69,9 @@ Bảng này **không** phải nguồn trạng thái; trạng thái canonical n�
 |---|---|
 | `A-W02-01` H0 mechanical | `DEFERRED — TEAM LEADER SCHEDULE APPROVAL PENDING` |
 | `A-W02-02` DS18B20 enumeration | ROM→vai trò **đã ghi cứng vào firmware** + đối chiếu tự động; nhãn vật lý vẫn `PENDING`; lệch canonical 3→4 chờ leader |
-| `A-W02-03` reboot identity proof | `IMPLEMENTED — HARDWARE RUN PENDING` (cơ chế + công cụ đã test tự động; chưa có log thật) |
-| `A-W02-04` acquisition implementation | `IMPLEMENTED — COMPILE VERIFIED (CI)` — `HARDWARE RUN PENDING` (firmware trong repo; build thật SUCCESS trên CI: `build-report-w02.md`; sketch bench cũ vẫn `RAW_EVIDENCE_PENDING`) |
-| `A-W02-05` inter-sensor consistency | `BENCH DATA VERIFIED — 620 RAW SAMPLES CAPTURED` (phiên sketch Arduino: 620/620 mẫu, 619 s, thống kê tái lập — `ds18b20/`; ROM cùng-capture `PENDING`, dời sang bài 5 reboot) · phiên 600 mẫu cũ vẫn `RAW CSV MISSING` |
+| `A-W02-03` reboot identity proof | **`HARDWARE VERIFIED — 6 BOOT IDENTITY STABLE`** (cập nhật 7: firmware thật `1b93f572` flash lên board; 5 reset host-driven + 1 context; verifier chính thức PASS; `espidf-run/reboot-verification.md`) |
+| `A-W02-04` acquisition implementation | **`HARDWARE RUNTIME VERIFIED — 252 SAMPLES @ ~1 HZ`** (cập nhật 7: `#CG SAMPLE` thật, interval [990, 1000] ms mean 999.756, VALID 252/252 — `espidf-run/runtime-cadence.md`); còn lại: CSV ≥600 mẫu từ firmware; sketch bench cũ vẫn `RAW_EVIDENCE_PENDING` |
+| `A-W02-05` inter-sensor consistency | `BENCH DATA VERIFIED — 620 RAW SAMPLES CAPTURED` (phiên sketch Arduino: 620/620 mẫu, 619 s, thống kê tái lập — `ds18b20/`) · **ROM same-boot resolve qua bài 5 reboot firmware (cập nhật 7)** · CSV consistency từ firmware ≥600 mẫu vẫn `PENDING`; phiên 600 mẫu cũ vẫn `RAW CSV MISSING` |
 | `A-W02-06` BME280 | `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` (bài bench thật 403/403 mẫu — `bme280/`; vị trí gá cuối vẫn `PENDING_TEST`) |
 | `A-W02-07` MC-38 | `BENCH VERIFIED — ESP-IDF INTEGRATION NOT VERIFIED` — log thô 48 cặp RAW/STABLE (debounce 40 ms, 24 chu kỳ, polarity `NEAR=LOW=CLOSED / FAR=HIGH=OPEN` có dấu trong log — `mc38/`); firmware ESP-IDF vẫn `PENDING` |
 

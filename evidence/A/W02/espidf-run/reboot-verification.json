@@ -1,0 +1,56 @@
+{
+  "verdict": "IDENTITY_STABLE",
+  "boots_observed": 6,
+  "min_boots_required": 5,
+  "roles": [
+    "T1",
+    "T2",
+    "T3"
+  ],
+  "role_roms": {
+    "T1": [
+      "287088CA00000051",
+      "287088CA00000051",
+      "287088CA00000051",
+      "287088CA00000051",
+      "287088CA00000051",
+      "287088CA00000051"
+    ],
+    "T2": [
+      "28AEBF2200000006",
+      "28AEBF2200000006",
+      "28AEBF2200000006",
+      "28AEBF2200000006",
+      "28AEBF2200000006",
+      "28AEBF2200000006"
+    ],
+    "T3": [
+      "28CBE9CA00000072",
+      "28CBE9CA00000072",
+      "28CBE9CA00000072",
+      "28CBE9CA00000072",
+      "28CBE9CA00000072",
+      "28CBE9CA00000072"
+    ]
+  },
+  "boot_ids": [
+    "227e6f67",
+    "50313e8c",
+    "c864acea",
+    "222be57b",
+    "99b3dcb5",
+    "ae20928d"
+  ],
+  "boot_counts": [
+    5,
+    6,
+    7,
+    8,
+    9,
+    10
+  ],
+  "boot_metadata_issues": [],
+  "missing_boot_indices": [],
+  "mismatches": [],
+  "duplicated_roms": []
+}

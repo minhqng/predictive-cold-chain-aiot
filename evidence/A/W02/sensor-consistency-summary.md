@@ -79,3 +79,19 @@ Trong ảnh `w02_rom_enumeration_4_devices.png` (một lần chạy khác), `DS3
 - [ ] Xác minh ROM discovery **cùng một boot** với dữ liệu — sẽ được thực hiện trong bài 5 reboot firmware ESP-IDF (`A-W02-03`).
 
 **Trạng thái hiện tại của `A-W02-05`: `BENCH DATA VERIFIED — 620 RAW SAMPLES CAPTURED` (phiên 620 mẫu, sketch Arduino, giới hạn ROM ghi tường minh) · phiên 600 mẫu cũ vẫn `RAW_EVIDENCE_PENDING`.**
+
+## 8. Cập nhật 7 (2026-10-18): ROM same-boot đã resolve + firmware runtime ~1 Hz đo được
+
+- **Phần ROM same-boot (`SAME-CAPTURE CONFIRMATION PENDING`) đã resolve** — không cần đo lại
+  620 mẫu: firmware ESP-IDF thật (`1b93f572`) sau khi flash thật lên board ESP32-S3
+  (MAC `e0:72:a1:bc:cf:4c`) in đủ 4 dòng `#CG ROM` **ở mỗi lần boot** — 6/6 boot thật
+  (5 reset host-driven + 1 context, NVS `boot_count` 5→10) đều khớp bản đồ đóng băng
+  T1/T2/T3/SPARE; verifier chính thức `cg_verify_reboots.py`: **REBOOT IDENTITY PASS**.
+  Chi tiết: `espidf-run/reboot-verification.md` + `espidf-run/flash-provenance.md`.
+- **Nhịp firmware ESP-IDF đã đo được:** phiên runtime ngắn (200 s cùng 6 boot window) có
+  **252 dòng `#CG SAMPLE`**, 246 khoảng cách liên tiếp đều trong [990, 1000] ms (mean
+  999.756 ms) — nhịp ~1 Hz là đo được, không còn là suy luận. Chi tiết:
+  `espidf-run/runtime-cadence.md`.
+- **Không đổi trạng thái phần bench:** 620 mẫu sketch vẫn là dữ liệu duy nhất cho thống kê
+  consistency (mean/SD/khoảng lệch) — phiên ngắn 252 mẫu không phải consistency window
+  (validator yêu cầu ≥600 mẫu); A-W02-05 vẫn còn CSV ≥600 mẫu từ firmware.

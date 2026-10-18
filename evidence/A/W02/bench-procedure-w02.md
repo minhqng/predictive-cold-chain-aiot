@@ -5,12 +5,25 @@ bằng máy đã được làm trong `firmware/` và `firmware/tools/` (xem
 `firmware-implementation.md`).
 
 Thứ tự đề xuất: **B0 → B1 → B2 → B3 → B4**; **B5 (BME280) bài bench đã xong** — chỉ còn
-phần vị trí gá cuối khi lắp cụm (xem cuối tệp). Tổng thời gian bench ước tính ~25 phút
-(không tính hàn/dán nhãn).
+phần vị trí gá cuối khi lắp cụm (xem cuối tệp).
+
+> **Trạng thái sau cập nhật 7 (2026-10-18):** **B0 + B1 ĐÃ XONG** bằng host-driven tự động
+> (`firmware/tools/cg_auto_reboot.py`, evidence `espidf-run/`): firmware `1b93f572` build
+> trên CI run `39134178842` đã flash thật lên ESP32-S3 (MAC `e0:72:a1:bc:cf:4c`), 3/3 region
+> hash verified; 5 reboot identity **PASS** (`espidf-run/reboot-verification.md`: 6 boots,
+> NVS `boot_count` 5→10, ROM→role ổn định 6/6 — gồm cả SPARE). **B2:** phiên runtime ngắn
+> 252 mẫu ~1 Hz đã đo được (`espidf-run/runtime-cadence.md`) nhưng **chỉ đủ chứng minh
+> cadence** — không dùng như consistency window (validator yêu cầu ≥600 mẫu).
+> **B3 + B4 vẫn còn.**
+> Chỉ còn các mục dưới đây phải làm trên board.
 
 ---
 
 ## B0. Nạp firmware (build đã xong trên CI)
+
+> **ĐÃ XONG (cập nhật 7) — `espidf-run/flash-provenance.md`:** firmware `1b93f572`
+> (run CI `39134178842`) flash thật, 3/3 region `Hash of data verified`, có backup
+> full-flash 4 MB để rollback. Các hướng dẫn dưới đây giữ nguyên để tái lập.
 
 Firmware W02 **đã được biên dịch thật** trên GitHub Actions (ESP-IDF v6.1, target
 `esp32s3`, SUCCESS — run URL, log và SHA-256 ở `build-report-w02.md`). B0 giờ chỉ còn là
@@ -38,6 +51,12 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 
 ## B1. Xác minh danh tính qua ≥5 reboot (`A-W02-03`)
 
+> **ĐÃ XONG (cập nhật 7) — bằng chứng `espidf-run/`:** dùng `py firmware/tools/
+> cg_auto_reboot.py --port COM4 --out <log> --boots 5 --hold 10` (host-driven; không cần
+> bấm RST). Verifier: `REBOOT IDENTITY: PASS (6 boots, roles stable, boot metadata
+> consistent)`. Chi tiết + biến thể: `espidf-run/reboot-verification.md`.
+> Các lệnh thủ công dưới đây vẫn giữ nguyên dùng để tái lập nếu bị mất bằng chứng tự động.
+
 1. Mở Serial Monitor `COM4 @ 115200`.
 2. Chạy: `py firmware/tools/cg_capture.py --port COM4 --out evidence/A/W02/serial-w02-reboot.log --seconds 90`
 3. Nhấn **RST/EN** trên board **5 lần**, mỗi lần cách nhau ~5–10 giây (đủ để thấy khối
@@ -55,11 +74,13 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 
 ## B2. Consistency 10 phút (`A-W02-05`)
 
-> **Trạng thái B2 sau lần cập nhật 5:** dữ liệu ≥10 phút × 4 kênh **đã có ở mức bench** —
+> **Trạng thái B2 sau cập nhật 7:** dữ liệu ≥10 phút × 4 kênh **đã có ở mức bench** —
 > phiên 620 mẫu sketch Arduino (COM4, 115200): 620/620 hợp lệ, 619 s đều 1000 ms, thống kê
-> tái lập từ log (`ds18b20/`). Điều **chưa** có: phiên chạy bằng **firmware ESP-IDF** với
-> schema `#CG SAMPLE`/`uptime_ms` của firmware (khi đó CSV dựng bằng `cg_build_sensor_csv.py`).
-> Yêu cầu tạo CSV dưới đây áp dụng cho phiên firmware đó.
+> tái lập từ log (`ds18b20/`). ROM same-boot hay không đã được resolve qua bài 5 reboot ở
+> `espidf-run/` (cập nhật 7). **Chỉ còn:** một capture **≥600 mẫu bằng firmware ESP-IDF**
+> (schema `#CG SAMPLE`) để dựng CSV qua `cg_build_sensor_csv.py`; phiên runtime ngắn 252 mẫu
+> ở `espidf-run/runtime-cadence.md` chưa đủ thành window. Yêu cầu tạo CSV dưới đây áp dụng
+> cho phiên firmware đó.
 
 1. Đặt 3 đầu dò T1/T2/T3 **cạnh nhau trong cùng điều kiện** (cùng một khoang/bát giữ nhiệt,
    tránh gió, tránh tay người). Ghi lại cách đặt bằng ảnh nếu muốn.

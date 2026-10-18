@@ -363,8 +363,14 @@ for name in DECLARED_MISSING:
 # 6b. Bằng chứng bench đã nhập -------------------------------------------------
 # Các blob bench thật (sketch Arduino standalone) được ghim bằng kích thước +
 # SHA-256; số liệu khớp với các hash khai báo trong báo cáo của từng thư mục
-# (`mc38/mc38-bench-report.md`, sau này là `ds18b20/`) và trong `acceptance.md`
-# §4.2/§12. Mismatch ⇒ bằng chứng đã bị sửa sau khi nhập.
+# (`mc38/mc38-bench-report.md`, `ds18b20/`) và trong `acceptance.md`
+# §4.2/§12/§13. Mismatch ⇒ bằng chứng đã bị sửa sau khi nhập.
+#
+# Từ lần cập nhật 7: thêm 4 blob của lần nạp + 5 reboot firmware ESP-IDF thật
+# (`espidf-run/` — xem `espidf-run/flash-provenance.md`,
+# `espidf-run/reboot-verification.md`, `espidf-run/runtime-cadence.md`).
+# Hash khớp với các SHA-256 được ghi trong chính các tệp đó và `acceptance.md`.
+# Cả hai nhóm đều là ghim bổ sung — không có blob nào bị bỏ ghim.
 BENCH_BLOBS = [
     ("mc38/mc38-bench-original.txt", 2401,
      "38cdeef5f9bd6fb1e13b7183d0903ad48035dc15fdbc0a9c57e7c0b5c9fb4595"),
@@ -376,6 +382,14 @@ BENCH_BLOBS = [
      "99bdc21cfe1ecbf565b2602a16d7c60871e0efe67f4a2ddb885715b446fefe21"),
     ("ds18b20/sensor-consistency-report.md", 1323,
      "2d53af0983dc5e3035f2ec2e30afdabcf1dce4b0867bdb37b94e9d1cb3b428d7"),
+    ("espidf-run/flash-original-log.txt", 4180,
+     "8cfaf7a3b67d018020641d739770ad38b71c248b1100263d88a64754759ed351"),
+    ("espidf-run/serial-reboot-original.log", 58271,
+     "e48977be20cd4e78d233f6c458d05e2d4486930283e0bac17e491320194f7854"),
+    ("espidf-run/reboot-verification.json", 1018,
+     "08dcd97aa88f3be5dc3bc82200eb7dea93f7ecc75425ac5d6cae15eb4815c739"),
+    ("espidf-run/reboot-verification-report.txt", 806,
+     "2fa3f0ed07b92d400a0b4d22e1a063344fb68e736dc83157a6d03e8f8d39388a"),
 ]
 bench_blob_hash_verified = 0
 for rel, nbytes, expected in BENCH_BLOBS:
@@ -431,8 +445,8 @@ print(
     "W02 STRUCTURE PASS: "
     f"{len(REQUIRED_FILES)} required files; "
     f"{len(entries)} provenance records verified by size + SHA-256; "
-    f"{bench_blob_hash_verified}/{len(BENCH_BLOBS)} bench evidence blobs "
-    "verified by size + SHA-256 (mc38, ds18b20); "
+    f"{bench_blob_hash_verified}/{len(BENCH_BLOBS)} bench/flash/reboot evidence blobs "
+    "verified by size + SHA-256 (mc38, ds18b20, espidf-run); "
     "ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); "
     "acceptance.md covers A-W02-01..A-W02-07; "
     "firmware static checks PASS."

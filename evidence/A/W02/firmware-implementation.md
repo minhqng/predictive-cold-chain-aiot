@@ -63,7 +63,8 @@ ngược hành vi của phiên bench cũ.
 
 ## 4. Kết quả kiểm tra trên máy hiện tại
 
-Lần chạy thật cuối cùng (sau commit firmware `2a5a0dacd2bfa3feb62f4b626f2a403e23bf39bc`):
+Lần chạy thật cuối cùng (sau commit firmware `1b93f572ed3f06a3030292b2515fa38bcaf75ca7` —
+cập nhật 7: fix door-task runtime + tool reboot):
 
 ```text
 py firmware/tools/run_all_checks.py
@@ -74,22 +75,42 @@ py firmware/tools/run_all_checks.py
 W02 CHECKS: 3/3 passed
 Reminder: no check here compiles the firmware or touches hardware.
 Compile check: Espressif idf docker build (see repository README).
-Hardware still pending: BME280, physical sensor labeling, H0 mechanical.
+Hardware still pending: 5-reboot ESP-IDF run, firmware consistency run, physical labeling, H0 mechanical.
 ```
 
-Số lượng thật của chính lần chạy này: `Ran 57 tests … OK` (57 unittest công cụ), `STATIC FIRMWARE CHECK: PASS (39 checks)`, và validator in `W02 STRUCTURE PASS: 14 required files; …; ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); …`. Các con số này lấy từ output thật, không sao chép từ lần chạy cũ.
+Số lượng thật của chính lần chạy này: `Ran 57 tests … OK` (57 unittest công cụ),
+`STATIC FIRMWARE CHECK: PASS (39 checks)`, và validator in `W02 STRUCTURE PASS: 14 required
+files; …; 9/9 bench/flash/reboot evidence blobs verified by size + SHA-256 (mc38, ds18b20,
+espidf-run); ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); …`.
+Các con số này lấy từ output thật, không sao chép từ lần chạy cũ.
 
-Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitHub Actions: **SUCCESS**, 0 cảnh báo — toàn bộ tham chiếu (run URL, log, artifact, SHA-256, lỗi build đầu và cách sửa) nằm ở `build-report-w02.md`. Dòng nhắc *"no check here compiles the firmware"* trong output trên là **nguyên văn của công cụ** (công cụ không đổi): nó nói đúng về `run_all_checks.py`, còn bản thân firmware đã được biên dịch thật bởi CI. Tương tự, dòng *"Hardware still pending: BME280, …"* cũng là **nguyên văn của công cụ** — công cụ **không được sửa** khi nhập bằng chứng BME280; với BME280, phần "hardware còn lại" nay là **tích hợp ESP-IDF + vị trí gá cuối** vì bài bench standalone đã xong (`acceptance.md §4.1`/`§11`).
+Lịch sử các trạng thái công cụ (để truy vết): khi nhập BME280 (cập nhật 3) dòng
+"Hardware still pending" chưa được sửa (nguyên văn cũ `BME280, physical sensor labeling, H0
+mechanical`); tại cập nhật 5 dòng được sửa thành `5-reboot ESP-IDF run, firmware consistency
+run, physical labeling, H0 mechanical`; sau khi 5 reboot + runtime firmware hoàn tất
+(cập nhật 7), dòng này sẽ được sửa tiếp khi nhập evidence mới — nội dung dòng luôn là
+**nguyên văn công cụ**, không được tự tay đổi mà không đi cùng thay đổi của công cụ.
+
+Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitHub Actions:
+**SUCCESS** (3 run: `39117530768`, `39131281315`, `39134178842`) — chi tiết ở
+`build-report-w02.md`. **Và firmware `1b93f572` giờ đã được nạp + chạy thật trên ESP32-S3**
+(MAC `e0:72:a1:bc:cf:4c`): flash 3/3 region hash verified, 5 reboot identity PASS, 252 mẫu
+`#CG SAMPLE` ~1 Hz — toàn bộ ở `espidf-run/` (`acceptance.md` §14).
 
 ## 5. Giới hạn đã khai báo (không giấu)
 
-1. **Đã biên dịch thật trên CI — nhưng chỉ dừng ở đó.** Máy cục bộ không có ESP-IDF, không
-   có Docker, không có trình biên dịch C; vì vậy build chạy trên GitHub Actions bằng đúng
-   image README gốc (`espressif/idf:v6.1`, `idf.py set-target esp32s3 && idf.py build`).
-   Kết quả: **SUCCESS**, 0 cảnh báo, `coldguard_firmware.bin` = `0x31360` bytes — chi tiết
-   ở `build-report-w02.md`. Tuyên bố "firmware chạy được" vẫn **chưa** có cơ sở: chưa nạp,
-   chưa chạy lần nào.
-2. **Chưa nạp, chưa chạy.** Không có log `#CG SAMPLE` / `#CG DOOR_EDGE` nào là thật.
+1. **Đã biên dịch thật trên CI và đã nạp + chạy thật trên board — phần nào đó vẫn là giới hạn.**
+   Máy cục bộ không có ESP-IDF, không có Docker, không có trình biên dịch C; vì vậy build chạy
+   trên GitHub Actions bằng đúng image README gốc (`espressif/idf:v6.1`,
+   `idf.py set-target esp32s3 && idf.py build`). Kết quả: **SUCCESS** 3 run — chi tiết ở
+   `build-report-w02.md`. **Cập nhật 7:** firmware `1b93f572` đã flash thật (3/3 region hash
+   verified) và chạy thật (5 reboot identity PASS + 252 mẫu `#CG SAMPLE` ~1 Hz) —
+   `espidf-run/`. Phần **chưa** chạy thật trên firmware: bài cửa (`#CG DOOR_EDGE`) và CSV
+   consistency ≥600 mẫu.
+2. ~~**Chưa nạp, chưa chạy.** Không có log `#CG SAMPLE` / `#CG DOOR_EDGE` nào là thật.~~
+   **Đã cập nhật (2026-10-18):** `#CG SAMPLE`/`#CG ROM`/`#CG BOOT`/`#CG DOOR_POLARITY`,
+   `#CG SAFETY` đều có log thật (`espidf-run/serial-reboot-original.log`);
+   `#CG DOOR_EDGE`/`#CG DOOR_STATE` **vẫn chưa có thật** (cửa không bị thao tác trong phiên).
 3. **Không cài ROM search.** Bus không được quét để phát hiện thiết bị 1-Wire lạ; identity
    vẫn an toàn (đọc theo ROM cố định) nhưng "có thiết bị thứ 5 trên bus" sẽ **không** bị
    phát hiện ở W02. Vì vậy dòng `#CG ROMS` **không** in số thiết bị lạ: trường `unknown=`
@@ -110,7 +131,26 @@ Build ESP-IDF thật (ESP-IDF v6.1, target `esp32s3`) nay đã chạy trên GitH
    hoàn tất (`build-report-w02.md`, SUCCESS, 0 cảnh báo). Cái còn thiếu là **golden-run trên
    target** (chạy trên board thật); nên bổ sung trong W03+ để thay thế dần hai lớp mô hình.
 
-## 6. Bước chạy thật còn lại
+## 6. Bài học từ lần chạy thật đầu tiên (bug runtime, đã fix)
+
+Lần flash đầu (firmware `2a5a0da`, artifact run `39131281315`) cho thấy **bug thật** mô hình
+test không phát hiện được:
+
+- Hiện tượng: board boot, in `#CG BOOT`, nhưng **0 dòng `#CG ROM`/`#CG SAMPLE`**; task
+  watchdog dội liên tục (IDLE0 starved) trong 205 s.
+- Nguyên nhân: `app_main.c` `door_task` gọi `vTaskDelay(pdMS_TO_TICKS(CG_DOOR_POLL_MS))`
+  với `CG_DOOR_POLL_MS=5` và `CONFIG_FREERTOS_HZ=100` ⇒ `pdMS_TO_TICKS(5)==0`;
+  `vTaskDelay(0)` chỉ yield cho task cùng ưu tiên ⇒ task prio-6 quay vô hạn, IDLE0 và
+  `cg_sensor` (prio 5) không bao giờ chạy.
+- Fix (commit `1b93f572ed3f06a3030292b2515fa38bcaf75ca7`): ghim tối thiểu 1 tick
+  (`wait_ticks > 0 ? wait_ticks : 1`) — cùng kiểu bảo vệ `sensor_task` đã có sẵn.
+  Debounce không thay đổi (đo bằng `esp_timer` µs); độ phân giải polling nới lên 1 tick
+  (10 ms) — không ảnh hưởng đường viền chính xác của bài cửa.
+- Bài học ghi vào wishlist W03+: thêm golden-run ngắn trên target vào lớp kiểm sau build
+  (đã có một lần — run thực tế phát hiện bug mà 57 test mô hình + 39 kiểm tra tĩnh +
+  compile PASS đều không thấy, vì error chỉ xuất hiện ở scheduling thật).
+
+## 7. Bước chạy thật còn lại
 
 Xem `bench-procedure-w02.md` — danh sách ngắn, có lệnh cụ thể cho từng bước và file bằng
-chứng phải sinh ra.
+chứng phải sinh ra. (B0/B1 đã xong — cập nhật 7; bài cửa B3 và dán nhãn B4 còn lại.)

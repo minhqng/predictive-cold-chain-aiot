@@ -2,28 +2,36 @@
 
 Physical problem this solves: the bench ESP32-S3 is connected over native
 USB-Serial/JTAG (VID 0x303A PID 0x1001), so there is no external USB-UART
-bridge wired to the EN pin. The proven way to reboot the chip from the
-host is the same sequence esptool uses for ``--after hard-reset`` (package
-``esp_pylib.serial_reset.hard_reset``): pulse RTS low (EN asserted) for
-``0.2 s`` and release again, all inside an already-open port handle while
-a reader loop keeps copying every byte the device prints. Only the RTS
-line is toggled: on Windows ``usbser.sys`` flushes
-``SET_CONTROL_LINE_STATE`` only when RTS changes, which is why naive
-DTR/RTS pulse trains silently do nothing (observed on this exact bench
-board: five pulse attempts, zero reset banners).
+bridge wired to the EN pin. Two host trigger paths exist for the native
+USB-Serial-JTAG peripheral, and they behave very differently on this
+bench board (VID 0x303A PID 0x1001, Windows usbser.sys):
+
+* RTS-only hard-reset pulses (the esptool ``--after hard-reset`` style)
+  did NOT reset a running application during bench use - the chip kept
+  streaming for the whole hold window, no reset banner, no boot block.
+* The reset path that IS proven on this exact board: open the port, then
+  drop both DTR and RTS to low. The peripheral translates that
+  asserted->deasserted transition into ``rst:0x15 (USB_UART_CHIP_RESET)``
+  and the chip boots from flash (``boot:0x8 SPI_FAST_FLASH_BOOT``). It
+  happened twice on the bench (once with the previous Arduino sketch,
+  once with the first W02 firmware image captured in segment 0 of the
+  first run), and the port handle survives it.
+
+This tool therefore performs each reboot as one open->drop cycle: it
+closes the port, opens it again, drops DTR/RTS, and records the boot
+completely, starting a few tens of milliseconds before the ROM banner.
 
 What it does, in order:
 
-1. opens the port, puts DTR/RTS into the (high, high) idle state esptool
-   leaves after its own reset sequences;
-2. records a short context segment of whatever the device is streaming;
-3. for ``--boots`` cycles: writes a host-side marker line (plain text, no
+1. opens the port and drops DTR/RTS - this itself triggers reset #0,
+   recorded as the context segment (never counted as one of --boots);
+2. for ``--boots`` cycles: writes a host-side marker line (plain text, no
    ``#CG`` prefix - the log grammar parser counts it as non-firmware
-   noise and never interprets it), performs the RTS hard-reset pulse,
-   waits for the chip to re-enumerate, then records device output for
-   ``--hold`` seconds;
-4. if ``--runtime`` is given, records one additional segment with no reset
-   for runtime cadence verification (``#CG SAMPLE`` with ``uptime_ms``).
+   noise and never interprets it), closes, re-opens, drops DTR/RTS again
+   (reset #N), records device output for ``--hold`` seconds;
+3. if ``--runtime`` is given, records one additional segment with no
+   reset on the same handle, for runtime cadence verification
+   (``#CG SAMPLE`` with ``uptime_ms``).
 
 Everything the device prints is copied to the output file byte for byte;
 host marks are clearly labelled. No output is ever dropped, filtered or
@@ -46,6 +54,7 @@ import datetime
 import pathlib
 import sys
 import time
+from typing import Any
 
 sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
@@ -59,23 +68,17 @@ def _mark(out, text: str) -> None:
     out.flush()
 
 
-def _set_idle(handle) -> None:
-    """Put DTR/RTS into the (high, high) idle state esptool leaves after
-    its own reset sequences (its hard_reset toggles RTS low->high from
-    there, and only RTS changes actually reach the chip on Windows)."""
-    handle.dtr = True
-    handle.rts = True
+def _open_and_drop(port: str, baud: int) -> Any:
+    """Open the port and drop DTR/RTS immediately. On this board's native
+    USB-Serial-JTAG the asserted->deasserted transition from the open
+    defaults is what triggers ``rst:0x15 (USB_UART_CHIP_RESET)``; the
+    handle survives it (proven twice on the bench)."""
+    import serial
 
-
-def _hard_reset(handle, hold_ms: int, post_ms: int) -> None:
-    """One real hard reset via RTS only, as esptool does after flashing
-    (esp_pylib.serial_reset.hard_reset with USB held-times: 0.2 s / 0.2 s).
-    The USB device disappears while reset is asserted and re-enumerates
-    after release; the reader loop keeps draining errors meanwhile."""
+    handle = serial.Serial(port=port, baudrate=baud, timeout=0.5)
+    handle.dtr = False
     handle.rts = False
-    time.sleep(hold_ms / 1000.0)
-    handle.rts = True
-    time.sleep(post_ms / 1000.0)
+    return handle
 
 
 def _read_for(handle, out, seconds: float) -> tuple[int, int]:
@@ -106,12 +109,10 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--port", default="COM4", help="serial port (default: COM4)")
     parser.add_argument("--baud", type=int, default=DEFAULT_BAUD, help=f"baud rate (default: {DEFAULT_BAUD})")
     parser.add_argument("--out", required=True, help="raw capture output path")
-    parser.add_argument("--boots", type=int, default=5, help="number of hard resets (0 = capture only)")
+    parser.add_argument("--boots", type=int, default=5, help="number of reboots to record (0 = capture only)")
     parser.add_argument("--hold", type=float, default=10.0, help="seconds to record after each reset (default: 10)")
     parser.add_argument("--runtime", type=float, default=0.0, help="extra seconds to record after the boot resets")
-    parser.add_argument("--settle", type=float, default=0.5, help="seconds to wait after opening the port before the first reset")
-    parser.add_argument("--reassert-ms", type=int, default=100,
-                        help="ms between idle-state writes and the reset pulse (default: 100)")
+    parser.add_argument("--gap", type=float, default=0.3, help="seconds between closing and reopening the port (default: 0.3)")
     args = parser.parse_args(argv)
 
     import serial  # lazy so analysis-only machines do not need pyserial
@@ -122,22 +123,26 @@ def main(argv: list[str] | None = None) -> int:
     with out_path.open("w", encoding="utf-8", newline="\n") as out:
         _mark(out, f"host tool=cg_auto_reboot.py port={args.port} baud={args.baud} "
                    f"boots={args.boots} hold_s={args.hold} runtime_s={args.runtime} "
-                   f"reset_method=esptool_hard_reset_rts_only hold_ms=200")
-        handle = serial.Serial(port=args.port, baudrate=args.baud, timeout=0.5)
-        _set_idle(handle)
-        _mark(out, "port opened dtr=1 rts=1 (esptool idle state)")
-        time.sleep(args.settle)
+                   f"reset_method=serial_open_dtr_rts_drop")
+        import serial  # noqa: F401  (ensures the port argument exists before opening)
+        try:
+            handle = _open_and_drop(args.port, args.baud)
+        except Exception as exc:
+            _mark(out, f"port open FAILED {type(exc).__name__}: {exc}")
+            print(f"[cg_auto_reboot] port open failed: {exc}", file=sys.stderr)
+            return 1
+        _mark(out, "port opened, dtr/rts dropped -> reset #0 expected (context segment)")
 
         try:
-            # Segment 0: whatever the device is currently streaming (context only).
-            _mark(out, "segment=pre_reset record_s=2.0 note=current-device-context-not-a-reboot")
+            # Segment 0: the boot triggered by the open+drop itself (context only).
+            _mark(out, "segment=reset_0_context record_s=2.0 note=never-counted-as-a-reboot")
             _read_for(handle, out, 2.0)
 
             for index in range(1, args.boots + 1):
-                _mark(out, f"reset request {index}/{args.boots} via esptool hard_reset (RTS low 0.2 s, release, USB re-enumerates)")
-                _set_idle(handle)
-                time.sleep(args.reassert_ms / 1000.0)
-                _hard_reset(handle, 200, 200)
+                handle.close()
+                time.sleep(args.gap)
+                _mark(out, f"reset request {index}/{args.boots} via serial_open_dtr_rts_drop")
+                handle = _open_and_drop(args.port, args.baud)
                 _mark(out, f"segment=boot_{index} record_s={args.hold}")
                 devices, io_errs = _read_for(handle, out, args.hold)
                 _mark(out, f"segment=boot_{index} device_lines={devices} io_errors={io_errs}")
@@ -147,8 +152,6 @@ def main(argv: list[str] | None = None) -> int:
                 devices, io_errs = _read_for(handle, out, args.runtime)
                 _mark(out, f"segment=runtime device_lines={devices} io_errors={io_errs}")
         finally:
-            handle.dtr = False
-            handle.rts = False
             handle.close()
             _mark(out, "port closed")
 
