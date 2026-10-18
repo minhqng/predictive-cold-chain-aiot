@@ -55,6 +55,12 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 
 ## B2. Consistency 10 phút (`A-W02-05`)
 
+> **Trạng thái B2 sau lần cập nhật 5:** dữ liệu ≥10 phút × 4 kênh **đã có ở mức bench** —
+> phiên 620 mẫu sketch Arduino (COM4, 115200): 620/620 hợp lệ, 619 s đều 1000 ms, thống kê
+> tái lập từ log (`ds18b20/`). Điều **chưa** có: phiên chạy bằng **firmware ESP-IDF** với
+> schema `#CG SAMPLE`/`uptime_ms` của firmware (khi đó CSV dựng bằng `cg_build_sensor_csv.py`).
+> Yêu cầu tạo CSV dưới đây áp dụng cho phiên firmware đó.
+
 1. Đặt 3 đầu dò T1/T2/T3 **cạnh nhau trong cùng điều kiện** (cùng một khoang/bát giữ nhiệt,
    tránh gió, tránh tay người). Ghi lại cách đặt bằng ảnh nếu muốn.
 2. Chạy capture 10 phút:

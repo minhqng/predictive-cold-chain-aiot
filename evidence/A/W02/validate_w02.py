@@ -370,6 +370,12 @@ BENCH_BLOBS = [
      "38cdeef5f9bd6fb1e13b7183d0903ad48035dc15fdbc0a9c57e7c0b5c9fb4595"),
     ("mc38/mc38-bench.csv", 1994,
      "27690ac7a05d21dcc673dfa188e256ba5cb8e3c9e74d0d53e328f20929279619"),
+    ("ds18b20/ds18b20-serial-original.txt", 32190,
+     "44228795d48f223b1fdde619c184eccd1c34a56f4dd3d19fdfa12f239289b91c"),
+    ("ds18b20/sensor-consistency.csv", 31533,
+     "99bdc21cfe1ecbf565b2602a16d7c60871e0efe67f4a2ddb885715b446fefe21"),
+    ("ds18b20/sensor-consistency-report.md", 1323,
+     "2d53af0983dc5e3035f2ec2e30afdabcf1dce4b0867bdb37b94e9d1cb3b428d7"),
 ]
 bench_blob_hash_verified = 0
 for rel, nbytes, expected in BENCH_BLOBS:
@@ -426,7 +432,7 @@ print(
     f"{len(REQUIRED_FILES)} required files; "
     f"{len(entries)} provenance records verified by size + SHA-256; "
     f"{bench_blob_hash_verified}/{len(BENCH_BLOBS)} bench evidence blobs "
-    "verified by size + SHA-256 (mc38); "
+    "verified by size + SHA-256 (mc38, ds18b20); "
     "ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); "
     "acceptance.md covers A-W02-01..A-W02-07; "
     "firmware static checks PASS."

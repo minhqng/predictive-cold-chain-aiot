@@ -3,6 +3,8 @@
 **Test mapping:** `SEN-H1-03` (`docs/03 §15`) · **Issue:** `A-W02-05` (`docs/05A §11`)
 **Nguồn:** `w02_ds18b20_600_samples_summary.png` (ảnh gốc do người dùng cung cấp) · **Ngày session:** 2026-10-18 (ngày nhận ảnh; sketch tự báo `# W02 TEST FINISHED`)
 
+> **Cập nhật (2026-10-18) — dữ liệu thô 620 mẫu đã được nhập tại `ds18b20/`.** Một phiên bench **mới** (sketch Arduino standalone, COM4 @ 115200): 620 mẫu liên tục 1–620, `uptime_ms` 42 014 → 661 014 (tổng **619 000 ms**, 619 khoảng × 1000 ms), 4 vai trò **620/620 hợp lệ**, 0 trùng/0 thiếu/0 sentinel; thống kê tính lại từ log gốc: T1 29.878528 °C (sd 0.021467), T2 30.187903 (0.016275), T3 29.568347 (0.023374), SPARE 29.921774 (0.028058); chênh lệch trung bình cặp lớn nhất **0.6196 °C (T2–T3)**; CSV khớp log từng dòng (chi tiết + SHA-256: `ds18b20/ds18b20-verification.md`). **Giới hạn ROM:** raw log **0 dòng ROM** — cảnh báo `ROM_DISCOVERY_NOT_FULLY_CONFIRMED_IN_LOG` được giữ nguyên (không chèn dòng ROM, không tắt cảnh báo); ROM được xác nhận bằng **bằng chứng độc lập phiên khác** (`w02_rom_enumeration_4_devices.png`, 4 PRESENT=1) và phần ROM **cùng một boot** sẽ được xác minh trong bài 5 reboot firmware ESP-IDF (`A-W02-03`). Phần dưới đây mô tả **phiên 600 mẫu cũ vẫn ở mức `RAW_EVIDENCE_PENDING`** (thiếu dữ liệu thô của chính phiên ấy) — hai phiên **không** hợp nhất thống kê.
+
 ## 1. Kết quả được hiển thị (số liệu nguyên văn từ ảnh)
 
 Bảng `# W02 SUMMARY` trong ảnh kết thúc bài test:
@@ -70,9 +72,10 @@ Trong ảnh `w02_rom_enumeration_4_devices.png` (một lần chạy khác), `DS3
 
 ## 7. Điều kiện để đóng `A-W02-05`
 
-- [ ] Lưu `sensor-consistency.csv` thô (600 dòng × 4 kênh) hoặc serial log có timestamp bật.
-- [ ] Ghi lại điều kiện đặt đầu dò (ảnh setup hoặc mô tả + ngày).
-- [ ] Ghi `hardware_config_id` và `firmware_commit` đã dùng.
+- [x] Lưu dữ liệu thô ≥10 phút × 4 kênh — **đã có ở mức bench**: `ds18b20/sensor-consistency.csv` (620 dòng × 4 kênh) + log nguồn, thống kê tính lại 100% khớp; **lưu ý:** đây là phiên sketch Arduino, CSV **không** dựng bằng `cg_build_sensor_csv.py` (schema `#CG SAMPLE` của firmware); phiên chạy bằng firmware ESP-IDF vẫn `PENDING`.
+- [ ] Ghi lại điều kiện đặt đầu dò (ảnh setup hoặc mô tả + ngày) cho từng phiên.
+- [ ] Ghi `hardware_config_id` và `firmware_commit` đã dùng — `firmware_commit` đã ghi (không phải nguồn của phiên bench); `hardware_config_id` vẫn `NOT_ASSIGNED`.
 - [ ] Leader xác nhận không cần chuẩn truy vết cho W02 (consistency check là đủ).
+- [ ] Xác minh ROM discovery **cùng một boot** với dữ liệu — sẽ được thực hiện trong bài 5 reboot firmware ESP-IDF (`A-W02-03`).
 
-**Trạng thái hiện tại của `A-W02-05`: `PARTIAL` — bằng chứng summary thật, nhưng thiếu dữ liệu thô; `RAW_EVIDENCE_PENDING`.**
+**Trạng thái hiện tại của `A-W02-05`: `BENCH DATA VERIFIED — 620 RAW SAMPLES CAPTURED` (phiên 620 mẫu, sketch Arduino, giới hạn ROM ghi tường minh) · phiên 600 mẫu cũ vẫn `RAW_EVIDENCE_PENDING`.**
