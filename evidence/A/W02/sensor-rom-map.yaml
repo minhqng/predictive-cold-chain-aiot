@@ -17,7 +17,8 @@ schema: coldguard.sensor-rom-map/v0
 week: W02
 owner: member-a
 hardware_config_id: NOT_ASSIGNED        # chưa được leader gán (kế thừa W01)
-firmware_commit: NOT_RECORDED            # sketch bench W02 không nằm trong repo
+firmware_commit: 0eb1f8a9731e4810304332910df168ce30de30b5 # commit firmware W02 trong repo (map đã ghi cứng); xem thêm bench_sketch_source
+bench_sketch_source: NOT_IN_REPO         # sketch bench sinh ra 3 ảnh: nguồn không nằm trong repo
 calibration_id: null
 rounds_used: []                          # chưa có run_id nào dùng mapping này
 
@@ -37,6 +38,20 @@ enumeration:
   count_deviation_ref: CR-A-W01-04        # W01: DS18B20 ×4 so với BOM freeze ×3
   library_order_is_not_identity: true     # docs/01 §6.5
   firmware_message_observed: "PASS: 4 DS18B20 detected"
+
+# Bản đồ trên nay đã được GHI CỨNG vào firmware W02 trong repo:
+#   firmware/main/coldguard_config.h (CG_ROM_T1/T2/T3/SPARE_BYTES)
+#   firmware/main/cg_rom_map.c       (tra cứu theo 8 byte ROM, không theo thứ tự discovery)
+# `firmware/tools/cg_check_firmware.py` đối chiếu từng byte với tệp này và tính lại
+# CRC8 Dallas của cả 4 ROM ở mỗi lần chạy kiểm tra. Firmware mới này KHÔNG phải nguồn
+# của 3 ảnh bằng chứng (sketch bench cũ không có trong repo) — xem
+# firmware-implementation.md.
+firmware_mapping:
+  config_header: firmware/main/coldguard_config.h
+  lookup_module: firmware/main/cg_rom_map.c
+  cross_check_tool: firmware/tools/cg_check_firmware.py
+  crc8_verified: true
+  discovery_order_used_for_identity: false
 
 roles:
   - role: T1
@@ -79,22 +94,29 @@ verification_status:
     reason: >-
       4 ROM phân biệt được liệt kê và đọc giá trị hợp lệ trong cùng phiên bench;
       canonical mong đợi đúng 3 ROM nên lệch số lượng cần leader xác nhận.
+      Ba ROM vai trò đã được ghi cứng vào firmware và đối chiếu tự động với tệp này.
   SEN-H1-02_reboot_identity:
-    result: NOT_PERFORMED
+    result: IMPLEMENTED_HARDWARE_RUN_PENDING
     reason: >-
-      Không có log 5 chu kỳ reboot/discovery. Không chứng minh được ROM → role
-      giữ nguyên qua reboot (docs/05A §11 A-W02-03).
+      Cơ chế đã có trong repo: NVS boot_count + boot_id + khối #CG ROM mỗi lần boot,
+      và công cụ firmware/tools/cg_verify_reboots.py đã được test tự động (5 boot ổn
+      định + boot_id phân biệt + boot_count tăng dần -> IDENTITY_STABLE; đổi ROM/thiếu
+      vai trò/khối lặp/boot_count không tăng -> FAIL, BOOT_METADATA_INVALID). Chưa có
+      log 5 chu kỳ reboot thật trên board nên KHÔNG được coi là đã thoả.
     evidence_state: RAW_EVIDENCE_PENDING
   SEN-H1-03_inter_sensor_consistency:
-    result: PARTIAL
+    result: STATISTICS_VERIFIED_FROM_SCREENSHOT
     reason: >-
-      Có bản tổng hợp 600 mẫu/đầu dò trong ảnh summary; thiếu CSV thô và
-      timestamp (xem sensor-consistency-summary.md).
+      Có bản tổng hợp 600 mẫu/đầu dò trong ảnh summary; thiếu CSV thô và timestamp
+      (xem sensor-consistency-summary.md). Công cụ dựng CSV từ log thật đã sẵn sàng
+      (firmware/tools/cg_build_sensor_csv.py, đã test tự động) nhưng chưa có lần chạy thật.
+    raw_csv_state: MISSING
   physical_labeling:
     result: NOT_PERFORMED
     reason: >-
       Chưa dán nhãn T1/T2/T3 lên đầu dò. Leader review docs/05A §11 yêu cầu chỉ
       đúng vào T1/T2/T3 và khớp với software ID — chưa thể thực hiện.
+    procedure: evidence/A/W02/bench-procedure-w02.md (mục B4)
 
 invariants_referenced:
   - id: PHY-DS-001
@@ -102,14 +124,18 @@ invariants_referenced:
     current_state: SATISFIED_ON_BENCH     # ba ROM khác nhau; chưa gắn nhãn vật lý
   - id: PHY-DS-002
     statement: "ROM lạ sau reboot không tự động thay thế cảm biến đã biết bị thiếu."
-    current_state: NOT_TESTED
+    current_state: IMPLEMENTED_IN_FIRMWARE_NOT_TESTED_ON_BENCH
+    note: >-
+      Firmware W02 chỉ đọc theo ROM cố định trong bảng, không dùng thứ tự discovery
+      và không có đường gán vai trò nào khác, nên không thể tự thay thế. Chưa chạy
+      trên board để quan sát hành vi khi thiếu một đầu dò.
   - id: PHY-DS-003
     statement: "Di chuyển đầu dò làm thay đổi cấu hình."
     current_state: NOT_APPLICABLE_UNTIL_PLACEMENT_FROZEN
 
 next_actions:
-  - Dán nhãn vật lý T1/T2/T3 (và SPARE) lên dây/đầu dò, chụp ảnh nhãn + vị trí.
-  - Chạy và lưu log >= 5 chu kỳ reboot/discovery để đóng SEN-H1-02.
-  - Lưu `sensor-consistency.csv` (hoặc serial log thô có timestamp) từ lần chạy thật.
-  - Ghi `firmware_commit` của sketch bench khi xác định được nguồn.
+  - Dán nhãn vật lý T1/T2/T3 (và SPARE) lên dây/đầu dò, chụp ảnh nhãn + vị trí (bench-procedure-w02.md B4).
+  - Biên dịch firmware bằng image espressif/idf (B0) rồi chạy >= 5 chu kỳ reboot thật để đóng SEN-H1-02 (B1).
+  - Chạy phiên >= 10 phút và dựng sensor-consistency.csv bằng công cụ để đóng phần CSV thô của SEN-H1-03 (B2).
+  - Quan sát vật lý "cửa mở -> mức thô nào" rồi chạy công cụ door với --open-level; đóng SEN-H1-05 (B3).
   - Leader xác nhận lệch số lượng đầu dò (CR-A-W01-04) có được chấp nhận làm cấu hình W02 hay không.
