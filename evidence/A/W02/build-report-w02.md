@@ -92,9 +92,10 @@ and checksums"), không sao chép tay; artifact GitHub được giữ 90 ngày.
 
 1. Đây là **COMPILE PASS**, không phải hardware pass. Firmware **chưa** nạp (flash) và
    **chưa** chạy lần nào; không có dòng log `#CG …` nào là thật.
-2. Không có bài test vật lý nào được chạy: BME280 vẫn `PENDING_TEST`, MC-38 vẫn chưa xác
+2. Không có bài test vật lý nào **của firmware ESP-IDF** được chạy: MC-38 vẫn chưa xác
    minh polarity, 5 chu kỳ reboot vẫn `HARDWARE_RUN_PENDING`, chưa có `sensor-consistency.csv`
-   của phiên mới.
+   của phiên mới. (BME280 có bài bench **standalone** bằng sketch Arduino — **không** phải
+   firmware ESP-IDF — `acceptance.md §4.1`/`§11`; vị trí gá cuối/self-heating vẫn `PENDING_TEST`.)
 3. `A-W02-04` chỉ được nâng phần **compile**; phần "một lần chạy thật để có log `#CG SAMPLE`"
    vẫn `PENDING`.
 4. Lớp test hành vi vẫn là mô hình Python + kiểm tra tĩnh; compile pass **không** thay thế
