@@ -1,6 +1,6 @@
 # ColdGuard — Member A — W02 sensor foundation
 
-**Snapshot:** 2026-10-18 · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit:** `NOT_RECORDED` · **Operator:** Member A (không ghi tên cá nhân trong repo)
+**Snapshot:** 2026-10-18 · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W02 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** `0eb1f8a9731e4810304332910df168ce30de30b5` · **Firmware sketch bench (nguồn 3 ảnh):** `NOT_IN_REPO` · **Operator:** Member A (không ghi tên cá nhân trong repo)
 
 ## Phạm vi và thẩm quyền
 
@@ -30,7 +30,9 @@
 
 | File | Nội dung |
 |---|---|
-| `sensor-rom-map.yaml` | Ánh xạ ROM → vai trò T1/T2/T3 + SPARE; trạng thái `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; trạng thái từng test liên quan danh tính |
+| `sensor-rom-map.yaml` | Ánh xạ ROM → vai trò T1/T2/T3 + SPARE; trạng thái `ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING`; trạng thái từng test liên quan danh tính; nay khớp từng byte với firmware trong repo |
+| `firmware-implementation.md` | Firmware W02 trong repo: bản đồ module, grammar log, ràng buộc canonical ↔ kiểm tra tự động, kết quả chạy, và **các giới hạn đã khai báo** (chưa biên dịch, chưa nạp, không có ROM search, BME280 ngoài phạm vi) |
+| `bench-procedure-w02.md` | Danh sách ngắn các bước **chỉ** làm được bằng phần cứng: build, 5 reboot, 10 phút consistency, chu kỳ cửa + polarity, dán nhãn, BME280 — kèm lệnh cụ thể và file phải sinh ra |
 | `sensor-consistency-summary.md` | `SEN-H1-03` / `A-W02-05`: bảng 600 mẫu/đầu dò, chênh lệch cặp, độ ổn định, và danh sách điều **không** chứng minh được |
 | `door-test-summary.md` | `SEN-H1-05` / `A-W02-07`: đọc bộ đếm MC-38, đối chiếu tiêu chí, lý do polarity và debounce còn `PENDING` |
 | `screenshot-provenance.csv` | Truy xuất nguồn từng ảnh: kích thước, SHA-256, file nguồn trong archive, nội dung, giới hạn |
@@ -47,7 +49,7 @@
 | `date` | 2026-10-18 (ngày nhận và kiểm chứng archive; phiên bench do người dùng thực hiện trước đó) |
 | `operator` | Member A (người vận hành vật lý; không ghi tên cá nhân trong repo) |
 | `hardware_config_id` | `NOT_ASSIGNED` — chưa được leader gán |
-| `firmware commit` | `NOT_RECORDED` — sketch bench W02 **không** có trong repo (repo chỉ có `firmware/main/app_main.c` bootstrap) |
+| `firmware commit` | `0eb1f8a9731e4810304332910df168ce30de30b5` → commit firmware W02 trong repo (`firmware/main/`, 7 module C; **không** phải nguồn của 3 ảnh) · sketch bench sinh ra 3 ảnh: `NOT_IN_REPO` |
 | `test IDs` | `HW-H0-01`, `HW-H0-02` (chưa thực hiện), `SEN-H1-01` (partial), `SEN-H1-02` (not performed), `SEN-H1-03` (partial), `SEN-H1-04` (not performed), `SEN-H1-05` (partial) |
 | `setup` | Bench không cấp nguồn TEC; 4 đầu dò DS18B20 trên một bus 1-Wire; MC-38 nối vào board; Serial Monitor COM4 @ 115200, không bật timestamp |
 | `result` | ROM map 3 vai trò + 1 spare; 600/600 mẫu hợp lệ × 4 đầu dò; MC-38 24 chu kỳ; BME280 chưa đo |
@@ -61,16 +63,16 @@ Bảng này **không** phải nguồn trạng thái; trạng thái canonical n�
 | Hạng mục | Trạng thái |
 |---|---|
 | `A-W02-01` H0 mechanical | `DEFERRED — TEAM LEADER SCHEDULE APPROVAL PENDING` |
-| `A-W02-02` DS18B20 enumeration | `PARTIAL` — 4 ROM phân biệt, lệch canonical 3 |
-| `A-W02-03` reboot identity proof | `RAW_EVIDENCE_PENDING` — chưa có log 5 chu kỳ |
-| `A-W02-04` acquisition implementation | `PARTIAL` — quan sát gián tiếp từ log; nguồn firmware không có trong repo |
-| `A-W02-05` inter-sensor consistency | `PARTIAL` — summary thật, thiếu CSV thô và timestamp |
+| `A-W02-02` DS18B20 enumeration | ROM→vai trò **đã ghi cứng vào firmware** + đối chiếu tự động; nhãn vật lý vẫn `PENDING`; lệch canonical 3→4 chờ leader |
+| `A-W02-03` reboot identity proof | `IMPLEMENTED — HARDWARE RUN PENDING` (cơ chế + công cụ đã test tự động; chưa có log thật) |
+| `A-W02-04` acquisition implementation | `IMPLEMENTED — COMPILE + HARDWARE RUN PENDING` (firmware trong repo; sketch bench cũ vẫn `RAW_EVIDENCE_PENDING`) |
+| `A-W02-05` inter-sensor consistency | `STATISTICS_VERIFIED_FROM_SCREENSHOT — RAW CSV MISSING` (công cụ dựng CSV đã sẵn sàng và đã test) |
 | `A-W02-06` BME280 | `PENDING_TEST — USER PLANS TO COMPLETE TONIGHT` |
-| `A-W02-07` MC-38 | `PARTIAL` — 24 chu kỳ ≥ 20; polarity/debounce chưa chứng minh |
+| `A-W02-07` MC-38 | `PARTIAL` — 24 chu kỳ ≥ 20; polarity + debounce thật vẫn chờ quan sát (firmware/tool đã không cho phép đoán) |
 
 ## Bất thường quan sát được (khai báo tường minh)
 
-1. **Ảnh `w02_rom_enumeration_4_devices.png`, khối `TEMPERATURE` đầu tiên sau dòng `PASS: 4 DS18B20 detected` không đầy đủ:** khối đó in `DS1: 29.81 C` → `29.56 C` (**không có tiền tố nhãn**) → `DS4: 29.88 C` → `Valid: 4/4`, tức **thiếu một dòng có nhãn** so với 6 khối sau (mỗi khối sau đều đủ `DS1`/`DS2`/`DS3`/`DS4`). Bộ chứng cứ này **không** suy đoán nguyên nhân (lỗi in của sketch, mất ký tự trên đường serial, hay hiện tượng ghi đè dòng đều có thể giải thích). Đây là lý do bổ sung để cần **nguồn firmware** và **log thô** trước khi kết luận về hành vi in của sketch.
+1. **Ảnh `w02_rom_enumeration_4_devices.png`, khối `TEMPERATURE` đầu tiên sau dòng `PASS: 4 DS18B20 detected` không đầy đủ:** khối đó in `DS1: 29.81 C` → `29.56 C` (**không có tiền tố nhãn**) → `DS4: 29.88 C` → `Valid: 4/4`, tức **thiếu một dòng có nhãn** so với 6 khối sau (mỗi khối sau đều đủ `DS1`/`DS2`/`DS3`/`DS4`). Bộ chứng cứ này **không** suy đoán nguyên nhân (lỗi in của sketch, mất ký tự trên đường serial, hay hiện tượng ghi đè dòng đều có thể giải thích). Đây là lý do bổ sung để cần **nguồn sketch bench** và **log thô** trước khi kết luận về hành vi in của phiên cũ — firmware W02 trong repo là bản triển khai mới, **không** phải nguồn của ảnh này, nên không dùng nó để suy ngược hành vi sketch cũ.
 2. **Khối `TEMPERATURE` cuối cùng của ảnh `w02_mc38_24_cycles.png` bị cắt:** ảnh dừng ở `DS2: 30.19 C`, nên không thấy `DS3`/`DS4`/`Valid` của khối đó.
 3. **Một khối trong ảnh enumeration in `DS3: 29.50 C`** trong khi các khối khác in `29.56 C` (đã ghi ở `sensor-consistency-summary.md §5`; nằm ngoài cửa sổ 600 mẫu).
 
@@ -78,12 +80,14 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 
 ## Reproduction / review
 
-1. Chạy `py validate_w02.py` (khuyến nghị trên Windows). Script kiểm tra cấu trúc và SHA-256 ảnh; **không** chạy bất kỳ phép xác minh vật lý nào.
-2. Kiểm tra ảnh khớp với `screenshot-provenance.csv`: `Get-FileHash .\w02_*.png -Algorithm SHA256`.
-3. Kiểm tra lại **archive gốc** (an toàn hơn kiểm tra ảnh trên đĩa, vì khoá tin cậy không nằm trong repo): `Get-FileHash "$env:USERPROFILE\Downloads\ColdGuard_A_W02_Existing_Test_Screenshots.zip" -Algorithm SHA256` phải trả về `383CBB4A323AD4E524C1E76348C30DACA4C161C42E85CD9A20C33586D5B97429` (81 661 bytes).
-4. Đối chiếu từng con số trong `sensor-consistency-summary.md` với ảnh `w02_ds18b20_600_samples_summary.png` (đặc biệt 4 dòng `# S1…S4`).
-5. Đối chiếu số học bộ đếm MC-38 trong `door-test-summary.md` §2 với ảnh `w02_mc38_24_cycles.png`.
-6. Đọc `acceptance.md` để biết chính xác hạng mục nào PASS/PARTIAL/PENDING và ai cần quyết định gì.
+1. Chạy `py firmware/tools/run_all_checks.py` từ gốc repo: chạy 3 lớp kiểm tra không cần phần cứng (57 test công cụ + 39 kiểm tra tĩnh firmware + `validate_w02.py`). Exit code 0 chỉ khi cả ba PASS.
+2. Chạy riêng `py validate_w02.py` trong thư mục này. Script kiểm tra cấu trúc, SHA-256 ảnh, ROM map khớp firmware, `firmware_commit` trỏ tới một commit thật **chứa đủ 5 module W02** (`app_main.c`, `cg_onewire.c`, `cg_rom_map.c`, `cg_ds18b20.c`, `cg_door.c`) với ROM bytes trong `coldguard_config.h` khớp từng byte; **không** chạy bất kỳ phép xác minh vật lý nào.
+3. Kiểm tra ảnh khớp với `screenshot-provenance.csv`: `Get-FileHash .\w02_*.png -Algorithm SHA256`.
+4. Kiểm tra lại **archive gốc** (an toàn hơn kiểm tra ảnh trên đĩa, vì khoá tin cậy không nằm trong repo): `Get-FileHash "$env:USERPROFILE\Downloads\ColdGuard_A_W02_Existing_Test_Screenshots.zip" -Algorithm SHA256` phải trả về `383CBB4A323AD4E524C1E76348C30DACA4C161C42E85CD9A20C33586D5B97429` (81 661 bytes).
+5. Đối chiếu từng con số trong `sensor-consistency-summary.md` với ảnh `w02_ds18b20_600_samples_summary.png` (đặc biệt 4 dòng `# S1…S4`).
+6. Đối chiếu số học bộ đếm MC-38 trong `door-test-summary.md` §2 với ảnh `w02_mc38_24_cycles.png`.
+7. Đọc `firmware-implementation.md` để biết firmware trong repo làm gì, đã được kiểm chứng tới đâu, và **chưa** làm gì.
+8. Đọc `acceptance.md` để biết chính xác hạng mục nào PASS/PARTIAL/PENDING và ai cần quyết định gì.
 
 ## Handoffs
 
@@ -94,4 +98,12 @@ Cả ba điểm trên đều **không** làm thay đổi kết luận của hồ
 
 ## Cổng chất lượng W02
 
-**Chưa PASS.** Có ba nhóm bằng chứng thật (enumeration, consistency summary, door cycles) và một bản đồ ROM vai trò đã ghi, nhưng thiếu dữ liệu thô, thiếu timestamp, thiếu BME280, thiếu log reboot và thiếu H0 — cộng thêm đầu dò chưa được dán nhãn vật lý. Hồ sơ ở mức **PR-reviewable** với blocker nêu tường minh, không che giấu phần còn thiếu.
+**Chưa PASS.** Có ba nhóm bằng chứng thật (enumeration, consistency summary, door cycles), một bản đồ ROM vai trò đã ghi cứng vào firmware và một lớp công cụ + test tự động đã chạy PASS — nhưng vẫn thiếu dữ liệu thô, thiếu timestamp cho phiên cũ, thiếu BME280, thiếu log reboot, thiếu H0 và chưa biên dịch/nạp firmware. Hồ sơ ở mức **PR-reviewable** với blocker nêu tường minh, không che giấu phần còn thiếu.
+
+### Phân biệt hai loại "đã xong" (quan trọng khi review)
+
+| Loại | Nghĩa | Ví dụ trong PR này |
+|---|---|---|
+| **Đã làm xong, có bằng chứng máy kiểm được** | Chạy lại được bằng một lệnh, kết quả khớp | Công cụ + test (`run_all_checks.py` 3/3 PASS: 57 test + 39 check tĩnh + validator hồ sơ); ROM map ↔ firmware ↔ CRC8; parser/CSV/debounce |
+| **Đã implement, chưa chạy trên phần cứng** | Code có trong repo, logic đã được kiểm tra tĩnh, nhưng **chưa** biên dịch/nạp/đo | Firmware W02 (`A-W02-03/04/07` phần code) |
+| **Chưa thể làm nếu không có phần cụ thể** | Cần người thao tác | 5 reboot, 10 phút consistency, polarity cửa, dán nhãn, BME280, H0 |

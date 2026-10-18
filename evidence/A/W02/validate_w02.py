@@ -9,7 +9,12 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    đúng SHA-256 (tức ảnh không bị crop/nén lại/ghi đè).
 3. Không có ảnh "mồ côi" nằm trên đĩa mà không được khai báo truy xuất nguồn.
 4. ``sensor-rom-map.yaml`` parse được, đúng trạng thái nhãn vật lý còn PENDING,
-   có đúng 3 vai trò T1/T2/T3 cộng 1 SPARE và đúng tập ROM đã chọn.
+   có đúng 3 vai trò T1/T2/T3 cộng 1 SPARE và đúng tập ROM đã chọn;
+   ``firmware_commit`` phải trỏ tới một commit thật trong repo chứa **các module W02**
+   (``cg_onewire.c``, ``cg_rom_map.c``, ``cg_ds18b20.c``, ``cg_door.c``, ``app_main.c``)
+   và ROM bytes trong ``coldguard_config.h`` của commit đó phải khớp tệp này.
+   Giá trị tạm ``FIRMWARE_COMMIT_PENDING`` là FAIL; không chạy được ``git`` để
+   xác minh cũng là FAIL (claim không kiểm chứng được thì không được coi là hợp lệ).
 5. ``acceptance.md`` có đủ 7 hạng mục A-W02-01..A-W02-07 và **có chứa** các nhãn trạng thái
    trung thực bắt buộc (``W02 NOT PASS``, ``PENDING_TEST``, ``DEFERRED``,
    ``ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING``, ``RAW_EVIDENCE_PENDING``). Script chỉ
@@ -17,6 +22,8 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    phát hiện một câu tự nhận PASS đặt ở chỗ khác.
 6. Nhất quán "thiếu thì phải thiếu": các artifact được ``acceptance.md`` khai báo
    MISSING không được tồn tại trên đĩa (và ngược lại).
+7. Firmware trong repo khớp hồ sơ: chạy ``firmware/tools/cg_check_firmware.py --quiet``
+   (ROM map ↔ ``coldguard_config.h``, CRC8, shared conversion, không đoán polarity…).
 
 Cách chạy (Windows): ``py validate_w02.py``. Trên một số máy, ``python`` là alias
 Microsoft Store bị hỏng và sẽ không chạy.
@@ -24,6 +31,8 @@ Microsoft Store bị hỏng và sẽ không chạy.
 from pathlib import Path
 import csv
 import hashlib
+import re
+import subprocess
 import sys
 
 try:  # Windows consoles default to cp1252 and cannot print Vietnamese text.
@@ -40,6 +49,8 @@ REQUIRED_FILES = [
     "door-test-summary.md",
     "screenshot-provenance.csv",
     "acceptance.md",
+    "firmware-implementation.md",
+    "bench-procedure-w02.md",
     "PR_BODY.md",
     "source-archive-readme.md",
     "validate_w02.py",
@@ -47,6 +58,9 @@ REQUIRED_FILES = [
     "w02_ds18b20_600_samples_summary.png",
     "w02_mc38_24_cycles.png",
 ]
+
+REPO_ROOT = ROOT.parents[2]
+FIRMWARE_COMMIT_PENDING = "FIRMWARE_COMMIT_PENDING"
 
 PROVENANCE_COLUMNS = [
     "file", "bytes", "sha256", "source_archive", "source_archive_sha256",
@@ -69,6 +83,20 @@ EXPECTED_ROLES = {
     "T3": "28CBE9CA00000072",
 }
 EXPECTED_SPARE = ["283BE5C9000000A9"]
+
+EXPECTED_ROMS = {**EXPECTED_ROLES, "SPARE": EXPECTED_SPARE[0]}
+
+# Commit firmware phải chứa đủ các module W02 - chỉ có app_main.c bootstrap là
+# chưa đủ, vì như vậy hồ sơ sẽ trỏ về một commit không chứa firmware W02.
+FIRMWARE_COMMIT_TREE_FILES = [
+    "firmware/main/app_main.c",
+    "firmware/main/cg_onewire.c",
+    "firmware/main/cg_rom_map.c",
+    "firmware/main/cg_ds18b20.c",
+    "firmware/main/cg_door.c",
+]
+
+EXPECTED_ROM_CONFIG_HEADER = "firmware/main/coldguard_config.h"
 
 ROM_MAP_STATUS = "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING"
 
@@ -116,6 +144,52 @@ def read_csv(rel_name):
     except OSError as exc:
         failures.append(f"{rel_name}: cannot read ({exc})")
     return [], []
+
+
+def firmware_commit_problem(firmware_commit):
+    """Kiểm tra commit firmware: đủ module W02 + ROM bytes khớp tệp này.
+
+    Trả về chuỗi mô tả lỗi, hoặc None nếu mọi thứ khớp. Có thể ném OSError
+    khi không chạy được git - caller phải coi đó là FAIL, không phải bỏ qua.
+    """
+
+    missing = []
+    for rel in FIRMWARE_COMMIT_TREE_FILES:
+        result = subprocess.run(
+            ["git", "cat-file", "-e", f"{firmware_commit}:{rel}"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            missing.append(rel)
+    if missing:
+        return (
+            f"sensor-rom-map.yaml: firmware_commit {firmware_commit} does not contain "
+            f"the W02 firmware sources: {missing}"
+        )
+
+    show = subprocess.run(
+        ["git", "show", f"{firmware_commit}:{EXPECTED_ROM_CONFIG_HEADER}"],
+        cwd=str(REPO_ROOT),
+        capture_output=True,
+        text=True,
+    )
+    if show.returncode != 0:
+        return (
+            f"sensor-rom-map.yaml: cannot read {EXPECTED_ROM_CONFIG_HEADER} "
+            f"from firmware_commit {firmware_commit}"
+        )
+
+    compact = re.sub(r"\s+", "", show.stdout).lower()
+    for role, rom in EXPECTED_ROMS.items():
+        byte_sequence = ",".join(f"0x{byte:02x}" for byte in bytes.fromhex(rom))
+        if byte_sequence not in compact:
+            return (
+                f"sensor-rom-map.yaml: ROM {role} ({rom}) is absent from "
+                f"{firmware_commit}:{EXPECTED_ROM_CONFIG_HEADER}"
+            )
+    return None
 
 
 # 1. File bắt buộc ------------------------------------------------------------
@@ -240,6 +314,31 @@ if rom_text:
                         "sensor-rom-map.yaml: "
                         f"{entry.get('role')}: physical_position_verified must be false"
                     )
+
+            # `firmware_commit` phải trỏ tới firmware thật trong repo. Một chuỗi
+            # tạm (hoặc một commit không chứa firmware) làm hồ sơ mất truy xuất nguồn.
+            firmware_commit = str(data.get("firmware_commit", "")).strip()
+            if firmware_commit == FIRMWARE_COMMIT_PENDING:
+                failures.append(
+                    "sensor-rom-map.yaml: firmware_commit is still "
+                    f"{FIRMWARE_COMMIT_PENDING} - record the real firmware commit"
+                )
+            elif not re.fullmatch(r"[0-9a-f]{40}", firmware_commit):
+                failures.append(
+                    "sensor-rom-map.yaml: firmware_commit must be a 40-char git SHA "
+                    f"or {FIRMWARE_COMMIT_PENDING}, got {firmware_commit!r}"
+                )
+            else:
+                try:
+                    commit_problem = firmware_commit_problem(firmware_commit)
+                except OSError as exc:
+                    failures.append(
+                        "sensor-rom-map.yaml: cannot verify firmware_commit with git "
+                        f"({exc}); the claim is unverified"
+                    )
+                else:
+                    if commit_problem is not None:
+                        failures.append(commit_problem)
         elif data is not None:
             failures.append("sensor-rom-map.yaml: root node is not a mapping")
 
@@ -261,6 +360,29 @@ for name in DECLARED_MISSING:
             "cập nhật acceptance.md hoặc bỏ file sai"
         )
 
+# 7. Firmware trong repo khớp hồ sơ -------------------------------------------
+checker = REPO_ROOT / "firmware" / "tools" / "cg_check_firmware.py"
+if not checker.is_file():
+    failures.append(f"firmware checker missing: {checker}")
+else:
+    try:
+        result = subprocess.run(
+            [sys.executable, str(checker), "--quiet"],
+            cwd=str(REPO_ROOT),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except OSError as exc:
+        failures.append(f"firmware checker could not run ({exc})")
+    else:
+        if result.returncode != 0:
+            failures.append(
+                "firmware static checks failed "
+                f"(exit {result.returncode}): "
+                + " | ".join((result.stdout or "").strip().splitlines()[-3:])
+            )
+
 # Kết quả ---------------------------------------------------------------------
 if failures:
     print("W02 STRUCTURE FAIL")
@@ -272,6 +394,8 @@ print(
     "W02 STRUCTURE PASS: "
     f"{len(REQUIRED_FILES)} required files; "
     f"{len(entries)} provenance records verified by size + SHA-256; "
-    "ROM map 3 roles + 1 spare; acceptance.md covers A-W02-01..A-W02-07."
+    "ROM map 3 roles + 1 spare + firmware_commit (W02 modules + ROM bytes); "
+    "acceptance.md covers A-W02-01..A-W02-07; "
+    "firmware static checks PASS."
 )
 print("KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. W02 VẪN Ở TRẠNG THÁI NOT PASS.")
