@@ -1,0 +1,9 @@
+# Bảng bằng chứng bench DS18B20 620 mẫu — giữ nguyên từng byte các tệp nhận từ người dùng.
+# Ghi đè quy tắc line-ending gốc repo (`* text=auto eol=lf`) cho thư mục này: không chuẩn
+# hoá line-ending khi add/checkout, để SHA-256 ghi trong hồ sơ (`ds18b20/ds18b20-verification.md`,
+# `acceptance.md` §4.3/§13) đúng với blob trong repo.
+* -text !eol
+# Log gốc giữ CRLF như bản nhận từ người dùng ban đầu: CR cuối dòng là kết thúc dòng thật,
+# không phải lỗi whitespace (để `git diff --check` sạch).
+ds18b20-serial-original.txt whitespace=cr-at-eol
+sensor-consistency-report.md whitespace=cr-at-eol
