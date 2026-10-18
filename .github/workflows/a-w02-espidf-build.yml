@@ -63,6 +63,10 @@ jobs:
           fi
           EOF
           source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          # The job container runs as root while the checkout is owned by the
+          # runner user, so git needs an explicit safe.directory entry before
+          # `git rev-parse` can run (otherwise source_commit stays empty).
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
           REPORT="${GITHUB_WORKSPACE}/build-report/environment.txt"
           {
             echo "source_commit=$(git rev-parse HEAD)"
