@@ -124,8 +124,8 @@ void cg_rs485_flush_input(void)
 cg_rs485_dir_mode_t cg_rs485_dir_mode(void)
 {
 #if CG_RS485_DIR_MODE == CG_RS485_DIR_MANUAL
-    return CG_RS485_DIR_MANUAL;
+    return CG_RS485_MODE_MANUAL;
 #else
-    return CG_RS485_DIR_AUTO;
+    return CG_RS485_MODE_AUTO;
 #endif
 }

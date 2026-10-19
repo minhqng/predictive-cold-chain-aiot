@@ -18,9 +18,14 @@
 #include <stddef.h>
 #include <stdint.h>
 
+/* Runtime direction values. Deliberately NOT named CG_RS485_DIR_*: the config
+ * header defines CG_RS485_DIR_MANUAL as a macro for the compile-time switch,
+ * and a macro sharing a name with an enum constant corrupts this declaration
+ * in any translation unit that includes coldguard_config.h first (caught by
+ * the first real ESP-IDF compile). */
 typedef enum {
-    CG_RS485_DIR_AUTO = 0,
-    CG_RS485_DIR_MANUAL = 1,
+    CG_RS485_MODE_AUTO = 0,
+    CG_RS485_MODE_MANUAL = 1,
 } cg_rs485_dir_mode_t;
 
 /* Configures UART1 from coldguard_config.h. Returns false on any ESP-IDF
