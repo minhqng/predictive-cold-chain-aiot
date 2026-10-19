@@ -1,6 +1,6 @@
 # ColdGuard — Member A — W03 power / RS-485 / PZEM / IBT-2 logic
 
-**Snapshot:** 2026-10-19 · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W03 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** see `firmware-tooling-verification.md` (`firmware_commit`) · **Build ESP-IDF thật (CI):** `build-report-w03.md` · **Operator:** Member A (không ghi tên cá nhân trong repo)
+**Snapshot:** 2026-10-19 · **Role:** Member A (Embedded & Thermal) · **Status:** `DRAFT / REVIEW REQUIRED — W03 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED` · **Firmware commit (repo):** see `firmware-tooling-verification.md` (`firmware_commit`) · **Build ESP-IDF thật (CI):** SUCCESS — image `espressif/idf:v6.1`, target `esp32s3`, run `39213118829` (`build-report-w03.md`) · **Operator:** Member A (không ghi tên cá nhân trong repo)
 
 ## Phạm vi và thẩm quyền
 
@@ -49,7 +49,7 @@
 2. `py evidence/A/W03/validate_w03.py` → kiểm tra file bắt buộc, khai báo MISSING, nhãn trạng thái trong `acceptance.md`, `firmware_commit` chứa đủ module W03 (đọc bằng `git cat-file`/`git show`), workflow CI tồn tại đúng image/target.
 3. Đọc `firmware-tooling-verification.md` để biết firmware/công cụ đã được kiểm chứng tới đâu và **chưa** làm gì.
 4. Đọc `hardware-deviation-and-safety.md` trước khi cấp nguồn cho khối RS-485 (mức logic chưa được duyệt là điều kiện chặn).
-5. `build-report-w03.md` chứa run CI thật (nếu chưa có URL, nghĩa là evidence commit cập nhật sau lần push đầu — xem chính file đó).
+5. `build-report-w03.md`: build ESP-IDF thật trên CI — run `39213118829` **SUCCESS cả hai job** (idf v6.1/esp32s3 + host checks); run đầu tiên FAIL (lỗi biên dịch thật, đã fix) được **giữ nguyên trong báo cáo** để truy vết.
 
 ## Handoffs
 
