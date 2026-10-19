@@ -1,0 +1,687 @@
+[host 2026-10-18T14:19:10Z] host tool=cg_auto_reboot.py port=COM4 baud=115200 boots=5 hold_s=10.0 runtime_s=200.0 reset_method=serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:10Z] port opened, dtr/rts dropped -> reset #0 expected (context segment)
+[host 2026-10-18T14:19:10Z] segment=reset_0_context record_s=2.0 note=never-counted-as-a-reboot
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=227e6f67 boot_count=5
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:19:12Z] reset request 1/5 via serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:12Z] segment=boot_1 record_s=10.0
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=50313e8c boot_count=6
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=2934 seq=3 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=3934 seq=4 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=4934 seq=5 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=5934 seq=6 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=6934 seq=7 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=7934 seq=8 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=8934 seq=9 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=9934 seq=10 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:19:23Z] segment=boot_1 device_lines=79 io_errors=0
+[host 2026-10-18T14:19:23Z] reset request 2/5 via serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:23Z] segment=boot_2 record_s=10.0
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=c864acea boot_count=7
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=30.0000 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=2934 seq=3 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=3934 seq=4 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=4934 seq=5 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=5934 seq=6 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=6934 seq=7 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=7934 seq=8 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=8934 seq=9 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=9934 seq=10 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:19:33Z] segment=boot_2 device_lines=79 io_errors=0
+[host 2026-10-18T14:19:33Z] reset request 3/5 via serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:33Z] segment=boot_3 record_s=10.0
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=222be57b boot_count=8
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=2934 seq=3 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=3934 seq=4 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=4934 seq=5 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=5934 seq=6 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=6934 seq=7 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=7934 seq=8 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=8934 seq=9 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=9934 seq=10 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:19:44Z] segment=boot_3 device_lines=79 io_errors=0
+[host 2026-10-18T14:19:44Z] reset request 4/5 via serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:44Z] segment=boot_4 record_s=10.0
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=99b3dcb5 boot_count=9
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=30.0625 T2=30.3750 T3=29.6250 SPARE=30.0000 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=2934 seq=3 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=3934 seq=4 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=4934 seq=5 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=5934 seq=6 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=6934 seq=7 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=7934 seq=8 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=8934 seq=9 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=9934 seq=10 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:19:54Z] segment=boot_4 device_lines=79 io_errors=0
+[host 2026-10-18T14:19:54Z] reset request 5/5 via serial_open_dtr_rts_drop
+[host 2026-10-18T14:19:54Z] segment=boot_5 record_s=10.0
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378ef6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 18 2026 14:04:45
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0a338h ( 41784) map
+I (94) esp_image: segment 1: paddr=0001a360 vaddr=3fc90900 size=0329ch ( 12956) load
+I (97) esp_image: segment 2: paddr=0001d604 vaddr=40374000 size=02a14h ( 10772) load
+I (103) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=17420h ( 95264) map
+I (126) esp_image: segment 4: paddr=00037448 vaddr=40376a14 size=09ec0h ( 40640) load
+I (135) esp_image: segment 5: paddr=00041310 vaddr=50000000 size=00024h (    36) load
+I (141) boot: Loaded app from partition at offset 0x10000
+I (142) boot: Disabling RNG early entropy source...
+I (153) cpu_start: Multicore app
+I (162) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (162) cpu_start: Pro cpu start user code
+I (162) cpu_start: cpu freq: 160000000 Hz
+I (164) app_init: Application information:
+I (168) app_init: Project name:     coldguard_firmware
+I (173) app_init: App version:      1
+I (176) app_init: Compile time:     Oct 18 2026 14:06:19
+I (181) app_init: ELF file SHA256:  1a47211f4...
+I (185) app_init: ESP-IDF:          v6.1
+I (189) efuse_init: Min chip rev:     v0.0
+I (193) efuse_init: Max chip rev:     v0.99 
+I (197) efuse_init: Chip rev:         v0.2
+I (201) heap_init: Initializing. RAM available for dynamic allocation:
+I (207) heap_init: At 3FC94650 len 000550C0 (340 KiB): RAM
+I (212) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (217) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (222) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (229) spi_flash: detected chip: generic
+I (231) spi_flash: flash io: dio
+W (234) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (247) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (253) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (260) main_task: Started on CPU0
+I (260) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6
+#CG LOG v=1 fw=cg-w02-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=1 grammar=1
+#CG BOOT boot_id=ae20928d boot_count=10
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+I (380) main_task: Returned from app_main()
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=29.9375 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=1934 seq=2 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=2934 seq=3 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=3934 seq=4 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=4934 seq=5 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=5934 seq=6 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=6934 seq=7 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=7934 seq=8 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=8934 seq=9 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=9934 seq=10 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:20:04Z] segment=boot_5 device_lines=79 io_errors=0
+[host 2026-10-18T14:20:04Z] segment=runtime record_s=200.0 note=no-reset-steady-cadence-capture
+#CG SAMPLE uptime_ms=10934 seq=11 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=11934 seq=12 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=12934 seq=13 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=13934 seq=14 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=14934 seq=15 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=15934 seq=16 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=16934 seq=17 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=17934 seq=18 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=18934 seq=19 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=19934 seq=20 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=20934 seq=21 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=21934 seq=22 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=22934 seq=23 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=23934 seq=24 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=24934 seq=25 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=25934 seq=26 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=26934 seq=27 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=27934 seq=28 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=28934 seq=29 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=29934 seq=30 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=30934 seq=31 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=31934 seq=32 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=32934 seq=33 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=33934 seq=34 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=34934 seq=35 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=35934 seq=36 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=36934 seq=37 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=37934 seq=38 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=38934 seq=39 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=39934 seq=40 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=40934 seq=41 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=41934 seq=42 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=42934 seq=43 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=43934 seq=44 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=44934 seq=45 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=45934 seq=46 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=46934 seq=47 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=47934 seq=48 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=48934 seq=49 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=49934 seq=50 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=50934 seq=51 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=51934 seq=52 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=52934 seq=53 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=53934 seq=54 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=54934 seq=55 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=55934 seq=56 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=56934 seq=57 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=57934 seq=58 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=58934 seq=59 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=59934 seq=60 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=60934 seq=61 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=61934 seq=62 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=62934 seq=63 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=63934 seq=64 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=64934 seq=65 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=65934 seq=66 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=66934 seq=67 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=67934 seq=68 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=68934 seq=69 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=69934 seq=70 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=70934 seq=71 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=71934 seq=72 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=72934 seq=73 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=73934 seq=74 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=74934 seq=75 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=75934 seq=76 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=76934 seq=77 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=77934 seq=78 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=78934 seq=79 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=79934 seq=80 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=80934 seq=81 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=81934 seq=82 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=82934 seq=83 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=83934 seq=84 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=84934 seq=85 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=85934 seq=86 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=86934 seq=87 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=87934 seq=88 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=88934 seq=89 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=89934 seq=90 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=90934 seq=91 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=91934 seq=92 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=92934 seq=93 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=93934 seq=94 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=94934 seq=95 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=95934 seq=96 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=96934 seq=97 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=97934 seq=98 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=98934 seq=99 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=99934 seq=100 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=100934 seq=101 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=101934 seq=102 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=102934 seq=103 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=103934 seq=104 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=104934 seq=105 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=105934 seq=106 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=106934 seq=107 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=107934 seq=108 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=108934 seq=109 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=109934 seq=110 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=110934 seq=111 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=111934 seq=112 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=112934 seq=113 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=113934 seq=114 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=114934 seq=115 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=115934 seq=116 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=116934 seq=117 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=117934 seq=118 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=118934 seq=119 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=119934 seq=120 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=120934 seq=121 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=121934 seq=122 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=122934 seq=123 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=123934 seq=124 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=124934 seq=125 T1=30.0625 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=125934 seq=126 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=126934 seq=127 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=127934 seq=128 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=128934 seq=129 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=129934 seq=130 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=130934 seq=131 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=131934 seq=132 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=132934 seq=133 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=133934 seq=134 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=134934 seq=135 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=135934 seq=136 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=136934 seq=137 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=137934 seq=138 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=138934 seq=139 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=139934 seq=140 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=140934 seq=141 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=141934 seq=142 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=142934 seq=143 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=143934 seq=144 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=144934 seq=145 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=145934 seq=146 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=146934 seq=147 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=147934 seq=148 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=148934 seq=149 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=149934 seq=150 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=150934 seq=151 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=151934 seq=152 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=152934 seq=153 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=153934 seq=154 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=154934 seq=155 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=155934 seq=156 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=156934 seq=157 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=157934 seq=158 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=158934 seq=159 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=159934 seq=160 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=160934 seq=161 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=161934 seq=162 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=162934 seq=163 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=163934 seq=164 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=164934 seq=165 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=165934 seq=166 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=166934 seq=167 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=167934 seq=168 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=168934 seq=169 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=169934 seq=170 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=170934 seq=171 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=171934 seq=172 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=172934 seq=173 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=173934 seq=174 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=174934 seq=175 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=175934 seq=176 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=176934 seq=177 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=177934 seq=178 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=178934 seq=179 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=179934 seq=180 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=180934 seq=181 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=181934 seq=182 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=182934 seq=183 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=183934 seq=184 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=184934 seq=185 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=185934 seq=186 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=186934 seq=187 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=187934 seq=188 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=188934 seq=189 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=189934 seq=190 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=190934 seq=191 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=191934 seq=192 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=192934 seq=193 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=193934 seq=194 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=194934 seq=195 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.0625 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=195934 seq=196 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=196934 seq=197 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=197934 seq=198 T1=30.1250 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=198934 seq=199 T1=30.1250 T2=30.4375 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=199934 seq=200 T1=30.1250 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=200934 seq=201 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=201934 seq=202 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=202934 seq=203 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=203934 seq=204 T1=30.0625 T2=30.4375 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=204934 seq=205 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=205934 seq=206 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=206934 seq=207 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=207934 seq=208 T1=30.0625 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=208934 seq=209 T1=30.1250 T2=30.3750 T3=29.8125 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+#CG SAMPLE uptime_ms=209934 seq=210 T1=30.0625 T2=30.3750 T3=29.7500 SPARE=30.1250 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+[host 2026-10-18T14:23:25Z] segment=runtime device_lines=200 io_errors=0
+[host 2026-10-18T14:23:25Z] port closed
