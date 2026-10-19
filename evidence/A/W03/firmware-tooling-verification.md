@@ -4,10 +4,10 @@
 Notebook này mô tả **đã implement gì**, **đã kiểm chứng bằng gì**, và **chưa làm gì**. Không có mục nào trong đây là bằng chứng đo.
 
 ```
-firmware_commit: 5a6cb1f8885e6a56b74fc1c04888c617967437e9
+firmware_commit: b85869322fb8c9828e25942346465d1ec6e131d7
 ```
 
-*(SHA trên là commit firmware W03 trong nhánh này. `validate_w03.py` xác minh bằng `git cat-file`/`git show` rằng commit đó chứa đủ module W03 và `coldguard_config.h` có grammar 2 + actuator default-OFF — không chỉ so chuỗi.)*
+*(SHA trên là commit firmware W03 trong nhánh này (gồm cả fix enum RS-485 sau lần compile CI đầu — xem `build-report-w03.md` §4). `validate_w03.py` xác minh bằng `git cat-file`/`git show` rằng commit đó chứa đủ module W03 và `coldguard_config.h` có grammar 2 + actuator default-OFF — không chỉ so chuỗi.)*
 
 ## 1. Firmware W03 — module bản đồ
 
