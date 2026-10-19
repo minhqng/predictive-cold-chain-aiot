@@ -6,11 +6,12 @@ artifact, SHA-256). Nó **không** phải bằng chứng phần cứng: firmware
 **chưa** được chạy trong W03, không cổng serial nào được mở, không tải/TEC nào được cấp
 nguồn.
 
-> **Trạng thái điền số:** phiên bản này được commit **trước** lần chạy CI đầu tiên của
-> nhánh W03. Các ô kết quả (run URL, SHA-256, cảnh báo…) được **cập nhật bằng một commit
-> evidence-only ngay sau khi run đầu tiên kết thúc** — đúng nội dung log/artifact thật,
-> không suy diễn. Nếu bạn đọc bản này mà §2 vẫn ghi "cập nhật sau", nghĩa là bạn đang ở
-> commit trước bước cập nhật đó; kiểm tra danh sách run của workflow.
+> **Trạng thái điền số:** lần build đầu tiên của nhánh (run `39212308802`) **FAIL** vì
+> một lỗi biên dịch thật — xem §4. Sau fix, các ô kết quả (run URL, SHA-256, cảnh báo…)
+> được **cập nhật bằng một commit evidence-only ngay khi run tiếp theo kết thúc** — đúng
+> nội dung log/artifact thật, không suy diễn. Nếu bạn đọc bản này mà §2 vẫn ghi
+> "cập nhật sau", nghĩa là bạn đang ở commit trước bước cập nhật đó; kiểm tra danh sách
+> run của workflow.
 
 ## 1. Bối cảnh
 
@@ -55,17 +56,37 @@ nguồn.
 | `bootloader.bin` | _cập nhật_ | _cập nhật_ |
 | `partition-table.bin` | _cập nhật_ | _cập nhật_ |
 
-## 4. Quan hệ với `firmware_commit`
+## 4. Lần build đầu FAIL và cách sửa (2026-10-19)
+
+- Run đầu tiên — commit `5a6cb1f`, push đầu của nhánh: job `espidf-build` **FAILURE**
+  tại bước `idf.py build`; job `host-checks` **SUCCESS** (unittest + static + cả hai
+  validator).
+  https://github.com/minhqng/predictive-cold-chain-aiot/actions/runs/39212308802
+- Lỗi compiler thật trong log (một dòng lỗi duy nhất, không có lỗi nào khác):
+  `/tmp/coldguard-firmware-build/main/coldguard_config.h:151:29: error: expected identifier before numeric constant`
+- Nguyên nhân: `cg_rs485.h` khai báo `enum { CG_RS485_DIR_AUTO, CG_RS485_DIR_MANUAL }`
+  trong khi `coldguard_config.h` có `#define CG_RS485_DIR_MANUAL 1` (switch compile-time).
+  Ở translation unit include config **trước** header (ví dụ `cg_power.c`), macro thay thế
+  enum constant ngay trong khai báo enum ⇒ lỗi. Lớp kiểm tra tĩnh + unittest cục bộ
+  **không thể** thấy loại lỗi này — đúng vai trò của compile thật.
+- Sửa: commit `b858693` — enum đổi tên thành `CG_RS485_MODE_AUTO/MANUAL`; `cg_rs485.c`
+  và `cg_power.c` cập nhật; tên macro compile-time giữ nguyên (không đổi hành vi).
+  Quét bổ sung toàn bộ `firmware/main`: **không còn** xung đột macro/enum nào khác.
+- Sau sửa: chạy lại 5 lớp kiểm tra cục bộ (`run_all_checks_w03.py`) → **5/5 PASS**;
+  `firmware_commit` của hồ sơ cập nhật thành `b858693` (commit chứa fix, được CI
+  build lại ở run tiếp theo).
+
+## 5. Quan hệ với `firmware_commit`
 
 - `firmware_commit` ghi trong `firmware-tooling-verification.md` trỏ tới commit firmware
   W03 (chứa `cg_pzem.c`, `cg_crc16.c`, `cg_rs485.c`, `cg_power.c`, `cg_actuator.c`,
   `cg_safety.c`, `app_main.c`, `coldguard_config.h` grammar 2). `validate_w03.py` xác minh
   bằng `git cat-file`/`git show`, không chỉ so chuỗi.
-- Run đầu tiên được kích hoạt bởi chính commit đó (push nhánh). Nếu build lại (dù cùng
+- Run build lại được kích hoạt bởi push chứa chính commit đó. Nếu build lại (dù cùng
   commit), byte có thể đổi (đường dẫn/timestamp trong ELF) — khi đó phải cập nhật lại bảng
   §3, không dán lại số cũ.
 
-## 5. Giới hạn của tuyên bố này (không giấu)
+## 6. Giới hạn của tuyên bố này (không giấu)
 
 1. Đây là **COMPILE PASS + HOST CHECKS PASS**, không phải hardware pass. Firmware W03
    **chưa** nạp và **chưa** chạy lần nào; không có dòng `#CG PZEM*` nào là thật.

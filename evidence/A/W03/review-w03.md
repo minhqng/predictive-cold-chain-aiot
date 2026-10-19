@@ -138,3 +138,23 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
 - Mọi hành vi phần cứng (RS-485 thật, PZEM thật, nhiễu điện, nhiệt, EMC).
 - `43 A` / thông số IBT-2 trên tải — là câu hỏi định mức module, D trả lời khi duyệt wiring.
 - Nghiệm thu W03 (acceptance matrix) — W03 **vẫn NOT PASS**; file này không đổi trạng thái nào.
+
+## 6. Phụ lục — phát hiện sau review: lỗi compile từ CI vòng đầu (2026-10-19)
+
+Vòng review ở trên chỉ dùng được công cụ **không có compiler**; lớp compile thật (CI) đã
+bắt thêm một defect mà mọi lớp trước đó đều mù:
+
+- **F1 (đã sửa):** run CI đầu tiên (commit `5a6cb1f`) fail:
+  `coldguard_config.h:151:29: error: expected identifier before numeric constant`.
+  Nguyên nhân: macro `CG_RS485_DIR_MANUAL` (config) trùng tên enum constant `CG_RS485_DIR_MANUAL`
+  trong `cg_rs485.h`; ở TU include config trước header (`cg_power.c`), macro được expand
+  ngay trong khai báo enum. Lớp static check + unittest **không** mô hình hoá tiền xử lý C
+  nên không thể bắt (và test hành vi là mô hình Python — đúng giới hạn đã khai báo ở
+  `firmware-tooling-verification.md` §6).
+  **Fix:** commit `b858693` — enum → `CG_RS485_MODE_AUTO/MANUAL`, `cg_rs485.c`/`cg_power.c`
+  cập nhật theo; macro compile-time giữ nguyên. Quét bổ sung toàn bộ `firmware/main` cho
+  xung đột macro↔enum: **hết**. 5 lớp cục bộ sau fix: **5/5 PASS**. CI được push lại và
+  kết quả ghi ở `build-report-w03.md` (kèm cả FAIL đầu tiên để truy vết).
+
+**Bài học ghi lại cho W04:** thêm build variant / compile smoke test cho các nhánh macro
+không mặc định; và không đặt enum constant trùng tên macro config trong cùng codebase.
