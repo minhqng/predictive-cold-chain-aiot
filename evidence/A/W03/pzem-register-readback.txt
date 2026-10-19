@@ -1,0 +1,68 @@
+A-W03-04 / A-W03-05 — PZEM-017 register readback & OFF envelope record
+Member A — ColdGuard W03 — snapshot 2026-10-19
+====================================================================
+
+STATUS: PENDING_READBACK — NO REAL PZEM SESSION HAS EVER BEEN CAPTURED
+====================================================================
+
+Lý do file này chưa chứa dữ liệu thật (không tô vẽ, không chèn hex giả):
+
+1. Trong repo (W01/W02/W03) KHÔNG tồn tại bất kỳ log PZEM thật nào:
+   - W01 chỉ có báo cáo người dùng "PZEM trả lời CRC hợp lệ, đọc 11.95 V"
+     qua sketch bench (không có raw log trong repo; xem
+     evidence/A/W01/hardware-audit-w01.md + pin-candidates-v0.md).
+   - Sketch duy nhất từng thấy là một file .ino ngoài repo
+     (request 01 04 00 00 00 01 31 CA @9600 8N1, RX=GPIO37/TX=GPIO36).
+   - Firmware W03 CHƯA được nạp/chạy trên board (chờ CR-A-W01-01).
+2. A-W03-04 yêu cầu bằng chứng cho giá trị current-range register 0x0001
+   (hoặc cấu hình 50 A tương đương). Số 0x0001 nằm trong tài liệu/unit test
+   là KỲ VỌNG, không phải KẾT QUẢ ĐO — không được trích dẫn như kết quả.
+3. A-W03-05 yêu cầu >=10 phút mẫu PZEM khi TEC OFF. Chưa từng có phiên nào.
+
+ĐIỀU KIỆN GỠ PENDING (khi mức logic RS-485 được D/leader duyệt):
+  - Nạp firmware W03, thu log serial bằng: py firmware/tools/cg_capture.py
+  - Tách readback:   py firmware/tools/cg_pzem_readback.py <capture.log> \
+                        --expect-profile 50A --json readback.json
+  - Dán NGUYÊN output (raw tx/rx + CRC + decode + uptime) vào file này thay
+    cho khối này, kèm ngày/người chạy.
+  - Nếu register trả về khác 50A: ghi nhận nguyên trạng (mismatch là phát
+    hiện, không phải lỗi tool) — TUYỆT ĐỐI KHÔNG ghi register để đổi profile.
+
+ĐỊNH DẠNG SẼ ĐƯỢC GHI (mẫu cấu trúc, KHÔNG phải dữ liệu):
+  Từ `cg_pzem_readback.py` (một khối cho mỗi dòng #CG PZEM_RANGE):
+    uptime_ms=<n> status=<token>
+      tx = <hex thật>
+      rx = <hex thật>
+      crc firmware/host = <0|1>/<0|1>        (host tính lại độc lập)
+      value firmware/host = 0x<xxxx>/0x<xxxx>
+      profile firmware/host = <50A|...>/<...>
+  => "50 A range verified" CHỈ được tuyên bố khi profile host-side = 50A
+     với CRC host-side = 1 trên log thật.
+
+--------------------------------------------------------------------
+A-W03-05 — schema pzem-off.csv (khi có raw thật) do
+cg_build_pzem_off_csv.py sinh ra:
+
+  Cột: uptime_ms,seq,status,crc_ok,attempts,exception_code,
+       voltage_v,current_a,power_w,energy_wh,ok_count,fail_count
+  Quy tắc:
+  - uptime_ms là đồng hồ thật của firmware (esp_timer); phiên phải >= 600 s.
+  - Ô V/A/W/Wh TRỐNG khi status != OK — không lặp giá trị cũ.
+  - Tool từ chối: thiếu #CG PZEM_CFG / read_only != 1 / window < 600 s /
+    trộn nhiều boot (trừ khi --boot) / thiếu --tec-off-confirmed
+    (xác nhận vận hành, tool không tự kiểm chứng được).
+  - Summary kèm: success rate, error rate, status counts, timeout/CRC/exception
+    counts, poll interval (min/median/max), gaps > 2x median, mean/min/max/
+    sd(spread) của V/A/W/Wh trên mẫu hợp lệ.
+
+Tệp pzem-off.csv canonical: KHAI BÁO MISSING cho tới khi có raw thật
+(acceptance.md §3). Validator từ chối nếu file xuất hiện mà chưa kèm log.
+
+--------------------------------------------------------------------
+Trạng thái từng phần:
+  - CRC16/MODBUS, khung đọc, scaling V/I/P/E: CODE IMPLEMENTED + unit test
+    (xem firmware-tooling-verification.md); parity hằng số C <-> host được
+    kiểm tra tĩnh tự động.
+  - Readback register 50 A: PENDING_READBACK.
+  - OFF envelope >=10 min: MEASUREMENT REQUIRED (chưa có TEC OFF session).
+  - Ghi register/đổi profile: KHÔNG TỒN TẠI đường code (chỉ FC 0x03/0x04).
