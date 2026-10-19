@@ -141,7 +141,7 @@ EXISTS`); migrations never manage extension-owned objects.
 ├── firmware/      # Member A — ESP-IDF app skeleton
 ├── backend/       # Member C — FastAPI skeleton (coldguard_backend + uv.lock)
 ├── ml/            # Member B — ML package skeleton (coldguard_ml + uv.lock)
-├── control/       # Member D — policy package skeleton (coldguard_control + uv.lock)
+├── control/       # Member D — pure policy core + unit tests (coldguard_control + uv.lock)
 └── infra/         # Member C — local Mosquitto + TimescaleDB Compose
 ```
 
@@ -157,6 +157,12 @@ EXISTS`); migrations never manage extension-owned objects.
 `control/` is separate from `backend/` and `firmware/` so policy logic stays
 testable without MQTT, PostgreSQL, GPIO, or hardware. Shared concerns (docs,
 integration, experiments, evidence, governance) are team-owned.
+
+The W01–W03 slice in `control/` is a pure `PolicyInput -> PolicyDecision` core
+with a seven-state policy, SAFE_LOCAL entry/exit gate, command validator and
+failure taxonomy. It does not publish MQTT, access a database, call GPIO, run a
+real controller, or actuate hardware; see `evidence/D/` for the scope and
+unverified items.
 
 ## Canonical Documentation
 
