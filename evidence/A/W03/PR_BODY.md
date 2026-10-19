@@ -35,7 +35,7 @@
   - **113 unittest PASS** (W02: 57; W03 thêm 56) — CRC vector từ sketch bench W01, bit-flip phải bị bắt, read-only FC, classify, word-order P/Wh, parser v1↔v2, thống kê, CLI từ chối dữ liệu không đạt.
   - **84 check tĩnh W03 PASS** (`cg_check_firmware_w03.py`) — parity register/scaling ↔ `cg_modbus.py`, quét FC ghi, CRC-trước-khi-tin, retry bound, token parity, default-OFF, boot order, grammar, CMake completeness.
   - **39 check tĩnh W02 PASS** + `validate_w02.py` **PASS (9/9 blob hash)** — regression W02 nguyên vẹn trên nhánh W03.
-  - **CI GitHub Actions**: xem `build-report-w03.md` (2 job: `idf.py build` esp32s3 + host checks). Trạng thái cuối cùng của run được ghi trong chính file đó.
+  - **CI GitHub Actions**: run `39213118829` — **SUCCESS cả hai job** (`idf.py build` esp32s3 + host checks; số liệu + SHA-256 trong `build-report-w03.md` §2/§3). Run đầu tiên FAIL vì một lỗi biên dịch thật (macro config trùng tên enum RS-485) — đã fix ở `b858693`, **giữ nguyên trong báo cáo** để truy vết (`build-report-w03.md` §4).
 
 ## 2. Deliverable canonical (`docs/05A §12`) — trạng thái thật
 
@@ -51,10 +51,15 @@
 
 Một vòng review đối kháng nội bộ (CRC/scaling, parser/timeout, readback CLI, ngân sách
 độ dài dòng log, UART/hướng, tương thích mức logic, IBT-2 default-OFF, regression W02) đã
-chạy trên máy; **không có defect chặn nào mới**. Hai ghi chú tồn dư (không phải defect)
-được giữ lại trong `review-w03.md` §4: margin của buffer log khi bộ đếm chạy nhiều năm, và
-nhánh MANUAL không được compile trong CI. **Review này không thay thế reviewer độc lập và
-không phải phê duyệt an toàn của Member D.**
+chạy trên máy và **không có defect nào trong các lớp đó**. Lớp **compile thật (CI)** bắt
+thêm **một** defect mà static check + unittest không thể thấy: macro config
+(`CG_RS485_DIR_MANUAL`) trùng tên enum constant trong `cg_rs485.h`
+(`coldguard_config.h:151: error: expected identifier before numeric constant`) — **đã
+fix** ở `b858693` (enum → `CG_RS485_MODE_*`), ghi ở `review-w03.md` §6 và
+`build-report-w03.md` §4. Hai ghi chú tồn dư (không phải defect) được giữ lại trong
+`review-w03.md` §4: margin buffer log khi bộ đếm chạy nhiều năm, và nhánh MANUAL không
+được compile trong CI. **Review này không thay thế reviewer độc lập và không phải phê
+duyệt an toàn của Member D.**
 
 ## 4. Những gì CHƯA xác minh (nêu tường minh)
 

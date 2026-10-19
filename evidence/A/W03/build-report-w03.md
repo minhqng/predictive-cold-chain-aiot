@@ -7,11 +7,9 @@ artifact, SHA-256). Nó **không** phải bằng chứng phần cứng: firmware
 nguồn.
 
 > **Trạng thái điền số:** lần build đầu tiên của nhánh (run `39212308802`) **FAIL** vì
-> một lỗi biên dịch thật — xem §4. Sau fix, các ô kết quả (run URL, SHA-256, cảnh báo…)
-> được **cập nhật bằng một commit evidence-only ngay khi run tiếp theo kết thúc** — đúng
-> nội dung log/artifact thật, không suy diễn. Nếu bạn đọc bản này mà §2 vẫn ghi
-> "cập nhật sau", nghĩa là bạn đang ở commit trước bước cập nhật đó; kiểm tra danh sách
-> run của workflow.
+> một lỗi biên dịch thật — xem §4. Sau fix (`b858693`), run thứ hai
+> (`39213118829`, commit `ae1744d`) **SUCCESS cả hai job**; số liệu thật ở §2/§3.
+> Mọi giá trị dưới đây được chép nguyên văn từ log/artifact của run đó, không suy diễn.
 
 ## 1. Bối cảnh
 
@@ -34,27 +32,38 @@ nguồn.
   secret nào. A green run là bằng chứng **COMPILE PASS + HOST CHECKS PASS**, không bao giờ
   là bằng chứng bench.
 
-## 2. Kết quả (điền từ log/artifact thật sau run đầu tiên)
+## 2. Kết quả (nguyên văn từ log/artifact thật)
 
 | Mục | Giá trị |
 |---|---|
-| Kết quả `espidf-build` | _cập nhật sau lần chạy đầu tiên_ |
-| Kết quả `host-checks` | _cập nhật sau lần chạy đầu tiên_ |
-| Commit được build | _cập nhật (từ `environment.txt`: `source_commit=…`)_ |
-| Run URL | _cập nhật sau lần chạy đầu tiên_ |
+| Kết quả `espidf-build` | **SUCCESS — COMPILE PASS (ESP32-S3)** |
+| Kết quả `host-checks` | **SUCCESS** (unittest 113 + static W03 84 + static W02 39 + validate_w02 + validate_w03) |
+| Commit được build | `source_commit=ae1744d1f55fe5a78e8453329402062275c96ba2` (`environment.txt`; là tip của nhánh khi push C+D — **cây firmware giống hệt** `firmware_commit b858693`, kiểm bằng `git diff b858693 ae1744d -- firmware` rỗng) |
+| Run URL | https://github.com/minhqng/predictive-cold-chain-aiot/actions/runs/39213118829 (id `39213118829`, event `push`) |
 | Runner / image | `ubuntu-latest`, job container `espressif/idf:v6.1` |
+| ESP-IDF | `ESP-IDF v6.1` (`idf.py --version`) |
+| Toolchain | `xtensa-esp-elf-gcc (crosstool-NG esp-15.2.0_20251204) 15.2.0` |
+| Python / CMake | `Python 3.12.3` / `cmake version 4.0.3` |
 | Target | `esp32s3` |
-| Cảnh báo compiler | _cập nhật (đếm trên `20-idf-py-build.log`)_ |
-| Artifact | `a-w03-espidf-build-report` (environment, log, sdkconfig, firmware + checksum) |
+| Cảnh báo compiler trong toàn bộ log build | **0** (đếm bằng `Select-String -Pattern "warning:"` trên `20-idf-py-build.log`) |
+| Kích thước | `coldguard_firmware.bin` = 230 976 bytes (`0x38640`); phân vùng app nhỏ nhất `0x100000`; **78% trống** (`0xc79c0`) |
+| Dòng cuối log build | `coldguard_firmware.bin binary size 0x38640 bytes. …` (sau `Project build complete`) |
+| Artifact | `a-w03-espidf-build-report` (2 110 446 bytes, id `12168348689`) — environment, log, sdkconfig, firmware + checksum; giữ 90 ngày |
 
-## 3. SHA-256 của artifact firmware (điền nguyên văn từ `30-artifacts.txt` của job)
+## 3. SHA-256 của artifact firmware (nguyên văn từ `30-artifacts.txt` của job)
 
 | File | Bytes | SHA-256 |
 |---|---|---|
-| `coldguard_firmware.bin` | _cập nhật_ | _cập nhật_ |
-| `coldguard_firmware.elf` | _cập nhật_ | _cập nhật_ |
-| `bootloader.bin` | _cập nhật_ | _cập nhật_ |
-| `partition-table.bin` | _cập nhật_ | _cập nhật_ |
+| `coldguard_firmware.bin` | 230 976 | `c84d651b75b329c5eb5d356ffa99333f59950be39aa476f4e387605aca7afaf7` |
+| `coldguard_firmware.elf` | 4 557 152 | `3656dedffdfb06af37c785fd3a629bc9e7892a8b3d3bdb6fe06cc83eeb0fe483` |
+| `coldguard_firmware.map` | 3 790 506 | `4db46214fd92338cb21ce3818922ae138e9e526a75edf1d6d9deb068e8c8a3f2` |
+| `bootloader.bin` | 21 120 | `4260ddd36281b754a4d9b7a3b8283597265705644cece61e092ef8b7fb770cb4` |
+| `partition-table.bin` | 3 072 | `7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820` |
+| `flasher_args.json` | 927 | `e145340bd24e90bc2881eb0debbf65c80d3c25048aa194239576d2981edceb9f` |
+| `sdkconfig` | 92 884 | `15607c6fd88332fbfe2e6e62036b152477382a6df54f9d97926755d38f14a335` |
+
+Các giá trị trên do chính job in ra (`sha256sum` trong bước "Collect firmware artifacts
+and checksums"), không sao chép tay.
 
 ## 4. Lần build đầu FAIL và cách sửa (2026-10-19)
 
@@ -73,8 +82,10 @@ nguồn.
   và `cg_power.c` cập nhật; tên macro compile-time giữ nguyên (không đổi hành vi).
   Quét bổ sung toàn bộ `firmware/main`: **không còn** xung đột macro/enum nào khác.
 - Sau sửa: chạy lại 5 lớp kiểm tra cục bộ (`run_all_checks_w03.py`) → **5/5 PASS**;
-  `firmware_commit` của hồ sơ cập nhật thành `b858693` (commit chứa fix, được CI
-  build lại ở run tiếp theo).
+  `firmware_commit` của hồ sơ cập nhật thành `b858693`.
+- Run thứ hai — commit `ae1744d` (fix + cập nhật evidence): **SUCCESS cả hai job**
+  (build + host-checks) — số liệu đầy đủ ở §2/§3. Đây là run được dùng để tuyên bố
+  **COMPILE PASS + HOST CHECKS PASS** cho W03.
 
 ## 5. Quan hệ với `firmware_commit`
 
