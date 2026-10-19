@@ -61,7 +61,7 @@ static void log_config_line(void)
     framing_string(framing, sizeof(framing));
     cg_log_line("%s %s slave=%d baud=%d framing=%s dir=%s read_only=1", CG_LOG_PREFIX,
                 CG_LOG_PZEM_CFG, CG_PZEM_SLAVE_ADDRESS, CG_RS485_BAUD, framing,
-                cg_rs485_dir_mode() == CG_RS485_DIR_MANUAL ? "MANUAL" : "AUTO");
+                cg_rs485_dir_mode() == CG_RS485_MODE_MANUAL ? "MANUAL" : "AUTO");
 }
 
 /* Sends one request and returns the raw link outcome. Bytes received are
