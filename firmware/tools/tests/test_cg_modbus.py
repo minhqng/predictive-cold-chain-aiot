@@ -136,6 +136,105 @@ class ParseRangeTests(unittest.TestCase):
         self.assertFalse(report["crc_ok"])
 
 
+class ExtractResponseTests(unittest.TestCase):
+    """The transport extractor must accept a framed tail, never an echo."""
+
+    def test_input_exact_and_prefixed(self) -> None:
+        frame = fixtures.input_response(1, 1234, 5, 123, 456)
+        echo = cg_modbus.build_read_input(1)
+        for prefix in (b"", b"\xaa" * 7, echo):
+            extracted = cg_modbus.extract_response(prefix + frame)
+            self.assertIs(extracted.status, cg_modbus.Status.OK)
+            self.assertEqual(extracted.frame, frame)
+
+    def test_range_exact_and_prefixed(self) -> None:
+        frame = fixtures.range_response(1, 0x0001)
+        echo = cg_modbus.build_read_range(1)
+        for prefix in (b"", b"\xaa" * 7, echo):
+            extracted = cg_modbus.extract_response(prefix + frame)
+            self.assertIs(extracted.status, cg_modbus.Status.OK)
+            self.assertEqual(extracted.frame, frame)
+
+    def test_exception_exact_and_prefixed(self) -> None:
+        frame = cg_modbus.append_crc(bytes((1, 0x84, 0x02)))
+        for prefix in (b"", b"\xaa" * 7, cg_modbus.build_read_input(1)):
+            extracted = cg_modbus.extract_response(prefix + frame)
+            self.assertIs(extracted.status, cg_modbus.Status.OK)
+            self.assertEqual(extracted.frame, frame)
+            self.assertIs(
+                cg_modbus.parse_input(extracted.frame, 1).status,
+                cg_modbus.Status.EXCEPTION,
+            )
+
+    def test_bad_crc_is_rejected(self) -> None:
+        frame = fixtures.input_response(1, 1234, 5, 123, 456)
+        damaged = frame[:-1] + bytes((frame[-1] ^ 0xFF,))
+        extracted = cg_modbus.extract_response(damaged)
+        self.assertIs(extracted.status, cg_modbus.Status.CRC_ERR)
+        self.assertIsNone(extracted.frame)
+
+    def test_wrong_slave_function_and_byte_count_are_not_decoded(self) -> None:
+        wrong_slave = fixtures.input_response(7, 1234, 5, 123, 456)
+        parsed = cg_modbus.parse_input(
+            cg_modbus.extract_response(wrong_slave).frame, 1
+        )
+        self.assertIs(parsed.status, cg_modbus.Status.BAD_SLAVE)
+
+        wrong_function = fixtures.range_response(1, 0x0001)
+        parsed = cg_modbus.parse_input(
+            cg_modbus.extract_response(wrong_function).frame, 1
+        )
+        self.assertIs(parsed.status, cg_modbus.Status.BAD_FUNCTION)
+
+        wrong_count = cg_modbus.append_crc(bytes((1, 0x04, 10)) + bytes(10))
+        parsed = cg_modbus.parse_input(
+            cg_modbus.extract_response(wrong_count).frame, 1
+        )
+        self.assertIs(parsed.status, cg_modbus.Status.BAD_LENGTH)
+
+    def test_truncated_echo_and_garbage_are_not_frames(self) -> None:
+        frame = fixtures.input_response(1, 1234, 5, 123, 456)
+        for raw in (frame[:10], cg_modbus.build_read_input(1), b"\xde\xad\xbe\xef" * 4):
+            extracted = cg_modbus.extract_response(raw)
+            self.assertNotEqual(extracted.status, cg_modbus.Status.OK)
+            self.assertIsNone(extracted.frame)
+
+    def test_trailing_garbage_prevents_a_tail_match(self) -> None:
+        frame = fixtures.range_response(1, 0x0001)
+        extracted = cg_modbus.extract_response(frame + b"\x00")
+        self.assertIs(extracted.status, cg_modbus.Status.BAD_LENGTH)
+        self.assertIsNone(extracted.frame)
+
+    def test_stale_frame_is_not_selected(self) -> None:
+        stale = fixtures.range_response(1, 0x0000)
+        current = fixtures.range_response(1, 0x0001)
+        extracted = cg_modbus.extract_response(stale + current)
+        self.assertIs(extracted.status, cg_modbus.Status.OK)
+        self.assertEqual(extracted.frame, current)
+
+    def test_two_valid_interpretations_are_ambiguous(self) -> None:
+        # The 17-byte input response is valid; its last 7 bytes are also a
+        # valid range response. Guessing either could fabricate telemetry.
+        raw = bytes.fromhex("01040C2DCA00000000000103020000B844")
+        self.assertIs(cg_modbus.parse_input(raw[:17], 1).status, cg_modbus.Status.OK)
+        self.assertIs(cg_modbus.parse_range(raw[10:], 1).status, cg_modbus.Status.OK)
+        extracted = cg_modbus.extract_response(raw)
+        self.assertIs(extracted.status, cg_modbus.Status.BAD_LENGTH)
+        self.assertIsNone(extracted.frame)
+
+    def test_wrong_exception_function_and_length_are_rejected(self) -> None:
+        wrong_function = cg_modbus.append_crc(bytes((1, 0x83, 0x02)))
+        self.assertIs(
+            cg_modbus.parse_input(wrong_function, 1).status,
+            cg_modbus.Status.BAD_FUNCTION,
+        )
+        wrong_length = cg_modbus.append_crc(bytes((1, 0x84, 0x02, 0x00)))
+        self.assertIs(
+            cg_modbus.parse_input(wrong_length, 1).status,
+            cg_modbus.Status.BAD_LENGTH,
+        )
+
+
 class ScalingTests(unittest.TestCase):
     def test_input_decode_uses_documented_lsb(self) -> None:
         # V = 12.34 V, I = 0.05 A, P = 12.3 W (123 * 0.1), E = 456 Wh.

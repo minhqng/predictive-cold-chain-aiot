@@ -1,0 +1,3 @@
+0af8a083cc1fe788ae13c7b1652effc1d3377862aeef66bf3f0521f2995c557e  raw/test-132b-off-envelope.log
+7eac5f80c2d95ebf7b4147251b2c38d65f5da103951b767413972f29a66f81d8  raw/test-132b-off-envelope.csv
+8986a21cf252577c90a9c208acf33737cab494e719f6173ac69b294ae723296b  firmware/ColdGuard_TEST_133B_reset_default_off.ino

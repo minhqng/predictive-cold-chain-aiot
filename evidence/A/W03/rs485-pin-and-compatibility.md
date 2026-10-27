@@ -29,6 +29,12 @@ Nguồn duy nhất của "phần cứng thật" trong W03 là ảnh W01 + báo c
 3. Cực tính A/B với PZEM chưa từng được kiểm tra có điện (PZEM chưa từng được firmware W03 poll).
 4. Module có jumper 120 Ω — chưa xác định jumper đang đóng hay mở trong ảnh.
 
+**Bổ sung 2026-10-27:** sketch Arduino bench (TEST 132B) trao đổi được **600/600** phản hồi
+ở `9600 8N1`, slave `0x01`, qua đúng module TTL485-V2.0 as-built. Điều này chứng minh
+**đường UART bench hoạt động ở cấu hình đã dùng** — hữu ích cho việc rà framing — nhưng
+**không** chứng minh mức logic an toàn, **không** phải firmware ESP-IDF W03, và **không**
+thay thế CR-A-W01-01. Bốn điểm chặn ở trên giữ nguyên.
+
 ## 4. Điều cần D + leader quyết định (CR-A-W01-01)
 
 - Chấp nhận TTL485-V2.0 + phân áp tạm cho **bench**, kèm giới hạn thử nghiệm; **hoặc** yêu cầu mua module 3.3 V đúng freeze trước khi chạy.

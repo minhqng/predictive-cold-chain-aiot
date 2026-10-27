@@ -27,6 +27,11 @@ typedef enum {
     CG_PZEM_UART_ERR,
 } cg_pzem_status_t;
 
+/* Wire lengths used by the extractor and the poll loop. */
+#define CG_PZEM_INPUT_FRAME_LEN 17U     /* slave + fc + count + 12 data + crc */
+#define CG_PZEM_RANGE_FRAME_LEN 7U      /* slave + fc + count + 2 data + crc */
+#define CG_PZEM_EXCEPTION_FRAME_LEN 5U  /* slave + fc|0x80 + code + crc */
+
 typedef struct {
     float voltage_v;
     float current_a;
@@ -41,6 +46,24 @@ size_t cg_pzem_build_read_input(uint8_t slave, uint8_t *out);
 /* Builds a 8-byte read-holding-register request for the current-range
  * profile (holding 0x0003, FC 0x03). READ ONLY. */
 size_t cg_pzem_build_read_range(uint8_t slave, uint8_t *out);
+
+/* Finds the single complete read response that ends at the end of `rx`.
+ *
+ * Echo bytes and other prefix bytes before the response are ignored. A
+ * candidate must be a complete 0x03/0x04 response (length derived from its
+ * byte count) or a complete 5-byte exception, and its CRC must validate.
+ * Exactly one candidate is accepted; more than one is ambiguous and is
+ * rejected as CG_PZEM_BAD_LENGTH rather than guessing. A stale frame followed
+ * by a newer response cannot qualify because it does not end at the tail; a
+ * lone late response is indistinguishable from a current one without
+ * transaction timing. The expected slave, function and byte count are then
+ * checked by cg_pzem_parse_input() or cg_pzem_parse_range(). On success
+ * `*frame` points into `rx` and remains
+ * valid only while `rx` is alive. On failure both outputs are cleared. This
+ * function does not decode registers.
+ */
+cg_pzem_status_t cg_pzem_extract_response(const uint8_t *rx, size_t rx_len,
+                                          const uint8_t **frame, size_t *frame_len);
 
 /* Parses a read-input response into 6 raw registers. On any non-OK status
  * the output registers are left untouched and must not be decoded. */

@@ -222,6 +222,13 @@ def run_checks() -> Checker:
             and body.find("cg_crc16_check") < body.find("frame[0]"),
             f"{name} validates CRC before trusting any frame field",
         )
+        checker.check(
+            body is not None
+            and "CG_PZEM_EXCEPTION_FRAME_LEN" in body
+            and "BAD_FUNCTION" in body
+            and "frame[1] != (uint8_t)" in body,
+            f"{name} accepts only the matching exception function and length",
+        )
 
     # 4. Transport / retry bound ------------------------------------------
     checker.check(
@@ -289,6 +296,33 @@ def run_checks() -> Checker:
     checker.check(
         define_int(config, "CG_PZEM_SLAVE_ADDRESS") == 1,
         "PZEM slave address is the documented commissioning default (1)",
+    )
+    extract_body = extract_function_body(
+        pzem_c_stripped, r"cg_pzem_status_t\s+cg_pzem_extract_response\s*\([^)]*\)"
+    )
+    checker.check(
+        extract_body is not None
+        and "cg_crc16_check" in extract_body
+        and "start + candidate_len != rx_len" in extract_body
+        and "valid_count > 1U" in extract_body,
+        "response extraction validates CRC and accepts only one frame ending at the RX tail",
+    )
+    checker.check(
+        "cg_pzem_extract_response" in power_stripped
+        and "CG_PZEM_RX_MAX" in power_stripped
+        and "CG_PZEM_RESPONSE_TIMEOUT_MS" in power_stripped
+        and "expected_frame" in power_stripped
+        and "link.rx + link.frame_offset" in power_stripped
+        and "link.frame_len" in power_stripped,
+        "cg_power reads a bounded raw window and gives only the extracted frame to the parser",
+    )
+    checker.check(
+        define_int(config, "CG_RS485_RX_IDLE_MS") is not None
+        and "uart_get_buffered_data_len" in rs485_stripped
+        and "CG_RS485_RX_IDLE_MS" in rs485_stripped
+        and "timeout_ticks == 0U" in rs485_stripped
+        and "timeout_ticks = 1U" in rs485_stripped,
+        "cg_rs485 drains available bytes, stops on an idle gap, and keeps a non-zero timeout tick",
     )
 
     # 5. Status token parity ----------------------------------------------

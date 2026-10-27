@@ -43,7 +43,12 @@ File này ghi lại những gì **đã có** (không đo lại), những gì **c
 | I_logic | *(trống)* | — | — | |
 | T_case | *(trống)* | — | — | |
 | Vpp | *(trống)* | — | — | |
-| Fuse | *(trống)* | — | — | xác nhận 5 A còn tốt (R04) |
+| Fuse | *(trống — chưa đo)* | — | — | xác nhận 5 A còn tốt (R04) |
+
+**Cập nhật 2026-10-27:** phiên bench TEST 131/132B/133B **không** đo lại nhánh logic này.
+Số `11.94–11.95 V` trong phiên đó là điện áp **nhánh TEC** đọc bởi PZEM, không phải đầu ra
+XL4015; không được dùng để điền bảng trên. Bảng vẫn trống đúng như nhãn
+`MEASUREMENT REQUIRED`.
 
 ## 4. Điều KHÔNG được suy diễn
 

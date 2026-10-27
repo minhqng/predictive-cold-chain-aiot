@@ -31,6 +31,8 @@ typedef struct {
     cg_pzem_status_t status;
     uint8_t attempts;
     uint8_t rx_len;
+    uint8_t frame_offset;
+    uint8_t frame_len;
     uint8_t rx[CG_PZEM_RX_MAX];
 } cg_link_result_t;
 
@@ -64,10 +66,12 @@ static void log_config_line(void)
                 cg_rs485_dir_mode() == CG_RS485_MODE_MANUAL ? "MANUAL" : "AUTO");
 }
 
-/* Sends one request and returns the raw link outcome. Bytes received are
- * handed to the protocol parser; the transport does not interpret them. */
+/* Sends one request and reads until the expected frame (or exception) is
+ * present, the per-attempt deadline expires, or the RX buffer is full. The
+ * tail frame is extracted; raw RX is preserved for the log, and the parser
+ * only receives the extracted frame. */
 static cg_link_result_t link_transaction(const uint8_t *request, size_t request_len,
-                                         size_t read_len)
+                                         uint8_t expected_function, size_t expected_len)
 {
     cg_link_result_t result;
 
@@ -77,6 +81,8 @@ static cg_link_result_t link_transaction(const uint8_t *request, size_t request_
     for (uint8_t attempt = 1; attempt <= CG_PZEM_MAX_ATTEMPTS; attempt++) {
         result.attempts = attempt;
         result.rx_len = 0;
+        result.frame_offset = 0;
+        result.frame_len = 0;
 
         cg_rs485_flush_input();
         if (!cg_rs485_write(request, request_len)) {
@@ -84,18 +90,74 @@ static cg_link_result_t link_transaction(const uint8_t *request, size_t request_
             continue;
         }
 
-        const int received = cg_rs485_read(result.rx, read_len, CG_PZEM_RESPONSE_TIMEOUT_MS);
-        if (received < 0) {
+        const int64_t deadline_us =
+            esp_timer_get_time() + (int64_t)CG_PZEM_RESPONSE_TIMEOUT_MS * 1000LL;
+        size_t rx_len = 0U;
+        cg_pzem_status_t last_extract = CG_PZEM_TIMEOUT;
+        bool uart_error = false;
+
+        while (rx_len < sizeof(result.rx)) {
+            const int64_t now_us = esp_timer_get_time();
+            if (now_us >= deadline_us) {
+                break;
+            }
+            const uint32_t remaining_ms =
+                (uint32_t)((deadline_us - now_us + 999LL) / 1000LL);
+            const int received = cg_rs485_read(result.rx + rx_len,
+                                               sizeof(result.rx) - rx_len, remaining_ms);
+            if (received < 0) {
+                uart_error = true;
+                result.frame_offset = 0;
+                result.frame_len = 0;
+                break;
+            }
+            if (received == 0) {
+                break;
+            }
+
+            rx_len += (size_t)received;
+            const uint8_t *frame = NULL;
+            size_t frame_len = 0U;
+            last_extract = cg_pzem_extract_response(result.rx, rx_len, &frame, &frame_len);
+            if (frame != NULL) {
+                result.frame_offset = (uint8_t)(frame - result.rx);
+                result.frame_len = (uint8_t)frame_len;
+            } else {
+                /* A later chunk can invalidate an earlier tail candidate.
+                 * Never leave a stale frame available to the parser. */
+                result.frame_offset = 0;
+                result.frame_len = 0;
+            }
+
+            const uint8_t expected_byte_count =
+                (uint8_t)(expected_len - CG_PZEM_EXCEPTION_FRAME_LEN);
+            const bool expected_frame =
+                frame != NULL &&
+                ((frame_len == expected_len && frame[0] == CG_PZEM_SLAVE_ADDRESS &&
+                  frame[1] == expected_function && frame[2] == expected_byte_count) ||
+                 (frame_len == CG_PZEM_EXCEPTION_FRAME_LEN &&
+                  frame[0] == CG_PZEM_SLAVE_ADDRESS &&
+                  frame[1] == (uint8_t)(expected_function | 0x80U)));
+            if (expected_frame) {
+                break;
+            }
+            /* Echo, prefix, a wrong slave/function, a bad CRC, or a partial
+             * frame may still be followed by the real response. Keep reading
+             * until the per-attempt deadline; only an expected frame ends the
+             * read early. */
+        }
+
+        result.rx_len = (uint8_t)rx_len;
+        if (uart_error) {
             result.status = CG_PZEM_UART_ERR;
             continue;
         }
-        if (received == 0) {
+        if (rx_len == 0U) {
             result.status = CG_PZEM_TIMEOUT;
             continue;
         }
-
-        result.rx_len = (uint8_t)received;
-        return result; /* the parser classifies the frame */
+        result.status = last_extract;
+        return result; /* valid frame -> parser; otherwise the extractor result */
     }
 
     return result;
@@ -126,21 +188,24 @@ static void poll_once(void)
     uint8_t exception_code = 0;
 
     const size_t request_len = cg_pzem_build_read_input(CG_PZEM_SLAVE_ADDRESS, request);
-    const cg_link_result_t link = link_transaction(request, request_len, 17U);
+    const cg_link_result_t link =
+        link_transaction(request, request_len, CG_PZEM_FC_READ_INPUT, CG_PZEM_INPUT_FRAME_LEN);
 
     cg_pzem_status_t status = link.status;
-    if (link.rx_len > 0) {
-        status = cg_pzem_parse_input(link.rx, link.rx_len, CG_PZEM_SLAVE_ADDRESS, regs);
+    if (link.frame_len > 0U) {
+        const uint8_t *frame = link.rx + link.frame_offset;
+        status = cg_pzem_parse_input(frame, (size_t)link.frame_len, CG_PZEM_SLAVE_ADDRESS, regs);
         if (status == CG_PZEM_OK) {
             cg_pzem_decode_input(regs, &values);
             values_valid = true;
-        } else if (status == CG_PZEM_EXCEPTION && link.rx_len >= 3U) {
-            exception_code = link.rx[2];
+        } else if (status == CG_PZEM_EXCEPTION && link.frame_len >= 3U) {
+            exception_code = frame[2];
         }
     }
 
     const bool crc_ok =
-        link.rx_len >= 4U && cg_crc16_check(link.rx, (size_t)link.rx_len);
+        link.frame_len >= 4U &&
+        cg_crc16_check(link.rx + link.frame_offset, (size_t)link.frame_len);
 
     hex_encode(request, request_len, tx_hex, sizeof(tx_hex));
     hex_encode(link.rx, link.rx_len, rx_hex, sizeof(rx_hex));
@@ -187,11 +252,14 @@ static void maybe_read_range(void)
     s_last_range_try_us = now_us;
 
     const size_t request_len = cg_pzem_build_read_range(CG_PZEM_SLAVE_ADDRESS, request);
-    const cg_link_result_t link = link_transaction(request, request_len, 7U);
+    const cg_link_result_t link =
+        link_transaction(request, request_len, CG_PZEM_FC_READ_HOLDING, CG_PZEM_RANGE_FRAME_LEN);
 
     cg_pzem_status_t status = link.status;
-    if (link.rx_len > 0) {
-        status = cg_pzem_parse_range(link.rx, link.rx_len, CG_PZEM_SLAVE_ADDRESS, &raw_value);
+    if (link.frame_len > 0U) {
+        const uint8_t *frame = link.rx + link.frame_offset;
+        status = cg_pzem_parse_range(frame, (size_t)link.frame_len, CG_PZEM_SLAVE_ADDRESS,
+                                     &raw_value);
         if (status == CG_PZEM_OK) {
             cg_pzem_range_hex(raw_value, value_hex);
             profile = cg_pzem_profile_name(raw_value);
@@ -199,13 +267,14 @@ static void maybe_read_range(void)
              * expected 50 A one: retrying cannot change the register, and a
              * mismatch is a finding, not a link problem. */
             s_range_read_done = true;
-        } else if (status == CG_PZEM_EXCEPTION && link.rx_len >= 3U) {
-            exception_code = link.rx[2];
+        } else if (status == CG_PZEM_EXCEPTION && link.frame_len >= 3U) {
+            exception_code = frame[2];
         }
     }
 
     const bool crc_ok =
-        link.rx_len >= 4U && cg_crc16_check(link.rx, (size_t)link.rx_len);
+        link.frame_len >= 4U &&
+        cg_crc16_check(link.rx + link.frame_offset, (size_t)link.frame_len);
 
     hex_encode(request, request_len, tx_hex, sizeof(tx_hex));
     hex_encode(link.rx, link.rx_len, rx_hex, sizeof(rx_hex));

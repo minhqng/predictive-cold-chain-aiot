@@ -62,14 +62,15 @@ def range_log_line(
     slave: int = 1,
     damaged_rx: bool = False,
     status: str = "OK",
+    prefix: bytes = b"",
 ) -> str:
     """One `#CG PZEM_RANGE` line with a complete, real (computed) frame pair."""
 
     tx = cg_modbus.build_read_range(slave)
-    rx = range_response(slave, value)
+    rx = prefix + range_response(slave, value)
     if damaged_rx:
         rx = rx[:-1] + bytes((rx[-1] ^ 0xFF,))
-    crc_ok = 1 if cg_modbus.crc_ok(rx) else 0
+    crc_ok = 1 if cg_modbus.extract_response(rx).frame is not None else 0
     profile = cg_modbus.profile_name(value)
     return (
         f"#CG PZEM_RANGE uptime_ms={uptime_ms} status={status} value=0x{value:04X} "

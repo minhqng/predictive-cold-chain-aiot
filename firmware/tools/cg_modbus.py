@@ -13,7 +13,11 @@ This is the host-side reference for the rules the firmware implements in C
     - holding 0x0003 current range: 0x0000=100 A, 0x0001=50 A,
       0x0002=200 A, 0x0003=300 A
 * response classification: TIMEOUT (transport), CRC_ERR, BAD_SLAVE,
-  BAD_FUNCTION, BAD_LENGTH, EXCEPTION, UART_ERR.
+  BAD_FUNCTION, BAD_LENGTH, EXCEPTION, UART_ERR;
+* response extraction: a complete frame must end at the RX tail, so echo or
+  prefix bytes are ignored and a stale frame followed by a newer response is
+  not selected. A lone late response is indistinguishable from a current one
+  without transaction timing; that limit is recorded in the evidence notes.
 
 The module never builds a write request. A-W03-04 is READ ONLY: a register
 write must not be possible through this tool, not merely "not used".
@@ -152,8 +156,11 @@ def _classify(frame: bytes, slave: int, function: int) -> tuple[Status, int | No
     if frame[0] != slave:
         return Status.BAD_SLAVE, None
     if frame[1] & 0x80:
-        code = frame[2] if len(frame) >= EXCEPTION_FRAME_LEN else None
-        return Status.EXCEPTION, code
+        if frame[1] != (function | 0x80):
+            return Status.BAD_FUNCTION, None
+        if len(frame) != EXCEPTION_FRAME_LEN:
+            return Status.BAD_LENGTH, None
+        return Status.EXCEPTION, frame[2]
     if frame[1] != function:
         return Status.BAD_FUNCTION, None
     return Status.OK, None
@@ -182,6 +189,58 @@ def parse_range(frame: bytes, slave: int) -> ParsedFrame:
     if len(frame) != RANGE_FRAME_LEN or frame[2] != 2:
         return ParsedFrame(status=Status.BAD_LENGTH)
     return ParsedFrame(status=Status.OK, registers=((frame[3] << 8) | frame[4],))
+
+
+@dataclasses.dataclass(frozen=True)
+class ExtractedFrame:
+    """Result of finding the response at the tail of a raw RX capture."""
+
+    status: Status
+    frame: bytes | None = None
+
+
+def extract_response(raw: bytes) -> ExtractedFrame:
+    """Extract the single complete read response ending at the RX tail.
+
+    A response may be preceded by request echo or other prefix bytes. The
+    candidate must be a complete 0x03/0x04 response (length derived from its
+    byte count) or a complete 5-byte exception, and its CRC must validate.
+    A stale frame followed by a newer response cannot qualify because it
+    does not end at the tail. A lone late response is indistinguishable from
+    a current one without transaction timing. If more than one different
+    CRC-valid interpretation ends at the tail, this is ambiguous and rejected
+    instead of guessed.
+    """
+
+    if len(raw) < EXCEPTION_FRAME_LEN:
+        return ExtractedFrame(Status.BAD_LENGTH)
+
+    valid: list[bytes] = []
+    plausible_crc_bad = False
+
+    for start in range(len(raw) - EXCEPTION_FRAME_LEN + 1):
+        function = raw[start + 1]
+        if function & 0x80:
+            candidate_len = EXCEPTION_FRAME_LEN
+        elif function in (FC_READ_HOLDING, FC_READ_INPUT):
+            candidate_len = EXCEPTION_FRAME_LEN + raw[start + 2]
+        else:
+            continue
+        if start + candidate_len != len(raw):
+            continue
+        candidate = raw[start:]
+        if crc_ok(candidate):
+            valid.append(candidate)
+        else:
+            plausible_crc_bad = True
+
+    if len(valid) == 1:
+        return ExtractedFrame(Status.OK, valid[0])
+    if len(valid) > 1:
+        return ExtractedFrame(Status.BAD_LENGTH)
+    if plausible_crc_bad:
+        return ExtractedFrame(Status.CRC_ERR)
+    return ExtractedFrame(Status.BAD_LENGTH)
 
 
 @dataclasses.dataclass(frozen=True)
@@ -218,7 +277,18 @@ def range_hex(raw_value: int) -> str:
 def format_range_readback(frame: bytes, slave: int) -> dict:
     """Decode a range response for the readback evidence file."""
 
-    parsed = parse_range(frame, slave)
+    extracted = extract_response(frame)
+    if extracted.frame is None:
+        return {
+            "status": extracted.status.value,
+            "exception_code": None,
+            "raw_value": None,
+            "value_hex": "nan",
+            "profile": "nan",
+            "crc_ok": False,
+        }
+
+    parsed = parse_range(extracted.frame, slave)
     if parsed.status is not Status.OK:
         return {
             "status": parsed.status.value,
@@ -226,7 +296,7 @@ def format_range_readback(frame: bytes, slave: int) -> dict:
             "raw_value": None,
             "value_hex": "nan",
             "profile": "nan",
-            "crc_ok": crc_ok(frame),
+            "crc_ok": True,
         }
     raw = parsed.registers[0]
     return {

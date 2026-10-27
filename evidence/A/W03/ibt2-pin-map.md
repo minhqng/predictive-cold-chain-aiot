@@ -20,9 +20,24 @@ Phạm vi W03: **logic-only, default OFF**. Không PWM, không chạy TEC, khôn
 |---|---|---|
 | `RPWM` | **GPIO5** (`CG_ACTUATOR_RPWM_PIN`) | GPIO output; **chỉ ghi 0**; không LEDC/MCPWM |
 | `EN` (chân enable được dùng theo đấu dây as-built) | **GPIO6** (`CG_ACTUATOR_ENABLE_PIN`) | GPIO output; **chỉ ghi 0**; xóa trước khi ghi PWM mức |
-| `LPWM` | — | **Chưa đấu vào GPIO nào trong W03** — tie-off là quyết định của D |
-| `L_EN` / chân enable còn lại | — | như trên |
+| `L_EN` | **GPIO10** theo as-built **operator-reported** | **Không được firmware W03 điều khiển**; **xung đột** với DS18B20 của W02 — xem §2.1 |
+| `LPWM` | `GND` theo as-built operator-reported | Không điều khiển; tie-off là quyết định của D |
 | `R_IS` / `L_IS` | — | không đấu |
+
+### 2.1 Xung đột `GPIO10` — chặn freeze, không tự sửa
+
+`GPIO10` đồng thời là:
+
+- `L_EN` của IBT-2 theo as-built **operator-reported**;
+- `CG_PIN_DS18B20_DATA 10` trong `firmware/main/coldguard_config.h` (W02), đã dùng để đọc
+  4 ROM ID và 620 mẫu DS18B20 trên bench;
+- chân DS18B20 DATA trong `docs/01 §11.7`.
+
+Không thể cùng lúc là bus 1-Wire và enable nửa cầu. W03 **không** đổi pinout firmware, không
+đổi dây, không kết luận chân nào "đúng": D + leader phải xác nhận as-built thật và quyết định
+(`team-dependencies.md` `TD-W03-03`).
+
+**CẢNH BÁO AN TOÀN / BLOCKER:** Xung đột này có thể dẫn tới hành vi kích hoạt nửa cầu IBT-2 ngoài ý muốn (khi bus 1-Wire kéo mức) hoặc làm tê liệt chuỗi đọc cảm biến nhiệt. **Nghiêm cấm cấp nguồn tải/TEC (energize)** dưới cấu hình xung đột này cho tới khi có phương án phân chân và an toàn được duyệt chính thức. Cho tới khi chốt, mọi kết luận "default OFF ổn định" chỉ là quan sát trên bench logic, không phải bất biến phần cứng đã freeze.
 
 **Thứ tự an toàn (đã implement + kiểm tra tĩnh):** `app_main()` gọi `cg_safety_force_actuator_off()` như hành động đầu tiên; `force_off` xóa `ENABLE` (0) trước, rồi ghi `RPWM` (0); kéo xuống (pulldown) cấu hình để chân không nổi khi chưa được điều khiển.
 
@@ -47,10 +62,29 @@ Phạm vi W03: **logic-only, default OFF**. Không PWM, không chạy TEC, khôn
 
 | Việc | Loại | Ai |
 |---|---|---|
-| D duyệt sơ đồ đấu `LPWM`/`L_EN` (tie-off qua trở hay để nổi có kiểm soát) | SAFETY REVIEW | D |
+| Chốt as-built `GPIO10` (L_EN hay DS18B20 DATA) và `pin_map_version` | TEAM DEPENDENCY (`TD-W03-03`) | D + leader |
+| D duyệt sơ đồ đấu `LPWM`/`L_EN` (tie-off qua trở hay để nổi có kiểm soát) | SAFETY REVIEW (`TD-W03-06`) | D |
 | Log **cold-boot/reset/watchdog** với tải an toàn: ≥5 cold boot + ≥5 reset, chứng minh `RPWM`/`EN` ở 0 trong toàn bộ capture; dùng `cg_capture.py` + đọc `#CG SAFETY` + trạng thái chân nếu có điều kiện đo | MEASUREMENT REQUIRED | Member A + D |
 | Xác nhận mức logic các chân theo datasheet module (ngưỡng VIH esp32-s3 3.3 V) | SAFETY REVIEW | D |
 | Chỉ khi mọi thứ trên xong mới xét PWM (W04/H4) | ngoài phạm vi W03 | D + leader |
+
+### 5.1 TEST 133B (2026-10-27) đóng góp được gì
+
+Sketch `hardware-2026-10-27/firmware/ColdGuard_TEST_133B_reset_default_off.ino` là **định
+nghĩa test**, không phải firmware W03. Người vận hành báo 6 cửa sổ × 20 mẫu (120/120 hợp lệ,
+`0.00 A`, `0.0 W`), 5 lần `ESP.restart()` và cold boot thủ công vẫn OFF.
+
+Ba giới hạn giữ nguyên:
+
+1. Dòng `RPWM: LOW / R_EN: LOW / L_EN: LOW` là **hằng chuỗi do sketch in** — không phải đọc
+   lại trạng thái chân, không có scope/logic analyzer.
+2. Sketch tự ghi `SCOPE: AFTER FIRMWARE START ONLY` — không chứng minh khoảng **trước**
+   `setup()`.
+3. Cold boot chỉ là lời khai; không có bảng đếm/timestamp/raw log →
+   `RAW_EVIDENCE_NOT_AVAILABLE`.
+
+Vì vậy TEST 133B là quan sát ủng hộ, **không** phải log cold-boot mà §5 yêu cầu; nó cũng
+không xử lý được xung đột `GPIO10` ở §2.1.
 
 ## 6. Ghi chú hồ sơ
 
