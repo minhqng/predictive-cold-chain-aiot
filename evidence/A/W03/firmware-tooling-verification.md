@@ -75,7 +75,7 @@ Các test tập trung vào đúng nơi dễ sai:
 
 ## 4. Compile thật
 
-Xem `build-report-w03.md` (GitHub Actions, image `espressif/idf:v6.1`, target `esp32s3`). Kết quả ghi trong file đó — **không** nằm trong file này để tránh mâu thuẫn khi CI cập nhật.
+Xem `build-report-w03.md` (GitHub Actions, image `espressif/idf:v6.1`, target `esp32s3`). Kết quả ghi trong file đó — **không** nằm trong file này để tránh mâu thuẫn khi CI cập nhật. Đối với commit `f8587dd`, bằng chứng biên dịch native Windows ESP-IDF v6.1 cục bộ được lưu trữ tại bundle `build-native-windows-2026-10-27/` (chi tiết tại `build-report-w03.md` §7).
 
 ## 5. Sửa lỗi đóng gói W02 (kèm trong nhánh W03)
 

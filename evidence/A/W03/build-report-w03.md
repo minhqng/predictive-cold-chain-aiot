@@ -110,3 +110,18 @@ and checksums"), không sao chép tay.
    được build trong CI** (mặc định là AUTO theo phần cứng as-built). Nếu D/leader chọn mua
    module MAX3485 đúng freeze, cần thêm build variant (đổi macro) trước khi tin nhánh đó.
    Ghi ở đây để không ai đọc code MANUAL như đã được compile.
+
+## 7. Bằng chứng biên dịch Native Windows ESP-IDF v6.1 cho commit `f8587dd` (2026-10-27)
+
+- **Bối cảnh:** Sau khi phân phối commit `f8587dd` lên PR #9, GitHub Actions runner trên mây bị chặn khởi chạy bởi giới hạn thanh toán của tài khoản kho mã (`Billing & plans` — run `40532665748`, `40532676477`).
+- **Bằng chứng độc lập:** Để cung cấp bằng chứng kỹ thuật rằng mã nguồn C của commit `f8587dd` biên dịch thành công mà không có lỗi cú pháp hay liên kết, bộ công cụ native ESP-IDF v6.1 chính thức (Xtensa GCC 15.2.0, CMake 4.0.3, Ninja 1.12.1) đã được cài đặt và thực thi trên máy trạm Windows trong thư mục scratch cách ly hoàn toàn.
+- **Thư mục bằng chứng:** `evidence/A/W03/build-native-windows-2026-10-27/`
+- **Kết quả:** `LOCAL ESP-IDF v6.1 BUILD: PASS`
+  - Target: `esp32s3`
+  - Lệnh: `idf.py set-target esp32s3` (exit 0) && `idf.py build` (exit 0)
+  - 1.090 bước Ninja hoàn tất (0 cảnh báo compiler, 0 lỗi).
+  - `coldguard_firmware.bin`: 231.680 bytes (`0x38900`), SHA-256 `1AA56B48D9DF6B4CCEE15275A9E2F7F400893EB1E88AD777C33C780E3A5085A9`
+  - `coldguard_firmware.elf`: 4.587.188 bytes, SHA-256 `323C7B6D5178EC00C38E3A2202A1CD365BDE35EB532D86D387B14E1E7EF66C0C`
+  - Phân vùng app: `0x100000` (1.048.576 bytes); dung lượng trống: `0xc7700` = 816.896 bytes (78% trống).
+  - Verifier script: `py evidence/A/W03/build-native-windows-2026-10-27/verify_build.py` (PASS).
+- **Ranh giới:** Bằng chứng này xác nhận tính đúng đắn kỹ thuật của mã nguồn C, nhưng **KHÔNG** làm thay đổi trạng thái Cloud CI của GitHub (vẫn cần tài khoản kho mã xử lý thanh toán) và **KHÔNG** phải nghiệm thu phần cứng (TD-W03-01..11 giữ nguyên, nghiêm cấm cấp nguồn TEC).

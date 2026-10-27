@@ -17,3 +17,4 @@ evidence/A/W03/hardware-2026-10-20/firmware/** -text
 evidence/A/W03/hardware-2026-10-20/tools/** -text
 evidence/A/W03/hardware-2026-10-27/raw/** -text
 evidence/A/W03/hardware-2026-10-27/firmware/** -text
+evidence/A/W03/build-native-windows-2026-10-27/raw/** -text
