@@ -2,7 +2,7 @@
 
 **Snapshot:** 2026-10-27 · **Role:** Member A (Embedded & Thermal) · **Dossier status:** `MEMBER A W03 EVIDENCE — DELIVERED FOR REVIEW` · **Team gate:** `W03 TEAM GATE: PENDING_REVIEW` · **Technical verdict:** `W03 NOT PASS` · **hardware_config_id:** `NOT_ASSIGNED`
 **Firmware commit (repo):** `b85869322fb8c9828e25942346465d1ec6e131d7` — xem `firmware-tooling-verification.md`
-**Build ESP-IDF thật (CI):** SUCCESS cho commit `ae1744d` (run `39213118829`, image `espressif/idf:v6.1`, target `esp32s3`; cây `firmware/` giống hệt `firmware_commit b858693`). Patch echo/prefix hiện tại trong working tree **chưa** được build CI tại thời điểm ghi (`build-report-w03.md`).
+**Build ESP-IDF thật:** CI SUCCESS cho commit `ae1744d` (run `39213118829`, image `espressif/idf:v6.1`, target `esp32s3`). Đối với commit đã push `f8587dd`: GitHub Actions CI trên mây bị chặn bởi hạn mức thanh toán tài khoản kho mã (`Billing & plans` — run `40532665748`), nhưng bản build native Windows ESP-IDF v6.1 cục bộ trên đúng mã nguồn commit `f8587dd` đạt **PASS** (1.090 bước Ninja, 0 warning, 0 error, xem `build-native-windows-2026-10-27/` và `build-report-w03.md`).
 **Operator:** Member A (không ghi tên cá nhân trong repo)
 
 ## Phạm vi và thẩm quyền
@@ -42,6 +42,7 @@
 | `validate_w03.py` | Kiểm tra cấu trúc hồ sơ + commit firmware + chạy lại static checks + chạy hai bundle verifier; **không** xác nhận vật lý |
 | `hardware-2026-10-20/` | Archive bench Arduino: 7 file raw byte-for-byte + hash, 601/594/7, CRC audit, FC06 archive-only |
 | `hardware-2026-10-27/` | Bundle bench mới: TEST 131/132B/133B, shunt continuity, as-built, provenance matrix, verifier |
+| `build-native-windows-2026-10-27/` | Bundle build native Windows ESP-IDF v6.1 trên commit `f8587dd`: log thô 10-set-target + 20-idf-py-build, checksum artifact, verifier `verify_build.py` |
 | `PR_BODY.md` | Nội dung mô tả PR (bản cục bộ để review trước khi publish) |
 
 ## Việc W03 cố ý KHÔNG làm
