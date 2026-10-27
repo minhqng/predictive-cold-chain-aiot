@@ -47,3 +47,53 @@
 - Cực tính không chắc, đầu nối ấm/nóng, tia lửa, mùi lạ, PSU hành xử bất thường, fuse nổ hoặc dây lỏng → **ngắt điện lưới** và điều tra.
 - Không bắc cầu fuse, không nối tắt PSU để mô phỏng lỗi, không cấp TEC khi quạt/tản nhiệt chưa hoạt động, không dùng jumper mảnh làm dây công suất.
 - **W03 không phê duyệt bất kỳ lần chạy tải dòng lớn nào.** Mọi bài đo W03 chỉ được thực hiện khi có mặt D (hoặc người được D ủy quyền), theo checklist tương ứng trong từng file.
+
+## 5. Bench archive 2026-10-20 — phân biệt xác nhận của người vận hành với phép đo
+
+Archive `hardware-2026-10-20/` chỉ là bằng chứng phụ của một phiên Arduino. Nó **không**
+thay đổi CR-A-W01-01 và không nâng bất kỳ mục nào trong `acceptance.md`.
+
+| Nội dung | Cách ghi đúng | Không được suy diễn |
+|---|---|---|
+| TEC OFF trong phiên OFF10 | **Xác nhận của người vận hành** (operator assertion), không được đo độc lập | Không coi là TEC OFF đã chứng minh; 594 mẫu hợp lệ ghi `current_a=0.00` không tự chứng minh TEC không được cấp nguồn |
+| IBT-2 VCC ≈ 5 V, bốn chân EN/PWM ≈ 0 V | **Số đo tay của người vận hành** tại thời điểm đó | Không phải log boot/reset/watchdog; không phải bằng chứng cold-boot default-OFF |
+| B+/B−/M+/M− đang tháo | **Trạng thái do người vận hành báo** | Không chứng minh module không thể bật khi reset, không chứng minh tie-off |
+| Shunt `raw=0x0001` | Log văn bản Arduino; **không có raw FC03 tx/rx**, không có CRC host-side | Không phải A-W03-04 readback; không chứng minh tải 50 A |
+| 601 mẫu, 594 `CRC_VALID`, 7 `INVALID` | Kết quả của sketch Arduino V4, gate `COLLECTED_WITH_ERRORS` | Không phải ESP-IDF W03; không chứng minh patch sửa 7 lỗi |
+
+Không có thử tải **50 A thật** và không có lần chạy **ESP-IDF W03** trên board trong
+archive này. 594 mẫu hợp lệ đều ghi `current_a=0.00`; 7 mẫu lỗi để trống. Đây chỉ là
+quan sát, không phải phép đo tải.
+
+**FC06:** `firmware/ColdGuard_W03_TTL485_SET50A_ONCE_8N1.ino` và `raw/w3testlog.txt` chứa
+lệnh FC06. Đây là vật liệu **`ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`**: không nạp lại,
+không gửi FC06, không dùng làm bằng chứng W03. D/leader phải xử lý như một sai lệch quy
+trình bench.
+
+**Phân áp:** nhãn `via_existing_5k_10k_divider` trong log là do sketch in, không phải kết
+luận topology. Không được gọi các điện trở 10 kΩ (hoặc mắc song song) là "5 kΩ" khi chưa
+kiểm tra sơ đồ; giá trị tương đương thay đổi theo cách mắc. Mạch 10k/10k/10k hiện tại vẫn
+là đấu nối tạm chưa được duyệt.
+
+## 6. Phiên bench 2026-10-27 — cùng quy tắc, thêm ba rủi ro mới
+
+Phiên TEST 131/132B/133B **không** thay đổi CR-A-W01-01 và **không** nâng bất kỳ mục nào
+trong `acceptance.md`. Nó thêm ba điểm phải theo dõi:
+
+| Nội dung | Cách ghi đúng | Không được suy diễn |
+|---|---|---|
+| TEST 132B: 600/600 hợp lệ, `11.94–11.95 V`, log tự gate `REVIEW REQUIRED` | Sketch Arduino bench; `MEASURED — BENCH ARTIFACT` trong phạm vi file | Không phải firmware W03; không phải PASS; `I=0.00 A` chỉ dưới độ phân giải |
+| TEST 131: `01 03 02 00 01 79 84`, CRC `0x8479` khớp | `OPERATOR-REPORTED` frame đã kiểm CRC host-side | Không có capture gốc → không phải evidence-grade readback |
+| `B−` ↔ `GND logic` ≈ `0 Ω` (as-built) | Số đọc DMM của người vận hành | **Failure mode mở**: shunt hở có thể đẩy dòng hồi qua GND logic → D quyết định (`TD-W03-02`) |
+
+Hai rủi ro cấu hình phải chặn freeze:
+
+1. **`GPIO10` vừa là `L_EN` (as-built) vừa là `CG_PIN_DS18B20_DATA` (W02)** — không thể cùng
+   một chân; W03 không tự đổi pinout (`TD-W03-03`).
+2. **`B−` common với GND logic** — nếu đường shunt/đầu cốt hở, dòng TEC có thể đi qua dây
+   GND logic/USB; đây là giả thuyết từ continuity, chưa xảy ra sự cố, nhưng phải được D
+   duyệt trước khi chạy tải (`TD-W03-02`).
+
+Không có thử tải **50 A**, không có TEC ON có kiểm soát, và **không** có lần chạy firmware
+ESP-IDF W03 trên board trong phiên này. Chi tiết phân loại bằng chứng:
+`hardware-2026-10-27/provenance-matrix.md`.

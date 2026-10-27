@@ -9,11 +9,13 @@ inferred from the shunt label. The firmware logs the whole exchange:
 This tool re-derives everything it can from the raw ``tx``/``rx`` hex in the
 capture instead of trusting the firmware's own decode:
 
+* the response is extracted from the raw RX tail first, so a request echo or
+  a 7/8-byte prefix does not break the host decode;
 * CRC16/MODBUS is recomputed host-side and compared with the logged
   ``crc_ok`` flag (a mismatch is a finding, not a warning);
 * the range value and profile name are decoded by ``cg_modbus`` from the
-  response bytes and compared with the firmware's ``value``/``profile``
-  tokens;
+  extracted response bytes and compared with the firmware's
+  ``value``/``profile`` tokens;
 * the ``read_only=1`` claim in ``#CG PZEM_CFG`` is required: a capture
   without it cannot certify that the session stayed read-only.
 
@@ -39,14 +41,16 @@ def decode_range_line(line: cg_serial.PzemRangeLine, slave: int) -> dict:
     """Host-side decode + cross-check of one firmware PZEM_RANGE line."""
 
     tx = bytes.fromhex(line.tx) if line.tx else b""
-    rx = bytes.fromhex(line.rx) if line.rx else b""
-
-    host_crc_ok = cg_modbus.crc_ok(rx) if len(rx) >= 4 else False
+    rx_raw = bytes.fromhex(line.rx) if line.rx else b""
+    extracted = cg_modbus.extract_response(rx_raw)
+    rx = extracted.frame
+    parsed = None
+    host_crc_ok = rx is not None
     decoded_raw = None
     decoded_hex = None
     decoded_profile = None
-    decode_status = "NO_RESPONSE"
-    if len(rx) >= 4:
+    decode_status = "NO_RESPONSE" if not rx_raw else extracted.status.value
+    if rx is not None:
         parsed = cg_modbus.parse_range(rx, slave)
         decode_status = parsed.status.value
         if parsed.status is cg_modbus.Status.OK:
@@ -55,11 +59,17 @@ def decode_range_line(line: cg_serial.PzemRangeLine, slave: int) -> dict:
             decoded_profile = cg_modbus.profile_name(decoded_raw)
 
     problems: list[str] = []
-    if line.status == "OK" and not len(rx) >= 4:
-        problems.append("firmware claims OK but no response bytes were logged")
-    if len(rx) >= 4 and host_crc_ok != line.crc_ok:
+    if line.status == "OK" and rx is None:
+        problems.append(
+            "firmware claims OK but no complete CRC-valid response frame was logged"
+        )
+    if rx_raw and host_crc_ok != line.crc_ok:
         problems.append(
             f"CRC disagreement: firmware crc_ok={int(line.crc_ok)}, host crc_ok={int(host_crc_ok)}"
+        )
+    if parsed is not None and line.status == "OK" and parsed.status is not cg_modbus.Status.OK:
+        problems.append(
+            f"firmware claims OK but host parse rejected the frame as {parsed.status.value}"
         )
     if decoded_hex is not None and decoded_hex != line.value_hex:
         problems.append(
@@ -68,6 +78,15 @@ def decode_range_line(line: cg_serial.PzemRangeLine, slave: int) -> dict:
     if decoded_profile is not None and decoded_profile != line.profile:
         problems.append(
             f"profile disagreement: firmware {line.profile}, host {decoded_profile}"
+        )
+    if (
+        parsed is not None
+        and parsed.status is cg_modbus.Status.EXCEPTION
+        and parsed.exception_code != line.exception_code
+    ):
+        problems.append(
+            "exception disagreement: "
+            f"firmware {line.exception_code}, host {parsed.exception_code}"
         )
     if line.status == "OK" and line.profile not in (
         "50A",
@@ -83,6 +102,7 @@ def decode_range_line(line: cg_serial.PzemRangeLine, slave: int) -> dict:
         "status": line.status,
         "tx": line.tx,
         "rx": line.rx,
+        "rx_frame": rx.hex().upper() if rx else "",
         "firmware_crc_ok": line.crc_ok,
         "host_crc_ok": host_crc_ok,
         "host_decode_status": decode_status,
@@ -91,6 +111,7 @@ def decode_range_line(line: cg_serial.PzemRangeLine, slave: int) -> dict:
         "firmware_profile": line.profile,
         "host_profile": decoded_profile,
         "exception_code": line.exception_code,
+        "host_exception_code": parsed.exception_code if parsed else None,
         "problems": problems,
     }
 
@@ -111,6 +132,8 @@ def render(report: dict) -> str:
         lines.append(f"uptime_ms={row['uptime_ms']} status={row['status']}")
         lines.append(f"  tx                    : {row['tx']}")
         lines.append(f"  rx                    : {row['rx']}")
+        if row["rx_frame"] and row["rx_frame"] != (row["rx"] or ""):
+            lines.append(f"  frame host            : {row['rx_frame']}")
         lines.append(
             f"  crc firmware/host     : {int(row['firmware_crc_ok'])}/{int(row['host_crc_ok'])}"
         )

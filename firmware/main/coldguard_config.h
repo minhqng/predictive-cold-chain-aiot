@@ -151,6 +151,13 @@
 #define CG_RS485_DIR_MANUAL 1
 #define CG_RS485_TX_DONE_TIMEOUT_MS 50
 
+/* A response chunk is considered complete after this much line silence. The
+ * transport still returns as soon as the caller's buffer is full; the poll
+ * loop below uses this only to stop waiting for more bytes after the last
+ * received one. It must stay above the Modbus RTU 3.5-character gap (about
+ * 4 ms at 9600 8N1) so a frame is not split by normal inter-byte spacing. */
+#define CG_RS485_RX_IDLE_MS 10
+
 /* ------------------------------------------------------------------ */
 /* W03 - PZEM-017 Modbus RTU (docs/01 section 9)                       */
 /* ------------------------------------------------------------------ */

@@ -18,6 +18,7 @@ TOOLS = pathlib.Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(TOOLS))
 
 import cg_build_pzem_off_csv  # noqa: E402
+import cg_modbus  # noqa: E402
 import cg_pzem_fixtures as fixtures  # noqa: E402
 import cg_pzem_readback  # noqa: E402
 
@@ -52,6 +53,41 @@ class ReadbackTests(unittest.TestCase):
         self.assertIn("PZEM READBACK: DECODED", output)
         self.assertIn("value firmware/host   : 0x0001 / 0x0001", output)
         self.assertIn("profile firmware/host : 50A / 50A", output)
+
+    def test_prefixed_range_frame_decodes(self) -> None:
+        for prefix in (b"\xaa" * 7, cg_modbus.build_read_range(1)):
+            capture = fixtures.cfg_line() + fixtures.range_log_line(
+                1234, value=0x0001, prefix=prefix
+            )
+            code, output = run_readback(capture)
+            self.assertEqual(code, 0, output)
+            self.assertIn("PZEM READBACK: DECODED", output)
+            self.assertIn("frame host", output)
+
+    def test_prefixed_exception_is_not_decoded_as_ok(self) -> None:
+        frame = cg_modbus.append_crc(bytes((1, 0x83, 0x02)))
+        prefix = cg_modbus.build_read_range(1)
+        capture = fixtures.cfg_line() + (
+            "#CG PZEM_RANGE uptime_ms=1234 status=EXCEPTION value=nan profile=nan "
+            f"crc_ok=1 exc=2 tx={fixtures.hexs(cg_modbus.build_read_range(1))} "
+            f"rx={fixtures.hexs(prefix + frame)}\n"
+        )
+        code, output = run_readback(capture)
+        self.assertEqual(code, 1, output)
+        self.assertIn("NOT DECODED", output)
+        self.assertNotIn("PZEM READBACK: DECODED", output)
+
+    def test_exception_code_disagreement_fails(self) -> None:
+        frame = cg_modbus.append_crc(bytes((1, 0x83, 0x02)))
+        prefix = cg_modbus.build_read_range(1)
+        capture = fixtures.cfg_line() + (
+            "#CG PZEM_RANGE uptime_ms=1234 status=EXCEPTION value=nan profile=nan "
+            f"crc_ok=1 exc=3 tx={fixtures.hexs(cg_modbus.build_read_range(1))} "
+            f"rx={fixtures.hexs(prefix + frame)}\n"
+        )
+        code, output = run_readback(capture)
+        self.assertEqual(code, 1, output)
+        self.assertIn("exception disagreement", output)
 
     def test_expected_profile_mismatch_fails(self) -> None:
         capture = fixtures.cfg_line() + fixtures.range_log_line(1234, value=0x0000)

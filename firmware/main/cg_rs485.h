@@ -36,8 +36,14 @@ bool cg_rs485_init(void);
  * transfer and released after the last stop bit. */
 bool cg_rs485_write(const uint8_t *data, size_t len);
 
-/* Reads up to `want` bytes, waiting at most `timeout_ms`.
- * Returns the number of bytes read (0 on timeout) or -1 on driver error. */
+/* Reads available chunks up to `want` bytes, waiting at most `timeout_ms`
+ * overall (rounded up to one RTOS tick when non-zero). Returns as soon as
+ * `want` bytes have been read, or after CG_RS485_RX_IDLE_MS of line silence
+ * once data has arrived. It never waits
+ * for `want` bytes after a complete short response. The caller may call it
+ * again to append a later chunk (for example an echo followed by the
+ * response). Returns the number of bytes read (0 on timeout) or -1 on driver
+ * error. */
 int cg_rs485_read(uint8_t *buffer, size_t want, uint32_t timeout_ms);
 
 /* Drops stale bytes before a new request. */

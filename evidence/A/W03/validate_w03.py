@@ -10,11 +10,13 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    ở snapshot này. Nếu một buổi đo thật tạo ra chúng, phải cập nhật ``acceptance.md``
    và script này **cùng lúc** — không được để file thật xuất hiện cạnh khai báo MISSING.
 3. ``acceptance.md`` có đủ 7 hạng mục A-W03-01..A-W03-07 và **có chứa** các nhãn trạng
-   thái trung thực bắt buộc (``W03 NOT PASS``, ``VERIFIED BY EXISTING EVIDENCE``,
-   ``CODE IMPLEMENTED / HARDWARE RUN PENDING``, ``MEASUREMENT REQUIRED``,
-   ``SAFETY REVIEW PENDING``, ``LEADER APPROVAL PENDING``, ``PENDING_READBACK``).
-   Script chỉ kiểm tra *sự hiện diện* của nhãn — nó **không** đọc hiểu văn xuôi và
-   **không** thể phát hiện một câu tự nhận PASS đặt ở chỗ khác.
+   thái trung thực bắt buộc (``W03 NOT PASS``, ``MEMBER A W03 EVIDENCE — DELIVERED FOR
+   REVIEW``, ``W03 TEAM GATE: PENDING_REVIEW``, ``VERIFIED BY EXISTING EVIDENCE``,
+   ``CODE IMPLEMENTED / HARDWARE RUN PENDING``, ``MEASURED — BENCH ARTIFACT``,
+   ``OPERATOR-REPORTED — RAW CAPTURE NOT AVAILABLE``, ``RAW_EVIDENCE_NOT_AVAILABLE``,
+   ``MEASUREMENT REQUIRED``, ``SAFETY REVIEW PENDING``, ``LEADER APPROVAL PENDING``,
+   ``PENDING_READBACK``). Script chỉ kiểm tra *sự hiện diện* của nhãn — nó **không**
+   đọc hiểu văn xuôi và **không** thể phát hiện một câu tự nhận PASS đặt ở chỗ khác.
 4. ``firmware_commit`` trong ``firmware-tooling-verification.md`` phải là SHA 40 hex
    trỏ tới một commit thật trong repo chứa **các module W03** (``cg_pzem.c``,
    ``cg_crc16.c``, ``cg_rs485.c``, ``cg_power.c``, ``cg_actuator.c``, ``cg_safety.c``,
@@ -33,6 +35,10 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
 7. Firmware trong repo khớp hồ sơ: chạy ``firmware/tools/cg_check_firmware_w03.py
    --quiet`` (parity register/scaling, read-only, CRC-trước-khi-tin, retry bound,
    default-OFF, boot order, grammar, CMake…).
+8. Hai bundle bench tự kiểm tra lại được: chạy ``hardware-2026-10-27/verify_test132b.py``
+   (hash, 600 hàng, span 598.99 s, gate ``REVIEW REQUIRED``, CRC TEST 131) và
+   ``hardware-2026-10-20/verify_capture.py`` (7/7 hash, 601/594/7, 7 frame CRC,
+   FC06 archive-only). Cả hai script chỉ đọc file, không mở serial.
 
 Cách chạy (Windows): ``py validate_w03.py``. Trên một số máy, ``python`` là alias
 Microsoft Store bị hỏng và sẽ không chạy.
@@ -53,6 +59,7 @@ REPO_ROOT = ROOT.parents[2]
 REQUIRED_FILES = [
     "README.md",
     "acceptance.md",
+    "team-dependencies.md",
     "hardware-deviation-and-safety.md",
     "logic-power-measurement.md",
     "rs485-pin-and-compatibility.md",
@@ -63,6 +70,17 @@ REQUIRED_FILES = [
     "PR_BODY.md",
     "review-w03.md",
     "validate_w03.py",
+    "hardware-2026-10-20/README.md",
+    "hardware-2026-10-20/SHA256SUMS.txt",
+    "hardware-2026-10-20/verify_capture.py",
+    "hardware-2026-10-27/README.md",
+    "hardware-2026-10-27/SHA256SUMS.txt",
+    "hardware-2026-10-27/provenance-matrix.md",
+    "hardware-2026-10-27/as-built-configuration.md",
+    "hardware-2026-10-27/test-131-profile-readback.md",
+    "hardware-2026-10-27/test-133b-reset-default-off.md",
+    "hardware-2026-10-27/shunt-continuity.md",
+    "hardware-2026-10-27/verify_test132b.py",
 ]
 
 # Artifact canonical được acceptance.md khai báo là còn thiếu ở snapshot này. Nếu một
@@ -76,8 +94,13 @@ ACCEPTANCE_ITEMS = [f"A-W03-{i:02d}" for i in range(1, 8)]
 
 REQUIRED_ACCEPTANCE_LABELS = [
     "W03 NOT PASS",
+    "MEMBER A W03 EVIDENCE — DELIVERED FOR REVIEW",
+    "W03 TEAM GATE: PENDING_REVIEW",
     "VERIFIED BY EXISTING EVIDENCE",
     "CODE IMPLEMENTED / HARDWARE RUN PENDING",
+    "MEASURED — BENCH ARTIFACT",
+    "OPERATOR-REPORTED — RAW CAPTURE NOT AVAILABLE",
+    "RAW_EVIDENCE_NOT_AVAILABLE",
     "MEASUREMENT REQUIRED",
     "SAFETY REVIEW PENDING",
     "LEADER APPROVAL PENDING",
@@ -127,16 +150,38 @@ WORKFLOW_FORBIDDEN_SNIPPETS = [
 
 # Neo nội dung: mỗi mục là (file, token bắt buộc, vì sao).
 CONTENT_ANCHORS = [
+    ("team-dependencies.md", "TD-W03-01",
+     "bảng quyết định chờ D/leader phải neo đúng ID"),
+    ("team-dependencies.md", "PENDING_REVIEW",
+     "cổng nhóm phải giữ PENDING_REVIEW, không được tự nâng"),
     ("hardware-deviation-and-safety.md", "CR-A-W01-01",
      "lệch freeze TTL485 vs MAX3485 phải được nêu đúng mã review"),
     ("rs485-pin-and-compatibility.md", "TTL485",
      "module as-built là TTL485-V2.0, không được viết mà bỏ mất sự thật này"),
     ("ibt2-pin-map.md", "GPIO5", "pin map IBT-2 phải neo chân thật của RPWM"),
     ("ibt2-pin-map.md", "GPIO6", "pin map IBT-2 phải neo chân thật của ENABLE"),
+    ("ibt2-pin-map.md", "GPIO10",
+     "xung đột GPIO10 với DS18B20 của W02 phải hiện diện trong pin map"),
     ("pzem-register-readback.txt", "PENDING",
      "snapshot này chưa có readback thật; có dữ liệu thật thì cập nhật file + validator"),
     ("review-w03.md", "Member D",
      "review nội bộ phải nói rõ nó không thay thế Member D"),
+    ("hardware-2026-10-27/README.md", "REVIEW REQUIRED",
+     "gate của TEST 132B là REVIEW REQUIRED, không được đổi thành PASS"),
+    ("hardware-2026-10-27/README.md", "598.99",
+     "cửa sổ mẫu thật là 598.99 s, không được làm tròn thành 600.00 s"),
+    ("hardware-2026-10-27/provenance-matrix.md", "RAW CAPTURE FILE NOT AVAILABLE",
+     "TEST 131 không có file capture gốc; khoảng trống phải được khai báo"),
+    ("hardware-2026-10-27/as-built-configuration.md", "NOT_ASSIGNED",
+     "hardware_config_id chưa được gán, không được tự điền"),
+    ("hardware-2026-10-27/test-133b-reset-default-off.md", "AFTER FIRMWARE START ONLY",
+     "TEST 133B không chứng minh trạng thái trước setup()"),
+]
+
+# Hai bundle bench phải tự kiểm tra lại được; script chỉ đọc file, không mở serial.
+BUNDLE_VERIFIERS = [
+    "hardware-2026-10-27/verify_test132b.py",
+    "hardware-2026-10-20/verify_capture.py",
 ]
 
 failures = []
@@ -306,6 +351,29 @@ else:
                 + " | ".join((result.stdout or "").strip().splitlines()[-3:])
             )
 
+# 8. Bundle bench tự kiểm tra ---------------------------------------------------
+for rel_name in BUNDLE_VERIFIERS:
+    script = ROOT / rel_name
+    if not script.is_file():
+        failures.append(f"bundle verifier missing: {rel_name}")
+        continue
+    try:
+        result = subprocess.run(
+            [sys.executable, str(script)],
+            cwd=str(script.parent),
+            capture_output=True,
+            text=True,
+            encoding="utf-8",
+        )
+    except OSError as exc:
+        failures.append(f"{rel_name}: could not run ({exc})")
+    else:
+        if result.returncode != 0:
+            failures.append(
+                f"{rel_name}: FAILED (exit {result.returncode}): "
+                + " | ".join((result.stdout or "").strip().splitlines()[-3:])
+            )
+
 # Kết quả ---------------------------------------------------------------------
 if failures:
     print("W03 STRUCTURE FAIL")
@@ -322,6 +390,10 @@ print(
     "actuator default-OFF; "
     f"workflow {WORKFLOW_REL} (idf v6.1, esp32s3, fetch-depth 0, no flash); "
     "content anchors verified; "
-    "firmware static checks PASS."
+    "firmware static checks PASS; "
+    f"bench bundle verifiers PASS ({len(BUNDLE_VERIFIERS)})."
 )
-print("KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. W03 VẪN Ở TRẠNG THÁI NOT PASS.")
+print(
+    "KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. "
+    "W03 TEAM GATE: PENDING_REVIEW — kỹ thuật vẫn W03 NOT PASS."
+)

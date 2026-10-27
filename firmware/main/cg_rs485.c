@@ -109,9 +109,56 @@ int cg_rs485_read(uint8_t *buffer, size_t want, uint32_t timeout_ms)
     if (!s_initialized || buffer == NULL || want == 0U) {
         return -1;
     }
-    const int received =
-        uart_read_bytes(CG_RS485_PORT, buffer, want, pdMS_TO_TICKS(timeout_ms));
-    return received < 0 ? -1 : received;
+
+    const TickType_t start = xTaskGetTickCount();
+    TickType_t timeout_ticks = pdMS_TO_TICKS(timeout_ms);
+    if (timeout_ms > 0U && timeout_ticks == 0U) {
+        timeout_ticks = 1U;
+    }
+    TickType_t idle_ticks = pdMS_TO_TICKS(CG_RS485_RX_IDLE_MS);
+    if (idle_ticks == 0U) {
+        idle_ticks = 1U;
+    }
+
+    size_t total = 0U;
+    TickType_t last_rx = start;
+    bool got_data = false;
+
+    while (total < want) {
+        size_t available = 0U;
+        if (uart_get_buffered_data_len(CG_RS485_PORT, &available) != ESP_OK) {
+            return -1;
+        }
+
+        if (available > 0U) {
+            size_t take = available;
+            if (take > want - total) {
+                take = want - total;
+            }
+            const int received =
+                uart_read_bytes(CG_RS485_PORT, buffer + total, (uint32_t)take, 0);
+            if (received < 0) {
+                return -1;
+            }
+            if (received > 0) {
+                total += (size_t)received;
+                last_rx = xTaskGetTickCount();
+                got_data = true;
+                continue;
+            }
+        }
+
+        const TickType_t now = xTaskGetTickCount();
+        if (got_data && (TickType_t)(now - last_rx) >= idle_ticks) {
+            break;
+        }
+        if ((TickType_t)(now - start) >= timeout_ticks) {
+            break;
+        }
+        vTaskDelay(1);
+    }
+
+    return (int)total;
 }
 
 void cg_rs485_flush_input(void)

@@ -1,13 +1,20 @@
 # W03 firmware and tooling verification (Member A)
 
-**Ngày:** 2026-10-19 · **Phạm vi:** phần không cần phần cứng (mã nguồn + công cụ + kiểm tra tự động).
+**Ngày:** 2026-10-19 (cập nhật 2026-10-27) · **Phạm vi:** phần không cần phần cứng (mã nguồn + công cụ + kiểm tra tự động).
 Notebook này mô tả **đã implement gì**, **đã kiểm chứng bằng gì**, và **chưa làm gì**. Không có mục nào trong đây là bằng chứng đo.
+
+> **Cập nhật 2026-10-27:** phiên bench TEST 131/132B/133B **không** thay đổi firmware/tooling
+> và **không** phải bằng chứng runtime của firmware W03. Nó chỉ thêm bằng chứng bench
+> (`hardware-2026-10-27/`) và hai bundle verifier; các giới hạn ở §6 giữ nguyên.
 
 ```
 firmware_commit: b85869322fb8c9828e25942346465d1ec6e131d7
 ```
 
-*(SHA trên là commit firmware W03 trong nhánh này (gồm cả fix enum RS-485 sau lần compile CI đầu — xem `build-report-w03.md` §4). `validate_w03.py` xác minh bằng `git cat-file`/`git show` rằng commit đó chứa đủ module W03 và `coldguard_config.h` có grammar 2 + actuator default-OFF — không chỉ so chuỗi.)*
+*(Ghi chú nguồn gốc commit — phân định rõ 3 trạng thái):*
+- **Baseline firmware đã commit gần nhất trong Git:** `b85869322fb8c9828e25942346465d1ec6e131d7` (chứa đầy đủ các module W03, fix enum RS-485 sau lần compile CI đầu tiên; đã build PASS trên CI run 39213118829 ở commit `ae1744d` vốn có cây `firmware/` giống hệt). `validate_w03.py` kiểm tra commit này.
+- **Sửa đổi firmware chưa commit trong working tree hiện tại:** Bổ sung bộ trích xuất tail-extractor (`cg_pzem_extract_response`), ngưỡng ngắt idle gap 10 ms (`CG_RS485_RX_IDLE_MS`), bộ đệm RX 32 byte, kiểm chứng qua 126 unit test Python host và 89 kiểm tra tĩnh. Các hàm này chưa nằm trong commit `b858693`.
+- **Commit SHA tương lai cho bản patch:** Chưa tồn tại ở thời điểm này. Tránh gán trước SHA giả định (self-referential). SHA mới sẽ được xác lập khi toàn bộ working tree được commit chuyển giao Git.
 
 ## 1. Firmware W03 — module bản đồ
 
@@ -37,10 +44,10 @@ Quyết định thiết kế quan trọng:
 | `firmware/tools/cg_serial.py` (mở rộng) | Parse `PZEM_CFG`/`PZEM_RANGE`/`PZEM`, `GRAMMAR_VERSION=2`; thống kê link + power (mean/min/max/sd/spread/gaps/success/error) | `test_cg_serial_pzem.py` (21 test) + test W02 cũ vẫn PASS |
 | `firmware/tools/cg_pzem_readback.py` | Tái giải mã `#CG PZEM_RANGE` từ log thật: CRC host-side, value, profile, đối chiếu chéo với firmware; yêu cầu `read_only=1` | `test_cg_pzem_tools.py` |
 | `firmware/tools/cg_build_pzem_off_csv.py` | Dựng `pzem-off.csv` + summary: ≥600 s, chống trộn boot, bắt buộc `--tec-off-confirmed`, ô trống cho mẫu lỗi | `test_cg_pzem_tools.py` |
-| `firmware/tools/cg_check_firmware_w03.py` | Kiểm tra tĩnh: parity register/scaling ↔ `cg_modbus.py`, read-only, CRC trước khi tin khung, framing macro, retry bound, token parity, default-OFF, boot order, grammar, CMake | chính nó: **84 check PASS** |
+| `firmware/tools/cg_check_firmware_w03.py` | Kiểm tra tĩnh: parity register/scaling ↔ `cg_modbus.py`, read-only, CRC trước khi tin khung, framing macro, retry bound, token parity, default-OFF, boot order, grammar, CMake, echo/prefix extractor | chính nó: **89 check PASS** |
 | `firmware/tools/run_all_checks_w03.py` | Một lệnh chạy toàn bộ 5 lớp kiểm tra | xem §3 |
 
-## 3. Kiểm tra đã chạy trên máy hiện tại (2026-10-19)
+## 3. Kiểm tra đã chạy trên máy hiện tại (cập nhật 2026-10-27)
 
 ```
 py firmware/tools/run_all_checks_w03.py
@@ -48,17 +55,19 @@ py firmware/tools/run_all_checks_w03.py
 
 | Lớp | Kết quả |
 |---|---|
-| unittest (W02 + W03) | **113 test PASS** (trước W03: 57; W03 thêm 56 test) |
-| static W03 (`cg_check_firmware_w03.py`) | **84 check PASS** |
+| unittest (W02 + W03) | **126 test PASS** (W02: 57; W03 thêm 69) |
+| static W03 (`cg_check_firmware_w03.py`) | **89 check PASS** |
 | static W02 (`cg_check_firmware.py`, regression) | **39 check PASS** |
-| `validate_w02.py` (regression) | **W02 STRUCTURE PASS — 9/9 bench blob hash verified** (validator nay chạy được trên checkout sạch nhờ file log được đóng gói kèm — xem §5) |
-| `validate_w03.py` | **W03 STRUCTURE PASS** (chi tiết khi chạy) |
+| `validate_w02.py` (regression) | **W02 STRUCTURE PASS — 9/9 bench blob hash verified** |
+| `validate_w03.py` | **W03 STRUCTURE PASS** — gồm content anchors + hai bundle verifier (2026-10-20, 2026-10-27) |
 
 Các test tập trung vào đúng nơi dễ sai:
 
 - CRC: vector độc lập `01 04 0000 0001 31 CA` (từ sketch bench W01); mọi bit-flip phải bị bắt; low-byte-first.
 - Read-only: builder ném lỗi với FC 0x05/0x06/0x0F/0x10; static check quét literal FC ghi trong `cg_pzem.{c,h}` + `cg_modbus.py`.
-- Classify: `BAD_SLAVE`, `BAD_FUNCTION`, `BAD_LENGTH`, `CRC_ERR`, `EXCEPTION` (kèm mã), và "no response" là `BAD_LENGTH` phía parser còn `TIMEOUT` thuộc transport (không trộn).
+- Classify: phân tầng rõ rệt giữa transport/extractor và parser:
+  - Tầng transport / extractor (`link_transaction` + `cg_pzem_extract_response`): `TIMEOUT` khi không nhận byte nào; `UART_ERR` khi lỗi đọc UART; `BAD_LENGTH` khi chỉ nhận echo request hoặc dữ liệu không kết thúc bằng khung Modbus hợp lệ (`plausible=false`); `CRC_ERR` khi ứng viên đuôi có CRC sai.
+  - Tầng parser (`cg_pzem_parse_input` / `cg_pzem_parse_range`): `BAD_SLAVE` (sai slave), `BAD_FUNCTION` (sai function), `BAD_LENGTH` (sai độ dài payload/byte count), `EXCEPTION` (phản hồi Modbus exception kèm mã lỗi).
 - Scaling: V/I 0.01; P/Wh 32-bit low-word-first (test đảo word chứng minh thứ tự); decode cần đủ 6 thanh ghi.
 - Parser: `nan` → `None`; số trên dòng non-OK **không** vào thống kê; grammar v1 vẫn parse; boot grouping; malformed được ghi lại.
 - Thống kê: success/error rate, status counts, CRC/timeout counts, gaps > 2×median, sd/spread; mẫu lỗi không vào mean.
