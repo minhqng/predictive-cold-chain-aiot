@@ -125,7 +125,7 @@ docker run --rm -v /tmp/coldguard-firmware-build:/project:z -w /project espressi
 
 ---
 
-## B4. Dán nhãn vật lý (`A-W02-02`, cần cho leader review)
+## B4. Dán nhãn vật lý (`A-W02-02`)
 
 1. Nhãn **T1** (gần cửa) → đầu dò có ROM `287088CA00000051`; **T2** (giữa) → `28AEBF2200000006`;
    **T3** (xa/đối diện) → `28CBE9CA00000072`; **SPARE** → `283BE5C9000000A9`.
@@ -146,7 +146,7 @@ chip-ID `0x60`, `BME280_INIT=PASS`, T/RH/P đọc hợp lý, 403/403 mẫu hợp
 Còn lại của `A-W02-06` (khi lắp cụm cuối):
 
 - vị trí gá BME280 trong cụm + ảnh/mô tả khoảng cách tới ESP32/V1 (tự sấy nóng) ⇒ `PENDING_TEST`;
-- (tùy quyết định của leader) tích hợp driver BME280 vào firmware ESP-IDF W02 — hiện **không** thuộc phạm vi firmware.
+- (phạm vi cần ghi bằng văn bản) tích hợp driver BME280 vào firmware ESP-IDF W02 — hiện **không** thuộc phạm vi firmware.
 
 > Bài bench dùng sketch Arduino đã **ghi đè** firmware ESP-IDF trong MCU — trước khi chạy
 > B1–B4 phải **nạp lại firmware chính thức** (B0).

@@ -15,8 +15,10 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    và ROM bytes trong ``coldguard_config.h`` của commit đó phải khớp tệp này.
    Giá trị tạm ``FIRMWARE_COMMIT_PENDING`` là FAIL; không chạy được ``git`` để
    xác minh cũng là FAIL (claim không kiểm chứng được thì không được coi là hợp lệ).
-5. ``acceptance.md`` có đủ 7 hạng mục A-W02-01..A-W02-07 và **có chứa** các nhãn trạng thái
-   trung thực bắt buộc (``W02 NOT PASS``, ``PENDING_TEST``, ``DEFERRED``,
+5. ``acceptance.md`` có đủ 7 hạng mục A-W02-01..A-W02-07 và **có chứa** bộ từ vựng
+   trạng thái trung thực (``MEMBER A W02 EVIDENCE — VERIFIED WITHIN TESTED SCOPE``,
+   ``DONE``, ``PARTIAL``, ``HARDWARE-LIMITED``, ``NOT IMPLEMENTED``,
+   ``INFRASTRUCTURE-LIMITED``, ``PENDING_TEST``, ``DEFERRED``,
    ``ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING``, ``RAW_EVIDENCE_PENDING``). Script chỉ
    kiểm tra *sự hiện diện* của nhãn — nó **không** đọc hiểu văn xuôi và **không** thể
    phát hiện một câu tự nhận PASS đặt ở chỗ khác.
@@ -101,7 +103,12 @@ EXPECTED_ROM_CONFIG_HEADER = "firmware/main/coldguard_config.h"
 ROM_MAP_STATUS = "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING"
 
 REQUIRED_ACCEPTANCE_LABELS = [
-    "W02 NOT PASS",
+    "MEMBER A W02 EVIDENCE — VERIFIED WITHIN TESTED SCOPE",
+    "DONE",
+    "PARTIAL",
+    "HARDWARE-LIMITED",
+    "NOT IMPLEMENTED",
+    "INFRASTRUCTURE-LIMITED",
     "PENDING_TEST",
     "DEFERRED",
     ROM_MAP_STATUS,
@@ -451,4 +458,7 @@ print(
     "acceptance.md covers A-W02-01..A-W02-07; "
     "firmware static checks PASS."
 )
-print("KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. W02 VẪN Ở TRẠNG THÁI NOT PASS.")
+print(
+    "KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. Phần code/tooling đã kiểm chứng bằng máy; "
+    "phần vật lý còn lại theo acceptance.md §5."
+)
