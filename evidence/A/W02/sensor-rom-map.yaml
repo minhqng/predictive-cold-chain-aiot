@@ -1,6 +1,9 @@
 # ColdGuard — Member A — W02
 # DS18B20 ROM → role map (identity contract, docs/01 §6.4–6.5)
 #
+# Pin map hiệu lực (2026-10-28): evidence/A/as-built-pinmap-2026-10-27.md
+#   DS18B20 DATA = GPIO33, CG_PIN_MAP_VERSION = 2. ROM bytes dưới đây không đổi.
+#
 # Thẩm quyền: docs/01 §6.4 (sensor roles), §6.5 (identity contract),
 #             §6.6 (PHY-DS-001..003), docs/05A §11 (A-W02-02, A-W02-03).
 # Nguồn dữ liệu: evidence/A/W02/w02_rom_enumeration_4_devices.png (ảnh gốc,
@@ -16,7 +19,7 @@
 schema: coldguard.sensor-rom-map/v0
 week: W02
 owner: member-a
-hardware_config_id: NOT_ASSIGNED        # chưa được leader gán (kế thừa W01)
+hardware_config_id: NOT_ASSIGNED        # chưa được gán (kế thừa W01)
 firmware_commit: 1b93f572ed3f06a3030292b2515fa38bcaf75ca7 # commit firmware W02 trong repo (map đã ghi cứng; lần cập nhật 7: + fix door-task vTaskDelay(0) ở app_main.c — đã build thật trên CI run 39134178842, flash thật trên board ESP32-S3 và 5 reboot identity PASS — espidf-run/); xem thêm bench_sketch_source
 bench_sketch_source: NOT_IN_REPO         # sketch bench sinh ra 3 ảnh: nguồn không nằm trong repo
 calibration_id: null
@@ -93,29 +96,30 @@ verification_status:
     result: PARTIAL
     reason: >-
       4 ROM phân biệt được liệt kê và đọc giá trị hợp lệ trong cùng phiên bench;
-      canonical mong đợi đúng 3 ROM nên lệch số lượng cần leader xác nhận.
-      Ba ROM vai trò đã được ghi cứng vào firmware và đối chiếu tự động với tệp này.
+      canonical mong đợi đúng 3 ROM nên lệch số lượng cần ghi nhận bằng văn bản
+      (CR-A-W01-04). Ba ROM vai trò đã được ghi cứng vào firmware và đối chiếu tự
+      động với tệp này.
   SEN-H1-02_reboot_identity:
-    result: IMPLEMENTED_HARDWARE_RUN_PENDING
+    result: HARDWARE_VERIFIED
     reason: >-
-      Cơ chế đã có trong repo: NVS boot_count + boot_id + khối #CG ROM mỗi lần boot,
-      và công cụ firmware/tools/cg_verify_reboots.py đã được test tự động (5 boot ổn
-      định + boot_id phân biệt + boot_count tăng dần -> IDENTITY_STABLE; đổi ROM/thiếu
-      vai trò/khối lặp/boot_count không tăng -> FAIL, BOOT_METADATA_INVALID). Chưa có
-      log 5 chu kỳ reboot thật trên board nên KHÔNG được coi là đã thoả.
-    evidence_state: RAW_EVIDENCE_PENDING
+      Firmware ESP-IDF 1b93f572 đã nạp và chạy thật trên board: 6 boot (5 reset
+      host-driven + 1 context), boot_id phân biệt, NVS boot_count 5->10 tăng liên
+      tục, ROM->role ổn định 6/6 gồm cả SPARE (espidf-run/reboot-verification.md).
+    evidence_state: VERIFIED_BY_EXISTING_EVIDENCE
   SEN-H1-03_inter_sensor_consistency:
-    result: STATISTICS_VERIFIED_FROM_SCREENSHOT
+    result: BENCH_DATA_VERIFIED_FIRMWARE_RUN_PENDING
     reason: >-
-      Có bản tổng hợp 600 mẫu/đầu dò trong ảnh summary; thiếu CSV thô và timestamp
-      (xem sensor-consistency-summary.md). Công cụ dựng CSV từ log thật đã sẵn sàng
-      (firmware/tools/cg_build_sensor_csv.py, đã test tự động) nhưng chưa có lần chạy thật.
-    raw_csv_state: MISSING
+      Phiên bench 620 mẫu thật (ds18b20/) đã nhập: 620/620 mẫu x 4 vai trò, 619 s
+      đều 1000 ms, thống kê tái lập từ log. Đây là sketch Arduino standalone; CSV
+      theo schema #CG SAMPLE của firmware (cg_build_sensor_csv.py) vẫn cần phiên
+      >=600 mẫu chạy bằng firmware. Bản tổng hợp 600 mẫu/đầu dò trong ảnh cũ vẫn
+      thiếu CSV thô và timestamp (sensor-consistency-summary.md).
+    raw_csv_state: FIRMWARE_RUN_PENDING
   physical_labeling:
     result: NOT_PERFORMED
     reason: >-
-      Chưa dán nhãn T1/T2/T3 lên đầu dò. Leader review docs/05A §11 yêu cầu chỉ
-      đúng vào T1/T2/T3 và khớp với software ID — chưa thể thực hiện.
+      Chưa dán nhãn T1/T2/T3 lên đầu dò. docs/05A §11 yêu cầu chỉ đúng vào
+      T1/T2/T3 và khớp với software ID khi nhìn vào thùng — chưa thực hiện được.
     procedure: evidence/A/W02/bench-procedure-w02.md (mục B4)
 
 invariants_referenced:
@@ -127,15 +131,15 @@ invariants_referenced:
     current_state: IMPLEMENTED_IN_FIRMWARE_NOT_TESTED_ON_BENCH
     note: >-
       Firmware W02 chỉ đọc theo ROM cố định trong bảng, không dùng thứ tự discovery
-      và không có đường gán vai trò nào khác, nên không thể tự thay thế. Chưa chạy
-      trên board để quan sát hành vi khi thiếu một đầu dò.
+      và không có đường gán vai trò nào khác, nên không thể tự thay thế. Firmware đã
+      chạy 6 boot ổn định, nhưng chưa có bài rút một đầu dò để quan sát hành vi khi
+      thiếu (PENDING_TEST).
   - id: PHY-DS-003
     statement: "Di chuyển đầu dò làm thay đổi cấu hình."
     current_state: NOT_APPLICABLE_UNTIL_PLACEMENT_FROZEN
 
 next_actions:
   - Dán nhãn vật lý T1/T2/T3 (và SPARE) lên dây/đầu dò, chụp ảnh nhãn + vị trí (bench-procedure-w02.md B4).
-  - Nạp firmware đã build (CI đã PASS: build-report-w02.md; B0) rồi chạy >= 5 chu kỳ reboot thật để đóng SEN-H1-02 (B1).
-  - Chạy phiên >= 10 phút và dựng sensor-consistency.csv bằng công cụ để đóng phần CSV thô của SEN-H1-03 (B2).
+  - Chạy phiên >= 10 phút bằng firmware ESP-IDF và dựng sensor-consistency.csv bằng công cụ để đóng phần CSV của SEN-H1-03 (B2).
   - Quan sát vật lý "cửa mở -> mức thô nào" rồi chạy công cụ door với --open-level; đóng SEN-H1-05 (B3).
-  - Leader xác nhận lệch số lượng đầu dò (CR-A-W01-04) có được chấp nhận làm cấu hình W02 hay không.
+  - Ghi nhận lệch số lượng đầu dò (CR-A-W01-04) bằng văn bản để chốt cấu hình W02.

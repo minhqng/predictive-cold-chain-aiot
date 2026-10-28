@@ -8,7 +8,7 @@
  *
  * Grammar (version 2 = version 1 kinds unchanged, plus the W03 PZEM kinds):
  *   #CG LOG v=<n> fw=<fw> hw=<hw> device=<dev> pin_map=<n> grammar=<n>
- *   #CG SAFETY actuator=OFF pwm=5 en=6
+ *   #CG SAFETY actuator=OFF pwm=5 en=6 len=10
  *   #CG BOOT boot_id=<hex> boot_count=<n>
  *   #CG ROM role=<T1|T2|T3|SPARE> rom=<16 hex> present=<0|1> status=<ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING>
  *   #CG ROMS required_present=<n>/3 known=<n> known_present=<n>
