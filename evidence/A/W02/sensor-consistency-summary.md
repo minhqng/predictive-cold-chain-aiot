@@ -75,8 +75,8 @@ Trong ảnh `w02_rom_enumeration_4_devices.png` (một lần chạy khác), `DS3
 - [x] Lưu dữ liệu thô ≥10 phút × 4 kênh — **đã có ở mức bench**: `ds18b20/sensor-consistency.csv` (620 dòng × 4 kênh) + log nguồn, thống kê tính lại 100% khớp; **lưu ý:** đây là phiên sketch Arduino, CSV **không** dựng bằng `cg_build_sensor_csv.py` (schema `#CG SAMPLE` của firmware); phiên chạy bằng firmware ESP-IDF vẫn `PENDING`.
 - [ ] Ghi lại điều kiện đặt đầu dò (ảnh setup hoặc mô tả + ngày) cho từng phiên.
 - [ ] Ghi `hardware_config_id` và `firmware_commit` đã dùng — `firmware_commit` đã ghi (không phải nguồn của phiên bench); `hardware_config_id` vẫn `NOT_ASSIGNED`.
-- [ ] Leader xác nhận không cần chuẩn truy vết cho W02 (consistency check là đủ).
-- [ ] Xác minh ROM discovery **cùng một boot** với dữ liệu — sẽ được thực hiện trong bài 5 reboot firmware ESP-IDF (`A-W02-03`).
+- [ ] Ghi nhận bằng văn bản rằng W02 dùng consistency check, không cần chuẩn truy vết.
+- [x] Xác minh ROM discovery **cùng một boot** với dữ liệu — đã làm bằng bài 6 boot firmware ESP-IDF (`A-W02-03`, §8).
 
 **Trạng thái hiện tại của `A-W02-05`: `BENCH DATA VERIFIED — 620 RAW SAMPLES CAPTURED` (phiên 620 mẫu, sketch Arduino, giới hạn ROM ghi tường minh) · phiên 600 mẫu cũ vẫn `RAW_EVIDENCE_PENDING`.**
 
