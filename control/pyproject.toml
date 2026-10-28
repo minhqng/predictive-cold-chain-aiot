@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "coldguard-control"
 version = "0.1.0"
-description = "ColdGuard control-policy package skeleton (Member D)"
+description = "ColdGuard pure control policy core (Member D, W01-W03)"
 requires-python = ">=3.12"
 dependencies = []
 
