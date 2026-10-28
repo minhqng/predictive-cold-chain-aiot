@@ -105,7 +105,7 @@ def test_lrk03_future_mutation_cannot_change_window_at_t():
     anchor_time = times[20]
 
     mutated_rows = [
-        replace(o, t1_c=999.5) if o.time > anchor_time else o for o in run.observations
+        replace(o, t1_c=100.0) if o.time > anchor_time else o for o in run.observations
     ]
     mutated = generate_windows(mutated_rows, _SPLIT, partition)
 

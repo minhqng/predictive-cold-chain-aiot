@@ -11,12 +11,17 @@ Implements the consumer-side rules of the W01 data dictionary
   strictly increasing within a boot (LRK-13); windows never join across boots;
 * ``UNKNOWN`` door state and non-VALID quality phases are first-class values
   (§6, §9) — absent channels stay ``None`` and are never zero-filled (LRK-14);
+* ``run_id`` is nullable for pre-experiment samples (§2) but every run-based
+  operation rejects a sample without run association;
+* temperatures follow the sensor ranges (DS18B20 -55..125 °C, BME280
+  -40..85 °C), so negative readings are valid cold-chain data;
 * arrival time (``backend_received_at``) is arrival evidence only (§3).
 """
 
 from __future__ import annotations
 
 import datetime as _dt
+import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass, replace
 from typing import Any
@@ -36,6 +41,19 @@ DEVICE_MODES: tuple[str, ...] = (
     "FAULT_LOCKOUT",
 )
 APPLIED_COOLING_STATES: tuple[str, ...] = ("ON", "OFF")
+
+#: Wire/protocol versions this consumer understands. The backend strict gate
+#: accepts exactly ``{1}`` (``backend/src/coldguard_backend/validation.py``);
+#: an unsupported version is never parsed as if compatible.
+SUPPORTED_SCHEMA_VERSIONS: frozenset[int] = frozenset({1})
+
+#: Physical measurement ranges from the sensor contracts (Doc 00/01):
+#: DS18B20 -55..125 C, BME280 -40..85 C. Negative readings are legal cold-chain
+#: data; only readings outside the instrument range are impossible.
+DS18B20_MIN_C = -55.0
+DS18B20_MAX_C = 125.0
+BME280_MIN_C = -40.0
+BME280_MAX_C = 85.0
 
 #: Sentinel alias for readability; values themselves must be tz-aware datetimes.
 SampleIdentity = tuple[str, str, int]
@@ -89,7 +107,9 @@ class Observation:
     seq: int
     time: _dt.datetime  # tz-aware UTC event time (never inferred from seq)
     uptime_ms: int | None
-    run_id: str
+    #: Nullable per the data dictionary: pre-experiment samples can exist
+    #: before a run association. Run-based analysis must reject ``None``.
+    run_id: str | None
 
     # Thermal (DS18B20 x3), environment (BME280)
     t1_c: float | None
@@ -128,7 +148,18 @@ class Observation:
 
     @property
     def trajectory_key(self) -> TrajectoryKey:
-        """The boot-scoped trajectory this sample belongs to (§3 reboot rule)."""
+        """The boot-scoped trajectory this sample belongs to (§3 reboot rule).
+
+        Raises ``DataContractError`` when the sample has no run association:
+        the trajectory key is run identity, and silently grouping
+        pre-experiment samples under a fabricated key would break dataset
+        lineage.
+        """
+        if self.run_id is None:
+            raise DataContractError(
+                f"{_observation_id_repr(self)} has no run association; "
+                "run-based analysis requires run_id"
+            )
         return (self.run_id, self.boot_id)
 
     @property
@@ -181,21 +212,44 @@ def validate_observation(observation: Observation) -> None:
     """Raise ``DataContractError`` when a row violates the dictionary contract.
 
     Notable enforced rules (data-dictionary-v0):
-    * identity fields non-empty, ``seq >= 0`` (§2);
+    * identity fields non-empty, ``seq >= 0`` (§2); ``run_id`` nullable but
+      non-empty when present;
     * tz-aware event time (§3);
     * enum domains for quality / door / applied state (§6, §8, §9);
-    * non-negative electrical/thermal domains and duty ratio range (§7, §8);
+    * instrument temperature ranges (negative values legal) and non-negative
+      electrical domains; duty ratio range (§7, §8);
     * ``rh_pct`` within 0..100 (§5);
+    * ``schema_version`` must be a supported exact integer (§2);
+    * ``uptime_ms`` is an optional non-negative integer counter (§2);
     * VALID sections carry every value of that section; absence is legal only
       with DEGRADED/INVALID quality (§9, including the realized C-wire rule).
     """
     ctx = f"observation {_observation_id_repr(observation)}"
-    for name in ("device_id", "boot_id", "run_id", "hardware_config_id", "firmware_version"):
+    for name in ("device_id", "boot_id", "hardware_config_id", "firmware_version"):
         value = getattr(observation, name)
         if not isinstance(value, str) or not value.strip():
             raise DataContractError(f"{ctx}: required identity field {name!r} is empty")
-    if not isinstance(observation.seq, int) or observation.seq < 0:
+    if observation.run_id is not None and (
+        not isinstance(observation.run_id, str) or not observation.run_id.strip()
+    ):
+        raise DataContractError(
+            f"{ctx}: run_id must be a non-empty string or None (nullable per "
+            "data-dictionary-v0 §2)"
+        )
+    if type(observation.seq) is not int or observation.seq < 0:
         raise DataContractError(f"{ctx}: seq must be an integer >= 0")
+    if (
+        type(observation.schema_version) is not int
+        or observation.schema_version not in SUPPORTED_SCHEMA_VERSIONS
+    ):
+        raise DataContractError(
+            f"{ctx}: schema_version {observation.schema_version!r} is not "
+            f"supported; supported: {sorted(SUPPORTED_SCHEMA_VERSIONS)}"
+        )
+    if observation.uptime_ms is not None and (
+        type(observation.uptime_ms) is not int or observation.uptime_ms < 0
+    ):
+        raise DataContractError(f"{ctx}: uptime_ms must be an integer >= 0 or None")
     parse_event_time(observation.time, context=ctx)
 
     for name in (
@@ -224,26 +278,37 @@ def validate_observation(observation: Observation) -> None:
             f"got {observation.device_mode!r}"
         )
 
+    for name in ("t1_c", "t2_c", "t3_c"):
+        _require_temperature(
+            ctx, name, getattr(observation, name), DS18B20_MIN_C, DS18B20_MAX_C
+        )
+    _require_temperature(
+        ctx, "t_air_c", observation.t_air_c, BME280_MIN_C, BME280_MAX_C
+    )
+
     _require_non_negative = (
         "cooling_voltage_v",
         "cooling_current_a",
         "cooling_power_w",
         "cooling_energy_counter_wh",
-        "t1_c",
-        "t2_c",
-        "t3_c",
-        "t_air_c",
     )
     for name in _require_non_negative:
         value = getattr(observation, name)
-        if value is not None and value < 0:
+        if value is None:
+            continue
+        number = _require_finite(ctx, name, value)
+        if number < 0:
             raise DataContractError(f"{ctx}: {name} must be >= 0, got {value!r}")
-    if observation.rh_pct is not None and not 0.0 <= observation.rh_pct <= 100.0:
-        raise DataContractError(f"{ctx}: rh_pct outside [0, 100]: {observation.rh_pct!r}")
-    if observation.applied_duty is not None and not 0.0 <= observation.applied_duty <= 1.0:
-        raise DataContractError(
-            f"{ctx}: applied_duty outside validated range [0, 1]: {observation.applied_duty!r}"
-        )
+    if observation.rh_pct is not None:
+        rh = _require_finite(ctx, "rh_pct", observation.rh_pct)
+        if not 0.0 <= rh <= 100.0:
+            raise DataContractError(f"{ctx}: rh_pct outside [0, 100]: {observation.rh_pct!r}")
+    if observation.applied_duty is not None:
+        duty = _require_finite(ctx, "applied_duty", observation.applied_duty)
+        if not 0.0 <= duty <= 1.0:
+            raise DataContractError(
+                f"{ctx}: applied_duty outside validated range [0, 1]: {observation.applied_duty!r}"
+            )
 
     _check_section(
         ctx,
@@ -268,6 +333,30 @@ def validate_observation(observation: Observation) -> None:
             ("cooling_energy_counter_wh", observation.cooling_energy_counter_wh),
         ),
     )
+
+
+def _require_finite(ctx: str, name: str, value: object) -> float:
+    """Require a finite ``int``/``float`` (``bool`` rejected) and return it."""
+    if (
+        isinstance(value, bool)
+        or not isinstance(value, (int, float))
+        or not math.isfinite(float(value))
+    ):
+        raise DataContractError(f"{ctx}: {name} must be a finite number, got {value!r}")
+    return float(value)
+
+
+def _require_temperature(
+    ctx: str, name: str, value: float | None, low: float, high: float
+) -> None:
+    """Enforce the instrument measurement range (negative values are legal)."""
+    if value is None:
+        return
+    number = _require_finite(ctx, name, value)
+    if not low <= number <= high:
+        raise DataContractError(
+            f"{ctx}: {name}={value!r} outside sensor range [{low}, {high}] °C"
+        )
 
 
 def _check_section(
@@ -384,10 +473,20 @@ def canonical_order(rows: Iterable[Observation]) -> tuple[Observation, ...]:
 
 
 def rows_by_run(rows: Iterable[Observation]) -> dict[str, tuple[Observation, ...]]:
-    """Group canonical rows by ``run_id`` (sorted output)."""
+    """Group canonical rows by ``run_id`` (sorted output).
+
+    Samples without a run association are legal telemetry but cannot enter a
+    run-based grouping: they raise instead of being filed under a fabricated
+    key.
+    """
     grouped: dict[str, list[Observation]] = {}
     for row in rows:
         validate_observation(row)
+        if row.run_id is None:
+            raise DataContractError(
+                f"{_observation_id_repr(row)} has no run association; "
+                "run-based grouping requires run_id"
+            )
         grouped.setdefault(row.run_id, []).append(row)
     return {run_id: tuple(items) for run_id, items in sorted(grouped.items())}
 
