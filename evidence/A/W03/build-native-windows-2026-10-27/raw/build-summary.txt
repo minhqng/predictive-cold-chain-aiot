@@ -1,0 +1,29 @@
+﻿================================================================================
+COLDGUARD W03 — LOCAL ESP-IDF v6.1 BUILD REPORT
+================================================================================
+Timestamp: 2026-10-27 23:14:31 +07:00
+Source Commit SHA: f8587ddf8cd1364baafc2a332fb3fa11c9fed97c
+Target: esp32s3
+ESP-IDF Version: ESP-IDF v6.1 (commit fff9895c82d744c7237be8847347bdd1b07c6643)
+Toolchain: xtensa-esp-elf-gcc.exe (esp-15.2.0_20251204) 15.2.0
+Build System: CMake 4.0.3 + Ninja 1.12.1 + ccache 4.12.1
+Host OS: Windows 11 Pro 64-bit
+
+Commands Executed:
+1. idf.py set-target esp32s3 (Exit code: 0)
+2. idf.py build (Exit code: 0, 1090/1090 targets built)
+
+Compiler Warnings: 0
+Compiler Errors: 0
+
+Generated Binaries:
+- coldguard_firmware.bin: 231680 bytes, SHA256: 1AA56B48D9DF6B4CCEE15275A9E2F7F400893EB1E88AD777C33C780E3A5085A9
+- coldguard_firmware.elf: 4587188 bytes, SHA256: 323C7B6D5178EC00C38E3A2202A1CD365BDE35EB532D86D387B14E1E7EF66C0C
+- coldguard_firmware.map: 3852877 bytes, SHA256: 5E12DD93A856048A71953A71C1D288052654FDDCFBCA65171367EB021DE0F1AB
+- bootloader.bin: 21120 bytes, SHA256: 3FC1E578CE1095263225EBFBBFFB5E9957864CD62EC4E7BFC285A4F423B53E9A
+- partition-table.bin: 3072 bytes, SHA256: 7F00B6C042A89B15B0CAC534F82ED988CAF29278FF5700B0C511EB1B5BB7C820
+- flasher_args.json: 951 bytes, SHA256: 8324FD03EDEC68DE3E5E2EB231C6671E260D357F548D3F9EE8C9140C58D8735F
+- sdkconfig: 96935 bytes, SHA256: 8065E5836FFF0328B43550148555ECD9EE679DD324C00A7D078763C5F9B049C2
+
+VERDICT: LOCAL ESP-IDF v6.1 BUILD: PASS
+================================================================================

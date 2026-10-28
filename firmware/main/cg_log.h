@@ -1,13 +1,13 @@
 /*
- * ColdGuard firmware - serial log primitives (Member A, W02).
+ * ColdGuard firmware - serial log primitives (Member A, W02/W03).
  *
  * Every machine line starts with the "#CG" prefix so that a host tool can
  * parse a raw Serial Monitor capture without guessing. Lines are written
  * under a mutex so that a line is never interleaved with another task's
  * line (a partially interleaved line would corrupt the evidence).
  *
- * Grammar (version 1):
- *   #CG LOG v=1 fw=<fw> hw=<hw> pin_map=<n> grammar=<n>
+ * Grammar (version 2 = version 1 kinds unchanged, plus the W03 PZEM kinds):
+ *   #CG LOG v=<n> fw=<fw> hw=<hw> device=<dev> pin_map=<n> grammar=<n>
  *   #CG SAFETY actuator=OFF pwm=5 en=6 len=10
  *   #CG BOOT boot_id=<hex> boot_count=<n>
  *   #CG ROM role=<T1|T2|T3|SPARE> rom=<16 hex> present=<0|1> status=<ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING>
@@ -15,12 +15,17 @@
  *   #CG DOOR_POLARITY state=<UNVERIFIED|CONFIRMED> raw_open_level=<0|1>
  *   #CG DOOR_EDGE uptime_us=<n> raw=<0|1>
  *   #CG DOOR_STATE uptime_ms=<n> raw=<0|1> state=<OPEN|CLOSED|UNVERIFIED> transitions=<n> cycles=<n> discarded=<n>
- *   #CG SAMPLE uptime_ms=<n> seq=<n> T1=<f|nan> T2=<f|nan> T3=<f|nan> t1=<0|1> t2=<0|1> t3=<0|1> thermal=<VALID|DEGRADED|INVALID> door_raw=<0|1> door=<OPEN|CLOSED|UNVERIFIED>
+ *   #CG SAMPLE uptime_ms=<n> seq=<n> T1=<f|nan> T2=<f|nan> T3=<f|nan> SPARE=<f|nan> t1=<0|1> t2=<0|1> t3=<0|1> thermal=<VALID|DEGRADED|INVALID> door_raw=<0|1> door=<OPEN|CLOSED|UNVERIFIED>
+ *   #CG PZEM_CFG slave=<n> baud=<n> framing=<8N1|8N2|8E1|8O1> dir=<AUTO|MANUAL> read_only=1
+ *   #CG PZEM_RANGE uptime_ms=<n> status=<token> value=<0xNNNN|nan> profile=<50A|100A|200A|300A|UNKNOWN|nan> crc_ok=<0|1> exc=<n> tx=<hex> rx=<hex>
+ *   #CG PZEM uptime_ms=<n> seq=<n> status=<OK|TIMEOUT|CRC_ERR|BAD_SLAVE|BAD_FUNCTION|BAD_LENGTH|EXCEPTION|UART_ERR> slave=<n> v=<f|nan> i=<f|nan> p=<f|nan> e=<f|nan> crc_ok=<0|1> attempts=<n> exc=<n> ok=<n> fail=<n> tx=<hex> rx=<hex>
  *   #CG ERR msg=<token>
  *
  * `nan` means "no valid reading"; it is never 0.0 and never a stale value.
- * The ROM summary counts the frozen map only (known=<CG_ROLE_COUNT>); W02
- * has no bus scan and therefore prints no "unknown devices" counter.
+ * A failed PZEM poll therefore prints `nan` for v/i/p/e - the previous value
+ * is never carried forward. The ROM summary counts the frozen map only
+ * (known=<CG_ROLE_COUNT>); W02 has no bus scan and therefore prints no
+ * "unknown devices" counter.
  */
 #pragma once
 

@@ -1,0 +1,19 @@
+ARCHIVE ONLY — DO NOT FLASH OR EXECUTE
+======================================
+
+This directory contains `ColdGuard_W03_TTL485_SET50A_ONCE_8N1.ino`, a raw
+Arduino bench sketch that contains an FC06 write path (`01 06 00 03 00 01 B8 0A`).
+It is preserved byte-for-byte for investigation only.
+
+- DO NOT compile or upload this sketch.
+- DO NOT send FC06 or change the PZEM current-range register.
+- DO NOT connect TEC / IBT-2 / a 50 A load for this archive.
+- DO NOT treat `raw/w3testlog.txt` as W03 acceptance evidence.
+
+The FC06 operation is outside the W03 read-only contract. It is recorded as a
+bench-process deviation (TD-W03-07). The canonical `pzem-off.csv` remains
+missing and ESP-IDF readback remains PENDING_READBACK.
+
+Read `../README.md`, `../crc-audit.md`, and `../../acceptance.md` before using
+anything in this archive. This file is a warning only; it does not authorize
+any hardware action.

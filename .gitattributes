@@ -7,3 +7,16 @@
 *.webp binary
 *.pdf binary
 *.mp4 binary
+
+# W03 bench archives: raw captures, firmware sketches and collectors must keep
+# their exact bytes because the SHA-256 values are pinned in SHA256SUMS.txt and
+# verified by verify_capture.py / verify_test132b.py. Without `-text`, a clean
+# checkout with core.autocrlf would rewrite CRLF and break the pinned hashes.
+evidence/A/W03/hardware-2026-10-20/raw/** -text
+evidence/A/W03/hardware-2026-10-20/firmware/** -text
+evidence/A/W03/hardware-2026-10-20/tools/** -text
+evidence/A/W03/hardware-2026-10-27/raw/** -text
+evidence/A/W03/hardware-2026-10-27/firmware/** -text
+evidence/A/W03/build-native-windows-2026-10-27/raw/** -text
+evidence/A/W03/build-native-windows-2026-10-28/raw/** -text
+evidence/A/W03/build-native-windows-2026-10-28-integrated/raw/** -text

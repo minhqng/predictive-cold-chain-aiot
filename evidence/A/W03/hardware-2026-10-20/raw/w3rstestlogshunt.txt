@@ -1,0 +1,8 @@
+#BOOT ColdGuard_W03_TTL485_SET50A_ONCE_8N1
+#PINS gpio_tx=36 gpio_rx=37 via_existing_5k_10k_divider
+#CONFIG slave=1 baud=9600 framing=8N1 shunt_reg=0x0003 target=0x0001
+#SAFETY no_auto_write=1 no_tec_or_ibt2_control=1 no_fc41_no_fc42=1
+
+
+#READ_PASS slave=1 shunt_reg=0x0001 high_v=300.00 low_v=7.00 prefix=8
+#PROFILE_RESULT shunt=50A raw=0x0001

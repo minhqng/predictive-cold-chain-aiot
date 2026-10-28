@@ -27,8 +27,12 @@ frontend/node_modules/
 frontend/dist/
 frontend/.next/
 
-# Local runtime noise.
+# Local runtime noise. Exception: raw evidence logs are versioned and
+# pinned by SHA-256 in the W02/W03 evidence validators, so they must
+# survive a clean checkout (the W02 dossier was shipped without its reboot
+# log because of this rule).
 *.log
+!evidence/**/*.log
 .DS_Store
 Thumbs.db
 .idea/

@@ -1,0 +1,148 @@
+A-W03-04 / A-W03-05 — PZEM-017 register readback & OFF envelope record
+Member A — ColdGuard W03 — snapshot 2026-10-19; bổ sung 2026-10-20 (archive Arduino)
+và 2026-10-27 (TEST 131/132B)
+====================================================================
+
+STATUS: PENDING_READBACK — KHÔNG CÓ READBACK BẰNG FIRMWARE ESP-IDF W03.
+        TEST 131 chỉ là frame do người vận hành báo (không có capture gốc);
+        TEST 132B là sketch Arduino bench, gate của log là REVIEW REQUIRED.
+====================================================================
+
+Lý do file này chưa chứa dữ liệu ESP-IDF thật (không tô vẽ, không chèn hex giả):
+
+1. Trước 2026-10-20, trong repo (W01/W02/W03) KHÔNG tồn tại log PZEM thật nào:
+   - W01 chỉ có báo cáo người dùng "PZEM trả lời CRC hợp lệ, đọc 11.95 V"
+     qua sketch bench (không có raw log trong repo; xem
+     evidence/A/W01/hardware-audit-w01.md + pin-candidates-v0.md).
+   - Sketch duy nhất từng thấy là một file .ino ngoài repo
+     (request 01 04 00 00 00 01 31 CA @9600 8N1, RX=GPIO37/TX=GPIO36).
+   - Firmware W03 CHƯA được nạp/chạy trên board (chờ CR-A-W01-01).
+   Ngày 2026-10-20 có một phiên Arduino V4 8N1 ngoài repo; raw byte-for-byte
+   đã được archive tại hardware-2026-10-20/. Đó KHÔNG phải firmware ESP-IDF
+   W03 và KHÔNG phải `#CG PZEM_RANGE`. Chi tiết ở khối ARCHIVE bên dưới.
+2. A-W03-04 yêu cầu bằng chứng cho giá trị current-range register 0x0001
+   (hoặc cấu hình 50 A tương đương). Số 0x0001 nằm trong tài liệu/unit test
+   là KỲ VỌNG; log Arduino cũng chỉ ghi văn bản `raw=0x0001` mà không có
+   tx/rx hex của FC03. Không được trích dẫn như kết quả A-W03-04.
+3. A-W03-05 yêu cầu >=10 phút mẫu PZEM khi TEC OFF. Phiên Arduino 2026-10-20
+   có 601 mẫu / 600.000 s nhưng gate `COLLECTED_WITH_ERRORS` (594 hợp lệ,
+   7 lỗi), TEC OFF chỉ là xác nhận của người vận hành, và không phải log
+   ESP-IDF. Vì vậy A-W03-05 vẫn MEASUREMENT REQUIRED.
+
+ĐIỀU KIỆN GỠ PENDING (khi có phép đo xác nhận mức logic RS-485 <=3.3 V ở GPIO37):
+  - Nạp firmware W03, thu log serial bằng: py firmware/tools/cg_capture.py
+  - Tách readback:   py firmware/tools/cg_pzem_readback.py <capture.log> \
+                        --expect-profile 50A --json readback.json
+  - Dán NGUYÊN output (raw tx/rx + CRC + decode + uptime) vào file này thay
+    cho khối này, kèm ngày/người chạy.
+  - Nếu register trả về khác 50A: ghi nhận nguyên trạng (mismatch là phát
+    hiện, không phải lỗi tool) — TUYỆT ĐỐI KHÔNG ghi register để đổi profile.
+
+ĐỊNH DẠNG SẼ ĐƯỢC GHI (mẫu cấu trúc, KHÔNG phải dữ liệu):
+  Từ `cg_pzem_readback.py` (một khối cho mỗi dòng #CG PZEM_RANGE):
+    uptime_ms=<n> status=<token>
+      tx = <hex thật>
+      rx = <hex thật>
+      crc firmware/host = <0|1>/<0|1>        (host tính lại độc lập)
+      value firmware/host = 0x<xxxx>/0x<xxxx>
+      profile firmware/host = <50A|...>/<...>
+  => "50 A range verified" CHỈ được tuyên bố khi profile host-side = 50A
+     với CRC host-side = 1 trên log thật.
+
+--------------------------------------------------------------------
+BỔ SUNG 2026-10-27 — TEST 131 (readback) + TEST 132B (OFF envelope)
+Hai bài này đều KHÔNG phải firmware ESP-IDF W03.
+--------------------------------------------------------------------
+
+Nguồn: evidence/A/W03/hardware-2026-10-27/ (README.md, provenance-matrix.md,
+SHA256SUMS.txt; kiểm tra bằng verify_test132b.py).
+
+A-W03-04 — TEST 131 (50 A profile):
+  - Người vận hành báo frame: 01 03 02 00 01 79 84
+  - CRC16/MODBUS tính lại host-side trên 5 byte đầu = 0x8479 -> on-wire 79 84
+    (low byte trước) => frame TỰ NHẤT QUÁN.
+  - 0x0001 = profile 50 A theo docs/01 §9.3.
+  - GIỚI HẠN: RAW_EVIDENCE_NOT_AVAILABLE. Không có file capture/log gốc của
+    TEST 131 trong môi trường này; hai phản hồi lỗi đầu tiên không có byte để
+    phân tích. Vì vậy đây là OPERATOR-REPORTED đã qua kiểm tra toán học,
+    KHÔNG phải evidence-grade raw readback.
+  - A-W03-04 vẫn PENDING_READBACK cho firmware W03. Không ghi register.
+
+A-W03-05 — TEST 132B (OFF envelope, Arduino bench):
+  - 600 hàng CSV, 600 hợp lệ / 0 lỗi, SUCCESS_RATE 100.00 %.
+  - V min/max = 11.94/11.95 V; mean = 11.9483 V (summary ghi 11.948).
+  - I = 0.00 A, P = 0.0 W, E = 0 Wh ở mọi hàng => dưới độ phân giải hiển thị,
+    KHÔNG phải zero tuyệt đối.
+  - rx_len = 29 mọi hàng (cấu trúc 21+8 byte là SUY LUẬN từ độ dài, không có
+    raw frame trong log).
+  - Cửa sổ mẫu: 10 ms -> 599000 ms = 598.99 s, KHÔNG phải 600.00 s; giây cuối
+    không có mẫu. DURATION_MS 600000 là hằng số test, không phải span.
+  - Gate của log: RESULT: REVIEW REQUIRED — hồ sơ không nâng thành PASS.
+  - TEC OFF chỉ là xác nhận của người vận hành; không có kênh đo độc lập.
+  - CSV schema bench (elapsed_ms,valid,...) KHÔNG phải pzem-off.csv canonical;
+    không copy lên root. Quyết định canonical: team-dependencies.md TD-W03-10;
+    cách tính cửa sổ: TD-W03-04.
+  - Phiên này KHÔNG chứng minh 7 frame lỗi của 2026-10-20 đã được sửa.
+
+--------------------------------------------------------------------
+ARCHIVE BỔ SUNG 2026-10-20 — ARDUINO BENCH, KHÔNG PHẢI ESP-IDF
+--------------------------------------------------------------------
+
+Nguồn: evidence/A/W03/hardware-2026-10-20/ (7 file raw byte-for-byte; hash
+trong SHA256SUMS.txt; kiểm tra bằng verify_capture.py).
+
+- OFF10: 601 mẫu, 594 CRC_VALID, 7 INVALID, span 600.000 s; dòng cuối:
+  `#OFF10_RESULT gate=COLLECTED_WITH_ERRORS samples=601/601 valid=594
+  invalid=7 sample_span_s=600.000 runtime_s=600.099`.
+  Đây là sketch Arduino V4 8N1 + collector COM4, KHÔNG phải firmware W03.
+- 7 mẫu lỗi: mỗi raw frame có echo/prefix và không có cửa sổ 5/7/17/21 byte
+  nào CRC hợp lệ (xem crc-audit.md). Không kết luận nguyên nhân gốc; patch
+  echo/prefix không được coi là đã sửa các lỗi này.
+- Readback: w3testlog.txt ghi một lần FC06 SET50 (`01 06 00 03 00 01 B8 0A`),
+  RX là hai khung giống nhau nên bị đánh dấu UNTRUSTED, sau đó có 3 dòng
+  `#READ_PASS ... shunt_reg=0x0001` và `#SET50_VERIFIED PASS`. Tuy nhiên
+  KHÔNG có tx/rx hex của FC03, KHÔNG có CRC host-side. w3rstestlogshunt.txt
+  cũng chỉ ghi văn bản `raw=0x0001`. Vì vậy 0x0001 chỉ là log
+  văn bản, không phải raw FC03 success frame; A-W03-04 vẫn PENDING_READBACK.
+- FC06 là hành vi ngoài hợp đồng read-only W03. Sketch SET50 và w3testlog
+  là `ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`; không chạy lại, không gửi
+  FC06. Sai lệch quy trình bench được ghi ở TD-W03-07.
+- TEC OFF trong phiên này là xác nhận của người vận hành, không được đo độc
+  lập. 594 mẫu hợp lệ đều ghi current_a=0.00; 7 mẫu lỗi để trống; không có
+  thử tải 50 A thật.
+- pzem-off.csv canonical của W03 vẫn MISSING; file trong raw/ là schema
+  bench, không được copy lên root.
+
+--------------------------------------------------------------------
+A-W03-05 — schema pzem-off.csv (khi có raw thật) do
+cg_build_pzem_off_csv.py sinh ra:
+
+  Cột: uptime_ms,seq,status,crc_ok,attempts,exception_code,
+       voltage_v,current_a,power_w,energy_wh,ok_count,fail_count
+  Quy tắc:
+  - uptime_ms là đồng hồ thật của firmware (esp_timer); phiên phải >= 600 s.
+  - Ô V/A/W/Wh TRỐNG khi status != OK — không lặp giá trị cũ.
+  - Tool từ chối: thiếu #CG PZEM_CFG / read_only != 1 / window < 600 s /
+    trộn nhiều boot (trừ khi --boot) / thiếu --tec-off-confirmed
+    (xác nhận vận hành, tool không tự kiểm chứng được).
+  - Summary kèm: success rate, error rate, status counts, timeout/CRC/exception
+    counts, poll interval (min/median/max), gaps > 2x median, mean/min/max/
+    sd(spread) của V/A/W/Wh trên mẫu hợp lệ.
+
+Tệp pzem-off.csv canonical: KHAI BÁO MISSING cho tới khi có raw thật
+(acceptance.md §3). Validator từ chối nếu file xuất hiện mà chưa kèm log.
+
+--------------------------------------------------------------------
+Trạng thái từng phần:
+  - CRC16/MODBUS, khung đọc, scaling V/I/P/E: CODE IMPLEMENTED + unit test
+    (xem firmware-tooling-verification.md); parity hằng số C <-> host được
+    kiểm tra tĩnh tự động.
+  - Readback register 50 A: PENDING_READBACK cho firmware W03. TEST 131 có
+    frame operator-reported 01 03 02 00 01 79 84 với CRC khớp host-side,
+    nhưng KHÔNG có capture gốc; archive 2026-10-20 chỉ ghi văn bản 0x0001,
+    không có tx/rx/CRC. Không có evidence-grade raw FC03 success frame.
+  - OFF envelope >=10 min: MEASUREMENT REQUIRED (archive Arduino 601/594/7,
+    gate COLLECTED_WITH_ERRORS, TEC OFF chỉ là operator assertion; không
+    phải canonical ESP-IDF).
+  - Ghi register/đổi profile: KHÔNG TỒN TẠI đường code trong W03 (chỉ FC
+    0x03/0x04). FC06 chỉ có trong sketch SET50 bên ngoài, archive-only.
