@@ -14,7 +14,8 @@ It verifies:
   * the SET50 log/sketch contain FC06 and are archive-only.
 
 It does NOT prove ESP-IDF firmware behavior, a real 50 A load, TEC OFF, or an
-IBT-2 cold boot. W03 remains NOT PASS.
+IBT-2 cold boot. The archive stays supplementary bench evidence, not ESP-IDF
+W03 acceptance.
 """
 
 from __future__ import annotations

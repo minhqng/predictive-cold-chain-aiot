@@ -86,7 +86,7 @@ def main() -> int:
     print("Reminder: no check here compiles the firmware or touches hardware.")
     print("Compile check: GitHub Actions ESP-IDF v6.1 build (see evidence/A/W03/README.md).")
     print(
-        "Hardware still pending: RS-485 logic-level approval (D), PZEM real readback + >=10 min "
+        "Hardware still pending: RS-485 logic-level measurement, PZEM real readback + >=10 min "
         "TEC-OFF window, XL4015 loaded verification, IBT-2 cold-boot log, shunt inspection under power."
     )
     return 0

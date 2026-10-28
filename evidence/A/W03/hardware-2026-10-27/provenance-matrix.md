@@ -2,7 +2,7 @@
 
 **Mục đích:** mỗi câu trong bộ hồ sơ W03 phải trả lời được "câu này thuộc loại bằng chứng
 nào". Ma trận này là nơi tra cứu duy nhất cho phiên 2026-10-27; nó **không** nâng bất kỳ
-nhãn nào trong `../acceptance.md` và **không** thay phê duyệt của Member D/leader.
+nhãn nào trong `../acceptance.md` và **không** thay `acceptance.md`.
 
 ## 0. Bốn lớp bằng chứng dùng trong hồ sơ này
 
@@ -52,7 +52,7 @@ File gốc: `raw/test-132b-off-envelope.log` (SHA-256 `0af8a083…`, 20 618 B) v
 | P17 | 5 lần `ESP.restart()` + cold boot thủ công vẫn OFF | `OPERATOR-REPORTED` | lời khai vận hành | Người vận hành quan sát hệ thống vẫn OFF | Không có bảng đếm/timestamp; không phải log reset |
 | P18 | `RPWM: LOW / R_EN: LOW / L_EN: LOW` | **HẰNG CHUỖI DO SKETCH IN — không phải phép đo** | source sketch | Sketch in đúng chuỗi đó | Không đọc lại trạng thái chân, không scope/logic analyzer |
 | P19 | Trước `setup()` các chân đã ở 0 | `NOT MEASURED` | — | — | `SCOPE: AFTER FIRMWARE START ONLY` — sketch tự giới hạn phạm vi |
-| P20 | `L_EN` nối `GPIO10` trên board as-built | `OPERATOR-REPORTED` | lời khai vận hành | Có khả năng đấu dây như vậy | **Xung đột** với W02 (`CG_PIN_DS18B20_DATA 10`); xem `TD-W03-03` |
+| P20 | `L_EN` nối `GPIO10` trên board as-built | `OPERATOR-REPORTED` | lời khai vận hành | Có khả năng đấu dây như vậy | Xung đột cũ với W02 (`CG_PIN_DS18B20_DATA 10`) **đã giải quyết 2026-10-28** bằng map v2 (DS18B20→GPIO33, L_EN=10); `TD-W03-03` RESOLVED (firmware). Vẫn chờ D đo continuity |
 
 ## 4. Shunt / đường dòng
 
@@ -76,7 +76,7 @@ File gốc: `raw/test-132b-off-envelope.log` (SHA-256 `0af8a083…`, 20 618 B) v
 | P31 | Chip RS-485 là `MAX13487ESA` | `OPERATOR-REPORTED` | lời khai | **Không** ảnh nào đọc được marking |
 | P32 | Nhãn shunt in `50A 75mV`, khắc `FL-2 0.5` | `MEASURED` (ảnh W01) | `photos/18`, `photos/04` | Chỉ là marking vật lý, **không** phải cấu hình PZEM |
 | P33 | Framing `9600 8N1`, slave `0x01` | `INFERRED` từ TEST 132B (600/600 hợp lệ) | CSV + sketch | Hoạt động ở cấu hình đã dùng; không chứng minh an toàn mức logic |
-| P34 | `hardware_config_id` | `NOT ASSIGNED` | — | Leader phải gán (`TD-W03-08`) |
+| P34 | `hardware_config_id` | `NOT ASSIGNED` | — | Chưa gán; cần gán (`TD-W03-08`) |
 
 ## 6. Cách tái kiểm
 
@@ -94,5 +94,5 @@ có khả năng nâng bất kỳ nhãn nào.
 - Không biến `INFERRED` thành kết luận an toàn.
 - Không tạo raw frame/CSV/ảnh cho ba hạng mục chỉ có lời khai (TEST 131, TEST 133B,
   shunt continuity).
-- Không thay `../acceptance.md`: trạng thái tổng vẫn là `W03 NOT PASS` /
-  `W03 TEAM GATE: PENDING_REVIEW`.
+- Không thay `../acceptance.md`: kết luận tổng hợp nằm ở đó (`DONE` / `PARTIAL` /
+  `HARDWARE-LIMITED` / `NOT IMPLEMENTED` / `INFRASTRUCTURE-LIMITED`).

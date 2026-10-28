@@ -14,18 +14,21 @@ void cg_actuator_force_off(void)
 {
     gpio_config_t config = {
         .pin_bit_mask = (1ULL << (uint32_t)CG_ACTUATOR_RPWM_PIN) |
-                        (1ULL << (uint32_t)CG_ACTUATOR_ENABLE_PIN),
+                        (1ULL << (uint32_t)CG_ACTUATOR_REN_PIN) |
+                        (1ULL << (uint32_t)CG_ACTUATOR_LEN_PIN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_ENABLE, /* keep the enable low if undriven */
+        .pull_down_en = GPIO_PULLDOWN_ENABLE, /* keep the enables low if undriven */
         .intr_type = GPIO_INTR_DISABLE,
     };
     ESP_ERROR_CHECK(gpio_config(&config));
 
-    /* IBT-2/BTS7960: PWM duty 0 and the enable inactive. Order matters for
-     * the intent, not for the silicon: the enable is cleared before the PWM
-     * level is written when leaving any other state. */
-    (void)gpio_set_level(CG_ACTUATOR_ENABLE_PIN, 0);
+    /* IBT-2/BTS7960: PWM duty 0 and both enable inputs inactive. The
+     * enables are cleared before the PWM level is written, so the safe
+     * state is reached without a window where a driven PWM is enabled.
+     * LPWM is tied to GND on the module and is not driven here. */
+    (void)gpio_set_level(CG_ACTUATOR_REN_PIN, 0);
+    (void)gpio_set_level(CG_ACTUATOR_LEN_PIN, 0);
     (void)gpio_set_level(CG_ACTUATOR_RPWM_PIN, 0);
 
     s_off = true;
@@ -38,7 +41,10 @@ bool cg_actuator_outputs_allowed(bool operator_authorized, uint32_t rpwm_duty,
     if (rpwm_duty > CG_ACTUATOR_DUTY_MAX || lpwm_duty > CG_ACTUATOR_DUTY_MAX) {
         return false;
     }
-    /* Both half-bridges driven at once would command opposing outputs. */
+    /* W03 drives at most one half-bridge. With both driven the load would see
+     * (RPWM - LPWM)*V: equal duties give equal bridge outputs and no
+     * differential (not a reverse), and an unequal pair is a differential
+     * this layer never commands. */
     if (rpwm_duty > 0U && lpwm_duty > 0U) {
         return false;
     }

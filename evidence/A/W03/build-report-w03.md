@@ -101,13 +101,13 @@ and checksums"), không sao chép tay.
 
 1. Đây là **COMPILE PASS + HOST CHECKS PASS**, không phải hardware pass. Firmware W03
    **chưa** nạp và **chưa** chạy lần nào; không có dòng `#CG PZEM*` nào là thật.
-2. Không bài test vật lý nào chạy trong CI: RS-485 vẫn chờ duyệt mức logic (CR-A-W01-01),
-   PZEM vẫn `PENDING_READBACK`, OFF envelope vẫn `MEASUREMENT REQUIRED`, IBT-2 vẫn chờ D
-   duyệt tie-off + cold-boot log.
+2. Không bài test vật lý nào chạy trong CI: RS-485 vẫn `MEASUREMENT REQUIRED` cho mức logic
+   (CR-A-W01-01), PZEM vẫn `PENDING_READBACK`, OFF envelope vẫn `MEASUREMENT REQUIRED`,
+   IBT-2 vẫn chờ phép đo tie-off + cold-boot log.
 3. Lớp test hành vi vẫn là mô hình Python + kiểm tra tĩnh; compile pass **không** thay thế
    golden-run trên target.
 4. Nhánh `CG_RS485_DIR_MODE 1` (MANUAL, MAX3485 canonical) là nhánh **compile-time không
-   được build trong CI** (mặc định là AUTO theo phần cứng as-built). Nếu D/leader chọn mua
+   được build trong CI** (mặc định là AUTO theo phần cứng as-built). Nếu đổi sang
    module MAX3485 đúng freeze, cần thêm build variant (đổi macro) trước khi tin nhánh đó.
    Ghi ở đây để không ai đọc code MANUAL như đã được compile.
 
@@ -125,3 +125,19 @@ and checksums"), không sao chép tay.
   - Phân vùng app: `0x100000` (1.048.576 bytes); dung lượng trống: `0xc7700` = 816.896 bytes (78% trống).
   - Verifier script: `py evidence/A/W03/build-native-windows-2026-10-27/verify_build.py` (PASS).
 - **Ranh giới:** Bằng chứng này xác nhận tính đúng đắn kỹ thuật của mã nguồn C, nhưng **KHÔNG** làm thay đổi trạng thái Cloud CI của GitHub (vẫn cần tài khoản kho mã xử lý thanh toán) và **KHÔNG** phải nghiệm thu phần cứng (TD-W03-01..11 giữ nguyên, nghiêm cấm cấp nguồn TEC).
+
+## 7.1. Bổ sung 2026-10-28 — build lại trên working tree hiện tại
+
+- **Vì sao:** bundle `2026-10-27` build từ `git archive f8587dd`, **không** chứa các thay đổi
+  firmware còn trong working tree (`cg_actuator.c/.h`, `cg_door.h`, `cg_log.c/.h`,
+  `coldguard_config.h`). Bằng chứng compile phải khớp đúng nguồn sẽ được commit.
+- **Thư mục bằng chứng:** `evidence/A/W03/build-native-windows-2026-10-28/` (log thô,
+  `SHA256SUMS.txt`, `verify_build.py`, `README.md`).
+- **Kết quả:** `LOCAL ESP-IDF v6.1 BUILD: PASS` — `idf.py set-target esp32s3` và `idf.py build`
+  exit `0`; `1090/1090` bước Ninja; **0** warning, **0** error; `Project build complete.`
+  - `coldguard_firmware.bin`: 231.712 bytes (`0x38920`), trống `0xc76e0` (78%)
+  - SHA-256: bin `3855196680e675ff792eeb85f765dc1f6c8e3ee976f14a874eeafd243823fe4d`,
+    elf `7f1e83b7c9872014c8ad14665b493b2a25aa8d8d67ec7d4461aee2c24cf9fc02`
+  - Verifier: `py evidence/A/W03/build-native-windows-2026-10-28/verify_build.py` (PASS)
+- **Ranh giới:** vẫn là build cục bộ, **không** phải GitHub Actions CI và **không** phải nghiệm
+  thu phần cứng. Không cấp nguồn TEC, không PWM, không flash.

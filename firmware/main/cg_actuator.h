@@ -13,9 +13,10 @@
  *     in W03 cannot energize the branch.
  *
  * The module header (photo 14-ibt2-actual.jpg) exposes VCC, GND, R_IS,
- * L_IS, R_EN, L_EN, RPWM, LPWM. The as-built wiring drives RPWM and a
- * shared enable (pin map v1); the remaining inputs are a hardware tie-off
- * decision that Member D owns. See evidence/A/W03/ibt2-pin-map.md.
+ * L_IS, R_EN, L_EN, RPWM, LPWM. The as-built wiring (map v2) drives RPWM
+ * (GPIO5), R_EN (GPIO6) and L_EN (GPIO10); LPWM is tied to GND and
+ * R_IS/L_IS are unconnected. See evidence/A/W03/ibt2-pin-map.md and
+ * evidence/A/as-built-pinmap-2026-10-27.md.
  */
 #pragma once
 
@@ -33,7 +34,9 @@ void cg_actuator_force_off(void);
 
 /* True only when a future layer may drive outputs. Refused when:
  *   - a duty is out of range,
- *   - both directions carry non-zero duty (opposing PWM),
+ *   - both directions carry non-zero duty (the load would see the difference:
+ *     equal duties give equal bridge outputs and no differential rather than
+ *     a reverse; W03 commands one half-bridge at a time),
  *   - no operator authorization is present,
  *   - outputs are compile-time disabled (W03: CG_ACTUATOR_ENABLE_ALLOWED=0). */
 bool cg_actuator_outputs_allowed(bool operator_authorized, uint32_t rpwm_duty,

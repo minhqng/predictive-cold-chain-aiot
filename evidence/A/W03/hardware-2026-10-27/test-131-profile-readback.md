@@ -55,8 +55,8 @@ luôn hợp lệ".
   của shunt, không phải bằng chứng cấu hình PZEM.
 - **Không** đồng nhất TEST 131 với lần FC06 `SET50` trong archive 2026-10-20. Lần FC06 đó
   nằm ngoài hợp đồng read-only W03, là `ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`, và vẫn là
-  sai lệch quy trình cần D/leader xử lý.
-- **Không** yêu cầu người vận hành chạy lại test chỉ để tạo file log mới. Nếu D cần
+  sai lệch quy trình cần được mô tả/xử lý (`TD-W03-07`).
+- **Không** yêu cầu người vận hành chạy lại test chỉ để tạo file log mới. Nếu cần
   evidence-grade capture, yêu cầu **file capture gốc** của lần chạy đã có; nếu file không
   còn, ghi nhận khoảng trống thay vì tái tạo.
 

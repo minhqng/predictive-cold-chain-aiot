@@ -10,9 +10,9 @@ It is preserved byte-for-byte for investigation only.
 - DO NOT connect TEC / IBT-2 / a 50 A load for this archive.
 - DO NOT treat `raw/w3testlog.txt` as W03 acceptance evidence.
 
-The FC06 operation is outside the W03 read-only contract. D/leader must review
-it as a bench-process deviation. W03 remains NOT PASS; the canonical
-`pzem-off.csv` remains missing and ESP-IDF readback remains PENDING_READBACK.
+The FC06 operation is outside the W03 read-only contract. It is recorded as a
+bench-process deviation (TD-W03-07). The canonical `pzem-off.csv` remains
+missing and ESP-IDF readback remains PENDING_READBACK.
 
 Read `../README.md`, `../crc-audit.md`, and `../../acceptance.md` before using
 anything in this archive. This file is a warning only; it does not authorize

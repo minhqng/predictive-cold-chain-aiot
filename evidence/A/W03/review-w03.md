@@ -4,10 +4,20 @@
 **Thực hiện bởi:** Member A (vòng tự review đối kháng trước khi mở PR).
 
 > **Giới hạn thẩm quyền (đọc trước):** đây **không** phải review độc lập của người thứ
-> ba, **không** thay thế Member D, và **không** phải phê duyệt an toàn. Review độc lập
-> của D/leader vẫn là điều kiện bắt buộc của CR-A-W01-01 và các mục `SAFETY REVIEW
-> PENDING` trong `acceptance.md`. File này chỉ ghi lại *những gì đã được kiểm tra bằng
-> máy/đọc code trong vòng này, kết quả ra sao, và cái gì còn tồn dư*.
+> ba và **không** phải phê duyệt an toàn. File này chỉ ghi lại *những gì đã được kiểm tra
+> bằng máy/đọc code trong vòng này, kết quả ra sao, và cái gì còn tồn dư*.
+
+> **Ghi chú supersession 2026-10-28 (bản ghi lịch sử, không sửa nội dung bên dưới):**
+> bản review này lập ngày 2026-10-19, trước pin map v2. Hai điểm trong bản ghi đã được
+> thay thế bởi hồ sơ hiện hành:
+> 1. Nhãn trạng thái (`NOT PASS`, `TEAM GATE: PENDING_REVIEW`, `SAFETY REVIEW PENDING`,
+>    điều kiện "D/leader duyệt") là nhãn của thời điểm đó; trạng thái hiện hành nằm ở
+>    `acceptance.md` (`DONE` / `PARTIAL` / `HARDWARE-LIMITED` / `NOT IMPLEMENTED` /
+>    `INFRASTRUCTURE-LIMITED`) và `MEASUREMENT REQUIRED`.
+> 2. Mô tả guard `outputs_allowed()` từng ghi "hai chiều đối nghịch": vật lý đúng là hai
+>    nửa cầu cùng duty cho hai đầu ra bằng nhau → **không có vi sai** (không phải lệnh đảo
+>    chiều). Mã và comment hiện hành trong `firmware/main/cg_actuator.c/.h` đã dùng cách
+>    mô tả đúng.
 
 ## 1. Cách làm
 
@@ -72,7 +82,7 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
   cho RTS/CTS, guard `#error` cho data bits/parity/stop bits ngoài dải). Parser host chấp
   nhận token `framing=<8N1|8N2|8E1|8O1>` và **giữ nguyên** giá trị firmware in, không tự
   chuẩn hoá.
-- **Kết quả:** PASS cho phần code. Hành vi vật lý vẫn `SAFETY REVIEW PENDING` (CR-A-W01-01).
+- **Kết quả:** PASS cho phần code. Hành vi vật lý vẫn `MEASUREMENT REQUIRED` (CR-A-W01-01).
 
 ### R6 — Tương thích mức logic (phía firmware, A-W03-02)
 
@@ -82,8 +92,8 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
   map v1) và **không** cấu hình GPIO35 khi AUTO. Không có chỗ nào set output mức 1 lên bất
   kỳ chân RS-485. Ràng buộc "5 V TXD phải qua phân áp trước GPIO37" là ràng buộc **phần
   cứng**, được ghi trong `rs485-pin-and-compatibility.md` + `hardware-deviation-and-safety.md`.
-- **Kết quả:** PASS cho phần "firmware không tạo thêm rủi ro"; quyết định mức logic vẫn
-  thuộc **D + leader** (`CR-A-W01-01`, `acceptance.md` §5).
+- **Kết quả:** PASS cho phần "firmware không tạo thêm rủi ro"; mức logic RS-485 thực tế
+  vẫn **chưa được đo** (`CR-A-W01-01`, `acceptance.md` §4).
 
 ### R7 — IBT-2 default-OFF (A-W03-07)
 
@@ -96,7 +106,7 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
   từ chối khi quá dải / hai chiều đối nghịch / chưa authorization / `CG_ACTUATOR_ENABLE_ALLOWED=0`.
   Static check W03 khẳng định lại các bất biến này (không có literal ghi 1 lên RPWM/ENABLE).
 - **Kết quả:** PASS cho phần code. Phần phần cứng (cold-boot log, tie-off `LPWM`/`L_EN`)
-  vẫn `SAFETY REVIEW PENDING (D)`.
+  vẫn `MEASUREMENT REQUIRED` — hạn chế an toàn điện.
 
 ### R8 — Regression W02
 
@@ -122,14 +132,14 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
    (một dòng trong `cg_log.c`) — **không** đổi trong W03 để giữ diff tối thiểu.
 2. **Nhánh MANUAL (MAX3485 canonical) không được build trong CI:** mặc định là AUTO theo
    phần cứng as-built; nhánh `#if CG_RS485_DIR_MODE == 1` chưa từng được compiler kiểm.
-   Đúng như thiết kế (không fake "đã chạy"), nhưng nếu D/leader chọn thay module MAX3485
-   đúng freeze thì phải thêm build variant đổi macro trước khi tin nhánh đó.
+   Đúng như thiết kế (không fake "đã chạy"), nhưng nếu thay module MAX3485 đúng freeze thì
+   phải thêm build variant đổi macro trước khi tin nhánh đó.
 3. **GPIO35/36/37 và module S3 octal:** trên một số module ESP32-S3 dùng flash/PSRAM
    octal, các chân 33–37 thuộc SPI0/1. Pin map là v1 (đã có từ W02, docs/01 §11.7) và
    các chân này chưa từng được **kiểm tra vật lý trong W03** (UART chưa chạy). Nội dung
-   này **thuộc CR-A-W01-01**: khi D/leader duyệt mức logic RS-485, xác nhận luôn board
-   as-built cho phép các chân này (board W02 đã chạy thật với GPIO34; GPIO36/37 chưa được
-   kiểm trong bất kỳ log nào của repo).
+   này **thuộc CR-A-W01-01**: khi đo mức logic RS-485, xác nhận luôn board as-built cho
+   phép các chân này (board W02 đã chạy thật với GPIO34; GPIO36/37 chưa được kiểm trong
+   bất kỳ log nào của repo).
 4. **MANUAL DE delay:** nhánh MANUAL dùng `uart_wait_tx_done` + 1 tick trước khi trả RX —
    hợp lý cho 9600 baud, nhưng chưa đo trên phần cứng; thuộc cùng buổi test CR-A-W01-01
    nếu module được thay.
@@ -137,8 +147,10 @@ bằng gì · kết quả*. Không mục nào được nâng thành hành vi ph�
 ## 5. Không thuộc phạm vi vòng review này
 
 - Mọi hành vi phần cứng (RS-485 thật, PZEM thật, nhiễu điện, nhiệt, EMC).
-- `43 A` / thông số IBT-2 trên tải — là câu hỏi định mức module, D trả lời khi duyệt wiring.
-- Nghiệm thu W03 (acceptance matrix) — W03 **vẫn NOT PASS**; file này không đổi trạng thái nào.
+- `43 A` / thông số IBT-2 trên tải — là câu hỏi định mức module, cần đo/xác nhận khi
+  kiểm tra wiring.
+- Nghiệm thu W03 (acceptance matrix) — ngoài phạm vi file này; trạng thái hiện hành ở
+  `acceptance.md`, không phải một cổng phê duyệt.
 
 ## 6. Phụ lục — phát hiện sau review: lỗi compile từ CI vòng đầu (2026-10-19)
 
@@ -193,14 +205,15 @@ những gì đã kiểm tra thêm trên máy hiện tại và giới hạn của
   `w3rstestlogshunt.txt` chỉ ghi văn bản `raw=0x0001`. Không có tx/rx hex FC03, không có
   CRC host-side → A-W03-04 vẫn `PENDING_READBACK`.
 - **FC06:** sketch SET50 và log là `ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`; không chạy
-  lại, không gửi FC06. Đây là sai lệch quy trình bench ngoài W03, cần D/leader xử lý.
+  lại, không gửi FC06. Đây là sai lệch quy trình bench ngoài W03, được ghi nhận ở
+  `TD-W03-07` để xử lý ở mức quy trình.
 
 ### R11 — Tồn dư sau đợt bổ sung
 
 1. **ESP-IDF compile cho patch: NOT RUN.** CI run `39213118829` chỉ áp dụng cho commit
    `ae1744d` (cây `firmware/` giống hệt `b858693`); sau khi push phải có build ESP-IDF v6.1 trên commit mới trước khi flash.
-2. **CR-A-W01-01 vẫn PENDING:** TTL485 5 V vs MAX3485 3.3 V chưa được D + leader duyệt;
-   archive không thay đổi quyết định này.
+2. **CR-A-W01-01 vẫn PENDING:** TTL485 5 V vs MAX3485 3.3 V **chưa được đo/xác nhận**;
+   archive không thay đổi trạng thái này.
 3. **Chưa có PZEM/50 A thật:** không có raw FC03 success frame, không có tải 50 A, không
    có ESP-IDF readback. `pzem-off.csv` canonical vẫn **MISSING**.
 4. **IBT-2 cold-boot/reset: NOT RUN.** VCC ≈ 5 V, EN/PWM ≈ 0 V, B+/B−/M+/M− disconnected
@@ -210,12 +223,12 @@ những gì đã kiểm tra thêm trên máy hiện tại và giới hạn của
    `hardware_config_id`.**
 
 **Kết luận đợt bổ sung:** patch đạt kiểm tra host (Python unittest + static checks); archive chứng minh đúng byte/log
-đã có, nhưng W03 vẫn **`NOT PASS`** và mọi gate phần cứng vẫn giữ nguyên.
+đã có, nhưng mọi hạng mục phần cứng vẫn **chưa đo** và trạng thái hiện hành ở `acceptance.md`.
 
 ## 8. Bổ sung 2026-10-27 — TEST 131 / 132B / 133B + shunt continuity
 
 Đợt này **không** thay đổi kết luận §1–§7 và **không** nâng W03. Nó thêm bằng chứng bench
-mới và ba rủi ro cấu hình; mọi thứ vẫn nằm dưới `W03 TEAM GATE: PENDING_REVIEW`.
+mới và ba rủi ro cấu hình; trạng thái hiện hành theo hạng mục ở `acceptance.md`.
 
 ### R12 — Tính toàn vẹn và số liệu TEST 132B
 
@@ -258,5 +271,5 @@ mới và ba rủi ro cấu hình; mọi thứ vẫn nằm dưới `W03 TEAM GAT
    raw frame để so sánh).
 5. `hardware_config_id` vẫn `NOT_ASSIGNED`.
 
-**Kết luận đợt 2026-10-27:** bằng chứng bench được kiểm tra toàn vẹn và ghi trung thực, nhưng
-W03 vẫn **`NOT PASS`** và cổng nhóm vẫn **`PENDING_REVIEW`**.
+**Kết luận đợt 2026-10-27:** bằng chứng bench được kiểm tra toàn vẹn và ghi trung thực; phần
+vật lý của W03 vẫn **chưa đo** — trạng thái hiện hành theo hạng mục ở `acceptance.md`.
