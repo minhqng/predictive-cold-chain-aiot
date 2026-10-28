@@ -1,0 +1,64 @@
+ColdGuard W03 — native ESP-IDF v6.1 build on the working tree (2026-10-28)
+=======================================================================
+
+Scope
+-----
+Compile-only verification of the CURRENT working-tree firmware sources in
+A-W03-power-pzem-logic. No hardware was touched, nothing was flashed.
+
+Why a second build was needed
+-----------------------------
+The 2026-10-27 bundle built `git archive f8587dd`, but the working tree still
+carries uncommitted firmware changes (pin map v2 + 3-pin safe-OFF + corrected
+IBT-2 comments). That earlier build therefore did not cover the sources that
+would actually be delivered.
+
+Source state
+------------
+- Worktree: C:\Users\dlbac\Downloads\coldguard-repo\A-W03-power-pzem-logic
+- HEAD: d54250cc4a57651d410de5588592f992afc2a034 (docs: native build evidence)
+- Uncommitted changes copied into the scratch build (firmware/main):
+  cg_actuator.c, cg_actuator.h, cg_door.h, cg_log.c, cg_log.h,
+  coldguard_config.h
+- Copy method: `cp -a firmware/. <scratch>/` (working tree, not git archive)
+
+Environment
+-----------
+- Host: Windows 11 Pro 64-bit (build 10.0.26300)
+- ESP-IDF: v6.1 at C:\Espressif\v6.1\esp-idf (paths visible in build log)
+- Profile: C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1
+- Target: esp32s3
+- Scratch dir: C:\Users\dlbac\Downloads\coldguard-firmware-build-w03-20261028
+
+Commands (PowerShell, exit code 0 for both)
+-------------------------------------------
+  $env:MSYSTEM=$null
+  . C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1
+  idf.py set-target esp32s3      # raw/10-set-target.log
+  idf.py build                   # raw/20-idf-py-build.log
+
+Result
+------
+- "Project build complete."
+- Ninja steps: 1090/1090
+- Compiler warnings in W03 sources: 0
+- Compiler errors: 0
+- coldguard_firmware.bin: 0x38920 bytes (231 712), 0xc76e0 bytes (78%) free
+- bootloader.bin: 0x5280 bytes (21 120), 0x2d80 bytes (36%) free
+
+Artifact SHA-256 (from the scratch build directory)
+---------------------------------------------------
+3855196680e675ff792eeb85f765dc1f6c8e3ee976f14a874eeafd243823fe4d  build/coldguard_firmware.bin
+7f1e83b7c9872014c8ad14665b493b2a25aa8d8d67ec7d4461aee2c24cf9fc02  build/coldguard_firmware.elf
+4bceb7365982f0851bfb570f77ac8b02d3867d33970b4f90a182247eac0b0d15  build/bootloader/bootloader.bin
+7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511EB1B5BB7C820  build/partition_table/partition-table.bin
+
+Boundaries
+----------
+- This is a LOCAL native build, not GitHub Actions CI. CI remains
+  INFRASTRUCTURE-LIMITED (GitHub billing).
+- Compilation proves syntax/link correctness of the copied working tree only.
+  It is not a hardware test and does not validate RS-485 levels, PZEM frames,
+  IBT-2 cold-boot behaviour, shunt topology, or TEC-OFF.
+- The artifact hashes identify binaries produced from this scratch copy; they
+  are not flashed or otherwise promoted.

@@ -1,0 +1,183 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# W03 verification workflow for the ColdGuard power/RS-485/PZEM logic
+# (Member A). Two jobs, neither touches hardware:
+#
+#   1. espidf-build  - real ESP-IDF compile check. Reproduces the documented
+#      procedure from the root README: copy firmware/ into a scratch
+#      directory (so generated build/ and sdkconfig never mix into the
+#      repository tree) and run `idf.py set-target esp32s3 && idf.py build`
+#      inside the official espressif/idf:v6.1 image. It does not flash
+#      anything, does not open a serial port and does not drive any output.
+#
+#   2. host-checks   - the five hardware-free check layers of the W03
+#      dossier: host-tool unittest suite (W02 + W03), W03 firmware static
+#      contract checks, W02 firmware static checks (regression), the W02
+#      dossier validator (regression) and the W03 dossier validator. The
+#      validators run `git cat-file`/`git show` against the recorded
+#      `firmware_commit`, so the checkout needs full history
+#      (`fetch-depth: 0`).
+#
+# A green run is COMPILE PASS + HOST CHECKS PASS only - never a bench or
+# hardware pass (see evidence/A/W03/ for the declared limits).
+name: A-W03 ESP-IDF build + host checks (esp32s3)
+
+on:
+  push:
+    branches:
+      - feat/a-w03-power-pzem-logic
+    paths:
+      - "firmware/**"
+      - ".github/workflows/a-w03-espidf-build.yml"
+  pull_request:
+    branches:
+      - feat/a-w02-sensor-foundation
+      - main
+    paths:
+      - "firmware/**"
+      - ".github/workflows/a-w03-espidf-build.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: a-w03-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  espidf-build:
+    name: idf.py build (ESP32-S3, espressif/idf:v6.1)
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    container:
+      image: espressif/idf:v6.1
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Record environment and source revision
+        run: |
+          mkdir -p "${GITHUB_WORKSPACE}/build-report"
+          cat > "${GITHUB_WORKSPACE}/build-report/idf-env.sh" <<'EOF'
+          # Make the ESP-IDF toolchain available whether or not the runner
+          # executed the image entrypoint (the entrypoint sources
+          # /opt/esp/idf/export.sh; the runner may override it).
+          if ! command -v idf.py >/dev/null 2>&1; then
+            . /opt/esp/idf/export.sh
+          fi
+          EOF
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          # The job container runs as root while the checkout is owned by the
+          # runner user, so git needs an explicit safe.directory entry before
+          # `git rev-parse` can run (otherwise source_commit stays empty).
+          git config --global --add safe.directory "${GITHUB_WORKSPACE}"
+          REPORT="${GITHUB_WORKSPACE}/build-report/environment.txt"
+          {
+            echo "source_commit=$(git rev-parse HEAD)"
+            echo "github_ref=${GITHUB_REF}"
+            echo "github_event=${GITHUB_EVENT_NAME}"
+            echo "runner=runs-on:ubuntu-latest"
+            echo "container_image=espressif/idf:v6.1"
+          } | tee "$REPORT"
+          echo "== idf.py --version ==" | tee -a "$REPORT"
+          idf.py --version 2>&1 | tee -a "$REPORT"
+          echo "== xtensa-esp32s3-elf-gcc --version (first line) ==" | tee -a "$REPORT"
+          xtensa-esp32s3-elf-gcc --version 2>&1 | head -n 1 | tee -a "$REPORT" || true
+          echo "== python --version ==" | tee -a "$REPORT"
+          python --version 2>&1 | tee -a "$REPORT"
+          echo "== cmake --version (first line) ==" | tee -a "$REPORT"
+          cmake --version 2>&1 | head -n 1 | tee -a "$REPORT"
+          echo "== idf.py path ==" | tee -a "$REPORT"
+          command -v idf.py | tee -a "$REPORT"
+
+      # Documented procedure (root README): build a scratch copy so the
+      # repository tree stays free of generated build output.
+      - name: Copy firmware to scratch directory
+        run: |
+          rm -rf /tmp/coldguard-firmware-build
+          mkdir -p /tmp/coldguard-firmware-build
+          cp -r firmware/. /tmp/coldguard-firmware-build/
+          find /tmp/coldguard-firmware-build -maxdepth 1 | sort
+
+      - name: Set target to esp32s3
+        run: |
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          cd /tmp/coldguard-firmware-build
+          set -o pipefail
+          idf.py set-target esp32s3 2>&1 | tee "${GITHUB_WORKSPACE}/build-report/10-set-target.log"
+
+      - name: Build firmware
+        run: |
+          source "${GITHUB_WORKSPACE}/build-report/idf-env.sh"
+          cd /tmp/coldguard-firmware-build
+          set -o pipefail
+          idf.py build 2>&1 | tee "${GITHUB_WORKSPACE}/build-report/20-idf-py-build.log"
+
+      - name: Collect firmware artifacts and checksums
+        if: success()
+        run: |
+          OUT="${GITHUB_WORKSPACE}/build-report/artifacts"
+          mkdir -p "$OUT"
+          cd /tmp/coldguard-firmware-build
+          for f in \
+            build/coldguard_firmware.bin \
+            build/coldguard_firmware.elf \
+            build/coldguard_firmware.map \
+            build/flasher_args.json \
+            build/bootloader/bootloader.bin \
+            build/partition_table/partition-table.bin \
+          ; do
+            cp "$f" "$OUT"/ 2>/dev/null || echo "collect warning: missing $f"
+          done
+          cp sdkconfig "$OUT/sdkconfig" 2>/dev/null || echo "collect warning: missing sdkconfig"
+          test -s "$OUT/coldguard_firmware.bin" || { echo "coldguard_firmware.bin missing - cannot record a firmware artifact"; exit 1; }
+          ls -l "$OUT" | tee "${GITHUB_WORKSPACE}/build-report/30-artifacts.txt"
+          (cd "$OUT" && sha256sum ./* | tee -a "${GITHUB_WORKSPACE}/build-report/30-artifacts.txt")
+
+      - name: Upload build report and artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: a-w03-espidf-build-report
+          path: build-report/
+          if-no-files-found: warn
+          retention-days: 90
+
+  host-checks:
+    name: host checks (unittest + static + validators)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - name: Checkout (full history for firmware_commit verification)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Record environment
+        run: |
+          python3 --version
+          git rev-parse HEAD
+
+      # Same five layers as firmware/tools/run_all_checks_w03.py, run as
+      # separate steps so a failure names the layer.
+      - name: Host tools unittest suite (W02 + W03)
+        run: python3 -m unittest discover -s firmware/tools/tests -t firmware/tools/tests
+
+      - name: W03 firmware static contract checks
+        run: python3 firmware/tools/cg_check_firmware_w03.py --quiet
+
+      - name: W02 firmware static contract checks (regression)
+        run: python3 firmware/tools/cg_check_firmware.py --quiet
+
+      - name: W02 dossier validator (regression)
+        run: python3 evidence/A/W02/validate_w02.py
+
+      - name: W03 dossier validator
+        run: python3 evidence/A/W03/validate_w03.py

@@ -1,14 +1,16 @@
-"""ColdGuard W02 serial-log parsing and analysis core (Member A).
+"""ColdGuard W02/W03 serial-log parsing and analysis core (Member A).
 
 This module is deliberately dependency-free (standard library only) so a
 bench operator can run it with the same interpreter that ships with the
 project tooling, and so its behaviour is testable without hardware.
 
-It parses the firmware's machine line grammar (firmware/main/cg_log.h,
-grammar version 1). Every machine line starts with ``#CG``. Anything else
-- ESP-IDF boot noise, operator notes, an empty line - is counted but not
-interpreted, so a raw Serial Monitor capture is never rewritten to fit the
-parser.
+It parses the firmware's machine line grammar (firmware/main/cg_log.h).
+Grammar version 2 adds the W03 PZEM line kinds to the unchanged version 1
+kinds; a v2 parser must still accept a v1 capture (the new lists stay
+empty, nothing is invented). Every machine line starts with ``#CG``.
+Anything else - ESP-IDF boot noise, operator notes, an empty line - is
+counted but not interpreted, so a raw Serial Monitor capture is never
+rewritten to fit the parser.
 
 Design rules that matter for evidence integrity:
 
@@ -17,8 +19,11 @@ Design rules that matter for evidence integrity:
   the value together (a value with ``tN=0`` stays ``None``). The spare
   probe has no flag in grammar v1: its value token is the validity marker
   (a number is valid, ``nan`` is missing).
-* Boot identity is grouped by ``#CG BOOT`` lines; ROM lines belong to the
-  boot that precedes them.
+* A PZEM sample is only usable when its line status is ``OK`` *and* all
+  four value tokens are real numbers. ``nan`` stays ``None``; a failed
+  poll is never carried forward as a value.
+* Boot identity is grouped by ``#CG BOOT`` lines; ROM and PZEM lines
+  belong to the boot that precedes them.
 * Nothing in this module invents samples, timestamps or ROM codes. If a
   field is absent, the corresponding result is ``None`` and the caller
   must report it as missing.
@@ -32,7 +37,7 @@ import re
 from typing import Iterable, Sequence
 
 LOG_PREFIX = "#CG"
-GRAMMAR_VERSION = 1
+GRAMMAR_VERSION = 2
 
 MEASUREMENT_ROLES = ("T1", "T2", "T3")
 SPARE_ROLE = "SPARE"
@@ -89,6 +94,72 @@ class DoorStateLine:
     boot_index: int
 
 
+@dataclasses.dataclass(frozen=True)
+class PzemConfig:
+    """One ``#CG PZEM_CFG`` line: the framing the poll used on the wire."""
+
+    slave: int | None
+    baud: int | None
+    framing: str | None
+    direction: str | None
+    read_only: bool
+    boot_index: int
+
+
+@dataclasses.dataclass(frozen=True)
+class PzemRangeLine:
+    """One ``#CG PZEM_RANGE`` line: the read-only profile readback."""
+
+    uptime_ms: int
+    status: str
+    raw_value: int | None
+    value_hex: str | None
+    profile: str | None
+    crc_ok: bool
+    exception_code: int
+    tx: str | None
+    rx: str | None
+    boot_index: int
+
+
+@dataclasses.dataclass(frozen=True)
+class PzemSample:
+    """One ``#CG PZEM`` poll line: one real observation time.
+
+    ``voltage_v``/``current_a``/``power_w``/``energy_wh`` are ``None``
+    unless the line carried a number. ``values_valid`` additionally
+    requires the link status to be ``OK``: a number on a non-OK line
+    would be a firmware contradiction and must not enter statistics.
+    """
+
+    index: int
+    uptime_ms: int
+    seq: int | None
+    status: str
+    voltage_v: float | None
+    current_a: float | None
+    power_w: float | None
+    energy_wh: float | None
+    crc_ok: bool
+    attempts: int | None
+    exception_code: int
+    ok_count: int | None
+    fail_count: int | None
+    tx: str | None
+    rx: str | None
+    boot_index: int
+
+    @property
+    def values_valid(self) -> bool:
+        return (
+            self.status == "OK"
+            and self.voltage_v is not None
+            and self.current_a is not None
+            and self.power_w is not None
+            and self.energy_wh is not None
+        )
+
+
 @dataclasses.dataclass
 class BootEntry:
     index: int
@@ -116,6 +187,9 @@ class ParsedLog:
     samples: list[Sample] = dataclasses.field(default_factory=list)
     door_edges: list[DoorEdge] = dataclasses.field(default_factory=list)
     door_states: list[DoorStateLine] = dataclasses.field(default_factory=list)
+    pzem_configs: list[PzemConfig] = dataclasses.field(default_factory=list)
+    pzem_range_lines: list[PzemRangeLine] = dataclasses.field(default_factory=list)
+    pzem_samples: list[PzemSample] = dataclasses.field(default_factory=list)
     errors: list[dict[str, str]] = dataclasses.field(default_factory=list)
     unknown_machine_lines: list[str] = dataclasses.field(default_factory=list)
     non_machine_lines: int = 0
@@ -297,6 +371,77 @@ def parse_text(text: str) -> ParsedLog:
                     thermal=fields.get("thermal"),
                     door_raw=_int(fields.get("door_raw")),
                     door_state=fields.get("door"),
+                )
+            )
+        elif kind == "PZEM_CFG":
+            fields = _fields(parts[2:])
+            slave = _int(fields.get("slave"))
+            baud = _int(fields.get("baud"))
+            if slave is None or baud is None:
+                log.malformed_lines.append(raw_line)
+                continue
+            log.pzem_configs.append(
+                PzemConfig(
+                    slave=slave,
+                    baud=baud,
+                    framing=fields.get("framing"),
+                    direction=fields.get("dir"),
+                    read_only=_bool_flag(fields.get("read_only")),
+                    boot_index=current_boot.index if current_boot else 0,
+                )
+            )
+        elif kind == "PZEM_RANGE":
+            fields = _fields(parts[2:])
+            uptime_ms = _int(fields.get("uptime_ms"))
+            status = fields.get("status")
+            if uptime_ms is None or status is None:
+                log.malformed_lines.append(raw_line)
+                continue
+            token = fields.get("value")
+            raw_value = None
+            value_hex = None
+            if token is not None and re.fullmatch(r"0[xX][0-9A-Fa-f]{4}", token):
+                raw_value = int(token, 16)
+                value_hex = f"0x{raw_value:04X}"
+            log.pzem_range_lines.append(
+                PzemRangeLine(
+                    uptime_ms=uptime_ms,
+                    status=status,
+                    raw_value=raw_value,
+                    value_hex=value_hex,
+                    profile=fields.get("profile"),
+                    crc_ok=_bool_flag(fields.get("crc_ok")),
+                    exception_code=_int(fields.get("exc")) or 0,
+                    tx=fields.get("tx"),
+                    rx=fields.get("rx"),
+                    boot_index=current_boot.index if current_boot else 0,
+                )
+            )
+        elif kind == "PZEM":
+            fields = _fields(parts[2:])
+            uptime_ms = _int(fields.get("uptime_ms"))
+            status = fields.get("status")
+            if uptime_ms is None or status is None:
+                log.malformed_lines.append(raw_line)
+                continue
+            log.pzem_samples.append(
+                PzemSample(
+                    index=len(log.pzem_samples),
+                    uptime_ms=uptime_ms,
+                    seq=_int(fields.get("seq")),
+                    status=status,
+                    voltage_v=_temp(fields.get("v")),
+                    current_a=_temp(fields.get("i")),
+                    power_w=_temp(fields.get("p")),
+                    energy_wh=_temp(fields.get("e")),
+                    crc_ok=_bool_flag(fields.get("crc_ok")),
+                    attempts=_int(fields.get("attempts")),
+                    exception_code=_int(fields.get("exc")) or 0,
+                    ok_count=_int(fields.get("ok")),
+                    fail_count=_int(fields.get("fail")),
+                    tx=fields.get("tx"),
+                    rx=fields.get("rx"),
+                    boot_index=current_boot.index if current_boot else 0,
                 )
             )
         elif kind == "ERR":
@@ -634,6 +779,194 @@ def door_csv_rows(
                 "transitions": line.transitions,
                 "cycles": line.cycles,
                 "discarded_edges": line.discarded,
+            }
+        )
+    return rows
+
+
+# --------------------------------------------------------------------------
+# PZEM power/link analysis (docs/05A A-W03-05, docs/01 section 9)
+# --------------------------------------------------------------------------
+
+PZEM_STATUS_TOKENS = (
+    "OK",
+    "TIMEOUT",
+    "CRC_ERR",
+    "BAD_SLAVE",
+    "BAD_FUNCTION",
+    "BAD_LENGTH",
+    "EXCEPTION",
+    "UART_ERR",
+)
+
+
+def _median(values: Sequence[float]) -> float | None:
+    if not values:
+        return None
+    ordered = sorted(values)
+    middle = len(ordered) // 2
+    if len(ordered) % 2 == 1:
+        return ordered[middle]
+    return (ordered[middle - 1] + ordered[middle]) / 2
+
+
+def pzem_boot_indices(parsed: ParsedLog) -> list[int]:
+    """Boot indices that contributed at least one PZEM line.
+
+    A capture that spans several reboots mixes counters from different
+    boots; the caller must select one boot (or refuse) instead of fusing
+    separate sessions into one statistic.
+    """
+
+    return sorted(
+        {sample.boot_index for sample in parsed.pzem_samples}
+        | {line.boot_index for line in parsed.pzem_range_lines}
+        | {line.boot_index for line in parsed.pzem_configs}
+    )
+
+
+def pzem_session(parsed: ParsedLog, boot_index: int | None = None) -> list[PzemSample]:
+    """PZEM samples of one boot (or all, when ``boot_index`` is None)."""
+
+    return [
+        sample
+        for sample in parsed.pzem_samples
+        if boot_index is None or sample.boot_index == boot_index
+    ]
+
+
+def pzem_link_stats(samples: Sequence[PzemSample]) -> dict:
+    """Link-quality statistics over a set of poll lines.
+
+    Distinguishes the transport outcome (status tokens, CRC failures,
+    timeouts) from the value path: a line only counts as ``ok`` when the
+    status is OK *and* all four values are present. The poll interval
+    profile is reported from real ``uptime_ms`` stamps; a missing interval
+    (> 2x median) is reported as a gap instead of silently compressing the
+    timeline.
+    """
+
+    n_total = len(samples)
+    n_ok = sum(1 for sample in samples if sample.values_valid)
+    status_counts: dict[str, int] = {}
+    for sample in samples:
+        status_counts[sample.status] = status_counts.get(sample.status, 0) + 1
+
+    crc_ok_count = sum(1 for sample in samples if sample.crc_ok)
+    timeout_count = status_counts.get("TIMEOUT", 0)
+    crc_error_count = status_counts.get("CRC_ERR", 0)
+    exception_count = status_counts.get("EXCEPTION", 0)
+    uart_error_count = status_counts.get("UART_ERR", 0)
+    attempts_counts: dict[str, int] = {}
+    for sample in samples:
+        key = str(sample.attempts) if sample.attempts is not None else "unknown"
+        attempts_counts[key] = attempts_counts.get(key, 0) + 1
+
+    stamps = [sample.uptime_ms for sample in samples]
+    intervals = [later - earlier for earlier, later in zip(stamps, stamps[1:])]
+    median_interval = _median([float(value) for value in intervals])
+    gaps: list[dict] = []
+    if median_interval is not None and median_interval > 0:
+        for sample, earlier, later in zip(samples[1:], stamps, stamps[1:]):
+            delta = later - earlier
+            if delta > 2 * median_interval:
+                gaps.append(
+                    {
+                        "after_uptime_ms": earlier,
+                        "uptime_ms": later,
+                        "gap_ms": delta,
+                        "seq": sample.seq,
+                    }
+                )
+
+    duration_s = (stamps[-1] - stamps[0]) / 1000.0 if len(stamps) >= 2 else 0.0
+
+    return {
+        "n_total": n_total,
+        "n_ok": n_ok,
+        "n_error": n_total - n_ok,
+        "success_rate": (n_ok / n_total) if n_total else None,
+        "error_rate": ((n_total - n_ok) / n_total) if n_total else None,
+        "status_counts": status_counts,
+        "crc_ok_count": crc_ok_count,
+        "crc_error_count": crc_error_count,
+        "timeout_count": timeout_count,
+        "exception_count": exception_count,
+        "uart_error_count": uart_error_count,
+        "attempts_counts": attempts_counts,
+        "first_uptime_ms": stamps[0] if stamps else None,
+        "last_uptime_ms": stamps[-1] if stamps else None,
+        "duration_s": round(duration_s, 3),
+        "interval_ms": {
+            "n": len(intervals),
+            "min": min(intervals) if intervals else None,
+            "median": median_interval,
+            "max": max(intervals) if intervals else None,
+        },
+        "gaps": gaps,
+        "gap_total_ms": sum(gap["gap_ms"] for gap in gaps),
+    }
+
+
+def pzem_power_stats(samples: Sequence[PzemSample]) -> dict:
+    """Per-quantity statistics over the samples that carry valid values.
+
+    ``sd`` is the sample standard deviation of the observation window -
+    with TEC off and a stable supply it is measurement noise, not a
+    stability claim about the load. ``spread`` is max-min. All statistics
+    come from real logged numbers only.
+    """
+
+    quantities = (
+        ("voltage_v", "voltage"),
+        ("current_a", "current"),
+        ("power_w", "power"),
+        ("energy_wh", "energy"),
+    )
+    stats: dict[str, dict] = {}
+    for key, _label in quantities:
+        values = [
+            getattr(sample, key)
+            for sample in samples
+            if sample.values_valid and getattr(sample, key) is not None
+        ]
+        stats[key] = {
+            "n_valid": len(values),
+            "n_total": len(samples),
+            "mean": _mean(values) if values else None,
+            "sd": _sample_sd(values) if values else None,
+            "min": min(values) if values else None,
+            "max": max(values) if values else None,
+            "spread": (max(values) - min(values)) if values else None,
+        }
+    return stats
+
+
+def pzem_csv_rows(samples: Sequence[PzemSample]) -> list[dict]:
+    """CSV rows for pzem-off.csv.
+
+    ``uptime_ms`` is the firmware's real observation clock. Values of a
+    failed poll (or of a line whose status is not OK) are empty cells,
+    never repeated from the previous sample.
+    """
+
+    rows: list[dict] = []
+    for sample in samples:
+        valid = sample.values_valid
+        rows.append(
+            {
+                "uptime_ms": sample.uptime_ms,
+                "seq": sample.seq,
+                "status": sample.status,
+                "crc_ok": 1 if sample.crc_ok else 0,
+                "attempts": sample.attempts,
+                "exception_code": sample.exception_code,
+                "voltage_v": sample.voltage_v if valid else None,
+                "current_a": sample.current_a if valid else None,
+                "power_w": sample.power_w if valid else None,
+                "energy_wh": sample.energy_wh if valid else None,
+                "ok_count": sample.ok_count,
+                "fail_count": sample.fail_count,
             }
         )
     return rows

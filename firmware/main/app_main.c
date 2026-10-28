@@ -1,5 +1,6 @@
 /*
- * ColdGuard firmware - W02 sensor foundation application (Member A).
+ * ColdGuard firmware - W03 power/PZEM + W02 sensor foundation application
+ * (Member A).
  *
  * What this application does (and only this):
  *   - forces the cooling actuator inputs OFF at boot (docs/01 11.8);
@@ -9,11 +10,13 @@
  *     prints one SAMPLE line per real observation time (A-W02-04/05);
  *   - samples the MC-38 raw level, timestamps every raw edge and prints a
  *     committed DOOR_STATE line after the debounce window (A-W02-07);
- *   - keeps BME280 out of scope (A-W02-06 is a pending physical test).
+ *   - polls the PZEM-017 over Modbus RTU read-only and prints one PZEM line
+ *     per real poll, plus the boot config/range readback (A-W03-03/04).
  *
- * Not implemented in W02 on purpose: MQTT/telemetry publishing,
- * MAX3485/PZEM, cooling control, command handling. Those belong to
- * W03/W05/W06 and adding them here would create unverified claims.
+ * Not implemented in W03 on purpose: MQTT/telemetry publishing, cooling
+ * control, PWM generation, command handling. Those belong to W04+ and
+ * adding them here would create unverified claims. BME280 stays a pending
+ * physical test (A-W02-06).
  */
 #include <stdio.h>
 #include <string.h>
@@ -30,6 +33,7 @@
 #include "cg_door.h"
 #include "cg_ds18b20.h"
 #include "cg_log.h"
+#include "cg_power.h"
 #include "cg_rom_map.h"
 #include "cg_safety.h"
 
@@ -227,6 +231,11 @@ void app_main(void)
     if (!cg_ds18b20_init()) {
         cg_log_error("ds18b20=INIT_DEGRADED continuing=1");
     }
+
+    /* W03: PZEM observation task (read-only Modbus polling). It has no path
+     * to the cooling branch; the actuator stays in the safe state forced
+     * above. */
+    cg_power_start();
 
     (void)xTaskCreate(door_task, "cg_door", 3072, NULL, 6, NULL);
     (void)xTaskCreate(sensor_task, "cg_sensor", 4096, NULL, 5, NULL);

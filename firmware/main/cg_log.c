@@ -98,6 +98,8 @@ void cg_log_banner(void)
 
 void cg_log_safety_actuator_off(void)
 {
+    /* "en" is R_EN (the historical name for the shared enable); "len" is the
+     * second enable that pin map v1 left unassigned. Both are driven low. */
     cg_log_line("%s %s actuator=OFF pwm=%d en=%d len=%d", CG_LOG_PREFIX, CG_LOG_SAFETY,
                 CG_PIN_IBT2_COOLING_PWM, CG_PIN_IBT2_REN, CG_PIN_IBT2_LEN);
 }
