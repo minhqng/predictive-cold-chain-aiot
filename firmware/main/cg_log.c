@@ -98,8 +98,8 @@ void cg_log_banner(void)
 
 void cg_log_safety_actuator_off(void)
 {
-    cg_log_line("%s %s actuator=OFF pwm=%d en=%d", CG_LOG_PREFIX, CG_LOG_SAFETY,
-                CG_PIN_IBT2_COOLING_PWM, CG_PIN_IBT2_ENABLE);
+    cg_log_line("%s %s actuator=OFF pwm=%d en=%d len=%d", CG_LOG_PREFIX, CG_LOG_SAFETY,
+                CG_PIN_IBT2_COOLING_PWM, CG_PIN_IBT2_REN, CG_PIN_IBT2_LEN);
 }
 
 void cg_log_boot(const char *boot_id, uint32_t boot_count)

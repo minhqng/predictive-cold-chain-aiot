@@ -12,17 +12,20 @@ void cg_safety_force_actuator_off(void)
 {
     gpio_config_t cfg = {
         .pin_bit_mask = (1ULL << (uint32_t)CG_PIN_IBT2_COOLING_PWM) |
-                        (1ULL << (uint32_t)CG_PIN_IBT2_ENABLE),
+                        (1ULL << (uint32_t)CG_PIN_IBT2_REN) |
+                        (1ULL << (uint32_t)CG_PIN_IBT2_LEN),
         .mode = GPIO_MODE_OUTPUT,
         .pull_up_en = GPIO_PULLUP_DISABLE,
-        .pull_down_en = GPIO_PULLDOWN_ENABLE, /* keep the enable low if undriven */
+        .pull_down_en = GPIO_PULLDOWN_ENABLE, /* keep the enables low if undriven */
         .intr_type = GPIO_INTR_DISABLE,
     };
     ESP_ERROR_CHECK(gpio_config(&cfg));
 
-    /* IBT-2/BTS7960: PWM duty 0 and both enables inactive. */
+    /* IBT-2/BTS7960: both enables inactive before the PWM level is
+     * written. LPWM is tied to GND on the module and is not driven. */
+    (void)gpio_set_level(CG_PIN_IBT2_REN, 0);
+    (void)gpio_set_level(CG_PIN_IBT2_LEN, 0);
     (void)gpio_set_level(CG_PIN_IBT2_COOLING_PWM, 0);
-    (void)gpio_set_level(CG_PIN_IBT2_ENABLE, 0);
 
     cg_log_safety_actuator_off();
 }

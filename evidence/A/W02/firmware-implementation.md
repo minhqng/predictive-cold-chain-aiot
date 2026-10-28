@@ -1,5 +1,13 @@
 # W02 firmware implementation — Member A
 
+> **Cập nhật 2026-10-28 — map v2.** Bản đồ chân hiệu lực của firmware là
+> `evidence/A/as-built-pinmap-2026-10-27.md`: DS18B20=**GPIO33** (trước là 10),
+> MC-38=**GPIO35** (trước là 34), BME280 SDA/SCL=21/**34**, IBT-2
+> RPWM/R_EN/L_EN=**5/6/10**, `CG_PIN_MAP_VERSION=2`. Bảng module bên dưới đã
+> được sửa theo map v2; các **bản ghi bench cũ** trong hồ sơ (DS18B20 trên
+> GPIO10, MC-38 trên GPIO34, BME SCL trên GPIO33) vẫn giữ nguyên như quan sát
+> lịch sử, không bị viết lại.
+
 **Phạm vi:** firmware W02 trong repo (`firmware/main/`, 7 module C) + công cụ kiểm chứng
 host (`firmware/tools/`). Tệp này ghi **chính xác** cái gì đã implement, cái gì đã được
 kiểm chứng tự động, và cái gì **chưa**.
@@ -16,12 +24,12 @@ ngược hành vi của phiên bench cũ.
 
 | File | Trách nhiệm | Ràng buộc canonical |
 |---|---|---|
-| `coldguard_config.h` | pin (docs/01 §11.7), chu kỳ lấy mẫu, ROM map, ngưỡng debounce, token log | một chỗ duy nhất chứa hằng số |
+| `coldguard_config.h` | pin (as-built map v2 — `evidence/A/as-built-pinmap-2026-10-27.md`), chu kỳ lấy mẫu, ROM map, ngưỡng debounce, token log, guard `#error` quyền sở hữu GPIO | một chỗ duy nhất chứa hằng số |
 | `cg_rom_map.c/.h` | ROM→vai trò bằng so khớp 8 byte; tự kiểm CRC8 + trùng lặp khi boot | `PHY-DS-001/002`; §6.5 "thứ tự thư viện không phải định danh" |
-| `cg_onewire.c/.h` | bit-bang 1-Wire open-drain (ESP-IDF v6 không có host driver 1-Wire; repo không dùng component registry) | bus DS18B20 trên GPIO10 |
+| `cg_onewire.c/.h` | bit-bang 1-Wire open-drain (ESP-IDF v6 không có host driver 1-Wire; repo không dùng component registry) | bus DS18B20 trên GPIO33 |
 | `cg_ds18b20.c/.h` | broadcast `SKIP_ROM`+`CONVERT_T` → đọc từng ROM; CRC8, 85.0 °C power-on, ngoài dải, mất presence ⇒ `invalid`, in `nan` | `PHY-DS-004/006`, §6.8 `VALID/DEGRADED/INVALID` |
-| `cg_door.c/.h` | MC-38 GPIO34: poll 5 ms, debounce 50 ms cấu hình được, đếm cạnh thô / cạnh bỏ đi, mọi cạnh thô có mốc µs, semantic `UNVERIFIED` khi polarity chưa commissioned | docs/01 §8.2/§8.3/§8.4 |
-| `cg_safety.c/.h` | ép IBT-2 PWM/EN về mức OFF **trước** mọi khởi tạo khác | docs/01 §11.8 |
+| `cg_door.c/.h` | MC-38 GPIO35: poll 5 ms, debounce 50 ms cấu hình được, đếm cạnh thô / cạnh bỏ đi, mọi cạnh thô có mốc µs, semantic `UNVERIFIED` khi polarity chưa commissioned | docs/01 §8.2/§8.3/§8.4 |
+| `cg_safety.c/.h` | ép IBT-2 RPWM/R_EN/L_EN về mức OFF **trước** mọi khởi tạo khác | docs/01 §11.8 |
 | `cg_log.c/.h` | in một dòng nguyên tử (mutex) theo grammar có phiên bản | để máy parse được, không phải để người đoán |
 | `app_main.c` | thứ tự boot, NVS `boot_count`, `boot_id`, 2 task (door 6, sensor 5) | `A-W02-03`, `A-W02-04`, `A-W02-07` |
 
@@ -154,3 +162,26 @@ test không phát hiện được:
 
 Xem `bench-procedure-w02.md` — danh sách ngắn, có lệnh cụ thể cho từng bước và file bằng
 chứng phải sinh ra. (B0/B1 đã xong — cập nhật 7; bài cửa B3 và dán nhãn B4 còn lại.)
+
+## 8. Native build cho mã nguồn map v2 (2026-10-28, working tree **trước commit**)
+
+Build trên máy Windows, ESP-IDF v6.1 (`git describe` = `v6.1`, commit `fff9895c82d744c7237be8847347bdd1b07c6643`),
+toolchain `xtensa-esp-elf-gcc 15.2.0 (esp-15.2.0_20251204)`, target `esp32s3`, build dir ngoài repo (`%TEMP%\cg-build-w02`).
+
+```text
+idf.py -B <scratch>/cg-build-w02 -DSDKCONFIG=<scratch>/cg-build-w02/sdkconfig -DIDF_TARGET=esp32s3 build
+```
+
+| Hạng mục | Giá trị |
+|---|---|
+| Exit code | `0` |
+| Bước Ninja | `1085/1085` |
+| Warning / Error | `0` / `0` |
+| App version string | `1ff6da6-dirty` |
+| Base commit của working tree | `1ff6da6ae3e36e8e20348d9af022ab13d8ea42a1` (14 tệp dirty) |
+| `coldguard_firmware.bin` | `201 584 B`, SHA-256 `47cf3bb6c498701ea449ef2352abd0459480b45bd74c00bebe30786eed54b00d` |
+| `bootloader.bin` / `partition-table.bin` | `21 120 B` / `3 072 B` |
+| SHA-256 gộp `firmware/main/*.c`, `*.h`, `CMakeLists.txt` | `980c8d46ff02290124fb803d3bcfab3bd2481ca7026e8f9ebc6edbf2874c1c5c` (sau khi sửa comment `cg_door.h`; build lại tăng dần cho ra **cùng** binary hash `47cf3bb6…`) |
+| Host test sau build | `74 unittest OK`; `cg_check_firmware.py` = 42 check PASS |
+
+Bản build này chứng minh **mã nguồn hiện tại trong working tree** biên dịch sạch; nó **không** thuộc một commit đã push và **không** thay thế build CI/board run trong `evidence/A/W02/espidf-run/` (các số liệu flash/runtime ở đó thuộc mã nguồn cũ hơn).

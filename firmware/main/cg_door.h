@@ -40,8 +40,8 @@ typedef struct {
     bool initialised;
 } cg_door_t;
 
-/* Configures GPIO34 as a pulled input and initialises the debouncer with
- * the first observed level. */
+/* Configures CG_PIN_MC38 (GPIO35 as-built) as a pulled input and
+ * initialises the debouncer with the first observed level. */
 void cg_door_init(cg_door_t *door);
 
 /* Samples the pin. `now_us` is a monotonic microsecond timestamp.

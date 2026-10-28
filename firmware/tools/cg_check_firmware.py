@@ -30,6 +30,9 @@ certify anything it cannot see:
    to own it yet.
 10. No unmeasurable counters - the ROM summary must not print an
     "unknown devices" count (W02 has no bus scan).
+11. GPIO ownership - the effective pin map must match the as-built map and
+    must not assign one pad to two peripherals, a flash/PSRAM/strapping
+    pin, or leave the actuator safe-OFF incomplete (see cg_gpio_map.py).
 
 Exit codes: 0 = every check passed, 1 = at least one check failed,
 2 = usage/IO error.
@@ -41,6 +44,12 @@ import argparse
 import pathlib
 import re
 import sys
+
+TOOLS_DIR = pathlib.Path(__file__).resolve().parent
+if str(TOOLS_DIR) not in sys.path:
+    sys.path.insert(0, str(TOOLS_DIR))
+
+import cg_gpio_map  # noqa: E402  (local module, path set above)
 
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 FIRMWARE_MAIN = REPO_ROOT / "firmware" / "main"
@@ -208,6 +217,8 @@ def run_checks() -> Checker:
     log_c = checker.read("firmware/main/cg_log.c")
     app_main = checker.read("firmware/main/app_main.c")
     cmake = checker.read("firmware/main/CMakeLists.txt")
+    safety_c = checker.read("firmware/main/cg_safety.c")
+    onewire_c = checker.read("firmware/main/cg_onewire.c")
 
     # 1. ROM map parity + CRC
     firmware_roms = parse_firmware_roms(config)
@@ -333,6 +344,67 @@ def run_checks() -> Checker:
             f'"{token}"' in config or f'"{token}"' in log_h,
             f"log grammar declares the {token} line kind",
         )
+
+    # 11. GPIO ownership and actuator safe-OFF
+    # W02 has no RS-485 driver, so the DE/RE checks are not applicable here;
+    # they are enforced by the W03 checker with the same shared module.
+    gpio = cg_gpio_map.evaluate(config)
+    for problem in cg_gpio_map.conflicts(gpio, require_rs485=False):
+        checker.fail(f"GPIO map: {problem}")
+    for problem in cg_gpio_map.as_built_mismatches(gpio, require_rs485=False):
+        checker.fail(f"GPIO map: {problem}")
+    if not cg_gpio_map.conflicts(gpio, require_rs485=False) and not cg_gpio_map.as_built_mismatches(
+        gpio, require_rs485=False
+    ):
+        checker.notes.append(
+            "ok   GPIO map has one owner per pad and matches the as-built map v2"
+        )
+    checker.check(
+        gpio.pin_map_version == 2,
+        f"CG_PIN_MAP_VERSION is 2 for the as-built map (got {gpio.pin_map_version})",
+    )
+
+    # The pin work may live in cg_safety.c (W02) or be delegated to
+    # cg_actuator.c (W03); either way the boot path must clear all three
+    # actuator inputs, enables first.
+    if "cg_actuator_force_off()" in strip_comments(safety_c):
+        try:
+            actuator_c = checker.read("firmware/main/cg_actuator.c")
+        except OSError:
+            checker.fail("cg_safety delegates safe-OFF to cg_actuator, but cg_actuator.c is unreadable")
+        else:
+            problems = cg_gpio_map.safe_off_problems(
+                actuator_c,
+                rpwm="CG_ACTUATOR_RPWM_PIN",
+                ren="CG_ACTUATOR_REN_PIN",
+                len_pin="CG_ACTUATOR_LEN_PIN",
+                signature=r"void\s+cg_actuator_force_off\s*\([^)]*\)",
+            )
+            for problem in problems:
+                checker.fail(f"delegated safe-OFF: {problem}")
+            checker.check(
+                not problems,
+                "delegated safe-OFF (cg_actuator_force_off) covers RPWM, R_EN and L_EN, enables first",
+            )
+    else:
+        problems = cg_gpio_map.safe_off_problems(
+            safety_c,
+            rpwm="CG_PIN_IBT2_COOLING_PWM",
+            ren="CG_PIN_IBT2_REN",
+            len_pin="CG_PIN_IBT2_LEN",
+            signature=r"void\s+cg_safety_force_actuator_off\s*\([^)]*\)",
+        )
+        for problem in problems:
+            checker.fail(f"safe-OFF: {problem}")
+        checker.check(
+            not problems,
+            "boot safe-OFF drives RPWM, R_EN and L_EN low (enables cleared first)",
+        )
+
+    for problem in cg_gpio_map.direction_problems(
+        {"cg_door.c": door_c, "cg_onewire.c": onewire_c, "cg_ds18b20.c": ds18b20}
+    ):
+        checker.fail(f"pin direction: {problem}")
 
     return checker
 

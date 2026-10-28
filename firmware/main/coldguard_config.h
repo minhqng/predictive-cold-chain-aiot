@@ -7,8 +7,9 @@
  * scattered magic numbers.
  *
  * Authority:
- *   - docs/01 section 11.7 "Proposed GPIO mapping v1" (subject to board
- *     verification; a change bumps pin_map_version, not the BOM).
+ *   - evidence/A/as-built-pinmap-2026-10-27.md (as-built map v2, from the
+ *     2026-10-25..27 bench sessions; it supersedes the docs/01 §11.7
+ *     "Proposed GPIO mapping v1" table, which stays as history).
  *   - docs/01 section 6.4/6.5 (T1 near door, T2 center, T3 far/opposite;
  *     identity is the ROM code, never a library enumeration index).
  *   - docs/01 section 8.2 (raw MC-38 level -> OPEN/CLOSED MUST be
@@ -24,25 +25,134 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w02-0.1.0"
+#define CG_FIRMWARE_VERSION "cg-w02-0.2.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
-#define CG_PIN_MAP_VERSION 1
+#define CG_PIN_MAP_VERSION 2
 #define CG_LOG_GRAMMAR_VERSION 1
 #define CG_DEVICE_ID "coldguard-001"
 
 /* ------------------------------------------------------------------ */
-/* Pins - docs/01 section 11.7                                         */
+/* Board profile used by the pin guards below                          */
 /* ------------------------------------------------------------------ */
 
-#define CG_PIN_DS18B20_DATA 10
+/* The MAKDRIVERONE board carries an ESP32-S3R2 (2 MB Quad in-package
+ * PSRAM) and an external W25Q32 Quad flash. GPIO26-32 are the SPI0/1
+ * flash bus. GPIO33-37 are available on this profile; an Octal-PSRAM
+ * part (S3R8/S3R8V) would additionally occupy them, so the guard below
+ * is conditional on this switch instead of assuming either variant. */
+#define CG_HW_PSRAM_OCTAL 0
+
+/* ------------------------------------------------------------------ */
+/* Pins - as-built map v2 (2026-10-27)                                 */
+/* ------------------------------------------------------------------ */
+
+/* DS18B20 DATA moved from GPIO10 to GPIO33 during TEST 129D: four ROMs
+ * were read on the 33 bus. GPIO10 belongs exclusively to IBT-2 L_EN. */
+#define CG_PIN_DS18B20_DATA 33
 #define CG_PIN_BME280_SDA 21
-#define CG_PIN_BME280_SCL 33
-#define CG_PIN_MC38 34
-#define CG_PIN_MAX3485_DE_RE 35
+/* SCL moved from GPIO33 to GPIO34 when the BME280 header was wired. */
+#define CG_PIN_BME280_SCL 34
+/* MC-38 moved from GPIO34 to GPIO35; GPIO34 now carries BME280 SCL. */
+#define CG_PIN_MC38 35
 #define CG_PIN_UART_TX_TO_MAX3485_DI 36
 #define CG_PIN_UART_RX_FROM_MAX3485_RO 37
 #define CG_PIN_IBT2_COOLING_PWM 5
-#define CG_PIN_IBT2_ENABLE 6
+#define CG_PIN_IBT2_REN 6
+#define CG_PIN_IBT2_LEN 10
+/* W02 compatibility name. R_EN is the enable that pin map v1 called
+ * "IBT-2 enable"; the W03 module also drives L_EN. */
+#define CG_PIN_IBT2_ENABLE CG_PIN_IBT2_REN
+
+/* ------------------------------------------------------------------ */
+/* Compile-time GPIO ownership guards                                  */
+/* ------------------------------------------------------------------ */
+
+#define CG_GPIO_SAME(a, b) ((a) == (b))
+#define CG_GPIO_IS_FLASH_BUS(p) ((p) >= 26 && (p) <= 32)
+#define CG_GPIO_IS_OCTAL_PSRAM(p) ((p) >= 33 && (p) <= 37)
+#define CG_GPIO_IS_STRAPPING(p) ((p) == 0 || (p) == 3 || (p) == 45 || (p) == 46)
+
+/* One authoritative owner per pin. A duplicate here means two drivers
+ * would configure the same pad in different modes. */
+#if CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_BME280_SDA) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_BME280_SCL) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_MC38) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_BME280_SCL) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_MC38) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SDA, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_MC38) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_MC38, CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_SAME(CG_PIN_MC38, CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_SAME(CG_PIN_MC38, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_MC38, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_MC38, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_UART_TX_TO_MAX3485_DI, CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_SAME(CG_PIN_UART_TX_TO_MAX3485_DI, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_UART_TX_TO_MAX3485_DI, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_UART_TX_TO_MAX3485_DI, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_UART_RX_FROM_MAX3485_RO, CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_SAME(CG_PIN_UART_RX_FROM_MAX3485_RO, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_UART_RX_FROM_MAX3485_RO, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_IBT2_COOLING_PWM, CG_PIN_IBT2_REN) || \
+    CG_GPIO_SAME(CG_PIN_IBT2_COOLING_PWM, CG_PIN_IBT2_LEN) || \
+    CG_GPIO_SAME(CG_PIN_IBT2_REN, CG_PIN_IBT2_LEN)
+#error "GPIO ownership conflict: one pin drives two peripherals in the active map"
+#endif
+
+/* Specific diagnostics for the two historical conflicts. */
+#if CG_GPIO_SAME(CG_PIN_DS18B20_DATA, CG_PIN_IBT2_LEN)
+#error "DS18B20 DATA and IBT-2 L_EN cannot share a pin (as-built: DATA=GPIO33, L_EN=GPIO10)"
+#endif
+#if CG_GPIO_SAME(CG_PIN_BME280_SCL, CG_PIN_MC38)
+#error "BME280 SCL and the MC-38 door input cannot share a pin (as-built: SCL=GPIO34, MC-38=GPIO35)"
+#endif
+
+#if CG_GPIO_IS_FLASH_BUS(CG_PIN_DS18B20_DATA) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_BME280_SDA) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_BME280_SCL) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_MC38) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_IBT2_REN) || \
+    CG_GPIO_IS_FLASH_BUS(CG_PIN_IBT2_LEN)
+#error "A pin is on the SPI0/1 flash bus (GPIO26-32) of the W25Q32 profile"
+#endif
+
+#if CG_HW_PSRAM_OCTAL && \
+    (CG_GPIO_IS_OCTAL_PSRAM(CG_PIN_DS18B20_DATA) || \
+     CG_GPIO_IS_OCTAL_PSRAM(CG_PIN_BME280_SCL) || \
+     CG_GPIO_IS_OCTAL_PSRAM(CG_PIN_MC38) || \
+     CG_GPIO_IS_OCTAL_PSRAM(CG_PIN_UART_TX_TO_MAX3485_DI) || \
+     CG_GPIO_IS_OCTAL_PSRAM(CG_PIN_UART_RX_FROM_MAX3485_RO))
+#error "Octal-PSRAM profile: GPIO33-37 are reserved for the memory bus"
+#endif
+
+#if CG_GPIO_IS_STRAPPING(CG_PIN_DS18B20_DATA) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_BME280_SDA) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_BME280_SCL) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_MC38) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_UART_TX_TO_MAX3485_DI) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_UART_RX_FROM_MAX3485_RO) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_IBT2_COOLING_PWM) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_IBT2_REN) || \
+    CG_GPIO_IS_STRAPPING(CG_PIN_IBT2_LEN)
+#error "A strapping pin (GPIO0/3/45/46) is assigned to a peripheral"
+#endif
 
 /* ------------------------------------------------------------------ */
 /* DS18B20 acquisition - docs/01 sections 6.6 / 6.7                    */

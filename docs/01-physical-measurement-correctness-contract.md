@@ -1508,6 +1508,13 @@ It must not generate duplicate control authority.
 
 ## 11.7 Proposed GPIO mapping v1
 
+> **SUPERSEDED 2026-10-28** — bảng dưới đây là lịch sử. Bản đồ chân hiệu lực là
+> `evidence/A/as-built-pinmap-2026-10-27.md` (map v2, `CG_PIN_MAP_VERSION = 2`):
+> DS18B20=GPIO33, BME280 SDA/SCL=21/34, MC-38=GPIO35, RS-485 TX/RX=36/37 (AUTO,
+> không DE/RE), IBT-2 RPWM/R_EN/L_EN=5/6/10, LPWM=GND. Xung đột GPIO10
+> (DS18B20 cũ vs L_EN as-built) được giải quyết bằng cách chuyển DS18B20 sang 33.
+> Không xoá bảng gốc; chỉ thêm ghi chú này.
+
 Subject to board verification:
 
 | Function | Proposed GPIO |
