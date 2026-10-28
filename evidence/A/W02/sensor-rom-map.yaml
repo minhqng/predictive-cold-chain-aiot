@@ -1,0 +1,145 @@
+# ColdGuard — Member A — W02
+# DS18B20 ROM → role map (identity contract, docs/01 §6.4–6.5)
+#
+# Pin map hiệu lực (2026-10-28): evidence/A/as-built-pinmap-2026-10-27.md
+#   DS18B20 DATA = GPIO33, CG_PIN_MAP_VERSION = 2. ROM bytes dưới đây không đổi.
+#
+# Thẩm quyền: docs/01 §6.4 (sensor roles), §6.5 (identity contract),
+#             §6.6 (PHY-DS-001..003), docs/05A §11 (A-W02-02, A-W02-03).
+# Nguồn dữ liệu: evidence/A/W02/w02_rom_enumeration_4_devices.png (ảnh gốc,
+#                người dùng cung cấp; xem screenshot-provenance.csv).
+#
+# CẢNH BÁO PHẠM VI CLAIM:
+# - Tệp này chỉ khẳng định ROM đã được *quan sát và gán vai trò logic*.
+# - Nó KHÔNG khẳng định đầu dò vật lý nào đã được dán nhãn, KHÔNG khẳng định
+#   vị trí lắp thật đã freeze, và KHÔNG thay thế H0 mechanical (A-W02-01).
+# - ROM được ghi NGUYÊN VĂN đúng chuỗi sketch in ra. Coi ROM là định danh
+#   bất trong suốt (opaque); không tự suy diễn thứ tự byte/CRC từ chuỗi này.
+
+schema: coldguard.sensor-rom-map/v0
+week: W02
+owner: member-a
+hardware_config_id: NOT_ASSIGNED        # chưa được gán (kế thừa W01)
+firmware_commit: 1b93f572ed3f06a3030292b2515fa38bcaf75ca7 # commit firmware W02 trong repo (map đã ghi cứng; lần cập nhật 7: + fix door-task vTaskDelay(0) ở app_main.c — đã build thật trên CI run 39134178842, flash thật trên board ESP32-S3 và 5 reboot identity PASS — espidf-run/); xem thêm bench_sketch_source
+bench_sketch_source: NOT_IN_REPO         # sketch bench sinh ra 3 ảnh: nguồn không nằm trong repo
+calibration_id: null
+rounds_used: []                          # chưa có run_id nào dùng mapping này
+
+status: ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+
+# Trạng thái trên nghĩa là:
+#   - Vai trò logic (T1/T2/T3) ĐÃ được Member A chọn và ghi lại;
+#   - đầu dò vật lý CHƯA được nhận diện, CHƯA dán nhãn, CHƯA chụp ảnh nhãn;
+#   - người vận hành chưa chứng minh được "đầu dò nào là T1" khi nhìn vào thùng.
+# Không được nâng trạng thái này thành DONE khi chưa có nhãn vật lý thật.
+
+enumeration:
+  evidence: w02_rom_enumeration_4_devices.png
+  discovered_count: 4
+  valid_count_in_capture: "4/4"
+  canonical_expected_count: 3            # docs/05A §11 A-W02-02 "exactly three expected ROMs"
+  count_deviation_ref: CR-A-W01-04        # W01: DS18B20 ×4 so với BOM freeze ×3
+  library_order_is_not_identity: true     # docs/01 §6.5
+  firmware_message_observed: "PASS: 4 DS18B20 detected"
+
+# Bản đồ trên nay đã được GHI CỨNG vào firmware W02 trong repo:
+#   firmware/main/coldguard_config.h (CG_ROM_T1/T2/T3/SPARE_BYTES)
+#   firmware/main/cg_rom_map.c       (tra cứu theo 8 byte ROM, không theo thứ tự discovery)
+# `firmware/tools/cg_check_firmware.py` đối chiếu từng byte với tệp này và tính lại
+# CRC8 Dallas của cả 4 ROM ở mỗi lần chạy kiểm tra. Firmware mới này KHÔNG phải nguồn
+# của 3 ảnh bằng chứng (sketch bench cũ không có trong repo) — xem
+# firmware-implementation.md.
+firmware_mapping:
+  config_header: firmware/main/coldguard_config.h
+  lookup_module: firmware/main/cg_rom_map.c
+  cross_check_tool: firmware/tools/cg_check_firmware.py
+  crc8_verified: true
+  discovery_order_used_for_identity: false
+
+roles:
+  - role: T1
+    position_semantics: near_door          # docs/01 §6.4
+    rom_hex: "287088CA00000051"
+    bench_enumeration_index: 1
+    bench_label_in_evidence: "DS1"
+    physical_label: PENDING
+    physical_position_verified: false
+  - role: T2
+    position_semantics: center
+    rom_hex: "28AEBF2200000006"
+    bench_enumeration_index: 2
+    bench_label_in_evidence: "DS2"
+    physical_label: PENDING
+    physical_position_verified: false
+  - role: T3
+    position_semantics: far_opposite
+    rom_hex: "28CBE9CA00000072"
+    bench_enumeration_index: 3
+    bench_label_in_evidence: "DS3"
+    physical_label: PENDING
+    physical_position_verified: false
+
+spare:
+  - rom_hex: "283BE5C9000000A9"
+    bench_enumeration_index: 4
+    bench_label_in_evidence: "DS4"
+    assigned_role: null                    # KHÔNG phải T1/T2/T3
+    physical_label: PENDING
+    note: >-
+      Đầu dò thứ tư đã hiện diện và đọc được. Nó KHÔNG được gán vai trò.
+      docs/01 PHY-DS-001 chỉ yêu cầu T1/T2/T3 ánh xạ tới ba ROM phân biệt;
+      đầu dò dư phải là biến tường minh, không được tự động thay thế
+      cảm biến thiếu (PHY-DS-002).
+
+verification_status:
+  SEN-H1-01_ds18b20_discovery:
+    result: PARTIAL
+    reason: >-
+      4 ROM phân biệt được liệt kê và đọc giá trị hợp lệ trong cùng phiên bench;
+      canonical mong đợi đúng 3 ROM nên lệch số lượng cần ghi nhận bằng văn bản
+      (CR-A-W01-04). Ba ROM vai trò đã được ghi cứng vào firmware và đối chiếu tự
+      động với tệp này.
+  SEN-H1-02_reboot_identity:
+    result: HARDWARE_VERIFIED
+    reason: >-
+      Firmware ESP-IDF 1b93f572 đã nạp và chạy thật trên board: 6 boot (5 reset
+      host-driven + 1 context), boot_id phân biệt, NVS boot_count 5->10 tăng liên
+      tục, ROM->role ổn định 6/6 gồm cả SPARE (espidf-run/reboot-verification.md).
+    evidence_state: VERIFIED_BY_EXISTING_EVIDENCE
+  SEN-H1-03_inter_sensor_consistency:
+    result: BENCH_DATA_VERIFIED_FIRMWARE_RUN_PENDING
+    reason: >-
+      Phiên bench 620 mẫu thật (ds18b20/) đã nhập: 620/620 mẫu x 4 vai trò, 619 s
+      đều 1000 ms, thống kê tái lập từ log. Đây là sketch Arduino standalone; CSV
+      theo schema #CG SAMPLE của firmware (cg_build_sensor_csv.py) vẫn cần phiên
+      >=600 mẫu chạy bằng firmware. Bản tổng hợp 600 mẫu/đầu dò trong ảnh cũ vẫn
+      thiếu CSV thô và timestamp (sensor-consistency-summary.md).
+    raw_csv_state: FIRMWARE_RUN_PENDING
+  physical_labeling:
+    result: NOT_PERFORMED
+    reason: >-
+      Chưa dán nhãn T1/T2/T3 lên đầu dò. docs/05A §11 yêu cầu chỉ đúng vào
+      T1/T2/T3 và khớp với software ID khi nhìn vào thùng — chưa thực hiện được.
+    procedure: evidence/A/W02/bench-procedure-w02.md (mục B4)
+
+invariants_referenced:
+  - id: PHY-DS-001
+    statement: "T1, T2, T3 phải ánh xạ tới ba ROM phân biệt."
+    current_state: SATISFIED_ON_BENCH     # ba ROM khác nhau; chưa gắn nhãn vật lý
+  - id: PHY-DS-002
+    statement: "ROM lạ sau reboot không tự động thay thế cảm biến đã biết bị thiếu."
+    current_state: IMPLEMENTED_IN_FIRMWARE_NOT_TESTED_ON_BENCH
+    note: >-
+      Firmware W02 chỉ đọc theo ROM cố định trong bảng, không dùng thứ tự discovery
+      và không có đường gán vai trò nào khác, nên không thể tự thay thế. Firmware đã
+      chạy 6 boot ổn định, nhưng chưa có bài rút một đầu dò để quan sát hành vi khi
+      thiếu (PENDING_TEST).
+  - id: PHY-DS-003
+    statement: "Di chuyển đầu dò làm thay đổi cấu hình."
+    current_state: NOT_APPLICABLE_UNTIL_PLACEMENT_FROZEN
+
+next_actions:
+  - Dán nhãn vật lý T1/T2/T3 (và SPARE) lên dây/đầu dò, chụp ảnh nhãn + vị trí (bench-procedure-w02.md B4).
+  - Chạy phiên >= 10 phút bằng firmware ESP-IDF và dựng sensor-consistency.csv bằng công cụ để đóng phần CSV của SEN-H1-03 (B2).
+  - Quan sát vật lý "cửa mở -> mức thô nào" rồi chạy công cụ door với --open-level; đóng SEN-H1-05 (B3).
+  - Ghi nhận lệch số lượng đầu dò (CR-A-W01-04) bằng văn bản để chốt cấu hình W02.
