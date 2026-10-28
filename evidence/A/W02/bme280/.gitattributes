@@ -1,0 +1,7 @@
+# Bằng chứng bench BME280 — giữ nguyên từng byte của các tệp nhận từ người dùng.
+# Ghi đè `* text=auto eol=lf` ở gốc repo cho thư mục này: không chuẩn hoá line-ending
+# khi add/checkout, để SHA-256 ghi trong `acceptance.md` §4.1/§11 đúng với blob trong repo.
+* -text !eol
+# Log gốc giữ CRLF như bản nhận ban đầu: CR cuối dòng là kết thúc dòng, không phải
+# lỗi whitespace (để `git diff --check` sạch).
+bme280-bench-original.txt whitespace=cr-at-eol

@@ -1,0 +1,13 @@
+verdict              : IDENTITY_STABLE
+boots observed       : 6 (min required 5)
+boot ids             : 227e6f67, 50313e8c, c864acea, 222be57b, 99b3dcb5, ae20928d
+boot counts (NVS)    : [5, 6, 7, 8, 9, 10]
+boot metadata        : OK (boot_id distinct, boot_count increasing)
+
+role  boot0  boot1  boot2  boot3  boot4  boot5
+T1    287088CA00000051  287088CA00000051  287088CA00000051  287088CA00000051  287088CA00000051  287088CA00000051
+T2    28AEBF2200000006  28AEBF2200000006  28AEBF2200000006  28AEBF2200000006  28AEBF2200000006  28AEBF2200000006
+T3    28CBE9CA00000072  28CBE9CA00000072  28CBE9CA00000072  28CBE9CA00000072  28CBE9CA00000072  28CBE9CA00000072
+
+json report written: evidence/A/W02/espidf-run/reboot-verification.json
+REBOOT IDENTITY: PASS (6 boots, roles stable, boot metadata consistent)
