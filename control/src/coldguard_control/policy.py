@@ -661,7 +661,18 @@ def evaluate_policy(pi: PolicyInput, cfg: PolicyConfig) -> PolicyDecision:
         )
 
     # ---- 4. SAFE_LOCAL regime and exit gate -------------------------------
-    if pi.device_mode is DeviceMode.SAFE_LOCAL:
+    # The prior policy state is authoritative: a caller-reported ONLINE_* mode
+    # must not bypass the exit gate while the last decision is still
+    # SAFE_LOCAL. Otherwise an inconsistent pair (mode ONLINE_NORMAL, state
+    # SAFE_LOCAL) with otherwise trusted remote evidence could reach the
+    # predictive path with network_stable_s=0 or a stale command pending.
+    # Both sources of "we are in SAFE_LOCAL" therefore share one gate, and an
+    # unmet gate keeps the device in SAFE_LOCAL (fail-closed).
+    safe_local_regime = (
+        pi.device_mode is DeviceMode.SAFE_LOCAL
+        or prior is PolicyState.SAFE_LOCAL
+    )
+    if safe_local_regime:
         exit_ok, missing = safe_local_exit_status(pi, cfg)
         if not exit_ok:
             intent, reason, detail = _hysteresis(t if usable else None,
@@ -683,11 +694,6 @@ def evaluate_policy(pi: PolicyInput, cfg: PolicyConfig) -> PolicyDecision:
                     "SAFE_LOCAL_ENTER" if entering_local else None
                 ),
             )
-    else:
-        exit_ok = True
-        missing = ()
-        # Fall through: the evidence below decides whether remote trust is
-        # actually present.
 
     untrusted, reason, detail = _remote_untrusted(pi, cfg)
     if untrusted:
@@ -756,8 +762,8 @@ def evaluate_policy(pi: PolicyInput, cfg: PolicyConfig) -> PolicyDecision:
                     "allowed within the same characterized action family"
                 ),
                 transition=(
-                    "SAFE_LOCAL_EXIT" if exit_ok and pi.device_mode
-                    is DeviceMode.SAFE_LOCAL else None
+                    "SAFE_LOCAL_EXIT" if prior is PolicyState.SAFE_LOCAL
+                    else None
                 ),
                 notes=(
                     "risk persistence " + str(persisted)
@@ -777,8 +783,8 @@ def evaluate_policy(pi: PolicyInput, cfg: PolicyConfig) -> PolicyDecision:
                     "not met; watch only, no preemptive actuation"
                 ),
                 transition=(
-                    "SAFE_LOCAL_EXIT" if exit_ok and pi.device_mode
-                    is DeviceMode.SAFE_LOCAL else None
+                    "SAFE_LOCAL_EXIT" if prior is PolicyState.SAFE_LOCAL
+                    else None
                 ),
                 notes=(
                     "persistence " + str(persisted) + " s < required "
@@ -796,7 +802,6 @@ def evaluate_policy(pi: PolicyInput, cfg: PolicyConfig) -> PolicyDecision:
         reason=reason,
         detail=detail,
         transition=(
-            "SAFE_LOCAL_EXIT" if exit_ok and pi.device_mode
-            is DeviceMode.SAFE_LOCAL else None
+            "SAFE_LOCAL_EXIT" if prior is PolicyState.SAFE_LOCAL else None
         ),
     )
