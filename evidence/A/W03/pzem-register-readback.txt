@@ -29,7 +29,7 @@ Lý do file này chưa chứa dữ liệu ESP-IDF thật (không tô vẽ, khôn
    7 lỗi), TEC OFF chỉ là xác nhận của người vận hành, và không phải log
    ESP-IDF. Vì vậy A-W03-05 vẫn MEASUREMENT REQUIRED.
 
-ĐIỀU KIỆN GỠ PENDING (khi mức logic RS-485 được D/leader duyệt):
+ĐIỀU KIỆN GỠ PENDING (khi có phép đo xác nhận mức logic RS-485 <=3.3 V ở GPIO37):
   - Nạp firmware W03, thu log serial bằng: py firmware/tools/cg_capture.py
   - Tách readback:   py firmware/tools/cg_pzem_readback.py <capture.log> \
                         --expect-profile 50A --json readback.json
@@ -106,7 +106,7 @@ trong SHA256SUMS.txt; kiểm tra bằng verify_capture.py).
   văn bản, không phải raw FC03 success frame; A-W03-04 vẫn PENDING_READBACK.
 - FC06 là hành vi ngoài hợp đồng read-only W03. Sketch SET50 và w3testlog
   là `ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`; không chạy lại, không gửi
-  FC06. D/leader phải xử lý như sai lệch quy trình bench.
+  FC06. Sai lệch quy trình bench được ghi ở TD-W03-07.
 - TEC OFF trong phiên này là xác nhận của người vận hành, không được đo độc
   lập. 594 mẫu hợp lệ đều ghi current_a=0.00; 7 mẫu lỗi để trống; không có
   thử tải 50 A thật.

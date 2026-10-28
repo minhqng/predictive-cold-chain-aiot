@@ -1,8 +1,8 @@
 # A-W03-06 — Shunt installation: continuity observations and open failure mode
 
 **Trạng thái: `CONTINUITY / FUNCTIONAL OBSERVATIONS — OPERATOR-REPORTED`**
-**`SAFETY ACCEPTANCE: PENDING (Member D)`.** Đây **không** phải nghiệm thu an toàn khi chạy
-tải lớn, và không phải phép đo điện trở chính xác.
+**Hạn chế an toàn điện: chưa nghiệm thu an toàn khi chạy tải lớn (`MEASUREMENT REQUIRED`).**
+Đây **không** phải nghiệm thu an toàn khi chạy tải lớn, và không phải phép đo điện trở chính xác.
 
 ## 1. Phần nhìn thấy từ W01 (ảnh)
 
@@ -48,7 +48,7 @@ Nếu đường shunt hoặc đầu cốt **lỏng/hở**:
 4. Shunt/PZEM có thể đọc sai hoặc mất tham chiếu khi đường hồi hở.
 
 **Đây là giả thuyết failure mode dựa trên continuity đã báo, không phải sự cố đã quan sát.**
-Member D phải quyết định:
+Cần được đánh giá (`TD-W03-02`):
 
 - topology return/star-ground có chấp nhận được không;
 - có cần đảm bảo **không** dùng GND logic làm return path (ví dụ single-point ground, dây
@@ -75,7 +75,7 @@ Task này **không** đấu lại dây, **không** đổi shunt, **không** yêu
 | Cỡ dây/đầu cốt/lực kẹp | **NOT VERIFIED** |
 | Nhiệt shunt/đầu nối khi có tải | **NOT MEASURED** |
 | Tải 50 A | **NOT TESTED** |
-| Đường return khi shunt hở | **FAILURE MODE OPEN — D REVIEW** |
+| Đường return khi shunt hở | **FAILURE MODE OPEN — cần đánh giá (`TD-W03-02`)** |
 | Cách ly/ground reference của PZEM | **NOT VERIFIED** |
 | Fuse coordination cho nhánh | **W04** |
 
@@ -87,7 +87,7 @@ Task này **không** đấu lại dây, **không** đổi shunt, **không** yêu
 | Secure terminals | **CHƯA CHỨNG MINH** — không có pull-test/ảnh cận cảnh |
 | No signal-wire in high-current path | **CHƯA CHỨNG MINH** |
 | Physical marking 50 A / 75 mV | **PASS theo nhãn in** (W01 photo 18) |
-| An toàn khi chạy tải lớn | **PENDING — Member D** |
+| An toàn khi chạy tải lớn | **`MEASUREMENT REQUIRED`** |
 
 **Kết luận:** có bằng chứng chức năng/continuity để tiếp tục review, **không** có nghiệm thu
 an toàn. Không được dùng các số này để mở khóa W04 high-current.

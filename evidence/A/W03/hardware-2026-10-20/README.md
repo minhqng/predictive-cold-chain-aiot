@@ -1,8 +1,8 @@
 # W03 Arduino bench archive — 2026-10-20
 
 **Trạng thái: `SUPPLEMENTARY BENCH ARCHIVE — NOT ESP-IDF W03 ACCEPTANCE`**
-**W03 tổng thể vẫn `W03 NOT PASS`.** Thư mục này không thay đổi `acceptance.md`, không
-thay thế `pzem-off.csv` canonical, và không chứng minh firmware W03 đã chạy trên phần cứng.
+Thư mục này không thay đổi `acceptance.md`, không thay thế `pzem-off.csv` canonical, và
+không chứng minh firmware W03 đã chạy trên phần cứng.
 
 ## 1. Nguồn và tính toàn vẹn
 
@@ -60,10 +60,10 @@ Dòng kết quả cuối trong `raw/pzem-off-serial.log`:
 - `raw/w3rstestlogshunt.txt` chỉ xác nhận lại `raw=0x0001` ở mức log văn bản;
   vẫn không có hex tx/rx, CRC, hay decode host-side. Không dùng làm `#CG PZEM_RANGE`.
 - FC06 là hành vi **ngoài** hợp đồng read-only của W03. Không được đưa sketch này vào
-  firmware, không được chạy lại; D/leader phải xử lý như một sai lệch quy trình bench.
+  firmware, không được chạy lại; sai lệch quy trình bench được ghi ở `TD-W03-07`.
 - Nhãn trong log `via_existing_5k_10k_divider` là nhãn do sketch in; **không** được diễn
   giải thành "5 kΩ tương đương" khi chưa kiểm tra topology. Tài liệu W01 mô tả
-  10k/10k/10k; đây vẫn là mạch tạm chưa được duyệt.
+  10k/10k/10k; đây vẫn là mạch tạm chưa được đo lại độc lập.
 
 ## 4. Những gì archive này KHÔNG chứng minh
 
@@ -76,11 +76,11 @@ Dòng kết quả cuối trong `raw/pzem-off-serial.log`:
 | Tải 50 A thật | **CHƯA** — 594 mẫu hợp lệ đều `current_a=0.00`, 7 mẫu lỗi để trống; không có tải |
 | TEC OFF envelope | **CHƯA** — TEC OFF chỉ là xác nhận của người vận hành, không được đo độc lập |
 | IBT-2 cold-boot/reset | **NOT RUN** — VCC/EN/PWM/disconnected chỉ là số đo tay, không phải boot log |
-| CR-A-W01-01 (TTL485 5 V vs MAX3485 3.3 V) | **PENDING** — archive không thay đổi quyết định D + leader |
+| CR-A-W01-01 (TTL485 5 V vs MAX3485 3.3 V) | **PENDING — change review** (archive không thay đổi kết luận) |
 
 ## 5. Đọc tiếp
 
 - `crc-audit.md` — 7 raw frame, CRC độc lập, không kết luận root cause.
 - `../pzem-register-readback.txt` — trạng thái `PENDING_READBACK` và khác biệt canonical.
 - `../hardware-deviation-and-safety.md` — ranh giới an toàn và các số đo tay.
-- `../acceptance.md` — nguồn trạng thái duy nhất; W03 vẫn `NOT PASS`.
+- `../acceptance.md` — nguồn trạng thái duy nhất.

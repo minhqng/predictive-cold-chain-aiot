@@ -1,5 +1,10 @@
 # W03 — Hardware deviation and safety boundaries (Member A)
 
+> **Cập nhật 2026-10-28:** map v2 (`evidence/A/as-built-pinmap-2026-10-27.md`)
+> xử lý lệch cấu hình `GPIO10` ở mức firmware và thêm safe-OFF 3 chân
+> (RPWM/R_EN/L_EN). File này **không** thay đổi bất kỳ ràng buộc an toàn điện nào:
+> `CR-A-W01-01`, tie-off `LPWM`/`L_EN`, cold-boot log vẫn `MEASUREMENT REQUIRED`.
+
 **Không phải chứng nhận an toàn.** Đây là bản ghi các lệch phần cứng đang mở và ranh giới W03 không được vượt qua. Kế thừa W01 `freeze-deviation-review.md` + `physical-risk-ledger.md`.
 
 ## 1. RS-485: TTL485-V2.0 thực tế vs MAX3485 đã freeze — CR-A-W01-01
@@ -11,14 +16,14 @@
 | Hướng | DE//RE điều khiển bằng GPIO | **auto-direction**, không có chân DE//RE trên header `GND/RXD/TXD/VCC` |
 | Mức RX | RO 3.3 V đấu thẳng | TXD idle **5 V** theo báo cáo; phân áp tạm 10k/10k/10k → ~3.314 V **đo được** (vận hành W01), tính ≈ 3.33 V |
 
-**Trạng thái:** `PENDING (D + leader)` — W01 `freeze-deviation-review.md` CR-A-W01-01.
+**Trạng thái:** `MEASUREMENT REQUIRED` — change review `CR-A-W01-01` đang mở (W01 `freeze-deviation-review.md`).
 
 **Quy tắc W03 (bắt buộc):**
 
 1. **Không** đấu 5 V trực tiếp vào GPIO nào của ESP32.
 2. **Không** giả định RO/chân trả lời là 3.3 V khi chưa có datasheet/marking xác thực (không được suy luận từ báo cáo người dùng).
-3. Phân áp 10k/10k/10k hiện tại là **đấu nối tạm đã được khảo sát**, không phải thiết kế production được duyệt.
-4. Chỉ chạy bất kỳ bài UART **sau khi** D + leader chốt CR-A-W01-01; firmware W03 không tự bật bất kỳ thử nghiệm nào (không có chế độ test UART trong build mặc định).
+3. Phân áp 10k/10k/10k hiện tại là **đấu nối tạm đã được khảo sát**, không phải thiết kế production.
+4. Chỉ chạy bất kỳ bài UART **sau khi** có phép đo xác nhận mức ≤3.3 V ở GPIO37; firmware W03 không tự bật bất kỳ thử nghiệm nào (không có chế độ test UART trong build mặc định).
 5. Firmware mặc định `CG_RS485_DIR_MODE 0` = **AUTO** (đúng cho module auto-direction hiện có). Nhánh MANUAL (GPIO35) chỉ tồn tại như compile-time option cho module MAX3485 canonical và bị `#if` loại khỏi build mặc định — không có code "chạy thử" chạm GPIO35 trong build này.
 
 ## 2. Rủi ro kế thừa đang mở (W01 risk ledger)
@@ -37,7 +42,7 @@
 ## 3. Ranh giới an toàn W03 (điều W03 cố ý KHÔNG làm)
 
 - **Không cấp nguồn TEC, không chạy tải dòng lớn** (đúng tinh thần "without unsafe TEC escalation" của `docs/05A §12`).
-- **Không** chạy bất kỳ bài UART phần cứng nào khi mức logic RS-485 chưa được duyệt.
+- **Không** chạy bất kỳ bài UART phần cứng nào khi mức logic RS-485 chưa được đo/xác nhận.
 - **Không** ghi register PZEM (không đổi profile, không đổi slave address qua bus).
 - **Không** tạo PWM; **không** tồn tại đường code nào ghi mức 1 lên `RPWM`/`ENABLE`.
 - **Không** nâng bất kỳ trạng thái nào từ ảnh/unit test: mọi bài cần đo đều `MEASUREMENT REQUIRED`.
@@ -46,7 +51,7 @@
 
 - Cực tính không chắc, đầu nối ấm/nóng, tia lửa, mùi lạ, PSU hành xử bất thường, fuse nổ hoặc dây lỏng → **ngắt điện lưới** và điều tra.
 - Không bắc cầu fuse, không nối tắt PSU để mô phỏng lỗi, không cấp TEC khi quạt/tản nhiệt chưa hoạt động, không dùng jumper mảnh làm dây công suất.
-- **W03 không phê duyệt bất kỳ lần chạy tải dòng lớn nào.** Mọi bài đo W03 chỉ được thực hiện khi có mặt D (hoặc người được D ủy quyền), theo checklist tương ứng trong từng file.
+- **W03 không cho phép bất kỳ lần chạy tải dòng lớn nào.** Mọi bài đo W03 chỉ được thực hiện khi có người thứ hai giám sát, theo checklist tương ứng trong từng file.
 
 ## 5. Bench archive 2026-10-20 — phân biệt xác nhận của người vận hành với phép đo
 
@@ -67,13 +72,13 @@ quan sát, không phải phép đo tải.
 
 **FC06:** `firmware/ColdGuard_W03_TTL485_SET50A_ONCE_8N1.ino` và `raw/w3testlog.txt` chứa
 lệnh FC06. Đây là vật liệu **`ARCHIVE ONLY — DO NOT FLASH OR EXECUTE`**: không nạp lại,
-không gửi FC06, không dùng làm bằng chứng W03. D/leader phải xử lý như một sai lệch quy
-trình bench.
+không gửi FC06, không dùng làm bằng chứng W03. Sai lệch quy trình bench được ghi ở
+`TD-W03-07` và phải được mô tả/xử lý trong hồ sơ.
 
 **Phân áp:** nhãn `via_existing_5k_10k_divider` trong log là do sketch in, không phải kết
 luận topology. Không được gọi các điện trở 10 kΩ (hoặc mắc song song) là "5 kΩ" khi chưa
 kiểm tra sơ đồ; giá trị tương đương thay đổi theo cách mắc. Mạch 10k/10k/10k hiện tại vẫn
-là đấu nối tạm chưa được duyệt.
+là đấu nối tạm chưa được đo lại độc lập.
 
 ## 6. Phiên bench 2026-10-27 — cùng quy tắc, thêm ba rủi ro mới
 

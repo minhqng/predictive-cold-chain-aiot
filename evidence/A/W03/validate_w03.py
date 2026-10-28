@@ -10,13 +10,14 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    ở snapshot này. Nếu một buổi đo thật tạo ra chúng, phải cập nhật ``acceptance.md``
    và script này **cùng lúc** — không được để file thật xuất hiện cạnh khai báo MISSING.
 3. ``acceptance.md`` có đủ 7 hạng mục A-W03-01..A-W03-07 và **có chứa** các nhãn trạng
-   thái trung thực bắt buộc (``W03 NOT PASS``, ``MEMBER A W03 EVIDENCE — DELIVERED FOR
-   REVIEW``, ``W03 TEAM GATE: PENDING_REVIEW``, ``VERIFIED BY EXISTING EVIDENCE``,
-   ``CODE IMPLEMENTED / HARDWARE RUN PENDING``, ``MEASURED — BENCH ARTIFACT``,
-   ``OPERATOR-REPORTED — RAW CAPTURE NOT AVAILABLE``, ``RAW_EVIDENCE_NOT_AVAILABLE``,
-   ``MEASUREMENT REQUIRED``, ``SAFETY REVIEW PENDING``, ``LEADER APPROVAL PENDING``,
-   ``PENDING_READBACK``). Script chỉ kiểm tra *sự hiện diện* của nhãn — nó **không**
-   đọc hiểu văn xuôi và **không** thể phát hiện một câu tự nhận PASS đặt ở chỗ khác.
+   thái trung thực bắt buộc (``MEMBER A W03 EVIDENCE — IMPLEMENTED & VERIFIED WITHIN
+   TESTED SCOPE``, ``DONE``, ``PARTIAL``, ``HARDWARE-LIMITED``, ``NOT IMPLEMENTED``,
+   ``INFRASTRUCTURE-LIMITED``, ``VERIFIED BY EXISTING EVIDENCE``,
+   ``MEASURED — BENCH ARTIFACT``, ``OPERATOR-REPORTED — RAW CAPTURE NOT AVAILABLE``,
+   ``RAW_EVIDENCE_NOT_AVAILABLE``, ``MEASUREMENT REQUIRED``, ``PENDING_READBACK``).
+   Script chỉ kiểm tra *sự hiện diện* của nhãn — nó **không** đọc hiểu văn xuôi và
+   **không** thể phát hiện một câu tự nhận PASS đặt ở chỗ khác. Script cũng **không**
+   kiểm tra (và không được dùng để đòi) bất kỳ cổng phê duyệt chéo thành viên nào.
 4. ``firmware_commit`` trong ``firmware-tooling-verification.md`` phải là SHA 40 hex
    trỏ tới một commit thật trong repo chứa **các module W03** (``cg_pzem.c``,
    ``cg_crc16.c``, ``cg_rs485.c``, ``cg_power.c``, ``cg_actuator.c``, ``cg_safety.c``,
@@ -31,7 +32,8 @@ Nó chỉ kiểm tra những gì có thể kiểm tra bằng máy:
    ``rs485-pin-and-compatibility.md`` neo ``TTL485``; ``ibt2-pin-map.md`` neo
    ``GPIO5``/``GPIO6``; ``pzem-register-readback.txt`` còn ở trạng thái ``PENDING``
    (snapshot này chưa từng có log PZEM thật — nếu có dữ liệu thật, cập nhật file này
-   và validator cùng lúc); ``review-w03.md`` nêu rõ không thay thế ``Member D``.
+   và validator cùng lúc); ``review-w03.md`` giữ nhãn "review tĩnh" của bản ghi
+   lịch sử 2026-10-19.
 7. Firmware trong repo khớp hồ sơ: chạy ``firmware/tools/cg_check_firmware_w03.py
    --quiet`` (parity register/scaling, read-only, CRC-trước-khi-tin, retry bound,
    default-OFF, boot order, grammar, CMake…).
@@ -93,17 +95,17 @@ DECLARED_MISSING = [
 ACCEPTANCE_ITEMS = [f"A-W03-{i:02d}" for i in range(1, 8)]
 
 REQUIRED_ACCEPTANCE_LABELS = [
-    "W03 NOT PASS",
-    "MEMBER A W03 EVIDENCE — DELIVERED FOR REVIEW",
-    "W03 TEAM GATE: PENDING_REVIEW",
+    "MEMBER A W03 EVIDENCE — IMPLEMENTED & VERIFIED WITHIN TESTED SCOPE",
+    "`DONE`",
+    "`PARTIAL`",
+    "`HARDWARE-LIMITED`",
+    "`NOT IMPLEMENTED`",
+    "`INFRASTRUCTURE-LIMITED`",
     "VERIFIED BY EXISTING EVIDENCE",
-    "CODE IMPLEMENTED / HARDWARE RUN PENDING",
     "MEASURED — BENCH ARTIFACT",
     "OPERATOR-REPORTED — RAW CAPTURE NOT AVAILABLE",
     "RAW_EVIDENCE_NOT_AVAILABLE",
     "MEASUREMENT REQUIRED",
-    "SAFETY REVIEW PENDING",
-    "LEADER APPROVAL PENDING",
     "PENDING_READBACK",
 ]
 
@@ -151,9 +153,9 @@ WORKFLOW_FORBIDDEN_SNIPPETS = [
 # Neo nội dung: mỗi mục là (file, token bắt buộc, vì sao).
 CONTENT_ANCHORS = [
     ("team-dependencies.md", "TD-W03-01",
-     "bảng quyết định chờ D/leader phải neo đúng ID"),
-    ("team-dependencies.md", "PENDING_REVIEW",
-     "cổng nhóm phải giữ PENDING_REVIEW, không được tự nâng"),
+     "bảng đầu vào còn thiếu phải neo đúng ID"),
+    ("team-dependencies.md", "Đầu vào còn thiếu",
+     "file phải mô tả đúng vai trò: đầu vào còn thiếu, không phải cổng phê duyệt"),
     ("hardware-deviation-and-safety.md", "CR-A-W01-01",
      "lệch freeze TTL485 vs MAX3485 phải được nêu đúng mã review"),
     ("rs485-pin-and-compatibility.md", "TTL485",
@@ -161,11 +163,11 @@ CONTENT_ANCHORS = [
     ("ibt2-pin-map.md", "GPIO5", "pin map IBT-2 phải neo chân thật của RPWM"),
     ("ibt2-pin-map.md", "GPIO6", "pin map IBT-2 phải neo chân thật của ENABLE"),
     ("ibt2-pin-map.md", "GPIO10",
-     "xung đột GPIO10 với DS18B20 của W02 phải hiện diện trong pin map"),
+     "lệch cấu hình GPIO10 với DS18B20 của W02 phải hiện diện trong pin map"),
     ("pzem-register-readback.txt", "PENDING",
      "snapshot này chưa có readback thật; có dữ liệu thật thì cập nhật file + validator"),
-    ("review-w03.md", "Member D",
-     "review nội bộ phải nói rõ nó không thay thế Member D"),
+    ("review-w03.md", "review tĩnh",
+     "bản review 2026-10-19 phải giữ nhãn gốc của bản ghi lịch sử"),
     ("hardware-2026-10-27/README.md", "REVIEW REQUIRED",
      "gate của TEST 132B là REVIEW REQUIRED, không được đổi thành PASS"),
     ("hardware-2026-10-27/README.md", "598.99",
@@ -395,5 +397,5 @@ print(
 )
 print(
     "KHÔNG PHẢI BÀI TEST NGHIỆM THU VẬT LÝ. "
-    "W03 TEAM GATE: PENDING_REVIEW — kỹ thuật vẫn W03 NOT PASS."
+    "Phần code/tooling đã kiểm chứng bằng máy; phần vật lý vẫn MEASUREMENT REQUIRED."
 )

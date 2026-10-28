@@ -3,7 +3,7 @@
 **Trạng thái: `SUPPLEMENTARY ANALYSIS — NOT A ROOT-CAUSE CONCLUSION`.**
 File này chỉ kiểm tra lại CRC của các frame thô đã có trong
 `raw/pzem-off-serial.log`. Nó không chứng minh nguyên nhân lỗi, không chứng minh patch
-RS-485 sửa được lỗi, và không thay đổi `W03 NOT PASS`.
+RS-485 sửa được lỗi, và không thay đổi `acceptance.md`.
 
 ## 1. Cách kiểm
 
@@ -64,4 +64,4 @@ sample 527 (line 3177): 01 04 00 00 00 08 F1 CC 01 04 10 14 AC 00 00 00 00 00 00
 - Không có raw FC03 success frame cho readback `0x0001`; `raw/w3rstestlogshunt.txt` chỉ là
   log văn bản. A-W03-04 vẫn `PENDING_READBACK`.
 - `pzem-off.csv` canonical của W03 vẫn **MISSING**; file trong `raw/` là schema bench.
-- Trách nhiệm theo dõi và phân tích nguyên nhân gốc rễ cho 7 frame lỗi này (đặc biệt 2 frame lỗi request echo) được bàn giao cho Member D + Member A qua mục **`TD-W03-11`** (`evidence/A/W03/team-dependencies.md`).
+- Trách nhiệm theo dõi và phân tích nguyên nhân gốc rễ cho 7 frame lỗi này (đặc biệt 2 frame lỗi request echo) được ghi ở mục **`TD-W03-11`** (`evidence/A/W03/team-dependencies.md`).

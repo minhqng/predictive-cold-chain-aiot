@@ -1,8 +1,8 @@
 # W03 Build Report — Biên dịch Native Windows ESP-IDF v6.1 (Member A)
 
 > **Trạng thái:** `LOCAL ESP-IDF v6.1 BUILD: PASS`
-> **Cổng nhóm:** `W03 TEAM GATE: PENDING_REVIEW` · **Kỹ thuật:** `W03 NOT PASS (Hardware Pending)`
-> **Phân định rõ:** Tài liệu này ghi nhận bằng chứng biên dịch thực tế của firmware W03 trên môi trường Windows cục bộ với toolchain native ESP-IDF v6.1 chính thức. Nó chứng minh mã nguồn C của W03 không có lỗi biên dịch; nhưng **KHÔNG** thay thế GitHub Actions CI (đang bị chặn bởi giới hạn thanh toán của tài khoản GitHub) và **KHÔNG** phải nghiệm thu phần cứng.
+> **Kết luận:** `DONE` cho lớp biên dịch · phần vật lý `HARDWARE-LIMITED`
+> **Phân định rõ:** Tài liệu này ghi nhận bằng chứng biên dịch thực tế của firmware W03 trên môi trường Windows cục bộ với toolchain native ESP-IDF v6.1 chính thức. Nó chứng minh mã nguồn C của W03 không có lỗi biên dịch; nhưng **KHÔNG** thay thế GitHub Actions CI (đang bị chặn bởi giới hạn thanh toán của tài khoản GitHub — `INFRASTRUCTURE-LIMITED`) và **KHÔNG** phải nghiệm thu phần cứng.
 
 ---
 
@@ -115,7 +115,7 @@ py evidence/A/W03/build-native-windows-2026-10-27/verify_build.py
 ## 7. Rào cản An toàn Phần cứng Còn lại (Hardware Safety Boundaries)
 
 Bản build thành công này **chỉ chứng minh tính đúng đắn về mặt phần mềm / cú pháp / liên kết thư viện**. Nó **KHÔNG** giải quyết các vấn đề an toàn phần cứng:
-* **`TD-W03-03` (Xung đột `GPIO10`):** Tuyệt đối **NGHIÊM CẤM CẤP NGUỒN TEC / TẢI** khi chân `GPIO10` (DS18B20 1-Wire vs IBT-2 L_EN) chưa có quyết định phân định chính thức từ Member D và Leader.
-* **`TD-W03-01`:** Phê duyệt mức logic TTL485-V2.0 5 V (CR-A-W01-01).
-* **`TD-W03-02`:** Phê duyệt an toàn đường hồi của Shunt.
-* **`TD-W03-04`:** Chấp thuận cửa sổ đo 598.99 s của TEST 132B.
+* **`TD-W03-03` (lệch cấu hình `GPIO10`):** Tuyệt đối **NGHIÊM CẤM CẤP NGUỒN TEC / TẢI** cho tới khi đo continuity xác nhận `L_EN` = GPIO10 và DS18B20 = GPIO33 trên board. Đây là lệch giữa giá trị cấu hình cũ và lời khai đấu dây, không phải bằng chứng hai dây vật lý cùng chân.
+* **`TD-W03-01`:** Đo xác nhận mức logic ≤3.3 V ở GPIO37 (change review `CR-A-W01-01`).
+* **`TD-W03-02`:** Đánh giá an toàn đường hồi của shunt (`MEASUREMENT REQUIRED`).
+* **`TD-W03-04`:** Tiêu chí cửa sổ đo 598.99 s của TEST 132B.

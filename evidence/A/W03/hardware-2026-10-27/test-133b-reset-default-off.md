@@ -3,6 +3,11 @@
 **Trạng thái: `OBSERVED PASS AFTER FIRMWARE START — OPERATOR-REPORTED`**
 **Giới hạn: `RAW LOG NOT AVAILABLE`; `COLD BOOT = OPERATOR-REPORTED`; `PRE-setup() SCOPE NOT PROVEN`.**
 
+> **Cập nhật 2026-10-28:** map v2 giữ đúng chân sketch đã dùng (`RPWM=5`, `R_EN=6`,
+> `L_EN=10`) và firmware W03 giờ điều khiển **cả 3 chân** về 0 (`cg_actuator_force_off`),
+> không còn để `L_EN` ngoài firmware. Các giới hạn bên trên **không đổi**: sketch chỉ in
+> chuỗi hằng, không đọc lại chân; cold-boot thật vẫn chưa có raw log.
+
 ## 1. Test được định nghĩa thế nào
 
 Sketch `firmware/ColdGuard_TEST_133B_reset_default_off.ino` (bản người vận hành cung cấp,
@@ -47,17 +52,20 @@ mẫu hợp lệ và không có dòng. Chính sketch đã giới hạn phạm vi
    hay capture. Không có bằng chứng oscilloscope/high-speed cho khoảng thời gian **trước khi
    `setup()` chạy**. Vì vậy không được biến quan sát này thành "hardware-level proof".
 
-## 4. Xung đột pin phải được xử lý trước khi freeze
+## 4. Lệch cấu hình `GPIO10` phải được đo trước khi freeze vật lý
 
-As-built được báo: `GPIO10 → L_EN`. Nhưng W02 dùng **`GPIO10` cho DS18B20 DATA**
+As-built được báo: `GPIO10 → L_EN`. Nhưng W02 **cấu hình** **`GPIO10` cho DS18B20 DATA**
 (`CG_PIN_DS18B20_DATA 10`, `docs/01 §11.7`) và đã đọc 4 ROM ID / 620 mẫu trên bench qua
-GPIO10. Hai chức năng không thể cùng chiếm một chân trong cấu hình freeze.
+GPIO10. Đây là lệch giữa **giá trị cấu hình firmware** và **lời khai đấu dây**; không có
+phép đo continuity nên **không** kết luận hai dây vật lý cùng một chân. Hai chức năng không
+thể cùng chiếm một chân trong **cấu hình** freeze.
 
-Đây là **`TEAM_DEPENDENCY`**, không phải lỗi có thể tự sửa trong W03:
+Map v2 (2026-10-28) tách ở mức cấu hình: DS18B20→GPIO33, `L_EN`=GPIO10, `pin_map_version=2`.
 
-- Không đổi pinout firmware hay dây phần cứng trong task này.
-- Không kết luận chân nào "đúng" khi chưa có sơ đồ/đo thực tế.
-- D + leader phải xác nhận as-built thực tế và quyết định `pin_map_version`/đấu dây.
+Việc còn lại:
+
+- Không đổi dây/BOM phần cứng trong task này.
+- Không kết luận chân nào "đúng" khi chưa có sơ đồ/đo thực tế — cần đo continuity (`TD-W03-03`).
 - Cho tới lúc đó, mọi tuyên bố "default OFF ổn định" chỉ có giá trị quan sát, không phải
   bất biến phần cứng đã freeze.
 
@@ -70,7 +78,7 @@ Chi tiết: `as-built-configuration.md` §3 và `../team-dependencies.md`.
 - Không suy ra module IBT-2 có thể chịu tải liên tục; `43 A` là giới hạn chip, không phải
   định mức module (`../ibt2-pin-map.md` §4).
 - Không suy ra shunt/đường dòng an toàn khi chạy tải lớn (`shunt-continuity.md`).
-- Không thay thế phê duyệt tie-off `LPWM`/`L_EN` và mức logic 3.3 V của D.
+- Không thay thế phép đo tie-off `LPWM`/`L_EN` và xác nhận mức logic 3.3 V (hạn chế an toàn điện).
 
 ## 6. Trạng thái acceptance
 
@@ -80,5 +88,5 @@ Chi tiết: `as-built-configuration.md` §3 và `../team-dependencies.md`.
 | 5 software reset | **OPERATOR-REPORTED** — không có raw log |
 | Cold boot | **OPERATOR-REPORTED** — không có bảng đếm/timestamp |
 | Trước `setup()` | **NOT PROVEN** — không có scope/high-speed capture |
-| Pin map không xung đột | **FAIL / PENDING** — GPIO10 trùng DS18B20; D + leader phải xử lý |
+| Pin map không xung đột | **`DONE` ở mức cấu hình** (map v2) — continuity `GPIO10` `MEASUREMENT REQUIRED` |
 | An toàn khi có tải TEC | **NOT TESTED** — ngoài phạm vi W03 |

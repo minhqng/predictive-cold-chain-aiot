@@ -1,0 +1,197 @@
+﻿python.exe : Your environment is not configured to handle Unicode characters.
+At C:\Espressif\tools\Microsoft.v6.1.PowerShell_profile.ps1:137 char:5
++     & "C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe" "C:\Es ...
++     ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (Your environmen...ode characters.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+
+Recommended fix (persistent):
+ - Enable "Beta: Use Unicode UTF-8 for worldwide language support" in Windows language/region settings.
+
+If you still see issues or this warning persists, you can also try one of these workarounds:
+ - Run "chcp 65001" in the current console before running idf.py.
+ - Set PYTHONUTF8=1 before running idf.py (or set it globally).
+
+Note: "chcp 65001" must be run in each new console session unless your console/profile is configured to apply it 
+automatically.
+-- Found Git: C:/Program Files/Git/mingw64/bin/git.exe (found version "2.55.0.windows.5")
+-- Minimal build - OFF
+-- ccache will be used for faster recompilation
+-- The C compiler identification is GNU 15.2.0
+-- The CXX compiler identification is GNU 15.2.0
+-- The ASM compiler identification is GNU
+-- Found assembler: C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Check for working C compiler: C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc.exe - skipped
+-- Detecting C compile features
+-- Detecting C compile features - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Check for working CXX compiler: C:/Espressif/tools/xtensa-esp-elf/esp-15.2.0_20251204/xtensa-esp-elf/bin/xtensa-esp32s3-elf-g++.exe - skipped
+-- Detecting CXX compile features
+-- Detecting CXX compile features - done
+-- Building ESP-IDF components for target esp32s3
+-- KCONFIG_REPORT_VERBOSITY not set, using default
+-- Project sdkconfig file C:/Users/dlbac/Downloads/coldguard-repo/A-W03-integration/firmware/sdkconfig
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/host/nimble/Kconfig.in:1428: BT_NIMBLE_MESH_PROVISIONER: 'default 0' is 
+not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/fatfs/Kconfig:240: FATFS_PRINT_LLI: 'default 0' is not a valid bool value 
+(only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/fatfs/Kconfig:245: FATFS_PRINT_FLOAT: 'default 0' is not a valid bool value 
+(only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bootloader/Kconfig.projbuild:383: Deprecation notice: hex literal '0' 
+without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bootloader/Kconfig.projbuild:423: Deprecation notice: hex literal '0' 
+without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/common/Kconfig.in:136: Deprecation notice: hex literal '0' without '0x' 
+prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/host/nimble/Kconfig.in:1023: Deprecation notice: hex literal '0' without 
+'0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/controller/esp32c3/Kconfig.in:652: Deprecation notice: hex literal '0' 
+without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_hw_support\./lowpower/port/esp32p4/Kconfig.p4_rev3_mspi_workaround:6: 
+Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be 
+required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_mm/Kconfig:20: Deprecation notice: hex literal '0' without '0x' prefix 
+detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_system\./port/soc/esp32s3/Kconfig.memory:21: Deprecation notice: hex 
+literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' 
+prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/openthread/Kconfig:106: Deprecation notice: hex literal '0' without '0x' 
+prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: Kconfig parser version: 1
+NOTE: Kconfig defaults policy: use sdkconfig
+NOTE: Status: Finished successfully
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/sdkconfig.rename.esp32s3:4: duplicate rename mapping for 
+CONFIG_BT_NIMBLE_COEX_PHY_CODED_TX_RX_TLIM_EN: previous target CONFIG_BT_LE_COEX_PHY_CODED_TX_RX_TLIM_EN, new target 
+CONFIG_BT_CTRL_COEX_PHY_CODED_TX_RX_TLIM_EN - last mapping is used
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/sdkconfig.rename.esp32s3:5: duplicate rename mapping for 
+CONFIG_BT_NIMBLE_COEX_PHY_CODED_TX_RX_TLIM_DIS: previous target CONFIG_BT_LE_COEX_PHY_CODED_TX_RX_TLIM_DIS, new target 
+CONFIG_BT_CTRL_COEX_PHY_CODED_TX_RX_TLIM_DIS - last mapping is used
+-- Compiler supported targets: xtensa-esp-elf
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- Detecting C compiler ABI info
+-- Detecting C compiler ABI info - done
+-- Detecting CXX compiler ABI info
+-- Detecting CXX compiler ABI info - done
+-- App "coldguard_firmware" version: efe6075-dirty
+-- Found Python3: C:/Espressif/tools/python/v6.1/venv/Scripts/python.exe (found version "3.11.15") found components: Interpreter
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD
+-- Performing Test CMAKE_HAVE_LIBC_PTHREAD - Success
+-- Found Threads: TRUE
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS
+-- Performing Test C_COMPILER_SUPPORTS_WFORMAT_SIGNEDNESS - Success
+-- Setting up mbedtls configuration
+-- Linkage type is PUBLIC
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_hal_wdt/esp32s3/rom.wdt.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_system/ld/esp32s3/memory.ld.in
+--   -> Preprocessing .in script: C:/Espressif/v6.1/esp-idf/components/esp_system/ld/esp32s3/memory.ld.in
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_system/ld/esp32s3/sections.ld.in
+--   -> Preprocessing .in script: C:/Espressif/v6.1/esp-idf/components/esp_system/ld/esp32s3/sections.ld.in
+--   -> Applying ldgen processing: C:/Users/dlbac/Downloads/coldguard-w03-integration-build-2026-10-28/build/esp-idf/esp_system/ld/sections.ld.in
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.api.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.bt_funcs.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libgcc.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.version.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_master.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_50.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_smp.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_dtm.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_test.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.ble_scan.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_rom/esp32s3/ld/esp32s3.rom.libc.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/soc/esp32s3/ld/esp32s3.peripherals.ld
+-- Adding linker script C:/Espressif/v6.1/esp-idf/components/esp_hal_regi2c/esp32s3/rom.regi2c.ld
+CMake Warning at C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:106 (message):
+  Private include directory
+  'C:/Espressif/v6.1/esp-idf/components/esp_wifi/wifi_apps/roaming_app/include'
+  belongs to component esp_wifi but is being used by component
+  wpa_supplicant.  It is recommended to define the component dependency for
+  wpa_supplicant on the component esp_wifi, i.e.  'idf_component_register(...
+  PRIV_REQUIRES esp_wifi)' in the CMakeLists.txt of wpa_supplicant, and
+  specify the included directory as idf_component_register(...
+  PRIV_INCLUDE_DIRS <dir relative to component>) in the CMakeLists.txt of
+  component esp_wifi.
+Call Stack (most recent call first):
+  C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:130 (__component_validation_check_include_dirs)
+  C:/Espressif/v6.1/esp-idf/CMakeLists.txt:356 (__component_validation_run_checks)
+
+
+CMake Warning at C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:106 (message):
+  Private include directory
+  'C:/Espressif/v6.1/esp-idf/components/esp_wifi/wifi_apps/roaming_app/src'
+  belongs to component esp_wifi but is being used by component
+  wpa_supplicant.  It is recommended to define the component dependency for
+  wpa_supplicant on the component esp_wifi, i.e.  'idf_component_register(...
+  PRIV_REQUIRES esp_wifi)' in the CMakeLists.txt of wpa_supplicant, and
+  specify the included directory as idf_component_register(...
+  PRIV_INCLUDE_DIRS <dir relative to component>) in the CMakeLists.txt of
+  component esp_wifi.
+Call Stack (most recent call first):
+  C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:130 (__component_validation_check_include_dirs)
+  C:/Espressif/v6.1/esp-idf/CMakeLists.txt:356 (__component_validation_run_checks)
+
+
+CMake Warning at C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:106 (message):
+  Private include directory
+  'C:/Espressif/v6.1/esp-idf/components/esp_wifi/wifi_apps/include/apps_private'
+  belongs to component esp_wifi but is being used by component
+  wpa_supplicant.  It is recommended to define the component dependency for
+  wpa_supplicant on the component esp_wifi, i.e.  'idf_component_register(...
+  PRIV_REQUIRES esp_wifi)' in the CMakeLists.txt of wpa_supplicant, and
+  specify the included directory as idf_component_register(...
+  PRIV_INCLUDE_DIRS <dir relative to component>) in the CMakeLists.txt of
+  component esp_wifi.
+Call Stack (most recent call first):
+  C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:130 (__component_validation_check_include_dirs)
+  C:/Espressif/v6.1/esp-idf/CMakeLists.txt:356 (__component_validation_run_checks)
+
+
+CMake Warning at C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:106 (message):
+  Private include directory
+  'C:/Espressif/v6.1/esp-idf/components/wpa_supplicant/src' belongs to
+  component wpa_supplicant but is being used by component esp_wifi.  It is
+  recommended to define the component dependency for esp_wifi on the
+  component wpa_supplicant, i.e.  'idf_component_register(...  PRIV_REQUIRES
+  wpa_supplicant)' in the CMakeLists.txt of esp_wifi, and specify the
+  included directory as idf_component_register(...  PRIV_INCLUDE_DIRS <dir
+  relative to component>) in the CMakeLists.txt of component wpa_supplicant.
+Call Stack (most recent call first):
+  C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:130 (__component_validation_check_include_dirs)
+  C:/Espressif/v6.1/esp-idf/CMakeLists.txt:356 (__component_validation_run_checks)
+
+
+CMake Warning at C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:106 (message):
+  Private include directory
+  'C:/Espressif/v6.1/esp-idf/components/wpa_supplicant/esp_supplicant/src'
+  belongs to component wpa_supplicant but is being used by component
+  esp_wifi.  It is recommended to define the component dependency for
+  esp_wifi on the component wpa_supplicant, i.e.  'idf_component_register(...
+  PRIV_REQUIRES wpa_supplicant)' in the CMakeLists.txt of esp_wifi, and
+  specify the included directory as idf_component_register(...
+  PRIV_INCLUDE_DIRS <dir relative to component>) in the CMakeLists.txt of
+  component wpa_supplicant.
+Call Stack (most recent call first):
+  C:/Espressif/v6.1/esp-idf/tools/cmake/component_validation.cmake:130 (__component_validation_check_include_dirs)
+  C:/Espressif/v6.1/esp-idf/CMakeLists.txt:356 (__component_validation_run_checks)
+
+
+-- Component idf::esp_trace will be linked with -Wl,--whole-archive
+-- Components: app_trace app_update bootloader bootloader_support bt cmock console cxx driver efuse esp-tls esp_adc esp_app_format esp_asrc_adapter esp_blockdev esp_blockdev_util esp_bootloader_format esp_coex esp_common esp_driver_ana_cmpr esp_driver_bitscrambler esp_driver_cam esp_driver_cordic esp_driver_dac esp_driver_dma esp_driver_gpio esp_driver_gptimer esp_driver_i2c esp_driver_i2s esp_driver_i3c esp_driver_isp esp_driver_jpeg esp_driver_ledc esp_driver_mcpwm esp_driver_parlio esp_driver_pcnt esp_driver_ppa esp_driver_rmt esp_driver_sd_intf esp_driver_sdio esp_driver_sdm esp_driver_sdmmc esp_driver_sdspi esp_driver_spi esp_driver_touch_sens esp_driver_tsens esp_driver_twai esp_driver_uart esp_driver_usb_serial_jtag esp_eth esp_event esp_gdbstub esp_hal_ana_cmpr esp_hal_ana_conv esp_hal_asrc esp_hal_cam esp_hal_clock esp_hal_cordic esp_hal_dma esp_hal_emac esp_hal_gpio esp_hal_gpspi esp_hal_i2c esp_hal_i2s esp_hal_i3c esp_hal_ieee802154 esp_hal_jpeg esp_hal_lcd esp_hal_ledc esp_hal_mcpwm esp_hal_mspi esp_hal_parlio esp_hal_pcnt esp_hal_pmu esp_hal_ppa esp_hal_regi2c esp_hal_rmt esp_hal_rtc_timer esp_hal_sd esp_hal_security esp_hal_systimer esp_hal_timg esp_hal_touch_sens esp_hal_twai esp_hal_uart esp_hal_usb esp_hal_wdt esp_hid esp_http_client esp_http_server esp_https_ota esp_https_server esp_hw_support esp_lcd esp_libc esp_local_ctrl esp_mm esp_netif esp_netif_stack esp_partition esp_phy esp_pm esp_psram esp_ringbuf esp_rom esp_security esp_stdio esp_system esp_timer esp_trace esp_usb_cdc_rom_console esp_wifi espcoredump esptool_py fatfs freertos hal heap http_parser ieee802154 log lwip main mbedtls nvs_flash nvs_sec_provider openthread partition_table perfmon protobuf-c protocomm pthread rt sdmmc soc spi_flash spiffs tcp_transport ulp unity vfs wear_levelling wpa_supplicant xtensa
+-- Component paths: C:/Espressif/v6.1/esp-idf/components/app_trace C:/Espressif/v6.1/esp-idf/components/app_update C:/Espressif/v6.1/esp-idf/components/bootloader C:/Espressif/v6.1/esp-idf/components/bootloader_support C:/Espressif/v6.1/esp-idf/components/bt C:/Espressif/v6.1/esp-idf/components/cmock C:/Espressif/v6.1/esp-idf/components/console C:/Espressif/v6.1/esp-idf/components/cxx C:/Espressif/v6.1/esp-idf/components/driver C:/Espressif/v6.1/esp-idf/components/efuse C:/Espressif/v6.1/esp-idf/components/esp-tls C:/Espressif/v6.1/esp-idf/components/esp_adc C:/Espressif/v6.1/esp-idf/components/esp_app_format C:/Espressif/v6.1/esp-idf/components/esp_asrc_adapter C:/Espressif/v6.1/esp-idf/components/esp_blockdev C:/Espressif/v6.1/esp-idf/components/esp_blockdev_util C:/Espressif/v6.1/esp-idf/components/esp_bootloader_format C:/Espressif/v6.1/esp-idf/components/esp_coex C:/Espressif/v6.1/esp-idf/components/esp_common C:/Espressif/v6.1/esp-idf/components/esp_driver_ana_cmpr C:/Espressif/v6.1/esp-idf/components/esp_driver_bitscrambler C:/Espressif/v6.1/esp-idf/components/esp_driver_cam C:/Espressif/v6.1/esp-idf/components/esp_driver_cordic C:/Espressif/v6.1/esp-idf/components/esp_driver_dac C:/Espressif/v6.1/esp-idf/components/esp_driver_dma C:/Espressif/v6.1/esp-idf/components/esp_driver_gpio C:/Espressif/v6.1/esp-idf/components/esp_driver_gptimer C:/Espressif/v6.1/esp-idf/components/esp_driver_i2c C:/Espressif/v6.1/esp-idf/components/esp_driver_i2s C:/Espressif/v6.1/esp-idf/components/esp_driver_i3c C:/Espressif/v6.1/esp-idf/components/esp_driver_isp C:/Espressif/v6.1/esp-idf/components/esp_driver_jpeg C:/Espressif/v6.1/esp-idf/components/esp_driver_ledc C:/Espressif/v6.1/esp-idf/components/esp_driver_mcpwm C:/Espressif/v6.1/esp-idf/components/esp_driver_parlio C:/Espressif/v6.1/esp-idf/components/esp_driver_pcnt C:/Espressif/v6.1/esp-idf/components/esp_driver_ppa C:/Espressif/v6.1/esp-idf/components/esp_driver_rmt C:/Espressif/v6.1/esp-idf/components/esp_driver_sd_intf C:/Espressif/v6.1/esp-idf/components/esp_driver_sdio C:/Espressif/v6.1/esp-idf/components/esp_driver_sdm C:/Espressif/v6.1/esp-idf/components/esp_driver_sdmmc C:/Espressif/v6.1/esp-idf/components/esp_driver_sdspi C:/Espressif/v6.1/esp-idf/components/esp_driver_spi C:/Espressif/v6.1/esp-idf/components/esp_driver_touch_sens C:/Espressif/v6.1/esp-idf/components/esp_driver_tsens C:/Espressif/v6.1/esp-idf/components/esp_driver_twai C:/Espressif/v6.1/esp-idf/components/esp_driver_uart C:/Espressif/v6.1/esp-idf/components/esp_driver_usb_serial_jtag C:/Espressif/v6.1/esp-idf/components/esp_eth C:/Espressif/v6.1/esp-idf/components/esp_event C:/Espressif/v6.1/esp-idf/components/esp_gdbstub C:/Espressif/v6.1/esp-idf/components/esp_hal_ana_cmpr C:/Espressif/v6.1/esp-idf/components/esp_hal_ana_conv C:/Espressif/v6.1/esp-idf/components/esp_hal_asrc C:/Espressif/v6.1/esp-idf/components/esp_hal_cam C:/Espressif/v6.1/esp-idf/components/esp_hal_clock C:/Espressif/v6.1/esp-idf/components/esp_hal_cordic C:/Espressif/v6.1/esp-idf/components/esp_hal_dma C:/Espressif/v6.1/esp-idf/components/esp_hal_emac C:/Espressif/v6.1/esp-idf/components/esp_hal_gpio C:/Espressif/v6.1/esp-idf/components/esp_hal_gpspi C:/Espressif/v6.1/esp-idf/components/esp_hal_i2c C:/Espressif/v6.1/esp-idf/components/esp_hal_i2s C:/Espressif/v6.1/esp-idf/components/esp_hal_i3c C:/Espressif/v6.1/esp-idf/components/esp_hal_ieee802154 C:/Espressif/v6.1/esp-idf/components/esp_hal_jpeg C:/Espressif/v6.1/esp-idf/components/esp_hal_lcd C:/Espressif/v6.1/esp-idf/components/esp_hal_ledc C:/Espressif/v6.1/esp-idf/components/esp_hal_mcpwm C:/Espressif/v6.1/esp-idf/components/esp_hal_mspi C:/Espressif/v6.1/esp-idf/components/esp_hal_parlio C:/Espressif/v6.1/esp-idf/components/esp_hal_pcnt C:/Espressif/v6.1/esp-idf/components/esp_hal_pmu C:/Espressif/v6.1/esp-idf/components/esp_hal_ppa C:/Espressif/v6.1/esp-idf/components/esp_hal_regi2c C:/Espressif/v6.1/esp-idf/components/esp_hal_rmt C:/Espressif/v6.1/esp-idf/components/esp_hal_rtc_timer C:/Espressif/v6.1/esp-idf/components/esp_hal_sd C:/Espressif/v6.1/esp-idf/components/esp_hal_security C:/Espressif/v6.1/esp-idf/components/esp_hal_systimer C:/Espressif/v6.1/esp-idf/components/esp_hal_timg C:/Espressif/v6.1/esp-idf/components/esp_hal_touch_sens C:/Espressif/v6.1/esp-idf/components/esp_hal_twai C:/Espressif/v6.1/esp-idf/components/esp_hal_uart C:/Espressif/v6.1/esp-idf/components/esp_hal_usb C:/Espressif/v6.1/esp-idf/components/esp_hal_wdt C:/Espressif/v6.1/esp-idf/components/esp_hid C:/Espressif/v6.1/esp-idf/components/esp_http_client C:/Espressif/v6.1/esp-idf/components/esp_http_server C:/Espressif/v6.1/esp-idf/components/esp_https_ota C:/Espressif/v6.1/esp-idf/components/esp_https_server C:/Espressif/v6.1/esp-idf/components/esp_hw_support C:/Espressif/v6.1/esp-idf/components/esp_lcd C:/Espressif/v6.1/esp-idf/components/esp_libc C:/Espressif/v6.1/esp-idf/components/esp_local_ctrl C:/Espressif/v6.1/esp-idf/components/esp_mm C:/Espressif/v6.1/esp-idf/components/esp_netif C:/Espressif/v6.1/esp-idf/components/esp_netif_stack C:/Espressif/v6.1/esp-idf/components/esp_partition C:/Espressif/v6.1/esp-idf/components/esp_phy C:/Espressif/v6.1/esp-idf/components/esp_pm C:/Espressif/v6.1/esp-idf/components/esp_psram C:/Espressif/v6.1/esp-idf/components/esp_ringbuf C:/Espressif/v6.1/esp-idf/components/esp_rom C:/Espressif/v6.1/esp-idf/components/esp_security C:/Espressif/v6.1/esp-idf/components/esp_stdio C:/Espressif/v6.1/esp-idf/components/esp_system C:/Espressif/v6.1/esp-idf/components/esp_timer C:/Espressif/v6.1/esp-idf/components/esp_trace C:/Espressif/v6.1/esp-idf/components/esp_usb_cdc_rom_console C:/Espressif/v6.1/esp-idf/components/esp_wifi C:/Espressif/v6.1/esp-idf/components/espcoredump C:/Espressif/v6.1/esp-idf/components/esptool_py C:/Espressif/v6.1/esp-idf/components/fatfs C:/Espressif/v6.1/esp-idf/components/freertos C:/Espressif/v6.1/esp-idf/components/hal C:/Espressif/v6.1/esp-idf/components/heap C:/Espressif/v6.1/esp-idf/components/http_parser C:/Espressif/v6.1/esp-idf/components/ieee802154 C:/Espressif/v6.1/esp-idf/components/log C:/Espressif/v6.1/esp-idf/components/lwip C:/Users/dlbac/Downloads/coldguard-repo/A-W03-integration/firmware/main C:/Espressif/v6.1/esp-idf/components/mbedtls C:/Espressif/v6.1/esp-idf/components/nvs_flash C:/Espressif/v6.1/esp-idf/components/nvs_sec_provider C:/Espressif/v6.1/esp-idf/components/openthread C:/Espressif/v6.1/esp-idf/components/partition_table C:/Espressif/v6.1/esp-idf/components/perfmon C:/Espressif/v6.1/esp-idf/components/protobuf-c C:/Espressif/v6.1/esp-idf/components/protocomm C:/Espressif/v6.1/esp-idf/components/pthread C:/Espressif/v6.1/esp-idf/components/rt C:/Espressif/v6.1/esp-idf/components/sdmmc C:/Espressif/v6.1/esp-idf/components/soc C:/Espressif/v6.1/esp-idf/components/spi_flash C:/Espressif/v6.1/esp-idf/components/spiffs C:/Espressif/v6.1/esp-idf/components/tcp_transport C:/Espressif/v6.1/esp-idf/components/ulp C:/Espressif/v6.1/esp-idf/components/unity C:/Espressif/v6.1/esp-idf/components/vfs C:/Espressif/v6.1/esp-idf/components/wear_levelling C:/Espressif/v6.1/esp-idf/components/wpa_supplicant C:/Espressif/v6.1/esp-idf/components/xtensa
+-- Configuring done (21.0s)
+-- Generating done (4.6s)
+-- Build files have been written to: C:/Users/dlbac/Downloads/coldguard-w03-integration-build-2026-10-28/build
+Adding "set-target"'s dependency "fullclean" to list of commands with default set of options.
+Executing action: fullclean
+Build directory 'C:\Users\dlbac\Downloads\coldguard-w03-integration-build-2026-10-28\build' not found. Nothing to clean.
+Executing action: set-target
+Set Target to: esp32s3, new sdkconfig will be created.
+Running cmake in directory C:\Users\dlbac\Downloads\coldguard-w03-integration-build-2026-10-28\build
+Executing "cmake -G Ninja -B C:\Users\dlbac\Downloads\coldguard-w03-integration-build-2026-10-28\build -DPYTHON_DEPS_CHECKED=1 -DPYTHON=C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe -DESP_PLATFORM=1 -DIDF_TARGET=esp32s3 -DCCACHE_ENABLE=True C:\Users\dlbac\Downloads\coldguard-repo\A-W03-integration\firmware"...

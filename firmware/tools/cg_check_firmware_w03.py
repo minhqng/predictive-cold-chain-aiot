@@ -31,6 +31,10 @@ from the sources and refuses to certify anything it cannot see:
     are declared and used.
 10. Build completeness - every `.c` file in `firmware/main` is listed in
     `CMakeLists.txt`.
+11. GPIO ownership - the effective map equals the as-built map v2, no pad
+    is owned twice, flash/PSRAM/strapping pins are rejected, a MANUAL
+    DE/RE on the MC-38 pin (GPIO35) is rejected, and the actuator safe-OFF
+    drives RPWM + R_EN + L_EN low with the enables cleared first.
 
 Exit codes: 0 = every check passed, 1 = at least one check failed,
 2 = usage/IO error.
@@ -46,6 +50,11 @@ import sys
 REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
 FIRMWARE_MAIN = REPO_ROOT / "firmware" / "main"
 TOOLS = REPO_ROOT / "firmware" / "tools"
+
+if str(TOOLS) not in sys.path:
+    sys.path.insert(0, str(TOOLS))
+
+import cg_gpio_map  # noqa: E402  (shared GPIO ownership rules)
 
 FORBIDDEN_WRITE_FC = re.compile(r"0[xX](?:05|06|0[Ff]|10)\b")
 STATUS_TOKEN_RE = re.compile(r'return\s+"([A-Z_]+)"\s*;')
@@ -125,6 +134,9 @@ def run_checks() -> Checker:
     actuator_c = checker.read("firmware/main/cg_actuator.c")
     actuator_h = checker.read("firmware/main/cg_actuator.h")
     safety_c = checker.read("firmware/main/cg_safety.c")
+    door_c = checker.read("firmware/main/cg_door.c")
+    onewire_c = checker.read("firmware/main/cg_onewire.c")
+    ds18b20_c = checker.read("firmware/main/cg_ds18b20.c")
     log_h = checker.read("firmware/main/cg_log.h")
     app_main = checker.read("firmware/main/app_main.c")
     cmake = checker.read("firmware/main/CMakeLists.txt")
@@ -379,22 +391,37 @@ def run_checks() -> Checker:
     )
     checker.check(
         re.search(
-            r"gpio_set_level\s*\(\s*CG_ACTUATOR_(?:RPWM|ENABLE)_PIN\s*,\s*1\s*\)",
+            r"gpio_set_level\s*\(\s*CG_ACTUATOR_(?:RPWM|ENABLE|REN|LEN)_PIN\s*,\s*1\s*\)",
             main_sources,
         )
         is None,
-        "no source writes 1 to RPWM or ENABLE (only 0 is ever written)",
+        "no source writes 1 to RPWM, R_EN or L_EN (only 0 is ever written)",
     )
     force_off_body = extract_function_body(
         actuator_stripped, r"void\s+cg_actuator_force_off\s*\([^)]*\)"
     )
     checker.check(
         force_off_body is not None
-        and force_off_body.find("gpio_set_level(CG_ACTUATOR_ENABLE_PIN, 0)")
+        and force_off_body.count("gpio_set_level") >= 3
+        and force_off_body.find("gpio_set_level(CG_ACTUATOR_REN_PIN, 0)")
         != -1
-        and force_off_body.find("gpio_set_level(CG_ACTUATOR_ENABLE_PIN, 0)")
+        and force_off_body.find("gpio_set_level(CG_ACTUATOR_LEN_PIN, 0)")
+        != -1
+        and force_off_body.find("gpio_set_level(CG_ACTUATOR_RPWM_PIN, 0)")
+        != -1
+        and force_off_body.find("gpio_set_level(CG_ACTUATOR_REN_PIN, 0)")
+        < force_off_body.find("gpio_set_level(CG_ACTUATOR_RPWM_PIN, 0)")
+        and force_off_body.find("gpio_set_level(CG_ACTUATOR_LEN_PIN, 0)")
         < force_off_body.find("gpio_set_level(CG_ACTUATOR_RPWM_PIN, 0)"),
-        "force_off clears ENABLE before it writes the PWM level",
+        "force_off clears both enables (R_EN, L_EN) before it writes the PWM level",
+    )
+    checker.check(
+        force_off_body is not None
+        and "CG_ACTUATOR_REN_PIN" in force_off_body
+        and "CG_ACTUATOR_LEN_PIN" in force_off_body
+        and "CG_ACTUATOR_RPWM_PIN" in force_off_body
+        and "pin_bit_mask" in force_off_body,
+        "force_off configures all three control pins as outputs",
     )
     allowed_body = extract_function_body(
         actuator_stripped, r"bool\s+cg_actuator_outputs_allowed\s*\([^)]*\)"
@@ -403,11 +430,18 @@ def run_checks() -> Checker:
         allowed_body is not None
         and "CG_ACTUATOR_ENABLE_ALLOWED" in allowed_body
         and allowed_body.count("return false") >= 2,
-        "outputs_allowed refuses output while ENABLE_ALLOWED=0 (and on opposing duty)",
+        "outputs_allowed refuses output while ENABLE_ALLOWED=0 (and on simultaneous duty on both directions)",
     )
+    # The invariant is documented in a header comment, so this check reads the
+    # raw header instead of stripped comments. The corrected physics matters:
+    # equal duty on both bridges gives equal outputs (no differential), not a
+    # commanded reverse, so the documented rule is "one half-bridge at a time".
     checker.check(
-        "opposing" in actuator_h.lower() or "both" in strip_comments(actuator_h).lower(),
-        "cg_actuator.h documents the opposing-direction invariant",
+        "one half-bridge at a time" in actuator_h.lower()
+        or "single half-bridge" in actuator_h.lower()
+        or "single-sided" in actuator_h.lower(),
+        "cg_actuator.h documents the single-sided command invariant "
+        "(one half-bridge at a time; equal duty is not a reverse command)",
     )
     checker.check(
         "gpio_" not in strip_comments(power_c),
@@ -486,6 +520,77 @@ def run_checks() -> Checker:
     sources = sorted(path.name for path in FIRMWARE_MAIN.glob("*.c"))
     missing = [name for name in sources if f'"{name}"' not in cmake]
     checker.check(not missing, f"CMakeLists lists every source file (missing: {missing or 'none'})")
+
+    # 11. GPIO ownership / as-built map -----------------------------------
+    gpio = cg_gpio_map.evaluate(config)
+    map_problems = cg_gpio_map.conflicts(gpio) + cg_gpio_map.as_built_mismatches(gpio)
+    for problem in map_problems:
+        checker.fail(f"GPIO map: {problem}")
+    checker.check(
+        not map_problems,
+        "effective pin map matches as-built map v2 with one owner per pad",
+    )
+    checker.check(
+        gpio.pin_map_version == 2,
+        f"CG_PIN_MAP_VERSION is 2 for the as-built map (got {gpio.pin_map_version})",
+    )
+
+    for problem in cg_gpio_map.safe_off_problems(
+        actuator_c,
+        rpwm="CG_ACTUATOR_RPWM_PIN",
+        ren="CG_ACTUATOR_REN_PIN",
+        len_pin="CG_ACTUATOR_LEN_PIN",
+        signature=r"void\s+cg_actuator_force_off\s*\([^)]*\)",
+    ):
+        checker.fail(f"safe-OFF: {problem}")
+    checker.check(
+        not cg_gpio_map.safe_off_problems(
+            actuator_c,
+            rpwm="CG_ACTUATOR_RPWM_PIN",
+            ren="CG_ACTUATOR_REN_PIN",
+            len_pin="CG_ACTUATOR_LEN_PIN",
+            signature=r"void\s+cg_actuator_force_off\s*\([^)]*\)",
+        ),
+        "cg_actuator_force_off covers RPWM, R_EN and L_EN (no pin omitted)",
+    )
+
+    for problem in cg_gpio_map.direction_problems(
+        {
+            "cg_door.c": door_c,
+            "cg_onewire.c": onewire_c,
+            "cg_rs485.c": rs485_c,
+            "cg_power.c": power_c,
+            "cg_ds18b20.c": ds18b20_c,
+        }
+    ):
+        checker.fail(f"pin direction: {problem}")
+
+    # A MANUAL DE/RE on the MC-38 pin must be rejected by the same rules.
+    manual_config = config.replace(
+        "#define CG_RS485_DIR_MODE 0", "#define CG_RS485_DIR_MODE 1"
+    )
+    if manual_config != config:
+        manual_gpio = cg_gpio_map.evaluate(manual_config)
+        manual_problems = cg_gpio_map.conflicts(manual_gpio)
+        checker.check(
+            any("collides with MC38" in problem for problem in manual_problems),
+            "MANUAL RS-485 DE/RE on GPIO35 is rejected (MC-38 owns the pin)",
+        )
+        free_pin_config = manual_config.replace(
+            "#define CG_PIN_MAX3485_DE_RE 35", "#define CG_PIN_MAX3485_DE_RE 4"
+        )
+        free_gpio = cg_gpio_map.evaluate(free_pin_config)
+        checker.check(
+            not cg_gpio_map.conflicts(free_gpio),
+            "MANUAL RS-485 DE/RE on a free pin is accepted",
+        )
+    else:
+        checker.fail("CG_RS485_DIR_MODE is not a single #define line the check can vary")
+
+    checker.check(
+        "MANUAL RS-485 DE/RE collides with another pin" in config,
+        "config has a compile-time #error for a MANUAL DE/RE collision",
+    )
 
     return checker
 

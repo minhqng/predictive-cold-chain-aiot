@@ -1,9 +1,8 @@
 # W03 bench evidence — 2026-10-27 (TEST 131 / 132B / 133B + shunt continuity)
 
 **Trạng thái: `SUPPLEMENTARY BENCH EVIDENCE — NOT ESP-IDF W03 RUNTIME`**
-**Team gate: `W03 TEAM GATE: PENDING_REVIEW`.** Thư mục này **không** phải nghiệm thu W03,
-không thay thế phê duyệt của Member D/leader, và không chứng minh firmware ESP-IDF W03 đã
-chạy trên board.
+Thư mục này **không** phải nghiệm thu W03, không thay `../acceptance.md`, và không chứng
+minh firmware ESP-IDF W03 đã chạy trên board.
 
 ## 1. Nguồn, ngày và người vận hành
 
@@ -33,7 +32,7 @@ thực sự nhận được; không dựng lại log, không chèn hex, không t
 | `test-131-profile-readback.md` | — | — | A-W03-04: frame 50 A + CRC host-side + provenance |
 | `test-133b-reset-default-off.md` | — | — | A-W03-07: 120/120 mẫu reset, giới hạn bằng chứng |
 | `shunt-continuity.md` | — | — | A-W03-06: continuity + failure mode chờ D |
-| `as-built-configuration.md` | — | — | Pin/power/RS-485/shunt as-built và xung đột GPIO10 |
+| `as-built-configuration.md` | — | — | Pin/power/RS-485/shunt as-built và lệch cấu hình GPIO10 |
 | `provenance-matrix.md` | — | — | Phân loại từng claim: đo / người vận hành báo / suy ra / chưa đo |
 | `SHA256SUMS.txt` | — | — | Hash đầy đủ của 3 file nguồn |
 
@@ -101,4 +100,4 @@ gate `COLLECTED_WITH_ERRORS`. Phiên 2026-10-27 có **600/600 hợp lệ**.
 - `provenance-matrix.md` — claim nào là đo, claim nào là lời khai.
 - `test-131-profile-readback.md`, `test-133b-reset-default-off.md`, `shunt-continuity.md`.
 - `../acceptance.md` — nguồn trạng thái duy nhất.
-- `../team-dependencies.md` — quyết định còn chờ D/leader.
+- `../team-dependencies.md` — đầu vào còn thiếu (phép đo, dữ liệu gốc, cấu hình).

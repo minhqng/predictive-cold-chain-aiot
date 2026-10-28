@@ -1,0 +1,11 @@
+worktree=C:/Users/dlbac/Downloads/coldguard-repo/A-W03-integration
+branch=integration/a-w03-w02-sync
+HEAD=efe6075c6d7a7311f34f1a4241d5c4af21961e35
+HEAD_parents=3
+staged_diff_sha256=e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+worktree_diff_sha256=836730ba326e4b935796730bb4093959e0c7de1d48ef55da7954f6f1b2dedd57
+status_sha256=28c2f7776ac9f6d819cf1d74d565195b82eac0609a1f9191a7819c591925eb3d
+firmware_tree_fingerprint=a64fbca949a0b21e562315e91da951e360dd71c8c5f330a60a31b7aeb2cc2200
+modified_tracked=28
+untracked_files=7
+8065e5836fff0328b43550148555ecd9ee679dd324c00a7d078763c5f9b049c2 *C:/Users/dlbac/Downloads/coldguard-w03-integration-build-2026-10-28/sdkconfig.used.txt

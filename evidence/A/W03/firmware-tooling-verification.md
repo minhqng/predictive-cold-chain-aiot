@@ -1,5 +1,11 @@
 # W03 firmware and tooling verification (Member A)
 
+> **Cập nhật 2026-10-28 (pin map v2):** các thay đổi hòa giải W01–W03 (pin map v2,
+> safe-OFF 3 chân, `cg_gpio_map.py`, guard MANUAL DE/RE) **chưa được commit** trong
+> phiên này. Mọi số liệu build/flash bên dưới thuộc **mã nguồn cũ** và không chứng
+> minh mã nguồn mới; build native cho working tree mới nằm ở **§4.1** (PASS, 0
+> warning/0 error, binary/SHA-256 ghi kèm).
+
 **Ngày:** 2026-10-19 (cập nhật 2026-10-27) · **Phạm vi:** phần không cần phần cứng (mã nguồn + công cụ + kiểm tra tự động).
 Notebook này mô tả **đã implement gì**, **đã kiểm chứng bằng gì**, và **chưa làm gì**. Không có mục nào trong đây là bằng chứng đo.
 
@@ -24,9 +30,9 @@ firmware_commit: b85869322fb8c9828e25942346465d1ec6e131d7
 | `firmware/main/cg_pzem.c/.h` | Giao thức PZEM: builder **chỉ đọc** (FC 0x04 input 0x0000..0x0005; FC 0x03 holding 0x0003), phân tích/classify khung trả lời, scaling V/A/W/Wh, tên profile. **Không có builder ghi** |
 | `firmware/main/cg_rs485.c/.h` | UART1 transport: framing từ macro (8N1 mặc định), AUTO direction mặc định; MANUAL (GPIO35) chỉ khi biên dịch với `CG_RS485_DIR_MODE 1` (module MAX3485 canonical) |
 | `firmware/main/cg_power.c/.h` | Task poll 1 Hz (deadline-paced): tx/rx raw, timeout 250 ms × tối đa 2 attempts, log `PZEM_CFG`/`PZEM`/`PZEM_RANGE`; `nan` khi lỗi; đếm ok/fail |
-| `firmware/main/cg_actuator.c/.h` | Safe-state IBT-2: `force_off()` (ENABLE=0 trước, RPWM=0), guard `outputs_allowed()` từ chối khi chưa authorization/đối nghịch/ngoài dải; không PWM |
+| `firmware/main/cg_actuator.c/.h` | Safe-state IBT-2: `force_off()` (R_EN, L_EN = 0 trước, RPWM=0), guard `outputs_allowed()` từ chối khi chưa authorization / cả hai chiều cùng duty / ngoài dải; không PWM |
 | `firmware/main/cg_safety.c/.h` | Gọi actuator force-off + log `#CG SAFETY` (giữ nguyên như W02, giờ ủy quyền pin cho `cg_actuator`) |
-| `firmware/main/coldguard_config.h` | Toàn bộ cấu hình W03 (RS485/PZEM/actuator), grammar v2, firmware version `cg-w03-0.1.0`; giữ `CG_PIN_MAP_VERSION 1` |
+| `firmware/main/coldguard_config.h` | Toàn bộ cấu hình W03 (RS485/PZEM/actuator), grammar v2, firmware version `cg-w03-0.2.0`; pin map v2 (`CG_PIN_MAP_VERSION 2`) + guard `#error` sở hữu chân |
 | `firmware/main/cg_log.h` | Grammar v2 = v1 không đổi + `PZEM_CFG`/`PZEM_RANGE`/`PZEM` |
 | `firmware/main/app_main.c` | Gọi `cg_power_start()` sau safety; giữ nguyên v1: safety off trước NVS/task/sensor |
 
@@ -44,10 +50,15 @@ Quyết định thiết kế quan trọng:
 | `firmware/tools/cg_serial.py` (mở rộng) | Parse `PZEM_CFG`/`PZEM_RANGE`/`PZEM`, `GRAMMAR_VERSION=2`; thống kê link + power (mean/min/max/sd/spread/gaps/success/error) | `test_cg_serial_pzem.py` (21 test) + test W02 cũ vẫn PASS |
 | `firmware/tools/cg_pzem_readback.py` | Tái giải mã `#CG PZEM_RANGE` từ log thật: CRC host-side, value, profile, đối chiếu chéo với firmware; yêu cầu `read_only=1` | `test_cg_pzem_tools.py` |
 | `firmware/tools/cg_build_pzem_off_csv.py` | Dựng `pzem-off.csv` + summary: ≥600 s, chống trộn boot, bắt buộc `--tec-off-confirmed`, ô trống cho mẫu lỗi | `test_cg_pzem_tools.py` |
-| `firmware/tools/cg_check_firmware_w03.py` | Kiểm tra tĩnh: parity register/scaling ↔ `cg_modbus.py`, read-only, CRC trước khi tin khung, framing macro, retry bound, token parity, default-OFF, boot order, grammar, CMake, echo/prefix extractor | chính nó: **89 check PASS** |
+| `firmware/tools/cg_check_firmware_w03.py` | Kiểm tra tĩnh: parity register/scaling ↔ `cg_modbus.py`, read-only, CRC trước khi tin khung, framing macro, retry bound, token parity, default-OFF, boot order, grammar, CMake, echo/prefix extractor, pin map v2, guard `#error` MANUAL DE/RE | chính nó: **96 check PASS** (bản trước pin map v2: 89) |
 | `firmware/tools/run_all_checks_w03.py` | Một lệnh chạy toàn bộ 5 lớp kiểm tra | xem §3 |
 
 ## 3. Kiểm tra đã chạy trên máy hiện tại (cập nhật 2026-10-27)
+
+> **Số liệu hiện hành sau pin map v2 (chạy lại 2026-10-28):** W03 `153` unittest
+> (gồm 10 actuator safety + 17 pin map), W02 `74` unittest, `cg_check_firmware_w03.py`
+> = `96` check, `run_all_checks_w03.py` = `5/5` lớp PASS, `run_all_checks.py` (W02) = `3/3`.
+> Bảng dưới đây giữ nguyên số liệu ngày 2026-10-27 làm bản ghi lịch sử.
 
 ```
 py firmware/tools/run_all_checks_w03.py
@@ -76,6 +87,37 @@ Các test tập trung vào đúng nơi dễ sai:
 ## 4. Compile thật
 
 Xem `build-report-w03.md` (GitHub Actions, image `espressif/idf:v6.1`, target `esp32s3`). Kết quả ghi trong file đó — **không** nằm trong file này để tránh mâu thuẫn khi CI cập nhật. Đối với commit `f8587dd`, bằng chứng biên dịch native Windows ESP-IDF v6.1 cục bộ được lưu trữ tại bundle `build-native-windows-2026-10-27/` (chi tiết tại `build-report-w03.md` §7).
+
+### 4.1 Native build cho mã nguồn map v2 (2026-10-28, working tree **chưa commit**)
+
+Build chạy trên máy Windows, ESP-IDF v6.1 (`git describe` = `v6.1`, commit `fff9895c82d744c7237be8847347bdd1b07c6643`), toolchain `xtensa-esp-elf-gcc 15.2.0 (esp-15.2.0_20251204)`, target `esp32s3`, build dir ngoài repo (`%TEMP%\cg-build-w03`).
+
+```text
+idf.py -B <scratch>/cg-build-w03 -DSDKCONFIG=<scratch>/cg-build-w03/sdkconfig -DIDF_TARGET=esp32s3 build
+```
+
+| Hạng mục | Giá trị |
+|---|---|
+| Exit code | `0` |
+| Bước Ninja | `1090/1090` |
+| Warning | `0` |
+| Error | `0` |
+| App version string | `d54250c-dirty` |
+| Base commit của working tree | `d54250cc4a57651d410de5588592f992afc2a034` (22 tệp dirty) |
+| `coldguard_firmware.bin` | `231 712 B`, SHA-256 `4d3fdea8c505ec0c26c941eeebe75c2e8bf363a1e82af01b8a07c37b591e2560` |
+| `bootloader.bin` / `partition-table.bin` | `21 120 B` / `3 072 B` |
+| SHA-256 gộp `firmware/main/*.c`, `*.h`, `CMakeLists.txt` | `d5d1038c2aca42aefe0d69f0818fe942151493c8c635eef9b3f4c8394ada253c` |
+| Host test sau build | `153 unittest OK`; `cg_check_firmware_w03.py` = 96 check PASS |
+
+Bản build này chứng minh **mã nguồn hiện tại trong working tree** biên dịch sạch; nó **không** thuộc một commit đã push và **không** thay thế CI run cho commit tương lai. Flash/runtime vẫn `HARDWARE RUN PENDING`.
+
+Bản build trên được lặp lại cùng ngày trong thư mục scratch
+`C:\Users\dlbac\Downloads\coldguard-firmware-build-w03-20261028` và log được lưu thành bundle
+`build-native-windows-2026-10-28/` (có `SHA256SUMS.txt` + `verify_build.py`). Hai lần build
+cho **cùng nguồn, cùng kết quả kỹ thuật** (`1090/1090`, 0 warning, 0 error, `0x38920`) nhưng
+SHA-256 binary **khác nhau** (`4d3fdea8…` so với `3855196680…`) vì ESP-IDF nhúng ngày/giờ
+build vào app descriptor — đây không phải khác biệt mã nguồn. Bundle lưu hash của lần build
+sau; hash lần build `%TEMP%` chỉ dùng để đối chiếu nội bộ.
 
 ## 5. Sửa lỗi đóng gói W02 (kèm trong nhánh W03)
 
