@@ -67,6 +67,30 @@ void cg_log_line(const char *fmt, ...)
     log_unlock();
 }
 
+bool cg_log_raw_line(const char *line)
+{
+    size_t len;
+
+    if (line == NULL) {
+        return false;
+    }
+    len = strlen(line);
+    if (len == 0U || len > CG_TELEMETRY_LINE_MAX) {
+        return false;
+    }
+    log_lock();
+    /* The caller treats a false return as "this frame was not delivered", so a
+     * short write, a failed newline or a failed flush must not be reported as
+     * success. With the USB-Serial/JTAG VFS an absent host makes write()
+     * return EIO, which surfaces here as a short fwrite/EOF fputc and an EOF
+     * fflush. */
+    const bool written = fwrite(line, 1, len, stdout) == len;
+    const bool newline = fputc('\n', stdout) != EOF;
+    const bool flushed = fflush(stdout) == 0;
+    log_unlock();
+    return written && newline && flushed;
+}
+
 const char *cg_log_rom_hex(const uint8_t rom[8], char out[17])
 {
     static const char hex[] = "0123456789ABCDEF";
