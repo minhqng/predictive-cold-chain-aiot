@@ -1,0 +1,8 @@
+
+
+DeviceID    : COM4
+Description : USB Serial Device
+PNPDeviceID : USB\VID_303A&PID_1001&MI_00\7&23BBB5F2&0&0000
+
+
+

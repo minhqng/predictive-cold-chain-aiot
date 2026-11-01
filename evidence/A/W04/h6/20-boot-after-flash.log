@@ -1,0 +1,40 @@
+--- WARNING: GDB cannot open serial ports accessed as COMx
+--- NOTE: Using \\.\COM4 instead...
+--- esp-idf-monitor 1.10.0 on \\.\COM4 115200
+--- WARNING: No ELF files found. Please provide the ELF file paths, required for binary log decoding.
+--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x4037954e
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x10b4
+load:0x403c8700,len:0xbbc
+load:0x403cb700,len:0x2d70
+entry 0x403c8880
+W (91) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+H6 SELFTEST result=PASS checks=138 failures=0
+
+H6 BOOT firmware=coldguard_h6_bench build=Oct 29 2026 21:56:41 pins_rpwm=5 pins_ren=6 pins_len=10 pwm_freq_hz=1000 freq_reconstructed=1 duty_permille=100 max_on_ms=60000 pzem_uart=1
+H6 SAFE_OFF duty_permille=0 ren=0 len=0 rpwm_level=0 tec_output=OFF
+W (96) ledc: GPIO 5 is not usable, maybe conflict with others
+H6 PZEM init=OK uart=1 tx=36 rx=37 baud=9600 slave=1
+H6 READY state=WAIT_FOR_MANUAL_ARM tec_output=OFF waiting_for=ARM
+
+Type 'help' to get the list of commands.
+Use UP/DOWN arrows to navigate through command history.
+Press TAB when typing command name to auto-complete.
+
+Your terminal application does not support escape sequences.
+
+Line editing and history features are disabled.
+
+On Windows, try using Windows Terminal or Putty instead.
+h6> H6 CONSOLE ready commands=ARM,START,STOP,STATUS,HELP
+H6 COMMANDS (case-sensitive):
+  STATUS  - state, elapsed, pin levels, live PZEM sample (TEC off)
+  ARM     - WAIT_FOR_MANUAL_ARM -> ARMED (no output change)
+  START   - ARMED -> RUNNING_10_PERCENT, one 60 s max run per boot
+  STOP    - RUNNING -> SAFE_OFF_FINAL immediately
+  HELP    - this text

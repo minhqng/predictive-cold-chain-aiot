@@ -1,0 +1,6 @@
+# capture start 2026-10-29T15:14:58.157553+00:00 port=COM4 baud=115200
+[   0.000] 15:14:58.157 >>> STATUS
+[   0.125] 15:14:58.275 STATUS
+[   0.125] 15:14:58.275 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   0.125] 15:14:58.275 H6 STATUS pzem=BAD_LENGTH
+# capture end 2026-10-29T15:15:02.226351+00:00 reason=timeout

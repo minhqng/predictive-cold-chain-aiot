@@ -1,0 +1,54 @@
+# H6 PZEM fix - static checks (2026-10-29)
+
+## 1. Only FC04 is built; 0x06 is the register count, not a function code
+59:    out[1] = 0x04U; /* read input registers; READ ONLY */
+63:    out[5] = 0x06U;
+120:        } else if (function == 0x04U) {
+255:    if (frame[1] != 0x04U) {
+
+## 2. No idle-based read termination remains (only comments)
+5: * CRC-valid reply is present or the per-attempt window expires. Line idle is
+274: * the attempt window closes; never stops on line idle. */
+
+## 3. Early exit only on a usable frame
+214:        return H6_PZEM_CLASS_OK;
+327:                if (h6_pzem_classify(trace->rx, total, tx, tx_len, &frame) == H6_PZEM_CLASS_OK) {
+328:                    trace->early_exit = true;
+366:    case H6_PZEM_CLASS_OK:
+489:    case H6_PZEM_CLASS_OK:
+
+## 4. Flush happens before write only
+286:    uart_flush_input(H6_UART_PORT);
+287:    const int written = uart_write_bytes(H6_UART_PORT, tx, tx_len);
+289:        uart_wait_tx_done(H6_UART_PORT, pdMS_TO_TICKS(H6_PZEM_TX_CMD_MS)) != ESP_OK) {
+415:    uart_flush_input(H6_UART_PORT);
+
+## 5. Read window and attempts unchanged
+40:#define H6_PZEM_TIMEOUT_MS 250
+41:#define H6_PZEM_ATTEMPTS 2
+42:#define H6_PZEM_POLL_MS 1000
+
+## 6. One TEC enable call site, one state-machine start call site
+288:            enabled = outputs_on_10_percent();
+461:    ok = h6_sm_start(&s_sm, esp_timer_get_time());
+
+## 7. START still requires a valid live PZEM sample
+442:    if (pre.valid) {
+449:    if (!pre.valid) {
+450:        H6_LOG("H6 CMD START rejected reason=PZEM_INVALID state=ARMED\n");
+
+## 8. PWM duty, frequency flag and ON bound unchanged
+21:#define H6_PWM_FREQ_HZ 1000
+22:#define H6_PWM_FREQ_RECONSTRUCTED 1
+25:#define H6_PWM_DUTY_COUNT 819 /* 819/8192 = 9.9988% */
+26:#define H6_PWM_DUTY_PERMILLE 100
+31:#define H6_MAX_ON_US 60000000LL
+
+## 9. Trace is registered only after a successful PZEM init
+630:        h6_pzem_set_trace(&print_pzem_trace, NULL);
+
+## 10. Production W04 gates unchanged (firmware/main/coldguard_config.h)
+370:#define CG_ACTUATOR_ENABLE_ALLOWED 0
+392:#define CG_TEC_OUTPUT_STAGE_ENABLED 0
+393:#define CG_TEC_HARDWARE_GATES_VERIFIED 0
+421:#define CG_TEC_REQUEST_DUTY_PERMILLE 0
