@@ -20,3 +20,12 @@ evidence/A/W03/hardware-2026-10-27/firmware/** -text
 evidence/A/W03/build-native-windows-2026-10-27/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28-integrated/raw/** -text
+
+# W04 commissioning dossier: raw H6 serial captures, the G1/G2a host logs, the
+# 2026-10-29 IDF build logs and the 2026-11-01 delivery build log keep their
+# exact bytes, because validate_w04.py pins their SHA-256 in SHA256SUMS.txt and
+# a CRLF rewrite would break every pin on a clean checkout.
+evidence/A/W04/h6/** -text
+evidence/A/W04/g1/** -text
+evidence/A/W04/g2a/** -text
+evidence/A/W04/build-2026-11-01/** -text
