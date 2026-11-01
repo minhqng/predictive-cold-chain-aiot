@@ -1,0 +1,47 @@
+timestamp_utc=2026-10-29T10:59:54Z
+worktree=/c/Users/dlbac/Downloads/coldguard-repo/A-W04-tec-commissioning
+head=0d350a57874d53f9b48bfd6b639eae0f50e6f450
+branch=feat/a-w04-tec-commissioning-foundation
+--- status ---
+ M firmware/main/CMakeLists.txt
+ M firmware/main/app_main.c
+ M firmware/main/cg_log.c
+ M firmware/main/cg_log.h
+ M firmware/main/cg_power.c
+ M firmware/main/coldguard_config.h
+ M firmware/tools/README.md
+?? docs/06-tec-commissioning-safety-and-limits.md
+?? firmware/main/cg_commission.c
+?? firmware/main/cg_commission.h
+?? firmware/main/cg_console.c
+?? firmware/main/cg_console.h
+?? firmware/main/cg_snapshot.c
+?? firmware/main/cg_snapshot.h
+?? firmware/main/cg_tec_command.c
+?? firmware/main/cg_tec_command.h
+?? firmware/main/cg_tec_control.c
+?? firmware/main/cg_tec_control.h
+?? firmware/main/cg_tec_hw.c
+?? firmware/main/cg_tec_limits.c
+?? firmware/main/cg_tec_limits.h
+?? firmware/main/cg_tec_platform.h
+?? firmware/main/cg_telemetry.c
+?? firmware/main/cg_telemetry.h
+?? firmware/tools/cg_build_telemetry.py
+?? firmware/tools/cg_check_firmware_w04.py
+?? firmware/tools/cg_telemetry_schema.py
+?? firmware/tools/run_all_checks_w04.py
+?? firmware/tools/tests/cg_tec_harness.c
+?? firmware/tools/tests/test_cg_check_firmware_w04.py
+?? firmware/tools/tests/test_cg_tec_state_machine.py
+?? firmware/tools/tests/test_cg_telemetry.py
+--- diff stat vs HEAD ---
+ firmware/main/CMakeLists.txt     |  8 ++++
+ firmware/main/app_main.c         | 24 ++++++++---
+ firmware/main/cg_log.c           | 19 +++++++++
+ firmware/main/cg_log.h           | 10 +++++
+ firmware/main/cg_power.c         |  9 ++++
+ firmware/main/coldguard_config.h | 91 ++++++++++++++++++++++++++++++++++++----
+ firmware/tools/README.md         | 25 +++++++++++
+ 7 files changed, 173 insertions(+), 13 deletions(-)
+--- stash list (read-only) ---

@@ -1,0 +1,16 @@
+test_fail_closed_scenarios (tests.test_cg_tec_state_machine.StateMachineHarnessTests.test_fail_closed_scenarios) ... ok
+test_omitting_len_from_mask_is_detected (tests.test_cg_actuator_safety.OmissionRegressionTests.test_omitting_len_from_mask_is_detected) ... ok
+test_omitting_len_is_detected (tests.test_cg_actuator_safety.OmissionRegressionTests.test_omitting_len_is_detected) ... ok
+test_authorization_is_required (tests.test_cg_actuator_safety.OutputGateTests.test_authorization_is_required) ... ok
+test_enable_allowed_is_zero (tests.test_cg_actuator_safety.OutputGateTests.test_enable_allowed_is_zero) ... ok
+test_enable_gate_is_compile_time (tests.test_cg_actuator_safety.OutputGateTests.test_enable_gate_is_compile_time) ... ok
+test_enables_are_cleared_before_rpwm (tests.test_cg_actuator_safety.RealActuatorTests.test_enables_are_cleared_before_rpwm) ... ok
+test_every_pin_appears_in_the_mask (tests.test_cg_actuator_safety.RealActuatorTests.test_every_pin_appears_in_the_mask) ... ok
+test_no_write_of_a_logical_one (tests.test_cg_actuator_safety.RealActuatorTests.test_no_write_of_a_logical_one) ... ok
+test_three_pin_safe_off_passes (tests.test_cg_actuator_safety.RealActuatorTests.test_three_pin_safe_off_passes) ... ok
+test_safety_line_carries_all_three_pins (tests.test_cg_actuator_safety.SafeOffLogTests.test_safety_line_carries_all_three_pins) ... ok
+
+----------------------------------------------------------------------
+Ran 11 tests in 1.850s
+
+OK

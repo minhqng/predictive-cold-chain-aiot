@@ -1,0 +1,13 @@
+[PASS] host tools: unittest suite (W02 + W03 + W04)
+[PASS] firmware: W04 static contract checks
+[PASS] firmware: W03 static contract checks (regression)
+[PASS] firmware: W02 static contract checks (regression)
+[PASS] evidence: W02 dossier validator (regression)
+[PASS] evidence: W03 dossier validator (regression)
+
+W04 CHECKS: 6/6 passed
+Reminder: no check here compiles the firmware or touches hardware.
+Compile check: ESP-IDF v6.1 build of the scratch copy (recorded in the W04 report).
+TEC COMMISSIONING FOUNDATION READY — PHYSICAL POWER TEST NOT YET AUTHORIZED
+Physical work still pending: G0 continuity/shunt/fuse, G1 boot/OFF capture,
+G2 fan + hot-side probe, G3 supervised TEC energization (not authorized yet).
