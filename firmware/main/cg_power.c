@@ -17,6 +17,7 @@
 #include "cg_log.h"
 #include "cg_pzem.h"
 #include "cg_rs485.h"
+#include "cg_snapshot.h"
 
 #define CG_POWER_STACK_WORDS 4096
 #define CG_POWER_TASK_PRIORITY 4
@@ -216,6 +217,14 @@ static void poll_once(void)
     } else {
         s_fail_count++;
     }
+
+    /* Publish the observation with its own timestamp. A failed poll remains
+     * invalid; no previous value is carried forward. */
+    cg_snapshot_publish_power(values_valid,
+                              values_valid ? values.voltage_v : 0.0f,
+                              values_valid ? values.current_a : 0.0f,
+                              values_valid ? values.power_w : 0.0f,
+                              (uint64_t)(esp_timer_get_time() / 1000));
 
     cg_log_line(
         "%s %s uptime_ms=%lld seq=%lu status=%s slave=%d v=%s i=%s p=%s e=%s crc_ok=%d "
