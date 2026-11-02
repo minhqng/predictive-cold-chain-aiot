@@ -1,0 +1,2 @@
+capture,hardware_config_id,configuration_key,is_probe_identification,role_verdict,electrical_qualification,poolable_group
+tec-cooling-response-600s.csv,CG-HW-001,config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED,False,CONSISTENT_WITH_FREEZE,UNQUALIFIED,"('config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED', 'CONSISTENT_WITH_FREEZE', 'UNQUALIFIED')"
