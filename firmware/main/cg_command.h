@@ -34,11 +34,24 @@
  *    cross-reset idempotency is deliberately NOT offered: persisting command
  *    identity would be the mechanism by which a stale actuation could come back.
  *
+ * 3. ONLY THE CANONICAL SOURCE IS ADMITTED. A record must say where it came from,
+ *    and `SOURCE_UNKNOWN` is the zero value that any incomplete construction
+ *    carries. Validation refuses acceptance for anything but
+ *    `CG_CMD_SOURCE_NETWORK`, so an unlabelled record cannot be accepted by the
+ *    absence of a prohibition. The refusal happens before the duplicate lookup,
+ *    which also means an inadmissible source cannot read another path's canonical
+ *    result out of the store. This classifies provenance; it does not
+ *    authenticate it - `source` is not a wire field, only the device layer that
+ *    received the bytes can stamp it, and real authentication belongs to the
+ *    transport slice with Member C.
+ *
  * An ACK is protocol evidence, never physical evidence (docs/02 §32.2, lines 2188-2197):
  * "the device handled the command according to protocol/local validation", not
  * "the chamber cooled". Applied state is reported separately from the requested
  * action, and in this build the output stage is compiled out, so the applied
- * state an ACK can ever report is OFF.
+ * state an ACK can ever report is OFF. The ACK also names the device it came
+ * from, taken from the device's own context rather than echoed from the command
+ * (docs/02 §32.3, lines 2200-2215).
  */
 #pragma once
 
@@ -66,9 +79,9 @@ typedef enum {
 } cg_command_id_form_t;
 
 typedef enum {
-    CG_CMD_SOURCE_UNKNOWN = 0,
-    CG_CMD_SOURCE_LOCAL_CONSOLE,
-    CG_CMD_SOURCE_NETWORK,   /* reserved: no transport exists in this build */
+    CG_CMD_SOURCE_UNKNOWN = 0,   /* inadmissible: an unlabelled record is not a command */
+    CG_CMD_SOURCE_LOCAL_CONSOLE, /* inadmissible: local test bridge, see CMDTEST */
+    CG_CMD_SOURCE_NETWORK,       /* the only admitted source; reserved: no transport exists in this build */
 } cg_command_source_t;
 
 typedef enum {
@@ -237,15 +250,30 @@ const char *cg_cmd_id_form_name(cg_command_id_form_t form);
  * side (Member C). The validation rules this module applies are transport
  * independent, which is why they can be proven here and reused unchanged when
  * C's delivery path exists. Flagged as an open contract item, not settled here.
+ *
+ * Two consequences of keeping it a parser rather than a transport:
+ *
+ * - every field docs/02 §28.2 requires must be present, by name. Absence is
+ *   refused with its own reason token, because `memset` of the record would
+ *   otherwise turn a missing `action_cooling` into CG_CMD_COOLING_OFF - an
+ *   implicit order to stay off that is not what "no action was given" means.
+ *   A field named twice is refused too, so a record cannot carry two expiries
+ *   and be judged by whichever the parser reached last.
+ * - `source` is deliberately not a field here. Only the layer that actually
+ *   received the bytes may stamp it, so a parsed record comes out
+ *   CG_CMD_SOURCE_UNKNOWN and is inadmissible until such a layer exists. A
+ *   command that could label its own source would not be a provenance check at
+ *   all, only a string an issuer chose to write.
  */
 bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **error);
 
 /* The local console/test bridge builds a canonical record from the short
  * operator form. The source is stamped LOCAL_CONSOLE and the id form is
- * labelled, and cg_command_validate refuses ACCEPTED for that source outright
- * (reason LOCAL_TEST_NOT_CANONICAL), so a test command can never impersonate a
- * backend one even if a later clock or transport makes the rest of the chain
- * pass. */
+ * labelled, and cg_command_validate admits only CG_CMD_SOURCE_NETWORK, so this
+ * bridge is refused up front (reason SOURCE_NOT_CANONICAL) and can never
+ * impersonate a backend command - even if a later clock or transport makes the
+ * rest of the chain pass, and even if its command_id matches one the store
+ * already answers. */
 bool cg_command_from_local_test(const char *command_id, cg_cmd_cooling_t cooling,
                                 uint32_t duty_permille, cg_command_t *out,
                                 const char **error);
