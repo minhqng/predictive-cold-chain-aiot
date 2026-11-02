@@ -351,8 +351,11 @@ commit cộng fixture W05 nên lịch sử không bị viết lại.
 
 `firmware/main/cg_command.c/.h` cài đặt phần **device** của docs/02 §28-§32:
 
-- chuỗi validate đúng thứ tự §29: schema → **nguồn** → `device_id` → `command_id`
-  mới/trùng → freshness → range → local safety → local state. Nguồn chỉ nhận
+- chuỗi validate theo thứ tự code hiện tại: schema → `device_id` → `command_id` có mặt →
+  **đáng thập nguồn** (chỉ nhận `NETWORK`) → tra store (mới/trùng) → freshness → range →
+  local safety → local state. Đáng thập nguồn nằm **trước** lần tra store, nên một nguồn
+  bị tỨ chối không đọc lại được canonical result của đường khác; §29 không liệt kê bước này
+  vì nó giả định lễnh đến qua hợp động §28. Nguồn chỉ nhận
   `CG_CMD_SOURCE_NETWORK`; `UNKNOWN` (giá trị khởi tạo 0) và `LOCAL_CONSOLE` bị chặn
   **trước** khi tra store, nên một nguồn không được phép cũng không đọc lại được
   canonical result của đường khác. Đây là phân loại xuất xứ, **không** phải xác thực:

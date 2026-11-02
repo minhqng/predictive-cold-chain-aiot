@@ -1,11 +1,11 @@
 # ESP-IDF v6.1 build of the W06 delivery tree (compile only; nothing flashed or energized)
 # built 2026-11-02 from the sources pinned in 22-source-hashes.txt
-f8a85face70de760fca83ba5cb3c5aaae465140b07a5d78031d6dfa110e63668 *bootloader/bootloader.bin
+5fec153fc60da1c90f8c506ef1d884cca234275a705d31911a00103b7b9c5b45 *bootloader/bootloader.bin
 7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820 *partition_table/partition-table.bin
-dad90d63fffc247cea438ec580b3090718e1779f3a66d4dd585cfbb49bdc7363 *coldguard_firmware.bin
-862616479f01aaf930a63625c3d1b4ecd158dc3c72fa9db54b281609058f55d9 *coldguard_firmware.elf
+255740569a29aaa89434ecc65d0da967acab87094e3e7e59fa2b1d9f6645902c *coldguard_firmware.bin
+682e903861cf71d629e4d5ceb7abe4d2f64e9d61e5a58f062d0732b12df84fd0 *coldguard_firmware.elf
 # sizes
 21120 bootloader/bootloader.bin
 3072 partition_table/partition-table.bin
 253520 coldguard_firmware.bin
-4739776 coldguard_firmware.elf
+4739784 coldguard_firmware.elf
