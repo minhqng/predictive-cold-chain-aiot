@@ -1,0 +1,43 @@
+{
+  "an_intentional_promotion_raises": "PromotionError: command FIXTURE-CMD-S4-1: ELECTRICAL lane source is 'INFERRED_FROM_INTENT'",
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "command_row": {
+    "ack_statuses": [
+      "SAFETY_BLOCKED"
+    ],
+    "applied_semantics": "REFUSED_NON_APPLICATION_OBSERVED",
+    "command_id": "FIXTURE-CMD-S4-1",
+    "lane_sources": {
+      "APPLIED": "READ_FROM_DEVICE_ACK_PAYLOAD",
+      "ELECTRICAL": "NO_EVIDENCE_IN_THIS_SOURCE",
+      "INTENT": "READ_FROM_DEVICE_ACK_PAYLOAD",
+      "THERMAL": "NO_EVIDENCE_IN_THIS_SOURCE"
+    },
+    "refused": true
+  },
+  "fixture_label": "HOST_FIXTURE_NOT_DEVICE_EVIDENCE",
+  "honesty": [
+    "this fixture is a tooling input, not an S4 run",
+    "it shows the block verdict being handled; it does not show a device blocking"
+  ],
+  "is_physical_measurement": false,
+  "promotion_rules": {
+    "duplicate_statuses": [
+      "DUPLICATE_CANONICAL"
+    ],
+    "forbidden_lane_sources": [
+      "INFERRED_FROM_INTENT"
+    ],
+    "refusal_statuses": [
+      "REJECTED",
+      "EXPIRED",
+      "SAFETY_BLOCKED",
+      "INVALID_STATE",
+      "OUT_OF_RANGE"
+    ],
+    "rule": "intent may never populate the applied, electrical or thermal lane; a lane's source must be a device frame, a device ACK payload, an explicit host-fixture label, or an explicit absence"
+  },
+  "purpose": "proves the delivered validator refuses to attribute an applied action to a refusal, and refuses to populate a device lane from the request",
+  "sources": []
+}

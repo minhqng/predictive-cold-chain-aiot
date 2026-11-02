@@ -1,0 +1,319 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "candidate_methods": [
+    {
+      "id": "C1-fan-obstruction",
+      "method": "partially block the hot-side fan",
+      "reason": "docs/05A \u00a720 A-W11-04 forbids inventing an unsafe fan obstruction; it also stalls the fan, which is a fault in a different class and changes the safety posture",
+      "verdict": "REJECTED_BY_INSTRUCTION",
+      "violates": [
+        "safe",
+        "does_not_damage_tec_or_v1"
+      ]
+    },
+    {
+      "id": "C2-heat-base-fouling",
+      "method": "add a controlled thermal resistance at the hot interface (gasket/dust)",
+      "reason": "physically alters the frozen hardware configuration, is not quantified without a hot-base probe, and is only partly reversible; the H8 limit table exists to keep the hot path bounded and this pushes an unmeasured variable into it",
+      "verdict": "NO-GO",
+      "violates": [
+        "does_not_change_frozen_hardware_config",
+        "repeatable",
+        "does_not_damage_tec_or_v1"
+      ]
+    },
+    {
+      "id": "C3-probe-displacement",
+      "method": "move or re-seat a probe to fake a changed reading",
+      "reason": "this is a sensor fault, not a thermal-effectiveness fault, and it produces exactly the contamination the 2026-11-02 PROBE_IDENTIFICATION session is excluded for: a hand on a probe. The label would be untrustworthy by construction",
+      "verdict": "NO-GO",
+      "violates": [
+        "safe",
+        "separable_from_S2_and_S4"
+      ]
+    },
+    {
+      "id": "C4-door_left_cracked",
+      "method": "hold the door at a fixed small opening",
+      "reason": "a steady added load with unchanged heat transfer is a load disturbance, which is S2's mechanism; labelling it S3 would put two names on one physical effect and destroy the contrast Member B trains on",
+      "verdict": "RECLASSIFIED",
+      "violates": [
+        "separable_from_S2_and_S4"
+      ]
+    },
+    {
+      "id": "C5-reduced-drive-in-software",
+      "method": "cap duty or current so less power reaches the stack",
+      "reason": "reducing the drive is an actuation-response change, which is S4; the electrical response would NOT remain plausible, so it fails S3's first condition by definition",
+      "verdict": "RECLASSIFIED",
+      "violates": [
+        "separable_from_S2_and_S4"
+      ]
+    },
+    {
+      "id": "C6-raise-ambient",
+      "method": "warm the room or the bench environment",
+      "reason": "not controllable or repeatable at 1 Hz within a supervised session, and the ambient path is already documented as not the plant (docs/05A \u00a716.3 ambient path is only a candidate); it also changes the baseline every paired run depends on",
+      "verdict": "NO-GO",
+      "violates": [
+        "repeatable",
+        "does_not_change_frozen_hardware_config"
+      ]
+    }
+  ],
+  "candidate_verdict_counts": {
+    "NO-GO": 3,
+    "RECLASSIFIED": 2,
+    "REJECTED_BY_INSTRUCTION": 1
+  },
+  "constraints": [
+    "safe",
+    "repeatable",
+    "does_not_damage_tec_or_v1",
+    "does_not_bypass_fuse_or_short_branch",
+    "does_not_change_frozen_hardware_config",
+    "separable_from_S2_and_S4"
+  ],
+  "decisive_reason": "thermal effectiveness is a lift per unit power and the lift has no measurable cold endpoint here: hot_base_max_c and cold_plate_min_c are UNRESOLVED because neither probe is installed (firmware/h8-bench/main/h8_limits.c:27), and the frozen geometry places T1/T3/T4 in chamber air and T2 on the TEC hot side",
+  "docs03_position": "docs/03 \u00a731 already permits omitting S3 from core fault claims when no clean method exists; this record is the evidence for using that clause rather than a preference",
+  "existing_capture_shortfalls": [
+    {
+      "boot_id": "56044b74",
+      "capture_id": "W04-TEC-COOLING-600S",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": true,
+      "kind": "csv_capture",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "registry_eligibility": "S1_BASELINE_CANDIDATE",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "no frame carries an OK producer status for current (values seen: ['None']); power_w/energy_wh exist with no status column at all, and absence is not verification",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "this is the healthy stage run: no degradation was applied, so it is the baseline half of a pair and never the degraded half",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    },
+    {
+      "boot_id": "cb8775eb",
+      "capture_id": "W04-G1-BOOT-60S",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": true,
+      "kind": "telem_schema1",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W04/g1/42-telemetry.csv",
+      "registry_eligibility": "NOT_A_THERMAL_RUN",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "kind 'telem_schema1' is not a frame stream the delivered parser reads, so its producer-status posture was NOT CHECKED here - unchecked is not failed",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "registry eligibility 'NOT_A_THERMAL_RUN': no stage ran in this source, so there is no actuation to degrade",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W05-TIMING-PILOT",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": true,
+      "kind": "derived_timing_table",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W05/timing-pilot-jitter.csv",
+      "registry_eligibility": "NOT_A_THERMAL_RUN",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "kind 'derived_timing_table' is not a frame stream the delivered parser reads, so its producer-status posture was NOT CHECKED here - unchecked is not failed",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "registry eligibility 'NOT_A_THERMAL_RUN': no stage ran in this source, so there is no actuation to degrade",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W05-SCHEMA-FIXTURE",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": false,
+      "kind": "schema_fixture",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W05/schema-fixture.json",
+      "registry_eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "labelled host fixture: an ACK or a fixture frame is protocol evidence only (docs/02 \u00a732.2), never a measured electrical state",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "a fixture cannot encode a degradation that was never applied to hardware",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W06-DEMO-COMMAND-CAPTURE",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W06/demo-command-capture.log",
+      "registry_eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "labelled host fixture: an ACK or a fixture frame is protocol evidence only (docs/02 \u00a732.2), never a measured electrical state",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "a fixture cannot encode a degradation that was never applied to hardware",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W06-ACK-FIXTURE",
+      "could_support_an_s3_run": false,
+      "falls_short_of": [
+        "M1-qualified-electrical-power",
+        "M2-cold-side-temperature",
+        "M3-hot-base-temperature",
+        "M4-repeatable-degradation-state",
+        "M5-baseline-effectiveness-variance"
+      ],
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "measurements_it_could_supply": [],
+      "path": "evidence/A/W06/ack-fixture.json",
+      "registry_eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "shortfall_reasons": {
+        "M1-qualified-electrical-power": "labelled host fixture: an ACK or a fixture frame is protocol evidence only (docs/02 \u00a732.2), never a measured electrical state",
+        "M2-cold-side-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M3-hot-base-temperature": "no cold-plate or hot-base probe is installed (firmware/h8-bench/main/h8_limits.c:27 marks both limits UNRESOLVED), so this source cannot carry either endpoint of the lift",
+        "M4-repeatable-degradation-state": "a fixture cannot encode a degradation that was never applied to hardware",
+        "M5-baseline-effectiveness-variance": "the registry holds 1 thermal candidate run(s) in total, so no between-run spread exists for any derived effectiveness metric"
+      }
+    }
+  ],
+  "not_done": [
+    "no fan obstruction was invented",
+    "no hardware was modified or reconfigured",
+    "no S3 run is claimed, listed or scheduled"
+  ],
+  "required_measurements": [
+    {
+      "available_now": false,
+      "evidence": "current_status and voltage_status are empty strings in all 957 rows of the committed capture and no power_status column exists",
+      "id": "M1-qualified-electrical-power",
+      "what": "electrical power delivered during the degraded state, with producer status",
+      "why": "S3 is defined by electrical response staying plausible while thermal effectiveness falls; without a qualified power figure the first half of the definition cannot be asserted"
+    },
+    {
+      "available_now": false,
+      "evidence": "firmware/h8-bench/main/h8_limits.c:27 marks hot_base_max_c UNRESOLVED with NO_HOT_BASE_PROBE_INSTALLED; cold_plate_min_c likewise; the frozen geometry has no probe on the cold plate",
+      "id": "M2-cold-side-temperature",
+      "what": "cold-plate temperature at the TEC interface",
+      "why": "thermal effectiveness is a temperature lift per unit power; the cold side of the lift is one of the two endpoints"
+    },
+    {
+      "available_now": false,
+      "evidence": "same unresolved limit row; T2 sits on the TEC hot side, which is not the hot base and is already excluded from chamber-air statistics",
+      "id": "M3-hot-base-temperature",
+      "what": "hot-base / heatsink-base temperature",
+      "why": "the other endpoint of the lift, and the place a fouling or contact-resistance degradation would show first"
+    },
+    {
+      "available_now": false,
+      "evidence": "every candidate method below either changes the frozen configuration, damages hardware, or is not separable from S2",
+      "id": "M4-repeatable-degradation-state",
+      "what": "a degradation that can be set to a known magnitude and removed identically at least 4 times",
+      "why": "docs/03 \u00a731 requires the scenario to be reproducible, and Member B needs pairs"
+    },
+    {
+      "available_now": false,
+      "evidence": "one physical thermal capture is committed, so no between-run spread exists for any derived metric",
+      "id": "M5-baseline-effectiveness-variance",
+      "what": "the effectiveness metric measured at least twice in the healthy state",
+      "why": "a degraded label needs a distribution to be degraded *relative to*"
+    }
+  ],
+  "requirement": "docs/05A \u00a720 A-W11-04 (conditional S3 feasibility)",
+  "scenario": "S3_THERMAL_EFFECTIVENESS_DEGRADATION",
+  "session_record_requirements": [
+    {
+      "id": "R1-instrumentation-attestation",
+      "record": "the cold-plate and hot-base probe ROMs, physical mounting point, and the resolved limit-table rows for hot_base_max_c and cold_plate_min_c",
+      "why": "without both endpoints of the lift there is no thermal-effectiveness quantity to degrade, only chamber air that happens to be warmer"
+    },
+    {
+      "id": "R2-qualified-electrical-state",
+      "record": "voltage, current and power for every frame, each with its producer status emitted as OK at the source",
+      "why": "S3 is 'electrical response plausible while thermal effectiveness falls'; an unqualified current cannot carry the plausible half of that sentence"
+    },
+    {
+      "id": "R3-degradation-setting-and-magnitude",
+      "record": "which method was used, its intended magnitude, how it was set, and how it was removed - identical each time, with the operator present",
+      "why": "docs/03 \u00a731 requires a reproducible scenario; a degradation that cannot be set to a known magnitude cannot become a label"
+    },
+    {
+      "id": "R4-matched-healthy-baseline",
+      "record": "the same hardware configuration id, firmware version, sensor ROMs, physical positions and duty as the degraded run, immediately before or after it",
+      "why": "effectiveness is a ratio against the healthy state; without a matched pair the degradation is indistinguishable from drift or a different box"
+    },
+    {
+      "id": "R5-repetition-count",
+      "record": "at least 2 healthy and 4 degraded captures, each a separate session with its own boot_id, and the timing of each edge from an operator timer",
+      "why": "a degraded label needs a distribution to be degraded relative to, and one boot's segments are not independent runs"
+    },
+    {
+      "id": "R6-confounders-and-interventions",
+      "record": "ambient temperature and humidity, door state with its per-boot attestation, fan readback, any manual intervention, and the end reason",
+      "why": "the S2 door disturbance and an S4 refusal both move chamber air; if they are not recorded they silently contaminate the S3 label"
+    },
+    {
+      "id": "R7-not-done-declaration",
+      "record": "what was deliberately not attempted (shorted branch, bypassed fuse, damaged TEC, obstructed fan) and why",
+      "why": "docs/05A \u00a720 A-W11-01 forbids those methods; the absence of a record that they were refused is indistinguishable from having quietly used one"
+    }
+  ],
+  "sources": [
+    {
+      "path": "evidence/A/W09/run-registry.json",
+      "sha256": "43fcb34aad1dd8446f459e818892b12bfb28f707701856f06ad0751e881e6fc0"
+    }
+  ],
+  "status_label": "IMPLEMENTED / HOST_VERIFIED (analysis only, no run)",
+  "verdict": "NO-GO",
+  "verdict_basis": "0 of 5 required measurements are available on the current frozen hardware, and every candidate method violates at least one constraint",
+  "version": "w11-s3-feasibility-v1",
+  "warning": "if the campaign later wants a thermal-side degradation label at all, the only honest route runs through new instrumentation, not through new manipulation of the existing bench",
+  "what_would_change_the_verdict": "install a cold-plate probe and a hot-base probe, resolve hot_base_max_c and cold_plate_min_c in the limit table, qualify the electrical columns with a real producer status, and then collect at least 2 healthy and 4 degraded captures"
+}
