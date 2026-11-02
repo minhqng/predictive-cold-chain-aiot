@@ -1,0 +1,4 @@
+id,ask,status,why,closes_with,owner
+GAP-DOOR-CRITICAL,A-W13-03 door->critical time,NOT_COMPUTABLE,no door-open event in any committed capture,supervised S2 door-disturbance capture under the frozen critical definition,Member A (physical) / Member D (critical definition)
+GAP-NETWORK-COMMAND-LATENCY,backend command -> device latency,NOT_COMPUTABLE,production firmware has no network command path (output stage compiled out),a transport decision with Member C and an authorized energized session,Member C / Member D
+GAP-COMMAND-ELECTRICAL-DISTRIBUTION,A-W13-01 median/P95 distribution,SINGLE_OBSERVATION,"one committed console trace yields one command->electrical event; H7 run logs live in a sibling commissioning worktree (read-only), not in this branch","additional clean START traces converted to the H6 schema, then re-run",Member A
