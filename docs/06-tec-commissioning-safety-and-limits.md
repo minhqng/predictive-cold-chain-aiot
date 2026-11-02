@@ -129,7 +129,7 @@ Bảng “đường dẫn lỗi → trạng thái cuối”:
 | `firmware/main/cg_tec_hw.c` | Adapter as-built: từ chối mọi yêu cầu cấp nguồn, luôn `force_off` |
 | `firmware/main/cg_tec_command.c/.h` | Parser lệnh console nghiêm ngặt |
 | `firmware/main/cg_snapshot.c/.h` | Ảnh chụp cảm biến/power/door có khóa, có mốc thời gian |
-| `firmware/main/cg_telemetry.c/.h` | Dòng `#CG TELEM schema=1`, một lần/giây |
+| `firmware/main/cg_telemetry.c/.h` | Dòng `#CG TELEM schema=N` (1 ở W04, 2 từ W05), một lần/giây |
 | `firmware/main/cg_console.c/.h` | UART0 115200, hàng đợi lệnh |
 | `firmware/main/cg_commission.c/.h` | Task 100 ms, token boot, log, telemetry, watchdog |
 
@@ -241,9 +241,9 @@ output stage bị tắt; các lệnh còn lại chạy được để kiểm tra
 
 ---
 
-## 6. Telemetry thô — schema 1
+## 6. Telemetry thô — schema 1 (W04) và schema 2 (W05)
 
-Một dòng mỗi giây, bắt đầu bằng `#CG TELEM schema=1`, do
+Một dòng mỗi giây, bắt đầu bằng `#CG TELEM schema=N`, do
 `firmware/main/cg_telemetry.c` phát ra. Mô tả trường của bản giao W04 (hợp
 đồng dữ liệu canonical thuộc `docs/02`):
 
@@ -290,6 +290,57 @@ Quy tắc dữ liệu:
 - `timestamp_utc=UNAVAILABLE` là hành vi đúng: máy host chỉ được ghi metadata
   phiên (header của `cg_capture.py`), không được dán giờ host lên từng dòng thiết
   bị.
+
+### 6.1 W05 — thêm identity, coherence, quality và liveness (schema 2)
+
+W05 nâng `CG_TELEMETRY_SCHEMA_VERSION` lên **2** và giữ toàn bộ tên trường W04
+nguyên nghĩa. `firmware/tools/cg_telemetry_schema.py` nhận cả schema 1 và 2, nên
+các capture đã commit trong `evidence/A/W04/` vẫn parse được — test
+`test_committed_w04_capture_still_parses` đọc trực tiếp 62 dòng thật và yêu cầu
+0 dòng bị từ chối. Đây là stream serial nội bộ; envelope JSON trong `docs/02`
+vẫn giữ `schema_version: 1` riêng của nó.
+
+Nhóm mới trên dòng:
+
+| Nhóm | Trường | Ý nghĩa bằng chứng |
+|---|---|---|
+| Identity | `device_id` `seq` `calibration_id` | Khoá dedup backend là `(device_id, boot_id, seq)` (docs/02 633-646, 845). `seq` tăng đơn điệu trong một boot; frame bị từ chối vì vượt ngân sách line **vẫn tiêu tốn seq**, nên khoảng hổng nghĩa là "quan sát này không tồn tại", không phải "dòng hỏng". |
+| Calibration | `calibration_id=UNRECORDED` | Token trạng thái, không phải định danh. Chưa đo bundle hiệu chuẩn nào (docs/01 §29; `sensor-rom-map.yaml` ghi `calibration_id: null`). Host converter phải ánh xạ `UNRECORDED → null`; bịa ra `CG-CAL-…` là cách duy nhất để một giá trị chưa được kiểm chứng lọt vào downstream. |
+| Sensor identity | `t1_rom` `t2_rom` `t3_rom` `spare_rom` `role_status` `rom_source` | docs/01 §6.5: identity là ROM, không phải index thư viện. `rom_source=FROZEN_CONFIG_MAP` nói thẳng các byte này đến từ bảng cấu hình đông cứng, **không** phải một phép match 1-Wire trong từng frame; bằng chứng detect mỗi boot nằm ở dòng `#CG ROM ... present=`. `role_status` nói thẳng nhãn vật lý vẫn pending. |
+| Coherence | `thermal_age_ms` `power_age_ms` `door_age_ms` `thermal_seq` `power_seq` `door_transitions` `door_cycles` `probes_valid` `probes_expected` | Frame tự khai mỗi nhóm dữ liệu cũ bao nhiêu và producer nào đã thực sự poll. W04 không có door timestamp và không xuất `energy_wh`. |
+| Electrical | `energy_wh` `energy_status` | Thanh ghi PZEM đã decode từ W03 nhưng chỉ nằm ở log; nay vào snapshot và vào dòng. |
+| Quality | `thermal_quality` `environment_quality` `door_quality` `electrical_quality` `quality` | Đúng bốn trạng thái canonical `VALID/DEGRADED/INVALID/UNKNOWN` (docs/01 §19), collapse `INVALID > UNKNOWN > DEGRADED > VALID`. |
+| Applied | `cooling_applied` `cooling_applied_source` `cooling_evidence` | Tách "lệnh đã xin" khỏi "đầu ra đang được giữ" và khỏi "PZEM xác nhận/phủ nhận". |
+| Liveness | `health` `health_thermal` `health_bme` `health_door` `health_power` `health_telemetry` `health_control` `*_beats` `*_max_gap_ms` | A-W05-01: producer dừng beating phải hiện ra theo tên, không được trông như một sensor ổn định đang lặp lại cùng một giá trị. |
+
+Bốn quy tắc phải giữ:
+
+- **Thiếu = `nan` + status**, không bao giờ 0.0 và không bao giờ là giá trị cũ.
+  `cg_snapshot_publish_power(valid=false, …)` thay quan sát bằng một quan sát
+  invalid có timestamp riêng; không có đường dẫn nào tái dùng dòng trước.
+- **`UNKNOWN` không được âm thầm thành bình thường** (docs/01 2302-2306). Nguồn
+  chưa từng được publish là `UNKNOWN`, không phải `INVALID`; và frame không có
+  báo cáo liveness là `health=UNKNOWN`, không phải `OK`.
+- **Cũ ≠ không hoạt động.** `cooling_evidence=UNOBSERVED_STALE`/`UNOBSERVED_NO_DATA`
+  phân biệt "không thể biết" với `MEASURED_IDLE_AND_ZERO` "biết, và dòng bằng 0".
+  `MEASURED_CONTRADICTS_APPLIED` nêu trường hợp đầu ra và đo đạc mâu thuẫn.
+- **Cổng BME280 chưa triển khai** nên `environment_quality=DEGRADED` và
+  `quality` không thể đạt `VALID` trong build này. Đó là trạng thái trung thực,
+  không phải lỗi cần che bằng cách bỏ qua nhóm environment.
+
+Ngân sách dòng: worst case **dựng sẵn** (seq 10 chữ số, age 20 chữ số, token dài
+nhất, run_id 32 ký tự) đo được **2098 byte** trên ngân sách `CG_TELEMETRY_LINE_MAX
+= 2560`; frame điển hình 1873 byte, trong khi capture W04 thật đo 1007–1012 byte.
+Test `test_measured_worst_case_fits_the_shipped_budget` thất bại nếu worst case
+đạt **90 %** ngân sách. Chưa có frame schema-2 nào từng được phát trên phần cứng,
+nên các con số này là phép tính trên ngân sách buffer, không phải throughput đo được.
+
+Tài liệu tham chiếu: `evidence/A/W05/quality-test.md` (33 scenario C trên host,
+118 static check, 24 mutation test), `evidence/A/W05/schema-fixture.json` (một
+dòng thật do chính formatter render), `evidence/A/W05/timing-pilot.md` (nhịp đo
+từ capture 60 s đã commit), `evidence/A/W05/handoff-w05.md` (hợp đồng cho B/C/D).
+Tất cả đều là bằng chứng **phần mềm**: ảnh W05 chưa từng được flash, nên chưa có
+30 phút telemetry thật.
 
 ---
 
