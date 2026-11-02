@@ -66,6 +66,33 @@ FORBIDDEN_OUTPUT_PHRASES = (
     "geometry unchanged since freeze", "no drift detected",
 )
 
+# The claim vocabulary W14 artifacts may only carry inside a quotation or a negation.
+# Kept here, not duplicated in the dossier tools, so the generator and the validator
+# cannot drift into checking different sentences.
+FALSE_CLAIM_PHRASES = FORBIDDEN_OUTPUT_PHRASES + (
+    "movement verified", "distribution computed", "distribution of run-to-run",
+    "tolerance agreed", "agreed tolerance", "adopted tolerance", "final tolerance",
+    "frozen tolerance", "physically verified", "repeatability established",
+)
+CLAIM_MARKERS = ("`", "\"", "never", "not", "false", "refus", "must not",
+                 "forbid", "without", "cannot", "n_never", "is_not", "not_a_", "NOT_")
+
+
+def assert_no_false_claim(name: str, text: str) -> None:
+    """Every false claim must be quoted, negated or labelled false; a bare assertion fails.
+
+    A blanket phrase ban cannot work here, because the honest reports have to *discuss*
+    these claims. What is banned is asserting one: a line that carries a forbidden claim
+    with no quotation mark, no negation and no `false` next to it is the defect.
+    """
+    for number, line in enumerate(text.splitlines(), start=1):
+        lowered = line.lower()
+        for phrase in FALSE_CLAIM_PHRASES:
+            if phrase in lowered and not any(marker in lowered for marker in CLAIM_MARKERS):
+                raise AnalysisError(
+                    f"{name}:{number} asserts {phrase!r} without quoting or negating it, "
+                    "and the archived captures cannot support it")
+
 WHAT_A_MISMATCH_WOULD_MEAN = {
     "capture_role_label_mismatch": (
         "the firmware's role column no longer matches the label the frozen record "

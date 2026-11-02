@@ -218,6 +218,27 @@ class HonestSplit(unittest.TestCase):
             qa.guard_no_forbidden_claim(planted)
         qa.guard_no_forbidden_claim(self.report)
 
+    def test_text_guard_blocks_a_bare_assertion_but_allows_a_quoted_one(self):
+        """The reports have to discuss these claims; what they may not do is assert one."""
+        bare = ("Sensor positions were re-checked against the freeze record and no "
+                "movement verified since then.")
+        with self.assertRaises(rep.AnalysisError) as caught:
+            qa.assert_no_false_claim("scratch.md", bare)
+        self.assertIn("no movement verified", str(caught.exception))
+        quoted = ("The sentence this tool refuses to print is `\"no movement verified\"`; "
+                  "it is never asserted.")
+        qa.assert_no_false_claim("scratch.md", quoted)
+        labelled = "- physically verified: `False`, host verified: `True`"
+        qa.assert_no_false_claim("scratch.md", labelled)
+
+    def test_text_guard_blocks_a_fabricated_tolerance_and_a_fake_distribution(self):
+        for text in ("The initial matching tolerance agreed with Member B is 0.5 C.",
+                     "Gradient distribution computed from the run-to-run spread.",
+                     "One session is enough: the distribution of run-to-run behaviour "
+                     "is now established."):
+            with self.assertRaises(rep.AnalysisError, msg=text):
+                qa.assert_no_false_claim("scratch.md", text)
+
     def test_every_mismatch_class_has_a_stated_physical_meaning(self):
         for key, text in qa.WHAT_A_MISMATCH_WOULD_MEAN.items():
             self.assertIsInstance(text, str, key)

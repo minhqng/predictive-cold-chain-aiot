@@ -1,0 +1,384 @@
+{
+  "CURRENT_VERIFIABLE": {
+    "air_triad_max_spread_c_in_that_session": 1.126,
+    "behaviour_consistent_with_frozen_geometry": true,
+    "capture_role_labels_vs_frozen_record": "MATCH",
+    "hot_side_channel_in_the_one_session": [
+      "t2_c"
+    ],
+    "statements_this_does_not_support": [
+      "that no probe moved after the freeze: the only session on disk predates every later date, so it cannot describe a period after it",
+      "that a channel in a new capture is the same physical probe: the H8S schema-3 frames carry no sensor ROM ids, so slot identity is not established by the wire",
+      "tip height, clearance, orientation, mounting method or cable path: none of these is in any frame"
+    ],
+    "statements_this_supports": [
+      "the committed session's own role column says MATCH against the labels the frozen record documents",
+      "in that session exactly one channel rose while the bridge was driven and it is the slot the record calls TEC_HOT_SIDE, while all three air channels fell - the data and the frozen geometry agree",
+      "the three air channels stayed within 1.126 C of each other while the hot-side surface separated by up to 18.459 C, which is the shape three tips in the air volume plus one on metal produce"
+    ]
+  },
+  "NEEDS_A_NEW_CAPTURE": {
+    "distinct_candidate_sessions": 0,
+    "protocol": [
+      "same stage, same commanded duty and duration as the frozen baseline, TEC driven once, door CLOSED with door_polarity CONFIRMED",
+      ">= 600 samples at the commanded 1 Hz so the driven block is as long as the baseline's",
+      "run this tool against the baseline capture before any statistic from the new session is published",
+      "a ROM readback or an equivalent per-channel identity record, because the schema in use carries none"
+    ],
+    "question_it_can_answer": "whether role labels and per-channel behaviour still match the frozen record - a match is a consistency observation, never a proof of non-movement",
+    "question_it_cannot_answer": "physical non-movement, which needs the mounting and photo evidence below",
+    "status": "NO_CANDIDATE_CAPTURE"
+  },
+  "NEEDS_PHYSICAL_EVIDENCE": {
+    "items": [
+      "configuration photo or drawing of the three air tips with a scale",
+      "mounting method, height, clearance and orientation per probe",
+      "cable path and strain-relief record",
+      "confirmation that the operator's wire labels still match the slots"
+    ],
+    "owner": "operator, at a supervised session (NEED_USER_ACTION)",
+    "status": "NOT_IN_ANY_CAPTURE"
+  },
+  "baseline_capture": {
+    "behaviour_signature": {
+      "air_mean_note": "the triad spread is measured across the three chamber-air positions only; the hot-side surface is never part of it",
+      "air_probe_levels": [
+        23.2848,
+        24.0158,
+        23.6663
+      ],
+      "air_triad_max_spread_c": 1.126,
+      "air_triad_median_spread_c": 0.875,
+      "channel_rank_by_level_high_to_low": [
+        "t2_c",
+        "t3_c",
+        "t4_c",
+        "t1_c"
+      ],
+      "consistent_with_hot_side_split": true,
+      "hot_side_minus_air_mean_c": {
+        "max": 18.459,
+        "mean": 13.8563,
+        "min": -0.1667
+      },
+      "per_channel": {
+        "t1_c": {
+          "delta_driven_c": -9.25,
+          "direction": "DOWN",
+          "mean_before_driven_c": 30.07,
+          "mean_driven_c": 23.2848,
+          "role": "CHAMBER_CENTER",
+          "samples": 600,
+          "sd_within_session_sample_c": 2.9362,
+          "spread_driven_c": 9.25,
+          "status": "MEASURED"
+        },
+        "t2_c": {
+          "delta_driven_c": 9.687,
+          "direction": "UP",
+          "mean_before_driven_c": 29.8887,
+          "mean_driven_c": 37.5119,
+          "role": "TEC_HOT_SIDE",
+          "samples": 600,
+          "sd_within_session_sample_c": 2.4034,
+          "spread_driven_c": 10.063,
+          "status": "MEASURED"
+        },
+        "t3_c": {
+          "delta_driven_c": -8.125,
+          "direction": "DOWN",
+          "mean_before_driven_c": 29.7415,
+          "mean_driven_c": 24.0158,
+          "role": "CHAMBER_BOTTOM",
+          "samples": 600,
+          "sd_within_session_sample_c": 2.5852,
+          "spread_driven_c": 8.187,
+          "status": "MEASURED"
+        },
+        "t4_c": {
+          "delta_driven_c": -8.75,
+          "direction": "DOWN",
+          "mean_before_driven_c": 30.1038,
+          "mean_driven_c": 23.6663,
+          "role": "CHAMBER_NEAR_DOOR",
+          "samples": 600,
+          "sd_within_session_sample_c": 2.7149,
+          "spread_driven_c": 8.75,
+          "status": "MEASURED"
+        }
+      },
+      "phase_rows": 600,
+      "rising_channel": [
+        "t2_c"
+      ]
+    },
+    "boot_ids": [
+      "56044b74"
+    ],
+    "capture": "evidence/A/W04/tec-cooling-response-600s.csv",
+    "class": "THERMAL_RESPONSE",
+    "independent_sessions": 1,
+    "provenance": {
+      "device_ms_first": "904",
+      "device_ms_last": "956894",
+      "session": "H8 box-cooling 600 s, stage H8-C, 2026-11-01, image 01cedce3..."
+    },
+    "role_label_check": {
+      "absent_columns": [],
+      "meaning_of_a_mismatch": "the firmware's role column no longer matches the label the frozen record documents, which means the image, pin-map version or slot-to-channel map changed - the capture is then describing a different logical geometry, not the frozen one. It is not by itself proof that a probe was moved.",
+      "mismatched_columns": [],
+      "per_column": {
+        "t1_role": {
+          "expected": "UNASSIGNED",
+          "state": "MATCH",
+          "tokens": [
+            "UNASSIGNED"
+          ]
+        },
+        "t2_role": {
+          "expected": "HOT_SIDE",
+          "state": "MATCH",
+          "tokens": [
+            "HOT_SIDE"
+          ]
+        },
+        "t3_role": {
+          "expected": "UNASSIGNED",
+          "state": "MATCH",
+          "tokens": [
+            "UNASSIGNED"
+          ]
+        },
+        "t4_role": {
+          "expected": "UNASSIGNED",
+          "state": "MATCH",
+          "tokens": [
+            "UNASSIGNED"
+          ]
+        }
+      },
+      "source": "evidence/A/W07/probe-identification-v0.md",
+      "state": "MATCH"
+    },
+    "rows": 957
+  },
+  "candidates": [
+    {
+      "behaviour_signature": {
+        "air_mean_note": "the triad spread is measured across the three chamber-air positions only; the hot-side surface is never part of it",
+        "air_probe_levels": [
+          23.2848,
+          24.0158,
+          23.6663
+        ],
+        "air_triad_max_spread_c": 1.126,
+        "air_triad_median_spread_c": 0.875,
+        "channel_rank_by_level_high_to_low": [
+          "t2_c",
+          "t3_c",
+          "t4_c",
+          "t1_c"
+        ],
+        "consistent_with_hot_side_split": true,
+        "hot_side_minus_air_mean_c": {
+          "max": 18.459,
+          "mean": 13.8563,
+          "min": -0.1667
+        },
+        "per_channel": {
+          "t1_c": {
+            "delta_driven_c": -9.25,
+            "direction": "DOWN",
+            "mean_before_driven_c": 30.07,
+            "mean_driven_c": 23.2848,
+            "role": "CHAMBER_CENTER",
+            "samples": 600,
+            "sd_within_session_sample_c": 2.9362,
+            "spread_driven_c": 9.25,
+            "status": "MEASURED"
+          },
+          "t2_c": {
+            "delta_driven_c": 9.687,
+            "direction": "UP",
+            "mean_before_driven_c": 29.8887,
+            "mean_driven_c": 37.5119,
+            "role": "TEC_HOT_SIDE",
+            "samples": 600,
+            "sd_within_session_sample_c": 2.4034,
+            "spread_driven_c": 10.063,
+            "status": "MEASURED"
+          },
+          "t3_c": {
+            "delta_driven_c": -8.125,
+            "direction": "DOWN",
+            "mean_before_driven_c": 29.7415,
+            "mean_driven_c": 24.0158,
+            "role": "CHAMBER_BOTTOM",
+            "samples": 600,
+            "sd_within_session_sample_c": 2.5852,
+            "spread_driven_c": 8.187,
+            "status": "MEASURED"
+          },
+          "t4_c": {
+            "delta_driven_c": -8.75,
+            "direction": "DOWN",
+            "mean_before_driven_c": 30.1038,
+            "mean_driven_c": 23.6663,
+            "role": "CHAMBER_NEAR_DOOR",
+            "samples": 600,
+            "sd_within_session_sample_c": 2.7149,
+            "spread_driven_c": 8.75,
+            "status": "MEASURED"
+          }
+        },
+        "phase_rows": 600,
+        "rising_channel": [
+          "t2_c"
+        ]
+      },
+      "boot_ids": [
+        "56044b74"
+      ],
+      "capture": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "comparison": {
+        "air_separation": {
+          "band_basis": "a factor-of-two screen around one session's own maximum spread, chosen to raise a flag for inspection. It is not a repeat tolerance and not a movement threshold: with one baseline session there is no measured run-to-run spread to build one from, and A-W14-04 leaves the real number to Member B",
+          "band_is_not_a_tolerance": true,
+          "baseline_max_spread_c": 1.126,
+          "candidate_max_spread_c": 1.126,
+          "meaning_if_outside": "the mutual spread of the three air probes left the band the baseline session shows. Because that band comes from one run's within-session drift, this is a flag to look, not a measurement of movement: it also fires if the chamber started at a different load or the door was left cracked.",
+          "state": "WITHIN_BASELINE_ORDER"
+        },
+        "air_triad_direction": {
+          "baseline": {
+            "t1_c": "DOWN",
+            "t3_c": "DOWN",
+            "t4_c": "DOWN"
+          },
+          "candidate": {
+            "t1_c": "DOWN",
+            "t3_c": "DOWN",
+            "t4_c": "DOWN"
+          },
+          "meaning_if_mismatched": "one of the three chamber-air channels stopped falling while driven, so that tip is no longer sampling the air volume the other two agree about - the most likely causes are a probe that moved, became coupled to a surface, or became electrically stale while the value held.",
+          "state": "MATCH"
+        },
+        "channel_rank_order": {
+          "baseline": [
+            "t2_c",
+            "t3_c",
+            "t4_c",
+            "t1_c"
+          ],
+          "candidate": [
+            "t2_c",
+            "t3_c",
+            "t4_c",
+            "t1_c"
+          ],
+          "meaning_if_mismatched": "the ordering of the channels by level flipped. Positions in a stratified chamber set the ordering, so a persistent flip with everything else unchanged is the pattern a probe swap or a probe that moved a shelf over would leave.",
+          "state": "MATCH"
+        },
+        "hot_side_channel": {
+          "baseline": [
+            "t2_c"
+          ],
+          "candidate": [
+            "t2_c"
+          ],
+          "meaning_if_mismatched": "the channel that rises while the bridge is driven is no longer the slot the record calls TEC hot side: either the hot-side probe left the stack, an air probe is now touching the stack or a rack, or the 1-Wire slots were re-mapped at the connector. Any of these invalidates the air/hot split every W07 statistic is built on.",
+          "state": "MATCH"
+        },
+        "level_offset_c": {
+          "meaning_if_large": "the absolute levels sit outside the baseline session's own drift band. That is expected whenever start conditions differ, so on its own it says nothing about position; it only matters together with a direction or separation change.",
+          "per_channel": {
+            "t1_c": 0.0,
+            "t2_c": 0.0,
+            "t3_c": 0.0,
+            "t4_c": 0.0
+          }
+        }
+      },
+      "comparison_value": "this candidate is the baseline session itself, so the comparison is circular and proves only that the tool runs: it cannot say anything about the period after 2026-11-01",
+      "distinct_from_baseline_session": false,
+      "role_label_check": {
+        "absent_columns": [],
+        "meaning_of_a_mismatch": "the firmware's role column no longer matches the label the frozen record documents, which means the image, pin-map version or slot-to-channel map changed - the capture is then describing a different logical geometry, not the frozen one. It is not by itself proof that a probe was moved.",
+        "mismatched_columns": [],
+        "per_column": {
+          "t1_role": {
+            "expected": "UNASSIGNED",
+            "state": "MATCH",
+            "tokens": [
+              "UNASSIGNED"
+            ]
+          },
+          "t2_role": {
+            "expected": "HOT_SIDE",
+            "state": "MATCH",
+            "tokens": [
+              "HOT_SIDE"
+            ]
+          },
+          "t3_role": {
+            "expected": "UNASSIGNED",
+            "state": "MATCH",
+            "tokens": [
+              "UNASSIGNED"
+            ]
+          },
+          "t4_role": {
+            "expected": "UNASSIGNED",
+            "state": "MATCH",
+            "tokens": [
+              "UNASSIGNED"
+            ]
+          }
+        },
+        "source": "evidence/A/W07/probe-identification-v0.md",
+        "state": "MATCH"
+      },
+      "rows": 957,
+      "same_capture_as_baseline": true
+    }
+  ],
+  "deliverable": "A-W14-01 sensor-position QA",
+  "frozen_baseline": {
+    "capture_role_labels_expected": {
+      "t1_role": "UNASSIGNED",
+      "t2_role": "HOT_SIDE",
+      "t3_role": "UNASSIGNED",
+      "t4_role": "UNASSIGNED"
+    },
+    "frozen_by": "operator-confirmed identification accepted as the official as-built record; no new identification test is authorized",
+    "geometry": "evidence/A/W07/geometry-v1.md \u00a71",
+    "identification_record": "evidence/A/W07/probe-identification-v0.md",
+    "slot_to_position": {
+      "t1_c": "CHAMBER_CENTER",
+      "t2_c": "TEC_HOT_SIDE",
+      "t3_c": "CHAMBER_BOTTOM",
+      "t4_c": "CHAMBER_NEAR_DOOR"
+    }
+  },
+  "meaning_of_each_mismatch": {
+    "air_separation_change": "the mutual spread of the three air probes left the band the baseline session shows. Because that band comes from one run's within-session drift, this is a flag to look, not a measurement of movement: it also fires if the chamber started at a different load or the door was left cracked.",
+    "air_triad_direction_change": "one of the three chamber-air channels stopped falling while driven, so that tip is no longer sampling the air volume the other two agree about - the most likely causes are a probe that moved, became coupled to a surface, or became electrically stale while the value held.",
+    "capture_role_label_mismatch": "the firmware's role column no longer matches the label the frozen record documents, which means the image, pin-map version or slot-to-channel map changed - the capture is then describing a different logical geometry, not the frozen one. It is not by itself proof that a probe was moved.",
+    "hot_side_channel_moved": "the channel that rises while the bridge is driven is no longer the slot the record calls TEC hot side: either the hot-side probe left the stack, an air probe is now touching the stack or a rack, or the 1-Wire slots were re-mapped at the connector. Any of these invalidates the air/hot split every W07 statistic is built on.",
+    "level_offset_beyond_baseline_band": "the absolute levels sit outside the baseline session's own drift band. That is expected whenever start conditions differ, so on its own it says nothing about position; it only matters together with a direction or separation change.",
+    "rank_order_change": "the ordering of the channels by level flipped. Positions in a stratified chamber set the ordering, so a persistent flip with everything else unchanged is the pattern a probe swap or a probe that moved a shelf over would leave."
+  },
+  "notes": [
+    "Host analysis of committed captures: no new measurement, no flash, no energized stage, no probe touched.",
+    "No new identification test is proposed: the operator froze the geometry and re-identifying it would move the thing being checked.",
+    "The touch session is classed PROBE_IDENTIFICATION and is refused here by cg_w14_spatial.require_thermal_capture, so it cannot become a baseline."
+  ],
+  "schema": "w14-sensor-position-qa-v0",
+  "verdict": {
+    "behaviour_agrees_with_frozen_geometry": true,
+    "forbidden_phrase_policy": "this report never states or implies that movement was ruled out",
+    "movement_since_freeze": "NOT_VERIFIABLE_FROM_ARCHIVED_DATA",
+    "non_movement_status": "NEEDS_A_NEW_CAPTURE_AND_PHYSICAL_EVIDENCE",
+    "role_labels_current_state": "MATCH"
+  }
+}

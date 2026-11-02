@@ -331,6 +331,38 @@ class AblationSupport(unittest.TestCase):
                 self.assertEqual(line["is_chamber_air"],
                                  "0" if sp.terms_include_hot_side(terms) else "1")
 
+    def test_csv_row_count_matches_the_published_samples_exactly(self):
+        """The series and the metrics must be the same rows, not a nearest-time proxy."""
+        rows = segment(0, 25, 999) + segment(25000, 5, 0)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "run.csv"
+            write_capture(path, rows)
+            report = sp.ablation_matrix([path])
+            counts = {}
+            for line in sp.ablation_csv_rows(report)[1:]:
+                counts[(line[3], line[2])] = counts.get((line[3], line[2]), 0) + 1
+            for name, block in report["captures"][0]["variants"].items():
+                for phase, metrics in block.items():
+                    if metrics["usable"]:
+                        self.assertEqual(counts[(name, phase)], metrics["samples"],
+                                         f"{name}/{phase}")
+
+    def test_csv_feature_values_recompute_from_the_row_they_came_from(self):
+        rows = segment(0, 15, 999)
+        with tempfile.TemporaryDirectory() as tmp:
+            path = pathlib.Path(tmp) / "run.csv"
+            write_capture(path, rows)
+            report = sp.ablation_matrix([path])
+            by_device = {row["device_ms"]: row for row in rows}
+            header = sp.ablation_csv_rows(report)
+            data = header[1:]
+            for line in data:
+                record = dict(zip(header[0], line))
+                if record["variant"] != "air_t1_center_v0":
+                    continue
+                source = by_device[str(int(float(record["device_ms"])))]
+                self.assertAlmostEqual(float(record["feature_c"]), float(source["t1_c"]), 4)
+
     def test_single_probe_versus_three_air_is_the_headline_comparison(self):
         rows = segment(0, 40, 999) + segment(40000, 10, 0)
         with tempfile.TemporaryDirectory() as tmp:

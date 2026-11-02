@@ -390,49 +390,44 @@ def _variant_summary(metrics: list[dict[str, object]], min_sessions: int,
 
 
 def ablation_csv_rows(report: dict[str, object]) -> list[tuple[object, ...]]:
-    """Long-format, variant-labelled series so Member B can join on device_ms."""
+    """Long-format, variant-labelled series so Member B can join on device_ms.
+
+    Rows are walked directly from the phase segment, and a row enters a variant only if
+    that variant has every term usable in it - the same exclusion rule the metrics use.
+    Joining back to the source by nearest timestamp was tried and dropped: it is O(n^2)
+    and it can attach a feature value to a neighbouring row's conditions.
+    """
     header = ("capture", "boot_id", "phase", "variant", "feature_terms", "feature_roles",
               "is_chamber_air", "includes_hot_side", "sample_index", "device_ms",
-              "pwm_applied_permille", "door_open", "feature_c", "conditioning_fingerprint")
+              "pwm_applied_permille", "door_open", "feature_c", "term_count",
+              "conditioning_fingerprint")
     rows: list[tuple[object, ...]] = [header]
     for capture in report["captures"]:  # type: ignore[union-attr]
         source = rep.capture_path(str(capture["capture"]))
         rows_read = rep.read_rows(source)
         phases = rep.split_phases(rows_read)
-        by_device = {row.get("device_ms"): row for row in rows_read}
+        boot = capture["boot_ids"][0] if capture["boot_ids"] else ""  # type: ignore[index]
         for name in report["variants"]:  # type: ignore[union-attr]
             variant = VARIANTS[name]
+            terms = tuple(variant["terms"])
             for phase, metrics in capture["variants"][name].items():  # type: ignore[union-attr,index]
                 if not metrics["usable"]:
                     continue
-                points, _ = term_points(phases[phase], tuple(variant["terms"]))
-                for index, (minutes, value) in enumerate(points):
-                    # term_points keeps the capture's own monotonic device_ms, so the
-                    # join back to the conditioning columns is exact, not interpolated.
-                    device_ms = round(minutes * 60000.0, 3)
-                    source_row = by_device.get(_nearest_device_ms(rows_read, device_ms), {})
+                index = 0
+                for source_row in phases[phase]:
+                    value, usable, total = mean_of_terms(source_row, terms)
+                    if value is None or usable != total:
+                        continue
                     rows.append((
-                        source.name, capture["boot_ids"][0] if capture["boot_ids"] else "",
-                        phase, name, ";".join(variant["terms"]), ";".join(variant["roles"]),
-                        int(bool(variant["is_chamber_air"])),
+                        source.name, boot, phase, name, ";".join(variant["terms"]),
+                        ";".join(variant["roles"]), int(bool(variant["is_chamber_air"])),
                         int(bool(variant["includes_hot_side"])), index,
-                        round(device_ms, 3), source_row.get("pwm_applied_permille", ""),
-                        source_row.get("door_open", ""), round(value, 4),
+                        source_row.get("device_ms", ""),
+                        source_row.get("pwm_applied_permille", ""),
+                        source_row.get("door_open", ""), round(value, 4), total,
                         metrics["conditioning_fingerprint"]))
+                    index += 1
     return rows
-
-
-def _nearest_device_ms(rows: list[dict[str, str]], target: float) -> str:
-    """The row whose device_ms is closest, so the feature joins to its own conditions."""
-    best, best_gap = "", float("inf")
-    for row in rows:
-        value = number(row, "device_ms")
-        if value is None:
-            continue
-        gap = abs(value - target)
-        if gap < best_gap:
-            best, best_gap = row.get("device_ms", ""), gap
-    return best
 
 
 # ---------------------------------------------------------------------------
