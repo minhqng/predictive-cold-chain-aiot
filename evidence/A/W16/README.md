@@ -40,7 +40,8 @@ A cross-era response comparison is legal only when every dimension matches:
 | `w16-rerun-requirements.csv` | A-W16-01 required re-runs with status |
 | `build_w16_artifacts.py` | regenerates every artifact by running the framework; `--check` compares byte-for-byte |
 | `validate_w16.py` | SHA256 pins, LF-only, re-runs `assert_no_freeze`, and fails on a host freeze or a G4 GREEN |
-| `SHA256SUMS.txt` | byte pins (LF-only) |
+| `SHA256SUMS.txt` | byte pins (LF-only), produced by `build_w16_artifacts.py --pins` |
+| `handoff.md` | this week's part of the docs/05A section 5 / 6.1-6.3 handover: the comparability correction, the tolerance form with no numbers in it, and what only a W16-era session can supply |
 
 ## 4. Reproduce
 
