@@ -37,25 +37,70 @@
     "why": "criterion not yet measurable: tmean_band_c (UNRESOLVED), gradient_bound_c_per_min (UNRESOLVED). UNKNOWN is not READY."
   },
   "suspect_frame": {
-    "current_status_value": "''",
+    "canonical_candidate": "docs/01 22.4 'Commanded OFF + unexpected current' names CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists 'current while state should be OFF' as its example",
+    "command_and_state_fields": {
+      "pwm_applied_permille": {
+        "preceding": [
+          "999",
+          "999"
+        ],
+        "suspect": "0"
+      },
+      "pwm_req_permille": {
+        "preceding": [
+          "1000",
+          "1000"
+        ],
+        "suspect": "0"
+      },
+      "state": {
+        "preceding": [
+          "COOLING",
+          "COOLING"
+        ],
+        "suspect": "COOLDOWN"
+      }
+    },
+    "competing_explanation": "evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, which is why register holdover is a candidate here rather than a conclusion",
     "device_ms": 826894,
+    "differing_measured_fields": [],
     "fields": {
       "current_a": "7.15",
       "current_status": "",
-      "device_ms": "826894",
       "energy_wh": "122.0",
       "power_w": "84.2",
       "pwm_applied_permille": "0",
       "pwm_req_permille": "0",
-      "stage": "H8-C",
       "state": "COOLDOWN",
       "t1_c": "20.875",
+      "t1_status": "OK",
       "t2_c": "39.562",
+      "t2_status": "OK",
       "t3_c": "21.625",
-      "t4_c": "21.438"
+      "t3_status": "OK",
+      "t4_c": "21.438",
+      "t4_status": "OK",
+      "voltage_status": "",
+      "voltage_v": "11.79"
     },
-    "preceding_frames_byte_identical_on_electrical_and_thermal": 2,
-    "reading": "state=COOLDOWN with applied duty 0 yet current 7.15 A; current_status is an empty cell, not OK, and the electrical and thermal fields repeat the two preceding driven frames exactly - consistent with documented PZEM register holdover, so it is recorded as an observation to confirm on the next supervised session and excluded from no statistic silently"
+    "measured_fields_compared": [
+      "voltage_v",
+      "voltage_status",
+      "current_a",
+      "current_status",
+      "power_w",
+      "energy_wh",
+      "t1_c",
+      "t1_status",
+      "t2_c",
+      "t2_status",
+      "t3_c",
+      "t3_status",
+      "t4_c",
+      "t4_status"
+    ],
+    "preceding_frames_identical_on_all_measured_fields": 2,
+    "reading": "applied duty `0` and requested duty `0` in state `COOLDOWN`, yet the row carries `7.15 A` and `84.2 W`; `current_status` is `` - an empty cell, not OK - and all 14 measured fields match 2 of the 2 preceding frames, so the readings did not move when the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety classification and not a host tool's call, so it is recorded as the canonical candidate for the next supervised session; the frame stays inside the recovery segment's published peak, where the report names it instead of averaging it away"
   },
   "with_test_injected_numbers": {
     "injection": {

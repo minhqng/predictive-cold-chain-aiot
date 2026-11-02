@@ -24,11 +24,7 @@ Every value below is `tmean_airroles_v0`. Slope columns name their own definitio
 | cooling step | 600 / 600 | 0 | 0 | 9.9833 | -8.7083 | -0.070104 | -0.854771 | 0.85 |
 | post-action recovery segment | 131 / 131 | 0 | 0 | 2.1667 | 5.333 | 3.097228 | 2.89316 | 0.8167 |
 
-The trailing-window slope is positive during cooling on purpose: the chamber
-mean bottoms out and starts rebounding inside the driven block, so the last
-120 samples measure recent motion, not the response. Both numbers are
-published under their own definitions and neither is called "the cooling
-slope".
+The two slope columns answer different questions and are not two estimates of one. In the only cooling segment the trailing window measures -0.070104 C/min, which is shallower than the whole phase at -0.854771 C/min, so it reports recent motion rather than the response. Neither value is "the cooling slope": the phase answer is `whole_phase_slope_c_per_min`, and the comparison is computed (`trailing_differs_from_whole_phase`) rather than asserted, so a future run in which the two agree will say so.
 
 ### Electrical figures
 
@@ -36,7 +32,11 @@ slope".
 - recovery segment: peak current `7.15 A` — **that peak is the single suspect frame below**, not evidence of current after the bridge opened
 - `current_status`/`voltage_status` are empty in all 600 rows read (`electrical_status_recorded: false`), so these are values with no recorded validity and are never presented as status-checked
 
-Suspect frame (`device_ms=826894`): state `COOLDOWN`, requested and applied duty `0`, current `7.15 A`, power `84.2 W`, `current_status` an **empty cell, not OK**, and its electrical and thermal fields byte-identical to the two preceding driven frames. Read as documented PZEM register holdover, recorded as an observation for the next supervised session, and not interpreted as current flowing with the bridge off.
+Suspect frame (`device_ms=826894`): applied duty `0` and requested duty `0` in state `COOLDOWN`, yet the row carries `7.15 A` and `84.2 W`; `current_status` is `` - an empty cell, not OK - and all 14 measured fields match 2 of the 2 preceding frames, so the readings did not move when the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety classification and not a host tool's call, so it is recorded as the canonical candidate for the next supervised session; the frame stays inside the recovery segment's published peak, where the report names it instead of averaging it away.
+
+- canonical candidate: docs/01 22.4 'Commanded OFF + unexpected current' names CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists 'current while state should be OFF' as its example
+- competing explanation: evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, which is why register holdover is a candidate here rather than a conclusion
+- comparison actually performed: `14` measured fields, `2` of `2` preceding frames identical on all of them, differing on `none`
 
 ## The representation question, measured
 

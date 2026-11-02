@@ -33,14 +33,17 @@ candidate and the exact ask are delivered; the runs are not invented.
   on this rig it averages hot-side metal into an air temperature.
 - `tmean_t2excluded_v0`, `tmean_all4_v0` — degraded and sensitivity variants.
 - Slope always names representation, window and method; the trailing-window figure
-  is never presented as a phase summary (it reads **+0.0701 °C/min** during the
-  cooling phase whose whole-phase slope is **-0.854771 °C/min**, because the curve
-  rebounds inside the driven block).
+  is never presented as a phase summary (during the cooling phase it reads
+  **-0.070104 °C/min** while the whole-phase slope is **-0.854771 °C/min**, because
+  the driven block runs out in the shallow bottom of the curve rather than at its
+  steepest point).
 - Spread is the **sample** (n-1) formula and says so; CV is withheld at a zero mean.
-- `nan`, absent and non-`OK` readings are excluded **and counted**; an empty status
-  cell is used but counted as `unqualified` — the H8 capture left
-  `current_status`/`voltage_status` empty on all 957 rows, so its electrical
-  figures carry no recorded validity and are labelled as such.
+- `nan`, absent and non-`OK` readings are excluded **and counted**; a value whose
+  status cell is empty is used but counted as `unqualified`, and a value with **no
+  status column at all** is unqualified too — silence is not a recorded check. In the
+  H8 capture `current_status`/`voltage_status` are empty on all 957 rows and
+  `power_w`/`energy_wh` have no status column, so every electrical figure there
+  carries no recorded validity and is labelled as such.
 - Rows with no usable applied duty are `undetermined` and join no phase.
 
 On the single run available the two candidate air means differ by a factor of
@@ -79,5 +82,6 @@ py firmware/tools/cg_reset_criterion.py evidence/A/W07/reset-criterion-v0.yaml -
   while they are, and `reset-criterion-evaluation.json` reaches `READY` only under
   values explicitly labelled a test injection.
 * **The touch-test data is `PROBE_IDENTIFICATION`.** It must never enter S1/S2/S4 or
-  any thermal-response statistic; the validator re-checks that all 233 of its
-  frames were captured with applied duty 0.
+  any thermal-response statistic; the validator recomputes the frame totals from the
+  six captures and fails if any frame shows `state != OFF`, a non-zero applied duty, or
+  a count the record does not state.

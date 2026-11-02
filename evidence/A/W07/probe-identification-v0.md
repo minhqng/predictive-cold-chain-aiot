@@ -19,15 +19,17 @@ made during this session.
 
 ## Installed firmware and frame shape (verified this session)
 
-- Port COM4 @ 115200, read-only capture (`capture_probe_id.py` writes nothing to
-  the port). Opening the port resets the board, so `boot_id` changes per window:
-  25ff9325, b45af2ff, a1732532, f0fef08c, 3c0b622a. Host UTC timestamps are the
+- Port COM4 @ 115200, read-only capture (`capture_probe_id.py`, kept outside the
+  repository with the scratch capture dir, writes nothing to the port). Opening the
+  port resets the board, so `boot_id` changes per window and the six windows carry six
+  distinct ids: live_check 25ff9325, baseline b45af2ff, touch_1 a1732532, settle_1
+  f0fef08c, touch_2 e5fde982, decay_check 3c0b622a. Host UTC timestamps are the
   session time axis; `device_ms` is per-boot.
 - Frames are `#CG H8S schema=3`, 1 Hz, carrying `t1..t4` with `t{n}_status`,
   `t{n}_role`, `t{n}_age_ms`, plus `state`, `pwm_*`, `fault`, `snapshot`.
 - **The frames carry no ROM id.** Slot identity is therefore direct observation;
-  the ROM labels below come from the frozen ROM table in the bench source
-  (`firmware/h8-bench` -> `CG_ROM_*_BYTES` in `coldguard_config.h:218-224`) and are
+  the ROM labels below come from the frozen ROM table in the delivered firmware
+  (`firmware/main/coldguard_config.h:229-235`, `CG_ROM_T1/T2/T3/SPARE_BYTES`) and are
   marked *by-source*, not verified by reading flash back.
 - Candidate installed image hash (local build):
   `01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f`
@@ -37,8 +39,8 @@ made during this session.
 ## Safety state during the session
 
 `state=OFF` and `pwm_applied_permille=0` in every captured frame; TEC power branch
-isolated by the operator. t2 (HOT_SIDE) was never touched and never moved more than
-0.063 °C.
+isolated by the operator. t2 (HOT_SIDE) was never touched; its largest within-window
+spread is 0.125 °C (`decay_check`), 0.062 °C in the other five.
 
 ## Evidence
 
@@ -52,8 +54,10 @@ isolated by the operator. t2 (HOT_SIDE) was never touched and never moved more t
 | `decay_check` | 60 | 59 | none | all channels back to baseline: t1 29.690, t2 29.952, t3 29.506, t4 29.733 |
 
 Each rise happened in a **different channel in a different window**, and each
-released channel decayed in the next window. Noise floor across all hands-off
-windows is <= 0.063 °C, against rises of 2.19-3.63 °C. t2 never responded.
+released channel decayed in the next window. Hands-off spread is <= 0.063 °C on every
+channel in five of the six windows, with one exception measured: t2 spans 0.125 °C in
+`decay_check`. Against those spreads the touch rises are 2.25-2.81 °C within window,
+and t2 never responded to a touch.
 
 ## Official mapping
 
