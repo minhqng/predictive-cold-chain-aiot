@@ -1,13 +1,27 @@
 {
   "criteria_file": "reset-criterion-v0",
+  "criterion_status": "CANDIDATE_NOT_FROZEN",
+  "hot_side_representation_refused": {
+    "criterion_status": "CANDIDATE_NOT_FROZEN",
+    "failing": [
+      "state was measured on 'tmean_chamber3_v0', but the criterion names 'tmean_airroles_v0'"
+    ],
+    "missing_evidence": [],
+    "unresolved_parameters": [
+      "tmean_band_c (UNRESOLVED)",
+      "gradient_bound_c_per_min (UNRESOLVED)"
+    ],
+    "verdict": "NOT_READY",
+    "why": "recorded evidence contradicts a resolved criterion: state was measured on 'tmean_chamber3_v0', but the criterion names 'tmean_airroles_v0'"
+  },
   "observed_state": {
     "cooling_state": "ON",
     "door_state": "CLOSED",
     "quality": "VALID",
-    "representation": "tmean_chamber3_v0",
+    "representation": "tmean_airroles_v0",
     "slope_c_per_min": null,
     "source": "capture_row",
-    "tmean_c": 29.9167,
+    "tmean_c": 30.021,
     "tmean_term_count": 3,
     "tmean_usable_terms": 3
   },
@@ -22,12 +36,33 @@
     "verdict": "UNKNOWN",
     "why": "criterion not yet measurable: tmean_band_c (UNRESOLVED), gradient_bound_c_per_min (UNRESOLVED). UNKNOWN is not READY."
   },
+  "suspect_frame": {
+    "current_status_value": "''",
+    "device_ms": 826894,
+    "fields": {
+      "current_a": "7.15",
+      "current_status": "",
+      "device_ms": "826894",
+      "energy_wh": "122.0",
+      "power_w": "84.2",
+      "pwm_applied_permille": "0",
+      "pwm_req_permille": "0",
+      "stage": "H8-C",
+      "state": "COOLDOWN",
+      "t1_c": "20.875",
+      "t2_c": "39.562",
+      "t3_c": "21.625",
+      "t4_c": "21.438"
+    },
+    "preceding_frames_byte_identical_on_electrical_and_thermal": 2,
+    "reading": "state=COOLDOWN with applied duty 0 yet current 7.15 A; current_status is an empty cell, not OK, and the electrical and thermal fields repeat the two preceding driven frames exactly - consistent with documented PZEM register holdover, so it is recorded as an observation to confirm on the next supervised session and excluded from no statistic silently"
+  },
   "with_test_injected_numbers": {
     "injection": {
-      "gradient_bound_c_per_min": "0.5",
-      "tmean_band_c": "31.0"
+      "gradient_bound_c_per_min": "0.50",
+      "tmean_band_c": "31.5"
     },
-    "note": "the two values above were injected to prove the evaluator can answer READY; they are not project thresholds and no document may quote them as such",
+    "note": "31.5 C and 0.50 C/min were injected to prove the evaluator can reach READY; they are not project thresholds, no document may quote them as such, and the shipped file keeps both gates UNRESOLVED",
     "result": {
       "criterion_status": "CANDIDATE_NOT_FROZEN",
       "failing": [],
