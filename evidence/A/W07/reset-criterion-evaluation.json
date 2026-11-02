@@ -1,0 +1,40 @@
+{
+  "criteria_file": "reset-criterion-v0",
+  "observed_state": {
+    "cooling_state": "ON",
+    "door_state": "CLOSED",
+    "quality": "VALID",
+    "representation": "tmean_chamber3_v0",
+    "slope_c_per_min": null,
+    "source": "capture_row",
+    "tmean_c": 29.9167,
+    "tmean_term_count": 3,
+    "tmean_usable_terms": 3
+  },
+  "shipped_candidate": {
+    "criterion_status": "CANDIDATE_NOT_FROZEN",
+    "failing": [],
+    "missing_evidence": [],
+    "unresolved_parameters": [
+      "tmean_band_c (UNRESOLVED)",
+      "gradient_bound_c_per_min (UNRESOLVED)"
+    ],
+    "verdict": "UNKNOWN",
+    "why": "criterion not yet measurable: tmean_band_c (UNRESOLVED), gradient_bound_c_per_min (UNRESOLVED). UNKNOWN is not READY."
+  },
+  "with_test_injected_numbers": {
+    "injection": {
+      "gradient_bound_c_per_min": "0.5",
+      "tmean_band_c": "31.0"
+    },
+    "note": "the two values above were injected to prove the evaluator can answer READY; they are not project thresholds and no document may quote them as such",
+    "result": {
+      "criterion_status": "CANDIDATE_NOT_FROZEN",
+      "failing": [],
+      "missing_evidence": [],
+      "unresolved_parameters": [],
+      "verdict": "READY",
+      "why": "every resolved criterion is satisfied by recorded evidence"
+    }
+  }
+}
