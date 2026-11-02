@@ -807,11 +807,16 @@ const char *cg_quality_name(cg_thermal_quality_t quality)
 
 static void worst_case_frame(cg_telemetry_frame_t *frame, cg_snapshot_t *snap, char run_id[33])
 {
+    static cg_health_report_t health;
+
     memset(snap, 0, sizeof(*snap));
     snap->thermal_observed = true;
     snap->thermal_valid = true;
     snap->thermal_quality = CG_QUALITY_VALID;
     snap->thermal_obs_ms = 999900U;
+    snap->thermal_seq = 4294967295U;
+    snap->probes_ok = 3;
+    snap->probes_expected = 3;
     for (int role = 0; role < CG_ROLE_COUNT; role++) {
         snap->t_valid[role] = true;
         snap->t_c[role] = -12.5625f;
@@ -819,17 +824,33 @@ static void worst_case_frame(cg_telemetry_frame_t *frame, cg_snapshot_t *snap, c
     snap->power_observed = true;
     snap->power_valid = true;
     snap->power_obs_ms = 999900U;
+    snap->power_seq = 4294967295U;
     snap->voltage_v = 12.04f;
     snap->current_a = 1.2345f;
     snap->power_w = 14.8f;
+    snap->energy_wh = 999999.0f;
+    snap->door_observed = true;
     snap->door_known = true;
     snap->door_open = false;
+    snap->door_obs_ms = 999900U;
+    snap->door_transitions = 4294967295U;
+    snap->door_cycles = 4294967295U;
 
     memset(run_id, 'A', 32);
     run_id[32] = '\0';
     (void)snprintf(g_ctl.reason, sizeof(g_ctl.reason), "%s", "START_LIMITS_UNRESOLVED");
 
+    memset(&health, 0, sizeof(health));
+    for (int i = 0; i < CG_PRODUCER_COUNT; i++) {
+        health.state[i] = CG_HEALTH_MISSED;
+        health.max_gap_ms[i] = 4294967295U;
+        health.beats[i] = 4294967295U;
+        health.gap_ms[i] = 4294967295U;
+    }
+    (void)snprintf(health.overall, sizeof(health.overall), "%s", "MISSED");
+
     memset(frame, 0, sizeof(*frame));
+    frame->seq = 4294967295U;
     frame->boot_id = "1234ABCD";
     frame->boot_count = 12;
     frame->uptime_ms = 1000000U;
@@ -837,6 +858,12 @@ static void worst_case_frame(cg_telemetry_frame_t *frame, cg_snapshot_t *snap, c
     frame->test_phase = "TEC_OFF";
     frame->snap = snap;
     frame->ctl = &g_ctl;
+    frame->health = &health;
+    frame->probe_rom[0] = "287088CA00000051";
+    frame->probe_rom[1] = "28AEBF2200000006";
+    frame->probe_rom[2] = "28CBE9CA00000072";
+    frame->probe_rom[3] = "283BE5C9000000A9";
+    frame->role_status = CG_ROM_STATUS;
     frame->output_stage_enabled = false;
     frame->fan_available = false;
 }
@@ -857,6 +884,7 @@ static bool test_telemetry_worst_case_fits(void)
     CHECK(len < sizeof(line));
     CHECK(strstr(line, "timestamp_utc=UNAVAILABLE") != NULL);
     CHECK(strstr(line, " raw_spare_status=OK") != NULL); /* complete tail token */
+    printf("  worst_case_len=%zu budget=%d\n", len, CG_TELEMETRY_LINE_MAX);
     return true;
 }
 
