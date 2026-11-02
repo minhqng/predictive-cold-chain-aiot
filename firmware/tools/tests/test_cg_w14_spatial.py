@@ -150,24 +150,28 @@ class RowAccounting(unittest.TestCase):
     def test_partial_term_rows_are_excluded_and_counted(self):
         rows = segment(0, 10, 999)
         rows[4]["t3_c"] = ""
-        points, tallies = sp.term_points(rows, ["t1_c", "t3_c"])
+        points, used, tallies = sp.term_points(rows, ["t1_c", "t3_c"])
         self.assertEqual(len(points), 9)
+        self.assertEqual(len(used), 9)
+        self.assertIs(used[0], rows[0])
         self.assertEqual(tallies["partial_term_rows"], 1)
         self.assertEqual(tallies["no_term_rows"], 0)
 
     def test_non_ok_status_excludes_a_value(self):
         rows = segment(0, 5, 999)
         rows[1]["t1_status"] = "INVALID"
-        points, tallies = sp.term_points(rows, ["t1_c"])
+        points, used, tallies = sp.term_points(rows, ["t1_c"])
         self.assertEqual(len(points), 4)
+        self.assertEqual(len(used), 4)
         self.assertEqual(tallies["no_term_rows"], 1)
 
     def test_status_free_readings_are_used_but_counted_unqualified(self):
         rows = segment(0, 6, 999)
         for source in rows:
             source.pop("t1_status")
-        points, tallies = sp.term_points(rows, ["t1_c"])
+        points, used, tallies = sp.term_points(rows, ["t1_c"])
         self.assertEqual(len(points), 6)
+        self.assertEqual(len(used), 6)
         self.assertEqual(tallies["unqualified_rows"], 6)
 
 

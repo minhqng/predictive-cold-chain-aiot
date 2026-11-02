@@ -29,6 +29,13 @@ Discipline this module exists to enforce
 * **One session is one session.** Within-session sample dispersion is published as a
   `single_session_observation`; it is never called a distribution, and the repeat
   distribution the canonical ask names needs independent sessions.
+* **The "same physical run" claim is a hash, and the hash is re-derived.** The
+  conditioning fingerprint is computed from the condition columns of the rows a
+  statistic walked, and the ablation flag over it is computed from the built rows
+  (`physical_condition_control`), never written as a literal. The dossier validator
+  re-computes it from the capture and re-checks every published CSV row against it: a
+  stamped fingerprint the capture does not produce is a validator failure, so the proof
+  is the recomputation, not the field.
 * **A disturbance that was never applied has no response.** Door-open events are found
   by transition in the data; none exists in committed captures, so the answer is
   NOT_COMPUTABLE with the re-derived tally, never an estimate.
@@ -154,6 +161,12 @@ def mean_of_terms(row: dict[str, str],
     W07's ``tmean`` only accepts a registered representation name, so arbitrary
     feature sets had nowhere to go; the value/status rules are W07's own ``number``
     and the partial-term bookkeeping matches ``tmean``'s tuple shape by test.
+
+    Validity is NOT lost here: a reading whose ``t*_status`` was never recorded is
+    unqualified, and W07 counts it (``term_points`` and ``pairwise_series`` publish
+    ``unqualified_rows``) rather than quietly treating it as checked. The committed
+    session records ``t*_status=OK`` on all 957 rows, so every published
+    ``unqualified_rows`` here is 0 - it is a tally the tools fill in, not a claim.
     """
     values = [value for value in (number(row, term) for term in terms)
               if value is not None]
@@ -163,14 +176,17 @@ def mean_of_terms(row: dict[str, str],
 
 
 def term_points(rows: list[dict[str, str]], terms: tuple[str, ...] | list[str]
-                ) -> tuple[list[tuple[float, float]], dict[str, int]]:
-    """Full-term (device minutes, mean) points, with every excluded row counted.
+                ) -> tuple[list[tuple[float, float]], list[dict[str, str]], dict[str, int]]:
+    """(points, rows behind them, tallies) for one term set.
 
     A row missing one term is a different quantity and joins no series
     (docs/01 517-530); that is W07's rule, kept here so partial means cannot leak into
-    a spatial or ablation figure.
+    a spatial or ablation figure. The rows come back alongside the points because the
+    conditioning control is a claim about *those* rows: a reader has to be able to see
+    which rows carried a statistic, not infer it from a sample count.
     """
     points: list[tuple[float, float]] = []
+    used_rows: list[dict[str, str]] = []
     tallies = {"partial_term_rows": 0, "no_term_rows": 0, "unqualified_rows": 0}
     for row in rows:
         value, usable, total = mean_of_terms(row, terms)
@@ -183,7 +199,8 @@ def term_points(rows: list[dict[str, str]], terms: tuple[str, ...] | list[str]
         if any(reading(row, term)[1] == "unqualified" for term in terms):
             tallies["unqualified_rows"] += 1
         points.append(((number(row, "device_ms") or 0.0) / 60000.0, value))
-    return points, tallies
+        used_rows.append(row)
+    return points, used_rows, tallies
 
 
 def least_squares(points: list[tuple[float, float]]) -> float | None:
@@ -205,8 +222,32 @@ def least_squares(points: list[tuple[float, float]]) -> float | None:
 # capture admission: class, provenance, conditioning fingerprint
 # ---------------------------------------------------------------------------
 
+# The six ``boot_id`` values the frozen identification record documents, one per
+# hand-held window: evidence/A/W07/probe-identification-v0.md ("Installed firmware and
+# frame shape") names live_check 25ff9325, baseline b45af2ff, touch_1 a1732532,
+# settle_1 f0fef08c, touch_2 e5fde982, decay_check 3c0b622a. They are session content,
+# so they survive a rename or a re-copy of the file that a path marker cannot.
+IDENTIFICATION_BOOT_IDS = ("25ff9325", "b45af2ff", "a1732532", "f0fef08c", "e5fde982",
+                           "3c0b622a")
+
+
+def identification_boot_ids(rows: list[dict[str, str]]) -> list[str]:
+    """Which of this capture's boot ids belong to the frozen identification session."""
+    return sorted({str(row.get("boot_id") or "").strip() for row in rows}
+                  & set(IDENTIFICATION_BOOT_IDS))
+
+
 def capture_class(path: pathlib.Path, rows: list[dict[str, str]]) -> str:
-    """PROBE_IDENTIFICATION is refused as a statistic source; everything else is thermal."""
+    """PROBE_IDENTIFICATION is refused as a statistic source; everything else is thermal.
+
+    Detection is provenance-first: the six documented identification ``boot_id`` values
+    are read out of the rows, so a renamed or re-copied derivative of the 2026-11-02
+    touch logs is still refused. The path and field markers stay as a second line of
+    defence - they are what refuses a capture whose boot ids were never recorded - not
+    the only line, because a filename is the easiest thing in a capture to lose.
+    """
+    if identification_boot_ids(rows):
+        return IDENTIFICATION_MARKER
     lowered_path = rep.capture_id(path).lower()
     markers = [IDENTIFICATION_MARKER.lower(), IDENTIFICATION_PATH_MARKER.lower()]
     if any(marker in lowered_path for marker in markers):
@@ -269,8 +310,14 @@ def variant_phase_metrics(rows: list[dict[str, str]], phase: str,
     """One variant's response over one phase of one capture, on full-term rows only."""
     variant = require_air(name)
     terms = tuple(variant["terms"])
-    points, tallies = term_points(rows, terms)
+    points, used_rows, tallies = term_points(rows, terms)
     base = {
+        "used_rows": len(used_rows),
+        # The condition columns of the rows THIS statistic actually walked over,
+        # hashed. Two variants of one capture disagree here if - and only if - they
+        # were computed over different physical rows, which is the thing a reader of
+        # an ablation comparison needs to be able to falsify.
+        "used_rows_conditioning_fingerprint": conditioning_fingerprint(used_rows),
         "variant": name,
         "phase": phase,
         "feature_terms": list(terms),
@@ -282,6 +329,7 @@ def variant_phase_metrics(rows: list[dict[str, str]], phase: str,
         "rows_read": len(rows),
         **tallies,
     }
+
     if len(points) < 2:
         return {**base, "usable": False, "samples": len(points),
                 "skipped_rows": len(rows) - len(points),
@@ -309,9 +357,66 @@ def variant_phase_metrics(rows: list[dict[str, str]], phase: str,
     }
 
 
+def physical_condition_control(fingerprint: str, phases: dict[str, list[dict[str, str]]],
+                               block_variants: dict[str, dict[str, dict[str, object]]]
+                               ) -> dict[str, object]:
+    """What the rows actually say about "same physical run", computed rather than declared.
+
+    Two independent things must hold for the A-W14-02 control to mean anything:
+
+    1. every variant/phase metric carries this capture's conditioning fingerprint;
+    2. inside a phase, the variants that produced a usable statistic walked over the
+       same condition rows - if one variant silently dropped rows the others kept, the
+       comparison stops being one run described several ways, and this says so.
+
+    ``one_fingerprint_per_capture`` is the conjunction of those two, derived here from
+    the built rows. A literal True would be a claim; this is a measurement of the data
+    that a validator can re-derive independently.
+    """
+    stamped = sorted({str(metrics["conditioning_fingerprint"])
+                      for per_phase in block_variants.values()
+                      for metrics in per_phase.values()})
+    per_phase_used: dict[str, list[str]] = {}
+    for phase in phases:
+        used = {str(metrics["used_rows_conditioning_fingerprint"])
+                for per_phase in block_variants.values()
+                for metrics in per_phase.values()
+                if metrics["phase"] == phase and metrics["usable"]}
+        if not used:
+            # No variant produced a usable statistic in this phase: there is no
+            # comparison here to control, so it is named as empty rather than counted
+            # as a disagreement between rows nobody used.
+            per_phase_used[phase] = []
+            continue
+        per_phase_used[phase] = sorted(used)
+    populated = [p for p, used in per_phase_used.items() if used]
+    disagreeing = sorted(p for p in populated if len(per_phase_used[p]) != 1)
+    return {
+        "capture_fingerprint": fingerprint,
+        "one_fingerprint_per_capture": (stamped == [fingerprint] and not disagreeing),
+        "fingerprints_stamped_on_variant_rows": stamped,
+        "used_rows_fingerprint_per_phase": per_phase_used,
+        "phases_where_variants_disagree_on_used_rows": disagreeing,
+        "phases_with_no_usable_variant": sorted(p for p in per_phase_used
+                                                if not per_phase_used[p]),
+        "condition_columns": list(CONDITION_COLUMNS),
+        "note": ("the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/"
+                 "boot_id over the rows a statistic walked, so two variants that differ "
+                 "in anything but the probe set disagree here and are reported, not "
+                 "averaged"),
+    }
+
+
 def ablation_matrix(paths: list[pathlib.Path], variants: tuple[str, ...] = ABLATION_VARIANTS,
                     min_sessions: int = MIN_SESSIONS_DEFAULT) -> dict[str, object]:
-    """Per-variant, per-phase metrics from the SAME rows, plus the control proof."""
+    """Per-variant, per-phase metrics from the SAME rows, plus the computed control.
+
+    The conditioning fingerprint is stamped from the capture the rows came from, and
+    `physical_condition_control` measures whether the variants really share those rows.
+    Neither is accepted on its own word: `validate_w14.py` re-derives the fingerprint
+    and every CSV row's device_ms -> feature_c/pwm/door/boot attribution from the
+    committed capture, so a stamped value that the capture does not support fails.
+    """
     out: dict[str, object] = {
         "schema": SCHEMA_NOTE,
         "purpose": ("A-W14-02 logical ablation support: one-sensor feature sets versus "
@@ -344,18 +449,25 @@ def ablation_matrix(paths: list[pathlib.Path], variants: tuple[str, ...] = ABLAT
                 if metrics["usable"] and phase in ("baseline", "cooling", "recovery"):
                     per_variant_rows[name].append(metrics)
             block_variants[name] = per_phase
+        control = physical_condition_control(fingerprint, phases, block_variants)
         out["captures"].append({**admission,
                                 "conditioning_fingerprint": fingerprint,
                                 "condition_columns": list(CONDITION_COLUMNS),
+                                "physical_condition_control": control,
                                 "undetermined_rows": len(phases["undetermined"]),
                                 "variants": block_variants})
-        out["physical_condition_control"] = {
-            "one_fingerprint_per_capture": True,
-            "note": ("every variant of a capture is computed over the same rows: the "
-                     "fingerprint hashes device_ms/state/pwm_applied_permille/door_open/"
-                     "boot_id, so two variants that differ in anything but the probe "
-                     "set would disagree here and are reported, not averaged"),
-        }
+    out["physical_condition_control"] = {
+        "one_fingerprint_per_capture": bool(out["captures"]) and all(
+            entry["physical_condition_control"]["one_fingerprint_per_capture"]
+            for entry in out["captures"]),
+        "captures": {str(entry["capture"]): entry["physical_condition_control"]
+                     for entry in out["captures"]},
+        "note": ("the flag is computed from the rows and never written as a literal, "
+                 "and validate_w14.py re-derives every fingerprint and every per-row "
+                 "device_ms -> feature_c/pwm/door/boot attribution from the committed "
+                 "capture, so the control is checked against the data instead of being "
+                 "asserted by this file"),
+    }
     sessions = {boot for capture in out["captures"] for boot in capture["boot_ids"]}
     # type: ignore[union-attr]
     out["per_variant_summary"] = {
@@ -456,8 +568,14 @@ def pair_label(a: str, b: str) -> str:
 
 def pairwise_series(rows: list[dict[str, str]], terms: tuple[str, ...] | list[str]
                     ) -> tuple[list[dict[str, object]], dict[str, int]]:
-    """Per-sample signed differences of every pair, plus the excluded-row tallies."""
-    tallies = {"usable_pairs": 0, "partial_rows": 0, "invalid_rows": 0}
+    """Per-sample signed differences of every pair, plus every excluded or unvouched row.
+
+    A gradient between two readings whose ``t*_status`` was never recorded is a weaker
+    quantity than one between two OK-qualified readings, so the tally says which rows
+    carry no validity record instead of letting them count silently as usable.
+    """
+    tallies = {"usable_pairs": 0, "partial_rows": 0, "invalid_rows": 0,
+               "unqualified_rows": 0, "usable_pairs_all_terms_ok": 0}
     series: list[dict[str, object]] = []
     for row in rows:
         values: dict[str, float] = {}
@@ -474,6 +592,10 @@ def pairwise_series(rows: list[dict[str, str]], terms: tuple[str, ...] | list[st
                            "differences": deltas,
                            "all_terms_ok": all(s == "ok" for s in states)})
             tallies["usable_pairs"] += 1
+            if any(s == "unqualified" for s in states):
+                tallies["unqualified_rows"] += 1
+            if all(s == "ok" for s in states):
+                tallies["usable_pairs_all_terms_ok"] += 1
         elif values:
             tallies["partial_rows"] += 1
         else:
@@ -527,6 +649,14 @@ def pair_agreement(rows: list[dict[str, str]], terms: tuple[str, ...] | list[str
         "roles": [AS_BUILT_ROLES[t] for t in terms],
         "includes_hot_side": terms_include_hot_side(list(terms)),
         "tallies": tallies,
+        "gradients_are_all_status_qualified": tallies["unqualified_rows"] == 0,
+        "unqualified_rows_note": (
+            "every gradient sample in this block sits on rows whose t*_status was "
+            "recorded OK" if tallies["unqualified_rows"] == 0 else
+            "{} of {} gradient samples sit on rows whose t*_status was never "
+            "recorded: the values are usable but unvouched, so these differences are "
+            "not quality-checked".format(tallies["unqualified_rows"],
+                                         tallies["usable_pairs"])),
         "pairs": per_pair,
         "max_pairwise_difference_c": max(
             (float(block["max_abs_c"]) for block in per_pair.values()

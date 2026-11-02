@@ -74,7 +74,13 @@ FALSE_CLAIM_PHRASES = FORBIDDEN_OUTPUT_PHRASES + (
     "tolerance agreed", "agreed tolerance", "adopted tolerance", "final tolerance",
     "frozen tolerance", "physically verified", "repeatability established",
 )
-CLAIM_MARKERS = ("`", "\"", "never", "not", "false", "refus", "must not",
+# A backtick, an explicit negation or an explicit false label is what makes a forbidden
+# claim a discussion instead of an assertion. A double quote is deliberately NOT one of
+# them: every JSON value line is built out of double quotes, so counting one as a
+# quotation marker exempted the entire contents of every .json artifact from this guard
+# (a planted `"summary": "... no movement verified ..."` sailed through). JSON artifacts
+# are checked structurally by `guard_no_forbidden_claim`, which has no exemption at all.
+CLAIM_MARKERS = ("`", "never", "not", "false", "refus", "must not",
                  "forbid", "without", "cannot", "n_never", "is_not", "not_a_", "NOT_")
 
 
@@ -84,6 +90,10 @@ def assert_no_false_claim(name: str, text: str) -> None:
     A blanket phrase ban cannot work here, because the honest reports have to *discuss*
     these claims. What is banned is asserting one: a line that carries a forbidden claim
     with no quotation mark, no negation and no `false` next to it is the defect.
+
+    This is a line filter for prose. Parsed JSON has no line structure worth trusting,
+    so `guard_no_forbidden_claim` is what checks it, and that guard has no exemption
+    list: a forbidden claim in any value of a payload raises, however it is quoted.
     """
     for number, line in enumerate(text.splitlines(), start=1):
         lowered = line.lower()
