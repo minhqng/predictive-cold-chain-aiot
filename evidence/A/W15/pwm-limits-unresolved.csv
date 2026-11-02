@@ -1,0 +1,7 @@
+symbol,field,unit,provenance_token,owner,evidence_required,state
+CG_LIMIT_CURRENT_MAX_A,current_max_a,A,TEC_CONTINUOUS_RATING_NOT_ESTABLISHED,D (value) / A (evidence),"continuous-load current versus duty and voltage on the real TEC, with wire/connector/IBT-2 thermal behaviour",UNRESOLVED
+CG_LIMIT_VOLTAGE_MAX_V,voltage_max_v,V,TEC_VMAX_NOT_ESTABLISHED,D / A,the SKU Vmax for the exact purchased TEC1-12715 (docs/01 section 13.2 forbids inferring it from the part number),UNRESOLVED
+CG_LIMIT_VOLTAGE_MIN_V,voltage_min_v,V,PSU_LOAD_REGULATION_NOT_MEASURED,D / A,loaded branch voltage across the duty points versus the PSU regulation setpoint (observed 11.75-11.81 V at 100 %),UNRESOLVED
+CG_LIMIT_HOT_SIDE_MAX_C,hot_side_max_c,C,HOT_SIDE_LIMIT_NOT_ESTABLISHED,D / A,hot-side plateau plus the SKU limit; the 55 C ceiling used on the bench was PROVISIONAL and is not a rating,UNRESOLVED
+CG_LIMIT_DUTY_MAX_PERMILLE,duty_max_permille,permille,DUTY_NOT_CHARACTERISED,D,"the duty ceiling the plant may be commanded to, which the characterization is supposed to inform",UNRESOLVED
+CG_LIMIT_ON_TIME_MAX_MS,on_time_max_ms,ms,ON_TIME_NOT_CHARACTERISED,D,"maximum continuous on-time before a mandatory rest, which needs a thermal asymptote plus component-temperature data",UNRESOLVED
