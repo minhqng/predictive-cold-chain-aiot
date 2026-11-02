@@ -7,8 +7,8 @@
  * previous value. That is what lets the host build a dataset without
  * inventing samples.
  *
- * Field contract (schema 2; see docs/06 and firmware/tools/
- * cg_telemetry_schema.py):
+ * Field contract (schema 3; see docs/06 6.1 and
+ * firmware/tools/cg_telemetry_schema.py):
  *   timestamp_utc is UNAVAILABLE: the ESP32 has no wall clock and no network
  *   time. The host adds a capture timestamp when it converts the capture;
  *   the device time axis is elapsed_ms/run_elapsed_ms.
@@ -47,6 +47,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "cg_command.h"
 #include "cg_health.h"
 #include "cg_snapshot.h"
 #include "cg_tec_control.h"
@@ -68,6 +69,11 @@ typedef struct {
     /* A-W05-01. NULL means liveness was not evaluated for this frame, which is
      * reported as health=UNKNOWN rather than as a healthy device. */
     const cg_health_report_t *health;
+    /* A-W06-04. NULL means no command has been received in this boot, which is
+     * published as NONE rather than as an implicit OFF: "nothing was asked" and
+     * "was asked to stay off" are different facts, and only the second one is
+     * evidence about an operator or backend intent. */
+    const cg_cmd_state_t *cmd_state;
     /* Pre-rendered identity so this module keeps no driver dependency and stays
      * host-testable. NULL element prints as UNREAD. */
     const char *probe_rom[CG_ROLE_COUNT];

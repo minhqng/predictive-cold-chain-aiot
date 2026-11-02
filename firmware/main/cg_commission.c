@@ -24,6 +24,7 @@
 #include "esp_timer.h"
 #include "sdkconfig.h"
 
+#include "cg_command.h"
 #include "cg_console.h"
 #include "cg_health.h"
 #include "cg_log.h"
@@ -52,6 +53,87 @@ static char s_test_phase[CG_TEC_PHASE_LEN] = "UNSET";
  * make a frame uninsertable rather than merely confusing. */
 static uint32_t s_telem_seq;
 static char s_probe_rom_hex[CG_ROLE_COUNT][CG_TELEM_ROM_HEX_LEN];
+/* W06 command layer. The store is volatile by decision: persisting command
+ * identity would be the mechanism by which a stale actuation could come back
+ * after a reset, and docs/02 2149-2158 requires the opposite. */
+static cg_cmd_store_t s_cmd_store;
+static cg_cmd_state_t s_cmd_state;
+
+/* The real world the validator must judge a command against. Every field is
+ * read from the shipped configuration or the live controller, so a local test
+ * command cannot talk its way into a more permissive context than the board
+ * actually offers. */
+static void build_cmd_context(cg_cmd_context_t *ctx, const cg_tec_inputs_t *in,
+                              uint64_t now_ms)
+{
+    const cg_tec_hw_ops_t *ops = cg_tec_hw_ops();
+    const bool limits_resolved = cg_tec_limits_all_resolved(&cg_tec_limits_shipped);
+    const cg_limit_t *duty_limit =
+        cg_tec_limit(&cg_tec_limits_shipped, CG_LIMIT_DUTY_MAX_PERMILLE);
+
+    memset(ctx, 0, sizeof(*ctx));
+    ctx->device_id = CG_DEVICE_ID;
+    /* No wall clock, no network time: the device cannot compare an issuer's
+     * absolute expiry to anything. This single line is why a canonical command
+     * is blocked rather than honoured, and it is the honest state, not a
+     * placeholder - see cg_command.h decision 1. */
+    ctx->time_sync = CG_TIME_SYNC_UNSYNCHRONIZED;
+    ctx->now_ms = 0U;
+    ctx->output_stage_enabled = ops->output_stage_available();
+    ctx->limits_resolved = limits_resolved;
+    ctx->allowed_duty_max_permille =
+        limits_resolved && duty_limit != NULL ? (uint32_t)duty_limit->value : 0U;
+    ctx->local_safety_permits = ops->output_stage_available() && limits_resolved;
+    ctx->inputs_sufficiently_valid = in->thermal_observed && in->thermal_valid;
+    ctx->uptime_ms = now_ms;
+    ctx->telemetry_seq = s_telem_seq;
+    /* The controller state is the only mode this device can honestly claim.
+     * docs/02 §23 policy modes (NORMAL/WATCH/...) belong to Member D's policy
+     * layer, which does not run here; naming that as device_mode would attribute
+     * a policy decision to firmware that never made it. */
+    ctx->device_mode = cg_tec_state_name(s_ctl.state);
+    ctx->fault_bits = s_ctl.fault_bits;
+    ctx->applied_cooling_on = s_ctl.outputs_energized;
+    ctx->applied_duty_permille = s_ctl.duty_permille;
+}
+
+/* CG_COMMAND_ACK_LINE_MAX is measured, not estimated: the widest reachable ACK
+ * (36-character id, LOCAL_CONSOLE, the longest reason and mode tokens and full-width
+ * counters) is 558 bytes, and the previous 512-byte buffer refused it silently. A refused ACK is not a safe failure: it is the loss of exactly the
+ * record that makes a rejection auditable. */
+static void emit_command_ack(const cg_cmd_ack_t *ack, const cg_cmd_context_t *ctx)
+{
+    char line[CG_COMMAND_ACK_LINE_MAX];
+    int len;
+
+    len = cg_command_ack_format(line, sizeof(line), ack, ctx, s_boot_id, s_boot_count);
+    if (len <= 0 || (size_t)len >= sizeof(line)) {
+        cg_log_error("cmdack=FORMAT_FAIL command_id=%.32s len=%d", ack->command_id, len);
+        return;
+    }
+    if (!cg_log_raw_line(line)) {
+        cg_log_error("cmdack=WRITE_FAIL command_id=%.32s", ack->command_id);
+    }
+}
+
+/* A-W06-04: the ACK is recorded either way - the desired state only when the
+ * command actually passed every validation conjunct, the verdict always. Nothing
+ * here routes to the actuator: physical application stays behind the
+ * controller's own gate, the compiled-out output stage, the unresolved limits
+ * and an operator authorization this slice does not have. Keeping "what the
+ * device was asked for" separate from "what the device is doing" is the whole
+ * point of docs/02 2188-2198 (§32.2) and 2200-2215 (§32.3). */
+static void record_command_state(const cg_cmd_ack_t *ack)
+{
+    if (ack->status == CG_CMD_ACK_ACCEPTED) {
+        s_cmd_state.desired_cooling = ack->desired_cooling;
+        s_cmd_state.desired_duty_permille = ack->desired_duty_permille;
+    }
+    s_cmd_state.has_command = true;
+    memcpy(s_cmd_state.command_id, ack->command_id, sizeof(s_cmd_state.command_id));
+    s_cmd_state.last_status = ack->status;
+    s_cmd_state.last_reason = ack->reason;
+}
 
 static void render_probe_identity(void)
 {
@@ -133,6 +215,7 @@ static void emit_telemetry(uint64_t now_ms, const cg_snapshot_t *snap)
         .probe_rom = {s_probe_rom_hex[0], s_probe_rom_hex[1], s_probe_rom_hex[2],
                       s_probe_rom_hex[3]},
         .role_status = CG_ROM_STATUS,
+        .cmd_state = &s_cmd_state,
         .output_stage_enabled = ops->output_stage_available(),
         .fan_available = ops->fan_available(),
     };
@@ -199,6 +282,26 @@ static void apply_command(const cg_tec_command_t *command, const cg_tec_inputs_t
         case CG_TEC_CMD_STATUS:
             log_tec("STATUS", cg_tec_state_name(s_ctl.state));
             break;
+        case CG_TEC_CMD_CMDTEST: {
+            cg_command_t command_record;
+            cg_cmd_context_t ctx;
+            cg_cmd_ack_t ack;
+            const char *error = "OK";
+            bool built;
+
+            built = cg_command_from_local_test(
+                command->arg, command->flag != 0U ? CG_CMD_COOLING_ON : CG_CMD_COOLING_OFF,
+                command->value, &command_record, &error);
+            if (!built) {
+                cg_log_error("cmdtest=RECORD_FAIL error=%s id=%.32s", error, command->arg);
+                break;
+            }
+            build_cmd_context(&ctx, in, in->now_ms);
+            cg_command_validate(&command_record, &ctx, &s_cmd_store, &ack);
+            emit_command_ack(&ack, &ctx);
+            record_command_state(&ack);
+            break;
+        }
         case CG_TEC_CMD_NONE:
         default:
             cg_log_error("console=EMPTY_COMMAND");
@@ -277,6 +380,7 @@ void cg_commission_start(const char *boot_id, uint32_t boot_count)
 
     (void)snprintf(s_boot_id, sizeof(s_boot_id), "%s", boot_id != NULL ? boot_id : "UNKNOWN");
     s_boot_count = boot_count;
+    cg_cmd_store_init(&s_cmd_store);
     render_probe_identity();
     make_token(token);
     now_ms = (uint64_t)(esp_timer_get_time() / 1000);
