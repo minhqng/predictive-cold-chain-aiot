@@ -69,7 +69,29 @@ class W06CheckerTests(unittest.TestCase):
     def test_absent_expiry_treated_as_unbounded_is_caught(self) -> None:
         checker = self.run_with(COMMAND, 'ack->reason = "MISSING_EXPIRY";',
                                 'ack->reason = "NO_EXPIRY_REQUESTED";\n        return;')
-        self.assertTrue(checker.failures)
+        self.assertTrue(any("an absent expiry is refused before any clock reasoning" in failure
+                            for failure in checker.failures))
+
+    def test_pre_identity_rejection_that_remembers_is_caught(self) -> None:
+        """A foreign or malformed record must not take the canonical result with it."""
+        checker = self.run_with(
+            COMMAND,
+            'ack->reason = "DEVICE_ID_MISMATCH";\n        return;',
+            'ack->reason = "DEVICE_ID_MISMATCH";\n'
+            '        if (store != NULL) {\n            store_put(store, ack);\n        }\n'
+            '        return;',
+        )
+        self.assertTrue(any("schema and device-identity rejections are not stored" in failure
+                            for failure in checker.failures))
+
+    def test_missing_local_source_gate_is_caught(self) -> None:
+        checker = self.run_with(
+            COMMAND,
+            "if (command->source == CG_CMD_SOURCE_LOCAL_CONSOLE) {",
+            "if (false) {",
+        )
+        self.assertTrue(any("a source gate precedes the ACCEPTED assignment" in failure
+                            for failure in checker.failures))
 
     def test_fabricated_now_ms_is_caught(self) -> None:
         checker = self.run_with(COMMISSION, "ctx->now_ms = 0U;",

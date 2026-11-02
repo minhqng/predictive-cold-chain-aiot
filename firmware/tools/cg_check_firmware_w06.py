@@ -119,8 +119,9 @@ def run_checks() -> Checker:
     checker.check(unsync != -1 and compare != -1 and unsync < compare,
                   "the fail-closed guard precedes the expiry comparison; a command is never "
                   "judged fresh by default")
-    checker.check("MISSING_EXPIRY" in body and "unbounded" not in body,
-                  "an absent expiry is refused, not treated as never expiring")
+    checker.check("MISSING_EXPIRY" in body and body.find('"MISSING_EXPIRY"') < unsync,
+                  "an absent expiry is refused before any clock reasoning, so a missing field "
+                  "cannot be read as never expiring")
     checker.check("MISSING_CREATED_AT" in body,
                   "a command without an issue time is refused rather than assumed recent")
     # The freshness rule must not be reinterpreted anywhere in the command layer.
@@ -155,6 +156,21 @@ def run_checks() -> Checker:
                   "duplicate hits and retention evictions are counted, so the memory bound is "
                   "observable instead of assumed")
 
+    # A rejection that happens before the record is established as *this*
+    # device's command has no canonical result to remember. Storing it would let
+    # a malformed or foreign submission clobber the verdict a valid earlier
+    # attempt of the same id earned.
+    checker.check(dup != -1 and "store_put" not in body[:dup],
+                  "schema and device-identity rejections are not stored: nothing can overwrite a "
+                  "remembered canonical result with a verdict the device never owned")
+
+    # 4b. The local test bridge cannot be promoted --------------------------
+    accepted = body.find("ack->status = CG_CMD_ACK_ACCEPTED;")
+    source_gate = body.find("command->source == CG_CMD_SOURCE_LOCAL_CONSOLE")
+    checker.check(source_gate != -1 and accepted != -1 and source_gate < accepted,
+                  "a source gate precedes the ACCEPTED assignment, so a LOCAL_CONSOLE record is "
+                  "refused structurally rather than only as a side effect of missing fields")
+
     # 5. Volatile memory ----------------------------------------------------
     checker.check("nvs" not in command_c.lower(),
                   "the command layer writes no NVS: command identity must not survive a reset")
@@ -173,7 +189,7 @@ def run_checks() -> Checker:
     for status in ACCEPT_STATUSES:
         checker.check(f'case CG_CMD_ACK_{status}' in command_c
                       or f'"{status}"' in command_c,
-                      f"the ACK status {status} is named exactly as docs/02 2168-2177 spells it")
+                      f"the ACK status {status} is named exactly as docs/02 §32.1 (2172-2184) spells it")
     status_body = extract_function_body(command_c,
                                         r"const char \*cg_cmd_ack_status_name\([^)]*\)") or ""
     emitted = set(re.findall(r'return "([A-Z_]+)";', status_body))
@@ -194,7 +210,7 @@ def run_checks() -> Checker:
                   "the ACK buffer is a named budget the measured worst case is tested against, "
                   "not an inline guess: a refused ACK deletes the audit record")
     checker.check('"VERIFIED"' not in command_c and '"COOLED"' not in command_c,
-                  "the command layer never claims a physical outcome (docs/02 2216-2224)")
+                  "the command layer never claims a physical outcome (docs/02 §32.2, 2188-2197)")
     for key in ("command_id=%s", "status=%s reason=%s", "desired_cooling=%s",
                 "applied_cooling=%s", "reapplied=%d", "expiry_evaluable=%d",
                 "time_sync_state=%s", "device_mode=%s", "ack_seq=%lu", "boot_id=%s",
