@@ -46,3 +46,7 @@ evidence/A/W06/** -text
 # re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
 # those bytes on a core.autocrlf checkout and break every pin.
 evidence/A/W08/** -text
+
+# W15 PZEM-integrity dossier: hash-pinned in evidence/A/W15/SHA256SUMS.txt and
+# re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
+evidence/A/W15/** -text
