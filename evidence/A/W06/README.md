@@ -49,7 +49,7 @@ version numbers cannot be confused.
 
 ```bash
 py firmware/tools/run_all_checks_w06.py              # whole suite, 12 layers
-py firmware/tools/cg_check_firmware_w06.py           # 120 static checks
+py firmware/tools/cg_check_firmware_w06.py           # 122 static checks
 py firmware/tools/tests/test_cg_w06_harness.py       # 40 C scenarios on the real sources
 py firmware/tools/tests/test_cg_command_trace.py     # 8 trace-stage non-promotion tests
 py evidence/A/W06/build_contract_artifacts.py --check # artifacts reproduce byte-for-byte

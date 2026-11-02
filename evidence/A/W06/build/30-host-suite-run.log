@@ -3,7 +3,7 @@
 #           cd firmware/tools && PYTHONUTF8=1 py run_all_checks_w06.py
 
 ## unittest suite (W02 + W03 + W04 + W05 + W06)
-Ran 294 tests
+Ran 295 tests
 OK
 exit_code=0
 
