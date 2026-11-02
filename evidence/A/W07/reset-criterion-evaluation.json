@@ -61,7 +61,8 @@
         "suspect": "COOLDOWN"
       }
     },
-    "competing_explanation": "evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, which is why register holdover is a candidate here rather than a conclusion",
+    "competing_explanation": "register/transition lag on the PZEM side. Two committed observations support it: evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, and after this frame the applied duty stays 0 while the reading falls 7.15 -> 0.56 -> 0.02 -> 0.0 -> 0.0 -> 0.02 A, reaching 0 at device_ms 829894. That is a decaying tail, not sustained energization - but it is a meter trace, not a verified zero-current measurement, so it weakens the anomaly reading without closing it",
+    "current_returns_to_zero_at_device_ms": 829894,
     "device_ms": 826894,
     "differing_measured_fields": [],
     "fields": {
@@ -83,6 +84,38 @@
       "voltage_status": "",
       "voltage_v": "11.79"
     },
+    "frames_after_suspect": [
+      {
+        "current_a": "0.56",
+        "device_ms": 827894,
+        "power_w": "6.6",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.02",
+        "device_ms": 828894,
+        "power_w": "0.2",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.0",
+        "device_ms": 829894,
+        "power_w": "0.0",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.0",
+        "device_ms": 830894,
+        "power_w": "0.0",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.02",
+        "device_ms": 831894,
+        "power_w": "0.2",
+        "voltage_v": "11.93"
+      }
+    ],
     "measured_fields_compared": [
       "voltage_v",
       "voltage_status",
@@ -98,6 +131,15 @@
       "t3_status",
       "t4_c",
       "t4_status"
+    ],
+    "measurement_vs_verification": "PZEM-reported values only. No independent instrument read this branch, so the decay describes what the meter showed, not proof that the branch carried no current - the two must not be conflated",
+    "operator_confirmed_zero_duty_current_sequence_a": [
+      "7.15",
+      "0.56",
+      "0.02",
+      "0.0",
+      "0.0",
+      "0.02"
     ],
     "preceding_frames_identical_on_all_measured_fields": 2,
     "reading": "applied duty `0` and requested duty `0` in state `COOLDOWN`, yet the row carries `7.15 A` and `84.2 W`; `current_status` is an **empty cell, not OK** and all 14 measured fields match 2 of the 2 preceding frames, so the readings did not move when the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety classification and not a host tool's call, so it is recorded as the canonical candidate for the next supervised session; the frame stays inside the recovery segment's published peak, where the report names it instead of averaging it away"

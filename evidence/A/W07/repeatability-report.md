@@ -35,7 +35,7 @@ The two slope columns answer different questions and are not two estimates of on
 Suspect frame (`device_ms=826894`): applied duty `0` and requested duty `0` in state `COOLDOWN`, yet the row carries `7.15 A` and `84.2 W`; `current_status` is an **empty cell, not OK** and all 14 measured fields match 2 of the 2 preceding frames, so the readings did not move when the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety classification and not a host tool's call, so it is recorded as the canonical candidate for the next supervised session; the frame stays inside the recovery segment's published peak, where the report names it instead of averaging it away.
 
 - canonical candidate: docs/01 22.4 'Commanded OFF + unexpected current' names CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists 'current while state should be OFF' as its example
-- competing explanation: evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, which is why register holdover is a candidate here rather than a conclusion
+- competing explanation: register/transition lag on the PZEM side. Two committed observations support it: evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, and after this frame the applied duty stays 0 while the reading falls 7.15 -> 0.56 -> 0.02 -> 0.0 -> 0.0 -> 0.02 A, reaching 0 at device_ms 829894. That is a decaying tail, not sustained energization - but it is a meter trace, not a verified zero-current measurement, so it weakens the anomaly reading without closing it
 - comparison actually performed: `14` measured fields, `2` of `2` preceding frames identical on all of them, differing on `none`
 
 ## The representation question, measured
