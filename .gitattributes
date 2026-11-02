@@ -47,3 +47,9 @@ evidence/A/W06/** -text
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
+
+# W14 spatial/position QA dossier: every file is hash-pinned in
+# evidence/A/W14/SHA256SUMS.txt and re-checked by validate_w14.py, so the generated
+# JSON/CSV must keep their exact bytes. `text=auto eol=lf` would rewrite them on a
+# checkout with core.autocrlf and break every pin.
+evidence/A/W14/** -text
