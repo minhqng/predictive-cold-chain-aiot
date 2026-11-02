@@ -588,7 +588,7 @@ static const char *const cg_command_required_tokens[CG_FIELD_COUNT] = {
 
 bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **error)
 {
-    char buffer[256];
+    char buffer[CG_COMMAND_RECORD_MAX];
     size_t len;
     size_t seen = 0U;
     int field = -1;

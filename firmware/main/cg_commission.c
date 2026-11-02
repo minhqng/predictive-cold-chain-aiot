@@ -98,9 +98,10 @@ static void build_cmd_context(cg_cmd_context_t *ctx, const cg_tec_inputs_t *in,
 }
 
 /* CG_COMMAND_ACK_LINE_MAX is measured, not estimated: the widest reachable ACK
- * (36-character id, LOCAL_CONSOLE, the longest reason and mode tokens and full-width
- * counters) is 558 bytes, and the previous 512-byte buffer refused it silently. A refused ACK is not a safe failure: it is the loss of exactly the
- * record that makes a rejection auditable. */
+ * (a 36-character id, the longest reason and mode tokens, full-width counters and
+ * now the required device_id) is 592 bytes, and the 512-byte buffer W06 first used
+ * refused it silently. A refused ACK is not a safe failure: it is the loss of
+ * exactly the record that makes a rejection auditable. */
 static void emit_command_ack(const cg_cmd_ack_t *ack, const cg_cmd_context_t *ctx)
 {
     char line[CG_COMMAND_ACK_LINE_MAX];
