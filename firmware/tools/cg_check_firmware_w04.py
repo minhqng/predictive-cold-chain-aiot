@@ -20,9 +20,9 @@ Checks:
 5.  Commission wiring - no invented cold/hot probe assignment, shipped
     limits used, UART console only, telemetry once per second, task
     watchdog registration.
-6.  Telemetry integrity - schema 1, `nan` for missing, no wall-clock
-    fabrication, cold/hot/ambient/RH marked not assigned, host schema
-    parity.
+6.  Telemetry integrity - firmware and host schema versions agree, `nan` for
+    missing, no wall-clock fabrication, cold/hot/ambient/RH marked not
+    assigned, host schema parity for the W04 field set.
 7.  Grammar guard - `cg_serial.GRAMMAR_VERSION` stays 2 (W04 only adds
     line kinds, never changes the existing grammar).
 8.  No network path - NETWORK_TOKEN scans sources, headers and CMake for any
@@ -298,7 +298,7 @@ def run_checks() -> Checker:
 
     # 6. Telemetry integrity --------------------------------------------
     checker.check(define_value(config, "CG_TELEMETRY_SCHEMA_VERSION") == str(telemetry_schema.SCHEMA_VERSION),
-                  "firmware and host agree on telemetry schema 1")
+                  "firmware and host agree on the current telemetry schema version")
     checker.check(define_value(config, "CG_INVALID_VALUE_TOKEN") == f'"{telemetry_schema.MISSING_TOKEN}"',
                   "missing values use the shared `nan` token")
     for field in telemetry_schema.REQUIRED_FIELDS + telemetry_schema.REQUIRED_STATUS_FIELDS:
