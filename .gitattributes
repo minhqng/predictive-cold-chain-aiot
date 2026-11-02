@@ -41,3 +41,8 @@ evidence/A/W05/** -text
 # build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
+
+# W08 envelope/Gate-A dossier: hash-pinned in evidence/A/W08/SHA256SUMS.txt and
+# re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
+# those bytes on a core.autocrlf checkout and break every pin.
+evidence/A/W08/** -text
