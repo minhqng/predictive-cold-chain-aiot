@@ -41,3 +41,17 @@ evidence/A/W05/** -text
 # build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
+
+# W08..W16 Member A dossiers: each is hash-pinned in its own SHA256SUMS.txt and
+# re-verified by validate_wNN.py, on the same terms as W04-W07 above. One block here
+# rather than one per task branch, because eight sibling branches appending to the end
+# of this file is a guaranteed conflict in the region that must not drift.
+evidence/A/W08/** -text
+evidence/A/W09/** -text
+evidence/A/W10/** -text
+evidence/A/W11/** -text
+evidence/A/W12/** -text
+evidence/A/W13/** -text
+evidence/A/W14/** -text
+evidence/A/W15/** -text
+evidence/A/W16/** -text
