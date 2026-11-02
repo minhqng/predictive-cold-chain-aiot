@@ -105,9 +105,9 @@ def main() -> int:
     print("Compile check: ESP-IDF v6.1 build, logged in evidence/A/W04/build-2026-11-01/.")
     print("W04 FOUNDATION DELIVERED — PRODUCTION TEC OUTPUT STAGE COMPILED OUT AND NOT AUTHORIZED")
     print("H6 bench energization already ran under operator supervision (2026-10-29, PWM 10%, 60s).")
-    print("Physical W04 work still missing: polarity record with photo, 5-boot/5-reset sweep,")
-    print("final fuse basis, 2x2.5 mm2 conductor-class audit, thermal channels in the first trace,")
-    print("and the canonical W04 deliverable files. See evidence/A/W04/acceptance.md.")
+    print("Physical W04 work still open: 5 genuine POWER_ON cold boots, one pin-level DMM/scope")
+    print("reading of GPIO5/6/10, the fuse-label and conductor-marking photographs, a conservative")
+    print("run that also records T1/T3, and the CR-A-W04-01/02 change reviews.")
     return 0
 
 

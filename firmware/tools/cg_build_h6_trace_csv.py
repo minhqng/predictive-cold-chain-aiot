@@ -140,7 +140,7 @@ def main() -> int:
     rows, counters = build(args.log)
     args.csv.parent.mkdir(parents=True, exist_ok=True)
     with args.csv.open("w", encoding="utf-8", newline="") as handle:
-        writer = csv.DictWriter(handle, fieldnames=COLUMNS)
+        writer = csv.DictWriter(handle, fieldnames=COLUMNS, lineterminator="\n")
         writer.writeheader()
         writer.writerows(rows)
 
