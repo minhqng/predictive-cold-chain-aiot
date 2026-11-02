@@ -110,7 +110,18 @@ PROBE_IDENTIFICATION_MARKERS = (
 # Mechanical-audit facts sourced from committed evidence (never re-derived,
 # never certified). These are observed states, not recommendations.
 CONDUCTOR_CANONICAL = "2 x 2.5 mm^2"
-CONDUCTOR_OBSERVED = "1.75 mm^2 (operator-confirmed 2026-11-02; no marking photographed, no measurement recorded)"
+# Operator correction, 2026-11-02: 1.75 mm is a DIAMETER measured across the copper
+# core, not a cross-sectional area. The area is therefore DERIVED, and the derivation
+# assumes a solid round core - nobody has confirmed that by looking at the strand, and a
+# flexible stranded conductor is not one round wire. Stating the derived area without the
+# assumption would be how a measurement comes to look like a certification.
+CONDUCTOR_CORE_DIAMETER_MM = 1.75
+CONDUCTOR_AREA_IF_SOLID_MM2 = round(3.141592653589793 * (CONDUCTOR_CORE_DIAMETER_MM / 2) ** 2, 3)
+CONDUCTOR_OBSERVED = (
+    f"{CONDUCTOR_CORE_DIAMETER_MM} mm copper-core diameter (operator-measured "
+    f"2026-11-02); = {CONDUCTOR_AREA_IF_SOLID_MM2} mm^2 of copper IF the core is solid "
+    "round - that assumption is NOT confirmed, no marking photographed, no cross-section "
+    "measured, no insulation class or routing recorded")
 FUSE_REPORTED_A = 15           # reported, suitability unproven
 # NOTE: the driven-branch peak current is computed per capture from the frames
 # themselves (see pzem_zero_active_audit); it is never carried as a constant, so
@@ -420,6 +431,44 @@ def role_geometry_audit(rows: list[dict[str, str]], path: pathlib.Path) -> dict[
 # ---------------------------------------------------------------------------
 # A-W12-02 PZEM zero/active audit
 # ---------------------------------------------------------------------------
+# Qualification is decided by the producer's own token, not by whether a cell is
+# non-empty. cg_pzem_status_name() emits OK / TIMEOUT / CRC_ERR / BAD_SLAVE /
+# BAD_FUNCTION, so only OK can vouch for a reading; docs/01 section 19 is explicit that
+# UNKNOWN must not become normal. Treating "INVALID" as a recorded status - which is what
+# a nonempty check does - would let an error token move a channel toward qualified.
+ELECTRICAL_QUALIFYING_STATUS = "OK"
+ELECTRICAL_STATUS_NAMES = ("OK", "TIMEOUT", "CRC_ERR", "BAD_SLAVE", "BAD_FUNCTION")
+ELECTRICAL_QUALIFIED = "QUALIFIED"
+ELECTRICAL_PARTIALLY_QUALIFIED = "PARTIALLY_QUALIFIED"
+ELECTRICAL_UNQUALIFIED = "UNQUALIFIED"
+
+
+def _status_class(value: str | None) -> str:
+    """valid / absent / error / unsupported - the four things a status cell can be."""
+    token = (value or "").strip()
+    if token == "":
+        return "absent"
+    if token == ELECTRICAL_QUALIFYING_STATUS:
+        return "valid"
+    if token in ELECTRICAL_STATUS_NAMES:
+        return "error"
+    return "unsupported"
+
+
+def _channel_qualification(rows: list[dict[str, str]], column: str) -> dict[str, object]:
+    """Per-channel status census: what the capture really recorded, counted."""
+    classes = [_status_class(row.get(column)) for row in rows]
+    tokens = sorted({(row.get(column) or "").strip() for row in rows} - {""})
+    return {
+        "frames": len(rows),
+        "valid": classes.count("valid"),
+        "absent": classes.count("absent"),
+        "error": classes.count("error"),
+        "unsupported": classes.count("unsupported"),
+        "tokens_seen": tokens,
+    }
+
+
 def pzem_zero_active_audit(rows: list[dict[str, str]]) -> dict[str, object]:
     """Compare OFF/ON separation to the envelope; list stale OFF-current frames.
 
@@ -434,8 +483,17 @@ def pzem_zero_active_audit(rows: list[dict[str, str]]) -> dict[str, object]:
     committed capture: the V/I/P numbers carry no device-side validity token and
     must not be quoted as qualified measurements.
     """
-    unqualified = all((r.get("current_status", "") == "" and
-                       r.get("voltage_status", "") == "") for r in rows) if rows else True
+    channels = {name: _channel_qualification(rows, name)
+                for name in ("current_status", "voltage_status")}
+    qualified_channels = [name for name, census in channels.items()
+                          if census["frames"] and census["valid"] == census["frames"]]
+    any_valid = any(census["valid"] for census in channels.values())
+    if qualified_channels and len(qualified_channels) == len(channels):
+        electrical_qualification = ELECTRICAL_QUALIFIED
+    elif any_valid:
+        electrical_qualification = ELECTRICAL_PARTIALLY_QUALIFIED
+    else:
+        electrical_qualification = ELECTRICAL_UNQUALIFIED
     duty0_current: list[dict[str, object]] = []
     for r in rows:
         duty = r.get("pwm_applied_permille")
@@ -455,15 +513,12 @@ def pzem_zero_active_audit(rows: list[dict[str, str]]) -> dict[str, object]:
     on_currents = [_to_float(r.get("current_a")) for r in rows
                    if r.get("pwm_applied_permille") == "999"]
     on_currents = [c for c in on_currents if c is not None]
-    qualified_frames = sum(1 for r in rows
-                           if (r.get("current_status") or "").strip()
-                           or (r.get("voltage_status") or "").strip())
     out: dict[str, object] = {
         "requirement": "A-W12-02",
         "envelope_reference": "W3 boot-default-off / W8 electrical envelope (sibling workstreams); "
                               "this host audit reads the OFF/ON separation in the committed capture, "
                               "it does not re-certify the envelope.",
-        "electrical_qualification": "UNQUALIFIED" if unqualified else "QUALIFIED_PARTLY",
+        "electrical_qualification": electrical_qualification,
         "duty0_with_current_frames": {
             "count": len(duty0_current),
             "listed_individually_never_averaged": True,
@@ -480,23 +535,39 @@ def pzem_zero_active_audit(rows: list[dict[str, str]]) -> dict[str, object]:
         "verdict": "OFF/ON separation observable; duty-0 stale-current frames "
                    "isolated; electrical figures UNQUALIFIED pending a qualified channel",
     }
-    # A qualification claim must carry its own evidence: how many frames actually
-    # emitted a non-empty current_status/voltage_status. The validator fails a
-    # QUALIFIED claim that has no such evidence, never qualification itself.
+    # A qualification claim must carry its own evidence, and the evidence has to be a
+    # VALIDATING token. The validator fails any QUALIFIED/PARTIALLY_QUALIFIED claim that
+    # no valid frame supports; it never fails qualification itself, which is what the
+    # earlier check did when it asserted today's defect as an invariant.
     out["qualified_frame_evidence"] = {
-        "frames_with_nonempty_status": qualified_frames,
+        "frames_with_valid_status": max((c["valid"] for c in channels.values()), default=0),
+        "frames_with_nonempty_status": sum(1 for r in rows
+                                           if (r.get("current_status") or "").strip()
+                                           or (r.get("voltage_status") or "").strip()),
         "total_frames": len(rows),
+        "per_channel": channels,
+        "qualifying_token": ELECTRICAL_QUALIFYING_STATUS,
     }
-    if unqualified:
-        out["unqualified_reason"] = "current_status and voltage_status empty in every " \
-                                    "frame; no power_status/door_status columns exist in " \
-                                    "this capture"
+    if electrical_qualification == ELECTRICAL_UNQUALIFIED:
+        out["unqualified_reason"] = (
+            "no frame carries the producer's validating current/voltage status token; the "
+            "committed capture leaves current_status and voltage_status empty in every row, "
+            "and power_w/energy_wh have no status column at all, so no electrical value here "
+            "is qualified")
+    else:
+        out["unqualified_reason"] = None
+    if electrical_qualification == ELECTRICAL_PARTIALLY_QUALIFIED:
+        out["verdict"] = ("OFF/ON separation observable; duty-0 stale-current frames "
+                          "isolated; a partially qualified channel is present - state which "
+                          "channel and which frames carry the validating token before any "
+                          "figure is called qualified")
+    elif electrical_qualification == ELECTRICAL_QUALIFIED:
+        out["verdict"] = ("OFF/ON separation observable; duty-0 stale-current frames "
+                          "isolated; both electrical channels carry the validating status "
+                          "token in every frame")
+    else:
         out["verdict"] = "OFF/ON separation observable; duty-0 stale-current frames " \
                          "isolated; electrical figures UNQUALIFIED pending a qualified channel"
-    else:
-        out["verdict"] = ("OFF/ON separation observable; duty-0 stale-current frames "
-                          "isolated; some frames carry a device-side validity token "
-                          "(partially qualified channel present)")
     return out
 
 
@@ -544,8 +615,11 @@ def mechanical_audit_checklist() -> list[dict[str, object]]:
             "check": "branch terminals and FDD2-250 fastons inspected (no discoloration, "
                      "no looseness)",
             "status": "NEED_USER_ACTION",
-            "observed": "W01 as-built maps the faston as 1.5-2.5 mm^2 rated (in range for "
-                        "the observed 1.75 mm^2 conductor); no terminal inspection record exists",
+            "observed": "W01 as-built maps the faston as 1.5-2.5 mm^2 rated, which would "
+                        f"cover the derived ~{CONDUCTOR_AREA_IF_SOLID_MM2} mm^2 copper area of "
+                        "the observed 1.75 mm core diameter - but that agreement rests on "
+                        "the unconfirmed solid-round assumption and on a termination "
+                        "inspection nobody has performed, so it is a lead, not a pass",
             "closes_with": "a supervised terminal-inspection note; this is a physical check the "
                            "host cannot perform",
         },
@@ -582,40 +656,91 @@ def mechanical_audit_checklist() -> list[dict[str, object]]:
 # ---------------------------------------------------------------------------
 # A-W12-04 hardware config signoff + dataset validity table
 # ---------------------------------------------------------------------------
-def hardware_config_signoff(captures: list[dict[str, object]]) -> dict[str, object]:
-    """List runs under CG-HW-001 and mark what must not be pooled.
+INTENDED_HARDWARE_CONFIG = "CG-HW-001"   # the label W01's as-built record gives this rig
 
-    The dataset-validity table is the deliverable: it shows, per capture, its
-    configuration key, whether it is probe-identification, whether its roles
-    follow the freeze, and whether its electrical channels are qualified. Two
-    captures may only be pooled when every one of those attributes agrees.
+
+def _verification_open_items(cap: dict[str, object]) -> list[str]:
+    """What is missing before this capture's configuration could be called verified.
+
+    Derived per capture rather than written once as a constant, so a future capture that
+    does carry ROM readback or labelled roles closes its own items instead of leaving a
+    hardcoded UNVERIFIED forever - and, the other way round, so nothing here can be read
+    as certified while the physical evidence is absent.
+    """
+    role = cap.get("role_geometry_audit", {}) or {}
+    items: list[str] = []
+    if not role.get("rom_readback_verified"):
+        items.append("sensor ROM identity taken from the configuration table, not read back "
+                     "from the devices")
+    labels = role.get("role_label_status") or {}
+    if any(str(state).upper() != "LABELLED" for state in labels.values()):
+        items.append(f"probe role labels not asserted by the capture: {labels or 'none seen'}")
+    if not cap.get("image_sha256"):
+        items.append("installed image not identified in the capture itself")
+    items.append("no physical configuration inspection record (photo with scale, mounting "
+                 "method/height/clearance, terminal and conductor marking)")
+    return items
+
+
+def hardware_config_signoff(captures: list[dict[str, object]]) -> dict[str, object]:
+    """Separate what the rig is CALLED from what has been VERIFIED about it.
+
+    Four different things were collapsed into one field before: the intended label
+    CG-HW-001, the identity derived from capture evidence, the physical session identity,
+    and the signoff state. A dataset-validity row stamped hardware_config_id=CG-HW-001
+    reads like a certified configuration even while A-W12-04 signoff is unresolved, which
+    is how an unverified configuration gets pooled by a consumer that trusts the column.
+
+    Pooling eligibility is still computed, so legitimate comparisons across independent
+    sessions of one verified configuration remain possible; it is the *certification* that
+    this function refuses to imply.
     """
     rows = []
     for cap in captures:
-        role = cap.get("role_geometry_audit", {})
-        pzem = cap.get("pzem_audit", {})
+        role = cap.get("role_geometry_audit", {}) or {}
+        pzem = cap.get("pzem_audit", {}) or {}
+        open_items = _verification_open_items(cap)
         rows.append({
             "capture": cap.get("capture"),
-            "hardware_config_id": "CG-HW-001",
-            "configuration_key": cap.get("configuration"),
+            "intended_hardware_config": INTENDED_HARDWARE_CONFIG,
+            "evidence_derived_config_identity": cap.get("configuration"),
+            "physical_session_identity": sorted(cap.get("boot_ids") or []),
+            "config_verification": "UNVERIFIED" if open_items else "VERIFIED",
+            "verification_open_items": open_items,
             "is_probe_identification": role.get("is_probe_identification"),
             "role_verdict": role.get("verdict"),
             "electrical_qualification": pzem.get("electrical_qualification"),
-            "poolable_group": (cap.get("configuration"), role.get("verdict"),
-                               pzem.get("electrical_qualification")),
+            "dataset_pooling_eligibility": (cap.get("configuration"), role.get("verdict"),
+                                            pzem.get("electrical_qualification")),
         })
     groups: dict[str, list[str]] = {}
     for row in rows:
-        groups.setdefault(str(row["poolable_group"]), []).append(row["capture"])
+        groups.setdefault(str(row["dataset_pooling_eligibility"]), []).append(row["capture"])
+    unverified = [row["capture"] for row in rows if row["config_verification"] == "UNVERIFIED"]
     return {
         "requirement": "A-W12-04",
-        "runs_under": "CG-HW-001",
+        "intended_hardware_config": INTENDED_HARDWARE_CONFIG,
+        "configuration_signoff_status": "UNRESOLVED" if unverified else "READY_FOR_SIGNOFF",
+        "captures_without_verified_configuration": unverified,
+        "what_the_label_is_not": ("CG-HW-001 is the intended label for this rig from the W01 "
+                                  "as-built record. It is not a verified identity, not a "
+                                  "signoff, and not evidence that two captures share a "
+                                  "physical configuration - that is what "
+                                  "evidence_derived_config_identity and the pooling columns "
+                                  "say."),
+        "what_would_close_signoff": [
+            "photograph the installed fuse body and conductor marking (see A-W12-03 items)",
+            "read the DS18B20 ROMs back from the devices rather than from the config table",
+            "assert probe roles in the capture, or record the mapping as a witnessed inspection",
+            "a named person signs the configuration record; a host audit cannot sign it",
+        ],
         "dataset_validity_table": rows,
         "poolable_groups": {g: names for g, names in groups.items()},
         "must_not_pool": [
             "probe-identification touch captures vs any plant capture",
             "captures whose roles disagree with the freeze vs captures that follow it",
-            "captures from different installed images (configuration key differs)",
+            "captures from different installed images (configuration identity differs)",
+            "captures whose electrical qualification differs",
         ],
     }
 
