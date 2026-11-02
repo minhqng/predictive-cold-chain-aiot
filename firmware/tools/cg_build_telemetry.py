@@ -38,7 +38,10 @@ sys.path.insert(0, str(pathlib.Path(__file__).resolve().parent))
 
 import cg_telemetry_schema as schema  # noqa: E402
 
-CSV_COLUMNS = [
+CSV_COLUMNS_BASE = [
+    # A W05 parser accepts schema 1 and 2, so one capture can legitimately mix
+    # them. The row has to say which line produced it.
+    "schema",
     "timestamp_utc",
     "timestamp_utc_source",
     "elapsed_ms",
@@ -76,6 +79,79 @@ CSV_COLUMNS = [
     "power_validity",
 ]
 
+# W05 additions to the flat acquisition view. A schema-1 record has none of
+# these, and they serialize as empty cells rather than as invented zeros - the
+# W04 captures committed in evidence/A/W04/ build through this same tool.
+W05_CSV_COLUMNS = [
+    "device_id",
+    "seq",
+    "calibration_id",
+    "role_status",
+    "t1_rom",
+    "t2_rom",
+    "t3_rom",
+    "spare_rom",
+    "energy_wh",
+    "energy_status",
+    "thermal_age_ms",
+    "power_age_ms",
+    "door_age_ms",
+    "thermal_seq",
+    "power_seq",
+    "door_transitions",
+    "door_cycles",
+    "probes_valid",
+    "probes_expected",
+    "thermal_quality",
+    "environment_quality",
+    "door_quality",
+    "electrical_quality",
+    "quality",
+    "cooling_applied",
+    "cooling_applied_source",
+    "cooling_evidence",
+    "health",
+    "health_thermal",
+    "health_bme",
+    "health_door",
+    "health_power",
+    "health_telemetry",
+    "health_control",
+    "thermal_beats",
+    "power_beats",
+    "door_beats",
+    "thermal_max_gap_ms",
+    "power_max_gap_ms",
+    "door_max_gap_ms",
+]
+
+CSV_COLUMNS = CSV_COLUMNS_BASE + W05_CSV_COLUMNS
+
+# The ML handoff gains exactly the columns Member B needs to decide whether a
+# frame is usable and where it came from: identity, the canonical quality
+# verdict, the freshness it must not assume, and the applied cooling state.
+# Values are still masked by status; quality names are never masked, because
+# they are the mask signal itself.
+W05_CORE_ML_COLUMNS = [
+    "device_id",
+    "seq",
+    "calibration_id",
+    "thermal_quality",
+    "environment_quality",
+    "door_quality",
+    "electrical_quality",
+    "quality",
+    "thermal_age_ms",
+    "power_age_ms",
+    "door_age_ms",
+    "probes_valid",
+    "probes_expected",
+    "cooling_applied",
+    "cooling_evidence",
+    "energy_wh",
+    "health",
+]
+
 ML_COLUMNS = [
     "elapsed_ms",
     "run_id",
@@ -97,7 +173,7 @@ ML_COLUMNS = [
     "sensor_validity",
     "power_validity",
     "door_open",
-]
+] + W05_CORE_ML_COLUMNS
 
 # The ML view masks a value unless its companion status is OK. The raw
 # and flat CSV views keep the device token untouched.
@@ -175,8 +251,13 @@ def summarize(records: list[schema.TelemetryRecord], report: dict) -> str:
     boots = sorted({str(r.value("boot_id")) for r in records})
     runs = sorted({str(r.value("run_id")) for r in records})
     phases = sorted({str(r.value("test_phase")) for r in records})
+    schemas = sorted({str(r.raw_fields.get("schema", "?")) for r in records})
+    devices = sorted({str(r.value("device_id")) for r in records if r.value("device_id")})
     lines = [
         f"telemetry records     : {len(records)}",
+        f"line schemas          : {', '.join(schemas)}",
+        f"devices               : "
+        f"{', '.join(devices) if devices else ('n/a (no records)' if not records else 'not carried (schema 1 lines)')}",
         f"boots                 : {', '.join(boots) if boots else 'none'}",
         f"run_ids               : {', '.join(runs) if runs else 'none'}",
         f"test phases           : {', '.join(phases) if phases else 'none'}",
@@ -188,12 +269,41 @@ def summarize(records: list[schema.TelemetryRecord], report: dict) -> str:
     if len(report["rejected"]) > 10:
         lines.append(f"  ... {len(report['rejected']) - 10} more rejected lines")
     lines.append("timestamp_utc         : UNAVAILABLE on every record (device has no wall clock)")
+
+    # W05: the quality distribution is part of the handoff, not an afterthought.
+    # A dataset built from frames that were mostly INVALID has to say so at the
+    # point of conversion, before anyone plots it.
+    quality_counts: dict[str, int] = {}
+    for record in records:
+        value = record.value("quality")
+        if isinstance(value, str):
+            quality_counts[value] = quality_counts.get(value, 0) + 1
+    if quality_counts:
+        order = ["VALID", "DEGRADED", "INVALID", "UNKNOWN"]
+        rendered = ", ".join(
+            f"{name}={quality_counts[name]}"
+            for name in order
+            if name in quality_counts
+        )
+        extra = sorted(set(quality_counts) - set(order))
+        if extra:
+            rendered += ", " + ", ".join(f"{name}={quality_counts[name]}" for name in extra)
+        lines.append(f"frame quality           : {rendered}")
+
+    seqs = [record.value("seq") for record in records if isinstance(record.value("seq"), int)]
+    if seqs:
+        duplicates = len(seqs) - len(set(seqs))
+        lines.append(
+            f"seq range               : {min(seqs)}..{max(seqs)} "
+            f"(duplicates={duplicates}, non-monotonic="
+            f"{sum(1 for a, b in zip(seqs, seqs[1:]) if b <= a)})"
+        )
     return "\n".join(lines)
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(
-        description="Build raw JSONL, acquisition CSV and ML dataset from a W04 capture."
+        description="Build raw JSONL, acquisition CSV and ML dataset from a W04/W05 capture."
     )
     parser.add_argument("log", help="serial capture produced by cg_capture.py")
     parser.add_argument("--jsonl", required=True, help="output raw JSONL path")

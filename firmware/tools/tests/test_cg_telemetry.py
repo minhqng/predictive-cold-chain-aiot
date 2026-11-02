@@ -85,6 +85,11 @@ class ParseLineTests(unittest.TestCase):
         self.assertIn("t_inside_status", str(ctx.exception))
 
     def test_unsupported_schema_is_rejected(self) -> None:
+        """Schema 2 is now the current line format, so an unknown future schema
+        is what has to be refused. A schema-1 body relabelled as 2 is also
+        refused, because it cannot carry the W05 identity fields."""
+        with self.assertRaises(schema.TelemetryError):
+            schema.parse_line(telem_line().replace("schema=1", "schema=9"))
         with self.assertRaises(schema.TelemetryError):
             schema.parse_line(telem_line().replace("schema=1", "schema=2"))
 
