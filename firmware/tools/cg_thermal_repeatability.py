@@ -354,6 +354,35 @@ def summarize(values: list[float], label: str) -> dict[str, object]:
     return out
 
 
+REPO_ROOT = pathlib.Path(__file__).resolve().parents[2]
+
+
+def capture_id(path: pathlib.Path) -> str:
+    """Name a capture the same way on every machine.
+
+    Generated artifacts are hash-pinned, so an absolute path here would make one
+    real capture produce different bytes per checkout - and would put a
+    developer's home directory into the repository.
+    """
+    candidate = path if path.is_absolute() else pathlib.Path.cwd() / path
+    try:
+        return candidate.resolve().relative_to(REPO_ROOT).as_posix()
+    except ValueError:
+        # Outside the repository: leave the path as given. Such a capture cannot be
+        # committed here, and validate_w07.py fails the dossier if one ever is.
+        return path.as_posix()
+
+
+def capture_path(identifier: str) -> pathlib.Path:
+    """Resolve what capture_id emitted back to the file it names.
+
+    The published id is repository-relative, so it must not depend on the
+    directory the next tool happened to be invoked from.
+    """
+    path = pathlib.Path(identifier)
+    return path if path.is_absolute() else REPO_ROOT / path
+
+
 def analyze(paths: list[pathlib.Path], representation: str,
             min_runs: int) -> dict[str, object]:
     runs: list[dict[str, object]] = []
@@ -366,7 +395,7 @@ def analyze(paths: list[pathlib.Path], representation: str,
                 continue
             per_phase[phase] = phase_metrics(phase_rows, phase, representation)
         runs.append({
-            "capture": path.as_posix(),
+            "capture": capture_id(path),
             "phases": per_phase,
             "passive_candidate": len(phases["cooling"]) == 0,
             "cooling_candidate": len(phases["cooling"]) > 0,
@@ -457,7 +486,7 @@ def overlay_rows(reports: list[dict[str, object]]) -> list[tuple[object, ...]]:
         representation = str(report["representation"])
         hot = includes_hot_side(representation)
         for run in report["runs"]:  # type: ignore[union-attr]
-            source = pathlib.Path(str(run["capture"]))  # type: ignore[arg-type]
+            source = capture_path(str(run["capture"]))
             phases = split_phases(read_rows(source))
             for phase, metrics in run["phases"].items():  # type: ignore[union-attr]
                 if not metrics.get("usable"):
