@@ -34,12 +34,19 @@ typedef enum {
     CG_TEC_CMD_RUN,
     CG_TEC_CMD_PHASE,
     CG_TEC_CMD_STATUS,
+    /* W06 local test bridge. It feeds the SAME canonical validator as a backend
+     * command would, and its record is stamped source=LOCAL_CONSOLE and
+     * command_id_form=TEST_TOKEN, so it can never be mistaken for a docs/02
+     * network command in the evidence. It has no clock to stamp absolute
+     * expiry with, so through the validator it is blocked fail-closed. */
+    CG_TEC_CMD_CMDTEST,
 } cg_tec_command_kind_t;
 
 typedef struct {
     cg_tec_command_kind_t kind;
     char arg[CG_TEC_CMD_ARG_MAX];
-    uint32_t value; /* START: requested duration in seconds */
+    uint32_t value; /* START: requested duration in seconds; CMDTEST: duty permille */
+    uint8_t flag;   /* CMDTEST: 1 = cooling ON, 0 = cooling OFF */
 } cg_tec_command_t;
 
 /* Parses one line (without the trailing newline is fine). On failure returns
