@@ -23,6 +23,7 @@ Generated 2026-11-01. Nothing in this directory was produced by a simulator.
 | `tec-cooling-response-600s.csv`, `tec-cooling-response-600s.png` | cross-week thermal response derived from the 2026-11-01 monitor stream, labelled as 100 % duty later-week data, not a conservative W04 trace |
 | `change-review-request-CR-A-W04-01.md`, `change-review-request-CR-A-W04-02.md` | the two contract questions Member A cannot decide alone (T2 semantics, conductor class) |
 | `tools/` | the Windows renderers that regenerate the figures; edit their node/edge and series lists, not the PNGs |
+| `w04-physical-verification-plan.md` | the remaining physical steps with their safety preconditions, backup/restore step and authorization gates — nothing in it has been executed |
 
 ## 2. Local-only artifacts (deliberately not committed)
 

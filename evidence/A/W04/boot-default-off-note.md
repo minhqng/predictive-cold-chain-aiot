@@ -53,12 +53,20 @@ by existing data and cannot be met by re-reading it:
    says it reads the pin's input side. A DMM or scope on GPIO5/GPIO6/GPIO10 is
    the only way to close it.
 
-There is also a provenance limit worth stating: the binary that produced those
-7 events is the 2026-10-29 production build, not the delivered image
-(`0acd230c…`, compile-only, never flashed). The source difference is comment and
+There is also a provenance limit worth stating, reconstructed from the flash
+logs rather than assumed: the binary that produced those 7 events is the
+2026-10-29 production build. The board was later flashed with the H6, H7 and then
+H8 images, and the last recorded flash (2026-10-31, H8 T2 HOT_SIDE `01cedce3…`)
+is what is on the hardware today. The delivered image (`0acd230c…`) is
+compile-only and has never run on hardware. The source difference is comment and
 tooling text only, but that is an argument, not a measurement.
 
 ## 3. Minimum additional evidence that would close A-W04-04
+
+The executable version of this list, with branch isolation, the full-flash backup
+and restore step, the second-console workaround for the native USB port dropping
+during power removal, and the standing authorization gates, is in
+`w04-physical-verification-plan.md`.
 
 | Need | Action | Risk |
 |---|---|---|

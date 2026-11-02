@@ -3,7 +3,9 @@
 Metadata block required by `docs/05A`. Per-requirement verdicts live in
 `acceptance.md`; the committed-versus-local inventory is in
 `ARTIFACT-MANIFEST.md`; the two open contract questions are in
-`change-review-request-CR-A-W04-01.md` and `change-review-request-CR-A-W04-02.md`.
+`change-review-request-CR-A-W04-01.md` (issue **#14**) and
+`change-review-request-CR-A-W04-02.md` (issue **#15**); the remaining physical
+steps and their safety preconditions are in `w04-physical-verification-plan.md`.
 
 | Field | Value |
 |---|---|

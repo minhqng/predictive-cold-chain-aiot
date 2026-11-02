@@ -56,17 +56,17 @@ failure `docs/05A` A-W08-02 warns about.
 
 1. A photograph of the installed fuse body showing its rating (and ideally
    `250 V` + glass/ceramic), plus one of the spare 10 A fuse.
-2. Either a marking or a measurement of the branch conductor cross-section
-   (photo of the print on the insulation, or caliper measurement of the bare
-   conductor with the strand count), **or** a recorded decision to rewire the
-   branch to `2 × 2.5 mm²`.
+2. The inputs that turn the confirmed 1.75 mm² conductor into an ampacity: its
+   insulation temperature class, run length, and whether the cable is bundled or
+   routed through a warm region — **or** a recorded decision to rewire the branch
+   to `2 × 2.5 mm²`. The cross-section itself is confirmed and is not re-asked.
 3. One sentence of installed condition for the ampacity basis: insulation
    temperature rating and how the cable is routed.
 
 With (1) and (2) this file gets a `Selected rating / Basis / Verification`
 block and A-W04-03 becomes VERIFIED. Until then A-W04-03 is **NEED_USER_INPUT**
-and the conductor item is a hardware deviation needing change review
-(`change-review-request-CR-A-W04-02.md`).
+and the conductor item is a hardware deviation under change review
+(`change-review-request-CR-A-W04-02.md`, issue **#15**).
 
 ## 6. What this note does not claim
 
