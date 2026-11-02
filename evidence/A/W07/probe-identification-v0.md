@@ -44,20 +44,22 @@ spread is 0.125 °C (`decay_check`), 0.062 °C in the other five.
 
 ## Evidence
 
-| window | seconds | frames | held by operator | observed |
-|---|---|---|---|---|
-| `live_check` | 12 | 11 | none | all four probes OK, t1 29.654 / t2 29.972 / t3 29.375 / t4 29.694 |
-| `baseline` | 45 | 44 | none | t1 29.651 (spread 0.063), t2 29.958, t3 29.375 flat, t4 29.694 |
-| `touch_1` | 62 | 61 | **near the door** | **t4 31.438 -> 34.250 (+2.81 in window, +3.63 vs baseline)**; t1 +0.04, t2 +0.00, t3 +0.03 |
-| `settle_1` | 30 | 29 | **middle of the chamber** | **t1 29.750 -> 31.938 (+2.19)** while t4 fell 32.062 -> 31.375 (release decay) |
-| `touch_2` | 30 | 29 | **bottom of the chamber** | **t3 29.500 -> 31.875 (+2.38)** while t1 fell -0.25 and t4 fell -0.13 |
-| `decay_check` | 60 | 59 | none | all channels back to baseline: t1 29.690, t2 29.952, t3 29.506, t4 29.733 |
+| window | boot_id | seconds | frames | held by operator | max spread t1..t4 | observed |
+|---|---|---|---|---|---|---|
+| `live_check` | 25ff9325 | 12 | 11 | none | 0.063 | all four probes OK, t1 29.654 / t2 29.972 / t3 29.375 / t4 29.694 |
+| `baseline` | b45af2ff | 45 | 44 | none | 0.063 | t1 29.651 (spread 0.063), t2 29.958, t3 29.375 flat, t4 29.694 |
+| `touch_1` | a1732532 | 62 | 61 | **near the door** | 2.812 | **t4 31.438 -> 34.250 (+2.81 in window, +3.63 vs baseline)**; t1 +0.04, t2 +0.00, t3 +0.03 |
+| `settle_1` | f0fef08c | 30 | 29 | **middle of the chamber** | 2.250 | **t1 29.750 -> 31.938 (+2.19)** while t4 fell 32.062 -> 31.375 (release decay) |
+| `touch_2` | e5fde982 | 30 | 29 | **bottom of the chamber** | 2.437 | **t3 29.500 -> 31.875 (+2.38)** while t1 fell -0.25 and t4 fell -0.13 |
+| `decay_check` | 3c0b622a | 60 | 59 | none | 0.125 | all channels back to baseline: t1 29.690, t2 29.952, t3 29.506, t4 29.733 |
 
 Each rise happened in a **different channel in a different window**, and each
-released channel decayed in the next window. Hands-off spread is <= 0.063 °C on every
-channel in five of the six windows, with one exception measured: t2 spans 0.125 °C in
-`decay_check`. Against those spreads the touch rises are 2.25-2.81 °C within window,
-and t2 never responded to a touch.
+released channel decayed in the next window. The largest hands-off spread is
+**0.125 °C** - t2 in `decay_check` - while `live_check` and `baseline` hold every channel
+within 0.063 °C, so 0.063 °C may not be quoted as the session noise floor. Against those
+spreads the touch rises are 2.25-2.81 °C within window, and t2 never responded to a touch.
+Every figure in this table, including which `boot_id` belongs to which window, is
+recomputed from the six captures by `validate_w07.py`.
 
 ## Official mapping
 

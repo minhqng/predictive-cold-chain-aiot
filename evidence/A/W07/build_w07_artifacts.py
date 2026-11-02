@@ -46,6 +46,31 @@ PHASE_LABEL = {"baseline": "passive warm-up segment",
 SUSPECT_DEVICE_MS = 826894
 
 
+def _status_clause(status: str) -> str:
+    """Say what the recorded status is, rather than asserting today's emptiness forever."""
+    if status == "":
+        return "`current_status` is an **empty cell, not OK**"
+    return f"`current_status` is `{status}` - a recorded value this dossier must report as-is"
+
+
+def _electrical_status_summary(rows: list[dict[str, str]]) -> str:
+    """Describe the electrical status fields as this capture actually records them.
+
+    Hardcoding "empty in all rows" was a snapshot of today's defect presented as
+    provenance: a future capture with recorded statuses would regenerate a report that
+    stated the opposite of what its own rows contain, and the prose check would still
+    pass because it looked for that sentence.
+    """
+    parts: list[str] = []
+    for key in ("current_status", "voltage_status"):
+        empty = sum(1 for row in rows if not (row.get(key) or "").strip())
+        parts.append(f"{key} empty in {empty}/{len(rows)} rows")
+    for column in ("power_w", "energy_wh"):
+        if not any(f"{column}_status" in row for row in rows):
+            parts.append(f"{column} has no status column")
+    return "; ".join(parts)
+
+
 def _provenance(path: pathlib.Path) -> dict[str, object]:
     rows = rep.read_rows(path)
     first = rows[0]
@@ -60,7 +85,7 @@ def _provenance(path: pathlib.Path) -> dict[str, object]:
         "fan_field": first.get("fan", "UNRECORDED"),
         "door_field_values": sorted({(row.get("door_open") or "MISSING") or "MISSING"
                                      for row in rows}),
-        "electrical_status_columns": "current_status/voltage_status empty in all rows",
+        "electrical_status_columns": _electrical_status_summary(rows),
     }
 
 
@@ -92,8 +117,13 @@ MEASURED_FIELDS = ("voltage_v", "voltage_status", "current_a", "current_status",
 COMMAND_FIELDS = ("state", "pwm_req_permille", "pwm_applied_permille")
 
 
-def _suspect_frame() -> dict[str, object]:
-    """The zero-duty nonzero-current frame, quoted rather than summarised away."""
+def _suspect_frame() -> dict[str, object] | None:
+    """The zero-duty nonzero-current frame, quoted rather than summarised away.
+
+    Returns None when the capture has no such frame: `SUSPECT_DEVICE_MS` names a specific
+    recorded sample, and a generator that asserts on it would abort the whole dossier for a
+    future capture that no longer contains it.
+    """
     rows = rep.read_rows(H8_CAPTURE)
     for row in rows:
         if row.get("device_ms") != str(SUSPECT_DEVICE_MS):
@@ -129,15 +159,15 @@ def _suspect_frame() -> dict[str, object]:
                         f"duty `{row.get('pwm_req_permille', '')}` in state "
                         f"`{row.get('state', '')}`, yet the row carries "
                         f"`{row.get('current_a', '')} A` and `{row.get('power_w', '')} W`; "
-                        f"`current_status` is `{row.get('current_status', '')}` - an empty "
-                        f"cell, not OK - and {agreement}, so the readings did not move when "
+                        f"{_status_clause(row.get('current_status', ''))} and {agreement}, "
+                        f"so the readings did not move when "
                         f"the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety "
                         f"classification and not a host tool's call, so it is recorded as the "
                         f"canonical candidate for the next supervised session; the frame stays "
                         f"inside the recovery segment's published peak, where the report names "
                         f"it instead of averaging it away"),
         }
-    raise AssertionError(f"suspect frame device_ms={SUSPECT_DEVICE_MS} not found")
+    return None
 
 
 def build() -> dict[str, str]:
@@ -298,18 +328,7 @@ def _report(analyses: dict[str, dict[str, object]], suspect: dict[str, object]) 
     lines += ["", _slope_relationship_sentence(phases), "", "### Electrical figures", ""]
     cooling = phases["cooling"]["runs"][0]
     recovery = phases.get("recovery", {}).get("runs", [{}])[0]
-    lines += [
-        f"- driven block: mean current `{cooling['mean_current_a']} A`, peak "
-        f"`{cooling['peak_current_a']} A`, mean power `{cooling['mean_power_w']} W`, "
-        f"energy delta `{cooling['energy_wh']} Wh`",
-        f"- recovery segment: peak current `{recovery.get('peak_current_a')} A` — "
-        f"**that peak is the single suspect frame below**, not evidence of current "
-        f"after the bridge opened",
-        f"- `current_status`/`voltage_status` are empty in all "
-        f"{cooling['rows_read']} rows read (`electrical_status_recorded: "
-        f"{str(cooling['electrical_status_recorded']).lower()}`), so these are values "
-        f"with no recorded validity and are never presented as status-checked",
-        "",
+    suspect_block = ([
         f"Suspect frame (`device_ms={SUSPECT_DEVICE_MS}`): {suspect['reading']}.",
         "",
         f"- canonical candidate: {suspect['canonical_candidate']}",
@@ -321,6 +340,26 @@ def _report(analyses: dict[str, dict[str, object]], suspect: dict[str, object]) 
         f"frames identical on all of them, differing on "
         f"`{suspect['differing_measured_fields'] or 'none'}`",
         "",
+    ] if suspect else [
+        "No frame in this capture carries a non-zero current with applied duty 0, so there "
+        "is no suspect frame to quote. A future capture that has one must name it rather "
+        "than let it raise the segment peak silently.",
+        "",
+    ])
+    lines += [
+        f"- driven block: mean current `{cooling['mean_current_a']} A`, peak "
+        f"`{cooling['peak_current_a']} A`, mean power `{cooling['mean_power_w']} W`, "
+        f"energy delta `{cooling['energy_wh']} Wh`",
+        f"- recovery segment: peak current `{recovery.get('peak_current_a')} A` — "
+        f"**that peak is the single suspect frame below**, not evidence of current "
+        f"after the bridge opened",
+        f"- electrical qualification: {cooling['electrical_status_note']} "
+        f"(`electrical_rows_unqualified: {cooling['electrical_rows_unqualified']}`, "
+        f"`electrical_status_recorded: "
+        f"{str(cooling['electrical_status_recorded']).lower()}`), so values that nothing "
+        f"checked are never presented as status-checked",
+        "",
+        *suspect_block,
         "## The representation question, measured",
         "",
         "Same single run, four definitions:",

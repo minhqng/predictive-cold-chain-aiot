@@ -35,6 +35,8 @@ FORBIDDEN = ("physically verified", "repeatability established", "physical pass"
 # pattern would match itself; a hardcoded path in a generator still surfaces
 # here, because the artifact it writes is what gets published.
 GENERATED_SUFFIXES = {".md", ".json", ".jsonl", ".yaml", ".csv"}
+PROBE_CHANNELS = ("t1", "t2", "t3", "t4")
+HANDS_OFF_WINDOWS = ("live_check", "baseline", "decay_check")
 
 
 def require(condition: bool, message: str) -> None:
@@ -85,7 +87,7 @@ def check_pins() -> None:
 # Durable: these hold however the physical study develops.
 ALWAYS_REQUIRED = ("tmean_airroles_v0", "tmean_chamber3_v0", "includes_hot_side",
                    "whole_phase_least_squares_v0", "NO_SAMPLES", "sample (n-1)",
-                   "undetermined rows", "empty cell, not OK")
+                   "undetermined rows")
 
 
 def _registry_entries(name: str) -> list[dict[str, object]]:
@@ -175,14 +177,24 @@ def check_identification() -> None:
         require(not driven,
                 f"a PROBE_IDENTIFICATION capture shows non-zero applied duty at "
                 f"{driven[:3]}")
-    boots = sorted({row.get("boot_id") for rows in frames.values() for row in rows
-                    if row.get("boot_id")})
-    for boot in boots:
-        require(boot in record, f"the captures carry boot_id {boot}, the record omits it")
-    listed = re.findall(r"\b[0-9a-f]{8}\b", record)
-    require(len(set(boots)) <= len(set(listed)),
-            f"the record lists {len(set(listed))} boot-like tokens for {len(boots)} "
-            f"boot_ids in the captures")
+    boots: dict[str, str] = {}
+    for name, rows in frames.items():
+        ids = {row.get("boot_id") for row in rows if row.get("boot_id")}
+        require(len(ids) == 1, f"{name} spans {sorted(ids)} boot_ids, expected one per window")
+        if len(ids) == 1:
+            boots[name] = ids.pop()
+    for name, boot in sorted(boots.items()):
+        window = name.removesuffix(".log")
+        row_line = next((line for line in record.splitlines()
+                         if line.startswith(f"| `{window}`")), "")
+        require(boot in row_line,
+                f"the record's `{window}` row must carry its own boot_id {boot}; a global "
+                f"list lets a window be mis-paired and still pass")
+    measured = set(boots.values())
+    listed = set(re.findall(r"\b[0-9a-f]{8}\b", record))
+    require(measured == listed,
+            f"boot ids in the captures {sorted(measured)} and boot ids in the record "
+            f"{sorted(listed)} are not the same set")
 
 
 def _lines(path: pathlib.Path) -> list[dict[str, str]]:
@@ -274,18 +286,32 @@ def check_criterion() -> None:
     require(evaluation["hot_side_representation_refused"]["verdict"] == "NOT_READY",
             "a hot-side-contaminated mean must be refused, not judged")
     suspect = evaluation["suspect_frame"]
-    fields = suspect["fields"]
-    require(fields["pwm_applied_permille"] == "0" and fields["current_a"] == "7.15"
-            and fields["current_status"] == "",
-            "the suspect frame must be quoted as recorded: duty 0, current 7.15, empty status")
-    require(suspect["differing_measured_fields"] == [],
-            f"the report claims the frame repeats its preceding measurements, which "
-            f"disagree on {suspect['differing_measured_fields']}")
-    require(suspect["preceding_frames_identical_on_all_measured_fields"] == 2,
-            "both preceding frames must actually match the quoted frame")
-    require("CONTROL_ELECTRICAL_ANOMALY" in suspect["canonical_candidate"],
-            "a commanded-OFF-with-current frame is a canonical safety candidate and "
-            "must not be filed away as a sensor quirk")
+    capture = rep.capture_path("evidence/A/W04/tec-cooling-response-600s.csv")
+    zero_duty_current = sorted({str(row.get("device_ms")) for row in rep.read_rows(capture)
+                                if rep.number(row, "pwm_applied_permille") == 0.0
+                                and (rep.number(row, "current_a") or 0.0) > 0.0})
+    if suspect is None:
+        require(not zero_duty_current,
+                f"the capture carries applied-duty-0 frames with current "
+                f"{zero_duty_current[:3]} but the report quotes none")
+    else:
+        require(str(suspect["device_ms"]) in zero_duty_current,
+                f"the quoted suspect frame {suspect['device_ms']} is not a duty-0 "
+                f"with-current frame in the capture")
+        fields = suspect["fields"]
+        require(fields["pwm_applied_permille"] == "0"
+                and fields["current_a"] == "7.15"
+                and fields["current_status"] == "",
+                "the suspect frame must be quoted as recorded: duty 0, current 7.15, "
+                "empty status")
+        require(suspect["differing_measured_fields"] == [],
+                f"the report claims the frame repeats its preceding measurements, which "
+                f"disagree on {suspect['differing_measured_fields']}")
+        require(suspect["preceding_frames_identical_on_all_measured_fields"] == 2,
+                "both preceding frames must actually match the quoted frame")
+        require("CONTROL_ELECTRICAL_ANOMALY" in suspect["canonical_candidate"],
+                "a commanded-OFF-with-current frame is a canonical safety candidate and "
+                "must not be filed away as a sensor quirk")
 
 
 def check_overlay() -> None:
@@ -347,32 +373,49 @@ def check_handwritten_claims() -> None:
                     f"a number the tools did not produce")
 
     probe_record = (DOSSIER / "probe-identification-v0.md").read_text(encoding="utf-8")
-    t2_spread = max(_spread(path) for path in (DOSSIER / "probe-identification").iterdir())
-    require(f"{t2_spread:.3f}" in probe_record,
-            f"the identification record must state the measured T2 spread {t2_spread:.3f} C")
+    captures = sorted((DOSSIER / "probe-identification").iterdir())
+    per_window = {path.name.removesuffix(".log"): {channel: _spread(path, channel)
+                                                   for channel in PROBE_CHANNELS}
+                  for path in captures}
+    t2_max = max(scores["t2"] for scores in per_window.values())
+    hands_off_max = max(max(scores.values()) for window, scores in per_window.items()
+                        if window in HANDS_OFF_WINDOWS)
+    require(f"{t2_max:.3f}" in probe_record,
+            f"the record must state the recomputed hot-side spread {t2_max:.3f} C")
+    require(f"{hands_off_max:.3f}" in probe_record,
+            f"the record must state the recomputed worst hands-off spread "
+            f"{hands_off_max:.3f} C, not a smaller number it did not measure")
+    for window, scores in sorted(per_window.items()):
+        worst = max(scores.values())
+        require(f"{worst:.3f}" in probe_record,
+                f"the record must state {window}'s recomputed max spread {worst:.3f} C")
 
 
-def _spread(path: pathlib.Path) -> float:
-    """Largest hot-side (t2) range one identification window shows.
+def _spread(path: pathlib.Path, channel: str) -> float:
+    """Within-window spread of one probe channel in a serial identification capture.
 
     Serial frames name the probe `t2`; the CSV names the same column `t2_c`. The record
-    used to claim T2 never moved more than 0.063 C, while decay_check.log spans 0.125 C,
-    so this is recomputed rather than quoted.
+    used to claim every channel stayed within 0.063 C while hands were off, which its own
+    `decay_check` data contradicts, so each figure is recomputed per channel here.
     """
-    values = [float(row["t2"]) for row in _lines(path) if row.get("t2")]
+    values = [float(row[channel]) for row in _lines(path) if row.get(channel)]
     return 0.0 if len(values) < 2 else max(values) - min(values)
 
 
+CHECKS = (check_pins, check_report, check_geometry, check_identification,
+          check_registries, check_criterion, check_overlay,
+          check_handwritten_claims, check_provenance_paths)
+
+
 def main() -> int:
-    check_pins()
-    check_report()
-    check_geometry()
-    check_identification()
-    check_registries()
-    check_criterion()
-    check_overlay()
-    check_handwritten_claims()
-    check_provenance_paths()
+    for check in CHECKS:
+        try:
+            check()
+        except Exception as error:
+            # A deleted file or a renamed field used to abort the whole run with a
+            # traceback, so the gate reported fewer failures than it had found and an
+            # earlier check's verdict could be the last thing printed. Record it and go on.
+            FAILURES.append(f"{check.__name__} raised {type(error).__name__}: {error}")
 
     if FAILURES:
         print("W07 DOSSIER: FAIL")

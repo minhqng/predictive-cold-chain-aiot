@@ -341,14 +341,21 @@ class ActivationBoundaryTests(unittest.TestCase):
             self.assertEqual(result["verdict"], "UNKNOWN", f"{value} acted as a bound")
 
     def test_an_unregistered_representation_is_contradicted_not_crashed(self) -> None:
-        for criteria_value, state_value in (("tmean_bogus", "tmean_bogus"),
-                                            ("tmean_airroles_v0", "tmean_bogus")):
+        """Two separate guards, each pinned by its own reason."""
+        cases = {
+            ("tmean_bogus", "tmean_bogus"): "criterion names",
+            ("tmean_airroles_v0", "tmean_bogus"): "state names",
+        }
+        for (definition, observed), reason in cases.items():
             criteria = resolved_criteria()
             for entry in criteria["parameters"]:  # type: ignore[index]
                 if entry["name"] == "tmean_definition":
-                    entry["value"] = criteria_value
-            result = rc.evaluate(criteria, dict(GOOD_STATE, representation=state_value))
-            self.assertEqual(result["verdict"], "NOT_READY")
+                    entry["value"] = definition
+            result = rc.evaluate(criteria, dict(GOOD_STATE, representation=observed))
+            self.assertEqual(result["verdict"], "NOT_READY", f"{definition}/{observed}")
+            self.assertTrue(any(reason in item for item in result["failing"]),
+                            f"{definition}/{observed} failed for the wrong reason: "
+                            f"{result['failing']}")
 
 
 class QualityScopeTests(unittest.TestCase):

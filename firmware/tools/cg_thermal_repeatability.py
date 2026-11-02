@@ -201,7 +201,11 @@ def _time_to_move(points: list[tuple[float, float]], phase: str,
 
 
 def phase_of(row: dict[str, str]) -> str:
-    """cooling / off / undetermined, keyed on applied duty (docs/01 §20.6)."""
+    """cooling / off / undetermined, keyed on applied duty (docs/01 §17.8).
+
+    §17.8 is the ON/OFF-versus-never-observed contract; §20.6 only constrains when a
+    recovery slope may be computed, so citing it here pointed at the wrong clause.
+    """
     duty, state = reading(row, "pwm_applied_permille")
     if state in ("absent", "invalid"):
         return "undetermined"
