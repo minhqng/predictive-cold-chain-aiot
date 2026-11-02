@@ -85,6 +85,8 @@ held).
    the hot block, with the probe's ROM label legible in the same frame.
 
 With those two files this record becomes photo-verified and `polarity-photo.md`
-can state `A-W04-06 = VERIFIED`. Until then the honest status is
-**NEED_USER_INPUT**, and the direction claim rests on the operator statement
-plus the measured gradient above.
+can state `A-W04-06 = VERIFIED`. No image already in the repository covers
+these views — `evidence/A/W01/photos/` stops at component markings, terminals and
+the chamber still in its packaging — so the request is specific rather than
+generic. Until then the honest status is **NEED_USER_INPUT**, and the direction
+claim rests on the operator statement plus the measured gradient above.

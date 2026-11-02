@@ -8,7 +8,7 @@ physical contract. **Nothing in this PR accepts, approves or works around it.**
 | Item | Record |
 |---|---|
 | Canonical ask | `docs/05A` A-W04-02 with `docs/01` PHY-SAFE-004: the TEC branch conductor class is `2 × 2.5 mm²`, and no primary TEC current may run through a PCT-218 or Dupont path |
-| As-built, operator-confirmed 2026-11-02 | the branch runs on **1.75 mm²** conductor |
+| As-built | **1.75 mm², confirmed definitively by the operator on 2026-11-02.** The size question is closed by that confirmation and is not re-asked; the repository still carries no photograph of a conductor marking |
 | Repository state before that statement | `evidence/A/W01/bom-audit.csv:20` HW-19 = `UNVERIFIED`, `photo_ref NONE`: no photo or marking anywhere has ever established the class |
 | Termination | FDD2-250 faston, rated 1.5–2.5 mm² — in range for 1.75 mm²; the separate out-of-range case is the same terminal type on 0.75 mm² auxiliary wire (HW-20), a different circuit |
 | Measured demand on the branch | 0.97 A peak at 10 % duty (H6, 2026-10-29); 9.99 A peak and 7.24 A mean at 100 % duty for 600 s (2026-11-01) |
@@ -49,5 +49,10 @@ for Member A's power/PZEM/IBT-2 work (`docs/04`).
 
 ## 6. Status
 
-OPEN. Until it is decided, A-W04-02 stays **NOT VERIFIED / deviation** in
-`acceptance.md`, and W08's safe-operating-envelope work is blocked behind it.
+OPEN — raised as issue **#15** on 2026-11-02. The evaluation requested is
+whether 1.75 mm² can be **accepted as an approved deviation on actual electrical
+and installation evidence** (insulation class, routing, bundling, against the
+measured 7.24 A continuous and 9.99 A peak) or **must be replaced** to meet
+`2 × 2.5 mm²`. Member A does not approve the deviation unilaterally. Until it is
+decided, A-W04-02 stays **DEVIATION** in `acceptance.md`, no fuse rating can be
+frozen, and W08's safe-operating-envelope work is blocked behind it.

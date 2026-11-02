@@ -54,6 +54,6 @@ feature consequences; Member C for the telemetry schema consequence.
 
 ## 6. Status
 
-OPEN. Awaiting a decision. Until then A-W04-07's thermal channels and any
+OPEN — raised as issue **#14** on 2026-11-02. Awaiting a decision. Until then A-W04-07's thermal channels and any
 canonical `Tmean` claim stay unresolved, and this PR makes no thermal acceptance
 claim.

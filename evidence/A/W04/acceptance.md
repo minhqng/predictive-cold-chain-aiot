@@ -20,7 +20,7 @@
 | ID | Canonical ask | State | Evidence |
 |---|---|---|---|
 | A-W04-01 | Power path review | PARTIAL | `g0-electrical-verification.md`, drawn as `power-topology-v1.png` with a per-link evidence class; branch de-energized is **inferred**, not measured (`g0…:185-188` `INFERRED_ONLY`, verdict `SUY LUẬN` at `:393`), and the `PSU+ → IBT-2 B+` bypass check is still open (`g0…:251` `NOT_VERIFIED`) |
-| A-W04-02 | Wiring class `2 × 2.5 mm²`, no PCT218/Dupont in the TEC path | **DEVIATION — change review raised** | conductor is 1.75 mm² per the operator statement of 2026-11-02; the repository record still says HW-19 `UNVERIFIED` with no photo (`g0…:331`, `evidence/A/W01/bom-audit.csv:20`). FDD2-250 (1.5–2.5 mm²) is in range for 1.75 mm²; the out-of-range case is the same terminal on 0.75 mm² auxiliary wire (HW-20), a different circuit. Raised as `change-review-request-CR-A-W04-02.md`; **not accepted by Member A** |
+| A-W04-02 | Wiring class `2 × 2.5 mm²`, no PCT218/Dupont in the TEC path | **DEVIATION — change review raised** | conductor is **1.75 mm², confirmed definitively by the operator on 2026-11-02** — the size is settled and is not re-asked; the repository record still says HW-19 `UNVERIFIED` with no photograph of a marking (`g0…:331`, `evidence/A/W01/bom-audit.csv:20`). FDD2-250 (1.5–2.5 mm²) is in range for 1.75 mm²; the out-of-range case is the same terminal on 0.75 mm² auxiliary wire (HW-20), a different circuit. Raised as `change-review-request-CR-A-W04-02.md` and issue **#15**; **not accepted by Member A** |
 | A-W04-03 | Conservative defensible fuse choice | PARTIAL — **not frozen** | `fuse-commissioning-note.md`. 15 A installed (operator 2026-11-02, label photo pending); reinsertion is operator-reported (`h6/09-pzem-gate-pass.md:8`) and the G0 position check is `NOT_VERIFIED` (`g0…:231-239,345-354`); no marking of any kind is recorded anywhere (`evidence/A/W01/photos/07-fusebox.jpg`). A rating cannot be frozen until the conductor's installed ampacity is known |
 | A-W04-04 | Default-OFF at boot/reset, 5 cold boots + 5 resets | PARTIAL — reset half satisfied, cold-boot and pin halves impossible from existing data | `boot-default-off.csv`, built by `firmware/tools/cg_build_boot_default_off_csv.py` from 101 raw captures: **132 ROM banners deduplicated to 116 unique start events** (16 events existed as identical captures in more than one working copy). **7 unique resets on the delivered `cg-w04-0.1.0`**, all seven reporting `tec_state=OFF output_stage=DISABLED pwm_duty=0 fan_command=OFF fault_reason=BOOT_SAFE_OFF`; **0 genuine `rst:0x1 POWERON` events in any session**; **0 pin-level DMM/scope records**; PZEM current was never live during any start (branch PSU off), so no boot has ever been shown to draw no branch current with the branch energized |
 | A-W04-05 | First conservative actuation, immediate stop on abnormal | DONE (electrical only) | one H6 run, PWM 10 %, guard-capped 60 s, 60/60 valid PZEM samples, peak 0.97 A / 11.3 W (modal 0.96 A / 11.2 W) at 11.71 V, automatic OFF `source=guard_timer reason=TIMEOUT elapsed_ms=60000`, outputs 0 after (`h6/40-h6-run.log:132-133`, `h6/41-h6-run-analysis.md` plus its dated 2026-11-01 correction) |
@@ -74,28 +74,42 @@ Corrections made as part of this delivery, all tooling or wording, none changing
 
 TEAM_DEPENDENCY — project-level review, not Member A wording:
 
-1. **T2 measurement semantics** — written up as
-   `change-review-request-CR-A-W04-01.md`. `docs/01` freezes T1/T2/T3 as
+1. **T2 measurement semantics** — `change-review-request-CR-A-W04-01.md`,
+   raised as issue **#14**. `docs/01` freezes T1/T2/T3 as
    chamber air; the operator and the device's own `t2_role=HOT_SIDE` frames say
    ROM `28AEBF2200000006` sits on the hot block. The delivered firmware takes no
    side (`t_hot_side_c=NOT_ASSIGNED`) and hot-side protection is preserved in
    every option.
-2. **Conductor class deviation** — `change-review-request-CR-A-W04-02.md`;
-   blocks any fuse freeze and blocks W08's envelope work.
+2. **Conductor class deviation** — `change-review-request-CR-A-W04-02.md`,
+   raised as issue **#15**; blocks any fuse freeze and blocks W08's envelope work.
+   The question put to the team is whether 1.75 mm² can be accepted as an approved
+   deviation on actual electrical and installation evidence, or must be replaced.
 3. **`docs/06` gate plan vs canonical W04 scope** — the G3 interlock is a Member
    A precondition, not a canonical requirement, while `docs/05A` W04 asks for
    H4–H6 to pass.
 4. **HW deviation register** — `TTL485-V2.0` vs canonical `MAX3485`
    (CR-A-W01-01, still open) and the extra `SPARE` DS18B20 with no canonical role.
 
-NEED_USER_INPUT / NEED_USER_ACTION, with the exact minimum in
-`boot-default-off-note.md` §3 and `polarity-photo.md` §5:
+NEED_USER_ACTION, with the executable procedure, the branch-isolation
+preconditions, the full-flash backup and restore step, the second-console
+workaround for the native USB port dropping during power removal, and the
+standing authorization gates in `w04-physical-verification-plan.md`. Which
+firmware is on the hardware was reconstructed from the flash logs: the last
+recorded flash is the H8 T2 HOT_SIDE image `01cedce3…` on 2026-10-31, so the
+delivered build `0acd230c…` **has never run on hardware** and a cold-boot session
+today would evidence the wrong program unless the delivered build is flashed
+first, which needs your explicit authorization:
 
-- five genuine `POWER_ON` cold boots on the installed production build;
-- one DMM or scope reading of GPIO5/GPIO6/GPIO10 during a cold boot;
-- a photograph of the installed fuse label and of the branch conductor marking;
-- two photographs of the TEC blocks and probe tips to make the polarity record
-  photo-verified;
+- five genuine `POWER_ON` cold boots (requires a console that survives the
+  power removal — see plan §3);
+- DMM readings of GPIO5/GPIO6/GPIO10 against logic GND. Member A has a DMM, so
+  these cover the steady state only; a DMM cannot disprove a microsecond boot
+  glitch and no such claim will be made from it;
+- a photograph of the installed fuse label (conductor size is confirmed and is
+  not being re-asked);
+- two photographs of the TEC faces and probe tips. No existing repository image
+  covers them: `evidence/A/W01/photos/` stops at component markings, terminals
+  and the chamber still in its packaging (`27-chamber-packaged-user-photo.jpg`);
 - the open unpowered G0 continuity check `PSU+ → IBT-2 B+`.
 
 Explicitly **not** claimed by this PR:
