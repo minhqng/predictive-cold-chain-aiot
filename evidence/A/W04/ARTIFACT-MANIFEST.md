@@ -19,6 +19,10 @@ Generated 2026-11-01. Nothing in this directory was produced by a simulator.
 | `g1/` | G1 production-firmware gate session 2026-10-29: git identity, source hashes, host unit tests, static checks, ESP-IDF build logs, chip identity, flash log, boot/reset captures, telemetry CSV/JSONL. |
 | `g2a/` | G2a probe-identification and six-limit audit reports and the capture script. |
 | `build-2026-11-01/` | ESP-IDF v6.1 compile-only build of the tree this PR delivers, with artifact and source hashes. |
+| `power-topology-v1.png`, `fuse-commissioning-note.md`, `boot-default-off.csv`, `boot-default-off-note.md`, `polarity-photo.md`, `h6/first-tec-trace.csv`, `h6/first-tec-plot.png` | the six canonical W04 deliverables; the CSV and PNG files are generated from pinned raw captures by the tools in `tools/` and `firmware/tools/` |
+| `tec-cooling-response-600s.csv`, `tec-cooling-response-600s.png` | cross-week thermal response derived from the 2026-11-01 monitor stream, labelled as 100 % duty later-week data, not a conservative W04 trace |
+| `change-review-request-CR-A-W04-01.md`, `change-review-request-CR-A-W04-02.md` | the two contract questions Member A cannot decide alone (T2 semantics, conductor class) |
+| `tools/` | the Windows renderers that regenerate the figures; edit their node/edge and series lists, not the PNGs |
 
 ## 2. Local-only artifacts (deliberately not committed)
 
@@ -66,6 +70,7 @@ share one hash for the same reason.
 |---|---|---|---|
 | `6815214d170a2c0efc9812384d80cfad29cf58ca6ea63f95d0eb42379cc6a439` | 641834 | `_w04-g2a-evidence/10-probe-warm-session.log` | raw probe-warm capture behind the committed `g2a/` reports |
 | `5e8bb1918b90c392bea2cdca9e227a91886a4ac6f7f4d4e3db74d705d1ca1414` | 321879 | `_w04-g2a-evidence/11-probe-warm-session-2.log` | second pass of the same capture |
+| `07ecfd7211a9089bb588539f664bc7eb851bb5a016a0c985ff80e0d6b9063c01` | 957 lines | `A-W04-tec-commissioning/evidence/A/W04/h8/box-cooling-600s-2026-11-01/monitor-final/samples.jsonl` | raw source of the committed `tec-cooling-response-600s.csv`; the CSV is in git, the JSONL stays local, so the derivation is checkable only against this hash |
 
 ### 2.3 H7 and H8 trees (later weeks, preserved locally)
 

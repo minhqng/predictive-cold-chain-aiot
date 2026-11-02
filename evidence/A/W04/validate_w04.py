@@ -72,7 +72,7 @@ def main() -> int:
         failures.append("acceptance.md claims W04 PASS/GREEN/COMPLETE")
 
     manifest = (DOSSIER / "ARTIFACT-MANIFEST.md").read_text(encoding="utf-8")
-    local_only = re.findall(r"^\| `[0-9a-f]{64}` \| \d+ \| `?([^`|\s]+)`? \|",
+    local_only = re.findall(r"^\| `[0-9a-f]{64}` \| [^|]+ \| `?([^`|\s]+)`? \|",
                             manifest, flags=re.MULTILINE)
     present = absent = 0
     for rel in local_only:
