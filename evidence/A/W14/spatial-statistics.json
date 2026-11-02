@@ -41,6 +41,7 @@
       "phases": {
         "baseline": {
           "air_gradient": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": false,
             "max_pairwise_difference_c": 0.438,
             "pairs": {
@@ -99,15 +100,19 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 226
+              "unqualified_rows": 0,
+              "usable_pairs": 226,
+              "usable_pairs_all_terms_ok": 226
             },
             "terms": [
               "t1_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": true,
             "max_pairwise_difference_c": 0.438,
             "pairs": {
@@ -212,19 +217,23 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 226
+              "unqualified_rows": 0,
+              "usable_pairs": 226,
+              "usable_pairs_all_terms_ok": 226
             },
             "terms": [
               "t1_c",
               "t2_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "phase_max_pairwise_difference_c": 0.438
         },
         "cooling": {
           "air_gradient": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": false,
             "max_pairwise_difference_c": 1.126,
             "pairs": {
@@ -283,15 +292,19 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 600
+              "unqualified_rows": 0,
+              "usable_pairs": 600,
+              "usable_pairs_all_terms_ok": 600
             },
             "terms": [
               "t1_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": true,
             "max_pairwise_difference_c": 18.938,
             "pairs": {
@@ -396,19 +409,23 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 600
+              "unqualified_rows": 0,
+              "usable_pairs": 600,
+              "usable_pairs_all_terms_ok": 600
             },
             "terms": [
               "t1_c",
               "t2_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "phase_max_pairwise_difference_c": 18.938
         },
         "recovery": {
           "air_gradient": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": false,
             "max_pairwise_difference_c": 0.813,
             "pairs": {
@@ -467,15 +484,19 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 131
+              "unqualified_rows": 0,
+              "usable_pairs": 131,
+              "usable_pairs_all_terms_ok": 131
             },
             "terms": [
               "t1_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
             "includes_hot_side": true,
             "max_pairwise_difference_c": 18.687,
             "pairs": {
@@ -580,14 +601,17 @@
             "tallies": {
               "invalid_rows": 0,
               "partial_rows": 0,
-              "usable_pairs": 131
+              "unqualified_rows": 0,
+              "usable_pairs": 131,
+              "usable_pairs_all_terms_ok": 131
             },
             "terms": [
               "t1_c",
               "t2_c",
               "t3_c",
               "t4_c"
-            ]
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
           },
           "phase_max_pairwise_difference_c": 18.687
         }

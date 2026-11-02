@@ -32,7 +32,29 @@ import cg_w14_sensor_qa as qa  # noqa: E402
 H8_CAPTURE = REPO / "evidence" / "A" / "W04" / "tec-cooling-response-600s.csv"
 MIN_SESSIONS = 3
 CAPTURES = [H8_CAPTURE]
-H8_ID = "evidence/A/W04/tec-cooling-response-600s.csv"
+H8_ID = rep.capture_id(H8_CAPTURE)
+# PHASE SNAPSHOT - MUST EVOLVE: the capture set above is the only thermal session the
+# repository holds. When the next one lands it joins CAPTURES and every artifact, pin
+# and validator check follows it; the validator then *forbids* the single-session
+# language instead of requiring it, so this file cannot keep claiming one session after
+# the limit stops being true.
+
+GENERATED_NAMES = ("spatial-statistics.json", "spatial-report.md", "ablation-support.json",
+                   "ablation-support.csv", "ablation-support.md", "sensor-position-qa.json",
+                   "sensor-position-qa.md", "pairing-input.json", "member-b-handoff.md")
+DOSSIER_DOCS = ("README.md", "acceptance.md", "handoff.md")
+DOSSIER_TOOLS = ("build_w14_artifacts.py", "validate_w14.py")
+
+
+def pinned_names() -> tuple[str, ...]:
+    """The exact file set this dossier may contain, and the set --pins writes.
+
+    An allowlist rather than a directory walk: the old rglob made `--pins` silently
+    legitimise any file dropped into the folder, including a stray .json or a .pyc, so
+    the pin file could be made to certify an artifact nobody delivered. validate_w14.py
+    imports this same list, so the two cannot drift apart.
+    """
+    return GENERATED_NAMES + DOSSIER_DOCS + DOSSIER_TOOLS
 
 
 def guard_text(name: str, text: str) -> None:
@@ -145,6 +167,10 @@ def _spatial_markdown(spatial: dict[str, object]) -> str:
         "",
         f"- one `boot_id` ({capture['boot_ids'][0]}) across {capture['rows']} rows, so "
         "baseline, cooling and recovery are segments of one session, not three runs",
+        "- gradient tallies carry `unqualified_rows`: a row whose `t*_status` was never "
+        "recorded is counted as unvouched instead of being quietly treated as checked "
+        f"(this capture's `t*_status` is `OK` on every row, so the count here is "
+        f"{capture['phases']['cooling']['air_gradient']['tallies']['unqualified_rows']})",
         "- `current_status`/`voltage_status` are empty in every row and `power_w`/"
         "`energy_wh` have no status column, so no electrical figure is status-checked",
         "- `device_ms` is per-boot; host wall-clock is not device time",
@@ -291,6 +317,7 @@ def _qa_markdown(report: dict[str, object]) -> str:
 
 def _ablation_markdown(matrix: dict[str, object], payload: dict[str, object]) -> str:
     capture = matrix["captures"][0]  # type: ignore[index]
+    control = capture["physical_condition_control"]  # type: ignore[call-overload,index]
     sensitivity = payload["what_the_real_data_supports"]["drop_one_feature_sensitivity"]
     lines = [
         "# W14 logical ablation support (A-W14-02)",
@@ -303,15 +330,31 @@ def _ablation_markdown(matrix: dict[str, object], payload: dict[str, object]) ->
         "comparison physical-condition-controlled instead of run-to-run. This file "
         "produces those datasets.",
         "",
-        "## How the control is proven, not claimed",
+        "## How the control is checked, and what it does not prove on its own",
         "",
         f"Every variant below is computed over the same rows of one capture "
         f"(`{capture['capture']}`, {capture['rows']} rows, boot "
         f"`{capture['boot_ids'][0]}`). The conditioning columns "
-        f"`{capture['condition_columns']}` are hashed per row into "
-        f"`{capture['conditioning_fingerprint']}`, and every variant of the capture "
-        "carries that same fingerprint - so two variants that differed in anything "
-        "other than which probes they read would disagree here and be reported.",
+        f"`{capture['condition_columns']}` hash to the capture-wide "
+        f"`{control['capture_fingerprint']}`, and that value is stamped on every "
+        "variant-phase row of the capture.",
+        "",
+        "Read the stamp for what it is: one hash per capture, so the stamped rows cannot "
+        "disagree with each other and cannot, on their own, prove that the variants "
+        "walked the same physical rows. The falsifiable part of the control is "
+        f"`physical_condition_control`: the fingerprint of the rows each variant "
+        f"actually used, per phase - here `{control['used_rows_fingerprint_per_phase']}` "
+        f"- plus `one_fingerprint_per_capture` "
+        f"(`{control['one_fingerprint_per_capture']}`), which is computed from those "
+        "sets and is False the moment any phase's usable variants used different "
+        "condition rows.",
+        "",
+        "What makes it a proof rather than a label is that none of it is trusted: "
+        "`validate_w14.py` re-reads the committed capture, re-computes the fingerprint "
+        "and re-derives every `ablation-support.csv` row's `device_ms` to "
+        "`feature_c`/`pwm`/`door`/`boot_id` attribution from the source rows. A "
+        "fingerprint, attribution or feature value the capture does not produce fails "
+        "the dossier, so the check is the recomputation, not this sentence.",
         "",
         "## Feature sets",
         "",
@@ -368,7 +411,9 @@ def _ablation_markdown(matrix: dict[str, object], payload: dict[str, object]) ->
         "`capture`, `boot_id`, `phase`, `variant`, `feature_terms`, `feature_roles`, "
         "`is_chamber_air`, `includes_hot_side`, `device_ms`, the commanded duty, the "
         "door token and the conditioning fingerprint. A join on `device_ms` inside one "
-        "`conditioning_fingerprint` gives B feature sets from the same physical instant.",
+        "`conditioning_fingerprint` gives B feature sets from the same physical instant "
+        "- and the validator re-derives each of those rows from the capture it names, so "
+        "the join keys are checked against the source rather than taken on trust.",
         "",
         "## What this is not",
         "",
@@ -494,6 +539,9 @@ def build() -> dict[str, str]:
         "pairing-input.json": json.dumps(payload, indent=2, sort_keys=True) + "\n",
         "member-b-handoff.md": _handoff_markdown(payload),
     }
+    if set(files) != set(GENERATED_NAMES):
+        raise SystemExit("the generated set and GENERATED_NAMES disagree: "
+                         f"{sorted(set(files) ^ set(GENERATED_NAMES))}")
     for name, text in files.items():
         guard_text(name, text)
     return files
@@ -521,22 +569,48 @@ def check_or_write(files: dict[str, str], write: bool) -> int:
     return 0
 
 
+def present_dossier_files() -> list[str]:
+    """Every file actually sitting in the dossier, repo-relative and posix-named."""
+    return sorted(path.relative_to(HERE).as_posix() for path in HERE.rglob("*")
+                  if path.is_file())
+
+
+def pin_rejections(present: list[str]) -> tuple[list[str], list[str], list[str]]:
+    """(caches, unknown files, missing files) for a dossier directory listing.
+
+    Caches and unknowns are refusals, not pin material: a dropped .pyc or a hand-added
+    artifact must stop the pin write, because the alternative is a SHA256SUMS.txt that
+    quietly certifies whatever happened to be in the folder.
+    """
+    allowed = set(pinned_names()) | {"SHA256SUMS.txt"}
+    caches = [name for name in present
+              if "__pycache__" in name.split("/") or name.lower().endswith(".pyc")]
+    unknown = sorted(set(present) - allowed - set(caches))
+    missing = sorted(allowed - {"SHA256SUMS.txt"} - set(present))
+    return caches, unknown, missing
+
+
 def write_pins() -> int:
-    """Pin every dossier file except the pin file itself, LF-only and sorted by name."""
+    """Pin the declared dossier file set, LF-only and sorted by name, or refuse."""
+    present = present_dossier_files()
+    caches, unknown, missing = pin_rejections(present)
+    if caches or unknown or missing:
+        print("W14 PINS: REFUSED")
+        for name in caches:
+            print(f"  - {name} is a Python cache; it is not a deliverable, delete it")
+        for name in unknown:
+            print(f"  - {name} is not a W14 dossier file: an unknown file cannot be "
+                  "pinned into legitimacy (declare it in pinned_names() or remove it)")
+        for name in missing:
+            print(f"  - {name} is a declared deliverable and is missing")
+        return 1
     lines = []
-    for path in sorted(DOSSIER_FILES()):
-        digest = hashlib.sha256(path.read_bytes()).hexdigest()
-        lines.append(f"{digest}  {path.relative_to(HERE).as_posix()}\n")
+    for name in pinned_names():
+        digest = hashlib.sha256((HERE / name).read_bytes()).hexdigest()
+        lines.append(f"{digest}  {name}\n")
     (HERE / "SHA256SUMS.txt").write_bytes("".join(lines).encode("utf-8"))
     print(f"wrote SHA256SUMS.txt ({len(lines)} files pinned)")
     return 0
-
-
-def DOSSIER_FILES():
-    for path in HERE.rglob("*"):
-        if (path.is_file() and path.name != "SHA256SUMS.txt"
-                and "__pycache__" not in path.parts and path.suffix != ".pyc"):
-            yield path
 
 
 if __name__ == "__main__":

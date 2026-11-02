@@ -29,7 +29,7 @@ It can say how far apart the three chamber-air positions sat from each other whi
 | recovery | t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR) | 131 | -0.3913 | 0.1901 | -0.626 | -0.062 | 0.626 | 851894 |
 | recovery | t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR) | 131 | -0.2777 | 0.2988 | -0.626 | 0.25 | 0.626 | 925894 |
 
-Row accounting for the driven block: `{'usable_pairs': 600, 'partial_rows': 0, 'invalid_rows': 0}` - a row missing one probe is counted, not averaged over.
+Row accounting for the driven block: `{'usable_pairs': 600, 'partial_rows': 0, 'invalid_rows': 0, 'unqualified_rows': 0, 'usable_pairs_all_terms_ok': 600}` - a row missing one probe is counted, not averaged over.
 
 ## Air versus the hot-side surface
 
@@ -64,6 +64,7 @@ What would make it computable: a supervised session that opens the door to a rec
 ## Data limits this report lives inside
 
 - one `boot_id` (56044b74) across 957 rows, so baseline, cooling and recovery are segments of one session, not three runs
+- gradient tallies carry `unqualified_rows`: a row whose `t*_status` was never recorded is counted as unvouched instead of being quietly treated as checked (this capture's `t*_status` is `OK` on every row, so the count here is 0)
 - `current_status`/`voltage_status` are empty in every row and `power_w`/`energy_wh` have no status column, so no electrical figure is status-checked
 - `device_ms` is per-boot; host wall-clock is not device time
 - the `#CG H8S schema=3` frames carry no sensor ROM ids, so a channel is a slot name, not a proven physical probe

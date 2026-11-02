@@ -16,6 +16,37 @@
       ],
       "conditioning_fingerprint": "d1671cc668ca0fa1",
       "independent_sessions": 1,
+      "physical_condition_control": {
+        "capture_fingerprint": "d1671cc668ca0fa1",
+        "condition_columns": [
+          "device_ms",
+          "state",
+          "pwm_applied_permille",
+          "door_open",
+          "boot_id"
+        ],
+        "fingerprints_stamped_on_variant_rows": [
+          "d1671cc668ca0fa1"
+        ],
+        "note": "the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/boot_id over the rows a statistic walked, so two variants that differ in anything but the probe set disagree here and are reported, not averaged",
+        "one_fingerprint_per_capture": true,
+        "phases_where_variants_disagree_on_used_rows": [],
+        "phases_with_no_usable_variant": [
+          "undetermined"
+        ],
+        "used_rows_fingerprint_per_phase": {
+          "baseline": [
+            "3f548d3e09f4d95a"
+          ],
+          "cooling": [
+            "8512f2f8a65e3c77"
+          ],
+          "recovery": [
+            "cfab6ca2eabf9ef5"
+          ],
+          "undetermined": []
+        }
+      },
       "provenance": {
         "device_ms_first": "904",
         "device_ms_last": "956894",
@@ -55,6 +86,8 @@
             "trailing_slope_c_per_min": 0.011026,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_pair_bottom_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -90,6 +123,8 @@
             "trailing_slope_c_per_min": -0.081397,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_pair_bottom_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -125,6 +160,8 @@
             "trailing_slope_c_per_min": 2.917246,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_pair_bottom_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -162,6 +199,8 @@
             "trailing_slope_c_per_min": 0.027407,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_pair_center_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -197,6 +236,8 @@
             "trailing_slope_c_per_min": -0.081897,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_pair_center_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -232,6 +273,8 @@
             "trailing_slope_c_per_min": 3.074948,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_pair_center_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -269,6 +312,8 @@
             "trailing_slope_c_per_min": 0.022957,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_pair_center_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -304,6 +349,8 @@
             "trailing_slope_c_per_min": -0.047016,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_pair_center_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -339,6 +386,8 @@
             "trailing_slope_c_per_min": 3.299488,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_pair_center_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -374,6 +423,8 @@
             "trailing_slope_c_per_min": 0.039338,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_t1_center_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -407,6 +458,8 @@
             "trailing_slope_c_per_min": -0.047516,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_t1_center_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -440,6 +493,8 @@
             "trailing_slope_c_per_min": 3.457191,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_t1_center_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -475,6 +530,8 @@
             "trailing_slope_c_per_min": 0.015475,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_t3_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -508,6 +565,8 @@
             "trailing_slope_c_per_min": -0.116278,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_t3_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -541,6 +600,8 @@
             "trailing_slope_c_per_min": 2.692706,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_t3_bottom_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -576,6 +637,8 @@
             "trailing_slope_c_per_min": 0.006576,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "air_t4_near_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -609,6 +672,8 @@
             "trailing_slope_c_per_min": -0.046516,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "air_t4_near_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -642,6 +707,8 @@
             "trailing_slope_c_per_min": 3.141786,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "air_t4_near_door_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -677,6 +744,8 @@
             "trailing_slope_c_per_min": -0.014386,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "hot_t2_surface_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -710,6 +779,8 @@
             "trailing_slope_c_per_min": 0.194853,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "hot_t2_surface_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -743,6 +814,8 @@
             "trailing_slope_c_per_min": -4.257636,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "hot_t2_surface_v0",
             "variant_kind": "single_probe",
             "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
@@ -782,6 +855,8 @@
             "trailing_slope_c_per_min": 0.020463,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "tmean_airroles_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -819,6 +894,8 @@
             "trailing_slope_c_per_min": -0.070104,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "tmean_airroles_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -856,6 +933,8 @@
             "trailing_slope_c_per_min": 3.097228,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "tmean_airroles_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -895,6 +974,8 @@
             "trailing_slope_c_per_min": 0.013476,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "tmean_chamber3_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -932,6 +1013,8 @@
             "trailing_slope_c_per_min": 0.010353,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "tmean_chamber3_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -969,6 +1052,8 @@
             "trailing_slope_c_per_min": 0.630754,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "tmean_chamber3_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -1006,6 +1091,8 @@
             "trailing_slope_c_per_min": 0.027407,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
             "variant": "tmean_t2excluded_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -1041,6 +1128,8 @@
             "trailing_slope_c_per_min": -0.081897,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
             "variant": "tmean_t2excluded_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -1076,6 +1165,8 @@
             "trailing_slope_c_per_min": 3.074948,
             "unqualified_rows": 0,
             "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
             "variant": "tmean_t2excluded_v0",
             "variant_kind": "multi_probe",
             "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
@@ -1265,7 +1356,40 @@
     }
   },
   "physical_condition_control": {
-    "note": "every variant of a capture is computed over the same rows: the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/boot_id, so two variants that differ in anything but the probe set would disagree here and are reported, not averaged",
+    "captures": {
+      "evidence/A/W04/tec-cooling-response-600s.csv": {
+        "capture_fingerprint": "d1671cc668ca0fa1",
+        "condition_columns": [
+          "device_ms",
+          "state",
+          "pwm_applied_permille",
+          "door_open",
+          "boot_id"
+        ],
+        "fingerprints_stamped_on_variant_rows": [
+          "d1671cc668ca0fa1"
+        ],
+        "note": "the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/boot_id over the rows a statistic walked, so two variants that differ in anything but the probe set disagree here and are reported, not averaged",
+        "one_fingerprint_per_capture": true,
+        "phases_where_variants_disagree_on_used_rows": [],
+        "phases_with_no_usable_variant": [
+          "undetermined"
+        ],
+        "used_rows_fingerprint_per_phase": {
+          "baseline": [
+            "3f548d3e09f4d95a"
+          ],
+          "cooling": [
+            "8512f2f8a65e3c77"
+          ],
+          "recovery": [
+            "cfab6ca2eabf9ef5"
+          ],
+          "undetermined": []
+        }
+      }
+    },
+    "note": "the flag is computed from the rows and never written as a literal, and validate_w14.py re-derives every fingerprint and every per-row device_ms -> feature_c/pwm/door/boot attribution from the committed capture, so the control is checked against the data instead of being asserted by this file",
     "one_fingerprint_per_capture": true
   },
   "purpose": "A-W14-02 logical ablation support: one-sensor feature sets versus the three-sensor chamber-air set, taken from the same physical rows so a comparison is physical-condition-controlled, not run-to-run",
