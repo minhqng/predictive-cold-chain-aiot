@@ -213,5 +213,60 @@ class NoG4FlagWiringTests(unittest.TestCase):
         self.assertTrue(report["no_g4_claim"])
 
 
+class GeometryMapComparisonTests(unittest.TestCase):
+    """The mapping is the evidence; `consistent_with_freeze` is only a claim about it."""
+
+    @staticmethod
+    def _side(roles, flag=True, labelled=True):
+        return {"observed": dict(roles), "consistent_with_freeze": flag,
+                "fully_labelled": labelled}
+
+    FROZEN = {"t1": "CHAMBER_CENTER", "t2": "TEC_HOT_SIDE",
+              "t3": "CHAMBER_BOTTOM", "t4": "CHAMBER_NEAR_DOOR"}
+
+    def _dim(self, result):
+        return result["dimension_table"]["geometry_roles"]
+
+    def test_identical_verified_maps_are_comparable(self) -> None:
+        out = w16.compare_snapshots({"geometry_roles": self._side(self.FROZEN)},
+                                    {"geometry_roles": self._side(self.FROZEN)})
+        self.assertEqual(self._dim(out)["state"], "MATCH")
+
+    def test_two_different_maps_cannot_both_be_match(self) -> None:
+        """Both sides assert consistent_with_freeze=True; the maps disagree."""
+        swapped = dict(self.FROZEN, t1="CHAMBER_NEAR_DOOR", t4="CHAMBER_CENTER")
+        out = w16.compare_snapshots({"geometry_roles": self._side(self.FROZEN)},
+                                    {"geometry_roles": self._side(swapped)})
+        self.assertEqual(self._dim(out)["state"], "MISMATCH")
+        self.assertFalse(out["comparison_allowed"])
+
+    def test_unassigned_role_is_a_missing_side_not_a_match(self) -> None:
+        out = w16.compare_snapshots(
+            {"geometry_roles": self._side(self.FROZEN)},
+            {"geometry_roles": self._side(dict(self.FROZEN, t3=None), labelled=False)})
+        self.assertEqual(self._dim(out)["state"], "MISSING_SIDE")
+        self.assertFalse(out["comparison_allowed"])
+
+    def test_a_stale_flag_cannot_override_the_mapping(self) -> None:
+        """Mapping is the frozen one but the side claims inconsistency: contradiction."""
+        out = w16.compare_snapshots(
+            {"geometry_roles": self._side(self.FROZEN, flag=False)},
+            {"geometry_roles": self._side(self.FROZEN, flag=True)})
+        entry = self._dim(out)
+        self.assertEqual(entry["state"], "MISMATCH")
+        self.assertEqual(entry["flag_contradicts_mapping"], ["baseline"])
+
+    def test_flag_claiming_agreement_cannot_rescue_a_wrong_map(self) -> None:
+        wrong = dict(self.FROZEN, t2="CHAMBER_CENTER")
+        out = w16.compare_snapshots({"geometry_roles": self._side(self.FROZEN)},
+                                    {"geometry_roles": self._side(wrong, flag=True)})
+        self.assertEqual(self._dim(out)["state"], "MISMATCH")
+
+    def test_comparison_of_unverified_configuration_never_allows_a_freeze(self) -> None:
+        report = w16.build_report([COOLING] if COOLING.is_file() else [])
+        self.assertFalse(report["cross_era_comparison"]["comparison_allowed"])
+        self.assertTrue(report["verdict"].startswith("NO_FREEZE"))
+
+
 if __name__ == "__main__":
     unittest.main()

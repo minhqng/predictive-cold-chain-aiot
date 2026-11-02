@@ -149,15 +149,6 @@ def _is_missing(value: object) -> bool:
     return False
 
 
-def _geometry_missing(side: object) -> bool:
-    """A geometry side is missing/unusable unless all four frozen slots are labelled."""
-    if not isinstance(side, dict):
-        return _is_missing(side)
-    observed = side.get("observed") or {}
-    labelled = all(observed.get(slot) for slot in FROZEN_ROLES)
-    return not (labelled and side.get("consistent_with_freeze"))
-
-
 def _roles_seen(rows: list[dict[str, str]]) -> dict[str, str]:
     """Dominant role token per slot, uppercased; UNASSIGNED collapses to None."""
     out: dict[str, str] = {}
@@ -222,6 +213,42 @@ def freeze_signature(rows: list[dict[str, str]], path: pathlib.Path | None = Non
     }
 
 
+def _role_mapping(side: object) -> tuple[dict[str, str] | None, bool]:
+    """The normalized slot->role map of one side, and whether it is missing evidence.
+
+    This replaces comparing `consistent_with_freeze`. Two snapshots whose `observed`
+    mappings disagreed entirely could both report that boolean as true and be declared
+    MATCH - the summary said what the data did not. The mapping is the evidence; a summary
+    flag is at most a claim about it, so a contradiction between the two is reported as a
+    mismatch rather than resolved by believing the flag.
+    """
+    if not isinstance(side, dict):
+        return None, True
+    raw = side.get("observed")
+    if not isinstance(raw, dict):
+        raw = side
+    mapping: dict[str, str] = {}
+    for slot in FROZEN_ROLES:
+        value = str(raw.get(slot) or "").strip().upper()
+        if value in MISSING_STRINGS or value in {"UNASSIGNED", "NOT_ASSIGNED", "SPARE"}:
+            return None, True          # a slot nobody labelled is not a comparable map
+        mapping[slot] = value
+    if not side.get("fully_labelled", True):
+        return None, True
+    return mapping, False
+
+
+def _flag_contradicts_mapping(side: object, mapping: dict[str, str] | None) -> bool:
+    """True when the summary boolean disagrees with the map it claims to summarise."""
+    if mapping is None or not isinstance(side, dict):
+        return False
+    flag = side.get("consistent_with_freeze")
+    if flag is None:
+        return False
+    agrees = all(mapping[slot] == role for slot, role in FROZEN_ROLES.items())
+    return bool(flag) != agrees
+
+
 def compare_snapshots(baseline: dict[str, object], current: dict[str, object]) -> dict[str, object]:
     """Per-dimension match table for two era snapshots, plus the comparison verdict.
 
@@ -234,14 +261,19 @@ def compare_snapshots(baseline: dict[str, object], current: dict[str, object]) -
     for dim in COMPARISON_DIMENSIONS:
         b = baseline.get(dim)
         c = current.get(dim)
-        # Geometry is only comparable when BOTH sides fully label the frozen
-        # slots and agree with the freeze; a partially-labelled side is a MISSING
-        # side, not a match (the committed baseline labels only T2).
+        # Geometry is comparable only when both sides fully label the frozen slots and
+        # their slot->role MAPS agree. An unlabelled or partially-labelled side is a
+        # MISSING side (the committed baseline labels only T2), and a side whose summary
+        # flag disagrees with its own map is a mismatch, not a match.
+        contradictions: list[str] = []
         if dim == "geometry_roles":
-            b_missing = _geometry_missing(b)
-            c_missing = _geometry_missing(c)
-            b_norm = b.get("consistent_with_freeze") if isinstance(b, dict) else b
-            c_norm = c.get("consistent_with_freeze") if isinstance(c, dict) else c
+            b_map, b_missing = _role_mapping(b)
+            c_map, c_missing = _role_mapping(c)
+            for label, side, mapping in (("baseline", b, b_map), ("current", c, c_map)):
+                if _flag_contradicts_mapping(side, mapping):
+                    contradictions.append(label)
+                    b_missing = c_missing = True
+            b_norm, c_norm = b_map, c_map
             b_cmp, c_cmp = b, c
         else:
             b_missing = _is_missing(b)
@@ -255,7 +287,18 @@ def compare_snapshots(baseline: dict[str, object], current: dict[str, object]) -
         else:
             state = "MISMATCH"
             blocked = True
-        table[dim] = {"baseline": b_cmp, "current": c_cmp, "state": state}
+        entry: dict[str, object] = {"baseline": b_cmp, "current": c_cmp, "state": state}
+        if dim == "geometry_roles":
+            entry["compared_as"] = ("slot->role map" if not (b_missing or c_missing)
+                                    else "refused: one or both sides unlabelled")
+            if b_map is not None:
+                entry["baseline_map"] = b_map
+            if c_map is not None:
+                entry["current_map"] = c_map
+            if contradictions:
+                entry["flag_contradicts_mapping"] = contradictions
+                entry["state"] = "MISMATCH"
+        table[dim] = entry
     return {
         "requirement": "A-W16-02",
         "dimension_table": table,
