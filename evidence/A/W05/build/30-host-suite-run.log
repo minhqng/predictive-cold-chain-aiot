@@ -1,0 +1,17 @@
+[PASS] host tools: unittest suite (W02 + W03 + W04 + W05)
+[PASS] firmware: W05 static contract checks
+[PASS] firmware: W04 static contract checks (regression)
+[PASS] firmware: W03 static contract checks (regression)
+[PASS] firmware: W02 static contract checks (regression)
+[PASS] evidence: W02 dossier validator (regression)
+[PASS] evidence: W03 dossier validator (regression)
+[PASS] evidence: W04 dossier validator (regression)
+[PASS] evidence: W05 dossier validator (hash pins, honest verdict)
+[PASS] tools: W05 timing pilot reproduced from the committed W04 capture
+
+W05 CHECKS: 10/10 passed
+Reminder: no check here compiled the firmware or touched hardware.
+Compile check: ESP-IDF v6.1 build, logged in evidence/A/W05/build/.
+A-W05-03 is PARTIAL: the pilot is measured from the committed 60 s W04 capture.
+A 30-minute on-device telemetry run and a real timing-jitter CSV still require an
+authorized, supervised flash and capture on the installed image.

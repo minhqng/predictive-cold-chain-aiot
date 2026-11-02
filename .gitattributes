@@ -29,3 +29,9 @@ evidence/A/W04/h6/** -text
 evidence/A/W04/g1/** -text
 evidence/A/W04/g2a/** -text
 evidence/A/W04/build-2026-11-01/** -text
+
+# W05 telemetry dossier: every file in evidence/A/W05/ is hash-pinned in
+# SHA256SUMS.txt and re-verified by validate_w05.py. The IDF build log and the
+# derived JSON/CSV must keep their exact bytes, because `text=auto eol=lf` would
+# rewrite line endings on a checkout with core.autocrlf and break every pin.
+evidence/A/W05/** -text
