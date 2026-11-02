@@ -53,7 +53,7 @@ FORBIDDEN_PHRASES = (
 )
 # A numeric door->critical claim in prose: "door->critical = 90 s" etc.
 _DOOR_PROSE = re.compile(r"door[\s>_\-–—→]*critical[^\n]{0,40}?[:=]\s*-?\d", re.IGNORECASE)
-_QUALIFIED_PREFIXES = ("QUALIFIED",)
+_QUALIFICATION_CLAIMS = ("QUALIFIED", "PARTIALLY_QUALIFIED")
 
 
 def declares_gate_green(text: str) -> bool:
@@ -123,8 +123,12 @@ def check_pzem_qualification_claim(audit: dict) -> list[str]:
     The old check failed whenever ``electrical_qualification`` left UNQUALIFIED -
     which asserted today's missing-qualification defect as an invariant and turned
     the chain red on the exact qualified capture this slice's action queue requests.
-    A qualified state is legal only when the audit records frames that actually
-    carry a non-empty current_status/voltage_status.
+
+    Two gaps close here. ``PARTIALLY_QUALIFIED`` did not start with ``QUALIFIED`` so it
+    escaped the prefix test entirely, and the evidence demanded was a *non-empty* cell,
+    which INVALID, STALE or TIMEOUT tokens satisfy. A claim must now be backed by frames
+    carrying the producer's own validating status (cg_pzem_status_name: OK), and any
+    qualification string outside the published vocabulary fails rather than passing quietly.
     """
     failures: list[str] = []
     for cap in audit.get("captures", []):
@@ -132,11 +136,16 @@ def check_pzem_qualification_claim(audit: dict) -> list[str]:
         if pz.get("duty0_with_current_frames", {}).get("listed_individually_never_averaged") is False:
             failures.append(f"{cap.get('capture')}: duty-0 current frames were averaged")
         qual = str(pz.get("electrical_qualification") or "")
-        if any(qual.startswith(p) for p in _QUALIFIED_PREFIXES):
+        if qual in _QUALIFICATION_CLAIMS:
             evidence = pz.get("qualified_frame_evidence") or {}
-            if not evidence.get("frames_with_nonempty_status"):
+            if not evidence.get("frames_with_valid_status"):
                 failures.append(f"{cap.get('capture')}: claims {qual!r} electrical "
-                                "qualification with no qualified-frame evidence")
+                                "qualification with no frame carrying a validating status "
+                                "token - non-empty is not enough, INVALID and TIMEOUT are "
+                                "both non-empty")
+        elif qual not in ("UNQUALIFIED", ""):
+            failures.append(f"{cap.get('capture')}: electrical_qualification {qual!r} is "
+                            "outside the published qualification vocabulary")
     return failures
 
 
