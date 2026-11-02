@@ -1,7 +1,7 @@
 /*
  * ColdGuard firmware - canonical device command contract (W06, Member A half).
  *
- * docs/02 2051-2160 (§28-§32) is the command contract. This module implements
+ * docs/02 §28-§32 (lines 2051-2216) is the command contract. This module implements
  * the DEVICE side of it: the field set a command must carry, the validation
  * chain, the idempotency memory, and the ACK record. It is transport-free on
  * purpose - there is no network stack in this firmware and W06 does not add one
@@ -34,7 +34,7 @@
  *    cross-reset idempotency is deliberately NOT offered: persisting command
  *    identity would be the mechanism by which a stale actuation could come back.
  *
- * An ACK is protocol evidence, never physical evidence (docs/02 2188-2198, §32.2):
+ * An ACK is protocol evidence, never physical evidence (docs/02 §32.2, lines 2188-2197):
  * "the device handled the command according to protocol/local validation", not
  * "the chamber cooled". Applied state is reported separately from the requested
  * action, and in this build the output stage is compiled out, so the applied
@@ -53,7 +53,8 @@
 #define CG_COMMAND_REASON_MAX 24
 #define CG_COMMAND_ID_UUID_LEN 36
 
-/* docs/02 2144-2148 leaves retention size as an implementation detail. Eight
+/* docs/02 §30.3 (lines 2130-2136) leaves retention size as an implementation
+ * detail. Eight
  * entries is the honest bound of this implementation: a command older than the
  * eight most recent ids is no longer recognized as a duplicate. */
 #define CG_CMD_STORE_CAPACITY 8
@@ -75,7 +76,8 @@ typedef enum {
     CG_TIME_SYNC_SYNCHRONIZED,
 } cg_time_sync_state_t;
 
-/* docs/02 2168-2177: the closed ACK status set. Nothing outside it may be
+/* docs/02 §32.1 (lines 2172-2186): the closed ACK status set. Nothing outside it
+ * may be
  * emitted, so an unlisted outcome is a contract bug rather than a new string. */
 typedef enum {
     CG_CMD_ACK_ACCEPTED = 0,
@@ -92,7 +94,8 @@ typedef enum {
     CG_CMD_COOLING_ON,
 } cg_cmd_cooling_t;
 
-/* The canonical field set of docs/02 2055-2070 (§28.1/§28.2). `created_at_ms`
+/* The canonical field set of docs/02 §28.1-§28.2 (lines 2053-2086).
+ * `created_at_ms`
  * and `expires_at_ms` are absolute instants in the ISSUER clock domain, in ms;
  * they are only comparable to anything when the device is synchronized. */
 typedef struct {
@@ -126,7 +129,7 @@ typedef struct {
     bool local_safety_permits;
     bool inputs_sufficiently_valid;
     uint64_t uptime_ms;               /* the device's own monotonic clock */
-    uint32_t telemetry_seq;           /* "seq/context" of docs/02 2232 */
+    uint32_t telemetry_seq;           /* docs/02 §32.3 "seq/context", line 2208 */
     const char *device_mode;
     uint32_t fault_bits;              /* local controller faults at ACK time */
     /* The physical truth the ACK must report, independent of what was asked.
@@ -230,7 +233,7 @@ const char *cg_cmd_id_form_name(cg_command_id_form_t form);
  * controller_id, policy_version, reason_code, action_cooling, action_duty_permille).
  *
  * This is Member A's representation of the field SET, not a new wire schema:
- * docs/02 2053-2070 shows a JSON envelope, and JSON belongs to the gateway
+ * docs/02 §28.1 (lines 2053-2073) shows a JSON envelope, and JSON belongs to the gateway
  * side (Member C). The validation rules this module applies are transport
  * independent, which is why they can be proven here and reused unchanged when
  * C's delivery path exists. Flagged as an open contract item, not settled here.
@@ -239,7 +242,10 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
 
 /* The local console/test bridge builds a canonical record from the short
  * operator form. The source is stamped LOCAL_CONSOLE and the id form is
- * labelled, so a test command can never impersonate a backend one. */
+ * labelled, and cg_command_validate refuses ACCEPTED for that source outright
+ * (reason LOCAL_TEST_NOT_CANONICAL), so a test command can never impersonate a
+ * backend one even if a later clock or transport makes the rest of the chain
+ * pass. */
 bool cg_command_from_local_test(const char *command_id, cg_cmd_cooling_t cooling,
                                 uint32_t duty_permille, cg_command_t *out,
                                 const char **error);
