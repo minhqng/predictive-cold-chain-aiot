@@ -8,8 +8,12 @@ hash check cannot be what failed, and requires a non-zero exit naming the defect
 
 The planted claims are the four this week could actually ship by accident: a
 non-movement verification, an invented pairing tolerance, a hot-side-contaminated
-chamber-air mean, and one session labelled a distribution. Two extras cover the
-disturbance response and an absolute developer path in a pinned artifact.
+chamber-air mean, and one session labelled a distribution. The rest cover what an
+independent review of the delivered dossier could still write into it after the pins
+were rebuilt: a forbidden claim inside a JSON value, a fabricated conditioning
+fingerprint, a series row whose value or run attribution the capture does not support,
+a developer path inside a pinned .py file, and a file dropped into the pinned folder.
+Each of those shipped once; each now has to fail.
 """
 
 from __future__ import annotations
@@ -28,6 +32,11 @@ TOOLS = REPO / "firmware" / "tools"
 H8 = REPO / "evidence" / "A" / "W04" / "tec-cooling-response-600s.csv"
 TOOL_FILES = ("cg_thermal_repeatability.py", "cg_w14_spatial.py", "cg_w14_sensor_qa.py",
               "cg_w14_pairing.py")
+# Written from parts so this test file never carries a path the validator's own
+# absolute-path scan looks for - the point of the case is the planted artifact.
+BS = chr(92)
+_ABSOLUTE_PATH_LINE = ('CAPTURE = r"C:' + BS + BS + "Users" + BS + BS +
+                       "bench" + BS + BS + 'capture.csv"')
 
 
 def build_copy(root: pathlib.Path) -> pathlib.Path:
@@ -63,7 +72,13 @@ def edit_json(dossier: pathlib.Path, name: str, mutate) -> None:
     path = dossier / name
     payload = json.loads(path.read_text(encoding="utf-8"))
     mutate(payload)
-    path.write_text(json.dumps(payload, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+    path.write_bytes((json.dumps(payload, indent=2, sort_keys=True) + "\n").encode("utf-8"))
+
+
+def edit_bytes(dossier: pathlib.Path, name: str, mutate) -> None:
+    """Change an artifact without re-encoding its line endings, so pins stay LF-only."""
+    path = dossier / name
+    path.write_bytes(mutate(path.read_bytes().decode("utf-8")).encode("utf-8"))
 
 
 class DossierValidatorFails(unittest.TestCase):
@@ -164,6 +179,115 @@ class DossierValidatorFails(unittest.TestCase):
         code, output = validate(self.dossier)
         self.assertEqual(code, 1, output)
         self.assertIn("hash mismatch", output)
+
+
+class ValidatorFailsAFabricatedProof(unittest.TestCase):
+    """The control field is only a proof if the capture backs every row of it.
+
+    These are the tamper cases the review re-ran against the delivered dossier and
+    passed: a stamped `conditioning_fingerprint` nobody re-derived, a `feature_c` no
+    source row produced, a series row attributed to a boot the capture never recorded,
+    a forbidden claim parked inside a JSON value, a developer path inside a pinned .py,
+    and a file dropped into the pinned folder. Each one is planted here, re-pinned so a
+    hash mismatch cannot be what tripped, and has to exit 1.
+    """
+
+    def setUp(self):
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = pathlib.Path(self._tmp.name) / "repo"
+        self.root.mkdir(parents=True)
+        self.dossier = build_copy(self.root)
+
+    def tearDown(self):
+        self._tmp.cleanup()
+
+    def test_the_untouched_copy_passes(self):
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 0, output)
+
+    def test_a_fabricated_conditioning_fingerprint_fails(self):
+        for name in ("ablation-support.json", "ablation-support.csv"):
+            edit_bytes(self.dossier, name,
+                       lambda text: text.replace("d1671cc668ca0fa1", "f" * 16))
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("conditioning_fingerprint", output)
+
+    def test_a_feature_value_the_capture_does_not_produce_fails(self):
+        def corrupt(text):
+            lines = text.splitlines(True)
+            parts = lines[5].rstrip("\n").split(",")
+            parts[12] = "99.9999"
+            lines[5] = ",".join(parts) + "\n"
+            return "".join(lines)
+        edit_bytes(self.dossier, "ablation-support.csv", corrupt)
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("feature_c", output)
+
+    def test_a_row_attributed_to_a_foreign_boot_fails(self):
+        def append(text):
+            extra = text.splitlines()[1].replace("56044b74", "deadbeef99")
+            return text + extra + "\n"
+        edit_bytes(self.dossier, "ablation-support.csv", append)
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("boot_id", output)
+
+    def test_a_control_flag_that_only_agrees_with_itself_fails(self):
+        """A per-phase used-row fingerprint the capture does not give is caught, not stamped."""
+        def mutate(payload):
+            metrics = payload["captures"][0]["variants"]["air_t1_center_v0"]["cooling"]
+            metrics["used_rows_conditioning_fingerprint"] = "0" * 16
+            metrics["used_rows"] = 1
+        edit_json(self.dossier, "ablation-support.json", mutate)
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("used", output)
+
+    def test_a_forbidden_claim_inside_a_json_value_fails(self):
+        edit_json(self.dossier, "sensor-position-qa.json",
+                  lambda payload: payload.update(
+                      summary="positions re-checked, no movement verified since the freeze"))
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("no movement verified", output)
+
+    def test_a_developer_path_inside_a_pinned_python_file_fails(self):
+        def plant(text):
+            marker = "MIN_SESSIONS = 3"
+            assert marker in text
+            return text.replace(marker, marker + "\n" + _ABSOLUTE_PATH_LINE, 1)
+        edit_bytes(self.dossier, "build_w14_artifacts.py", plant)
+        repin(self.dossier)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("absolute capture path", output)
+
+    def test_a_file_dropped_into_the_dossier_is_refused_by_the_pin_write(self):
+        (self.dossier / "dropped-artifact.json").write_bytes(b'{"planted": true}\n')
+        result = subprocess.run([sys.executable,
+                                 str(self.dossier / "build_w14_artifacts.py"), "--pins"],
+                                cwd=str(self.dossier), capture_output=True, text=True,
+                                encoding="utf-8", errors="replace")
+        self.assertEqual(result.returncode, 1, result.stdout + result.stderr)
+        self.assertIn("dropped-artifact.json", result.stdout)
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("dropped-artifact.json", output)
+
+    def test_a_dropped_bytecode_cache_fails_the_validator(self):
+        cache = self.dossier / "__pycache__"
+        cache.mkdir(exist_ok=True)
+        (cache / "someone_else.cpython-314.pyc").write_bytes(b"\x00not bytecode")
+        code, output = validate(self.dossier)
+        self.assertEqual(code, 1, output)
+        self.assertIn("Python cache", output)
 
 
 class BuilderRefusesFalseClaims(unittest.TestCase):
