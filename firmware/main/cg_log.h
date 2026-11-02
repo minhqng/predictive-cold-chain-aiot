@@ -22,7 +22,10 @@
  *   #CG AUTH token=<8 hex> ttl_ms=<n> clear_requires_token=1
  *   #CG TEC event=<token> ...          (state machine events and status)
  *   #CG TEC_LIMIT name=<token> state=<UNRESOLVED|RESOLVED> value=<f> unit=<token> source=<token>
- *   #CG TELEM schema=1 ...             (raw experiment telemetry, cg_telemetry.h)
+ *   #CG TELEM schema=<n> ...           (raw experiment telemetry, cg_telemetry.h)
+ *   #CG CMDACK schema=1 event=ACK command_id=<id> ... (W06 command ACK, cg_command.h;
+ *                                      schema=1 is the docs/02 command envelope, not
+ *                                      the serial telemetry schema)
  *   #CG ERR msg=<token>
  *
  * `nan` means "no valid reading"; it is never 0.0 and never a stale value.

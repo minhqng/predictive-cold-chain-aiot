@@ -32,7 +32,7 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w05-0.1.0"
+#define CG_FIRMWARE_VERSION "cg-w06-0.1.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
 /* docs/01 2855-2876 makes calibration_id the identity of a calibration bundle
  * (DS18B20 cross-check, BME check, PZEM reference check, date, environment,
@@ -464,9 +464,12 @@
  * its meaning and position-independent key, so firmware/tools/cg_telemetry_schema.py
  * parses schema 1 and schema 2 lines; the W04 captures committed in
  * evidence/A/W04/ must remain parseable, and the tests pin that. */
-#define CG_TELEMETRY_SCHEMA_VERSION 2
+#define CG_TELEMETRY_SCHEMA_VERSION 3
 #define CG_TELEMETRY_PERIOD_MS 1000
-#define CG_TELEMETRY_LINE_MAX 2560
+#define CG_TELEMETRY_LINE_MAX 3072
+/* W06 raised this from 2560: the schema-3 frame adds the command layer, and the
+ * harness-measured worst case is 2256 bytes. At 2560 that left 12 % headroom, which
+ * is too little for a budget whose violation silently drops observations. */
 
 /* ------------------------------------------------------------------ */
 /* W05 - producer liveness (A-W05-01 task boundaries)                   */
@@ -502,6 +505,18 @@
  * an observation time. Four door periods is 80 ms, far inside any deliberate
  * open interval used for a disturbance test, so it cannot erase a treatment. */
 #define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
+
+/* ------------------------------------------------------------------ */
+/* W06 - command/ACK                                                   */
+/* ------------------------------------------------------------------ */
+
+/* Budget for the #CG CMDACK line, measured by cg_w05/cg_w06 harness scenarios
+ * against the widest ACK the formatter can be given. It is a separate, much
+ * smaller stream than the telemetry line, so it does not share that budget, but
+ * it must still be a ceiling the worst case is known to fit: cg_log_raw_line()
+ * refuses an over-long line rather than truncating it, and a refused ACK would
+ * silently delete the evidence that a command was rejected. */
+#define CG_COMMAND_ACK_LINE_MAX 640
 
 /* Local operator console on UART0 (the log console). Commands share the
  * terminal with the log stream; the parser rejects every line it does not
@@ -541,6 +556,9 @@
 #define CG_LOG_TEC "TEC"
 #define CG_LOG_TEC_LIMIT "TEC_LIMIT"
 #define CG_LOG_TELEM "TELEM"
+/* W06 command/ACK evidence line kind (docs/02 §32). A new line kind, so the
+ * serial grammar version stays 2 exactly as the W03 PZEM kinds did. */
+#define CG_LOG_CMDACK "CMDACK"
 #define CG_LOG_ERROR "ERR"
 
 /* Token printed instead of a number when a probe reading is not valid.

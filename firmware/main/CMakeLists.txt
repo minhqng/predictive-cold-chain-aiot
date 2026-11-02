@@ -20,6 +20,7 @@ idf_component_register(
         "cg_quality.c"
         "cg_health.c"
         "cg_telemetry.c"
+        "cg_command.c"
         "cg_console.c"
         "cg_commission.c"
     INCLUDE_DIRS "."
