@@ -21,13 +21,13 @@ Source: `probe-identification-v0.md` and its six raw captures
 | slot | ROM | physical position | how established |
 |---|---|---|---|
 | T1 | `287088CA00000051` | **chamber CENTER** | rose 29.750 → 31.938 °C while held; fell after release |
-| T2 | `28AEBF2200000006` | **TEC HOT_SIDE** (stays on the hot-side metal) | never touched; ≤0.063 °C across all windows |
+| T2 | `28AEBF2200000006` | **TEC HOT_SIDE** (stays on the hot-side metal) | never touched; spread 0.062 °C in five of the six windows, 0.125 °C in `decay_check` |
 | T3 | `28CBE9CA00000072` | **chamber BOTTOM** | rose 29.500 → 31.875 °C while held; other channels fell |
 | T4 / SPARE | `283BE5C9000000A9` | **NEAR the chamber DOOR** | rose 31.438 → 34.250 °C while held, unambiguously |
 
 Provenance rule, stated honestly: **the temperature response establishes the
 slot-to-position mapping. The ROM ids come from the firmware's frozen ROM map
-(`coldguard_config.h:218-224`), not from an independent ROM readback in these
+(`coldguard_config.h:229-235`), not from an independent ROM readback in these
 frames** - the installed H8 image emits no ROM on the wire. Wires were labelled by
 the operator during the session; if a label and this table ever disagree, the wire
 wins until re-tested.
@@ -41,11 +41,11 @@ wins until re-tested.
 | Probe identities | four DS18B20 ROMs, roles T1/T2/T3/SPARE | `cg_rom_map.c:15-24`, mirrored from `evidence/A/W02/sensor-rom-map.yaml` |
 | RS-485 to the power meter | GPIO **36** (DI) / **37** (RO), 9600 8N1, bounded 250 ms read | `coldguard_config.h:78-79`, `evidence/A/W03/` |
 | IBT-2 / BTS7960 control pins | RPWM **GPIO5**, R_EN **GPIO6**, L_EN **GPIO10** | `coldguard_config.h:80-82` |
-| BME280 | SDA **21** / SCL **34**; **not implemented in firmware** | `coldguard_config.h:73-75`, `cg_telemetry.h:21-22` (`:501`), A-W02-06 still asks to verify the sensor itself |
+| BME280 | SDA **21** / SCL **34**; **not implemented in firmware** | `coldguard_config.h:73-75`, `cg_telemetry.h:21-22`, A-W02-06 still asks to verify the sensor itself |
 | Door sensor (MC-38) | GPIO **35**, polarity commissioned by touch only | `coldguard_config.h:77`, `evidence/A/W02/mc38/` |
 | Production output posture | `CG_TEC_OUTPUT_STAGE_ENABLED 0` (`:403`), gates unverified (`:404`), requested duty 0, actuator enable disallowed (`:381`); six operating limits all `UNRESOLVED` | `coldguard_config.h`, `cg_tec_limits.h:5-8` (the count `CG_LIMIT_COUNT` is the enum at `:23-31`) |
 | Installed bench image | `build-t2-hot-side`, SHA-256 `01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f`, 258 544 B; local-only, outside the repository | `evidence/A/W04/ARTIFACT-MANIFEST.md` |
-| Telemetry cadence | 1 Hz, one line per second | `evidence/A/W05/timing-pilot.md` (955 of 956 gaps exactly 1000 ms) |
+| Telemetry cadence | commanded at 1 Hz; the wire is not exactly 1000 ms | `coldguard_config.h:473` (`CG_TELEMETRY_PERIOD_MS 1000`); measured in `evidence/A/W05/timing-pilot.md`: 61 gaps, 980 ms / 1080 ms bimodal, median 980 ms — that file states spacing is *not* 1000 ms, and the 955-of-956 exact-spacing figure belongs to the W04 H8 CSV |
 
 ## 3. NOT FROZEN — what this record cannot assert
 
@@ -68,14 +68,17 @@ wins until re-tested.
    ask is `2 × 2.5 mm²` (`docs/05A` A-W04-02, `docs/01` PHY-SAFE-004),
    `evidence/A/W01/bom-audit.csv` still carries HW-19 as `UNVERIFIED`, and the
    deviation register stays open. Do not read this row as compliance.
-5. **Fuse selection.** Reported at 15 A; suitability for the observed 9.35-9.99 A
-   loads is unproven and stays a W08 question.
+5. **Fuse selection.** Reported at 15 A. The only current this dossier can cite is the
+   single cooling run's peak `9.99 A` (mean `7.2247 A`), and every one of those readings
+   is unqualified because the capture records no current status - so suitability is
+   unproven and stays a W08 question, not a range I invented.
 
 ## 4. Canonical naming versus the as-built rig — a discrepancy to resolve, not hide
 
-`docs/01` §20.1 (lines 2312-2318) defines Tmean as mean(T1,T2,T3), and the earlier
-probe-role text (lines 517-530) freezes T1/T2/T3 as the chamber probes with a
-degraded two-sensor mean labelled separately. The as-built rig is:
+`docs/01` §20.1 (lines 2312-2318) defines Tmean as mean(T1,T2,T3), the probe-role
+text (lines 823-825, and the frozen-label table at 842) assigns T1 near-door / T2
+central / T3 far-opposite, and lines 517-530 are the separate rule that a degraded
+partial mean must not reuse the full-mean label. The as-built rig is:
 
 ```text
 canonical expectation        as-built reality
@@ -109,8 +112,10 @@ The raw firmware slot names stay exactly as they are; nothing is renamed silentl
 What Member A does **not** decide here: whether `docs/01` §20.1 is amended to name
 the chamber set by role rather than by slot, or whether the firmware ROM-to-role
 table is re-pointed. That is a project-level change to a canonical document with a
-safety consequence (T2 currently carries the only hot-side observation, and the
-55 °C provisional limit depends on it). The minimum coherent transition, if the
+safety consequence (T2 currently carries the only hot-side observation, and there is no
+established hot-side limit for it to feed: `cg_tec_limits.c:45` records
+`HOT_SIDE_LIMIT_NOT_ESTABLISHED`, and the limits themselves are `UNRESOLVED` at
+`cg_tec_limits.h:5-8`). The minimum coherent transition, if the
 project chooses it, is: keep `TEC_HOT_SIDE` on ROM `28AEBF2200000006` and its
 protection role; assign chamber-air roles by ROM rather than by enumeration index;
 publish a new `hardware_config_id` for the configuration so captures before and

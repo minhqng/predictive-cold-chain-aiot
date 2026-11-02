@@ -83,33 +83,60 @@ def _registry(report: dict[str, object], phase: str) -> list[dict[str, object]]:
     return entries
 
 
+# What makes the frame anomalous is its measurements not moving while its command
+# did, so the two field groups are compared and reported separately on purpose.
+MEASURED_FIELDS = ("voltage_v", "voltage_status", "current_a", "current_status",
+                   "power_w", "energy_wh",
+                   "t1_c", "t1_status", "t2_c", "t2_status",
+                   "t3_c", "t3_status", "t4_c", "t4_status")
+COMMAND_FIELDS = ("state", "pwm_req_permille", "pwm_applied_permille")
+
+
 def _suspect_frame() -> dict[str, object]:
     """The zero-duty nonzero-current frame, quoted rather than summarised away."""
     rows = rep.read_rows(H8_CAPTURE)
     for row in rows:
-        if row.get("device_ms") == str(SUSPECT_DEVICE_MS):
-            keys = ("device_ms", "stage", "state", "pwm_req_permille",
-                    "pwm_applied_permille", "current_a", "current_status", "power_w",
-                    "energy_wh", "t1_c", "t2_c", "t3_c", "t4_c")
-            neighbours = [r for r in rows
-                          if r["device_ms"] in {str(SUSPECT_DEVICE_MS - 2000),
-                                                str(SUSPECT_DEVICE_MS - 1000)}]
-            identical = [n for n in neighbours
-                         if all(n.get(k) == row.get(k) for k in
-                                ("current_a", "power_w", "energy_wh", "t1_c", "t2_c"))]
-            return {
-                "device_ms": SUSPECT_DEVICE_MS,
-                "fields": {k: row.get(k, "") for k in keys},
-                "preceding_frames_byte_identical_on_electrical_and_thermal":
-                    len(identical),
-                "current_status_value": repr(row.get("current_status", "")),
-                "reading": ("state=COOLDOWN with applied duty 0 yet current 7.15 A; "
-                            "current_status is an empty cell, not OK, and the electrical "
-                            "and thermal fields repeat the two preceding driven frames "
-                            "exactly - consistent with documented PZEM register holdover, "
-                            "so it is recorded as an observation to confirm on the next "
-                            "supervised session and excluded from no statistic silently"),
-            }
+        if row.get("device_ms") != str(SUSPECT_DEVICE_MS):
+            continue
+        neighbours = [r for r in rows
+                      if r["device_ms"] in {str(SUSPECT_DEVICE_MS - 2000),
+                                            str(SUSPECT_DEVICE_MS - 1000)}]
+        differing = sorted({k for n in neighbours for k in MEASURED_FIELDS
+                            if n.get(k) != row.get(k)})
+        identical = [n for n in neighbours
+                     if all(n.get(k) == row.get(k) for k in MEASURED_FIELDS)]
+        agreement = (f"all {len(MEASURED_FIELDS)} measured fields match "
+                     f"{len(identical)} of the {len(neighbours)} preceding frames"
+                     if not differing else
+                     f"measured fields differ from the preceding frames on {differing}")
+        return {
+            "device_ms": SUSPECT_DEVICE_MS,
+            "fields": {k: row.get(k, "") for k in MEASURED_FIELDS + COMMAND_FIELDS},
+            "measured_fields_compared": list(MEASURED_FIELDS),
+            "preceding_frames_identical_on_all_measured_fields": len(identical),
+            "differing_measured_fields": differing,
+            "command_and_state_fields": {
+                k: {"preceding": [n.get(k, "") for n in neighbours],
+                    "suspect": row.get(k, "")} for k in COMMAND_FIELDS},
+            "canonical_candidate": ("docs/01 22.4 'Commanded OFF + unexpected current' names "
+                                    "CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists "
+                                    "'current while state should be OFF' as its example"),
+            "competing_explanation": ("evidence/A/W04/README.md records the first PZEM sample "
+                                      "after START still returning pre-run registers, which is "
+                                      "why register holdover is a candidate here rather than a "
+                                      "conclusion"),
+            "reading": (f"applied duty `{row.get('pwm_applied_permille', '')}` and requested "
+                        f"duty `{row.get('pwm_req_permille', '')}` in state "
+                        f"`{row.get('state', '')}`, yet the row carries "
+                        f"`{row.get('current_a', '')} A` and `{row.get('power_w', '')} W`; "
+                        f"`current_status` is `{row.get('current_status', '')}` - an empty "
+                        f"cell, not OK - and {agreement}, so the readings did not move when "
+                        f"the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety "
+                        f"classification and not a host tool's call, so it is recorded as the "
+                        f"canonical candidate for the next supervised session; the frame stays "
+                        f"inside the recovery segment's published peak, where the report names "
+                        f"it instead of averaging it away"),
+        }
     raise AssertionError(f"suspect frame device_ms={SUSPECT_DEVICE_MS} not found")
 
 
@@ -127,8 +154,7 @@ def build() -> dict[str, str]:
 
     buffer = io.StringIO()
     csv.writer(buffer, lineterminator="\n").writerows(
-        rep.overlay_rows([analyses[PRIMARY], analyses["tmean_chamber3_v0"],
-                          analyses["tmean_t2excluded_v0"]]))
+        rep.overlay_rows([analyses[name] for name in (PRIMARY, *COMPARATORS)]))
     files["repeatability-overlay.csv"] = buffer.getvalue()
 
     for phase, filename in PHASE_FILE.items():
@@ -139,7 +165,7 @@ def build() -> dict[str, str]:
     files["reset-criterion-evaluation.json"] = json.dumps(_criterion_evidence(),
                                                           indent=2,
                                                           sort_keys=True) + "\n"
-    files["repeatability-report.md"] = _report(analyses)
+    files["repeatability-report.md"] = _report(analyses, _suspect_frame())
     for name, text in files.items():
         _guard(name, text)
     return files
@@ -191,7 +217,38 @@ def _stat_row(block: dict[str, object], outcome: str) -> str:
             f"{stats.get('cv_note', '')} |")
 
 
-def _report(analyses: dict[str, dict[str, object]]) -> str:
+def _slope_relationship_sentence(phases: dict[str, dict[str, object]]) -> str:
+    """Say what the two slope columns measured, derived from the numbers themselves.
+
+    This paragraph used to read "the trailing-window slope is positive during cooling on
+    purpose" as a hardcoded literal, while the table printed three lines above it said
+    -0.070104 - so the dossier's own prose contradicted its own evidence, and the example
+    it was meant to give of slope discipline was the thing that was wrong. No sign or
+    magnitude may be asserted here that the run did not produce.
+    """
+    run = phases.get("cooling", {}).get("runs", [{}])[0]
+    trailing = run.get("slope_c_per_min")
+    whole = run.get("whole_phase_slope_c_per_min")
+    if trailing is None or whole is None:
+        return ("One of the two slope definitions is uncomputed for the only cooling "
+                "segment, so they are published without comparison.")
+    if abs(trailing) < abs(whole):
+        comparison = "shallower than"
+    elif abs(trailing) > abs(whole):
+        comparison = "steeper than"
+    else:
+        comparison = "the same size as"
+    return (
+        f"The two slope columns answer different questions and are not two estimates of "
+        f"one. In the only cooling segment the trailing window measures {trailing} C/min, "
+        f"which is {comparison} the whole phase at {whole} C/min, so it reports recent "
+        f"motion rather than the response. Neither value is \"the cooling slope\": the "
+        f"phase answer is `whole_phase_slope_c_per_min`, and the comparison is computed "
+        f"(`trailing_differs_from_whole_phase`) rather than asserted, so a future run in "
+        f"which the two agree will say so.")
+
+
+def _report(analyses: dict[str, dict[str, object]], suspect: dict[str, object]) -> str:
     primary = analyses[PRIMARY]
     phases = primary["phases"]
     lines = [
@@ -238,17 +295,7 @@ def _report(analyses: dict[str, dict[str, object]]) -> str:
             f"{run['skipped_rows']} | {run['partial_term_rows']} | "
             f"{run['duration_min']} | {run['delta_c']} | {run['slope_c_per_min']} | "
             f"{run['whole_phase_slope_c_per_min']} | {run['minutes_to_1c']} |")
-    lines += [
-        "",
-        "The trailing-window slope is positive during cooling on purpose: the chamber",
-        "mean bottoms out and starts rebounding inside the driven block, so the last",
-        "120 samples measure recent motion, not the response. Both numbers are",
-        "published under their own definitions and neither is called \"the cooling",
-        "slope\".",
-        "",
-        "### Electrical figures",
-        "",
-    ]
+    lines += ["", _slope_relationship_sentence(phases), "", "### Electrical figures", ""]
     cooling = phases["cooling"]["runs"][0]
     recovery = phases.get("recovery", {}).get("runs", [{}])[0]
     lines += [
@@ -263,12 +310,16 @@ def _report(analyses: dict[str, dict[str, object]]) -> str:
         f"{str(cooling['electrical_status_recorded']).lower()}`), so these are values "
         f"with no recorded validity and are never presented as status-checked",
         "",
-        f"Suspect frame (`device_ms={SUSPECT_DEVICE_MS}`): state `COOLDOWN`, "
-        f"requested and applied duty `0`, current `7.15 A`, power `84.2 W`, "
-        f"`current_status` an **empty cell, not OK**, and its electrical and thermal "
-        f"fields byte-identical to the two preceding driven frames. Read as documented "
-        f"PZEM register holdover, recorded as an observation for the next supervised "
-        f"session, and not interpreted as current flowing with the bridge off.",
+        f"Suspect frame (`device_ms={SUSPECT_DEVICE_MS}`): {suspect['reading']}.",
+        "",
+        f"- canonical candidate: {suspect['canonical_candidate']}",
+        f"- competing explanation: {suspect['competing_explanation']}",
+        f"- comparison actually performed: `{len(suspect['measured_fields_compared'])}` "
+        f"measured fields, "
+        f"`{suspect['preceding_frames_identical_on_all_measured_fields']}` of "
+        f"`{len(suspect['command_and_state_fields']['state']['preceding'])}` preceding "
+        f"frames identical on all of them, differing on "
+        f"`{suspect['differing_measured_fields'] or 'none'}`",
         "",
         "## The representation question, measured",
         "",
