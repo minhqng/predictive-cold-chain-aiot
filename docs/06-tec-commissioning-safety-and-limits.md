@@ -342,6 +342,61 @@ từ capture 60 s đã commit), `evidence/A/W05/handoff-w05.md` (hợp đồng c
 Tất cả đều là bằng chứng **phần mềm**: ảnh W05 chưa từng được flash, nên chưa có
 30 phút telemetry thật.
 
+
+### 6.2 W06 — hợp đồng lệnh device-side và ACK (serial schema 3)
+
+W06 nâng `CG_TELEMETRY_SCHEMA_VERSION` lên **3** và giữ nguyên schema 1 (W04) cùng
+schema 2 (W05): `cg_telemetry_schema.py` nhận cả ba, và test đọc lại capture W04 đã
+commit cộng fixture W05 nên lịch sử không bị viết lại.
+
+`firmware/main/cg_command.c/.h` cài đặt phần **device** của docs/02 §28-§32:
+
+- chuỗi validate đúng thứ tự §29: schema → `device_id` → `command_id` mới/trùng →
+  freshness → range → local safety → local state;
+- **expiry tuyệt đối không thẩm định được thì fail closed.** Thiết bị không có đồng hồ
+  thực, nên `created_at`/`expires_at` của issuer không so sánh được với gì cả.
+  Thiết bị trả `SAFETY_BLOCKED / reason=EPOCH_UNSYNCHRONIZED, expiry_evaluable=0`.
+  **Không** thay bằng TTL tính từ lúc nhận: TTL từ lúc nhận chỉ chứng minh thiết bị
+  *vừa thấy* lệnh, không nói lệnh đã nằm trong queue bao lâu, nên nó không thể thay
+  cho ngữ nghĩa canonical.
+  `expires_at` không có ⇒ `REJECTED/MISSING_EXPIRY`, không bao giờ được hiểu là "vĩnh viễn";
+  thiếu `created_at` ⇒ `MISSING_CREATED_AT`; `expires_at <= created_at` ⇒ `OUT_OF_RANGE`.
+- idempotency: store RAM 8 phần tử. Bản trùng trả `DUPLICATE_CANONICAL` kèm
+  **canonical_status** của lần đầu, `reapplied=0`, và quyết định được trả trước cả
+  freshness/range/safety — để một replay không thể đạt verdict khác khi thế giới đã đổi.
+  Đếm `hits` và `evicted` để bound của retention là quan sát được, không phải giả định.
+- **store không bao giờ xuống NVS.** Sau reset thiết bị *không nhớ* command_id cũ
+  (`duplicate_recognized=0`) và cũng **không** tiếp tục desire cũ: nó khởi động
+  default-OFF và validate lại. A-W06-06 được chứng minh bằng host scenario; phần vật lý
+  (power-cycle thật sau một lệnh ON) còn nợ, và hôm nay được chặn bởi output stage
+  compiled out.
+- ACK tách `desired_*` khỏi `applied_*`; cặp applied chỉ lấy từ context của thiết bị.
+  `applied_state_comes_from_the_device` chứng minh board *đang* làm lạnh phải ACK
+  `applied_cooling=ON` khi bị yêu cầu OFF.
+- Cầu console `CMDTEST` dùng đúng validator đó nhưng bị đóng dấu
+  `source=LOCAL_CONSOLE`, `command_id_form=TEST_TOKEN` và **không** mang
+  `created_at`/`expires_at` — thiết bị không có clock để đóng dấu, và một timestamp do
+  người vận hành gõ không phải time base đã đồng bộ. Nó không thể đạt ACCEPTED trên
+  build thật. Đây là công cụ test, **không phải** network command contract.
+
+`schema=1` trên dòng `#CG CMDACK` là phiên bản **command envelope** của docs/02 §28.1,
+không phải serial schema của stream telemetry; test giữ cho hai số này không lẫn nhau.
+
+`device_mode` trong ACK là trạng thái controller (`OFF`/`ARMED`/`COOLING`/`COOLDOWN`/
+`FAULT_LATCH`), **không phải** policy mode §23 docs/02 — firmware này không chạy policy
+machine, và ghi tên policy mode sẽ gán cho firmware một quyết định nó chưa bao giờ đưa ra.
+
+Khi chưa có time sync, **không lệnh remote nào có thể được accept**, kể cả lệnh STOP.
+Đây là hệ quả có chủ đích của fail-closed; đường bảo vệ cục bộ (STOP/ESTOP console,
+heartbeat timeout, fault latch, output stage compiled out) không phụ thuộc hợp đồng lệnh.
+Chọn time sync hay sửa ngữ nghĩa expiry là quyết định của C/D và dự án (docs/02 phải đổi
+trước), không phải quyết định của Member A — xem `evidence/A/W06/handoff-w06.md` §1.
+
+Bằng chứng: `evidence/A/W06/command-parser-tests.md` (36 scenario C trên host, 93 static
+check, 20 mutation + 1 must-not-fire control + 1 baseline), `ack-fixture.json` và ba log lệnh
+(`duplicate/expired/reset-command-log`) — tất cả generate từ source thật, gắn nhãn
+host scenario, không phải đo vật lý. `physical-command-trace.md` nói rõ trace thật còn nợ gì.
+
 ---
 
 ## 7. Thu thập dữ liệu (bắt đầu bằng phiên TEC-OFF)

@@ -1,0 +1,30 @@
+# W06 host verification run, 2026-11-02 (PYTHONUTF8=1, Python 3.14.8, Windows host; MSVC harness build.)
+# Reproduce: cd firmware/tools && PYTHONUTF8=1 py -m unittest discover -s tests -t tests
+#           cd firmware/tools && PYTHONUTF8=1 py run_all_checks_w06.py
+
+## unittest suite (W02 + W03 + W04 + W05 + W06)
+Ran 280 tests
+OK
+exit_code=0
+
+## twelve-layer W06 check chain
+[PASS] host tools: unittest suite (W02 + W03 + W04 + W05 + W06)
+[PASS] firmware: W06 static contract checks
+[PASS] firmware: W05 static contract checks (regression)
+[PASS] firmware: W04 static contract checks (regression)
+[PASS] firmware: W03 static contract checks (regression)
+[PASS] firmware: W02 static contract checks (regression)
+[PASS] evidence: W02 dossier validator (regression)
+[PASS] evidence: W03 dossier validator (regression)
+[PASS] evidence: W04 dossier validator (regression)
+[PASS] evidence: W05 dossier validator (regression)
+[PASS] evidence: W06 dossier validator (hash pins, honest verdict)
+[PASS] tools: W06 contract artifacts reproduce from the real sources
+W06 CHECKS: 12/12 passed
+Reminder: no check here compiled the firmware or touched hardware.
+
+Compile check: ESP-IDF v6.1 build, logged in 20-idf-py-build.log.
+A-W06-05 and A-W06-06 remain open physically: there is no transport, no backend
+issuer, and no authorized energized session, so the physical trace and the
+reset-command log are recorded as NEED_USER_ACTION rather than simulated.
+Nothing in this log flashed a board, energized a stage, or touched hardware.
