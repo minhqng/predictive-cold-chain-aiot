@@ -14,6 +14,7 @@
         "command_id_form": "UUID",
         "desired_cooling": "ON",
         "desired_duty_permille": "250",
+        "device_id": "coldguard-001",
         "device_mode": "OFF",
         "event": "ACK",
         "expiry_evaluable": "0",
@@ -27,7 +28,7 @@
         "time_sync_state": "SYNCHRONIZED",
         "uptime_ms": "123456"
       },
-      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000e command_id_form=UUID source=NETWORK boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=DUPLICATE_CANONICAL reason=NONE desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 canonical_status=ACCEPTED output_stage=ENABLED allowed_duty_max_permille=500"
+      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000e command_id_form=UUID source=NETWORK device_id=coldguard-001 boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=DUPLICATE_CANONICAL reason=NONE desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 canonical_status=ACCEPTED output_stage=ENABLED allowed_duty_max_permille=500"
     },
     "shipped-unsynchronized": {
       "description": "the board as shipped: no wall clock, so expiry is unverifiable",
@@ -42,6 +43,7 @@
         "command_id_form": "UUID",
         "desired_cooling": "ON",
         "desired_duty_permille": "250",
+        "device_id": "coldguard-001",
         "device_mode": "OFF",
         "event": "ACK",
         "expiry_evaluable": "0",
@@ -55,7 +57,7 @@
         "time_sync_state": "UNSYNCHRONIZED",
         "uptime_ms": "123456"
       },
-      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000a command_id_form=UUID source=NETWORK boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=SAFETY_BLOCKED reason=EPOCH_UNSYNCHRONIZED desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=UNSYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=DISABLED allowed_duty_max_permille=0"
+      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000a command_id_form=UUID source=NETWORK device_id=coldguard-001 boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=SAFETY_BLOCKED reason=EPOCH_UNSYNCHRONIZED desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=UNSYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=DISABLED allowed_duty_max_permille=0"
     },
     "synchronized-accepted": {
       "description": "harness-injected synchronized clock and resolved limits",
@@ -70,6 +72,7 @@
         "command_id_form": "UUID",
         "desired_cooling": "ON",
         "desired_duty_permille": "250",
+        "device_id": "coldguard-001",
         "device_mode": "OFF",
         "event": "ACK",
         "expiry_evaluable": "1",
@@ -83,7 +86,7 @@
         "time_sync_state": "SYNCHRONIZED",
         "uptime_ms": "123456"
       },
-      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000b command_id_form=UUID source=NETWORK boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=ACCEPTED reason=NONE desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=1 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
+      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000b command_id_form=UUID source=NETWORK device_id=coldguard-001 boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=ACCEPTED reason=NONE desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=1 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
     },
     "synchronized-expired": {
       "description": "harness-injected clock past the command's expiry",
@@ -98,6 +101,7 @@
         "command_id_form": "UUID",
         "desired_cooling": "ON",
         "desired_duty_permille": "250",
+        "device_id": "coldguard-001",
         "device_mode": "OFF",
         "event": "ACK",
         "expiry_evaluable": "1",
@@ -111,7 +115,7 @@
         "time_sync_state": "SYNCHRONIZED",
         "uptime_ms": "123456"
       },
-      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000c command_id_form=UUID source=NETWORK boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=EXPIRED reason=EXPIRED desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=1 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
+      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000c command_id_form=UUID source=NETWORK device_id=coldguard-001 boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=EXPIRED reason=EXPIRED desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=1 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
     },
     "wrong-device": {
       "description": "command addressed to another device id",
@@ -126,6 +130,7 @@
         "command_id_form": "UUID",
         "desired_cooling": "ON",
         "desired_duty_permille": "250",
+        "device_id": "coldguard-001",
         "device_mode": "OFF",
         "event": "ACK",
         "expiry_evaluable": "0",
@@ -139,7 +144,7 @@
         "time_sync_state": "SYNCHRONIZED",
         "uptime_ms": "123456"
       },
-      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000d command_id_form=UUID source=NETWORK boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=REJECTED reason=DEVICE_ID_MISMATCH desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
+      "raw_line": "#CG CMDACK schema=1 event=ACK command_id=00000000-0000-4000-8000-00000000000d command_id_form=UUID source=NETWORK device_id=coldguard-001 boot_id=abcd0123 boot_count=9 uptime_ms=123456 ack_seq=42 status=REJECTED reason=DEVICE_ID_MISMATCH desired_cooling=ON desired_duty_permille=250 applied_cooling=OFF applied_duty_permille=0 reapplied=0 expiry_evaluable=0 time_sync_state=SYNCHRONIZED device_mode=OFF fault_code=0x00000000 output_stage=ENABLED allowed_duty_max_permille=500"
     }
   },
   "provenance": {

@@ -1,11 +1,11 @@
 # A-W06-01/02/03/04 — Command parser and lifecycle test record
 
 Executed: 2026-11-02 · Method: **host execution of the delivered C sources**
-Harness: `firmware/tools/tests/cg_w06_harness.c` (38 scenarios; compiles
+Harness: `firmware/tools/tests/cg_w06_harness.c` (39 scenarios; compiles
 `cg_command.c`, `cg_quality.c`, `cg_health.c`, `cg_snapshot.c`, `cg_telemetry.c`,
 `cg_tec_control.c`, `cg_tec_limits.c`, `cg_tec_command.c` unchanged) · Checker:
-`cg_check_firmware_w06.py` (95 static checks) · Negative tests:
-`tests/test_cg_check_firmware_w06.py` (24 tests: 22 in-memory mutations, 1 must-not-fire
+`cg_check_firmware_w06.py` (120 static checks) · Negative tests:
+`tests/test_cg_check_firmware_w06.py` (28 tests: 26 in-memory mutations, 1 must-not-fire
 control, 1 real-tree baseline) · W06 harness worst-case line measurements in
 `build/`
 
@@ -43,7 +43,7 @@ contains no `ttl_ms`/`TTL_MS`, no `received_ms +` or `uptime_ms + command->`
 arithmetic, and the ARM authorization window (`CG_TEC_ARM_TTL_MS`, a different
 pre-existing thing) is asserted not to leak into command expiry.
 
-## 2. Scenario matrix (all 38 pass)
+## 2. Scenario matrix (all 39 pass)
 
 | Group | Scenarios |
 |---|---|
@@ -54,7 +54,7 @@ pre-existing thing) is asserted not to leak into command expiry.
 | A-W06-02 idempotency | `duplicate_returns_canonical_and_does_not_reapply` (the world is then moved on — ceiling lowered, stage removed — and the replay still answers the **original** verdict), `blocked_duplicate_stays_blocked_canonical`, `new_id_same_action_is_a_new_instruction`, `retention_bound_is_explicit`, `pre_identity_rejection_cannot_clobber_the_canonical_result` (a foreign-addressed or wrong-schema record sharing an accepted command's id may not take the remembered verdict with it) |
 | A-W06-06 reset | `store_is_volatile_across_reset` |
 | ACK | `ack_line_carries_the_required_payload`, `ack_duplicate_names_canonical_status`, `ack_refuses_truncation_and_anonymous_records`, `ack_status_vocabulary_is_closed` |
-| Encoding + console bridge | `fields_record_parses_canonical_set`, `fields_record_refers_unknown_and_malformed`, `local_test_bridge_is_labelled_and_unbounded_by_choice`, `local_console_command_is_blocked_by_the_validator`, `local_console_source_is_gated_before_acceptance` (the same record given a real expiry and a permissive context: the source gate, not a missing field, is what refuses it), `console_cmdtest_grammar`, `existing_console_verbs_unchanged` |
+| Encoding + console bridge | `fields_record_parses_canonical_set`, `fields_record_refers_unknown_and_malformed`, `local_test_bridge_is_labelled_and_unbounded_by_choice`, `local_console_command_is_blocked_by_the_validator`, `source_admission_refuses_unknown_local_and_replay` (a record whose source was never stamped, the local bridge given a real expiry and a permissive context, and the same `command_id` replayed from both an inadmissible and a canonical source), `ack_names_the_device_from_its_own_context`, `console_cmdtest_grammar`, `existing_console_verbs_unchanged` |
 | Telemetry | `no_command_is_named_not_zeroed`, `desired_and_applied_are_both_published`, `worst_case_fits_after_w06_fields`, `oversized_numbers_are_refused`,
 `worst_case_ack_fits_its_budget` |
 
@@ -88,7 +88,9 @@ cannot obtain an acceptance, and the ACK says which required field is missing.
 The separation is deliberate and is checked twice over: the bridge is not the
 network contract, it cannot be mistaken for one in the log, and
 `cg_command_validate` refuses `ACCEPTED` for `source=LOCAL_CONSOLE` outright
-(`SAFETY_BLOCKED / LOCAL_TEST_NOT_CANONICAL`). That gate is what makes the
+(`SAFETY_BLOCKED / SOURCE_NOT_CANONICAL`), and it does so *before* the store is
+consulted, so an inadmissible source cannot read back the canonical result another
+path earned for the same id. That admission is what makes the
 distinction survive a future change of clock or transport: today the missing
 expiry already blocks a local record, but the gate does not depend on that
 staying true. `local_console_source_is_gated_before_acceptance` exercises the

@@ -351,8 +351,19 @@ commit cộng fixture W05 nên lịch sử không bị viết lại.
 
 `firmware/main/cg_command.c/.h` cài đặt phần **device** của docs/02 §28-§32:
 
-- chuỗi validate đúng thứ tự §29: schema → `device_id` → `command_id` mới/trùng →
-  freshness → range → local safety → local state;
+- chuỗi validate đúng thứ tự §29: schema → **nguồn** → `device_id` → `command_id`
+  mới/trùng → freshness → range → local safety → local state. Nguồn chỉ nhận
+  `CG_CMD_SOURCE_NETWORK`; `UNKNOWN` (giá trị khởi tạo 0) và `LOCAL_CONSOLE` bị chặn
+  **trước** khi tra store, nên một nguồn không được phép cũng không đọc lại được
+  canonical result của đường khác. Đây là phân loại xuất xứ, **không** phải xác thực:
+  `source` cố ý không phải field trên dây, chỉ lớp nhận byte mới được đóng dấu.
+- Parser đòi **đủ** các field bắt buộc của §28.2 theo đúng tên (`created_at_ms`,
+  `expires_at_ms`, `action_cooling`, `action_duty_permille`, `policy_version`,
+  `reason_code`), mỗi thiếu là một token `MISSING_*` riêng; `controller_id` thuộc
+  §28.3 nên tùy chọn; một field ghi trùng ⇒ `DUPLICATE_FIELD`. Lý do:
+  `CG_CMD_COOLING_OFF = 0`, nên một lệnh thiếu `action_cooling` mà không bị chặn sẽ
+  trở thành một lệnh "tắt" thật sự — docs/01 §19 nói rõ unknown không được âm thầm
+  thành bình thường.
 - **expiry tuyệt đối không thẩm định được thì fail closed.** Thiết bị không có đồng hồ
   thực, nên `created_at`/`expires_at` của issuer không so sánh được với gì cả.
   Thiết bị trả `SAFETY_BLOCKED / reason=EPOCH_UNSYNCHRONIZED, expiry_evaluable=0`.
@@ -371,13 +382,17 @@ commit cộng fixture W05 nên lịch sử không bị viết lại.
   (power-cycle thật sau một lệnh ON) còn nợ, và hôm nay được chặn bởi output stage
   compiled out.
 - ACK tách `desired_*` khỏi `applied_*`; cặp applied chỉ lấy từ context của thiết bị.
+  ACK cũng mang `device_id` **của chính thiết bị** (docs/02 §32.3, dòng 2206), lấy từ
+  context chứ không echo lại `device_id` của lệnh — nhắc lại một danh tính được yêu
+  cầu chỉ là bằng chứng của một cái tên, không phải của người đã trả lời.
   `applied_state_comes_from_the_device` chứng minh board *đang* làm lạnh phải ACK
   `applied_cooling=ON` khi bị yêu cầu OFF.
 - Cầu console `CMDTEST` dùng đúng validator đó nhưng bị đóng dấu
   `source=LOCAL_CONSOLE`, `command_id_form=TEST_TOKEN` và **không** mang
   `created_at`/`expires_at` — thiết bị không có clock để đóng dấu, và một timestamp do
   người vận hành gõ không phải time base đã đồng bộ. Nó không thể đạt ACCEPTED trên
-  build thật. Đây là công cụ test, **không phải** network command contract.
+  build thật vì rule nguồn chạm trước mọi thứ khác: `SAFETY_BLOCKED /
+  `SOURCE_NOT_CANONICAL`. Đây là công cụ test, **không phải** network command contract.
 
 `schema=1` trên dòng `#CG CMDACK` là phiên bản **command envelope** của docs/02 §28.1,
 không phải serial schema của stream telemetry; test giữ cho hai số này không lẫn nhau.
@@ -392,8 +407,8 @@ heartbeat timeout, fault latch, output stage compiled out) không phụ thuộc 
 Chọn time sync hay sửa ngữ nghĩa expiry là quyết định của C/D và dự án (docs/02 phải đổi
 trước), không phải quyết định của Member A — xem `evidence/A/W06/handoff-w06.md` §1.
 
-Bằng chứng: `evidence/A/W06/command-parser-tests.md` (38 scenario C trên host, 95 static
-check, 22 mutation + 1 must-not-fire control + 1 baseline, 8 unit test cho công cụ trace), `ack-fixture.json` và ba log lệnh
+Bằng chứng: `evidence/A/W06/command-parser-tests.md` (39 scenario C trên host, 120 static
+check, 26 mutation + 1 must-not-fire control + 1 baseline, 8 unit test cho công cụ trace), `ack-fixture.json` và ba log lệnh
 (`duplicate/expired/reset-command-log`) — tất cả generate từ source thật, gắn nhãn
 host scenario, không phải đo vật lý. `physical-command-trace.md` nói rõ trace thật còn nợ gì.
 

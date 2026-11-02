@@ -67,18 +67,31 @@ defaulting it:
 | `status` | `reason` examples | meaning |
 |---|---|---|
 | `ACCEPTED` | `NONE` | every §29 conjunct held. **Not** "cooled". |
-| `REJECTED` | `UNSUPPORTED_SCHEMA`, `DEVICE_ID_MISMATCH`, `MISSING_COMMAND_ID`, `MISSING_EXPIRY`, `MISSING_CREATED_AT` | malformed or misaddressed |
+| `REJECTED` | `UNSUPPORTED_SCHEMA`, `DEVICE_ID_MISMATCH`, `MISSING_COMMAND_ID`; from the parser also `MISSING_EXPIRES_AT`, `MISSING_CREATED_AT`, `MISSING_ACTION_COOLING`, `MISSING_ACTION_DUTY`, `MISSING_POLICY_VERSION`, `MISSING_REASON_CODE`, `DUPLICATE_FIELD` | malformed or misaddressed |
 | `DUPLICATE_CANONICAL` | the original reason | replay answered from the store, `reapplied=0` |
 | `EXPIRED` | `EXPIRED` | clock synchronized and past `expires_at` |
-| `SAFETY_BLOCKED` | `EPOCH_UNSYNCHRONIZED`, `OUTPUT_STAGE_COMPILED_OUT`, `LIMITS_UNRESOLVED`, `LOCAL_SAFETY_BLOCKED` | device may not act, whatever the issuer intended |
+| `SAFETY_BLOCKED` | `EPOCH_UNSYNCHRONIZED`, `OUTPUT_STAGE_COMPILED_OUT`, `LIMITS_UNRESOLVED`, `LOCAL_SAFETY_BLOCKED`, `SOURCE_NOT_CANONICAL` | device may not act, whatever the issuer intended |
 | `INVALID_STATE` | `SENSORS_INVALID_OR_STALE` | local measurements will not support the action |
 | `OUT_OF_RANGE` | `DUTY_ABOVE_ALLOWED_MAX`, `DUTY_NOT_A_PERCENT`, `ON_WITH_ZERO_DUTY`, `OFF_WITH_NONZERO_DUTY`, `BAD_VALIDITY_WINDOW` | action outside the allowed set |
+
+Two of these names deserve a note, because they are the two places where the
+device's rules and a convenient reading diverge:
+
+* `MISSING_EXPIRY` (validator) is about a record that reached validation without an
+  expiry; `MISSING_EXPIRES_AT` (parser) is about a wire record that never named the
+  field. Same consequence, different layer, and C's exporter should keep them apart.
+* `SOURCE_NOT_CANONICAL` replaces `LOCAL_TEST_NOT_CANONICAL`, which was retired: a
+  rule stated as "one named source is forbidden" leaves the unlabelled zero value
+  admitted, which is precisely how an unattributed record should not gain an
+  acceptance.
 
 ACK payload (the §32.3 list, plus what makes it interpretable):
 
 ```text
 schema=1 (command envelope; NOT the serial telemetry schema, which is 3)
 command_id  command_id_form  source  device_id  boot_id  boot_count
+             ^ device_id is THIS DEVICE'S identity from its own context, never an
+               echo of the command's device_id. A relay that rewrites it is a bug.
 uptime_ms   ack_seq          status  reason
 desired_cooling      desired_duty_permille
 applied_cooling      applied_duty_permille      reapplied
@@ -90,19 +103,26 @@ Parse a real ACK with `firmware/tools/cg_command_trace.py` (it also demonstrates
 the lifecycle stage rules) or against the raw fields in
 `evidence/A/W06/ack-fixture.json`.
 
-## 3. Three properties C must not accidentally break
+## 3. Four properties C must not accidentally break
 
-1. **Idempotency memory is volatile, 8 entries.** A restart does not remember
+1. **`source` is yours to stamp, never the command's to claim.** The parser has
+   no `source` field on purpose, and validation admits only
+   `CG_CMD_SOURCE_NETWORK`. The layer that actually receives bytes must stamp
+   that value in the device context. Nothing in firmware proves a NETWORK label
+   is genuine - that is transport authentication, C's slice, and a separate
+   decision from this provenance check.
+
+2. **Idempotency memory is volatile, 8 entries.** A restart does not remember
    any `command_id`: `duplicate_recognized=0` after a reset is expected, not a
    bug. C must therefore treat a post-reboot retransmission as a new command and
    must not rely on the device to suppress it — and must not configure the broker
    to retain or redeliver commands across a device restart, which §31.2 forbids
    anyway.
-2. **Retention overflow is visible.** `store.evicted` counts ids pushed out of
+3. **Retention overflow is visible.** `store.evicted` counts ids pushed out of
    the window; if C ever retries a command with more than eight distinct ids in
    between, the device will apply it again. If that is unacceptable for a given
    action, the guarantee has to live in C's layer, not here.
-3. **`applied_*` is device truth, `desired_*` is request truth.** Do not derive
+4. **`applied_*` is device truth, `desired_*` is request truth.** Do not derive
    "the device is cooling" from an `ACCEPTED` ACK. The telemetry line carries the
    applied pair on every frame (`cooling_applied`, `pwm_duty`, and from W06
    `desired_cooling` / `last_ack_status`), which is the field set to normalize

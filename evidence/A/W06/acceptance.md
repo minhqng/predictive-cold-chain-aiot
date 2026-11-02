@@ -13,13 +13,13 @@ as open rather than simulated.
 
 | ID | Canonical ask | Status | Evidence |
 |---|---|---|---|
-| **A-W06-01** | Command parser: accept only the schema Doc 02 supports; check `device_id`, `command_id`, expiry, action, allowed duty/state | **VERIFIED (software)** | `cg_command.c` + the §29 chain in the contract's own order; scenarios 1-15; `ack-fixture.json` shows the wrong-device and unsynchronized verdicts on emitted bytes. Unknown fields, non-canonical cooling vocabulary (`OPEN`), non-numeric and negative times are refused at parse. |
+| **A-W06-01** | Command parser: accept only the schema Doc 02 supports; check `device_id`, `command_id`, expiry, action, allowed duty/state | **VERIFIED (software)** | `cg_command.c` + the §29 chain in the contract's own order; `ack-fixture.json` shows the wrong-device and unsynchronized verdicts on emitted bytes. Unknown fields, non-canonical cooling vocabulary (`OPEN`), non-numeric and negative times and duplicate fields are refused at parse; every field §28.2 makes mandatory (create time, expiry, action, duty, policy provenance, reason) has its own `MISSING_*` token, so an incomplete record is never a zero-initialised command. Admission refuses any source but the canonical network contract. |
 | **A-W06-02** | Same `command_id` twice ⇒ one physical logical application, return canonical result | **VERIFIED (software)** | `duplicate_returns_canonical_and_does_not_reapply`: after the first answer the world is moved on (ceiling lowered, stage removed) and the replay still returns the original `ACCEPTED` with `reapplied=0`; `duplicate-command-log.jsonl`; retention bound and eviction counting are explicit |
 | **A-W06-03** | Expired command ⇒ reject, no actuation | **PARTIAL — reject VERIFIED for the evaluable case; the shipped device cannot evaluate expiry** | Synchronized clock: `EXPIRED/EXPIRED`, no actuation. Unsynchronized (the real shipped state): **`SAFETY_BLOCKED / EPOCH_UNSYNCHRONIZED`, also no actuation** — a stricter outcome than the contract's expiry branch, reached because absolute expiry cannot be evaluated without a clock. No receive-time TTL is substituted. Closing this fully needs time synchronization (C) or a contract amendment. |
-| **A-W06-04** | Distinguish desired command from applied output; ACK includes applied state | **VERIFIED (software)** | ACK carries `desired_cooling/desired_duty_permille` separately from `applied_cooling/applied_duty_permille`, the applied pair read only from the device context; `applied_state_comes_from_the_device` proves a board that is cooling ACKs `applied_cooling=ON` against an OFF request; telemetry now publishes the same pair (`schema 3`) |
+| **A-W06-04** | Distinguish desired command from applied output; ACK includes applied state | **VERIFIED (software)** | ACK carries `desired_cooling/desired_duty_permille` separately from `applied_cooling/applied_duty_permille`, the applied pair read only from the device context, and `device_id` read from the device's own context rather than echoed from the command (§32.3, line 2206); `applied_state_comes_from_the_device` proves a board that is cooling ACKs `applied_cooling=ON` against an OFF request; telemetry now publishes the same pair (`schema 3`) |
 | **A-W06-05** | Physical trace: backend command → device accept → applied → PZEM → thermal, with C/D | **BLOCKED (needs C's issuer, a transport, and an authorized energized session)** | Tool + non-promoting stage rules delivered and exercised; `trace-committed-w04-capture.json` correctly empty; `trace-host-demo.json` stops every synthetic command at the right stage. See `physical-command-trace.md` §4 for the ordered prerequisites |
 | **A-W06-06** | Verify reboot does not automatically resume unsafe stale actuation | **VERIFIED (software) · PARTIAL physically** | Store is RAM-only, re-initialised at start, nothing in `cg_command.c` or `cg_commission.c` touches NVS (checked); `reset-command-log.jsonl` shows accepted→reset→not-remembered→re-validated→`applied_cooling=OFF`. A real power-cycle test is owed as soon as a stage can be energized; today the claim is additionally bounded by the compiled-out output stage and by the seven distinct `boot_count` values in the committed W04 captures (13, 14, 15, 18, 19, 20, 40), whose first telemetry frame is `tec_state=OFF output_stage=DISABLED` in every case |
-| Deliverable | `command-parser-tests` | **VERIFIED (host)** | `command-parser-tests.md`: 38 scenarios, 95 static checks, and 24 checker tests (22 mutations, 1 must-not-fire control, 1 real-tree baseline), plus 8 unit tests for the trace tool in `tests/test_cg_command_trace.py` |
+| Deliverable | `command-parser-tests` | **VERIFIED (host)** | `command-parser-tests.md`: 39 scenarios, 120 static checks, and 28 checker tests (26 mutations, 1 must-not-fire control, 1 real-tree baseline), plus 8 unit tests for the trace tool in `tests/test_cg_command_trace.py` |
 | Deliverable | `duplicate-command-log` | **VERIFIED (host)** | `duplicate-command-log.jsonl`, generated by the delivered validator |
 | Deliverable | `expired-command-log` | **VERIFIED (host)** | `expired-command-log.jsonl` |
 | Deliverable | `reset-command-log` | **VERIFIED (host)** / physical half open | `reset-command-log.jsonl` |
@@ -77,7 +77,31 @@ as open rather than simulated.
 7. **The local-test distinction rested on a missing field.** A `LOCAL_CONSOLE`
    record was refused because it carries no expiry — true today, and one change to
    the bridge or the clock would have made it false. `cg_command_validate` now
-   refuses `ACCEPTED` for that source explicitly, with its own reason token.
+   refuses it explicitly, and the rule is now stated as "only the canonical
+   network source is admitted" rather than as a prohibition on one named
+   alternative; §3.8-§3.10 below record what the correction pass found next.
+
+8. **The ACK omitted `device_id`.** docs/02 §32.3 lists `device_id` as ACK payload
+   (line 2206) and `handoff-w06.md` documented it in the payload table - but the
+   formatter never emitted it, so the handoff described bytes the firmware did not
+   produce. The field now comes from the device's own context, never from the
+   command's `device_id`: echoing a requested identity would be evidence of a name,
+   not of who answered. Worst case re-measured at 592 bytes, budget raised to 768.
+9. **An incomplete record became an implicit command.** `cg_command_parse_fields`
+   required only `schema_version`, `device_id` and `command_id`, then `memset` the
+   rest. Because `CG_CMD_COOLING_OFF = 0`, a record with no `action_cooling` parsed
+   as a valid order to stay off, and one with no policy provenance or reason still
+   reached the validator. Every §28.2 mandatory field is now required by name with
+   its own reason token, `controller_id` stays optional per §28.3, and a field named
+   twice is refused rather than resolved by whichever copy the parser reached last.
+10. **An unlabelled source could be accepted.** `CG_CMD_SOURCE_UNKNOWN` is the zero
+    value, and the previous gate named only `LOCAL_CONSOLE`, so any record whose
+    source was never stamped - which is what the parser produces - could reach
+    `ACCEPTED` through absence of a prohibition. Validation now admits
+    `CG_CMD_SOURCE_NETWORK` only, and does so *before* the store lookup, so an
+    inadmissible source cannot read back the canonical result another path earned
+    for the same `command_id` either. This classifies provenance; it does not
+    authenticate it, and `source` is deliberately not a wire field.
 
 ## 4. Physical actions still owed
 
@@ -123,14 +147,16 @@ The eight files that moved since the delivered W05 head are
 The W06 chain is `build/22-source-hashes.txt` (the 48 sources actually
 compiled) → `build/20-idf-py-build.log` (ESP-IDF v6.1 / esp32s3, ends
 `IDF_BUILD_OK`) → `build/21-artifact-hashes.txt` (app image
-`581c55af58af4919885a547036a0c620c75584ed31831b0644927933bed8528c`, 253 504
-bytes). `build/30-host-suite-run.log` records the 290-test host suite and the
+`dad90d63fffc247cea438ec580b3090718e1779f3a66d4dd585cfbb49bdc7363`, 253 520
+bytes). `build/30-host-suite-run.log` records the 294-test host suite and the
 12-layer check chain that produced this dossier.
 
-Three earlier images of this slice are superseded, not invalidated:
+Four earlier images of this slice are superseded, not invalidated:
 `c5884a648abc6e0777cf68ebd24b1fc9e5ed0647f0d6b979a13c6e0e9e022f4b` and
 `49078951bdeef7543c0bb5d8a0fa9982075b204704197832373e5fdb46822933` (both 253 456
-bytes) were built from the pre-review and post-first-review trees, and W05's
+bytes) from the pre-review and post-first-review trees,
+`581c55af58af4919885a547036a0c620c75584ed31831b0644927933bed8528c` (253 504 bytes)
+from the post-second-review tree before the contract corrections, and W05's
 `7487cc8148489a31a4151477c3c65460e77f80bb56ebd1e688a41f9f772bc8eb` (248 512
 bytes) predates the command fields. **No image in this chain has been flashed,
 run, or energized.**
@@ -152,7 +178,10 @@ that was reviewed, so these errors are corrected here instead of in place.
    (`CG_TELEMETRY_LINE_MAX` then). The command and desired-state fields raise the
    measured worst case to 2256 bytes against a raised buffer of 3072
    (harness: `w06_worst_case_len=2256 budget=3072`). The new ACK line has its own
-   measured budget: 558 worst against `CG_COMMAND_ACK_LINE_MAX 640`. Any band
+   measured budget: 592 worst against `CG_COMMAND_ACK_LINE_MAX 768` (W06 first
+   shipped 558/640; adding the required ACK `device_id` field moved the worst case
+   to 592, which is 92 % of 640 and inside the buffer but outside the 10 % margin
+   the budget exists to keep, so the budget rose with it). Any band
    estimate built on the W05 frame size understates W06 by 383 bytes worst case
    and must be recomputed from these numbers.
 3. **Checked and *not* in error:** W05 §6 claimed thirteen files of the W04 pin
@@ -170,7 +199,7 @@ findings, and what each produced:
 | Receive-time TTL was being used as a freshness proof | Accepted. Rejected outright: expiry is evaluated only against a synchronized clock, otherwise `SAFETY_BLOCKED / EPOCH_UNSYNCHRONIZED` with `expiry_evaluable=0`. A static check fails the build if a `created_at`-substitute expression appears. |
 | The local console bridge could be mistaken for the network command contract | Accepted. `CMDTEST` is stamped `source=LOCAL_CONSOLE` with `command_id_form=TEST_TOKEN` and a `LOCAL_TEST` controller id, carries no timestamps, can never reach `ACCEPTED`, and cannot advance desired state; `handoff-w06.md` states the distinction for C. |
 | Numeric fields parsed without overflow guards | Accepted. All four numeric call sites now use an overflow-checked unsigned parser that refuses rather than wraps. |
-| ACK line size was assumed, not measured | Accepted. Worst-case scenario added and pinned at 558 bytes under a 640-byte budget. |
+| ACK line size was assumed, not measured | Accepted. Worst-case scenario added; now 592 bytes under a 768-byte budget after `device_id` joined the payload. |
 | Replay attribution could cross a reset | Accepted. The trace attributes events to a `boot_id` and refuses to promote across one; `reapplied=1` is reported as a defect, never as success. |
 | Docs cited `§32.2` at the wrong line range and the handoff claimed verbatim field names | Accepted. Anchors corrected, and the renames (`created_at` → `created_at_ms`, `action.duty` 0..1 → `action_duty_permille`) are now disclosed as conversions instead of described as copies. |
 | Five checker assertions could not fail | Accepted and re-proved: each mutation now removes the live construct, and one must-not-fire control asserts the guard is real. |
@@ -180,7 +209,7 @@ Re-checked directly against the delivered tree rather than taken from the review
 notes: `cg_tec_start` has exactly one call site (`cg_commission.c:255`, the
 console `START` handler) and none in `cg_command.c`; `grep` for `nvs`,
 `flash_write`, `ledc_set_duty` and `gpio_set_level` in the command path returns
-nothing; the harness reports `38/38` scenarios and the checker reports `95
+nothing; the harness reports `39/39` scenarios and the checker reports `120
 checks`; `evidence/A/W06/build/22-source-hashes.txt` verifies 0 mismatches
 against `firmware/`, which is what makes the §6 image claim mean anything.
 
@@ -202,11 +231,30 @@ The third pass could not verify the PR states quoted in `README.md` (it made no
 network calls), and it did not re-run the ESP-IDF compile; §6 states which build
 log and image hashes the delivered tree corresponds to, and that image has not
 been flashed. It also flagged one claim as unverifiable by construction — the
-558-byte ACK worst case is harness-constructed, not a proven maximal output, so
-the 82 bytes of headroom should be read as a measured margin for the inputs the
+592-byte ACK worst case is harness-constructed, not a proven maximal output, so
+the 176 bytes of headroom should be read as a measured margin for the inputs the
 harness feeds it, not as a proof that no input can exceed the buffer. The refusal
 on overflow, not the margin, is the safety property.
 
 None of it changes a status in §1: A-W06-05 and the physical half of A-W06-06
 stay open because no transport, issuer or authorized energized session exists,
 not because of a code finding.
+
+### 8.1 Contract correction pass (2026-11-02, operator-reported)
+
+Three further findings on the delivered PR, each confirmed against the code and
+the canonical text before being fixed, and each covered by the scenarios named in
+§3.8-§3.10:
+
+| Finding | Confirmed? | Correction |
+|---|---|---|
+| The emitted `#CG CMDACK` omits `device_id`, required by docs/02 §32.3 | **Yes.** The format string in `cg_command_ack_format()` had no `device_id=` token, while `handoff-w06.md` already listed it in the payload table. | Emit `device_id` from `ctx->device_id` (authoritative), refusing to invent one when the context is absent. New scenario `ack_names_the_device_from_its_own_context` proves a changed context changes the ACK, and that the command's own `device_id` never appears in it. Budget 640 -> 768 after re-measurement (592 worst case). |
+| `cg_command_parse_fields()` requires only three fields, so a record can omit mandatory ones | **Yes.** `CG_CMD_COOLING_OFF = 0` made an absent action parse as a real "stay off" order; missing policy provenance and reason reached the validator. | Require the full §28.2 set by name with per-field `MISSING_*` tokens, keep `controller_id` optional per §28.3, refuse duplicate field names, and add nine parser cases plus 19 static checks. |
+| An unrecognised source could reach `ACCEPTED` | **Yes.** Admission tested `== LOCAL_CONSOLE`; `CG_CMD_SOURCE_UNKNOWN` (the zero value, and what the parser yields) passed it. | Admit `CG_CMD_SOURCE_NETWORK` only, before the store lookup, with reason `SOURCE_NOT_CANONICAL`; `source` is not a wire field so a record cannot stamp its own provenance. Scenario `source_admission_refuses_unknown_local_and_replay` covers valid, unknown, local, replayed-invalid and replayed-valid. |
+
+Preserved by these corrections and re-tested rather than assumed: default OFF, the
+fail-closed absolute-expiry rule with no receive-time TTL, idempotency ordering,
+volatile store and reset behaviour, the desired/applied distinction, and the six
+unresolved operating limits. `LOCAL_TEST_NOT_CANONICAL` is retired in favour of the
+single admission token `SOURCE_NOT_CANONICAL`; nothing in the physical evidence
+claimed a device received a command, and that remains true.
