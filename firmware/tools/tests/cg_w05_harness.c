@@ -397,7 +397,14 @@ static bool test_identity_fields_are_present(void)
 
     fixture_init(&fx);
     CHECK(render(&fx, line, sizeof(line)) > 0U);
-    CHECK(has(line, "schema=2 "));
+    /* The version number itself is not the contract; the *fields* are. W06 raised
+     * the serial schema, so this asserts the macro the firmware actually ships. */
+    {
+        char schema_token[16];
+        (void)snprintf(schema_token, sizeof(schema_token), "schema=%d ",
+                       CG_TELEMETRY_SCHEMA_VERSION);
+        CHECK(has(line, schema_token));
+    }
     CHECK(has(line, "device_id=coldguard-001 "));
     CHECK(has(line, "seq=1 "));
     CHECK(has(line, "boot_id=abcd0123 "));
