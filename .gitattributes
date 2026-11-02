@@ -47,3 +47,8 @@ evidence/A/W06/** -text
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
+
+# W11 S4/refusal dossier: hash-pinned in evidence/A/W11/SHA256SUMS.txt and
+# re-checked by validate_w11.py; `* text=auto eol=lf` would rewrite those bytes on a
+# core.autocrlf checkout and break every pin.
+evidence/A/W11/** -text
