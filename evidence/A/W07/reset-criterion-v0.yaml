@@ -1,0 +1,60 @@
+# A-W07-05 - initial/reset criterion candidate, version 0.
+#
+# Read and validated by firmware/tools/cg_reset_criterion.py. This file is a
+# CANDIDATE, not a frozen threshold set: docs/05A A-W07-05 asks for a state-based
+# criterion and the W07 pass criteria say no arbitrary universal threshold is
+# required, so every number here must come from measured repeatability. Until it
+# does, the status stays UNRESOLVED and the evaluator can only ever answer UNKNOWN
+# - never READY - for the gate that depends on it.
+#
+# `owner` records who can set the value, not who wishes to.
+schema: reset-criterion-v0
+status: CANDIDATE_NOT_FROZEN
+owner: Member A proposes; Member D owns control thresholds; the tmean definition is a project-level decision
+applies_to: deciding whether the chamber may be treated as reset before a run starts
+notes: see evidence/A/W07/repeatability-report.md for the measurements this list is waiting on
+
+parameters:
+  # The mean this criterion is measured on. FROZEN as a name, contested in
+  # meaning: docs/01 freezes T1/T2/T3 as chamber-air probes, while the committed
+  # H8 capture labels T2 HOT_SIDE and shows it rising while T1/T3/T4 fall during
+  # cooling. The two candidate definitions differ by 3.4x in measured cooling
+  # effect on that one run, so this is not a rounding choice.
+  # Enforced, not decorative: the evaluator refuses a state whose `representation`
+  # differs from this value, so the contested T2 question cannot be smuggled in by
+  # measuring on one mean and judging against another.
+  - name: tmean_definition
+    value: tmean_chamber3_v0
+    status: PROPOSED
+    source: docs/01 517-530 (mean(T1,T2,T3); a partial mean must not reuse the same label)
+
+  # Upper bound on the chamber-air mean at the moment a run may be declared reset.
+  # A two-sided band needs a centre, and this tool will not supply one for itself:
+  # that number would be a threshold nobody measured. v0 therefore tests the upper
+  # bound only, and the centre question stays here rather than in the evaluator.
+  - name: tmean_band_c
+    value: UNRESOLVED
+    status: UNRESOLVED
+    source: needs >=3 valid passive warm-up runs (A-W07-02); one 218 s passive segment exists inside the H8 capture and no repeat of it
+
+  - name: gradient_bound_c_per_min
+    value: UNRESOLVED
+    status: UNRESOLVED
+    source: needs the same runs; the single observed passive drift is +0.020 C/min and a bound fitted to one sample would be noise dressed as a limit
+
+  # These three are state facts, not thresholds, and are already decidable from
+  # recorded fields, so they are frozen now rather than left as placeholders.
+  - name: door_required
+    value: CLOSED
+    status: FROZEN
+    source: docs/01 17.7 (door OPEN/CLOSED/UNKNOWN; UNKNOWN is not CLOSED)
+
+  - name: cooling_state_required_known
+    value: true
+    status: FROZEN
+    source: docs/01 17.8 (cooling ON/OFF must be distinguishable from never-observed)
+
+  - name: sensor_quality_required
+    value: VALID
+    status: FROZEN
+    source: docs/01 19 (VALID/DEGRADED/INVALID/UNKNOWN; unknown must not silently become normal)

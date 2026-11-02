@@ -41,3 +41,9 @@ evidence/A/W05/** -text
 # build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
+
+# W07 repeatability dossier: hash-pinned in evidence/A/W07/SHA256SUMS.txt and
+# re-checked by validate_w07.py. The generated JSON/JSONL/CSV must keep their exact
+# bytes, because `text=auto eol=lf` would rewrite them on a checkout with
+# core.autocrlf and break every pin.
+evidence/A/W07/** -text
