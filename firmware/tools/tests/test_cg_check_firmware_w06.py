@@ -84,13 +84,41 @@ class W06CheckerTests(unittest.TestCase):
         self.assertTrue(any("schema and device-identity rejections are not stored" in failure
                             for failure in checker.failures))
 
-    def test_missing_local_source_gate_is_caught(self) -> None:
+    def test_source_admission_removed_is_caught(self) -> None:
+        """Refusing only LOCAL_CONSOLE would leave UNKNOWN admissible by silence."""
         checker = self.run_with(
             COMMAND,
+            "if (command->source != CG_CMD_SOURCE_NETWORK) {",
             "if (command->source == CG_CMD_SOURCE_LOCAL_CONSOLE) {",
-            "if (false) {",
         )
-        self.assertTrue(any("a source gate precedes the ACCEPTED assignment" in failure
+        self.assertTrue(any("the only admitted source is the canonical network contract"
+                            in failure for failure in checker.failures))
+
+    def test_ack_without_device_identity_is_caught(self) -> None:
+        checker = self.run_with(COMMAND, '"device_id=%s boot_id=%s ', '"boot_id=%s ')
+        self.assertTrue(any("device_id is read from the device context" in failure
+                            for failure in checker.failures))
+
+    def test_ack_echoing_the_requested_identity_is_caught(self) -> None:
+        """The ACK must answer as itself, not repeat the name it was addressed to."""
+        checker = self.run_with(
+            COMMAND,
+            '           (ctx != NULL && ctx->device_id != NULL && ctx->device_id[0] != \'\\0\')\n'
+            '               ? ctx->device_id\n'
+            '               : "MISSING_CONTEXT",',
+            '           command->device_id,',
+        )
+        self.assertTrue(any("device_id is read from the device context" in failure
+                            for failure in checker.failures))
+
+    def test_required_field_refusal_removed_is_caught(self) -> None:
+        checker = self.run_with(COMMAND, '"MISSING_ACTION_COOLING"', '""')
+        self.assertTrue(any("an absent required field has its own reason token" in failure
+                            for failure in checker.failures))
+
+    def test_duplicate_field_refusal_is_caught(self) -> None:
+        checker = self.run_with(COMMAND, '*error = "DUPLICATE_FIELD";', '*error = "OK";')
+        self.assertTrue(any("a field named twice is refused" in failure
                             for failure in checker.failures))
 
     def test_fabricated_now_ms_is_caught(self) -> None:

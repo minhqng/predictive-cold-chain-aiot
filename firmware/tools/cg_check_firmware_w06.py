@@ -164,12 +164,21 @@ def run_checks() -> Checker:
                   "schema and device-identity rejections are not stored: nothing can overwrite a "
                   "remembered canonical result with a verdict the device never owned")
 
-    # 4b. The local test bridge cannot be promoted --------------------------
+    # 4b. Source admission --------------------------------------------------
     accepted = body.find("ack->status = CG_CMD_ACK_ACCEPTED;")
-    source_gate = body.find("command->source == CG_CMD_SOURCE_LOCAL_CONSOLE")
-    checker.check(source_gate != -1 and accepted != -1 and source_gate < accepted,
-                  "a source gate precedes the ACCEPTED assignment, so a LOCAL_CONSOLE record is "
-                  "refused structurally rather than only as a side effect of missing fields")
+    admission = body.find("if (command->source != CG_CMD_SOURCE_NETWORK) {")
+    checker.check(admission != -1 and accepted != -1 and admission < accepted,
+                  "the only admitted source is the canonical network contract, so UNKNOWN "
+                  "(the zero value) and LOCAL_CONSOLE cannot be accepted by absence of a "
+                  "prohibition")
+    checker.check(dup != -1 and admission != -1 and admission < dup,
+                  "admission happens before the store is consulted, so an inadmissible source "
+                  "cannot read back another path's canonical result")
+    checker.check('"SOURCE_NOT_CANONICAL"' in body,
+                  "the refusal names its own reason token instead of borrowing another gate")
+    checker.check("source" not in parse_field_keys(command_c),
+                  "source is not a wire field: only the layer that received the bytes may "
+                  "stamp it, so a command cannot label its own provenance")
 
     # 5. Volatile memory ----------------------------------------------------
     checker.check("nvs" not in command_c.lower(),
@@ -205,6 +214,28 @@ def run_checks() -> Checker:
                   "still lets 20 digits wrap, which could turn a far-future expiry in-range")
     checker.check("if (!parse_u64_checked(value, &wide) || wide > 4294967295ULL)" in command_c,
                   "an out-of-range duty is refused rather than narrowed into range by the cast")
+
+    # 6b. Parser completeness against docs/02 §28.2 --------------------------
+    keys = parse_field_keys(command_c)
+    for required in ("schema_version", "command_id", "device_id", "created_at_ms",
+                     "expires_at_ms", "policy_version", "reason_code", "action_cooling",
+                     "action_duty_permille"):
+        checker.check(required in keys,
+                      f"the parser knows the §28.2 required field {required!r}")
+    checker.check('"DUPLICATE_FIELD"' in command_c
+                  and "seen_fields |= 1U << (unsigned)field" in command_c,
+                  "a field named twice is refused, so a record cannot carry two expiries and be "
+                  "judged by whichever the parser reached last")
+    for token in ("MISSING_ACTION_COOLING", "MISSING_ACTION_DUTY", "MISSING_CREATED_AT",
+                  "MISSING_EXPIRES_AT", "MISSING_POLICY_VERSION", "MISSING_REASON_CODE",
+                  "MISSING_DEVICE_ID", "MISSING_COMMAND_ID", "MISSING_SCHEMA_VERSION"):
+        checker.check(f'"{token}"' in command_c,
+                      f"an absent required field has its own reason token {token!r} instead of "
+                      f"becoming a zero value")
+    checker.check("CG_CMD_COOLING_OFF = 0" in command_h
+                  and "cg_command_required_tokens" in command_c,
+                  "the zero value of the cooling enum is a real command (OFF), so absence must be "
+                  "refused in the parser rather than inherited from memset")
     checker.check("char line[CG_COMMAND_ACK_LINE_MAX];" in commission_c
                   and re.search(r"CG_COMMAND_ACK_LINE_MAX\s+\d+", config) is not None,
                   "the ACK buffer is a named budget the measured worst case is tested against, "
@@ -214,9 +245,16 @@ def run_checks() -> Checker:
     for key in ("command_id=%s", "status=%s reason=%s", "desired_cooling=%s",
                 "applied_cooling=%s", "reapplied=%d", "expiry_evaluable=%d",
                 "time_sync_state=%s", "device_mode=%s", "ack_seq=%lu", "boot_id=%s",
+                "device_id=%s",
                 "uptime_ms=%llu", "output_stage=%s", "allowed_duty_max_permille=%lu"):
         checker.check(key in command_c, f"the ACK line carries {key}")
     ack_format = extract_function_body(command_c, r"int cg_command_ack_format\([^)]*\)")
+    checker.check("device_id=%s" in (ack_format or "")
+                  and "ctx->device_id" in (ack_format or "")
+                  and "ack->device_id" not in (ack_format or ""),
+                  "the ACK's device_id is read from the device context, never echoed back from "
+                  "the command: repeating a requested identity would be evidence of a name, not "
+                  "of who answered (docs/02 §32.3, 2200-2215)")
     checker.check(ack_format is not None
                   and "if (overflow) {\n        buf[0] = '\\0';" in ack_format,
                   "an ACK that would not fit is refused whole by the overflow branch, never "
@@ -288,6 +326,16 @@ def run_checks() -> Checker:
     checker.check('"cg_command.c"' in cmake, "cg_command.c is in the build")
 
     return checker
+
+
+def parse_field_keys(command_c: str) -> list[str]:
+    """Every key cg_command_parse_fields compares, in source order.
+
+    Used to prove `source` is not among them: a record that could name its own
+    provenance would make the admission check a string test, not a check.
+    """
+    body = extract_function_body(command_c, r"bool cg_command_parse_fields\([^)]*\)") or ""
+    return re.findall(r'strcmp\(key,\s*"([^"]+)"\)', body)
 
 
 def body_span(text: str, marker: str) -> str:

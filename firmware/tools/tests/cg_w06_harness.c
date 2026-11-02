@@ -519,23 +519,83 @@ static bool test_pre_identity_rejection_cannot_clobber_the_canonical_result(void
     return true;
 }
 
-static bool test_local_console_source_is_gated_before_acceptance(void)
+
+static bool test_source_admission_refuses_unknown_local_and_replay(void)
 {
     cg_cmd_context_t ctx = permissive_context();
     cg_cmd_store_t store;
     cg_cmd_ack_t ack;
-    /* A locally issued record given every canonical field, including a real
-     * expiry: the shipped bridge cannot reach this state, so the refusal here is
-     * the gate itself and not a side effect of a missing field. */
-    cg_command_t cmd = make_command("local:w06-selftest", CG_DEVICE_ID, CG_CMD_COOLING_ON, 250U,
-                                    900000ULL, 1100000ULL);
+    cg_cmd_ack_t replay;
+    cg_command_t cmd = make_command(UUID_A, CG_DEVICE_ID, CG_CMD_COOLING_ON, 250U, 900000ULL,
+                                    1100000ULL);
 
     cg_cmd_store_init(&store);
+
+    /* UNKNOWN is the zero value: the source a record carries when nobody stamped
+     * it. It must not be accepted by the absence of a prohibition. */
+    cmd.source = CG_CMD_SOURCE_UNKNOWN;
+    cg_command_validate(&cmd, &ctx, &store, &ack);
+    CHECK(ack.status == CG_CMD_ACK_SAFETY_BLOCKED);
+    CHECK(strcmp(ack.reason, "SOURCE_NOT_CANONICAL") == 0);
+
+    /* The local console bridge, given every canonical field including a real
+     * expiry, so the refusal is the admission rule and not a missing field. */
     cmd.source = CG_CMD_SOURCE_LOCAL_CONSOLE;
     cmd.id_form = CG_CMD_ID_FORM_TEST_TOKEN;
     cg_command_validate(&cmd, &ctx, &store, &ack);
     CHECK(ack.status == CG_CMD_ACK_SAFETY_BLOCKED);
-    CHECK(strcmp(ack.reason, "LOCAL_TEST_NOT_CANONICAL") == 0);
+    CHECK(strcmp(ack.reason, "SOURCE_NOT_CANONICAL") == 0);
+
+    /* Admission happens before the store is consulted, so an inadmissible source
+     * cannot read back the canonical result another path earned for the same id.
+     * The refusal also must not enter the store, or it would displace it. */
+    cmd.source = CG_CMD_SOURCE_NETWORK;
+    cmd.id_form = CG_CMD_ID_FORM_UUID;
+    cg_command_validate(&cmd, &ctx, &store, &ack);
+    CHECK(ack.status == CG_CMD_ACK_ACCEPTED);
+
+    cmd.source = CG_CMD_SOURCE_LOCAL_CONSOLE;
+    cmd.id_form = CG_CMD_ID_FORM_TEST_TOKEN;
+    cg_command_validate(&cmd, &ctx, &store, &replay);
+    CHECK(replay.status == CG_CMD_ACK_SAFETY_BLOCKED);
+    CHECK(strcmp(replay.reason, "SOURCE_NOT_CANONICAL") == 0);
+    CHECK(store.hits == 0U);
+
+    /* The legitimate duplicate still works. */
+    cmd.source = CG_CMD_SOURCE_NETWORK;
+    cmd.id_form = CG_CMD_ID_FORM_UUID;
+    cg_command_validate(&cmd, &ctx, &store, &replay);
+    CHECK(replay.status == CG_CMD_ACK_DUPLICATE_CANONICAL);
+    CHECK(replay.canonical_status == CG_CMD_ACK_ACCEPTED);
+    CHECK(store.hits == 1U);
+    return true;
+}
+
+static bool test_ack_names_the_device_from_its_own_context(void)
+{
+    cg_cmd_context_t ctx = permissive_context();
+    cg_cmd_ack_t ack;
+    cg_command_t cmd = make_command(UUID_A, CG_DEVICE_ID, CG_CMD_COOLING_ON, 250U, 900000ULL,
+                                    1100000ULL);
+    char line[CG_COMMAND_ACK_LINE_MAX];
+    char needle[64];
+    cg_cmd_store_t store;
+
+    cg_cmd_store_init(&store);
+    cg_command_validate(&cmd, &ctx, &store, &ack);
+    CHECK(ack.status == CG_CMD_ACK_ACCEPTED);
+
+    /* docs/02 §32.3 (2200-2215) requires device_id in the ACK payload, and it
+     * must be the device's own identity rather than an echo of the command. */
+    (void)snprintf(needle, sizeof(needle), "device_id=%s", ctx.device_id);
+    CHECK(cg_command_ack_format(line, sizeof(line), &ack, &ctx, SCENARIO_BOOT_ID, 9U) > 0);
+    CHECK(strstr(line, needle) != NULL);
+
+    ctx.device_id = "coldguard-other";
+    (void)snprintf(needle, sizeof(needle), "device_id=%s", ctx.device_id);
+    CHECK(cg_command_ack_format(line, sizeof(line), &ack, &ctx, SCENARIO_BOOT_ID, 9U) > 0);
+    CHECK(strstr(line, needle) != NULL);
+    CHECK(strstr(line, "device_id=" CG_DEVICE_ID " boot_id") == NULL);
     return true;
 }
 
@@ -799,8 +859,62 @@ static bool test_fields_record_refers_unknown_and_malformed(void)
                                    " command_id=abc expires_at_ms=-5",
                                    &cmd, &error));
     CHECK(strcmp(error, "BAD_EXPIRES_AT") == 0);
-    CHECK(!cg_command_parse_fields("schema_version=1 command_id=abc", &cmd, &error));
-    CHECK(strcmp(error, "MISSING_REQUIRED_FIELD") == 0);
+    CHECK(!cg_command_parse_fields("schema_version=1 command_id=" UUID_A, &cmd, &error));
+    CHECK(strcmp(error, "MISSING_DEVICE_ID") == 0);
+    /* docs/02 §28.2 makes each of these mandatory. The point of naming them one
+     * by one is that a zero-initialised record must never stand in for a
+     * command: without this, an absent action_cooling parsed as
+     * CG_CMD_COOLING_OFF - an implicit order to stay off. */
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 policy_version=p-1 reason_code=R"
+        " action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_ACTION_COOLING") == 0);
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 policy_version=p-1 reason_code=R"
+        " action_cooling=ON",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_ACTION_DUTY") == 0);
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " expires_at_ms=1100000 policy_version=p-1 reason_code=R action_cooling=ON"
+        " action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_CREATED_AT") == 0);
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 policy_version=p-1 reason_code=R action_cooling=ON"
+        " action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_EXPIRES_AT") == 0);
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 reason_code=R action_cooling=ON"
+        " action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_POLICY_VERSION") == 0);
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 policy_version=p-1"
+        " action_cooling=ON action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "MISSING_REASON_CODE") == 0);
+    /* controller_id is §28.3 optional: its absence must still parse. */
+    CHECK(cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 policy_version=p-1 reason_code=R"
+        " action_cooling=ON action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "OK") == 0);
+    /* One field named twice is not a later copy winning silently. */
+    CHECK(!cg_command_parse_fields(
+        "schema_version=1 command_id=" UUID_A " device_id=" CG_DEVICE_ID
+        " created_at_ms=900000 expires_at_ms=1100000 expires_at_ms=9000000"
+        " policy_version=p-1 reason_code=R action_cooling=ON action_duty_permille=250",
+        &cmd, &error));
+    CHECK(strcmp(error, "DUPLICATE_FIELD") == 0);
     /* A 37-character identity does not fit the canonical UUID buffer and must be
      * refused outright rather than cut down to a shorter, different id. */
     CHECK(!cg_command_parse_fields(
@@ -847,9 +961,11 @@ static bool test_local_console_command_is_blocked_by_the_validator(void)
     cg_cmd_store_init(&store);
     CHECK(cg_command_from_local_test("w06-selftest", CG_CMD_COOLING_ON, 250U, &cmd, &error));
     cg_command_validate(&cmd, &ctx, &store, &ack);
-    CHECK(ack.status == CG_CMD_ACK_REJECTED);
-    CHECK(strcmp(ack.reason, "MISSING_CREATED_AT") == 0 ||
-          strcmp(ack.reason, "MISSING_EXPIRY") == 0);
+    /* Admission is the first thing said about a local record, so the reason names
+     * the provenance rule rather than whichever canonical field happens to be
+     * missing. The field-absence paths are their own scenarios. */
+    CHECK(ack.status == CG_CMD_ACK_SAFETY_BLOCKED);
+    CHECK(strcmp(ack.reason, "SOURCE_NOT_CANONICAL") == 0);
     CHECK(ack.applied_cooling == CG_CMD_COOLING_OFF);
     return true;
 }
@@ -1066,9 +1182,12 @@ static bool test_oversized_numbers_are_refused(void)
     CHECK(!cg_command_parse_fields("schema_version=9999999999 device_id=" CG_DEVICE_ID
                                    " command_id=abc", &cmd, &error));
     CHECK(strcmp(error, "BAD_SCHEMA_VERSION") == 0);
-    /* In range, and parsed exactly. */
+    /* In range, and parsed exactly: the complete canonical field set, so this
+     * case is about the number rather than about a missing field. */
     CHECK(cg_command_parse_fields("schema_version=1 device_id=" CG_DEVICE_ID
-                                  " command_id=abc action_duty_permille=4294967295",
+                                  " command_id=abc created_at_ms=900000"
+                                  " expires_at_ms=1100000 policy_version=p-1 reason_code=R"
+                                  " action_cooling=ON action_duty_permille=4294967295",
                                   &cmd, &error));
     CHECK(cmd.duty_permille == 4294967295U);
     return true;
@@ -1100,6 +1219,9 @@ static bool test_worst_case_ack_fits_its_budget(void)
     ack.device_mode = "FAULT_LATCH";
     ack.fault_bits = 0xFFFFFFFFU;
     ctx.allowed_duty_max_permille = 4294967295U;
+    /* The ACK now carries the device identity, so the worst case must use the
+     * longest one the buffer can hold, not the friendly default. */
+    ctx.device_id = "coldguard-0000000000000"; /* 23 chars = CG_COMMAND_LABEL_MAX - 1 */
 
     len = cg_command_ack_format(line, sizeof(line), &ack, &ctx, "abcd0123", 4294967295U);
     printf("  ack_worst_case_len=%d budget=%d\n", len, CG_COMMAND_ACK_LINE_MAX);
@@ -1299,8 +1421,10 @@ int main(void)
          test_duplicate_returns_canonical_and_does_not_reapply},
         {"pre_identity_rejection_cannot_clobber_the_canonical_result",
          test_pre_identity_rejection_cannot_clobber_the_canonical_result},
-        {"local_console_source_is_gated_before_acceptance",
-         test_local_console_source_is_gated_before_acceptance},
+        {"source_admission_refuses_unknown_local_and_replay",
+         test_source_admission_refuses_unknown_local_and_replay},
+        {"ack_names_the_device_from_its_own_context",
+         test_ack_names_the_device_from_its_own_context},
         {"blocked_duplicate_stays_blocked_canonical",
          test_blocked_duplicate_stays_blocked_canonical},
         {"new_id_same_action_is_a_new_instruction",
