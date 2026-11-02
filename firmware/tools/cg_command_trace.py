@@ -12,7 +12,7 @@ This tool reads a serial capture and reports, per `command_id`, how far down tha
 chain evidence actually exists - and names the first stage where it does not.
 
 It exists because the stages are easy to conflate. An `ACCEPTED` ACK is protocol
-evidence (docs/02 2188-2198, §32.2: "device handled the command according to
+evidence (docs/02 §32.2, lines 2188-2197: "device handled the command according to
 protocol/local validation"), not proof that current flowed or that the chamber
 moved. The tool therefore never promotes a stage:
 
@@ -169,7 +169,7 @@ def evaluate(commands: dict[str, dict[str, object]]) -> list[dict[str, object]]:
             # anyway.
             row["notes"].append(
                 "an ACK reported reapplied=1: the replay applied a second time, which "
-                "docs/02 2126-2135 forbids regardless of its status label"
+                "docs/02 §30.1 (line 2118) forbids regardless of its status label"
             )
 
         # DEVICE_ACK is earned by an ACK line existing; APPLIED_STATE is earned
@@ -198,7 +198,7 @@ def evaluate(commands: dict[str, dict[str, object]]) -> list[dict[str, object]]:
             row["notes"].append(
                 f"no telemetry frame from boot_id={row['boot_id']} after the ACK reported "
                 "cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied "
-                "evidence (docs/02 2188-2198)"
+                "evidence (docs/02 §32.2, lines 2188-2197)"
             )
             rows.append(row)
             continue
@@ -311,8 +311,12 @@ def main(argv: list[str] | None = None) -> int:
         ],
     }
     if args.per_frame:
-        for row, (command_id, record) in zip(report["commands"], commands.items()):
-            row["frames_after"] = record.get("frames_after", [])
+        # Rows are sorted by command_id while `commands` keeps arrival order, so
+        # pairing them positionally would attach the wrong frames whenever the
+        # two orders differ. Look the record up by the identity it belongs to.
+        by_id = dict(commands)
+        for row in report["commands"]:
+            row["frames_after"] = by_id[row["command_id"]].get("frames_after", [])
 
     if args.json_out is not None:
         args.json_out.parent.mkdir(parents=True, exist_ok=True)

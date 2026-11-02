@@ -246,7 +246,8 @@ COOLING_EVIDENCE_VOCABULARY = (
     "UNOBSERVED_NO_DATA",
 )
 OUTPUT_STAGE_VOCABULARY = ("ENABLED", "DISABLED")
-# docs/02 2168-2177 closes the ACK status set. The command layer may not invent a
+# docs/02 §32.1 (lines 2172-2186) closes the ACK status set. The command layer may not
+# invent a
 # verdict, and neither may the parser quietly accept one.
 ACK_STATUS_VOCABULARY = (
     "ACCEPTED",
