@@ -50,7 +50,7 @@ def main() -> int:
     evidence = REPO_ROOT / "evidence" / "A"
     checks: list[tuple[str, list[str], pathlib.Path]] = [
         (
-            "host tools: unittest suite (W02 + W03 + W04 + W05 + W06 + W08 + W15)",
+            "host tools: unittest suite (every week test present on this branch)",
             ["-m", "unittest", "discover", "-s", "tests", "-t", "tests"],
             TOOLS,
         ),
@@ -79,12 +79,19 @@ def main() -> int:
             [str(evidence / "W08" / "validate_w08.py")],
             evidence / "W08",
         ),
-        (
-            "evidence: W15 dossier validator (regression: W15 reads the W08 declaration)",
-            [str(evidence / "W15" / "validate_w15.py")],
-            evidence / "W15",
-        ),
     ]
+    # W15's validator is a real regression here (it reads the W08 declaration), but it is
+    # another week's dossier: on the W08 branch alone that directory does not exist, and a
+    # runner that invoked it anyway turned a clean checkout into a crash and - worse - made
+    # W08's reported pass depend on files no ref has. Run it when present, say NOT RUN when
+    # not, and never let the absence count as a pass.
+    w15 = evidence / "W15"
+    if (w15 / "validate_w15.py").is_file():
+        checks.append((
+            "evidence: W15 dossier validator (regression: W15 reads the W08 declaration)",
+            [str(w15 / "validate_w15.py")],
+            w15,
+        ))
     for name, args, cwd in [
         ("firmware: W06 static contract checks", ["cg_check_firmware_w06.py"], REPO_ROOT),
         ("firmware: W05 static contract checks", ["cg_check_firmware_w05.py"], REPO_ROOT),
@@ -136,6 +143,11 @@ def main() -> int:
             failures += 1
             for line in output.strip().splitlines()[-25:]:
                 print(f"        {line}")
+
+    if not (evidence / "W15" / "validate_w15.py").is_file():
+        print("[NOT RUN] evidence: W15 dossier validator - this branch carries no W15 "
+              "dossier. The check runs on the W15 branch that stacks here; it is a skip, "
+              "not a pass.")
 
     print()
     if failures:
