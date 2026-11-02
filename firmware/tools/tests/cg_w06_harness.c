@@ -924,6 +924,46 @@ static bool test_fields_record_refers_unknown_and_malformed(void)
     return true;
 }
 
+static bool test_maximal_canonical_record_parses(void)
+{
+    /* The widest legal record, field by field at its documented maximum. The
+     * first W06 parser copied the line into 256 bytes, which silently refused
+     * this as RECORD_TOO_LONG - a bound below the real maximum would make C's
+     * longest valid command unparsable without saying why. */
+    char record[CG_COMMAND_RECORD_MAX + 2];
+    char oversized[CG_COMMAND_RECORD_MAX + 2];
+    cg_command_t cmd;
+    const char *error = "OK";
+    int written;
+
+    written = snprintf(record, sizeof(record),
+                       "schema_version=1 command_id=%s device_id=%.23s"
+                       " created_at_ms=%.20s expires_at_ms=%.20s controller_id=%.23s"
+                       " policy_version=%.23s reason_code=%.23s action_cooling=ON"
+                       " action_duty_permille=1000",
+                       "00000000-0000-4000-8000-00000000000f", "01234567890123456789012",
+                       "12345678901234567890", "12345678901234567890",
+                       "01234567890123456789012", "01234567890123456789012",
+                       "01234567890123456789012");
+    CHECK(written > 0 && (size_t)written < sizeof(record));
+    CHECK((size_t)written > 256U); /* the old bound would have refused it */
+    CHECK(cg_command_parse_fields(record, &cmd, &error));
+    CHECK(strcmp(error, "OK") == 0);
+    CHECK(cmd.duty_permille == 1000U);
+    CHECK(cmd.has_created_at && cmd.has_expires_at);
+    CHECK(cmd.created_at_ms == 12345678901234567890ULL);
+    CHECK(strlen(cmd.reason_code) == 23U);
+
+    /* One byte over the bound is refused and says so, rather than parsing a
+     * truncated record. */
+    memset(oversized, 'x', sizeof(oversized) - 1U);
+    oversized[sizeof(oversized) - 1U] = '\0';
+    CHECK(strlen(oversized) == (size_t)CG_COMMAND_RECORD_MAX + 1U);
+    CHECK(!cg_command_parse_fields(oversized, &cmd, &error));
+    CHECK(strcmp(error, "RECORD_TOO_LONG") == 0);
+    return true;
+}
+
 static bool test_local_test_bridge_is_labelled_and_unbounded_by_choice(void)
 {
     cg_command_t cmd;
@@ -1440,6 +1480,7 @@ int main(void)
         {"fields_record_parses_canonical_set", test_fields_record_parses_canonical_set},
         {"fields_record_refers_unknown_and_malformed",
          test_fields_record_refers_unknown_and_malformed},
+        {"maximal_canonical_record_parses", test_maximal_canonical_record_parses},
         {"local_test_bridge_is_labelled_and_unbounded_by_choice",
          test_local_test_bridge_is_labelled_and_unbounded_by_choice},
         {"local_console_command_is_blocked_by_the_validator",

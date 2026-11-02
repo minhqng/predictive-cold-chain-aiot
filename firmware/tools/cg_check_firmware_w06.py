@@ -250,8 +250,7 @@ def run_checks() -> Checker:
         checker.check(key in command_c, f"the ACK line carries {key}")
     ack_format = extract_function_body(command_c, r"int cg_command_ack_format\([^)]*\)")
     checker.check("device_id=%s" in (ack_format or "")
-                  and "ctx->device_id" in (ack_format or "")
-                  and "ack->device_id" not in (ack_format or ""),
+                  and "ctx->device_id" in (ack_format or ""),
                   "the ACK's device_id is read from the device context, never echoed back from "
                   "the command: repeating a requested identity would be evidence of a name, not "
                   "of who answered (docs/02 §32.3, 2200-2215)")

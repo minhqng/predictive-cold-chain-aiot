@@ -66,6 +66,16 @@
 #define CG_COMMAND_REASON_MAX 24
 #define CG_COMMAND_ID_UUID_LEN 36
 
+/* Largest key=value record cg_command_parse_fields can hold. The parser copies a
+ * line into a buffer of this size before splitting it, so a bound below the real
+ * maximum silently refuses a legal command as RECORD_TOO_LONG. 331 bytes is the
+ * widest canonical record - schema_version(15+9) + command_id(11+36) +
+ * device_id(10+23) + created_at_ms(14+20) + expires_at_ms(14+20) +
+ * controller_id(14+23) + policy_version(15+23) + reason_code(12+23) +
+ * action_cooling(15+3) + action_duty_permille(21+10) - plus 9 separators and the
+ * terminator, rounded up. The first W06 cut used 256, which is under that. */
+#define CG_COMMAND_RECORD_MAX 512
+
 /* docs/02 §30.3 (lines 2130-2136) leaves retention size as an implementation
  * detail. Eight
  * entries is the honest bound of this implementation: a command older than the
