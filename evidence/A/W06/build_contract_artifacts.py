@@ -5,7 +5,7 @@
 Everything here is produced by compiling and running the real
 ``firmware/main/cg_command.c`` (and its telemetry neighbour) through
 ``firmware/tools/tests/cg_w06_harness.c``. The harness emits its fixtures only
-after all 34 assertions have passed, so an artifact cannot be generated from a
+after all 36 scenarios have passed, so an artifact cannot be generated from a
 tree that fails its own tests. Nothing is typed into these files by hand.
 
 Artifacts:
