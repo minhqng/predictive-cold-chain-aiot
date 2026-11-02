@@ -25,6 +25,7 @@ the datasets from the runs that exist, and the honest boundary of each.
 | `sensor-position-qa.json`, `sensor-position-qa.md` | the A-W14-01 baseline, the role-label check, the behaviour signature, and the protocol a new capture must meet |
 | `pairing-input.json`, `member-b-handoff.md` | the A-W14-04 payload: what the data supports, what it cannot, join keys, the form a tolerance takes once sessions exist, and the asks for B |
 | `build_w14_artifacts.py`, `validate_w14.py`, `SHA256SUMS.txt` | regeneration with `--check`, `--pins`, byte pins, and the honesty re-checker that re-derives every published number from the raw rows |
+| `handoff.md` | this week's part of the docs/05A §5 / §6.1–§6.3 handover: which fields B can consume now, what must not be inferred from a single session, and what W14 gives C and D (nothing direct, and it says so) |
 | `firmware/tools/tests/test_cg_w14_dossier.py` | proves the validator fails: a mini-repo copy passes untouched, then each planted false claim (non-movement, invented tolerance, hot-side air mean, `n=1` as a distribution, fabricated disturbance, absolute path, unpinned edit) exits non-zero |
 | `firmware/tools/run_all_checks_w14.py` | six layers, including the W07/W06/W05/W04 regressions |
 
