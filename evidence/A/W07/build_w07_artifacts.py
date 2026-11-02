@@ -131,6 +131,24 @@ def _suspect_frame() -> dict[str, object] | None:
         neighbours = [r for r in rows
                       if r["device_ms"] in {str(SUSPECT_DEVICE_MS - 2000),
                                             str(SUSPECT_DEVICE_MS - 1000)}]
+        # The frames AFTER the suspect one decide how it should be read. Quoting the
+        # frame alone made it look like current persisted at zero duty; it does not, and
+        # the record has to show the decay rather than leave the reader to assume it.
+        off_tail: list[dict[str, object]] = []
+        for r in rows:
+            if int(r.get("device_ms", "-1")) <= SUSPECT_DEVICE_MS:
+                continue
+            if rep.number(r, "pwm_applied_permille") != 0.0:
+                break
+            off_tail.append({"device_ms": int(r["device_ms"]),
+                             "current_a": r.get("current_a", ""),
+                             "power_w": r.get("power_w", ""),
+                             "voltage_v": r.get("voltage_v", "")})
+            if len(off_tail) >= 5:
+                break
+        sequence = [row.get("current_a", "")] + [s["current_a"] for s in off_tail]
+        zero_at = next((s["device_ms"] for s in off_tail if s["current_a"] in ("0.0", "0")),
+                       None)
         differing = sorted({k for n in neighbours for k in MEASURED_FIELDS
                             if n.get(k) != row.get(k)})
         identical = [n for n in neighbours
@@ -148,13 +166,27 @@ def _suspect_frame() -> dict[str, object] | None:
             "command_and_state_fields": {
                 k: {"preceding": [n.get(k, "") for n in neighbours],
                     "suspect": row.get(k, "")} for k in COMMAND_FIELDS},
+            "operator_confirmed_zero_duty_current_sequence_a": sequence,
+            "frames_after_suspect": off_tail,
+            "current_returns_to_zero_at_device_ms": zero_at,
+            "measurement_vs_verification": (
+                "PZEM-reported values only. No independent instrument read this branch, so "
+                "the decay describes what the meter showed, not proof that the branch carried "
+                "no current - the two must not be conflated"),
             "canonical_candidate": ("docs/01 22.4 'Commanded OFF + unexpected current' names "
                                     "CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists "
                                     "'current while state should be OFF' as its example"),
-            "competing_explanation": ("evidence/A/W04/README.md records the first PZEM sample "
-                                      "after START still returning pre-run registers, which is "
-                                      "why register holdover is a candidate here rather than a "
-                                      "conclusion"),
+            "competing_explanation": ("register/transition lag on the PZEM side. Two committed "
+                                      "observations support it: evidence/A/W04/README.md records "
+                                      "the first PZEM sample after START still returning pre-run "
+                                      "registers, and after this frame the applied duty stays 0 "
+                                      "while the reading falls "
+                                      f"{' -> '.join(str(s) for s in sequence)} A, reaching "
+                                      f"{'0 at device_ms ' + str(zero_at) if zero_at else 'no zero reading in the captured tail'}"
+                                      ". That is a decaying tail, not sustained energization - "
+                                      "but it is a meter trace, not a verified zero-current "
+                                      "measurement, so it weakens the anomaly reading without "
+                                      "closing it"),
             "reading": (f"applied duty `{row.get('pwm_applied_permille', '')}` and requested "
                         f"duty `{row.get('pwm_req_permille', '')}` in state "
                         f"`{row.get('state', '')}`, yet the row carries "

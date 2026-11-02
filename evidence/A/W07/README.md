@@ -18,6 +18,7 @@ candidate and the exact ask are delivered; the runs are not invented.
 |---|---|
 | `probe-identification-v0.md` + `probe-identification/` | the 2026-11-02 operator-confirmed slot→position mapping (T1 centre, T2 hot side, T3 bottom, T4 near door) with its six raw captures, labelled `PROBE_IDENTIFICATION` and excluded from S1/S2/S4 |
 | `geometry-v1.md` | what is frozen and from which line of which file; what is not; the `docs/01` naming discrepancy and the minimum coherent transition, with no silent remap |
+| `handoff.md` | this week's part of the docs/05A §5 / §6.1–§6.3 handover: which fields B/C/D can consume now, which are unqualified, and the passive-warm-up session spec that A-W07-02/05 are waiting on |
 | `firmware/tools/cg_thermal_repeatability.py` | captures → per-phase trajectories, direction-aware thresholds, slopes with declared representation/window/method, cross-run mean / sample SD / CV / min / max, and `INSUFFICIENT_RUNS` naming how many runs are missing instead of inventing a distribution |
 | `firmware/tools/cg_reset_criterion.py` | A-W07-05 as an executable evaluator: `READY` / `NOT_READY` / `UNKNOWN` kept strictly apart, unresolved gates unable to produce `READY`, and a state measured on the wrong mean refused |
 | `reset-criterion-v0.yaml` | three gates FROZEN from canonical state semantics, two numeric gates `UNRESOLVED` with the measurement each waits for named in `source` |

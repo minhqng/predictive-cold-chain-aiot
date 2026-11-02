@@ -60,18 +60,28 @@ wins until re-tested.
    recorded. Whether each tip hangs in air or touches a wall or rack is unknown.
 3. **V1 position, cable routing, door alignment/gap at rest, internal load state**
    - not recorded at all.
-4. **The branch conductor is not frozen evidence.** Its size, 1.75 mm², is an
-   operator statement, and this record lists it as *settled information* —
-   `evidence/A/W04/fuse-commissioning-note.md:36` records that no marking was
-   photographed and no measurement was taken, and its table at `:53` says
-   explicitly: "No conductor evidence at all (today) → **no freeze**". The canonical
-   ask is `2 × 2.5 mm²` (`docs/05A` A-W04-02, `docs/01` PHY-SAFE-004),
-   `evidence/A/W01/bom-audit.csv` still carries HW-19 as `UNVERIFIED`, and the
-   deviation register stays open. Do not read this row as compliance.
-5. **Fuse selection.** Reported at 15 A. The only current this dossier can cite is the
-   single cooling run's peak `9.99 A` (mean `7.2247 A`), and every one of those readings
-   is unqualified because the capture records no current status - so suitability is
-   unproven and stays a W08 question, not a range I invented.
+4. **The branch conductor is not frozen evidence, and its recorded unit was wrong.**
+   The operator corrected on 2026-11-02 that **1.75 mm is the diameter of the copper
+   core, not a cross-sectional area of 1.75 mm²**. For a round solid core that is
+   `π × (1.75/2)² ≈ 2.405 mm²`, so the gap to the canonical ask of `2 × 2.5 mm²`
+   (`docs/05A` A-W04-02, `docs/01` PHY-SAFE-004) is about 4 % by area, not the ~30 % a
+   "1.75 mm² vs 2.5 mm²" reading implied. The assumption is load-bearing and is stated
+   here rather than buried: a stranded conductor is not a single round wire, so if the
+   strand is flexible the derivation does not hold and only the printed marking settles it.
+   `evidence/A/W04/fuse-commissioning-note.md:36` still records that no marking was
+   photographed and no measurement was taken, and its table at `:53` still says "No
+   conductor evidence at all (today) → **no freeze**". The FDD2-250 termination is rated
+   1.5-2.5 mm², so 2.405 mm² is **in range** for it (`fuse-commissioning-note.md:37`).
+   Nothing here declares nominal `2.5 mm²` compliance: this row corrects a unit, it does
+   not verify hardware, and `evidence/A/W01/bom-audit.csv` still carries HW-19 as
+   `UNVERIFIED`. The full reassessment belongs to A-W08-02, which owns fuse finalization.
+5. **Fuse selection.** Reported at 15 A, operator-reported only: the same note at `:15`
+   records that **no marking is legible on the installed body** - no current rating, no
+   250 V, no glass/ceramic, no blade size - so a catalogue entry or a shop listing is not
+   evidence about this hardware. The only current this dossier can cite is the single
+   cooling run's peak `9.99 A` (mean `7.2247 A`), and every one of those readings is
+   unqualified because the capture records no current status, so suitability is unproven
+   and stays a W08 question rather than a range I invented.
 
 ## 4. Canonical naming versus the as-built rig — a discrepancy to resolve, not hide
 
