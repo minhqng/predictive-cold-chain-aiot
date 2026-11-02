@@ -304,8 +304,80 @@ def _bad(text: str) -> str:
     return ""
 
 
-def _load_ok(path: pathlib.Path) -> dict[str, object]:
-    return rc.load_criteria(path)
+class ActivationBoundaryTests(unittest.TestCase):
+    """The ways a file can look like a gate without being one, each closed by a test
+    that fails if the guard is removed."""
+
+    def test_an_unwriteable_status_cannot_activate_a_state_gate(self) -> None:
+        for name in ("door_required", "sensor_quality_required",
+                     "cooling_state_required_known"):
+            criteria = resolved_criteria()
+            for entry in criteria["parameters"]:  # type: ignore[index]
+                if entry["name"] == name:
+                    entry["status"] = "TRUST_ME"
+            result = rc.evaluate(criteria, dict(GOOD_STATE))
+            self.assertEqual(result["verdict"], "UNKNOWN", f"{name} activated on junk")
+
+    def test_a_frozen_requirement_that_names_no_condition_cannot_reach_ready(self) -> None:
+        cases = [("door_required", "OPEN", {"door_state": "OPEN"}),
+                 ("sensor_quality_required", "DEGRADED", {"quality": "DEGRADED"}),
+                 ("cooling_state_required_known", "false", {"cooling_state": "STANDBY"})]
+        for name, value, state_over in cases:
+            criteria = resolved_criteria()
+            for entry in criteria["parameters"]:  # type: ignore[index]
+                if entry["name"] == name:
+                    entry["value"] = value
+            result = rc.evaluate(criteria, dict(GOOD_STATE, **state_over))
+            self.assertEqual(result["verdict"], "UNKNOWN", f"{name}={value} satisfied ready")
+
+    def test_an_infinite_bound_is_not_a_threshold(self) -> None:
+        """`inf` means no bound, so a FROZEN inf must not certify any temperature."""
+        for value in ("inf", "-inf", float("inf")):
+            criteria = resolved_criteria()
+            for entry in criteria["parameters"]:  # type: ignore[index]
+                if entry["name"] == "tmean_band_c":
+                    entry["value"] = value
+            result = rc.evaluate(criteria, dict(GOOD_STATE, tmean_c=9999.0))
+            self.assertEqual(result["verdict"], "UNKNOWN", f"{value} acted as a bound")
+
+    def test_an_unregistered_representation_is_contradicted_not_crashed(self) -> None:
+        for criteria_value, state_value in (("tmean_bogus", "tmean_bogus"),
+                                            ("tmean_airroles_v0", "tmean_bogus")):
+            criteria = resolved_criteria()
+            for entry in criteria["parameters"]:  # type: ignore[index]
+                if entry["name"] == "tmean_definition":
+                    entry["value"] = criteria_value
+            result = rc.evaluate(criteria, dict(GOOD_STATE, representation=state_value))
+            self.assertEqual(result["verdict"], "NOT_READY")
+
+
+class QualityScopeTests(unittest.TestCase):
+    """The quality verdict must cover the probes the mean is actually made of."""
+
+    @staticmethod
+    def _row(**over: str) -> dict[str, str]:
+        base = {"device_ms": "1000", "door_open": "0", "pwm_applied_permille": "0",
+                "t1_c": "30.0", "t1_status": "OK",
+                "t2_c": "31.0", "t2_status": "OK",
+                "t3_c": "30.0", "t3_status": "OK",
+                "t4_c": "30.0", "t4_status": "OK"}
+        base.update(over)
+        return base
+
+    def test_an_invalid_term_of_the_mean_is_not_valid_quality(self) -> None:
+        """t4 is a term of the as-built air mean, so it cannot be ignored."""
+        state = rc.state_from_capture_row(self._row(t4_status="INVALID"),
+                                          "tmean_airroles_v0")
+        self.assertEqual(state["quality"], "INVALID")
+
+    def test_a_probe_outside_the_mean_does_not_decide_its_quality(self) -> None:
+        state = rc.state_from_capture_row(self._row(t4_status="INVALID"),
+                                         "tmean_chamber3_v0")
+        self.assertEqual(state["quality"], "VALID")
+
+    def test_an_empty_status_cell_is_not_valid_quality(self) -> None:
+        state = rc.state_from_capture_row(self._row(t3_status=""), "tmean_airroles_v0")
+        self.assertEqual(state["quality"], "UNKNOWN")
 
 
 if __name__ == "__main__":

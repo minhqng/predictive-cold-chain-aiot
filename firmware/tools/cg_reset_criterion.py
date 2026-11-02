@@ -38,6 +38,7 @@ from __future__ import annotations
 from collections.abc import Callable
 import argparse
 import json
+import math
 import pathlib
 import sys
 
@@ -171,17 +172,29 @@ def parameter(criteria: dict[str, object], name: str) -> tuple[str, str]:
 
 
 def _number(value: object) -> float | None:
+    """A finite number, or None. `inf` as a bound means no bound, so it is not a number here.
+
+    Accepting it let `tmean_band_c: inf` with status FROZEN answer READY for any chamber
+    temperature - a vacuous threshold is the same defect as an invented one.
+
+    The boundary is finiteness, not plausibility: `1e9` still passes, because deciding
+    what counts as a sensible chamber bound is exactly the measurement A-W07-05 refuses
+    to guess. The shipped file's UNRESOLVED status and validate_w07.py's pin on it are
+    what keep an unmeasured number out of delivery, not an invented range here.
+    """
     if isinstance(value, bool) or value is None:
         return None
     if isinstance(value, (int, float)):
-        return float(value)
+        number = float(value)
+        return number if math.isfinite(number) else None
     text = str(value).strip()
     if text in ("", "nan", "UNAVAILABLE", "UNRESOLVED", "UNKNOWN", "null"):
         return None
     try:
-        return float(text)
+        number = float(text)
     except ValueError:
         return None
+    return number if math.isfinite(number) else None
 
 
 def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str, object]:
@@ -231,10 +244,16 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
     definition, definition_status = parameter(criteria, "tmean_definition")
     if not active(definition_status):
         unresolved.append(f"tmean_definition ({definition_status})")
+    elif definition not in repeatability.REPRESENTATIONS:
+        failing.append(f"criterion names {definition!r}, which is not a representation this "
+                       f"toolkit defines, so nothing can have been measured on it")
     else:
         observed = str(state.get("representation") or "").strip()
         if not observed:
             missing.append("representation")
+        elif observed not in repeatability.REPRESENTATIONS:
+            failing.append(f"state names {observed!r}, which is not a representation this "
+                           f"toolkit defines")
         elif observed != definition:
             failing.append(f"state was measured on {observed!r}, but the criterion names "
                            f"{definition!r}")
@@ -249,32 +268,46 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
                  _number(state.get("slope_c_per_min")),
                  lambda measured, bound: abs(measured) <= abs(bound))
 
-    door_required, door_status = parameter(criteria, "door_required")
-    door = str(state.get("door_state") or "UNKNOWN").strip().upper()
-    if door_status == "UNRESOLVED":
-        unresolved.append("door_required (UNRESOLVED)")
-    elif door == "UNKNOWN":
-        missing.append("door_state")
-    elif door != door_required.strip().upper():
-        failing.append(f"door_state {door} is not the required {door_required.upper()}")
+    def state_gate(name: str, required: str, status: str, observed: str,
+                   condition: str, evidence: str) -> None:
+        """One frozen state requirement - activated only by a real readiness condition.
+
+        Two ways a file can pretend to gate on state without gating: an unwriteable status
+        on the hand-built path the artifact generator uses, and a value that names no
+        condition (`door_required: OPEN` cannot be what a reset asks for). Neither may
+        reach READY, so both answer UNKNOWN and say which.
+        """
+        wanted = required.strip().upper()
+        if not active(status):
+            unresolved.append(f"{name} ({status})")
+        elif wanted != condition:
+            unresolved.append(f"{name}={wanted!r} states no readiness condition; this "
+                              f"criterion requires {condition}")
+        elif observed == "UNKNOWN":
+            missing.append(evidence)
+        elif observed != wanted:
+            failing.append(f"{evidence} {observed} is not the required {wanted}")
+
+    state_gate("door_required", *parameter(criteria, "door_required"),
+               condition="CLOSED", evidence="door_state",
+               observed=str(state.get("door_state") or "UNKNOWN").strip().upper())
+
+    state_gate("sensor_quality_required", *parameter(criteria, "sensor_quality_required"),
+               condition="VALID", evidence="quality",
+               observed=str(state.get("quality") or "UNKNOWN").strip().upper())
 
     known, known_status = parameter(criteria, "cooling_state_required_known")
     cooling = str(state.get("cooling_state") or "UNKNOWN").strip().upper()
-    if known_status == "UNRESOLVED":
-        unresolved.append("cooling_state_required_known (UNRESOLVED)")
+    if not active(known_status):
+        unresolved.append(f"cooling_state_required_known ({known_status})")
+    elif known.strip().lower() not in ("true", "1", "yes"):
+        unresolved.append(f"cooling_state_required_known={known!r} states no readiness "
+                          f"condition; a reset may not be decided on a cooling state that "
+                          f"is allowed to be never-observed")
     elif cooling == "UNKNOWN":
         missing.append("cooling_state")
-    elif known.strip().lower() in ("true", "1", "yes") and cooling not in ("ON", "OFF"):
+    elif cooling not in ("ON", "OFF"):
         failing.append(f"cooling_state {cooling} is not a known state")
-
-    quality_required, quality_status = parameter(criteria, "sensor_quality_required")
-    quality = str(state.get("quality") or "UNKNOWN").strip().upper()
-    if quality_status == "UNRESOLVED":
-        unresolved.append("sensor_quality_required (UNRESOLVED)")
-    elif quality == "UNKNOWN":
-        missing.append("quality")
-    elif quality != quality_required.strip().upper():
-        failing.append(f"quality {quality} is not the required {quality_required.upper()}")
 
     if failing:
         verdict = "NOT_READY"
@@ -329,9 +362,12 @@ def state_from_capture_row(row: dict[str, str],
     duty = repeatability.number(row, "pwm_applied_permille")
     cooling = "UNKNOWN" if duty is None else ("ON" if duty > 0.0 else "OFF")
 
+    # The quality verdict must cover the probes the mean is actually made of. It used
+    # to read t1/t2/t3 unconditionally, so on the as-built air mean (t1, t3, t4) a row
+    # with t4_status INVALID still answered VALID, and the gate vouched for t2 - a probe
+    # the criterion refuses to average at all.
     statuses = [(row.get(f"{probe}_status") or "").strip()
-                for probe in ("t1", "t2", "t3")
-                if f"{probe}_status" in row]
+                for probe in (term[:-2] for term in repeatability.terms_of(representation))]
     if not statuses or any(item == "" for item in statuses):
         quality = "UNKNOWN"
     elif all(item == "OK" for item in statuses):

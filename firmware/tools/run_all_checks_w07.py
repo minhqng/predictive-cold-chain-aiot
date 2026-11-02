@@ -65,8 +65,8 @@ def main() -> int:
             print("        " + tail.replace("\n", "\n        "))
 
     total = len(checks)
-    print(f"\nW07 CHECKS: {total - failed}/{total} passed"
-          + (" - 1 FAILED" if failed else ""))
+    verdict = "passed" if not failed else f"passed - {failed} FAILED"
+    print(f"\nW07 CHECKS: {total - failed}/{total} {verdict}")
     print("Reminder: nothing here flashed a board, energized a stage or measured a "
           "physical quantity. The runs W07 needs are physical, and the report says so.")
     return 1 if failed else 0
