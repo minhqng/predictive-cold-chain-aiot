@@ -42,5 +42,8 @@ underlying evidence closes the blocker instead of leaving a stale "open" string.
   a plan, not an inspection.
 - ROM/per-channel identity readback from the devices rather than from the configuration
   table, which is the only way `hardware_config_id` stops being a *declared* identity.
-- Hardware-configuration **signoff** (A-W12-04): a decision, not a Member A artifact. A can
-  prepare it and name what is missing; A cannot sign it.
+- Hardware-configuration **signoff** (A-W12-04): a decision, not a Member A artifact. The
+  validity table now separates the intended label `CG-HW-001` from an evidence-derived
+  configuration identity, the physical session identity, and the verification status —
+  because a row stamped `hardware_config_id` reads as certified while signoff is open.
+  A can prepare signoff and name what is missing; A cannot sign it.

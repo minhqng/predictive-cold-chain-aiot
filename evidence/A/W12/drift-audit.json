@@ -45,10 +45,30 @@
         },
         "qualified_frame_evidence": {
           "frames_with_nonempty_status": 0,
+          "frames_with_valid_status": 0,
+          "per_channel": {
+            "current_status": {
+              "absent": 957,
+              "error": 0,
+              "frames": 957,
+              "tokens_seen": [],
+              "unsupported": 0,
+              "valid": 0
+            },
+            "voltage_status": {
+              "absent": 957,
+              "error": 0,
+              "frames": 957,
+              "tokens_seen": [],
+              "unsupported": 0,
+              "valid": 0
+            }
+          },
+          "qualifying_token": "OK",
           "total_frames": 957
         },
         "requirement": "A-W12-02",
-        "unqualified_reason": "current_status and voltage_status empty in every frame; no power_status/door_status columns exist in this capture",
+        "unqualified_reason": "no frame carries the producer's validating current/voltage status token; the committed capture leaves current_status and voltage_status empty in every row, and power_w/energy_wh have no status column at all, so no electrical value here is qualified",
         "verdict": "OFF/ON separation observable; duty-0 stale-current frames isolated; electrical figures UNQUALIFIED pending a qualified channel"
       },
       "role_geometry_audit": {
@@ -169,25 +189,41 @@
     "what_a_would_sign": "the committed datasets are internally consistent within each configuration, but the mechanical and electrical-qualification items above must close before A contributes a signoff"
   },
   "hardware_config_signoff": {
+    "captures_without_verified_configuration": [
+      "tec-cooling-response-600s.csv"
+    ],
+    "configuration_signoff_status": "UNRESOLVED",
     "dataset_validity_table": [
       {
         "capture": "tec-cooling-response-600s.csv",
-        "configuration_key": "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
-        "electrical_qualification": "UNQUALIFIED",
-        "hardware_config_id": "CG-HW-001",
-        "is_probe_identification": false,
-        "poolable_group": [
+        "config_verification": "UNVERIFIED",
+        "dataset_pooling_eligibility": [
           "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
           "CONSISTENT_WITH_FREEZE",
           "UNQUALIFIED"
         ],
-        "role_verdict": "CONSISTENT_WITH_FREEZE"
+        "electrical_qualification": "UNQUALIFIED",
+        "evidence_derived_config_identity": "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
+        "intended_hardware_config": "CG-HW-001",
+        "is_probe_identification": false,
+        "physical_session_identity": [
+          "56044b74"
+        ],
+        "role_verdict": "CONSISTENT_WITH_FREEZE",
+        "verification_open_items": [
+          "sensor ROM identity taken from the configuration table, not read back from the devices",
+          "probe role labels not asserted by the capture: {'t1': 'UNLABELLED', 't2': 'LABELLED', 't3': 'UNLABELLED', 't4': 'UNLABELLED'}",
+          "installed image not identified in the capture itself",
+          "no physical configuration inspection record (photo with scale, mounting method/height/clearance, terminal and conductor marking)"
+        ]
       }
     ],
+    "intended_hardware_config": "CG-HW-001",
     "must_not_pool": [
       "probe-identification touch captures vs any plant capture",
       "captures whose roles disagree with the freeze vs captures that follow it",
-      "captures from different installed images (configuration key differs)"
+      "captures from different installed images (configuration identity differs)",
+      "captures whose electrical qualification differs"
     ],
     "poolable_groups": {
       "('config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED', 'CONSISTENT_WITH_FREEZE', 'UNQUALIFIED')": [
@@ -195,7 +231,13 @@
       ]
     },
     "requirement": "A-W12-04",
-    "runs_under": "CG-HW-001"
+    "what_the_label_is_not": "CG-HW-001 is the intended label for this rig from the W01 as-built record. It is not a verified identity, not a signoff, and not evidence that two captures share a physical configuration - that is what evidence_derived_config_identity and the pooling columns say.",
+    "what_would_close_signoff": [
+      "photograph the installed fuse body and conductor marking (see A-W12-03 items)",
+      "read the DS18B20 ROMs back from the devices rather than from the config table",
+      "assert probe roles in the capture, or record the mapping as a witnessed inspection",
+      "a named person signs the configuration record; a host audit cannot sign it"
+    ]
   },
   "mechanical_audit_checklist": [
     {
@@ -219,7 +261,7 @@
       "check": "branch terminals and FDD2-250 fastons inspected (no discoloration, no looseness)",
       "closes_with": "a supervised terminal-inspection note; this is a physical check the host cannot perform",
       "item": "terminals",
-      "observed": "W01 as-built maps the faston as 1.5-2.5 mm^2 rated (in range for the observed 1.75 mm^2 conductor); no terminal inspection record exists",
+      "observed": "W01 as-built maps the faston as 1.5-2.5 mm^2 rated, which would cover the derived ~2.405 mm^2 copper area of the observed 1.75 mm core diameter - but that agreement rests on the unconfirmed solid-round assumption and on a termination inspection nobody has performed, so it is a lead, not a pass",
       "status": "NEED_USER_ACTION"
     },
     {
@@ -227,7 +269,7 @@
       "check": "installed branch fuse rating and its suitability to the conductor",
       "closes_with": "a photograph of the fuse body rating + conductor insulation class, run length and bundling so an ampacity can be stated (fuse note ~:53: 'no conductor evidence today -> no freeze')",
       "item": "fuse",
-      "observed": "fuse reported 15 A but its marking was never photographed (evidence/A/W04/fuse-commissioning-note.md ~:36); observed conductor 1.75 mm^2 (operator-confirmed 2026-11-02; no marking photographed, no measurement recorded); canonical ask 2 x 2.5 mm^2; W01 HW-19 still UNVERIFIED",
+      "observed": "fuse reported 15 A but its marking was never photographed (evidence/A/W04/fuse-commissioning-note.md ~:36); observed conductor 1.75 mm copper-core diameter (operator-measured 2026-11-02); = 2.405 mm^2 of copper IF the core is solid round - that assumption is NOT confirmed, no marking photographed, no cross-section measured, no insulation class or routing recorded; canonical ask 2 x 2.5 mm^2; W01 HW-19 still UNVERIFIED",
       "recommended_vs_observed": "observed = a 15 A fuse is reported installed; recommended = no rating is defensible without the conductor ampacity inputs. The deviation is open; this audit does not certify compliance.",
       "status": "BLOCKED_HARDWARE"
     },
