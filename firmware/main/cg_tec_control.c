@@ -78,8 +78,18 @@ static bool safe_stop_outputs(cg_tec_control_t *ctl)
     if (!ctl->ops.set_cooling_duty(0U)) {
         ok = false;
     }
-    ctl->outputs_energized = false;
-    ctl->duty_permille = 0U;
+    /* Cleared only when the disengage actually succeeded. If the platform
+     * refused to take the outputs down, this layer must keep claiming the
+     * outputs are energized: telemetry that said OFF while the branch was
+     * still being driven would be the single most dangerous field in the
+     * frame. There is no electrical readback here, so the honest ceiling of
+     * this flag is "what the output layer last succeeded to drive", and the
+     * shipped stage-unavailable adapter refuses everything, so it stays false
+     * in this build regardless. */
+    if (ok) {
+        ctl->outputs_energized = false;
+        ctl->duty_permille = 0U;
+    }
     return ok;
 }
 
@@ -524,6 +534,7 @@ void cg_tec_get_status(const cg_tec_control_t *ctl, cg_tec_status_t *out)
     out->state = ctl->state;
     out->fault_bits = ctl->fault_bits;
     out->duty_permille = ctl->duty_permille;
+    out->outputs_energized = ctl->outputs_energized;
     out->start_count = ctl->start_count;
     out->stop_count = ctl->stop_count;
     out->estop_count = ctl->estop_count;
