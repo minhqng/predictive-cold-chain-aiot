@@ -332,5 +332,31 @@ class OverlayTests(unittest.TestCase):
                          cooling["skipped_rows"])
 
 
+class ProvenanceTests(unittest.TestCase):
+    """A hash-pinned artifact that names a developer's path is not reproducible."""
+
+    def test_an_in_repo_capture_is_published_repository_relative(self) -> None:
+        self.assertEqual(rep.capture_id(H8_CAPTURE),
+                         "evidence/A/W04/tec-cooling-response-600s.csv")
+        self.assertNotIn(":", rep.capture_id(H8_CAPTURE))
+
+    def test_analyze_reports_the_id_not_the_checkout_path(self) -> None:
+        report = rep.analyze([H8_CAPTURE], "tmean_airroles_v0", 3)
+        for run in report["runs"]:
+            self.assertEqual(run["capture"],
+                             "evidence/A/W04/tec-cooling-response-600s.csv")
+
+    def test_the_published_id_resolves_back_without_the_working_directory(self) -> None:
+        """Reading a capture must not depend on where the next tool was invoked."""
+        self.assertEqual(rep.capture_path(rep.capture_id(H8_CAPTURE)).resolve(),
+                         H8_CAPTURE.resolve())
+
+    def test_a_capture_outside_the_repository_is_not_renamed(self) -> None:
+        with tempfile.TemporaryDirectory() as workdir:
+            scratch = pathlib.Path(workdir) / "scratch.csv"
+            write_capture(scratch, ramp(0, 4, 0, -0.01))
+            self.assertEqual(rep.capture_id(scratch), scratch.as_posix())
+
+
 if __name__ == "__main__":
     unittest.main()
