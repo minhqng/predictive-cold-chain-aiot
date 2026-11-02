@@ -4,8 +4,8 @@ Executed: 2026-11-02 · Method: **host execution of the delivered C sources**
 Harness: `firmware/tools/tests/cg_w06_harness.c` (40 scenarios; compiles
 `cg_command.c`, `cg_quality.c`, `cg_health.c`, `cg_snapshot.c`, `cg_telemetry.c`,
 `cg_tec_control.c`, `cg_tec_limits.c`, `cg_tec_command.c` unchanged) · Checker:
-`cg_check_firmware_w06.py` (120 static checks) · Negative tests:
-`tests/test_cg_check_firmware_w06.py` (28 tests: 26 in-memory mutations, 1 must-not-fire
+`cg_check_firmware_w06.py` (122 static checks) · Negative tests:
+`tests/test_cg_check_firmware_w06.py` (29 tests: 27 in-memory mutations, 1 must-not-fire
 control, 1 real-tree baseline) · W06 harness worst-case line measurements in
 `build/`
 
