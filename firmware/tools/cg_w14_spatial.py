@@ -69,15 +69,25 @@ REPO_ROOT = rep.REPO_ROOT
 # variants: W07's registered representations, plus the single-probe sets W07 lacks
 # ---------------------------------------------------------------------------
 
-def _variant(name: str, terms: tuple[str, ...], source: str,
-             kind: str) -> dict[str, object]:
-    """One sensor feature set, labelled by probe, role and hot-side exposure."""
+def _variant(name: str, terms: tuple[str, ...], source: str, kind: str,
+             w07_flag: bool | None = None) -> dict[str, object]:
+    """One sensor feature set, labelled by probe, role and hot-side exposure.
+
+    For a representation W07 already registers, its own ``includes_hot_side`` flag is
+    taken as the authority and cross-checked against the predicate derived from
+    ``AS_BUILT_ROLES`` at import time: if the map and the table ever disagree, the
+    module refuses to load rather than letting a reader discover it downstream.
+    """
     touches_hot = terms_include_hot_side(terms)
+    if w07_flag is not None and w07_flag != touches_hot:
+        raise AnalysisError(
+            f"{name}: W07 registers includes_hot_side={w07_flag} but the frozen role "
+            f"map says {touches_hot} for {list(terms)} - one of the two is wrong")
     return {
         "name": name,
         "terms": list(terms),
         "roles": [AS_BUILT_ROLES[term] for term in terms],
-        "includes_hot_side": touches_hot,
+        "includes_hot_side": (w07_flag if w07_flag is not None else touches_hot),
         "is_chamber_air": (not touches_hot) and len(terms) > 0,
         "kind": kind,
         "source": source,
@@ -98,7 +108,8 @@ W07_SOURCE = "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)"
 
 VARIANTS: dict[str, dict[str, object]] = {
     name: _variant(name, terms_of(name), W07_SOURCE,
-                   "single_probe" if len(terms_of(name)) == 1 else "multi_probe")
+                   "single_probe" if len(terms_of(name)) == 1 else "multi_probe",
+                   w07_flag=includes_hot_side(name))
     for name in REPRESENTATIONS
 }
 VARIANTS.update({

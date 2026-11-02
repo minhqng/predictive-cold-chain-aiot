@@ -74,9 +74,10 @@ tools and re-checked from the raw rows by `validate_w14.py`.
    `tolerance_value: 0.4` and `agreed_with_member_b: true` in the pairing input; the
    hot-side-contaminated mean re-labelled chamber air; `n=1` promoted to
    `DISTRIBUTION_COMPUTED`; a disturbance response asserted against 0 OPEN rows; an
-   absolute developer path in drive-letter form inside a pinned artifact; and an edit
-   made after pinning. All seven fail as designed, plus the two generator-guard cases in
-   the same file.
+   absolute developer path in drive-letter form inside a pinned artifact - seven false
+   claims, each producing exit 1 - as does an eighth tamper case, an edit made after
+   pinning, caught by the hash check. The same file carries two generator-guard cases
+   proving `build_w14_artifacts.py` refuses to write an asserted false claim at all.
 
 ## 4. Physical evidence still owed (consolidated)
 

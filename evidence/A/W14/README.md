@@ -50,7 +50,7 @@ Roles, representations and the hot-side flag are **imported** from
 over an arbitrary term tuple, needed because A-W14-02 asks for one-sensor sets — is
 pinned against W07's own `tmean` by a test over every registered representation, so the
 two cannot drift. Chamber-air variants are checked against the role map at compute time
-(`require_air`), and the 96 W14 tests (39 spatial, 25 QA, 21 pairing, 11 dossier-guard)
+(`require_air`), and the 97 W14 tests (40 spatial, 25 QA, 21 pairing, 11 dossier-guard)
 include the hot-side containment proofs at three levels: the label check, the planted
 air-labelled-hot-terms defect, and a per-row re-check of every published CSV line.
 

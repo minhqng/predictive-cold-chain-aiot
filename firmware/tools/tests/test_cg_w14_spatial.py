@@ -79,6 +79,19 @@ class RoleMapReuse(unittest.TestCase):
         for name in rep.REPRESENTATIONS:
             self.assertEqual(sp.VARIANTS[name]["terms"], list(rep.terms_of(name)))
             self.assertEqual(sp.VARIANTS[name]["source"], sp.W07_SOURCE)
+            self.assertEqual(sp.VARIANTS[name]["includes_hot_side"],
+                             rep.includes_hot_side(name))
+
+    def test_a_map_table_disagreement_refuses_to_build_a_variant(self):
+        """W07's flag and the role map are cross-checked, not merely both used."""
+        with self.assertRaises(rep.AnalysisError) as caught:
+            sp._variant("bogus_v0", ("t1_c", "t2_c"), "test", "multi_probe",
+                        w07_flag=False)
+        self.assertIn("one of the two is wrong", str(caught.exception))
+        built = sp._variant("consistent_v0", ("t1_c", "t2_c"), "test", "multi_probe",
+                            w07_flag=True)
+        self.assertTrue(built["includes_hot_side"])
+        self.assertFalse(built["is_chamber_air"])
 
     def test_mean_of_terms_equals_w07_tmean_for_every_registered_representation(self):
         """The generic helper must be W07's rule, not a near miss of it."""

@@ -13,6 +13,10 @@ deliverables could mislead.
 from __future__ import annotations
 
 import argparse
+import csv
+import hashlib
+import io
+import json
 import pathlib
 import sys
 
@@ -476,12 +480,7 @@ def build() -> dict[str, str]:
     qa.guard_no_forbidden_claim(qa_report)
     payload = pair.pairing_input(CAPTURES, MIN_SESSIONS)
 
-    import io
-    import json
-
     buffer = io.StringIO()
-    import csv
-
     csv.writer(buffer, lineterminator="\n").writerows(sp.ablation_csv_rows(matrix))
 
     files: dict[str, str] = {
@@ -524,8 +523,6 @@ def check_or_write(files: dict[str, str], write: bool) -> int:
 
 def write_pins() -> int:
     """Pin every dossier file except the pin file itself, LF-only and sorted by name."""
-    import hashlib
-
     lines = []
     for path in sorted(DOSSIER_FILES()):
         digest = hashlib.sha256(path.read_bytes()).hexdigest()
