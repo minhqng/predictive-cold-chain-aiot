@@ -1,6 +1,9 @@
 # A-W14 handoff — what W14 gives B/C/D
 
-Week-scoped slice of the docs/05A §5 / §6.1–§6.3 handover. The payload files themselves are
+Week-scoped slice of the docs/05A §5 / §6.1–§6.3 handover. Counts quoted below (the
+957-row session, the 9 570 long-format rows, 10 feature sets) are a **PHASE SNAPSHOT -
+MUST EVOLVE**: they describe the capture set W14 holds today, and `validate_w14.py`
+re-derives them, so a second session makes them wrong on purpose. The payload files themselves are
 `ablation-support.{json,csv,md}`, `spatial-statistics.json`, `sensor-position-qa.{json,md}`
 and `pairing-input.json` / `member-b-handoff.md`; this file only states what each can and
 cannot be used for, so a consumer does not have to re-derive the limits.
@@ -11,7 +14,7 @@ cannot be used for, so a consumer does not have to re-derive the limits.
 |---|---|---|
 | sensor identity / placement | `sensor-position-qa.json` compares captured role labels and per-channel behaviour against the frozen record (`../W07/geometry-v1.md` §1) | **MATCH** on labels; behaviour signature confirms only `t2_c` rose while the air probes fell. Physical non-movement is **`NEEDS_A_NEW_CAPTURE`** — archived data cannot prove it, and this dossier never prints "no movement verified" |
 | pairing context | `pairing-input.json` + `member-b-handoff.md`: initial mean, initial gradient and response variation across what exists | **Input side only.** `tolerance_proposed: false`, `tolerance_value: null`. A structural guard raises if any number ever appears under a tolerance-named key. B freezes the tolerance (A-W14-04 is explicitly "with B") |
-| valid/invalid run status, `run_id` | not produced here — W14 consumes W09's registry rather than minting run identity | Single session stays single: `ablation-support` rows all share one conditioning fingerprint, which is the proof they are the *same* physical run, not three |
+| valid/invalid run status, `run_id` | not produced here — W14 consumes W09's registry rather than minting run identity | Single session stays single: every `ablation-support` row carries the capture's conditioning fingerprint (`device_ms/state/pwm_applied_permille/door_open/boot_id` hashed over the rows a statistic walked), and `validate_w14.py` re-derives it and every row's `device_ms` → `feature_c`/`pwm`/`door`/`boot` attribution from the committed CSV. That recomputation, not the stamped field, is what makes "the same physical run" checkable; it is one boot, never three |
 | quality flags | every feature set carries `is_chamber_air` / `includes_hot_side` | Hot side is excluded from all chamber-air sets; `require_air()` raises rather than averaging T2 into an air statistic, and W07's flag and the role map cross-check each other at import |
 | physical response delay | none — that is W13 | W14 measures spatial field and ablation, not latency |
 

@@ -1,7 +1,9 @@
 # A-W14 — Role-aware spatial statistics and sensor-position QA (Member A)
 
 Week: **W14** · Branch: `feat/a-w14-spatial-statistics` · Stacked on
-`feat/a-w07-plant-repeatability` (HEAD `2e688be`, the W07 delivery head)
+`feat/a-w07-plant-repeatability` at its current head `ff387a1` (the merge-base of this
+branch with that one, and the base PR #21 opens against; the W07 delivery head `2e688be`
+is an ancestor of it, not the tip)
 Owner: Member A · Status: **TOOLS + DOSSIER DELIVERED · SPATIAL STATISTICS LIMITED TO
 ONE SESSION · DISTURBANCE RESPONSE NOT COMPUTABLE · PAIRING TOLERANCES TEAM_DEPENDENCY
 · NON-MOVEMENT NOT VERIFIABLE FROM ARCHIVED DATA**
@@ -17,7 +19,7 @@ the datasets from the runs that exist, and the honest boundary of each.
 
 | Piece | What it is |
 |---|---|
-| `firmware/tools/cg_w14_spatial.py` | A-W14-02/03: named sensor **feature sets** (single probe, pairs, the W07 air mean) computed over the *same rows*, with a per-row conditioning fingerprint as the proof of "same physical run"; per-pair gradients, max pairwise differences, door-event detection, and `require_air()`, which raises instead of averaging the hot side into an air statistic |
+| `firmware/tools/cg_w14_spatial.py` | A-W14-02/03: named sensor **feature sets** (single probe, pairs, the W07 air mean) computed over the *same rows*, each set carrying the conditioning fingerprint of the rows it actually walked plus the capture-wide fingerprint over `device_ms/state/pwm_applied_permille/door_open/boot_id`; per-pair gradients, max pairwise differences, an unqualified-reading tally, door-event detection, provenance-based refusal of the identification session, and `require_air()`, which raises instead of averaging the hot side into an air statistic |
 | `firmware/tools/cg_w14_sensor_qa.py` | A-W14-01: the sensor-position QA **method and baseline** — capture role labels and per-channel behaviour checked against the frozen record, every mismatch class naming what it would mean physically, output split into `CURRENT_VERIFIABLE` / `NEEDS_A_NEW_CAPTURE` / `NEEDS_PHYSICAL_EVIDENCE` |
 | `firmware/tools/cg_w14_pairing.py` | A-W14-04: Member A's **input side** for the A/B matching tolerances in a form B can consume, with a structural guard that raises if any number ever appears under a tolerance-named key |
 | `spatial-statistics.json`, `spatial-report.md` | the generated A-W14-03 numbers, labelled `SINGLE_SESSION_OBSERVATION`, with the gradient distribution `NOT_COMPUTABLE_AS_DISTRIBUTION` and the disturbance block `NOT_COMPUTABLE` |
@@ -26,8 +28,9 @@ the datasets from the runs that exist, and the honest boundary of each.
 | `pairing-input.json`, `member-b-handoff.md` | the A-W14-04 payload: what the data supports, what it cannot, join keys, the form a tolerance takes once sessions exist, and the asks for B |
 | `build_w14_artifacts.py`, `validate_w14.py`, `SHA256SUMS.txt` | regeneration with `--check`, `--pins`, byte pins, and the honesty re-checker that re-derives every published number from the raw rows |
 | `handoff.md` | this week's part of the docs/05A §5 / §6.1–§6.3 handover: which fields B can consume now, what must not be inferred from a single session, and what W14 gives C and D (nothing direct, and it says so) |
-| `firmware/tools/tests/test_cg_w14_dossier.py` | proves the validator fails: a mini-repo copy passes untouched, then each planted false claim (non-movement, invented tolerance, hot-side air mean, `n=1` as a distribution, fabricated disturbance, absolute path, unpinned edit) exits non-zero |
-| `firmware/tools/run_all_checks_w14.py` | six layers, including the W07/W06/W05/W04 regressions |
+| `firmware/tools/tests/test_cg_w14_dossier.py` | proves the validator fails: a mini-repo copy passes untouched, then each planted false claim (non-movement in prose **and inside a JSON value**, invented tolerance, hot-side air mean, `n=1` as a distribution, fabricated disturbance, a **fabricated conditioning fingerprint**, a series row whose value or `boot_id` attribution the capture does not support, absolute path in a `.md` **and in a pinned `.py`**, a dropped stray file, a dropped `.pyc`) exits non-zero after the pins are rebuilt |
+| `firmware/tools/tests/test_cg_w14_provenance.py` | proves the *mechanisms* the review called fabricated now measure something: fingerprints re-derived per variant from the rows, the control flag false when variants walk different rows, unqualified gradients counted, the identification session refused after a rename, the claim guard with no double-quote exemption, and an allowlist pin set |
+| `firmware/tools/run_all_checks_w14.py` | six layers, including the W07/W06/W05/W04 regressions; the cross-week W04-W06 chain runs only on a tree with git history and is reported NOT RUN (never passed) on an archive export, because W02's and W03's validators answer `firmware_commit` from git |
 
 ## 2. The headline numbers, all from the one real session
 
@@ -51,16 +54,19 @@ Roles, representations and the hot-side flag are **imported** from
 over an arbitrary term tuple, needed because A-W14-02 asks for one-sensor sets — is
 pinned against W07's own `tmean` by a test over every registered representation, so the
 two cannot drift. Chamber-air variants are checked against the role map at compute time
-(`require_air`), and the 97 W14 tests (40 spatial, 25 QA, 21 pairing, 11 dossier-guard)
+(`require_air`), and the 128 W14 tests (40 spatial, 25 QA, 21 pairing, 20 dossier-guard,
+22 control-and-provenance)
 include the hot-side containment proofs at three levels: the label check, the planted
 air-labelled-hot-terms defect, and a per-row re-check of every published CSV line.
+The "same physical run" control is checked the same way: re-computed from the capture,
+never accepted from the artifact.
 
 ## 4. What each deliverable can and cannot say
 
 | Ask | What was delivered | What it does not say |
 |---|---|---|
 | A-W14-01 verify no movement since freeze | method + baseline + mismatch semantics, split into `CURRENT_VERIFIABLE` / `NEEDS_A_NEW_CAPTURE` / `NEEDS_PHYSICAL_EVIDENCE`, verdict `NOT_VERIFIABLE_FROM_ARCHIVED_DATA` | it cannot and does not claim the probes did not move: `#CG H8S schema=3` frames carry no ROM ids, so a channel is a slot name, not a proven probe |
-| A-W14-02 ablation support | feature sets from the same rows, control proven by fingerprint | it is one run described several ways, so it carries no run-to-run information |
+| A-W14-02 ablation support | feature sets from the same rows, with the conditioning control re-derived from the capture by `validate_w14.py` | it is one run described several ways, so it carries no run-to-run information |
 | A-W14-03 spatial statistics | per-pair gradients, max pairwise differences, per-probe agreement — all labelled `SINGLE_SESSION_OBSERVATION` | no gradient **distribution**, no disturbance response: `door_open` is `0` in 940 rows and `UNKNOWN` in 17, so the event was never applied |
 | A-W14-04 pairing tolerances | Member A's input, structured for B to consume | no number in the tolerance slot, and no claim that anything is agreed |
 
@@ -82,8 +88,12 @@ py -m unittest discover -s firmware/tools/tests -t firmware/tools/tests
   probe moved. Nothing here is `PHYSICALLY_VERIFIED`, and the validator refuses the
   phrase as an assertion.
 * **One session is one session.** Its baseline, cooling and recovery segments are
-  published as segments of one boot with `independent_session: false`, never as three
-  runs, and `n=1` is never promoted to a distribution.
+  published as segments of one boot - the artifacts carry `independent_sessions: 1` per
+  capture, with every phase block labelled from the session count of the capture it came
+  from and the verdict carrying `single_session_observation: true` - never as three runs,
+  and `n=1` is never promoted to a distribution. (The singular field
+  `independent_session: false` this index used to promise is not a field any W14 tool
+  computes, so it is no longer claimed here.)
 * **The 2026-11-02 touch session is `PROBE_IDENTIFICATION`** and is refused before a
   number is computed — including as a QA baseline, because a hand-held probe is not a
   behaviour reference. `evidence/A/W02/sensor-consistency.csv` is likewise excluded: its
@@ -92,6 +102,12 @@ py -m unittest discover -s firmware/tools/tests -t firmware/tools/tests
   run-to-run band are different physical quantities; `cg_w14_pairing` raises if a value
   ever appears under a tolerance key, and the validator re-runs that guard on the
   published file.
+* **Which sentences are a phase snapshot.** `acceptance.md` §7 lists the statements that
+  are true only of the capture set on disk today - one session, 957 rows, 10 feature sets
+  x 3 phases, 9 570 series rows, the five headline figures and this fingerprint - and
+  `validate_w14.py` re-derives every one of them from the artifacts instead of pinning
+  the literals, so the next session makes them change on purpose rather than failing the
+  dossier for having grown.
 * **The generator once refused its own draft.** An early `member-b-handoff.md` line
   asserted a thing the captures cannot support and `build_w14_artifacts.py` exited
   non-zero rather than writing it; that refusal is now a durable test, not a footnote.
