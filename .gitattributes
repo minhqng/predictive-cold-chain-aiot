@@ -52,3 +52,8 @@ evidence/A/W12/** -text
 # and re-checked by validate_w13.py; `text=auto eol=lf` would rewrite those bytes
 # on a checkout with core.autocrlf and break every pin.
 evidence/A/W13/** -text
+
+# W16 comparability dossier: every file is hash-pinned in evidence/A/W16/SHA256SUMS.txt
+# and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
+# those bytes on a checkout with core.autocrlf and break every pin.
+evidence/A/W16/** -text
