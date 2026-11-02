@@ -78,7 +78,8 @@ def v2_line(**overrides: object) -> str:
 class FormatterFixtureTests(unittest.TestCase):
     def test_real_frame_parses_as_schema_two(self) -> None:
         record = schema.parse_line(harness_fixture_line())
-        self.assertEqual(record.value("schema"), 2)
+        self.assertEqual(record.value("schema"), schema.SCHEMA_VERSION)
+        self.assertGreaterEqual(record.value("schema"), 2, "the fixture must be a W05-era frame")
         self.assertEqual(record.value("device_id"), "coldguard-001")
         self.assertEqual(record.value("calibration_id"), "UNRECORDED")
         self.assertGreaterEqual(record.value("seq"), 1)
@@ -91,6 +92,7 @@ class FormatterFixtureTests(unittest.TestCase):
         record = schema.parse_line(harness_fixture_line())
         known = set(schema.REQUIRED_FIELDS) | set(schema.REQUIRED_STATUS_FIELDS)
         known |= set(schema.W05_REQUIRED_FIELDS)
+        known |= set(getattr(schema, "W06_REQUIRED_FIELDS", ()))
         known |= set(schema.INTEGER_FIELDS) | set(schema.FLOAT_FIELDS)
         known |= {
             # Vocabulary-only or descriptive fields the parser keeps as strings.
@@ -138,7 +140,7 @@ class BackCompatibilityTests(unittest.TestCase):
 
     def test_unknown_schema_is_rejected(self) -> None:
         with self.assertRaises(schema.TelemetryError):
-            schema.parse_line(v2_line(schema=3))
+            schema.parse_line(v2_line(schema=schema.SCHEMA_VERSION + 1))
 
 
 class W05VocabularyTests(unittest.TestCase):
@@ -277,7 +279,7 @@ class BuilderHandoffTests(unittest.TestCase):
         self.assertEqual(w04_row["device_id"], "")
         self.assertEqual(w04_row["quality"], "")
         w05_row = dict(zip(header, second))
-        self.assertEqual(w05_row["schema"], "2")
+        self.assertEqual(w05_row["schema"], str(schema.SCHEMA_VERSION))
         self.assertEqual(w05_row["device_id"], "coldguard-001")
 
 

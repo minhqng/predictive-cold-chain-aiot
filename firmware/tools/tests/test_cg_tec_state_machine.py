@@ -29,6 +29,7 @@ TESTS = pathlib.Path(__file__).resolve().parent
 
 HARNESS = TESTS / "cg_tec_harness.c"
 SOURCES = [MAIN / "cg_tec_control.c", MAIN / "cg_tec_limits.c", MAIN / "cg_telemetry.c",
+           MAIN / "cg_command.c",
            MAIN / "cg_quality.c", MAIN / "cg_health.c"]
 
 VSWHERE = pathlib.Path(r"C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe")

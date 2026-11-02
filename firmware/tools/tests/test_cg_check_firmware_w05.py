@@ -207,8 +207,17 @@ class W05CheckerTests(unittest.TestCase):
         self.assertIn("W05 did not introduce a requested duty", " ".join(checker.failures))
 
     def test_schema_drift_from_host_is_caught(self) -> None:
-        checker = self.run_with(CONFIG, "#define CG_TELEMETRY_SCHEMA_VERSION 2",
-                                "#define CG_TELEMETRY_SCHEMA_VERSION 3")
+        """Mutate the firmware's serial schema away from whatever the host parser
+        currently implements, so the guard stays real after a later slice raises
+        the number."""
+        import cg_telemetry_schema as host_schema
+
+        current = checker_module.define_value(
+            checker_module.Checker().read(CONFIG), "CG_TELEMETRY_SCHEMA_VERSION"
+        )
+        self.assertEqual(current, str(host_schema.SCHEMA_VERSION))
+        checker = self.run_with(CONFIG, f"#define CG_TELEMETRY_SCHEMA_VERSION {current}",
+                                f"#define CG_TELEMETRY_SCHEMA_VERSION {int(current) + 1}")
         self.assertIn("firmware and host agree on the current serial schema version",
                       " ".join(checker.failures))
 
