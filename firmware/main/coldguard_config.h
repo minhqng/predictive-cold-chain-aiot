@@ -520,8 +520,13 @@
  * smaller stream than the telemetry line, so it does not share that budget, but
  * it must still be a ceiling the worst case is known to fit: cg_log_raw_line()
  * refuses an over-long line rather than truncating it, and a refused ACK would
- * silently delete the evidence that a command was rejected. */
-#define CG_COMMAND_ACK_LINE_MAX 640
+ * silently delete the evidence that a command was rejected.
+ *
+ * 768, not the 640 W06 first shipped with: the ACK now carries the required
+ * device_id field (docs/02 §32.3), which measured 592 bytes at the widest inputs
+ * the formatter can be handed - 92 % of 640, inside the buffer but outside the
+ * 10 % margin this budget exists to keep. */
+#define CG_COMMAND_ACK_LINE_MAX 768
 
 /* Local operator console on UART0 (the log console). Commands share the
  * terminal with the log stream; the parser rejects every line it does not

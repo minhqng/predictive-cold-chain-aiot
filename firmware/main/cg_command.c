@@ -247,6 +247,24 @@ void cg_command_validate(const cg_command_t *command, const cg_cmd_context_t *ct
         return; /* nothing to remember, so nothing is stored */
     }
 
+    /* Admission. docs/02 §29 does not list a source conjunct, because it assumes
+     * the record arrived through §28's contract; on this device that assumption
+     * has to be tested, since a record can be built by the local console bridge
+     * or by a parser that never saw a transport at all. Only the canonical
+     * network source is admitted, so UNKNOWN (the zero value, and what any
+     * incomplete construction carries) and LOCAL_CONSOLE both fail closed instead
+     * of being accepted by absence of a prohibition.
+     *
+     * This classifies provenance, it does not authenticate it: nothing here
+     * proves a NETWORK-labelled record really came from the gateway. Authentication
+     * belongs to the transport slice with Member C, and until that exists this
+     * field is trusted input, not a security boundary. */
+    if (command->source != CG_CMD_SOURCE_NETWORK) {
+        ack->status = CG_CMD_ACK_SAFETY_BLOCKED;
+        ack->reason = "SOURCE_NOT_CANONICAL";
+        return; /* refused before the store: see the ordering note below */
+    }
+
     /* §29 conjunct 3 + §30.1: recognized or new. A duplicate must not create a
      * second independent application; it returns the canonical stored result.
      * The check runs before freshness and range, because re-deciding them for a
@@ -379,22 +397,8 @@ void cg_command_validate(const cg_command_t *command, const cg_cmd_context_t *ct
         return;
     }
 
-    /* Last-line invariant, independent of every conjunct above: a record that
-     * did not arrive through the canonical network contract cannot be accepted,
-     * even if a future transport, clock or operator action makes the rest of the
-     * chain pass. The local console bridge is a test instrument (source
-     * LOCAL_CONSOLE, id form TEST_TOKEN); today the missing expiry already
-     * refuses it, and this gate makes that structural rather than a side effect. */
-    if (command->source == CG_CMD_SOURCE_LOCAL_CONSOLE) {
-        ack->status = CG_CMD_ACK_SAFETY_BLOCKED;
-        ack->reason = "LOCAL_TEST_NOT_CANONICAL";
-        if (store != NULL) {
-            store_put(store, ack);
-        }
-        return;
-    }
-
-    /* Every conjunct held. The device records the desired state and answers
+    /* Every conjunct held, and the source was admitted at the top. The device
+     * records the desired state and answers
      * ACCEPTED - which is protocol evidence only (§32.2). Physical application
      * stays behind the existing controller, which is what actually enforces the
      * bounded duration, the faults and the compile-out guards. */
@@ -442,11 +446,18 @@ int cg_command_ack_format(char *buf, size_t cap, const cg_cmd_ack_t *ack,
 
     append(&cursor, &left, &overflow,
            "#CG CMDACK schema=1 event=ACK command_id=%s command_id_form=%s source=%s "
-           "boot_id=%s boot_count=%lu uptime_ms=%llu ack_seq=%lu status=%s reason=%s "
+           "device_id=%s boot_id=%s boot_count=%lu uptime_ms=%llu ack_seq=%lu status=%s reason=%s "
            "desired_cooling=%s desired_duty_permille=%lu applied_cooling=%s "
            "applied_duty_permille=%lu reapplied=%d expiry_evaluable=%d "
            "time_sync_state=%s device_mode=%s fault_code=0x%08lX",
            ack->command_id, cg_cmd_id_form_name(ack->id_form), cg_cmd_source_name(ack->source),
+           /* docs/02 §32.3 (2200-2215) requires device_id in the ACK payload. It
+            * comes from the device's own context, never from the command's
+            * device_id field: echoing a requested identity back would make the
+            * ACK evidence of a name the device only repeated. */
+           (ctx != NULL && ctx->device_id != NULL && ctx->device_id[0] != '\0')
+               ? ctx->device_id
+               : "MISSING_CONTEXT",
            boot_id != NULL ? boot_id : "UNKNOWN", (unsigned long)boot_count,
            (unsigned long long)ack->uptime_ms, (unsigned long)ack->telemetry_seq,
            cg_cmd_ack_status_name(ack->status), ack->reason != NULL ? ack->reason : "NONE",
@@ -524,14 +535,64 @@ static bool parse_u64_checked(const char *text, uint64_t *out)
     return true;
 }
 
+/* Field slots in the order the parser tests them. A record that names one field
+ * twice is refused: a later copy silently overwriting an earlier one would let a
+ * malformed command carry two expiries and be judged by whichever the parser
+ * reached last. */
+enum cg_cmd_field {
+    CG_FIELD_SCHEMA_VERSION = 0,
+    CG_FIELD_COMMAND_ID,
+    CG_FIELD_DEVICE_ID,
+    CG_FIELD_CREATED_AT,
+    CG_FIELD_EXPIRES_AT,
+    CG_FIELD_CONTROLLER_ID,
+    CG_FIELD_POLICY_VERSION,
+    CG_FIELD_REASON_CODE,
+    CG_FIELD_ACTION_COOLING,
+    CG_FIELD_ACTION_DUTY,
+    CG_FIELD_COUNT
+};
+
+static int cg_command_field_index(const char *key)
+{
+    static const char *const names[CG_FIELD_COUNT] = {
+        "schema_version", "command_id", "device_id", "created_at_ms", "expires_at_ms",
+        "controller_id", "policy_version", "reason_code", "action_cooling",
+        "action_duty_permille",
+    };
+
+    for (int i = 0; i < (int)CG_FIELD_COUNT; i++) {
+        if (strcmp(key, names[i]) == 0) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+/* Why each field is mandatory. docs/02 §28.2 (2075-2086) lists the required set:
+ * stable command_id, target device, issue/create time, expiry, requested action,
+ * policy provenance, reason. controller_id is §28.3 optional, so its token is
+ * empty and its absence never refuses a record. */
+static const char *const cg_command_required_tokens[CG_FIELD_COUNT] = {
+    "MISSING_SCHEMA_VERSION",
+    "MISSING_COMMAND_ID",
+    "MISSING_DEVICE_ID",
+    "MISSING_CREATED_AT",
+    "MISSING_EXPIRES_AT",
+    "",                    /* controller_id: optional per §28.3 */
+    "MISSING_POLICY_VERSION",
+    "MISSING_REASON_CODE",
+    "MISSING_ACTION_COOLING",
+    "MISSING_ACTION_DUTY",
+};
+
 bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **error)
 {
     char buffer[256];
     size_t len;
     size_t seen = 0U;
-    bool have_schema = false;
-    bool have_device = false;
-    bool have_id = false;
+    int field = -1;
+    unsigned seen_fields = 0U;
     char *cursor;
 
     if (error != NULL) {
@@ -588,6 +649,17 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
         value = eq + 1;
         seen++;
 
+        field = cg_command_field_index(key);
+        if (field >= 0) {
+            if (seen_fields & (1U << (unsigned)field)) {
+                if (error != NULL) {
+                    *error = "DUPLICATE_FIELD";
+                }
+                return false;
+            }
+            seen_fields |= 1U << (unsigned)field;
+        }
+
         if (strcmp(key, "schema_version") == 0) {
             if (!value_is_number(value, 9U)) {
                 if (error != NULL) {
@@ -605,7 +677,6 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
                 }
                 out->schema_version = (int)wide_schema;
             }
-            have_schema = true;
         } else if (strcmp(key, "command_id") == 0) {
             if (copy_token(out->command_id, sizeof(out->command_id), value) == NULL) {
                 if (error != NULL) {
@@ -623,7 +694,6 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
                 }
                 return false;
             }
-            have_id = true;
         } else if (strcmp(key, "device_id") == 0) {
             if (copy_token(out->device_id, sizeof(out->device_id), value) == NULL) {
                 if (error != NULL) {
@@ -631,7 +701,6 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
                 }
                 return false;
             }
-            have_device = true;
         } else if (strcmp(key, "created_at_ms") == 0) {
             if (!value_is_number(value, CG_CMD_MAX_DIGITS)) {
                 if (error != NULL) {
@@ -719,11 +788,21 @@ bool cg_command_parse_fields(const char *text, cg_command_t *out, const char **e
         cursor = space + 1;
     }
 
-    if (!have_schema || !have_device || !have_id) {
-        if (error != NULL) {
-            *error = "MISSING_REQUIRED_FIELD";
+    /* Refuse an incomplete record in the parser rather than downstream. Without
+     * this, `memset(out, 0, ...)` at the top made an absent action_cooling read
+     * as CG_CMD_COOLING_OFF - a zero value that is a real, executable command to
+     * stay off - and a record missing policy provenance or reason still reached
+     * the validator. docs/01 §19 is explicit that an unknown must not silently
+     * become normal, and §28.2 makes these fields required, so absence is its own
+     * stable reason token and never an inferred intent. */
+    for (int i = 0; i < (int)CG_FIELD_COUNT; i++) {
+        if (((seen_fields & (1U << (unsigned)i)) == 0U) &&
+            cg_command_required_tokens[i][0] != '\0') {
+            if (error != NULL) {
+                *error = cg_command_required_tokens[i];
+            }
+            return false;
         }
-        return false;
     }
     return true;
 }
