@@ -43,9 +43,14 @@ import sys
 
 import cg_thermal_repeatability as repeatability
 
+includes_hot_side = repeatability.includes_hot_side
+
 CRITERION_SCHEMA = "reset-criterion-v0"
 STATUS_VOCABULARY = ("FROZEN", "PROPOSED", "UNRESOLVED")
 PARAMETER_KEYS = ("name", "value", "status", "source")
+# A block missing `value` or `status` would silently read as unresolved or,
+# worse, as satisfied with an empty string.
+REQUIRED_BLOCK_KEYS = ("name", "value", "status", "source")
 TOP_LEVEL_KEYS = ("schema", "status", "owner", "applies_to", "notes")
 
 # The five conditions docs/05A A-W07-05 names, plus the representation they are
@@ -123,6 +128,9 @@ def load_criteria(path: pathlib.Path) -> dict[str, object]:
             raise CriteriaError(f"{path}: {key!r} outside any parameter block: {raw!r}")
         if key not in PARAMETER_KEYS:
             raise CriteriaError(f"{path}: unknown parameter key {key!r}")
+        if key in current:
+            raise CriteriaError(f"{path}: duplicate {key!r} inside one parameter block: "
+                                f"{raw!r}")
         current[key] = _scalar(value)
     close_block()
 
@@ -133,6 +141,19 @@ def load_criteria(path: pathlib.Path) -> dict[str, object]:
     missing = sorted(set(REQUIRED_PARAMETERS) - set(names))
     if missing:
         raise CriteriaError(f"{path}: missing parameters {missing}")
+    # A repeated block is not a duplicate top-level key, so it survives the check
+    # above - and `parameter()` answers the first match, which lets a later
+    # UNRESOLVED block hide behind an earlier invented value (or the reverse).
+    duplicated = sorted({name for name in names if names.count(name) > 1})
+    if duplicated:
+        raise CriteriaError(f"{path}: repeated parameter blocks {duplicated}: the "
+                            f"evaluator answers the first match, so a duplicate is a "
+                            f"silent redefinition")
+    for entry in parameters:
+        for key in REQUIRED_BLOCK_KEYS:
+            if key not in entry:
+                raise CriteriaError(f"{path}: parameter {entry.get('name')!r} has no "
+                                    f"{key!r}")
     for entry in parameters:
         if entry.get("status") not in STATUS_VOCABULARY:
             raise CriteriaError(f"{path}: bad status {entry.get('status')!r} "
@@ -177,6 +198,15 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
     unresolved: list[str] = []
     missing: list[str] = []
 
+    def active(entry_status: str) -> bool:
+        """Only a status the file format can express activates a gate.
+
+        `load_criteria` already rejects unknown statuses; this keeps a hand-built
+        criteria dict - the way the artifact generator injects test values - from
+        reaching READY through a string the shipped format would not accept.
+        """
+        return entry_status in ("FROZEN", "PROPOSED")
+
     def numeric_gate(name: str, evidence: str, measured: float | None,
                      test: Callable[[float, float], bool]) -> None:
         """One numeric criterion: its parameter, the evidence that answers it, the test.
@@ -188,7 +218,7 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
         """
         value, status = parameter(criteria, name)
         number = _number(value)
-        if status == "UNRESOLVED" or number is None:
+        if not active(status) or number is None:
             unresolved.append(f"{name} ({status})")
         elif measured is None:
             missing.append(evidence)
@@ -199,8 +229,8 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
     # written against one mean judged against another is a silent redefinition, and
     # the open T2 question is exactly where that would happen.
     definition, definition_status = parameter(criteria, "tmean_definition")
-    if definition_status == "UNRESOLVED":
-        unresolved.append("tmean_definition (UNRESOLVED)")
+    if not active(definition_status):
+        unresolved.append(f"tmean_definition ({definition_status})")
     else:
         observed = str(state.get("representation") or "").strip()
         if not observed:
@@ -208,6 +238,9 @@ def evaluate(criteria: dict[str, object], state: dict[str, object]) -> dict[str,
         elif observed != definition:
             failing.append(f"state was measured on {observed!r}, but the criterion names "
                            f"{definition!r}")
+        elif includes_hot_side(observed):
+            failing.append(f"representation {observed!r} averages a TEC hot-side probe into a "
+                           f"chamber-air mean, which this criterion cannot judge")
 
     numeric_gate("tmean_band_c", "tmean_c", _number(state.get("tmean_c")),
                  lambda measured, band: measured <= band)
@@ -275,8 +308,11 @@ def _explain(verdict: str, failing: list[str], unresolved: list[str],
 
 
 def state_from_capture_row(row: dict[str, str],
-                           representation: str = "tmean_chamber3_v0") -> dict[str, object]:
+                           representation: str = "tmean_airroles_v0") -> dict[str, object]:
     """Adapt one recorded bench row into the criterion's evidence vocabulary.
+
+    The default is the as-built chamber-air mean; a caller that means a different
+    definition must pass it explicitly so the artifact always names what it used.
 
     Separate from the evaluator on purpose: a different capture layout must not be
     able to change what READY means.
@@ -290,7 +326,7 @@ def state_from_capture_row(row: dict[str, str],
     else:
         door = door_raw.upper()
 
-    duty = repeatability._number(row, "pwm_applied_permille")
+    duty = repeatability.number(row, "pwm_applied_permille")
     cooling = "UNKNOWN" if duty is None else ("ON" if duty > 0.0 else "OFF")
 
     statuses = [(row.get(f"{probe}_status") or "").strip()

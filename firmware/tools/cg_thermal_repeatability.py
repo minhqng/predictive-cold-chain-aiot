@@ -1,31 +1,53 @@
-"""ColdGuard plant repeatability analysis (A-W07-04).
+"""ColdGuard plant repeatability analysis (A-W07-02/03/04).
 
-Standard library only, host-only: nothing here drives or reads hardware. It
-turns recorded bench captures into the per-outcome statistics week 07 asks for
-and, just as importantly, refuses to report repeatability that the data cannot
-support.
+Standard library only, host-only: nothing here drives or reads hardware. It turns
+recorded bench captures into the per-outcome statistics week 07 asks for and, just
+as importantly, refuses to report repeatability the data cannot support.
 
-Why the representations are named (docs/01 §20):
+Representations are named, never implied (docs/01 §20.1, §20.5)
 
-* ``tmean_chamber3_v0`` is mean(T1,T2,T3) - the chamber-air definition Doc 01
-  freezes. It is computed because it is the canonical one, not because T2's
-  physical position is settled.
-* ``tmean_t2excluded_v0`` is mean(T1,T3). The committed H8 capture labels the
-  T2 probe ``HOT_SIDE``, and during cooling T2 rises while T1/T3/T4 fall, so
-  the two definitions do not describe the same physical quantity. Publishing a
-  single unlabelled "Tmean" would hide exactly that.
-* ``tmean_all4_v0`` is mean(T1,T2,T3,T4) and is reported only as a sensitivity
-  check: it changes the answer without settling the dispute.
+The 2026-11-02 operator-confirmed as-built geometry is:
 
-Every slope names its representation, window and fit method, because docs/01
-20.5 calls a bare ``dT/dt`` ambiguous. Spread uses the **sample** formula
-(n-1) and says so (docs/01 §20.4). ``nan``, missing values and non-``OK``
-statuses are excluded from means and counted, never treated as zero.
+    T1 = chamber CENTER          T2 = TEC HOT_SIDE
+    T3 = chamber BOTTOM          T4/SPARE = near the CHAMBER DOOR
 
-Repeatability is reported only when at least ``--min-runs`` valid runs of the
-same phase exist. With fewer, the verdict is ``INSUFFICIENT_RUNS`` together with
-how many more runs are needed - the alternative is a number that looks like a
-measurement and is really a guess.
+so the three chamber-air probes are T1, T3 and T4, and T2 sits on hot metal. That
+makes the choice of mean a physical question with a measurable answer, not a style
+preference:
+
+* ``tmean_airroles_v0`` = mean(T1,T3,T4) - the as-built chamber-air mean and the
+  primary statistic for this rig.
+* ``tmean_chamber3_v0`` = mean(T1,T2,T3) - what docs/01 §20.1 writes literally,
+  which on this rig averages a hot-side surface into an air temperature. Kept
+  because it is the canonical text, and flagged ``includes_hot_side``.
+* ``tmean_t2excluded_v0`` = mean(T1,T3) - the two-probe degraded mean.
+* ``tmean_all4_v0`` - sensitivity check only.
+
+On the single committed run the hot-side-contaminated mean reports -2.56 C over the
+driven block where the role-correct air mean is several times larger: the
+definition, not the chamber, moves the number. Nothing picks a winner silently -
+every artifact carries ``representation``, ``representation_terms``,
+``representation_roles`` and ``includes_hot_side``.
+
+Statistics discipline
+
+* a partial mean (one term missing) is not the same quantity, so partial rows are
+  excluded from a phase series and counted in ``partial_term_rows``
+  (docs/01 517-530, 2312-2318);
+* a reading whose status column says anything other than ``OK`` is excluded;
+* a reading whose status column exists but is EMPTY is used and counted as
+  ``unqualified`` - the H8 capture left ``current_status`` and ``voltage_status``
+  empty on all 957 rows, so its electrical figures are values with no recorded
+  validity, and ``electrical_status_recorded`` says so;
+* a row with no usable applied-duty value is ``undetermined`` and joins neither the
+  baseline nor the recovery segment: defaulting it to "off" would invent passive
+  run time;
+* every slope names representation, window and method, and the trailing-window slope
+  is never called "the cooling slope" - on a curve that bottoms out and rebounds it
+  can be positive during a cooling phase;
+* spread uses the sample (n-1) formula and says so (docs/01 §20.4);
+* fewer than ``--min-runs`` valid runs of a phase yields ``INSUFFICIENT_RUNS`` plus
+  the number still needed, never a fabricated distribution.
 """
 
 from __future__ import annotations
@@ -42,58 +64,44 @@ MIN_RUNS_DEFAULT = 3
 SLOPE_WINDOW_SAMPLES = 120
 SLOPE_METHOD = "trailing_window_least_squares"
 
-REPRESENTATIONS = {
-    "tmean_chamber3_v0": ("t1_c", "t2_c", "t3_c"),
-    "tmean_t2excluded_v0": ("t1_c", "t3_c"),
-    "tmean_all4_v0": ("t1_c", "t2_c", "t3_c", "t4_c"),
+AS_BUILT_ROLES = {"t1_c": "CHAMBER_CENTER", "t2_c": "TEC_HOT_SIDE",
+                  "t3_c": "CHAMBER_BOTTOM", "t4_c": "CHAMBER_NEAR_DOOR"}
+
+REPRESENTATIONS: dict[str, dict[str, object]] = {
+    "tmean_airroles_v0": {"terms": ("t1_c", "t3_c", "t4_c"), "includes_hot_side": False},
+    "tmean_chamber3_v0": {"terms": ("t1_c", "t2_c", "t3_c"), "includes_hot_side": True},
+    "tmean_t2excluded_v0": {"terms": ("t1_c", "t3_c"), "includes_hot_side": False},
+    "tmean_all4_v0": {"terms": ("t1_c", "t2_c", "t3_c", "t4_c"), "includes_hot_side": True},
 }
 
-# Outcomes whose spread across runs is the actual A-W07-04 question.
 OUTCOMES = (
-    "start_c",
-    "end_c",
-    "delta_c",
-    "slope_c_per_min",
-    "whole_phase_slope_c_per_min",
-    "minutes_to_1c",
-    "minutes_to_2c",
-    "mean_current_a",
-    "peak_current_a",
-    "mean_power_w",
-    "energy_wh",
+    "start_c", "end_c", "delta_c", "min_c", "max_c",
+    "slope_c_per_min", "whole_phase_slope_c_per_min",
+    "minutes_to_1c", "minutes_to_2c",
+    "mean_current_a", "peak_current_a", "mean_power_w", "energy_wh",
     "valid_sample_fraction",
 )
+
+_MISSING_VALUE = ("", "nan", "NaN", "UNAVAILABLE", "UNRECORDED", "null")
 
 
 class AnalysisError(RuntimeError):
     pass
 
 
-def _number(row: dict[str, str], key: str) -> float | None:
-    """A reading is usable only when its status says so.
+def terms_of(representation: str) -> tuple[str, ...]:
+    return tuple(REPRESENTATIONS[representation]["terms"])  # type: ignore[arg-type]
 
-    `nan`, an empty cell and a non-OK status are three different ways of having
-    no evidence; all three return None rather than a number.
-    """
-    raw = (row.get(key) or "").strip()
-    if raw in ("", "nan", "NaN", "UNAVAILABLE", "UNRECORDED"):
-        return None
-    status_key = _status_key(row, key)
-    if status_key is not None and (row.get(status_key) or "").strip() not in ("OK", ""):
-        return None
-    try:
-        return float(raw)
-    except ValueError:
-        return None
+
+def includes_hot_side(representation: str) -> bool:
+    return bool(REPRESENTATIONS[representation]["includes_hot_side"])
 
 
 def _status_key(row: dict[str, str], key: str) -> str | None:
-    """The status column that qualifies this value column, if the capture has one.
+    """The status column qualifying a value column, if this capture has one.
 
-    `t1_c` is gated by `t1_status`, `current_a` by `current_status`. A column
-    with no matching status column is used as recorded, and the value column is
-    never its own status: that mis-read made every `device_ms` look unusable and
-    silently emptied the slope input.
+    A column is never its own status: that mis-read once made every ``device_ms``
+    look unusable and silently emptied a slope.
     """
     candidate = f"{key.split('_')[0]}_status"
     if candidate == key or candidate not in row:
@@ -101,14 +109,35 @@ def _status_key(row: dict[str, str], key: str) -> str | None:
     return candidate
 
 
-def tmean(row: dict[str, str], representation: str) -> tuple[float | None, int, int]:
-    """Return (mean, usable_count, term_count) for one row.
+def reading(row: dict[str, str], key: str) -> tuple[float | None, str]:
+    """(value, state) where state is ok / unqualified / invalid / absent."""
+    raw = (row.get(key) or "").strip()
+    if raw in _MISSING_VALUE:
+        return None, "absent"
+    status_key = _status_key(row, key)
+    state = "ok"
+    if status_key is not None:
+        status = (row.get(status_key) or "").strip()
+        if status == "":
+            state = "unqualified"
+        elif status != "OK":
+            return None, "invalid"
+    try:
+        return float(raw), state
+    except ValueError:
+        return None, "invalid"
 
-    A partial mean is not the same quantity as the full one, so usable_count is
-    returned alongside and callers must treat a shortfall as its own condition.
-    """
-    terms = REPRESENTATIONS[representation]
-    values = [v for v in (_number(row, t) for t in terms) if v is not None]
+
+def number(row: dict[str, str], key: str) -> float | None:
+    """The usable value of a field. Use `reading` whenever validity matters."""
+    value, state = reading(row, key)
+    return value if state in ("ok", "unqualified") else None
+
+
+def tmean(row: dict[str, str], representation: str) -> tuple[float | None, int, int]:
+    """(mean, usable_count, term_count); a shortfall means it is not the full quantity."""
+    terms = terms_of(representation)
+    values = [value for value in (number(row, term) for term in terms) if value is not None]
     if not values:
         return None, 0, len(terms)
     return sum(values) / len(values), len(values), len(terms)
@@ -130,27 +159,16 @@ def _least_squares(points: list[tuple[float, float]]) -> float | None:
 
 def trailing_slope_c_per_min(points: list[tuple[float, float]],
                              window: int = SLOPE_WINDOW_SAMPLES) -> float | None:
-    """Slope over the trailing window of the phase, not the leading edge.
-
-    The window is in samples at the capture cadence; a phase shorter than the
-    window uses what it has and the sample count is reported, so the number is
-    never detached from how it was made.
-    """
+    """Recent motion over the trailing window - not a phase summary."""
     if len(points) < 2:
         return None
     tail = points[-window:] if len(points) > window else points
     return _least_squares(tail)
 
 
-def minutes_to_first_1c_drop(points: list[tuple[float, float]],
-                             threshold_c: float = 1.0) -> float | None:
-    """Minutes from phase start until the representation moves `threshold_c`.
-
-    A cooling step passes a positive threshold (fall); a recovery step passes a
-    negative one (rise), which is why the number is an argument and not a hidden
-    constant. None means the move never happened inside the phase - a result, not
-    a gap, and callers must not render it as 0.
-    """
+def minutes_to_threshold_drop(points: list[tuple[float, float]],
+                              threshold_c: float = 1.0) -> float | None:
+    """Minutes until the representation moves `threshold_c`; None if it never does."""
     if len(points) < 2:
         return None
     start = points[0][1]
@@ -162,14 +180,21 @@ def minutes_to_first_1c_drop(points: list[tuple[float, float]],
     return None
 
 
-def is_cooling_row(row: dict[str, str]) -> bool:
-    """The action reference is applied duty, not the bench stage label.
+def _time_to_move(points: list[tuple[float, float]], phase: str,
+                  threshold_c: float = 1.0) -> float | None:
+    if phase == "cooling":
+        return minutes_to_threshold_drop(points, threshold_c)
+    if phase == "recovery":
+        return minutes_to_threshold_drop(points, -threshold_c)
+    return None
 
-    Using the stage would fold the post-action cooldown into "cooling" and then
-    call its rebound the cooling response, which is exactly what docs/01 §20.6
-    warns about: recovery is a different phase measured after the action ended.
-    """
-    return (_number(row, "pwm_applied_permille") or 0.0) > 0.0
+
+def phase_of(row: dict[str, str]) -> str:
+    """cooling / off / undetermined, keyed on applied duty (docs/01 §20.6)."""
+    duty, state = reading(row, "pwm_applied_permille")
+    if state in ("absent", "invalid"):
+        return "undetermined"
+    return "cooling" if (duty or 0.0) > 0.0 else "off"
 
 
 def read_rows(path: pathlib.Path) -> list[dict[str, str]]:
@@ -177,116 +202,149 @@ def read_rows(path: pathlib.Path) -> list[dict[str, str]]:
         reader = csv.DictReader(handle)
         if not reader.fieldnames:
             raise AnalysisError(f"{path} has no header row")
-        needed = {"device_ms", "pwm_applied_permille", "current_a"}
-        missing = needed - set(reader.fieldnames)
+        missing = {"device_ms", "pwm_applied_permille", "current_a"} - set(reader.fieldnames)
         if missing:
             raise AnalysisError(f"{path} is missing required columns: {sorted(missing)}")
         return [row for row in reader]
 
 
 def split_phases(rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
-    """Contiguous cooling blocks split the capture into before / during / after.
-
-    A capture with no cooling block has a baseline only: that is an honest
-    passive warm-up candidate and is labelled as such rather than silently
-    treated as a cooling step.
-    """
-    marks = [is_cooling_row(row) for row in rows]
+    marks = [phase_of(row) == "cooling" for row in rows]
     if not any(marks):
-        return {"baseline": rows, "cooling": [], "recovery": []}
+        kept = [row for row in rows if phase_of(row) != "undetermined"]
+        return {"baseline": kept, "cooling": [], "recovery": [],
+                "undetermined": [row for row in rows if phase_of(row) == "undetermined"]}
     first = marks.index(True)
     last = len(marks) - 1 - marks[::-1].index(True)
+    middle = rows[first:last + 1]
+
+    def pending(segment: list[dict[str, str]]) -> list[dict[str, str]]:
+        return [row for row in segment if phase_of(row) == "undetermined"]
+
+    def usable(segment: list[dict[str, str]]) -> list[dict[str, str]]:
+        return [row for row in segment if phase_of(row) != "undetermined"]
+
     return {
-        "baseline": rows[:first],
-        "cooling": rows[first:last + 1],
-        "recovery": rows[last + 1:],
+        "baseline": usable(rows[:first]),
+        "cooling": middle,
+        "recovery": usable(rows[last + 1:]),
+        "undetermined": (pending(rows[:first]) + pending(middle)
+                         + pending(rows[last + 1:])),
     }
 
 
-def _time_to_move(points: list[tuple[float, float]], phase: str,
-                  threshold_c: float = 1.0) -> float | None:
-    """When the representation has moved `threshold_c` in the direction of the phase.
+def _phase_points(rows: list[dict[str, str]],
+                  representation: str) -> tuple[list[tuple[float, float]], dict[str, int]]:
+    points: list[tuple[float, float]] = []
+    tallies = {"partial_term_rows": 0, "no_term_rows": 0, "unqualified_rows": 0}
+    for row in rows:
+        value, count, terms = tmean(row, representation)
+        if value is None:
+            tallies["no_term_rows"] += 1
+            continue
+        if count != terms:
+            tallies["partial_term_rows"] += 1
+            continue
+        if any(reading(row, term)[1] == "unqualified" for term in terms_of(representation)):
+            tallies["unqualified_rows"] += 1
+        elapsed = number(row, "device_ms")
+        points.append(((elapsed or 0.0) / 60000.0, value))
+    return points, tallies
 
-    Cooling is a fall, recovery is a rise, and a baseline has no direction to
-    answer, so it reports None instead of a number that implies an action that
-    never happened.
-    """
-    if phase == "cooling":
-        return minutes_to_first_1c_drop(points, threshold_c)
-    if phase == "recovery":
-        return minutes_to_first_1c_drop(points, -threshold_c)
-    return None
+
+def _column_stats(rows: list[dict[str, str]],
+                  key: str) -> tuple[list[float], int, int]:
+    usable: list[float] = []
+    unqualified = invalid = 0
+    for row in rows:
+        value, state = reading(row, key)
+        if state == "unqualified":
+            unqualified += 1
+        if state == "invalid":
+            invalid += 1
+        if state in ("ok", "unqualified") and value is not None:
+            usable.append(value)
+    return usable, unqualified, invalid
 
 
 def phase_metrics(rows: list[dict[str, str]], phase: str,
                   representation: str) -> dict[str, object]:
-    points: list[tuple[float, float]] = []
-    usable = 0
-    for row in rows:
-        value, count, terms = tmean(row, representation)
-        if value is None:
-            continue
-        if count == terms:
-            usable += 1
-        t = _number(row, "device_ms")
-        points.append(((t or 0.0) / 60000.0, value))
+    points, tallies = _phase_points(rows, representation)
+    base: dict[str, object] = {
+        "phase": phase,
+        "representation": representation,
+        "representation_terms": list(terms_of(representation)),
+        "representation_roles": [AS_BUILT_ROLES[t] for t in terms_of(representation)],
+        "includes_hot_side": includes_hot_side(representation),
+        "rows_read": len(rows),
+        **tallies,
+    }
     if len(points) < 2:
-        return {"phase": phase, "usable": False, "samples": len(points),
-                "reason": "FEWER_THAN_TWO_USABLE_SAMPLES"}
+        return {**base, "usable": False, "samples": len(points),
+                "skipped_rows": len(rows) - len(points),
+                "reason": "FEWER_THAN_TWO_FULL_TERM_SAMPLES"}
 
-    currents = [v for v in (_number(r, "current_a") for r in rows) if v is not None]
-    powers = [v for v in (_number(r, "power_w") for r in rows) if v is not None]
-    doors = [(r.get("door_open") or "").strip() for r in rows]
-    durations_min = points[-1][0] - points[0][0]
-    energies = [v for v in (_number(r, "energy_wh") for r in rows) if v is not None]
+    currents, current_unqualified, current_invalid = _column_stats(rows, "current_a")
+    powers, power_unqualified, _ = _column_stats(rows, "power_w")
+    energies, _, _ = _column_stats(rows, "energy_wh")
+    voltages, voltage_unqualified, _ = _column_stats(rows, "voltage_v")
+    doors = sorted({(row.get("door_open") or "MISSING").strip() or "MISSING" for row in rows})
     slope = trailing_slope_c_per_min(points)
     whole = _least_squares(points)
     return {
-        "phase": phase,
+        **base,
         "usable": True,
-        "representation": representation,
-        "slope_definition": f"{representation}/{SLOPE_WINDOW_SAMPLES}samples/"
-                            f"{SLOPE_METHOD}_v0",
+        "slope_definition": f"{representation}/{SLOPE_WINDOW_SAMPLES}samples/{SLOPE_METHOD}_v0",
+        "whole_phase_slope_definition": f"{representation}/whole_phase_least_squares_v0",
         "samples": len(points),
-        "full_term_samples": usable,
-        "partial_term_samples": len(points) - usable,
-        "duration_min": round(durations_min, 4),
+        "skipped_rows": len(rows) - len(points),
+        "current_rows_unqualified": current_unqualified,
+        "current_rows_invalid": current_invalid,
+        "power_rows_unqualified": power_unqualified,
+        "voltage_rows_unqualified": voltage_unqualified,
+        "electrical_status_recorded": current_unqualified == 0,
+        "electrical_status_note": (
+            "current/voltage carried no OK status in this capture: the values are "
+            "unqualified, not verified" if current_unqualified
+            else "current/voltage statuses were recorded"),
+        "duration_min": round(points[-1][0] - points[0][0], 4),
         "start_c": round(points[0][1], 4),
         "end_c": round(points[-1][1], 4),
         "min_c": round(min(p[1] for p in points), 4),
         "max_c": round(max(p[1] for p in points), 4),
         "delta_c": round(points[-1][1] - points[0][1], 4),
+        "trailing_slope_is_not_a_phase_summary": True,
         "slope_c_per_min": None if slope is None else round(slope, 6),
         "whole_phase_slope_c_per_min": None if whole is None else round(whole, 6),
-        "minutes_to_1c": _time_to_move(points, phase),
+        "minutes_to_1c": _time_to_move(points, phase, 1.0),
         "minutes_to_2c": _time_to_move(points, phase, 2.0),
         "mean_current_a": None if not currents else round(sum(currents) / len(currents), 4),
         "peak_current_a": None if not currents else round(max(currents), 4),
         "mean_power_w": None if not powers else round(sum(powers) / len(powers), 4),
-        "energy_wh": None if not energies else round(energies[-1] - energies[0], 4),
-        "door_open_tokens": {token or "MISSING": doors.count(token) for token in set(doors)},
-        "valid_sample_fraction": round(usable / len(points), 4),
+        "mean_voltage_v": None if not voltages else round(sum(voltages) / len(voltages), 4),
+        "energy_wh": None if len(energies) < 2 else round(energies[-1] - energies[0], 4),
+        "door_open_tokens": doors,
+        "valid_sample_fraction": round(len(points) / len(rows), 4),
     }
 
 
-def summarize(outcomes: list[float], label: str) -> dict[str, object]:
-    """Sample statistics (n-1) over one outcome across runs, with no hiding."""
-    out: dict[str, object] = {"outcome": label, "n": len(outcomes)}
-    if not outcomes:
+def summarize(values: list[float], label: str) -> dict[str, object]:
+    """Sample statistics (n-1) over one outcome across runs, with nothing hidden."""
+    out: dict[str, object] = {"outcome": label, "n": len(values)}
+    if not values:
         out["status"] = "NO_SAMPLES"
+        out["note"] = "no run of this phase produced this outcome"
         return out
     out["status"] = "OK"
-    out["mean"] = round(statistics.fmean(outcomes), 6)
-    out["min"] = round(min(outcomes), 6)
-    out["max"] = round(max(outcomes), 6)
-    out["range"] = round(max(outcomes) - min(outcomes), 6)
-    if len(outcomes) >= 2:
-        sd = statistics.stdev(outcomes)
+    out["mean"] = round(statistics.fmean(values), 6)
+    out["min"] = round(min(values), 6)
+    out["max"] = round(max(values), 6)
+    out["range"] = round(max(values) - min(values), 6)
+    if len(values) >= 2:
+        sd = statistics.stdev(values)
         out["sd_sample"] = round(sd, 6)
-        out["cv_pct"] = (
-            round(100.0 * sd / statistics.fmean(outcomes), 4)
-            if statistics.fmean(outcomes) != 0 else None
-        )
+        mean = statistics.fmean(values)
+        out["cv_pct"] = round(100.0 * sd / mean, 4) if mean != 0 else None
         if out["cv_pct"] is None:
             out["cv_note"] = "CV undefined: the mean is zero, so a ratio has no meaning"
     else:
@@ -300,132 +358,134 @@ def analyze(paths: list[pathlib.Path], representation: str,
             min_runs: int) -> dict[str, object]:
     runs: list[dict[str, object]] = []
     for path in paths:
-        phases = split_phases(read_rows(path))
-        per_phase = {}
-        for phase, rows in phases.items():
-            if not rows:
+        rows = read_rows(path)
+        phases = split_phases(rows)
+        per_phase: dict[str, object] = {}
+        for phase, phase_rows in phases.items():
+            if phase == "undetermined" or not phase_rows:
                 continue
-            per_phase[phase] = phase_metrics(rows, phase, representation)
+            per_phase[phase] = phase_metrics(phase_rows, phase, representation)
         runs.append({
             "capture": path.as_posix(),
             "phases": per_phase,
             "passive_candidate": len(phases["cooling"]) == 0,
             "cooling_candidate": len(phases["cooling"]) > 0,
+            "undetermined_rows": len(phases["undetermined"]),
+            "rows_read": len(rows),
         })
 
-    usable_by_phase: dict[str, list[dict[str, object]]] = {}
+    usable: dict[str, list[dict[str, object]]] = {}
     for run in runs:
         for phase, metrics in run["phases"].items():
             if metrics.get("usable"):
-                usable_by_phase.setdefault(phase, []).append(metrics)
+                usable.setdefault(phase, []).append(metrics)  # type: ignore[arg-type]
 
     phases_out: dict[str, object] = {}
-    for phase, samples in usable_by_phase.items():
+    for phase, samples in usable.items():
         stats = {}
         for outcome in OUTCOMES:
-            values = [s[outcome] for s in samples
-                      if isinstance(s.get(outcome), (int, float))]
+            values = [s[outcome] for s in samples if isinstance(s.get(outcome), (int, float))]
             stats[outcome] = summarize(values, outcome)
-        counts = [s["samples"] for s in samples]
-        verdict = {
-            "runs": len(samples),
-            "min_runs_required": min_runs,
-            "additional_runs_needed": max(0, min_runs - len(samples)),
-            "status": "REPEATABILITY_COMPUTED" if len(samples) >= min_runs
-                      else "INSUFFICIENT_RUNS",
-        }
         phases_out[phase] = {
             "runs": samples,
             "statistics": stats,
-            "samples_per_run": counts,
-            "verdict": verdict,
+            "samples_per_run": [s["samples"] for s in samples],
+            "verdict": {
+                "runs": len(samples),
+                "min_runs_required": min_runs,
+                "additional_runs_needed": max(0, min_runs - len(samples)),
+                "status": ("REPEATABILITY_COMPUTED" if len(samples) >= min_runs
+                           else "INSUFFICIENT_RUNS"),
+            },
         }
 
     return {
         "analysis": SCHEMA_NOTE,
         "representation": representation,
-        "representation_terms": list(REPRESENTATIONS[representation]),
-        "slope_definition": f"{representation}/{SLOPE_WINDOW_SAMPLES}samples/"
-                            f"{SLOPE_METHOD}_v0",
+        "representation_terms": list(terms_of(representation)),
+        "representation_roles": [AS_BUILT_ROLES[t] for t in terms_of(representation)],
+        "includes_hot_side": includes_hot_side(representation),
+        "slope_definition": f"{representation}/{SLOPE_WINDOW_SAMPLES}samples/{SLOPE_METHOD}_v0",
+        "whole_phase_slope_definition": f"{representation}/whole_phase_least_squares_v0",
         "spread_formula": "sample (n-1)",
         "runs_read": len(runs),
         "runs": runs,
         "phases": phases_out,
         "verdict": _overall_verdict(phases_out, runs),
         "notes": [
-            "This is host analysis of recorded captures. It does not "
-            "reproduce, energize or verify any physical action.",
-            "The chosen representation is a contract question, not a "
-            "measurement question: see the module docstring.",
-            "A capture with no cooling block is a passive warm-up candidate "
-            "only; it is never counted as a cooling step.",
+            "Host analysis of recorded captures: nothing here reproduced, energized "
+            "or verified a physical action.",
+            "A capture with no cooling block is a passive candidate only, never a "
+            "cooling step.",
+            "Rows whose applied duty is absent are counted as undetermined and join "
+            "neither the baseline nor the recovery segment.",
+            "Partial means are excluded from a phase series and counted in "
+            "partial_term_rows, so a published phase statistic is always the full "
+            "quantity it names.",
+            "Electrical values are published with an explicit statement of whether "
+            "their validity was recorded at all.",
         ],
     }
 
 
-def _overall_verdict(phases: dict[str, object], runs: list[dict[str, object]]) -> dict[str, object]:
+def _overall_verdict(phases: dict[str, object], runs: list[dict[str, object]]) -> dict:
+    def _status(block: object) -> str:
+        return "NO_DATA" if not isinstance(block, dict) else block["verdict"]["status"]
+
     cooling = phases.get("cooling")
     baseline = phases.get("baseline")
-    def _status(block: object) -> str:
-        if not isinstance(block, dict):
-            return "NO_DATA"
-        return block["verdict"]["status"]
     return {
         "cooling_step_runs": _status(cooling),
         "passive_warmup_runs": _status(baseline),
         "plant_variation_reportable": all(
             _status(p) == "REPEATABILITY_COMPUTED" for p in (cooling, baseline)),
         "captures_with_no_cooling_block": sum(1 for r in runs if r["passive_candidate"]),
+        "undetermined_rows_total": sum(int(r["undetermined_rows"]) for r in runs),
     }
 
 
-def overlay_rows(report: dict[str, object]) -> list[tuple[object, ...]]:
-    """Trajectory overlay rows: header plus one row per (run, phase, sample)."""
-    rows: list[tuple[object, ...]] = [
-        ("run", "phase", "sample_index", "elapsed_min", "tmean_c", "representation")]
-    for run in report["runs"]:
-        source = pathlib.Path(run["capture"])  # type: ignore[arg-type]
-        phases = split_phases(read_rows(source))
-        for phase, metrics in run["phases"].items():  # type: ignore[union-attr]
-            if not metrics.get("usable"):
-                continue
-            for index, (minutes, value) in enumerate(
-                    _series_points(phases[phase], metrics["representation"])):
-                rows.append((source.name, phase, index, round(minutes, 4),
-                             round(value, 4), metrics["representation"]))
+def overlay_rows(reports: list[dict[str, object]]) -> list[tuple[object, ...]]:
+    """Overlay rows for one or more analyses, from the same series as the statistics.
+
+    Two time bases: ``phase_elapsed_min`` aligns runs against each other,
+    ``boot_elapsed_min`` keeps the device's own monotonic axis.
+    """
+    header = ("run", "phase", "representation", "includes_hot_side", "sample_index",
+              "phase_elapsed_min", "boot_elapsed_min", "tmean_c")
+    rows: list[tuple[object, ...]] = [header]
+    for report in reports:
+        representation = str(report["representation"])
+        hot = includes_hot_side(representation)
+        for run in report["runs"]:  # type: ignore[union-attr]
+            source = pathlib.Path(str(run["capture"]))  # type: ignore[arg-type]
+            phases = split_phases(read_rows(source))
+            for phase, metrics in run["phases"].items():  # type: ignore[union-attr]
+                if not metrics.get("usable"):
+                    continue
+                points, _ = _phase_points(phases[phase], representation)
+                if not points:
+                    continue
+                base_t = points[0][0]
+                for index, (minutes, value) in enumerate(points):
+                    rows.append((source.name, phase, representation, int(hot), index,
+                                 round(minutes - base_t, 4), round(minutes, 4),
+                                 round(value, 4)))
     return rows
 
 
-def write_overlay_csv(path: pathlib.Path, report: dict[str, object]) -> None:
-    """Write the trajectory overlay with LF endings, byte-reproducible.
-
-    The default csv dialect emits CRLF, which would make a hash pin platform
-    dependent.
-    """
-    import csv as csv_module
+def write_overlay_csv(path: pathlib.Path, reports: list[dict[str, object]]) -> None:
+    """LF-only overlay, so a hash pin is platform independent."""
     import io
 
     buffer = io.StringIO()
-    csv_module.writer(buffer, lineterminator="\n").writerows(overlay_rows(report))
+    csv.writer(buffer, lineterminator="\n").writerows(overlay_rows(reports))
     path.write_bytes(buffer.getvalue().encode("utf-8"))
-
-
-def _series_points(rows: list[dict[str, str]],
-                   representation: str) -> list[tuple[float, float]]:
-    points: list[tuple[float, float]] = []
-    for row in rows:
-        value, count, terms = tmean(row, representation)
-        if value is None or count != terms:
-            continue
-        t = _number(row, "device_ms") or 0.0
-        points.append((t / 60000.0, value))
-    return points
 
 
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument("captures", nargs="+", type=pathlib.Path)
-    parser.add_argument("--representation", default="tmean_chamber3_v0",
+    parser.add_argument("--representation", default="tmean_airroles_v0",
                         choices=sorted(REPRESENTATIONS))
     parser.add_argument("--min-runs", type=int, default=MIN_RUNS_DEFAULT)
     parser.add_argument("--json", dest="json_out", type=pathlib.Path)
@@ -440,6 +500,7 @@ def main(argv: list[str] | None = None) -> int:
         for outcome in OUTCOMES:
             stats = block["statistics"][outcome]
             if stats["status"] != "OK":
+                print(f"  {outcome}: NO_SAMPLES (n=0)")
                 continue
             print(f"  {outcome}: n={stats['n']} mean={stats['mean']} "
                   f"sd_sample={stats['sd_sample']} cv_pct={stats['cv_pct']} "
@@ -453,7 +514,7 @@ def main(argv: list[str] | None = None) -> int:
         print(f"json={args.json_out}")
     if args.csv_out is not None:
         args.csv_out.parent.mkdir(parents=True, exist_ok=True)
-        write_overlay_csv(args.csv_out, report)
+        write_overlay_csv(args.csv_out, [report])
         print(f"csv={args.csv_out}")
     return 0
 
