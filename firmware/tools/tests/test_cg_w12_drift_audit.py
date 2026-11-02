@@ -165,7 +165,13 @@ class PoolingRefusalTests(unittest.TestCase):
         ]
         signoff = w12.hardware_config_signoff(captures)
         self.assertEqual(len(signoff["poolable_groups"]), 2)
-        self.assertIn("CG-HW-001", str(signoff["runs_under"]))
+        # The label may be present, but never as a column a consumer can read as a
+        # certified configuration identity while signoff is unresolved.
+        self.assertEqual(signoff["intended_hardware_config"], w12.INTENDED_HARDWARE_CONFIG)
+        self.assertEqual(signoff["configuration_signoff_status"], "UNRESOLVED")
+        for row in signoff["dataset_validity_table"]:
+            self.assertNotIn("hardware_config_id", row)
+            self.assertEqual(row["config_verification"], "UNVERIFIED")
 
 
 class HonestyGateTests(unittest.TestCase):
@@ -319,16 +325,158 @@ class ValidatorQualificationClaimTests(unittest.TestCase):
         failures = validate_w12.check_pzem_qualification_claim(audit)
         self.assertTrue(failures)
 
-    def test_qualified_with_evidence_passes(self) -> None:
+    def test_qualified_with_validating_tokens_passes(self) -> None:
         audit = {"captures": [{"capture": "c.csv", "pzem_audit": {
             "electrical_qualification": "QUALIFIED",
-            "qualified_frame_evidence": {"frames_with_nonempty_status": 5}}}] }
+            "qualified_frame_evidence": {"frames_with_nonempty_status": 5,
+                                         "frames_with_valid_status": 5}}}] }
         self.assertEqual(validate_w12.check_pzem_qualification_claim(audit), [])
+
+    def test_nonempty_status_alone_is_no_longer_accepted_as_evidence(self) -> None:
+        """The old evidence key counted any filled cell, INVALID included."""
+        audit = {"captures": [{"capture": "c.csv", "pzem_audit": {
+            "electrical_qualification": "QUALIFIED",
+            "qualified_frame_evidence": {"frames_with_nonempty_status": 5,
+                                         "frames_with_valid_status": 0}}}] }
+        self.assertTrue(validate_w12.check_pzem_qualification_claim(audit))
 
     def test_unqualified_current_capture_does_not_fail(self) -> None:
         audit = {"captures": [{"capture": "c.csv", "pzem_audit": {
             "electrical_qualification": "UNQUALIFIED"}}] }
         self.assertEqual(validate_w12.check_pzem_qualification_claim(audit), [])
+
+
+
+class ElectricalQualificationTokenTests(unittest.TestCase):
+    """A non-empty status cell is not evidence of validity - only the producer's OK is."""
+
+    def _audit(self, current_status, voltage_status, n=3):
+        rows = [_row(seq=i, device_ms=i * 1000, pwm_applied_permille="999",
+                     current_a="7.2", voltage_v="12.0",
+                     current_status=current_status, voltage_status=voltage_status)
+                for i in range(n)]
+        return w12.pzem_zero_active_audit(rows)
+
+    def test_empty_everywhere_is_unqualified(self) -> None:
+        out = self._audit("", "")
+        self.assertEqual(out["electrical_qualification"], "UNQUALIFIED")
+        self.assertEqual(out["qualified_frame_evidence"]["frames_with_valid_status"], 0)
+
+    def test_both_channels_ok_is_qualified(self) -> None:
+        out = self._audit("OK", "OK")
+        self.assertEqual(out["electrical_qualification"], "QUALIFIED")
+        self.assertEqual(out["qualified_frame_evidence"]["frames_with_valid_status"], 3)
+
+    def test_one_channel_ok_is_partially_qualified(self) -> None:
+        out = self._audit("OK", "")
+        self.assertEqual(out["electrical_qualification"], "PARTIALLY_QUALIFIED")
+        per = out["qualified_frame_evidence"]["per_channel"]
+        self.assertEqual(per["current_status"]["valid"], 3)
+        self.assertEqual(per["voltage_status"]["valid"], 0)
+
+    def test_an_error_token_never_qualifies(self) -> None:
+        """TIMEOUT/CRC_ERR/INVALID are non-empty; the old code counted them as evidence."""
+        for token in ("TIMEOUT", "CRC_ERR", "BAD_SLAVE", "INVALID", "STALE", "UNKNOWN",
+                      "banana"):
+            out = self._audit(token, token)
+            self.assertEqual(out["electrical_qualification"], "UNQUALIFIED", token)
+            self.assertEqual(out["qualified_frame_evidence"]["frames_with_valid_status"], 0,
+                             token)
+
+    def test_unsupported_tokens_are_named_not_swallowed(self) -> None:
+        out = self._audit("banana", "")
+        census = out["qualified_frame_evidence"]["per_channel"]["current_status"]
+        self.assertEqual(census["unsupported"], 3)
+        self.assertIn("banana", census["tokens_seen"])
+
+    def test_mixed_ok_and_empty_is_partly_qualified(self) -> None:
+        rows = [_row(seq=0, pwm_applied_permille="999", current_a="7.2",
+                     current_status="OK", voltage_status="OK"),
+                _row(seq=1, device_ms=1000, pwm_applied_permille="999", current_a="7.2",
+                     current_status="", voltage_status="")]
+        out = w12.pzem_zero_active_audit(rows)
+        self.assertEqual(out["electrical_qualification"], "PARTIALLY_QUALIFIED")
+        self.assertEqual(out["qualified_frame_evidence"]["frames_with_valid_status"], 1)
+
+    def test_validator_fails_a_partially_qualified_claim_without_a_valid_token(self) -> None:
+        audit = {"captures": [{"capture": "x.csv", "pzem_audit": {
+            "electrical_qualification": "PARTIALLY_QUALIFIED",
+            "duty0_with_current_frames": {"listed_individually_never_averaged": True},
+            "qualified_frame_evidence": {"frames_with_nonempty_status": 5,
+                                         "frames_with_valid_status": 0}}}]}
+        self.assertTrue(validate_w12.check_pzem_qualification_claim(audit))
+        audit["captures"][0]["pzem_audit"]["qualified_frame_evidence"][
+            "frames_with_valid_status"] = 5
+        self.assertEqual(validate_w12.check_pzem_qualification_claim(audit), [])
+
+    def test_validator_rejects_an_unpublished_qualification_word(self) -> None:
+        audit = {"captures": [{"capture": "x.csv", "pzem_audit": {
+            "electrical_qualification": "GOOD_ENOUGH",
+            "duty0_with_current_frames": {"listed_individually_never_averaged": True}}}]}
+        self.assertTrue(validate_w12.check_pzem_qualification_claim(audit))
+
+
+class ConfigIdentitySeparationTests(unittest.TestCase):
+    """An intended label must not read as a verified configuration identity."""
+
+    @staticmethod
+    def _cap(name, image, boots, roles_frozen=True):
+        return {"capture": name, "configuration": f"config:image={image}|limits=APPROVED",
+                "boot_ids": boots, "image_sha256": image,
+                "role_geometry_audit": {
+                    "is_probe_identification": False,
+                    "rom_readback_verified": False,
+                    "role_label_status": ({"t1": "LABELLED", "t2": "LABELLED",
+                                           "t3": "LABELLED", "t4": "LABELLED"}
+                                          if roles_frozen else {"t1": "UNLABELLED"}),
+                    "verdict": "MATCH"},
+                "pzem_audit": {"electrical_qualification": "UNQUALIFIED"}}
+
+    def test_no_row_is_stampable_as_a_certified_config_id(self) -> None:
+        out = w12.hardware_config_signoff([self._cap("a.csv", "img1", ["b1"])])
+        for row in out["dataset_validity_table"]:
+            self.assertNotIn("hardware_config_id", row)
+            self.assertEqual(row["intended_hardware_config"], w12.INTENDED_HARDWARE_CONFIG)
+            self.assertEqual(row["config_verification"], "UNVERIFIED")
+            self.assertTrue(row["verification_open_items"])
+        self.assertEqual(out["configuration_signoff_status"], "UNRESOLVED")
+
+    def test_two_independent_boots_of_one_identity_stay_poolable(self) -> None:
+        out = w12.hardware_config_signoff([
+            self._cap("a.csv", "img1", ["b1"]), self._cap("b.csv", "img1", ["b2"])])
+        groups = out["poolable_groups"]
+        self.assertEqual(len(groups), 1, "a legitimate two-session comparison was split")
+        self.assertEqual(sorted(next(iter(groups.values()))), ["a.csv", "b.csv"])
+
+    def test_different_images_never_share_a_pooling_group(self) -> None:
+        out = w12.hardware_config_signoff([
+            self._cap("a.csv", "img1", ["b1"]), self._cap("b.csv", "img2", ["b2"])])
+        self.assertEqual(len(out["poolable_groups"]), 2)
+
+    def test_missing_image_evidence_is_named_as_an_open_item(self) -> None:
+        cap = self._cap("a.csv", "img1", ["b1"])
+        cap["image_sha256"] = None
+        out = w12.hardware_config_signoff([cap])
+        items = out["dataset_validity_table"][0]["verification_open_items"]
+        self.assertTrue(any("image" in item.lower() for item in items), items)
+
+    def test_unlabelled_roles_are_an_open_item(self) -> None:
+        out = w12.hardware_config_signoff([self._cap("a.csv", "img1", ["b1"],
+                                                     roles_frozen=False)])
+        items = out["dataset_validity_table"][0]["verification_open_items"]
+        self.assertTrue(any("role labels" in item.lower() for item in items), items)
+
+
+class ConductorUnitTests(unittest.TestCase):
+    def test_the_record_states_diameter_and_the_derivation_assumption(self) -> None:
+        text = w12.CONDUCTOR_OBSERVED
+        self.assertIn("diameter", text)
+        self.assertIn("solid", text)
+        self.assertIn("not confirmed", text.lower())
+        self.assertNotIn("1.75 mm^2 (operator-confirmed", text)
+
+    def test_the_derived_area_is_the_steady_value_for_a_solid_round_core(self) -> None:
+        self.assertAlmostEqual(w12.CONDUCTOR_AREA_IF_SOLID_MM2, 2.405, places=3)
 
 
 if __name__ == "__main__":
