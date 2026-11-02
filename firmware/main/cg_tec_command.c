@@ -109,6 +109,12 @@ static bool split_line(char *line, char **verb, char **arg)
         *arg = NULL;
         return true;
     }
+    /* The verb is split off the same way in both paths. Without this the
+     * two-token forms (ARM/CLEAR/START/RUN/PHASE) left *verb pointing at
+     * whatever the caller's uninitialised local held, and the dispatch below
+     * compared garbage - a latent defect the W06 harness caught by exercising
+     * those verbs for the first time. */
+    *verb = start;
     *space = '\0';
     *arg = space + 1;
     while (is_space(**arg)) {
