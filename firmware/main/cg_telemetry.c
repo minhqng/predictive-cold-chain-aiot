@@ -366,6 +366,24 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
                (unsigned long)frame->health->max_gap_ms[CG_PRODUCER_DOOR]);
     }
 
+    /* A-W06-04: the desired/applied distinction survives into the dataset.
+     * `cooling_applied` (above) is what the device is doing; these are what it
+     * was last asked to do and how that request was answered. */
+    if (frame->cmd_state != NULL && frame->cmd_state->has_command) {
+        append(&cursor, &left, &overflow,
+               " command_id=%s desired_cooling=%s desired_duty_permille=%lu"
+               " last_ack_status=%s last_ack_reason=%s",
+               frame->cmd_state->command_id,
+               cg_cmd_cooling_name(frame->cmd_state->desired_cooling),
+               (unsigned long)frame->cmd_state->desired_duty_permille,
+               cg_cmd_ack_status_name(frame->cmd_state->last_status),
+               frame->cmd_state->last_reason != NULL ? frame->cmd_state->last_reason : "NONE");
+    } else {
+        append(&cursor, &left, &overflow,
+               " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
+               " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED");
+    }
+
     if (overflow) {
         buf[0] = '\0';
         return 0U;
