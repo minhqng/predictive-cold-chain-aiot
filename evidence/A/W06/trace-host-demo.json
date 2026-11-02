@@ -43,7 +43,7 @@
       "desired_duty_permille": "250",
       "expiry_evaluable": "1",
       "notes": [
-        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 2188-2198)"
+        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 \u00a732.2, lines 2188-2197)"
       ],
       "reapplied_flags": [
         "0"
@@ -124,7 +124,7 @@
       "desired_duty_permille": "250",
       "expiry_evaluable": "0",
       "notes": [
-        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 2188-2198)"
+        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 \u00a732.2, lines 2188-2197)"
       ],
       "reapplied_flags": [
         "0"

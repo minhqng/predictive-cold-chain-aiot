@@ -27,7 +27,7 @@ real capture.
 | `THERMAL_VERIFIED` | ≥3 usable chamber-air readings in the attributed frames span ≥0.25 °C |
 
 A blocked stage records `blocked_at` and the reason text; the tool never
-back-fills a later stage from an earlier one, because `docs/02` §32.2 (2188-2198) says an
+back-fills a later stage from an earlier one, because `docs/02` §32.2 (lines 2188-2197) says an
 ACK is protocol evidence and not "the chamber cooled".
 
 The two thresholds (0.05 A, 0.25 °C) are **named analysis floors** printed in the
@@ -73,7 +73,29 @@ exactly what must not be silently upgraded to "cooled".
 py evidence/A/W06/build_contract_artifacts.py --check
 py firmware/tools/cg_command_trace.py evidence/A/W06/demo-command-capture.log --per-frame
 py firmware/tools/cg_command_trace.py evidence/A/W04/g1/40-g1-boot-60s.log
+py firmware/tools/tests/test_cg_command_trace.py
 ```
+
+### 3.1 The tool's own tests, and the defect they caught
+
+`tests/test_cg_command_trace.py` holds eight tests, because a stage ladder that is
+only ever run on one friendly fixture proves nothing about the ladder. They pin:
+that an `ACCEPTED` ACK alone stops at `APPLIED_STATE`; that `cooling_applied=ON`
+in a frame is what earns the stage, not a desired value; that a frame from another
+`boot_id` is never attributed; that a replay reporting `reapplied=1` is recorded as
+a defect rather than promoted; that a command-less capture reports
+`NO_COMMAND_LINES_PRESENT`; that the published demo report still reproduces from
+the shipped capture; and that `--per-frame` attributes frames **by command
+identity**.
+
+That last one found a real bug during review. Report rows come out sorted by
+`command_id` while parsing keeps arrival order, so the original `zip()` pairing
+attached the wrong frames to the wrong command whenever those two orders
+disagreed - and it agreed by luck on the shipped demo, whose ids are already in
+ascending order. The lookup is now keyed by id, and the test feeds ids in the
+opposite order so the pairing cannot regress silently. A capture read in arrival
+order would have shown two commands claiming each other's frames, which is exactly
+the kind of trace error that makes a nonexistent actuation look evidenced.
 
 ## 4. What a real trace requires (NEED_USER_ACTION, in order)
 

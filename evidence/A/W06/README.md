@@ -31,7 +31,7 @@ version numbers cannot be confused.
 | File | What it is |
 |---|---|
 | `README.md` | this file |
-| `command-parser-tests.md` | the 36-scenario matrix, the freshness decision table, retention/reset semantics, and the W04 parser defect found here |
+| `command-parser-tests.md` | the 38-scenario matrix, the freshness decision table, retention/reset semantics, and the W04 parser defect found here |
 | `physical-command-trace.md` | stage rules, the two generated traces, what a real trace requires |
 | `ack-fixture.json` | five labelled `#CG CMDACK` lines emitted by the delivered formatter, with parsed field maps |
 | `duplicate-command-log.jsonl` | the same `command_id` submitted three times: `ACCEPTED`, then two `DUPLICATE_CANONICAL` with `reapplied=0` |
@@ -49,8 +49,9 @@ version numbers cannot be confused.
 
 ```bash
 py firmware/tools/run_all_checks_w06.py              # whole suite, 12 layers
-py firmware/tools/cg_check_firmware_w06.py           # 93 static checks
-py firmware/tools/tests/test_cg_w06_harness.py       # 36 C scenarios on the real sources
+py firmware/tools/cg_check_firmware_w06.py           # 95 static checks
+py firmware/tools/tests/test_cg_w06_harness.py       # 38 C scenarios on the real sources
+py firmware/tools/tests/test_cg_command_trace.py     # 8 trace-stage non-promotion tests
 py evidence/A/W06/build_contract_artifacts.py --check # artifacts reproduce byte-for-byte
 py evidence/A/W06/validate_w06.py
 ```

@@ -392,8 +392,8 @@ heartbeat timeout, fault latch, output stage compiled out) không phụ thuộc 
 Chọn time sync hay sửa ngữ nghĩa expiry là quyết định của C/D và dự án (docs/02 phải đổi
 trước), không phải quyết định của Member A — xem `evidence/A/W06/handoff-w06.md` §1.
 
-Bằng chứng: `evidence/A/W06/command-parser-tests.md` (36 scenario C trên host, 93 static
-check, 20 mutation + 1 must-not-fire control + 1 baseline), `ack-fixture.json` và ba log lệnh
+Bằng chứng: `evidence/A/W06/command-parser-tests.md` (38 scenario C trên host, 95 static
+check, 22 mutation + 1 must-not-fire control + 1 baseline, 8 unit test cho công cụ trace), `ack-fixture.json` và ba log lệnh
 (`duplicate/expired/reset-command-log`) — tất cả generate từ source thật, gắn nhãn
 host scenario, không phải đo vật lý. `physical-command-trace.md` nói rõ trace thật còn nợ gì.
 
