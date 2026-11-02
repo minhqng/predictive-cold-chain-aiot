@@ -1,5 +1,6 @@
 /*
- * ColdGuard firmware - raw telemetry line (W04 foundation, W05 identity/quality).
+ * ColdGuard firmware - raw telemetry line (W04 foundation, W05 identity/quality,
+ * W06 command state).
  *
  * One `#CG TELEM` line per second carries the measurements the experiment
  * needs. The line is an *observation*: a missing value is printed as `nan`

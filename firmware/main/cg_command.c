@@ -40,7 +40,7 @@ const char *cg_cmd_ack_status_name(cg_cmd_ack_status_t status)
         case CG_CMD_ACK_OUT_OF_RANGE:
             return "OUT_OF_RANGE";
         default:
-            /* The status set is closed (docs/02 2168-2177). An unlisted value is
+            /* The status set is closed (docs/02 §32.1, lines 2172-2186). An unlisted value is
              * a firmware defect, and naming it UNKNOWN keeps it visible instead
              * of defaulting it into a plausible verdict. */
             return "UNKNOWN";
@@ -104,7 +104,7 @@ static void store_put(cg_cmd_store_t *store, const cg_cmd_ack_t *ack)
 
     /* Overwriting a live slot means an id has left the retention window. The
      * count is evidence, not decoration: it states how often this device could
-     * no longer recognize a replay, which is the bound docs/02 2144-2148 leaves
+     * no longer recognize a replay, which is the bound docs/02 §30.3 (2130-2136) leaves
      * to implementation. */
     if (slot->used && strcmp(slot->command_id, ack->command_id) != 0) {
         store->evicted++;
@@ -222,22 +222,22 @@ void cg_command_validate(const cg_command_t *command, const cg_cmd_context_t *ct
     if (command->schema_version != 1) {
         ack->status = CG_CMD_ACK_REJECTED;
         ack->reason = "UNSUPPORTED_SCHEMA";
-        if (store != NULL) {
-            store_put(store, ack);
-        }
+        /* Not stored: the record is not a command this contract recognises, so
+         * it has no canonical result to remember. Storing it under its id would
+         * let a malformed submission clobber the verdict a valid earlier attempt
+         * of the same id earned, and the next replay would return the wrong
+         * canonical status. */
         return;
     }
 
     /* §29 conjunct 2: target device. A command addressed to another device is
      * rejected even if every other condition holds, so a bus- or topic-wide
-     * broadcast cannot actuate this board. */
+     * broadcast cannot actuate this board. Not stored, for the same reason as
+     * above: this device never owned that command identity. */
     if (ctx->device_id == NULL || command->device_id[0] == '\0' ||
         strcmp(ctx->device_id, command->device_id) != 0) {
         ack->status = CG_CMD_ACK_REJECTED;
         ack->reason = "DEVICE_ID_MISMATCH";
-        if (store != NULL) {
-            store_put(store, ack);
-        }
         return;
     }
 
@@ -359,7 +359,7 @@ void cg_command_validate(const cg_command_t *command, const cg_cmd_context_t *ct
     }
 
     /* §29 conjuncts 6 and 7: local safety and local state. Backend
-     * authorization does not replace either (docs/02 2120-2122). */
+     * authorization does not replace either (docs/02 §29, line 2110). */
     if (!ctx->local_safety_permits) {
         ack->status = CG_CMD_ACK_SAFETY_BLOCKED;
         ack->reason = !ctx->output_stage_enabled
@@ -373,6 +373,21 @@ void cg_command_validate(const cg_command_t *command, const cg_cmd_context_t *ct
     if (!ctx->inputs_sufficiently_valid) {
         ack->status = CG_CMD_ACK_INVALID_STATE;
         ack->reason = "SENSORS_INVALID_OR_STALE";
+        if (store != NULL) {
+            store_put(store, ack);
+        }
+        return;
+    }
+
+    /* Last-line invariant, independent of every conjunct above: a record that
+     * did not arrive through the canonical network contract cannot be accepted,
+     * even if a future transport, clock or operator action makes the rest of the
+     * chain pass. The local console bridge is a test instrument (source
+     * LOCAL_CONSOLE, id form TEST_TOKEN); today the missing expiry already
+     * refuses it, and this gate makes that structural rather than a side effect. */
+    if (command->source == CG_CMD_SOURCE_LOCAL_CONSOLE) {
+        ack->status = CG_CMD_ACK_SAFETY_BLOCKED;
+        ack->reason = "LOCAL_TEST_NOT_CANONICAL";
         if (store != NULL) {
             store_put(store, ack);
         }

@@ -4,7 +4,7 @@
  * Compiles firmware/main/cg_command.c, cg_telemetry.c, cg_snapshot.c and
  * cg_tec_command.c unchanged and drives them with an explicit validation
  * context. Nothing here is a physical actuation: the point is that the
- * device-side rules of docs/02 2051-2240 (§28-§32) are executable and
+ * device-side rules of docs/02 §28-§32 (lines 2051-2216) are executable and
  * falsifiable on the host, including the verdicts that are unreachable on the
  * shipped board (the output stage is compiled out and the clock is
  * unsynchronized, so ACCEPTED cannot occur in firmware today).
@@ -133,7 +133,7 @@ static bool test_unsupported_schema_rejected(void)
                                     1100000ULL);
 
     cg_cmd_store_init(&store);
-    cmd.schema_version = 2; /* docs/02 2053-2070 publishes envelope version 1 only */
+    cmd.schema_version = 2; /* docs/02 §28.1 (2053-2073) publishes envelope version 1 only */
     cg_command_validate(&cmd, &ctx, &store, &ack);
     CHECK(ack.status == CG_CMD_ACK_REJECTED);
     CHECK(strcmp(ack.reason, "UNSUPPORTED_SCHEMA") == 0);
@@ -481,6 +481,64 @@ static bool test_duplicate_returns_canonical_and_does_not_reapply(void)
     return true;
 }
 
+static bool test_pre_identity_rejection_cannot_clobber_the_canonical_result(void)
+{
+    cg_cmd_context_t ctx = permissive_context();
+    cg_cmd_store_t store;
+    cg_cmd_ack_t first;
+    cg_cmd_ack_t intruder;
+    cg_cmd_ack_t replay;
+    cg_command_t cmd = make_command(UUID_A, CG_DEVICE_ID, CG_CMD_COOLING_ON, 250U, 900000ULL,
+                                    1100000ULL);
+    cg_command_t foreign;
+    cg_command_t bad_schema;
+
+    cg_cmd_store_init(&store);
+    cg_command_validate(&cmd, &ctx, &store, &first);
+    CHECK(first.status == CG_CMD_ACK_ACCEPTED);
+
+    /* Same id, two records this contract does not own: one addressed to another
+     * device, one in a schema the device does not speak. Neither may take the
+     * remembered result with it. */
+    foreign = cmd;
+    (void)snprintf(foreign.device_id, sizeof(foreign.device_id), "%s", "coldguard-999");
+    cg_command_validate(&foreign, &ctx, &store, &intruder);
+    CHECK(intruder.status == CG_CMD_ACK_REJECTED);
+    CHECK(strcmp(intruder.reason, "DEVICE_ID_MISMATCH") == 0);
+
+    bad_schema = cmd;
+    bad_schema.schema_version = 2U;
+    cg_command_validate(&bad_schema, &ctx, &store, &intruder);
+    CHECK(intruder.status == CG_CMD_ACK_REJECTED);
+    CHECK(strcmp(intruder.reason, "UNSUPPORTED_SCHEMA") == 0);
+
+    cg_command_validate(&cmd, &ctx, &store, &replay);
+    CHECK(replay.status == CG_CMD_ACK_DUPLICATE_CANONICAL);
+    CHECK(replay.canonical_status == CG_CMD_ACK_ACCEPTED);
+    CHECK(replay.reapplied == false);
+    return true;
+}
+
+static bool test_local_console_source_is_gated_before_acceptance(void)
+{
+    cg_cmd_context_t ctx = permissive_context();
+    cg_cmd_store_t store;
+    cg_cmd_ack_t ack;
+    /* A locally issued record given every canonical field, including a real
+     * expiry: the shipped bridge cannot reach this state, so the refusal here is
+     * the gate itself and not a side effect of a missing field. */
+    cg_command_t cmd = make_command("local:w06-selftest", CG_DEVICE_ID, CG_CMD_COOLING_ON, 250U,
+                                    900000ULL, 1100000ULL);
+
+    cg_cmd_store_init(&store);
+    cmd.source = CG_CMD_SOURCE_LOCAL_CONSOLE;
+    cmd.id_form = CG_CMD_ID_FORM_TEST_TOKEN;
+    cg_command_validate(&cmd, &ctx, &store, &ack);
+    CHECK(ack.status == CG_CMD_ACK_SAFETY_BLOCKED);
+    CHECK(strcmp(ack.reason, "LOCAL_TEST_NOT_CANONICAL") == 0);
+    return true;
+}
+
 static bool test_blocked_duplicate_stays_blocked_canonical(void)
 {
     cg_cmd_context_t ctx = shipped_context();
@@ -621,7 +679,7 @@ static bool test_ack_line_carries_the_required_payload(void)
     len = cg_command_ack_format(line, sizeof(line), &ack, &ctx, "abcd0123", 9U);
     CHECK(len > 0);
     CHECK((size_t)len == strlen(line));
-    /* docs/02 2227-2236 payload list, plus the identity and clock state that
+    /* docs/02 §32.3 (lines 2200-2215) payload list, plus the identity and clock state
      * makes the verdict interpretable. */
     CHECK(has(line, "#CG CMDACK schema=1 event=ACK "));
     CHECK(has(line, "command_id=" UUID_A " "));
@@ -635,7 +693,7 @@ static bool test_ack_line_carries_the_required_payload(void)
     CHECK(has(line, "reapplied=0 expiry_evaluable=0 "));
     CHECK(has(line, "time_sync_state=UNSYNCHRONIZED "));
     CHECK(has(line, "output_stage=DISABLED allowed_duty_max_permille=0"));
-    /* schema=1 here is the COMMAND envelope of docs/02 2055, not the serial
+    /* schema=1 here is the COMMAND envelope of docs/02 line 2057, not the serial
      * telemetry schema; a reader must be able to tell them apart. */
     CHECK(!has(line, "schema=3"));
     return true;
@@ -1239,6 +1297,10 @@ int main(void)
         {"applied_state_comes_from_the_device", test_applied_state_comes_from_the_device},
         {"duplicate_returns_canonical_and_does_not_reapply",
          test_duplicate_returns_canonical_and_does_not_reapply},
+        {"pre_identity_rejection_cannot_clobber_the_canonical_result",
+         test_pre_identity_rejection_cannot_clobber_the_canonical_result},
+        {"local_console_source_is_gated_before_acceptance",
+         test_local_console_source_is_gated_before_acceptance},
         {"blocked_duplicate_stays_blocked_canonical",
          test_blocked_duplicate_stays_blocked_canonical},
         {"new_id_same_action_is_a_new_instruction",

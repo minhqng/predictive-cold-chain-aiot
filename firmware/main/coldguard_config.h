@@ -448,22 +448,27 @@
  * truncated.
  *
  * W02/W03 frames need 1536 bytes. The longest #CG TELEM line actually
- * observed in the committed W04 captures is 1012 bytes, so 2560 is headroom,
- * not a number taken from a guess. The value stays at 2560 because Member A's
+ * observed in the committed W04 captures is 1012 bytes, so 2560 was headroom,
+ * not a number taken from a guess (W05 rationale; W06 raises the budget below). The value stays at 2560 because Member A's
  * local H8 bench tree (deliberately outside this repository, fingerprinted in
  * evidence/A/W04/ARTIFACT-MANIFEST.md) reuses this guard and needs 2342; that
  * dependency is disclosed there instead of being documented as a W04 result.
  * W02/W03 output is unchanged and its captures stay parseable.
  *
- * SCHEMA 2 (W05). The raw serial line gains the A-W05-02 identity fields
+ * SCHEMA 2 (W05, kept for history). The raw serial line gained the A-W05-02 identity fields
  * (device_id, seq, calibration_id), the A-W05-05 per-source quality names, the
  * A-W05-04 per-field ages and producer sequences, and the A-W05-01 producer
  * liveness counters. This is the *serial* stream only: the canonical JSON
  * envelope in docs/02 604-620 keeps its own `schema_version: 1`, and bumping
  * the serial schema does not amend that contract. Every W04 field name keeps
  * its meaning and position-independent key, so firmware/tools/cg_telemetry_schema.py
- * parses schema 1 and schema 2 lines; the W04 captures committed in
- * evidence/A/W04/ must remain parseable, and the tests pin that. */
+ * parses schema 1, schema 2 and schema 3 lines; the W04 captures committed in
+ * evidence/A/W04/ must remain parseable, and the tests pin that.
+ *
+ * SCHEMA 3 (W06, current). The line gains the command layer: command_id,
+ * desired_cooling, desired_duty_permille, last_ack_status and last_ack_reason,
+ * so a capture can separate what the device was asked from what it did. Schemas
+ * 1 and 2 still parse unchanged. */
 #define CG_TELEMETRY_SCHEMA_VERSION 3
 #define CG_TELEMETRY_PERIOD_MS 1000
 #define CG_TELEMETRY_LINE_MAX 3072

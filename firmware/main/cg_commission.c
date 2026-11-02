@@ -55,7 +55,7 @@ static uint32_t s_telem_seq;
 static char s_probe_rom_hex[CG_ROLE_COUNT][CG_TELEM_ROM_HEX_LEN];
 /* W06 command layer. The store is volatile by decision: persisting command
  * identity would be the mechanism by which a stale actuation could come back
- * after a reset, and docs/02 2149-2158 requires the opposite. */
+ * after a reset, and docs/02 §31.2-§31.3 (2152-2160) requires the opposite. */
 static cg_cmd_store_t s_cmd_store;
 static cg_cmd_state_t s_cmd_state;
 
@@ -122,7 +122,7 @@ static void emit_command_ack(const cg_cmd_ack_t *ack, const cg_cmd_context_t *ct
  * controller's own gate, the compiled-out output stage, the unresolved limits
  * and an operator authorization this slice does not have. Keeping "what the
  * device was asked for" separate from "what the device is doing" is the whole
- * point of docs/02 2188-2198 (§32.2) and 2200-2215 (§32.3). */
+ * point of docs/02 §32.2 (2188-2197) and §32.3 (2200-2215). */
 static void record_command_state(const cg_cmd_ack_t *ack)
 {
     if (ack->status == CG_CMD_ACK_ACCEPTED) {
