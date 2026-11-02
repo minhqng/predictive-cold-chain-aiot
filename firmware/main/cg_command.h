@@ -56,6 +56,7 @@
 #pragma once
 
 #include <stdbool.h>
+#include <stddef.h>
 #include <stdint.h>
 
 /* Canonical UUID form is 36 characters; the local test bridge accepts shorter
