@@ -1,0 +1,899 @@
+{
+  "analysis": "repeatability-v0",
+  "includes_hot_side": true,
+  "notes": [
+    "Host analysis of recorded captures: nothing here reproduced, energized or verified a physical action.",
+    "A capture with no cooling block is a passive candidate only, never a cooling step.",
+    "Rows whose applied duty is absent are counted as undetermined and join neither the baseline nor the recovery segment.",
+    "Partial means are excluded from a phase series and counted in partial_term_rows, so a published phase statistic is always the full quantity it names.",
+    "Electrical values are published with an explicit statement of whether their validity was recorded at all."
+  ],
+  "phases": {
+    "baseline": {
+      "runs": [
+        {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 226,
+          "delta_c": 0.0625,
+          "door_open_tokens": [
+            "0",
+            "UNKNOWN"
+          ],
+          "duration_min": 3.7498,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 29.9688,
+          "energy_wh": 0.0,
+          "includes_hot_side": true,
+          "max_c": 30.0,
+          "mean_current_a": 0.0,
+          "mean_power_w": 0.0,
+          "mean_voltage_v": 11.95,
+          "min_c": 29.9062,
+          "minutes_to_1c": null,
+          "minutes_to_2c": null,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 0.0,
+          "phase": "baseline",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 226,
+          "samples": 226,
+          "skipped_rows": 0,
+          "slope_c_per_min": 0.011751,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 29.9062,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 226,
+          "whole_phase_slope_c_per_min": 0.02161,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        }
+      ],
+      "samples_per_run": [
+        226
+      ],
+      "statistics": {
+        "delta_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0625,
+          "mean": 0.0625,
+          "min": 0.0625,
+          "n": 1,
+          "outcome": "delta_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "end_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 29.9688,
+          "mean": 29.9688,
+          "min": 29.9688,
+          "n": 1,
+          "outcome": "end_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "energy_wh": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 1,
+          "outcome": "energy_wh",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "max_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 30.0,
+          "mean": 30.0,
+          "min": 30.0,
+          "n": 1,
+          "outcome": "max_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 1,
+          "outcome": "mean_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_power_w": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 1,
+          "outcome": "mean_power_w",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "min_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 29.9062,
+          "mean": 29.9062,
+          "min": 29.9062,
+          "n": 1,
+          "outcome": "min_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "minutes_to_1c": {
+          "n": 0,
+          "note": "no run of this phase produced this outcome",
+          "outcome": "minutes_to_1c",
+          "status": "NO_SAMPLES"
+        },
+        "minutes_to_2c": {
+          "n": 0,
+          "note": "no run of this phase produced this outcome",
+          "outcome": "minutes_to_2c",
+          "status": "NO_SAMPLES"
+        },
+        "peak_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 1,
+          "outcome": "peak_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.011751,
+          "mean": 0.011751,
+          "min": 0.011751,
+          "n": 1,
+          "outcome": "slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "start_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 29.9062,
+          "mean": 29.9062,
+          "min": 29.9062,
+          "n": 1,
+          "outcome": "start_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "valid_sample_fraction": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.0,
+          "mean": 1.0,
+          "min": 1.0,
+          "n": 1,
+          "outcome": "valid_sample_fraction",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "whole_phase_slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.02161,
+          "mean": 0.02161,
+          "min": 0.02161,
+          "n": 1,
+          "outcome": "whole_phase_slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        }
+      },
+      "verdict": {
+        "additional_runs_needed": 2,
+        "min_runs_required": 3,
+        "runs": 1,
+        "status": "INSUFFICIENT_RUNS"
+      }
+    },
+    "cooling": {
+      "runs": [
+        {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 600,
+          "delta_c": -4.1095,
+          "door_open_tokens": [
+            "0"
+          ],
+          "duration_min": 9.9833,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 25.875,
+          "energy_wh": 14.0,
+          "includes_hot_side": true,
+          "max_c": 30.2033,
+          "mean_current_a": 7.2247,
+          "mean_power_w": 85.1593,
+          "mean_voltage_v": 11.7951,
+          "min_c": 25.7657,
+          "minutes_to_1c": 1.9,
+          "minutes_to_2c": 2.6167,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 9.99,
+          "phase": "cooling",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 600,
+          "samples": 600,
+          "skipped_rows": 0,
+          "slope_c_per_min": -0.003864,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 29.9845,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 600,
+          "whole_phase_slope_c_per_min": -0.467323,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        }
+      ],
+      "samples_per_run": [
+        600
+      ],
+      "statistics": {
+        "delta_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": -4.1095,
+          "mean": -4.1095,
+          "min": -4.1095,
+          "n": 1,
+          "outcome": "delta_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "end_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 25.875,
+          "mean": 25.875,
+          "min": 25.875,
+          "n": 1,
+          "outcome": "end_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "energy_wh": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 14.0,
+          "mean": 14.0,
+          "min": 14.0,
+          "n": 1,
+          "outcome": "energy_wh",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "max_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 30.2033,
+          "mean": 30.2033,
+          "min": 30.2033,
+          "n": 1,
+          "outcome": "max_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 7.2247,
+          "mean": 7.2247,
+          "min": 7.2247,
+          "n": 1,
+          "outcome": "mean_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_power_w": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 85.1593,
+          "mean": 85.1593,
+          "min": 85.1593,
+          "n": 1,
+          "outcome": "mean_power_w",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "min_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 25.7657,
+          "mean": 25.7657,
+          "min": 25.7657,
+          "n": 1,
+          "outcome": "min_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "minutes_to_1c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.9,
+          "mean": 1.9,
+          "min": 1.9,
+          "n": 1,
+          "outcome": "minutes_to_1c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "minutes_to_2c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 2.6167,
+          "mean": 2.6167,
+          "min": 2.6167,
+          "n": 1,
+          "outcome": "minutes_to_2c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "peak_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 9.99,
+          "mean": 9.99,
+          "min": 9.99,
+          "n": 1,
+          "outcome": "peak_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": -0.003864,
+          "mean": -0.003864,
+          "min": -0.003864,
+          "n": 1,
+          "outcome": "slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "start_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 29.9845,
+          "mean": 29.9845,
+          "min": 29.9845,
+          "n": 1,
+          "outcome": "start_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "valid_sample_fraction": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.0,
+          "mean": 1.0,
+          "min": 1.0,
+          "n": 1,
+          "outcome": "valid_sample_fraction",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "whole_phase_slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": -0.467323,
+          "mean": -0.467323,
+          "min": -0.467323,
+          "n": 1,
+          "outcome": "whole_phase_slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        }
+      },
+      "verdict": {
+        "additional_runs_needed": 2,
+        "min_runs_required": 3,
+        "runs": 1,
+        "status": "INSUFFICIENT_RUNS"
+      }
+    },
+    "recovery": {
+      "runs": [
+        {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 131,
+          "delta_c": 2.0155,
+          "door_open_tokens": [
+            "0"
+          ],
+          "duration_min": 2.1667,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 27.8905,
+          "energy_wh": 0.0,
+          "includes_hot_side": true,
+          "max_c": 27.8905,
+          "mean_current_a": 0.0604,
+          "mean_power_w": 0.7084,
+          "mean_voltage_v": 11.9292,
+          "min_c": 25.7345,
+          "minutes_to_1c": 1.4333,
+          "minutes_to_2c": 2.1667,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 7.15,
+          "phase": "recovery",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 131,
+          "samples": 131,
+          "skipped_rows": 0,
+          "slope_c_per_min": 1.258512,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 25.875,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 131,
+          "whole_phase_slope_c_per_min": 1.114837,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        }
+      ],
+      "samples_per_run": [
+        131
+      ],
+      "statistics": {
+        "delta_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 2.0155,
+          "mean": 2.0155,
+          "min": 2.0155,
+          "n": 1,
+          "outcome": "delta_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "end_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 27.8905,
+          "mean": 27.8905,
+          "min": 27.8905,
+          "n": 1,
+          "outcome": "end_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "energy_wh": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0,
+          "mean": 0.0,
+          "min": 0.0,
+          "n": 1,
+          "outcome": "energy_wh",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "max_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 27.8905,
+          "mean": 27.8905,
+          "min": 27.8905,
+          "n": 1,
+          "outcome": "max_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.0604,
+          "mean": 0.0604,
+          "min": 0.0604,
+          "n": 1,
+          "outcome": "mean_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "mean_power_w": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 0.7084,
+          "mean": 0.7084,
+          "min": 0.7084,
+          "n": 1,
+          "outcome": "mean_power_w",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "min_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 25.7345,
+          "mean": 25.7345,
+          "min": 25.7345,
+          "n": 1,
+          "outcome": "min_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "minutes_to_1c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.4333,
+          "mean": 1.4333,
+          "min": 1.4333,
+          "n": 1,
+          "outcome": "minutes_to_1c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "minutes_to_2c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 2.1667,
+          "mean": 2.1667,
+          "min": 2.1667,
+          "n": 1,
+          "outcome": "minutes_to_2c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "peak_current_a": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 7.15,
+          "mean": 7.15,
+          "min": 7.15,
+          "n": 1,
+          "outcome": "peak_current_a",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.258512,
+          "mean": 1.258512,
+          "min": 1.258512,
+          "n": 1,
+          "outcome": "slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "start_c": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 25.875,
+          "mean": 25.875,
+          "min": 25.875,
+          "n": 1,
+          "outcome": "start_c",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "valid_sample_fraction": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.0,
+          "mean": 1.0,
+          "min": 1.0,
+          "n": 1,
+          "outcome": "valid_sample_fraction",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        },
+        "whole_phase_slope_c_per_min": {
+          "cv_note": "spread needs at least two runs",
+          "cv_pct": null,
+          "max": 1.114837,
+          "mean": 1.114837,
+          "min": 1.114837,
+          "n": 1,
+          "outcome": "whole_phase_slope_c_per_min",
+          "range": 0.0,
+          "sd_sample": null,
+          "status": "OK"
+        }
+      },
+      "verdict": {
+        "additional_runs_needed": 2,
+        "min_runs_required": 3,
+        "runs": 1,
+        "status": "INSUFFICIENT_RUNS"
+      }
+    }
+  },
+  "representation": "tmean_all4_v0",
+  "representation_roles": [
+    "CHAMBER_CENTER",
+    "TEC_HOT_SIDE",
+    "CHAMBER_BOTTOM",
+    "CHAMBER_NEAR_DOOR"
+  ],
+  "representation_terms": [
+    "t1_c",
+    "t2_c",
+    "t3_c",
+    "t4_c"
+  ],
+  "runs": [
+    {
+      "capture": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "cooling_candidate": true,
+      "passive_candidate": false,
+      "phases": {
+        "baseline": {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 226,
+          "delta_c": 0.0625,
+          "door_open_tokens": [
+            "0",
+            "UNKNOWN"
+          ],
+          "duration_min": 3.7498,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 29.9688,
+          "energy_wh": 0.0,
+          "includes_hot_side": true,
+          "max_c": 30.0,
+          "mean_current_a": 0.0,
+          "mean_power_w": 0.0,
+          "mean_voltage_v": 11.95,
+          "min_c": 29.9062,
+          "minutes_to_1c": null,
+          "minutes_to_2c": null,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 0.0,
+          "phase": "baseline",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 226,
+          "samples": 226,
+          "skipped_rows": 0,
+          "slope_c_per_min": 0.011751,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 29.9062,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 226,
+          "whole_phase_slope_c_per_min": 0.02161,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        },
+        "cooling": {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 600,
+          "delta_c": -4.1095,
+          "door_open_tokens": [
+            "0"
+          ],
+          "duration_min": 9.9833,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 25.875,
+          "energy_wh": 14.0,
+          "includes_hot_side": true,
+          "max_c": 30.2033,
+          "mean_current_a": 7.2247,
+          "mean_power_w": 85.1593,
+          "mean_voltage_v": 11.7951,
+          "min_c": 25.7657,
+          "minutes_to_1c": 1.9,
+          "minutes_to_2c": 2.6167,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 9.99,
+          "phase": "cooling",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 600,
+          "samples": 600,
+          "skipped_rows": 0,
+          "slope_c_per_min": -0.003864,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 29.9845,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 600,
+          "whole_phase_slope_c_per_min": -0.467323,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        },
+        "recovery": {
+          "current_rows_invalid": 0,
+          "current_rows_unqualified": 131,
+          "delta_c": 2.0155,
+          "door_open_tokens": [
+            "0"
+          ],
+          "duration_min": 2.1667,
+          "electrical_status_note": "current/voltage carried no OK status in this capture: the values are unqualified, not verified",
+          "electrical_status_recorded": false,
+          "end_c": 27.8905,
+          "energy_wh": 0.0,
+          "includes_hot_side": true,
+          "max_c": 27.8905,
+          "mean_current_a": 0.0604,
+          "mean_power_w": 0.7084,
+          "mean_voltage_v": 11.9292,
+          "min_c": 25.7345,
+          "minutes_to_1c": 1.4333,
+          "minutes_to_2c": 2.1667,
+          "no_term_rows": 0,
+          "partial_term_rows": 0,
+          "peak_current_a": 7.15,
+          "phase": "recovery",
+          "power_rows_unqualified": 0,
+          "representation": "tmean_all4_v0",
+          "representation_roles": [
+            "CHAMBER_CENTER",
+            "TEC_HOT_SIDE",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "representation_terms": [
+            "t1_c",
+            "t2_c",
+            "t3_c",
+            "t4_c"
+          ],
+          "rows_read": 131,
+          "samples": 131,
+          "skipped_rows": 0,
+          "slope_c_per_min": 1.258512,
+          "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+          "start_c": 25.875,
+          "trailing_slope_is_not_a_phase_summary": true,
+          "unqualified_rows": 0,
+          "usable": true,
+          "valid_sample_fraction": 1.0,
+          "voltage_rows_unqualified": 131,
+          "whole_phase_slope_c_per_min": 1.114837,
+          "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+        }
+      },
+      "rows_read": 957,
+      "undetermined_rows": 0
+    }
+  ],
+  "runs_read": 1,
+  "slope_definition": "tmean_all4_v0/120samples/trailing_window_least_squares_v0",
+  "spread_formula": "sample (n-1)",
+  "verdict": {
+    "captures_with_no_cooling_block": 0,
+    "cooling_step_runs": "INSUFFICIENT_RUNS",
+    "passive_warmup_runs": "INSUFFICIENT_RUNS",
+    "plant_variation_reportable": false,
+    "undetermined_rows_total": 0
+  },
+  "whole_phase_slope_definition": "tmean_all4_v0/whole_phase_least_squares_v0"
+}
