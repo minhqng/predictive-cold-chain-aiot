@@ -14,6 +14,7 @@
 
 #include "coldguard_config.h"
 #include "cg_crc16.h"
+#include "cg_health.h"
 #include "cg_log.h"
 #include "cg_pzem.h"
 #include "cg_rs485.h"
@@ -219,12 +220,18 @@ static void poll_once(void)
     }
 
     /* Publish the observation with its own timestamp. A failed poll remains
-     * invalid; no previous value is carried forward. */
-    cg_snapshot_publish_power(values_valid,
-                              values_valid ? values.voltage_v : 0.0f,
-                              values_valid ? values.current_a : 0.0f,
-                              values_valid ? values.power_w : 0.0f,
-                              (uint64_t)(esp_timer_get_time() / 1000));
+     * invalid; no previous value is carried forward. The sequence number and
+     * the energy register travel with it (W05): energy_wh was decoded and
+     * logged since W03 but never reached the snapshot, so the experiment
+     * stream could not carry accumulated energy. */
+    {
+        const uint64_t obs_ms = (uint64_t)(esp_timer_get_time() / 1000);
+        cg_snapshot_publish_power(values_valid, values_valid ? values.voltage_v : 0.0f,
+                                  values_valid ? values.current_a : 0.0f,
+                                  values_valid ? values.power_w : 0.0f,
+                                  values_valid ? values.energy_wh : 0.0f, s_seq, obs_ms);
+        cg_health_registry_beat(CG_PRODUCER_POWER, obs_ms);
+    }
 
     cg_log_line(
         "%s %s uptime_ms=%lld seq=%lu status=%s slave=%d v=%s i=%s p=%s e=%s crc_ok=%d "

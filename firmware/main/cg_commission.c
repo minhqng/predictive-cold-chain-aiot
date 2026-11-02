@@ -25,7 +25,9 @@
 #include "sdkconfig.h"
 
 #include "cg_console.h"
+#include "cg_health.h"
 #include "cg_log.h"
+#include "cg_rom_map.h"
 #include "cg_snapshot.h"
 #include "cg_tec_command.h"
 #include "cg_tec_control.h"
@@ -44,6 +46,28 @@ static char s_boot_id[9];
 static uint32_t s_boot_count;
 static char s_run_id[CG_TEC_RUN_ID_LEN] = "UNSET";
 static char s_test_phase[CG_TEC_PHASE_LEN] = "UNSET";
+/* A-W05-02: the monotonic per-boot frame counter. It starts at 1 and is never
+ * reset by a command, a run change or a fault clear, because the backend dedup
+ * key is (device_id, boot_id, seq) and a repeated seq inside one boot would
+ * make a frame uninsertable rather than merely confusing. */
+static uint32_t s_telem_seq;
+static char s_probe_rom_hex[CG_ROLE_COUNT][CG_TELEM_ROM_HEX_LEN];
+
+static void render_probe_identity(void)
+{
+    static const char digits[] = "0123456789ABCDEF";
+
+    for (int role = 0; role < CG_ROLE_COUNT; role++) {
+        uint8_t rom[8];
+        size_t out = 0;
+        cg_rom_map_bytes((cg_role_t)role, rom);
+        for (int i = 0; i < 8 && out + 2U < sizeof(s_probe_rom_hex[role]); i++) {
+            s_probe_rom_hex[role][out++] = digits[(rom[i] >> 4) & 0xFU];
+            s_probe_rom_hex[role][out++] = digits[rom[i] & 0xFU];
+        }
+        s_probe_rom_hex[role][out] = '\0';
+    }
+}
 
 static void make_token(char out[CG_TEC_TOKEN_LEN])
 {
@@ -95,7 +119,9 @@ static void emit_telemetry(uint64_t now_ms, const cg_snapshot_t *snap)
 {
     char line[CG_TELEMETRY_LINE_MAX];
     const cg_tec_hw_ops_t *ops = cg_tec_hw_ops();
+    cg_health_report_t health;
     cg_telemetry_frame_t frame = {
+        .seq = ++s_telem_seq,
         .boot_id = s_boot_id,
         .boot_count = s_boot_count,
         .uptime_ms = now_ms,
@@ -103,17 +129,32 @@ static void emit_telemetry(uint64_t now_ms, const cg_snapshot_t *snap)
         .test_phase = s_test_phase,
         .snap = snap,
         .ctl = &s_ctl,
+        .health = &health,
+        .probe_rom = {s_probe_rom_hex[0], s_probe_rom_hex[1], s_probe_rom_hex[2],
+                      s_probe_rom_hex[3]},
+        .role_status = CG_ROM_STATUS,
         .output_stage_enabled = ops->output_stage_available(),
         .fan_available = ops->fan_available(),
     };
-    const size_t len = cg_telemetry_format(line, sizeof(line), &frame);
+    size_t len;
+
+    cg_health_registry_beat(CG_PRODUCER_TELEMETRY, now_ms);
+    cg_health_registry_eval(now_ms, &health);
+
+    len = cg_telemetry_format(line, sizeof(line), &frame);
 
     if (len == 0U || len >= sizeof(line)) {
-        cg_log_error("telem=FORMAT_FAIL len=%u", (unsigned)len);
+        /* The frame was refused, so no seq was published for it. The counter
+         * still advanced, which leaves a gap rather than a duplicate: the
+         * backend sees a missing frame instead of two frames claiming to be the
+         * same observation. */
+        cg_log_error("telem=FORMAT_FAIL seq=%lu len=%u", (unsigned long)frame.seq,
+                     (unsigned)len);
         return;
     }
     if (!cg_log_raw_line(line)) {
-        cg_log_error("telem=WRITE_FAIL len=%u", (unsigned)len);
+        cg_log_error("telem=WRITE_FAIL seq=%lu len=%u", (unsigned long)frame.seq,
+                     (unsigned)len);
     }
 }
 
@@ -196,6 +237,10 @@ static void commission_task(void *arg)
 
         cg_snapshot_read(&snap);
         build_inputs(&snap, now_ms, &inputs);
+        /* A-W05-01: the control producer beats from its own task context, so a
+         * stalled loop is visible by name instead of looking like a controller
+         * that simply has nothing to say. */
+        cg_health_registry_beat(CG_PRODUCER_CONTROL, now_ms);
 
         while (xQueueReceive(s_cmd_queue, &command, 0) == pdTRUE) {
             apply_command(&command, &inputs);
@@ -232,8 +277,20 @@ void cg_commission_start(const char *boot_id, uint32_t boot_count)
 
     (void)snprintf(s_boot_id, sizeof(s_boot_id), "%s", boot_id != NULL ? boot_id : "UNKNOWN");
     s_boot_count = boot_count;
+    render_probe_identity();
     make_token(token);
     now_ms = (uint64_t)(esp_timer_get_time() / 1000);
+
+    /* A-W05-02: the identity block the backend keys on, printed once per boot so
+     * a capture that never reached a telemetry line still carries the device
+     * identity and the calibration state. calibration_id is UNRECORDED until a
+     * calibration bundle exists; it is not a placeholder that means "calibrated". */
+    cg_log_line(
+        "%s %s event=IDENTITY device_id=%s boot_id=%s boot_count=%lu firmware_version=%s "
+        "hardware_config_id=%s calibration_id=%s schema=%d seq_start=1",
+        CG_LOG_PREFIX, CG_LOG_BOOT, CG_DEVICE_ID, s_boot_id, (unsigned long)s_boot_count,
+        CG_FIRMWARE_VERSION, CG_HARDWARE_CONFIG_ID, CG_CALIBRATION_ID,
+        CG_TELEMETRY_SCHEMA_VERSION);
 
     cg_tec_control_init(&s_ctl, &cg_tec_limits_shipped, cg_tec_hw_ops(), token, now_ms,
                         CG_TEC_ARM_TTL_MS, CG_TEC_HEARTBEAT_TIMEOUT_MS, CG_TEC_COOLDOWN_MS,

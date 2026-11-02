@@ -35,6 +35,7 @@
 #include "cg_commission.h"
 #include "cg_door.h"
 #include "cg_ds18b20.h"
+#include "cg_health.h"
 #include "cg_log.h"
 #include "cg_power.h"
 #include "cg_rom_map.h"
@@ -85,8 +86,13 @@ static void door_task(void *arg)
         uint64_t now_us = (uint64_t)esp_timer_get_time();
 
         cg_door_poll(&s_door, now_us, &edge, &level, &commit);
+        /* W05: the door publication now carries its own observation time and
+         * its edge counters, so the telemetry can state a door age and prove
+         * the debounce state machine is still advancing. */
         cg_snapshot_publish_door(CG_DOOR_POLARITY_CONFIRMED == 1,
-                                 cg_door_state(&s_door) == CG_DOOR_OPEN, s_door.raw_committed);
+                                 cg_door_state(&s_door) == CG_DOOR_OPEN, s_door.raw_committed,
+                                 now_us / 1000ULL, s_door.transitions, s_door.cycles);
+        cg_health_registry_beat(CG_PRODUCER_DOOR, now_us / 1000ULL);
 
         if (edge) {
             cg_log_line("%s %s uptime_us=%lld raw=%d", CG_LOG_PREFIX, CG_LOG_DOOR_EDGE,
@@ -152,7 +158,11 @@ static void sensor_task(void *arg)
 
         cg_ds18b20_read_all(&snap);
         seq++;
-        cg_snapshot_publish_thermal(&snap, (uint64_t)(esp_timer_get_time() / 1000));
+        {
+            const uint64_t obs_ms = (uint64_t)(esp_timer_get_time() / 1000);
+            cg_snapshot_publish_thermal(&snap, seq, obs_ms);
+            cg_health_registry_beat(CG_PRODUCER_THERMAL, obs_ms);
+        }
 
         for (size_t i = 0; i < cg_rom_map_size(); i++) {
             const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
@@ -238,6 +248,26 @@ void app_main(void)
 
     if (!cg_ds18b20_init()) {
         cg_log_error("ds18b20=INIT_DEGRADED continuing=1");
+    }
+
+    /* A-W05-01: every producer declares its nominal cadence before any task
+     * that beats starts, so the registry is never read while uninitialized and
+     * a producer that has not beaten yet is reported as NEVER rather than OK.
+     * The boot line records which periods the liveness verdicts were judged
+     * against - without it, a later `health=LATE` is not reproducible. */
+    {
+        const uint64_t periods[CG_PRODUCER_COUNT] = {
+            CG_HEALTH_THERMAL_PERIOD_MS, CG_HEALTH_BME_PERIOD_MS, CG_HEALTH_DOOR_PERIOD_MS,
+            CG_HEALTH_POWER_PERIOD_MS,   CG_HEALTH_TELEMETRY_PERIOD_MS,
+            CG_HEALTH_CONTROL_PERIOD_MS,
+        };
+        cg_health_registry_init(periods);
+        cg_log_line(
+            "%s %s event=REGISTRY_INIT thermal_ms=%d bme_ms=%d door_ms=%d power_ms=%d "
+            "telemetry_ms=%d control_ms=%d door_request_ms=%d",
+            CG_LOG_PREFIX, CG_LOG_TEC, CG_HEALTH_THERMAL_PERIOD_MS, CG_HEALTH_BME_PERIOD_MS,
+            CG_HEALTH_DOOR_PERIOD_MS, CG_HEALTH_POWER_PERIOD_MS, CG_HEALTH_TELEMETRY_PERIOD_MS,
+            CG_HEALTH_CONTROL_PERIOD_MS, CG_DOOR_POLL_MS);
     }
 
     /* W03: PZEM observation task (read-only Modbus polling). It has no path

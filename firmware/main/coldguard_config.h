@@ -32,8 +32,19 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w04-0.1.0"
+#define CG_FIRMWARE_VERSION "cg-w05-0.1.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
+/* docs/01 2855-2876 makes calibration_id the identity of a calibration bundle
+ * (DS18B20 cross-check, BME check, PZEM reference check, date, environment,
+ * procedure). Member A has recorded none of those as an evidence-grade bundle:
+ * evidence/A/W02/sensor-rom-map.yaml carries `calibration_id: null`, and the
+ * PZEM reference check is W15 work. So the field is emitted as UNRECORDED - a
+ * status token in the same family as NOT_ASSIGNED - rather than inventing a
+ * `CG-CAL-...` value. The host converter must map UNRECORDED to null: the
+ * backend contract already declares calibration_id nullable
+ * (backend/src/coldguard_backend/contracts.py:166), so a fabricated identifier
+ * would be the only value that could be silently trusted downstream. */
+#define CG_CALIBRATION_ID "UNRECORDED"
 #define CG_PIN_MAP_VERSION 2
 /* Grammar v2 = grammar v1 line kinds, unchanged, plus the W03 PZEM/PZEM_CFG/
  * PZEM_RANGE lines. A v1 parser ignores the new kinds as unknown; a v2 parser
@@ -442,10 +453,55 @@
  * local H8 bench tree (deliberately outside this repository, fingerprinted in
  * evidence/A/W04/ARTIFACT-MANIFEST.md) reuses this guard and needs 2342; that
  * dependency is disclosed there instead of being documented as a W04 result.
- * W02/W03 output is unchanged and its captures stay parseable. */
-#define CG_TELEMETRY_SCHEMA_VERSION 1
+ * W02/W03 output is unchanged and its captures stay parseable.
+ *
+ * SCHEMA 2 (W05). The raw serial line gains the A-W05-02 identity fields
+ * (device_id, seq, calibration_id), the A-W05-05 per-source quality names, the
+ * A-W05-04 per-field ages and producer sequences, and the A-W05-01 producer
+ * liveness counters. This is the *serial* stream only: the canonical JSON
+ * envelope in docs/02 604-620 keeps its own `schema_version: 1`, and bumping
+ * the serial schema does not amend that contract. Every W04 field name keeps
+ * its meaning and position-independent key, so firmware/tools/cg_telemetry_schema.py
+ * parses schema 1 and schema 2 lines; the W04 captures committed in
+ * evidence/A/W04/ must remain parseable, and the tests pin that. */
+#define CG_TELEMETRY_SCHEMA_VERSION 2
 #define CG_TELEMETRY_PERIOD_MS 1000
 #define CG_TELEMETRY_LINE_MAX 2560
+
+/* ------------------------------------------------------------------ */
+/* W05 - producer liveness (A-W05-01 task boundaries)                   */
+/* ------------------------------------------------------------------ */
+
+/* Nominal period of each producer task, used only to classify its beats as
+ * OK/LATE/MISSED. These are NOT the control freshness bounds (those are
+ * CG_TEC_STALE_*_MS above and are what the controller acts on).
+ *
+ * The door value is the *measurable* period, not the requested one:
+ * CG_DOOR_POLL_MS asks for 5 ms, but pdMS_TO_TICKS(5) rounds to 0 at the
+ * default 100 Hz FreeRTOS tick and app_main clamps it to one tick, so the door
+ * task actually publishes every ~10 ms. Naming 5 ms here would report a
+ * permanently LATE producer, which is a false alarm about a task that is
+ * running exactly as the code intends. The 20 ms figure is the A-W05-03 finding
+ * and the timing study must re-measure it against a real capture. */
+#define CG_HEALTH_THERMAL_PERIOD_MS CG_SAMPLE_PERIOD_MS
+#define CG_HEALTH_BME_PERIOD_MS CG_SAMPLE_PERIOD_MS
+#define CG_HEALTH_DOOR_PERIOD_MS 20
+#define CG_HEALTH_POWER_PERIOD_MS CG_PZEM_POLL_PERIOD_MS
+#define CG_HEALTH_TELEMETRY_PERIOD_MS CG_TELEMETRY_PERIOD_MS
+#define CG_HEALTH_CONTROL_PERIOD_MS CG_TEC_TICK_MS
+
+/* BME280 is not implemented in this tree (docs/01 A-W02-06 is pending, and the
+ * telemetry reports humidity as SENSOR_NOT_PRESENT). Its producer therefore
+ * never beats and is reported NEVER, which the quality layer turns into
+ * UNKNOWN for the environment group rather than a pass. */
+
+/* A door level older than this cannot be presented as the current door state
+ * (docs/01 2237-2249: historical validity is not control freshness). W04 had no
+ * door age at all - the door publication carried no timestamp - so this bound
+ * could not be evaluated; it exists now that cg_snapshot_publish_door() takes
+ * an observation time. Four door periods is 80 ms, far inside any deliberate
+ * open interval used for a disturbance test, so it cannot erase a treatment. */
+#define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
 
 /* Local operator console on UART0 (the log console). Commands share the
  * terminal with the log stream; the parser rejects every line it does not
