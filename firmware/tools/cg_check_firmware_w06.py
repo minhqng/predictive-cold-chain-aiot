@@ -194,6 +194,16 @@ def run_checks() -> Checker:
                   and "cg_cmd_store_init(&s_cmd_store);" in commission_c,
                   "the store is a boot-scoped static initialised at start, so a reset clears it")
 
+    # A header that uses size_t without including stddef.h compiles under MSVC by
+    # accident, when some earlier header pulled the typedef in. gcc -std=c11 -Werror
+    # fails it, which is how CI caught it after every local build was green.
+    for header_name, header_text in (("cg_command.h", command_h),
+                                     ("cg_telemetry.h", telemetry_h)):
+        if "size_t" in header_text:
+            checker.check("#include <stddef.h>" in header_text,
+                          f"firmware/main/{header_name} uses size_t and must include "
+                          f"<stddef.h> to compile on its own")
+
     # 6. ACK vocabulary and payload ----------------------------------------
     for status in ACCEPT_STATUSES:
         checker.check(f'case CG_CMD_ACK_{status}' in command_c

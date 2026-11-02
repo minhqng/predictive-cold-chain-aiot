@@ -23,6 +23,7 @@ import cg_check_firmware_w06 as checker_module  # noqa: E402
 
 CONFIG = "firmware/main/coldguard_config.h"
 COMMAND = "firmware/main/cg_command.c"
+COMMAND_H = "firmware/main/cg_command.h"
 COMMISSION = "firmware/main/cg_commission.c"
 PARSER = "firmware/main/cg_tec_command.c"
 TELEMETRY = "firmware/main/cg_telemetry.c"
@@ -93,6 +94,12 @@ class W06CheckerTests(unittest.TestCase):
         )
         self.assertTrue(any("the only admitted source is the canonical network contract"
                             in failure for failure in checker.failures))
+
+    def test_non_self_contained_header_is_caught(self) -> None:
+        """CI's gcc -Werror failed this after every local MSVC build was green."""
+        checker = self.run_with(COMMAND_H, "#include <stddef.h>\n", "")
+        self.assertTrue(any("must include <stddef.h> to compile on its own" in failure
+                            for failure in checker.failures))
 
     def test_ack_without_device_identity_is_caught(self) -> None:
         checker = self.run_with(COMMAND, '"device_id=%s boot_id=%s ', '"boot_id=%s ')
