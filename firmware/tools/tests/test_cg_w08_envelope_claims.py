@@ -31,6 +31,7 @@ import importlib.util
 import io
 import json
 import contextlib
+import os
 import pathlib
 import shutil
 import sys
@@ -525,6 +526,66 @@ class ArtifactHonesty(unittest.TestCase):
                 code = module.main()
             self.assertEqual(code, 1, buffer.getvalue())
             self.assertIn("flash image committed into the dossier", buffer.getvalue())
+
+    def test_pinned_pycache_entry_makes_the_validator_fail(self) -> None:
+        # F3: a __pycache__ byte must never pass as a pinned dossier artifact.
+        # Copy the dossier, add an evil cache file and pin its correct hash - the
+        # pin itself must be rejected, not silently verified.
+        with tempfile.TemporaryDirectory(prefix="cg-w08-pyc-") as dirn:
+            work = pathlib.Path(dirn) / "W08"
+            shutil.copytree(DOSSIER, work)
+            cache = work / "__pycache__"
+            cache.mkdir(exist_ok=True)
+            (cache / "evil.cpython-314.pyc").write_bytes(b"not evidence")
+            lines = [f"{hashlib.sha256(p.read_bytes()).hexdigest()}  "
+                     f"{p.relative_to(work).as_posix()}"
+                     for p in sorted(work.rglob("*"))
+                     if p.is_file() and p.name != "SHA256SUMS.txt"]
+            (work / "SHA256SUMS.txt").write_text("\n".join(lines) + "\n",
+                                                 encoding="utf-8", newline="\n")
+            module = self._load_validator()
+            module.DOSSIER = work
+            buffer = io.StringIO()
+            with contextlib.redirect_stdout(buffer):
+                code = module.main()
+            self.assertEqual(code, 1, buffer.getvalue())
+            self.assertIn("Python cache", buffer.getvalue())
+
+    def test_a_file_without_a_pin_makes_the_validator_fail(self) -> None:
+        # F3 both-direction: pinning every dossier file means an added, unpinned
+        # artifact is caught even though no GENERATED name was touched.
+        with tempfile.TemporaryDirectory(prefix="cg-w08-added-") as dirn:
+            work = pathlib.Path(dirn) / "W08"
+            shutil.copytree(DOSSIER, work)
+            (work / "extra-notes.md").write_text("unpinned\n", encoding="utf-8",
+                                                 newline="\n")
+            module = self._load_validator()
+            module.DOSSIER = work
+            buffer = io.StringIO()
+            with contextlib.redirect_stdout(buffer):
+                code = module.main()
+            self.assertEqual(code, 1, buffer.getvalue())
+            self.assertIn("not hash-pinned", buffer.getvalue())
+
+    def test_empty_bench_root_reports_byte_checks_not_run(self) -> None:
+        # F2: pointed at an empty scratch bench tree the 18 per-original SHA-256
+        # checks cannot run, and the validator must print the NOT RUN note rather
+        # than bundling the skip into the OK line.
+        module = self._load_validator()
+        with tempfile.TemporaryDirectory(prefix="cg-w08-emptybench-") as dirn:
+            saved = os.environ.get("CG_W08_BENCH_ROOT")
+            os.environ["CG_W08_BENCH_ROOT"] = dirn
+            buffer = io.StringIO()
+            try:
+                with contextlib.redirect_stdout(buffer):
+                    code = module.main()
+            finally:
+                if saved is None:
+                    os.environ.pop("CG_W08_BENCH_ROOT", None)
+                else:
+                    os.environ["CG_W08_BENCH_ROOT"] = saved
+        self.assertEqual(code, 0, buffer.getvalue())
+        self.assertIn("local-bench original byte-checks: NOT RUN", buffer.getvalue())
 
     @staticmethod
     def _load_validator():

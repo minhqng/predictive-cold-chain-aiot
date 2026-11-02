@@ -11,7 +11,7 @@ branch, and the produced verdict is `GATE A NOT CLOSED`.
 | ID | Canonical ask | Status | Evidence | Gap |
 |---|---|---|---|---|
 | **A-W08-01** | safe operating envelope from W4-W7 | REAL_DATA_ANALYZED (observed) / NOT FROZEN | operating-envelope-v1.yaml, envelope-by-duty.csv, holdover-frames.csv, electrical-status-coverage.csv | one committed duty level; the ladder is local-only; no limit is a rating |
-| **A-W08-02** | fuse finalization 10/15/20 A with rationale | BLOCKED_HARDWARE | fuse-selection.md (generated) + the observed currents table | no ampacity basis for 1.75 mm2, no photographed fuse marking, canonical 2 x 2.5 mm2 deviation open |
+| **A-W08-02** | fuse finalization 10/15/20 A with rationale | BLOCKED_HARDWARE | fuse-selection.md (generated) + the observed currents table | no ampacity basis for the installed conductor (2.405 mm2 derived from a 1.75 mm core diameter under a solid-round assumption), no photographed fuse marking, canonical 2 x 2.5 mm2 deviation open |
 | **A-W08-03** | hot-side sustainability long run | REAL_DATA_ANALYZED (three of four bullets) / NEED_USER_ACTION | thermal-sustainability.csv | terminals/IBT-2 abnormal behaviour is unmeasured by any frame; no continuous rating may be claimed |
 | **A-W08-04** | SAFE_LOCAL integration support with D | TEAM_DEPENDENCY | safe-local-physical-inputs.csv (SL-01..SL-14) | no transport, no wall clock, no fan observation, no interlock, and the mode itself belongs to D |
 | **A-W08-05** | Gate A package indexing all H0-H7 artifacts | IMPLEMENTED / HOST_VERIFIED | Gate-A-report.md + gate-a-artifact-index.csv | W07 evidence is not in this checkout; the H7/H8 raw sessions are local-bench; committed captures in this run: 5 |
@@ -22,8 +22,8 @@ branch, and the produced verdict is `GATE A NOT CLOSED`.
 |---|---|---|
 | safe physical envelope known | NOT MET | the observed envelope exists (one duty level committed, the ladder local-only), but the fuse/conductor basis is missing so nothing can be called safe; see fuse-selection.md verdict NO_FREEZE |
 | repeatable enough plant | NOT MET HERE | repeatability is W07's question and its evidence is not in this checkout; one 600 s capture cannot answer it |
-| fuse selected | NOT MET | NO_FREEZE: no ampacity basis for the installed 1.75 mm2 branch and no photographed fuse marking |
-| no unresolved high-current anomaly | MET FOR THE RECORDED FRAMES, OPEN FOR UNRECORDED PHYSICS | fault_bits=0 in all 957 committed frames and steady OFF current never exceeded the 0.02 A meter floor; the only duty-0 frames above it are the two documented PZEM register-latency frames, named individually. Nothing measures the terminals or the IBT-2 case, so 'no anomaly' is a statement about the recorded electrical frames only |
+| fuse selected | NOT MET | NO_FREEZE: no ampacity basis for the installed branch (a 1.75 mm core diameter, 2.405 mm2 if solid round) and no photographed fuse marking; the 15 A value is operator-reported only |
+| no unresolved high-current anomaly | NOT PRE-JUDGED - CANDIDATE OPEN IN W15 | fault_bits=0 in all 957 committed frames and steady OFF current never exceeded the 0.02 A meter floor; the duty-0 frames above it are the two PZEM register-latency frames, named individually and left open by W15 between the register-holdover reading and the canonical CONTROL_ELECTRICAL_ANOMALY class (docs/01 22.4/23.4, high severity). This row does not decide that safety classification, and nothing here measures the terminals or the IBT-2 case either |
 | SAFE_LOCAL physically possible | NOT DEMONSTRATED | the inputs exist (SL-01..SL-08) but the fan is unobservable, no interlock is installed, there is no wall clock and no transport, and the mode itself is Member D's |
 
 ## 3. Index of H0-H7 artifacts (docs/01 Gate H0 ... Gate H7)
@@ -110,18 +110,22 @@ no recorded field measures at all. Full machine-readable table:
 | fan running is not electronically observable | fan_readback=NOT_ELECTRONICALLY_VERIFIED in 957/957 frames. | BLOCKED_HARDWARE |
 | no hardware interlock | interlock_state=NOT_INSTALLED in 957/957 frames. | BLOCKED_HARDWARE |
 | fault-to-stop latency never measured | fault_latency_us=-1 in every frame; no fault was ever injected. | NEED_USER_ACTION |
-| duty-0 frames with current | 11 frames across all sources; each is a documented register-latency case, listed individually in duty-zero-current-frames.csv and excluded from both the drive and the OFF envelope. | REAL_DATA_ANALYZED |
+| duty-0 frames with current | 11 frames across all sources, each listed individually in duty-zero-current-frames.csv and excluded from both the drive and the OFF envelope. The record names them as register-latency cases, which is an explanation and not a classification: docs/01 22.4/23.4 make a commanded-OFF-with-current frame a candidate CONTROL_ELECTRICAL_ANOMALY (high severity), and W15 leaves that option open. For device_ms=826894 the applied duty stayed 0 while the PZEM-reported reading decayed 7.15 -> 0.56 -> 0.02 -> 0.0 A, reaching zero at device_ms=829894, so the decay weakens sustained-energization and supports register/transition lag - but that trace is the meter's own report with no independent instrument behind it, so measured value and verified physical current stay apart and the safety qualification is open. | REAL_DATA_ANALYZED |
 | no continuous rating for the TEC | the 55 C hot-side ceiling was provisional; the SKU continuous rating is unestablished, so 'margin to 55 C' is not headroom. | NEED_USER_ACTION |
-| conductor deviation open | 1.75 mm2 installed against a canonical 2 x 2.5 mm2 ask; HW-19 UNVERIFIED. | TEAM_DEPENDENCY |
+| conductor deviation open | the record's "1.75" is the copper core diameter in mm (unit error corrected by the operator 2026-11-02), i.e. 2.405 mm2 if the core is round solid - a ~3.8 % gap to the canonical 2 x 2.5 mm2 ask rather than ~30 %, and inside the FDD2-250 1.5-2.5 mm2 termination rating. The assumption is stated, not proven: no marking was photographed, so no nominal 2.5 mm2 compliance is claimed and HW-19 stays UNVERIFIED. | TEAM_DEPENDENCY |
 
 ## 6. Operator action queue (W08 half; the W15 half is in evidence/A/W15)
 
 Merged to the minimum number of supervised sessions without dropping any
-required repetition.
+required repetition. The unpowered inspection (OQ-W08-1) is **necessary, not
+sufficient**: it produces the conductor and fuse markings, and it does not by
+itself clear any energized-session gate - the open CONTROL_ELECTRICAL_ANOMALY
+classification of the duty-0 frame and Member D's unresolved thresholds gate
+those sessions too, and neither is answered by a photo.
 
 | Queue | Requirement | Action | Power state | Unlocks | Sessions |
 |---|---|---|---|---|---|
-| OQ-W08-1 | A-W08-02 | Photograph the installed branch fuse body (rating, 250 V, glass/ceramic) and the spare 10 A fuse; photograph the installed power cable marking and measure its run length. | PSU OFF, branch de-energized; no flashing, no serial needed | the ampacity basis that A-W08-02 needs before any of 10/15/20 A can be defended; closes the HW-19 audit row | 1 (cold inspection, no supervision of energized parts needed) |
+| OQ-W08-1 | A-W08-02 | Photograph the installed branch fuse body (rating, 250 V, glass/ceramic) and the spare 10 A fuse; photograph the installed power cable marking and measure its run length. | PSU OFF, branch de-energized; no flashing, no serial needed | the ampacity basis that A-W08-02 needs before any of 10/15/20 A can be defended; closes the HW-19 audit row. It is necessary, not sufficient: it does not clear an energized-session gate, which also needs the duty-0 anomaly classification and Member D's thresholds | 1 (cold inspection, no supervision of energized parts needed) |
 | OQ-W08-2 | A-W08-03 | One supervised long run at 100 % duty for at least 1800 s with the operator touching nothing and reporting terminal / IBT-2 / cable temperature by touch-free measurement at t=0, 300, 600, 900, 1200, 1500, 1800 s. | energized branch, attended bench, operator at the PSU | A-W08-03's fourth bullet (terminals/IBT-2 abnormal behaviour) and the component-thermal half of the fuse decision | 1 (merge with OQ-W15-2's duty points only if the ladder is re-authorized; a 100 % long run must keep its own repetition) |
 | OQ-W08-3 | A-W08-04 | SAFE_LOCAL demonstration session: with TEC running, remove broker/backend reachability (and then restore it) while Controller A keeps sensing and local output behaviour is recorded. | energized branch, attended | A-W08-04 and the docs/00 Q7 resilience claim | 1 (depends on D + C delivering a mode to test) |
 | OQ-W08-4 | A-W08-01 / A-W08-05 | Deliver the committed copy of the H7 duty-ladder logs and the H8 A-E endurance samples.jsonl into this repository (hash-pinned, read-only), or accept that the envelope's 20-90 % rows stay LOCAL_BENCH and unreproducible for reviewers. | no hardware at all: this is an evidence-move, not a test | a clean-checkout reviewer can reproduce every number in operating-envelope-v1.yaml instead of trusting a declaration | 0 |
@@ -137,6 +141,16 @@ required repetition.
   proves which physical probe is which beyond the operator-frozen as-built
   record;
 * every electrical figure from the committed CSV is published as a value
-  with **no recorded validity** (`electrical_status_recorded: false`).
+  with **no recorded validity** (`electrical_status_recorded: false`);
+* it does not decide the duty-0-with-current classification, and it does not
+  treat the PZEM's own decaying trace as proof the branch was unenergized -
+  a measured value and a verified physical current are different claims, and
+  no independent instrument stands behind any figure here;
+* it does not read the corrected conductor figure as compliance: ~2.405 mm2
+  holds only if the core is round solid, and no marking was photographed;
+* it does not treat a shop listing or catalogue entry as evidence about the
+  installed fuse body, whose marking has never been read;
+* it does not claim that the unpowered inspection clears an energized-session
+  gate.
 
 Verdict: **GATE A NOT CLOSED**

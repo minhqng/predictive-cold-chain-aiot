@@ -68,7 +68,7 @@ Committed in this repository (a clean checkout reproduces every one of them):
 | branch voltage while driven | 11.76 – 11.81 V | same CSV |
 | power median / mean / max | 84.4 / 85.3015 / 117.4 W | same CSV |
 | steady OFF current maximum | **0.02 A** over 355 duty-0 frames | same CSV (one PZEM LSB = noise floor) |
-| latency frames at duty 0 | 2 (7.15 A held register at `device_ms=826894`, 0.56 A settling) | same CSV, listed in `holdover-frames.csv` |
+| latency frames at duty 0 | 2 above the steady floor (7.15 A held register at `device_ms=826894`, 0.56 A settling at `827894`); the applied duty stayed 0 while the PZEM-reported reading decayed **7.15 → 0.56 → 0.02 → 0.0 A**, reaching zero at `device_ms=829894` | same CSV, listed in `holdover-frames.csv`; the decay is the meter's own report, not an independently measured current, and it does not settle the safety classification |
 | energy counter vs power integral | 108 → 122 Wh (14 Wh) vs 14.219 Wh | same CSV |
 | V×I vs reported power | worst delta **0.099 W**, tolerance 0.18 W, 0 frames beyond | same CSV, all 957 frames |
 | TEC_HOT_SIDE max (driven) | **39.938 °C**, margin 15.062 K to the provisional 55 °C, +0.1759 K/min over the final minute | same CSV, `t2` |
@@ -108,12 +108,22 @@ Declared, from Member A's local bench tree (`local-bench-observations.json`,
 * **No continuous rating exists.** The 55 °C hot-side ceiling was PROVISIONAL;
   `thermal-sustainability.csv` reports a *margin to a provisional number*, which
   is not headroom.
-* **A fuse is not selected.** A-W08-02 returns NO_FREEZE: the branch is
-  1.75 mm² (operator-confirmed, never re-derived here) against a canonical
-  `2 × 2.5 mm²` ask with no recorded insulation class, run length or bundling,
-  and the installed fuse's marking has never been photographed
-  (`evidence/A/W04/fuse-commissioning-note.md`,
-  `evidence/A/W01/bom-audit.csv` HW-19 `UNVERIFIED`). No compliance is claimed.
+* **A fuse is not selected.** A-W08-02 returns NO_FREEZE. The conductor record was
+  corrected by the operator on 2026-11-02: the "1.75 mm²" in the old note was a
+  **unit error** — 1.75 is the **copper core diameter in mm**. Read as a round solid
+  core that is `pi × (1.75/2)² ≈ 2.405 mm²`, about **4 % below** the canonical
+  `2 × 2.5 mm²` ask by area (not ~30 %) and inside the FDD2-250 termination's
+  1.5–2.5 mm² rating. The solid-round assumption is stated, not proven: a stranded
+  core is not one round wire, only the printed marking settles it, and no marking has
+  been photographed — `evidence/A/W01/bom-audit.csv` HW-19 stays `UNVERIFIED` and no
+  nominal 2.5 mm² compliance is claimed. Insulation class, run length and bundling
+  remain unrecorded, so there is still no ampacity basis to coordinate against.
+* **The installed fuse's 15 A is operator-reported only.** Nothing is legible on the
+  installed body — no current rating, no 250 V, no glass/ceramic, no blade size
+  (`evidence/A/W04/fuse-commissioning-note.md`), and its marking has never been
+  photographed. A shop listing or catalogue entry for a fuse of that rating is not
+  evidence about installed hardware and is not treated as one here, so suitability
+  stays unproven and the verdict stays NO_FREEZE.
 * **The bench images are not this branch's firmware.** The delivered build has
   the output stage compiled out (`coldguard_config.h`), requested duty 0,
   `CG_ACTUATOR_ENABLE_ALLOWED 0`, and all six operating limits `UNRESOLVED`
@@ -125,7 +135,9 @@ Declared, from Member A's local bench tree (`local-bench-observations.json`,
   token says `HOT_SIDE` on T2 in the 2026-11-01 frames and `HOT_FINS` on T1 in
   the 2026-10-31 image; the ROM ids are by-source from the firmware ROM map, not
   a readback. TEC_HOT_SIDE is never averaged into a chamber-air statistic.
-* **Checkout line endings.** `.gitattributes` currently has no `-text` rule for
-  these directories, so with `core.autocrlf=true` a checkout rewrites CRLF and
-  breaks every pin. The coordinator must add `evidence/A/W08/** -text` and
-  `evidence/A/W15/** -text`; this slice may not edit `.gitattributes`.
+* **Checkout line endings.** `* text=auto eol=lf` with `core.autocrlf=true` would
+  rewrite these pinned files to CRLF on checkout and break every pin, so
+  `.gitattributes` now carries `evidence/A/W08/** -text` (added by this slice's W08
+  commit); the matching `evidence/A/W15/** -text` rule ships in this slice's W15
+  commit. Until a rule is present on the branch you build from, verify pins in a
+  checkout made with `core.autocrlf=input` or `false`.

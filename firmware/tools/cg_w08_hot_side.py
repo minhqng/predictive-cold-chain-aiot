@@ -17,15 +17,23 @@ Two questions are answered here, both strictly from recorded bytes:
    reports). So "margin to 55 degC" is a distance to a provisional working
    number, and it is not a statement that anything may be run continuously.
 
-2. **Can a fuse be chosen from measurement alone?** No. The branch conductor is
-   1.75 mm2 (operator-confirmed, never re-derived here) against a canonical ask
-   of ``2 x 2.5 mm2``, its insulation class, run length and routing are
-   unrecorded, and the installed fuse's marking has never been photographed
-   (``evidence/A/W04/fuse-commissioning-note.md``,
-   ``evidence/A/W01/bom-audit.csv`` HW-19 ``UNVERIFIED``). A fuse protects the
-   weakest element in the branch - the cable - so with no ampacity basis there is
-   nothing to coordinate against. This module therefore keeps ``observed`` and
-   ``recommended`` in separate blocks and returns ``NO_FREEZE``.
+2. **Can a fuse be chosen from measurement alone?** No. The branch conductor was
+   recorded as "1.75 mm2", and the operator corrected that on 2026-11-02: 1.75 is
+   the **diameter of the copper core in mm**, so the recorded figure carried a unit
+   error. For a round solid conductor that is ``pi x (1.75/2)^2 = 2.405 mm2``,
+   which is ~4 % below the canonical ``2 x 2.5 mm2`` ask by cross-sectional area
+   and inside the FDD2-250 termination's 1.5-2.5 mm2 rating - not the ~30 % gap the
+   old wording implied. The solid-round assumption is stated, not proven: a
+   stranded core is not one round wire, and only a photographed marking settles
+   what is installed, so no nominal 2.5 mm2 compliance is declared and
+   ``evidence/A/W01/bom-audit.csv`` HW-19 stays ``UNVERIFIED``. The conductor's
+   insulation class, run length and routing are still unrecorded, and the installed
+   fuse's marking has never been photographed - the 15 A value is operator-reported
+   only, with nothing legible on the body (``evidence/A/W04/fuse-commissioning-note.md``
+   section 1). A fuse protects the weakest element in the branch - the cable - so
+   with no ampacity basis there is nothing to coordinate against. This module
+   therefore keeps ``observed`` and ``recommended`` in separate blocks and returns
+   ``NO_FREEZE``.
 
 Nothing here touches hardware. ``PHYSICALLY_VERIFIED`` is never emitted; the
 status vocabulary is IMPLEMENTED / HOST_VERIFIED / REAL_DATA_ANALYZED /
@@ -36,6 +44,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import pathlib
 import sys
 from dataclasses import dataclass
@@ -70,11 +79,35 @@ ROM_BY_CHANNEL = {
     "t4_note": "SPARE slot",
 }
 
-# Conductor and fuse facts. These are declarations of the record, not analysis:
-# the size is operator-confirmed and must never be re-derived or re-asked.
-BRANCH_CONDUCTOR_MM2 = 1.75
+# Conductor and fuse facts. These are declarations of the record, not analysis.
+# Operator correction 2026-11-02: the recorded "1.75 mm2" was a UNIT ERROR - 1.75
+# is the copper CORE DIAMETER in mm. The cross-section below is therefore a
+# DERIVED reading under a stated solid-round assumption, never a measurement, and
+# it must not be re-asked or quietly turned into a nominal 2.5 mm2 claim: no
+# marking has been photographed, so evidence/A/W01/bom-audit.csv HW-19 stays
+# UNVERIFIED and the deviation stays open.
+BRANCH_CONDUCTOR_RECORDED_FIGURE = "1.75"
+BRANCH_CONDUCTOR_CORE_DIAMETER_MM = 1.75
+CONDUCTOR_SHAPE_ASSUMPTION = (
+    "round solid copper core, area = pi x (diameter/2)^2; a stranded core is not "
+    "one round wire, so only a photographed marking settles what is installed"
+)
+BRANCH_CONDUCTOR_MM2 = round(
+    math.pi * (BRANCH_CONDUCTOR_CORE_DIAMETER_MM / 2) ** 2, 3)
 CANONICAL_CONDUCTOR = "2 x 2.5 mm2"
+CANONICAL_CONDUCTOR_MM2 = 2.5
+CONDUCTOR_AREA_GAP_VS_CANONICAL_PCT = round(
+    (CANONICAL_CONDUCTOR_MM2 - BRANCH_CONDUCTOR_MM2) / CANONICAL_CONDUCTOR_MM2
+    * 100, 1)
+# FDD2-250 faston termination rating, as recorded in the W04 commissioning note.
+TERMINATION_RANGE_MM2 = (1.5, 2.5)
+CONDUCTOR_NOMINAL_COMPLIANCE_CLAIMED = False
 INSTALLED_FUSE_A_REPORTED = 15.0
+FUSE_MARKING_LEGIBLE = False
+CATALOGUE_IS_NOT_INSTALLED_EVIDENCE = (
+    "a shop listing or catalogue entry for a fuse of that rating says nothing about "
+    "the installed body and is not treated as evidence here"
+)
 FUSE_CANDIDATES_A = (10, 15, 20)
 
 OFF_BENCH_GATE_A = 0.200
@@ -287,8 +320,10 @@ def fuse_evaluation(currents: list[dict[str, object]],
             "justified_by_observation_alone": False,
             "why_not": (
                 "a fuse rating is the conductor's ampacity coordinate, and the "
-                "installed 1.75 mm2 branch has no recorded insulation class, run "
-                "length or bundling; the body marking has never been photographed"
+                f"installed branch has no recorded ampacity basis: {BRANCH_CONDUCTOR_MM2} "
+                f"mm2 is derived from a {BRANCH_CONDUCTOR_CORE_DIAMETER_MM} mm core "
+                "diameter under a solid-round assumption, with no insulation class, "
+                "run length or bundling recorded and no marking photographed"
             ),
         })
 
@@ -318,16 +353,33 @@ def fuse_evaluation(currents: list[dict[str, object]],
             "not_chosen": True,
         },
         "conductor": {
+            "recorded_figure": BRANCH_CONDUCTOR_RECORDED_FIGURE,
+            "recorded_unit_error_corrected": (
+                "the record said 1.75 mm2 - a unit error; the operator corrected on "
+                "2026-11-02 that 1.75 is the copper core diameter in mm"),
+            "core_diameter_mm": BRANCH_CONDUCTOR_CORE_DIAMETER_MM,
+            "shape_assumption": CONDUCTOR_SHAPE_ASSUMPTION,
             "installed_mm2": BRANCH_CONDUCTOR_MM2,
-            "provenance": "operator-confirmed 2026-11-02; never re-derived or re-asked",
+            "installed_mm2_basis": (
+                f"derived: pi x ({BRANCH_CONDUCTOR_CORE_DIAMETER_MM}/2)^2, an "
+                "arithmetic reading of the corrected record, not a measurement"),
+            "provenance": "operator-corrected 2026-11-02; the area is derived from "
+                          "the corrected diameter and never re-asked",
             "canonical_ask": CANONICAL_CONDUCTOR,
+            "canonical_mm2": CANONICAL_CONDUCTOR_MM2,
+            "area_gap_vs_canonical_pct": CONDUCTOR_AREA_GAP_VS_CANONICAL_PCT,
             "deviation_open": True,
+            "nominal_canonical_compliance_claimed": CONDUCTOR_NOMINAL_COMPLIANCE_CLAIMED,
             "deviation_register": (
                 "evidence/A/W04/fuse-commissioning-note.md (no marking photographed; "
                 "'No conductor evidence at all (today) -> no freeze') and "
                 "evidence/A/W01/bom-audit.csv HW-19 UNVERIFIED"
             ),
-            "termination_in_range": "FDD2-250 faston covers 1.5-2.5 mm2",
+            "termination_in_range": (
+                f"FDD2-250 faston covers {TERMINATION_RANGE_MM2[0]}-"
+                f"{TERMINATION_RANGE_MM2[1]} mm2, and the derived "
+                f"{BRANCH_CONDUCTOR_MM2} mm2 sits inside that range - a termination "
+                "fit, not a conductor rating"),
             "insulation_class_recorded": False,
             "run_length_recorded": False,
             "bundling_recorded": False,
@@ -335,7 +387,11 @@ def fuse_evaluation(currents: list[dict[str, object]],
         },
         "fuse": {
             "installed_reported_a": INSTALLED_FUSE_A_REPORTED,
-            "marking_photographed": False,
+            "value_basis": "operator-reported only; nothing is legible on the body",
+            "marking_photographed": FUSE_MARKING_LEGIBLE,
+            "legible_on_installed_body": FUSE_MARKING_LEGIBLE,
+            "no_rating_no_voltage_no_dielectric_no_blade_size_recorded": True,
+            "catalogue_is_not_installed_evidence": CATALOGUE_IS_NOT_INSTALLED_EVIDENCE,
             "suitability_proven": False,
             "candidates_a": list(FUSE_CANDIDATES_A),
             "decision_table": table,
@@ -349,10 +405,21 @@ def fuse_evaluation(currents: list[dict[str, object]],
         "verdict": "NO_FREEZE",
         "gate_a_pass_criterion_safe_physical_envelope_known": "NOT_MET",
         "what_would_close_it": [
-            "photograph of the installed fuse body rating (and the spare 10 A)",
+            "photograph of the installed fuse body rating (and the spare 10 A) read "
+            "off that body: the 15 A figure is operator-reported today, nothing is "
+            "legible on the installed body (no current rating, no 250 V, no "
+            "glass/ceramic, no blade size), and a shop listing or catalogue entry "
+            "for a fuse of that rating is not evidence about installed hardware",
             "insulation temperature class, run length and routing/bundling of the "
-            "installed 1.75 mm2 branch, with a cited ampacity table",
-            "either acceptance of the 1.75 mm2 deviation with its basis, or "
+            f"installed branch (a {BRANCH_CONDUCTOR_CORE_DIAMETER_MM} mm core "
+            f"diameter, {BRANCH_CONDUCTOR_MM2} mm2 if solid round), with a cited "
+            "ampacity table for the real installation",
+            "the conductor marking photographed, so the solid-round assumption is "
+            "either confirmed or replaced by the printed cross-section; until then "
+            f"the {CONDUCTOR_AREA_GAP_VS_CANONICAL_PCT} % gap to the canonical "
+            "2 x 2.5 mm2 ask is an assumption-based reading and HW-19 stays "
+            "UNVERIFIED",
+            "either acceptance of the conductor deviation with its basis, or "
             "replacement by the canonical 2 x 2.5 mm2 with photo + marking",
             "an IBT-2/terminal temperature observation during a long run "
             "(A-W08-03's fourth bullet, which no recorded frame measures)",
@@ -460,12 +527,27 @@ def render_fuse_md(evaluation: dict[str, object]) -> str:
         "",
         "| Item | Record |",
         "|---|---|",
-        f"| Branch conductor | **{BRANCH_CONDUCTOR_MM2} mm2** (operator-confirmed; "
-        "size never re-derived here) |",
-        f"| Canonical ask | `{CANONICAL_CONDUCTOR}` - deviation still open |",
-        "| Fuse body marking | never photographed; 15 A is operator-reported |",
+        f"| Branch conductor | recorded as **{BRANCH_CONDUCTOR_RECORDED_FIGURE}**, "
+        "which the operator corrected on 2026-11-02 to the **copper core diameter "
+        "in mm**, not a cross-section: the \"mm2\" in the old record was a unit "
+        "error. Reading it as a round solid core gives "
+        f"**{BRANCH_CONDUCTOR_MM2} mm2** = pi x "
+        f"({BRANCH_CONDUCTOR_CORE_DIAMETER_MM}/2)^2 |",
+        "| Conductor shape assumption | **round solid core**, stated, not proven: a "
+        "stranded core is not one round wire and only the printed marking settles it |",
+        f"| Canonical ask | `{CANONICAL_CONDUCTOR}` - deviation still open; the area "
+        f"gap is **~{CONDUCTOR_AREA_GAP_VS_CANONICAL_PCT} %**, not the ~30 % the "
+        "old unit-error wording implied, and no nominal 2.5 mm2 compliance is "
+        "claimed |",
+        "| Termination | FDD2-250 faston rated 1.5-2.5 mm2 covers the derived "
+        f"{BRANCH_CONDUCTOR_MM2} mm2 - a fit check, not an ampacity basis |",
+        "| Fuse body marking | never photographed; nothing is legible on the "
+        "installed body (no current rating, no 250 V, no glass/ceramic, no blade "
+        f"size - `evidence/A/W04/fuse-commissioning-note.md`); {INSTALLED_FUSE_A_REPORTED:g} A "
+        "is operator-reported only, and a shop listing or catalogue entry is not "
+        "evidence about installed hardware |",
         "| Insulation class / run length / bundling | not recorded anywhere |",
-        "| Ampacity basis for 1.75 mm2 | none cited in this repository |",
+        f"| Ampacity basis for the installed conductor | none cited in this repository |",
         f"| BOM audit | `evidence/A/W01/bom-audit.csv` HW-19 = `UNVERIFIED` |",
         "",
         "## 4. Candidate table, argued against the observations only",
@@ -496,6 +578,17 @@ def render_fuse_md(evaluation: dict[str, object]) -> str:
         "  2 x 2.5 mm2 deviation is closed by replacement rather than accepted.",
         "* **Not claimed:** compliance, suitability of the installed 15 A fuse,",
         "  continuous duty, or any permission to energize the branch.",
+        "* **Conductor reinterpretation, stated once:** the corrected record reads "
+        f"as ~{BRANCH_CONDUCTOR_MM2} mm2 on a solid-round assumption, ~"
+        f"{CONDUCTOR_AREA_GAP_VS_CANONICAL_PCT} % under the canonical 2.5 mm2 and "
+        "inside the FDD2-250 1.5-2.5 mm2 termination range. That narrows the "
+        "geometric gap; it does not close it, and it is still not a nominal 2.5 mm2 "
+        "conductor: no marking was photographed, HW-19 stays UNVERIFIED, and a "
+        "stranded core would make the derived area wrong in an unknown direction.",
+        "* **Fuse evidence, stated once:** the 15 A value is operator-reported only. "
+        "Nothing is legible on the installed body, and a shop listing or catalogue "
+        "entry for a fuse of that rating is not evidence about installed hardware, so "
+        "suitability stays unproven and the verdict stays NO_FREEZE.",
         "",
         "## 6. Verdict",
         "",

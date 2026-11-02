@@ -476,9 +476,14 @@ W08_ACTION_QUEUE: tuple[dict[str, str], ...] = (
                              "evidence/A/W01/bom-audit.csv HW-19 UNVERIFIED",
         "safety_prerequisites": "none beyond de-energized inspection",
         "expected_capture": "two photographs + a length + the cable's insulation "
-                            "temperature class from the jacket marking",
+                            "temperature class from the jacket marking, and the "
+                            "conductor's printed cross-section (which decides whether "
+                            "the 1.75 mm core diameter is a solid round conductor)",
         "unlocks": "the ampacity basis that A-W08-02 needs before any of 10/15/20 A "
-                   "can be defended; closes the HW-19 audit row",
+                   "can be defended; closes the HW-19 audit row. It is necessary, not "
+                   "sufficient: it does not clear an energized-session gate, which "
+                   "also needs the duty-0 anomaly classification and Member D's "
+                   "thresholds",
         "min_sessions": "1 (cold inspection, no supervision of energized parts needed)",
         "status_label": "NEED_USER_ACTION",
     },
@@ -595,16 +600,21 @@ def pass_criteria_walk(envelope_report: dict[str, object],
                 "checkout; one 600 s capture cannot answer it"},
         {"criterion": "fuse selected",
          "result": "NOT MET",
-         "why": fuse["verdict"] + ": no ampacity basis for the installed 1.75 mm2 "
-                "branch and no photographed fuse marking"},
+         "why": fuse["verdict"] + f": no ampacity basis for the installed branch "
+                f"(a {fuse['conductor']['core_diameter_mm']} mm core diameter, "
+                f"{fuse['conductor']['installed_mm2']} mm2 if solid round) and no "
+                "photographed fuse marking; the 15 A value is operator-reported "
+                "only"},
         {"criterion": "no unresolved high-current anomaly",
-         "result": "MET FOR THE RECORDED FRAMES, OPEN FOR UNRECORDED PHYSICS",
+         "result": "NOT PRE-JUDGED - CANDIDATE OPEN IN W15",
          "why": "fault_bits=0 in all "
                 f"{h8.get('frames', 0)} committed frames and steady OFF current never "
-                "exceeded the 0.02 A meter floor; the only duty-0 frames above it are "
-                "the two documented PZEM register-latency frames, named individually. "
-                "Nothing measures the terminals or the IBT-2 case, so 'no anomaly' is "
-                "a statement about the recorded electrical frames only"},
+                "exceeded the 0.02 A meter floor; the duty-0 frames above it are the "
+                "two PZEM register-latency frames, named individually and left open by "
+                "W15 between the register-holdover reading and the canonical "
+                "CONTROL_ELECTRICAL_ANOMALY class (docs/01 22.4/23.4, high severity). "
+                "This row does not decide that safety classification, and nothing here "
+                "measures the terminals or the IBT-2 case either"},
         {"criterion": "SAFE_LOCAL physically possible",
          "result": "NOT DEMONSTRATED",
          "why": "the inputs exist (SL-01..SL-08) but the fan is unobservable, no "
@@ -657,6 +667,7 @@ def build_package(repo_root: pathlib.Path, bench_root: pathlib.Path | None,
 
 def requirement_matrix(envelope_report: dict[str, object],
                        hot_side_report: dict[str, object]) -> list[dict[str, str]]:
+    fuse = hot_side_report["fuse_evaluation"]
     committed = [s for s, v in envelope_report["sources"].items()
                  if v["trust"] == "COMMITTED"]
     return [
@@ -669,8 +680,11 @@ def requirement_matrix(envelope_report: dict[str, object],
         {"id": "A-W08-02", "ask": "fuse finalization 10/15/20 A with rationale",
          "status": "BLOCKED_HARDWARE",
          "evidence": "fuse-selection.md (generated) + the observed currents table",
-         "gap": "no ampacity basis for 1.75 mm2, no photographed fuse marking, "
-                "canonical 2 x 2.5 mm2 deviation open"},
+         "gap": f"no ampacity basis for the installed conductor "
+                f"({fuse['conductor']['installed_mm2']} mm2 derived from a "
+                f"{fuse['conductor']['core_diameter_mm']} mm core diameter under a "
+                "solid-round assumption), no photographed fuse marking, canonical "
+                "2 x 2.5 mm2 deviation open"},
         {"id": "A-W08-03", "ask": "hot-side sustainability long run",
          "status": "REAL_DATA_ANALYZED (three of four bullets) / NEED_USER_ACTION",
          "evidence": "thermal-sustainability.csv",
@@ -691,6 +705,8 @@ def requirement_matrix(envelope_report: dict[str, object],
 
 def named_gaps(envelope_report: dict[str, object],
                hot_side_report: dict[str, object]) -> list[dict[str, str]]:
+    fuse = hot_side_report["fuse_evaluation"]
+    conductor = fuse["conductor"]
     coverage = envelope_report["status_coverage"]
     unqualified = sorted(s for s, c in coverage.items()
                          if not c["electrical_status_recorded"])
@@ -721,17 +737,33 @@ def named_gaps(envelope_report: dict[str, object],
          "status_label": "NEED_USER_ACTION"},
         {"gap": "duty-0 frames with current",
          "detail": f"{len(envelope_report['duty_zero_with_current_frames'])} frames "
-                   "across all sources; each is a documented register-latency case, "
-                   "listed individually in duty-zero-current-frames.csv and excluded "
-                   "from both the drive and the OFF envelope.",
+                   "across all sources, each listed individually in "
+                   "duty-zero-current-frames.csv and excluded from both the drive and "
+                   "the OFF envelope. The record names them as register-latency cases, "
+                   "which is an explanation and not a classification: docs/01 "
+                   "22.4/23.4 make a commanded-OFF-with-current frame a candidate "
+                   "CONTROL_ELECTRICAL_ANOMALY (high severity), and W15 leaves that "
+                   "option open. For device_ms=826894 the applied duty stayed 0 while "
+                   "the PZEM-reported reading decayed 7.15 -> 0.56 -> 0.02 -> 0.0 A, "
+                   "reaching zero at device_ms=829894, so the decay weakens "
+                   "sustained-energization and supports register/transition lag - but "
+                   "that trace is the meter's own report with no independent instrument "
+                   "behind it, so measured value and verified physical current stay "
+                   "apart and the safety qualification is open.",
          "status_label": "REAL_DATA_ANALYZED"},
         {"gap": "no continuous rating for the TEC",
          "detail": "the 55 C hot-side ceiling was provisional; the SKU continuous "
                    "rating is unestablished, so 'margin to 55 C' is not headroom.",
          "status_label": "NEED_USER_ACTION"},
         {"gap": "conductor deviation open",
-         "detail": "1.75 mm2 installed against a canonical 2 x 2.5 mm2 ask; HW-19 "
-                   "UNVERIFIED.",
+         "detail": f"the record's \"1.75\" is the copper core diameter in mm (unit "
+                   f"error corrected by the operator 2026-11-02), i.e. "
+                   f"{conductor['installed_mm2']} mm2 if the core is round solid - a "
+                   f"~{conductor['area_gap_vs_canonical_pct']} % gap to the canonical "
+                   "2 x 2.5 mm2 ask rather than ~30 %, and inside the FDD2-250 "
+                   "1.5-2.5 mm2 termination rating. The assumption is stated, not "
+                   "proven: no marking was photographed, so no nominal 2.5 mm2 "
+                   "compliance is claimed and HW-19 stays UNVERIFIED.",
          "status_label": "TEAM_DEPENDENCY"},
     ]
 
@@ -874,7 +906,11 @@ def render_gate_a_report(package: dict[str, object]) -> str:
         "## 6. Operator action queue (W08 half; the W15 half is in evidence/A/W15)",
         "",
         "Merged to the minimum number of supervised sessions without dropping any",
-        "required repetition.",
+        "required repetition. The unpowered inspection (OQ-W08-1) is **necessary, not",
+        "sufficient**: it produces the conductor and fuse markings, and it does not by",
+        "itself clear any energized-session gate - the open CONTROL_ELECTRICAL_ANOMALY",
+        "classification of the duty-0 frame and Member D's unresolved thresholds gate",
+        "those sessions too, and neither is answered by a photo.",
         "",
         "| Queue | Requirement | Action | Power state | Unlocks | Sessions |",
         "|---|---|---|---|---|---|",
@@ -896,7 +932,17 @@ def render_gate_a_report(package: dict[str, object]) -> str:
         "  proves which physical probe is which beyond the operator-frozen as-built",
         "  record;",
         "* every electrical figure from the committed CSV is published as a value",
-        "  with **no recorded validity** (`electrical_status_recorded: false`).",
+        "  with **no recorded validity** (`electrical_status_recorded: false`);",
+        "* it does not decide the duty-0-with-current classification, and it does not",
+        "  treat the PZEM's own decaying trace as proof the branch was unenergized -",
+        "  a measured value and a verified physical current are different claims, and",
+        "  no independent instrument stands behind any figure here;",
+        "* it does not read the corrected conductor figure as compliance: ~2.405 mm2",
+        "  holds only if the core is round solid, and no marking was photographed;",
+        "* it does not treat a shop listing or catalogue entry as evidence about the",
+        "  installed fuse body, whose marking has never been read;",
+        "* it does not claim that the unpowered inspection clears an energized-session",
+        "  gate.",
         "",
         "Verdict: **" + package["verdict"] + "**",
         "",

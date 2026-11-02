@@ -800,11 +800,15 @@ do_not_extrapolate:
 open_inputs_blocking_a_frozen_envelope:
   - id: A-W08-02
     status: BLOCKED_HARDWARE
-    gap: the installed ampacity basis of the 1.75 mm2 conductor (insulation
-         class, run length, bundling) and the fuse body marking
+    gap: the installed ampacity basis of the branch conductor (recorded as a
+         1.75 mm copper core diameter, i.e. ~2.405 mm2 only if it is round
+         solid; insulation class, run length and bundling are unrecorded) and
+         the fuse body marking
   - id: A-W04-02
     status: TEAM_DEPENDENCY
-    gap: conductor class deviation against the canonical 2 x 2.5 mm2 ask
+    gap: conductor class deviation against the canonical 2 x 2.5 mm2 ask; the
+         derived 2.405 mm2 is a ~4 % area gap under a solid-round assumption,
+         not a nominal 2.5 mm2 claim, and HW-19 stays UNVERIFIED
   - id: A-W08-03
     status: NEED_USER_ACTION
     gap: terminals/IBT-2 abnormal behaviour under a long run is an operator

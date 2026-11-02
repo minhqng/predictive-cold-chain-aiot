@@ -120,10 +120,18 @@ def main() -> int:
         ))
 
     failures = 0
+    bench_byte_checks_not_run = False
     for label, args, cwd in checks:
         ok, output = run(args, cwd)
         marker = "PASS" if ok else "FAIL"
         print(f"[{marker}] {label}")
+        if "byte-checks: NOT RUN" in output:
+            # The validator legitimately passes on a machine without the bench
+            # tree, but the 18 per-original SHA-256 checks did not run: say so
+            # instead of letting the PASS imply they were executed.
+            bench_byte_checks_not_run = True
+            print("        [NOT RUN] local-bench original byte-checks "
+                  "(bench tree absent) - not a pass, see the validator note")
         if not ok:
             failures += 1
             for line in output.strip().splitlines()[-25:]:
@@ -136,13 +144,23 @@ def main() -> int:
         return 1
 
     print(f"W08 CHECKS: {len(checks)}/{len(checks)} passed")
+    if bench_byte_checks_not_run:
+        print("NOT RUN (not counted as passed): local-bench original byte-checks - "
+              "the 18 declared session originals live only in Member A's local W04 "
+              "tree and were absent here. Set CG_W08_BENCH_ROOT to a tree that has "
+              "them to run those checks; the ladder/endurance rows stay LOCAL_BENCH "
+              "either way.")
     print("Reminder: no check here compiled the firmware, opened a port or touched hardware.")
     print("Gate A is NOT CLOSED by these checks. A-W08-02 stays BLOCKED_HARDWARE (no")
-    print("ampacity basis for the installed 1.75 mm2 branch, fuse marking never")
-    print("photographed), A-W08-03's terminals/IBT-2 bullet stays NEED_USER_ACTION, and")
+    print("ampacity basis for the installed branch - a 1.75 mm core diameter, ~2.405 mm2")
+    print("only if it is round solid, with no marking photographed - and the fuse's 15 A")
+    print("value is operator-reported with nothing legible on the body), so NO_FREEZE;")
+    print("A-W08-03's terminals/IBT-2 bullet stays NEED_USER_ACTION, and")
     print("A-W08-04 stays TEAM_DEPENDENCY: SAFE_LOCAL is Member D's policy state and the")
-    print("delivered firmware has no transport. See evidence/A/W08/acceptance.md §4 for")
-    print("the physical actions owed.")
+    print("delivered firmware has no transport. The unpowered inspection is necessary,")
+    print("not sufficient: the open duty-0 anomaly classification and Member D's")
+    print("thresholds gate the energized sessions too. See")
+    print("evidence/A/W08/acceptance.md section 4 for the physical actions owed.")
     return 0
 
 

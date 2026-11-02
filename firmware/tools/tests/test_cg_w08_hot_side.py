@@ -15,6 +15,7 @@ Host analysis of recorded files; no measurement, no certification.
 from __future__ import annotations
 
 import functools
+import math
 import pathlib
 import sys
 import unittest
@@ -117,8 +118,20 @@ class FuseAndConductorEvaluation(unittest.TestCase):
 
     def test_conductor_deviation_is_recorded_not_re_derived(self) -> None:
         conductor = fuse()["conductor"]
-        self.assertEqual(conductor["installed_mm2"], 1.75)
-        self.assertIn("never re-derived", conductor["provenance"])
+        # Operator correction 2026-11-02: the recorded "1.75" is the copper core
+        # DIAMETER in mm, so the cross-section is derived from it, not asserted.
+        self.assertEqual(conductor["recorded_figure"], "1.75")
+        self.assertEqual(conductor["core_diameter_mm"], 1.75)
+        self.assertEqual(conductor["installed_mm2"], 2.405)
+        self.assertAlmostEqual(round(math.pi * (1.75 / 2) ** 2, 3), 2.405)
+        self.assertEqual(conductor["area_gap_vs_canonical_pct"], 3.8)
+        self.assertIn("unit error", conductor["recorded_unit_error_corrected"])
+        self.assertIn("stranded", conductor["shape_assumption"])
+        self.assertIn("derived", conductor["installed_mm2_basis"])
+        self.assertFalse(conductor["nominal_canonical_compliance_claimed"])
+        self.assertIn("2.405", conductor["termination_in_range"])
+        self.assertIn("fit", conductor["termination_in_range"])
+        self.assertIn("corrected", conductor["provenance"])
         self.assertEqual(conductor["canonical_ask"], "2 x 2.5 mm2")
         self.assertTrue(conductor["deviation_open"])
         self.assertEqual(conductor["status_label"], "TEAM_DEPENDENCY")
@@ -127,8 +140,31 @@ class FuseAndConductorEvaluation(unittest.TestCase):
         self.assertIn("HW-19", conductor["deviation_register"])
         fuse_block = fuse()["fuse"]
         self.assertFalse(fuse_block["marking_photographed"])
+        self.assertFalse(fuse_block["legible_on_installed_body"])
         self.assertFalse(fuse_block["suitability_proven"])
         self.assertEqual(fuse_block["installed_reported_a"], 15.0)
+        self.assertIn("operator-reported", fuse_block["value_basis"])
+        self.assertIn("catalogue", fuse_block["catalogue_is_not_installed_evidence"])
+
+    def test_generated_note_states_the_conductor_unit_error_and_limits(self) -> None:
+        """The corrected conductor record and the fuse-evidence limits are published.
+
+        Both are the kind of statement a later edit can quietly smooth into a
+        pass, so they are asserted as text, not only as dict fields.
+        """
+        text = hot.render_fuse_md(fuse())
+        self.assertIn("unit error", text)
+        self.assertIn("2.405 mm2", text)
+        self.assertIn("round solid", text)
+        self.assertIn("stranded", text)
+        self.assertIn("3.8 %", text)
+        self.assertIn("HW-19 stays UNVERIFIED", text)
+        self.assertIn("operator-reported only", text)
+        self.assertIn("catalogue entry is not evidence", text)
+        # The old unit-error wording must not survive anywhere in the note.
+        self.assertNotIn("1.75 mm2 branch", text)
+        self.assertNotIn("Ampacity basis for 1.75 mm2", text)
+        self.assertNotIn("nominal 2.5 mm2 compliance is claimed and", text)
 
     def test_observed_loads_are_the_committed_peak_and_flagged_unqualified(self) -> None:
         currents = hot.observed_currents(REPO, None)
@@ -153,7 +189,9 @@ class FuseAndConductorEvaluation(unittest.TestCase):
                         "## 6. Verdict"):
             self.assertIn(heading, text)
         self.assertIn("NO_FREEZE", text)
-        self.assertIn("1.75 mm2", text)
+        # The corrected record replaces the unit-error wording outright.
+        self.assertIn("2.405 mm2", text)
+        self.assertNotRegex(text.replace("²", ""), r"1\.75\s*mm2")
         self.assertIn("Not claimed:", text)
         self.assertIn("BLOCKED_HARDWARE", text)
         self.assertNotIn("compliance is met", text)

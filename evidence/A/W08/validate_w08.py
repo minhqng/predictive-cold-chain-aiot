@@ -30,6 +30,7 @@ from __future__ import annotations
 import csv
 import hashlib
 import json
+import os
 import pathlib
 import re
 import sys
@@ -61,6 +62,19 @@ HONEST_PHRASES = (
     "A-W08-02",
     "BLOCKED_HARDWARE",
 )
+
+# Operator correction 2026-11-02: the recorded "1.75" is the copper CORE DIAMETER
+# in mm, so the cross-section is a derived reading, never a re-asked fact and never
+# a nominal 2.5 mm2 claim. Kept here as a literal so the validator fails if the
+# unit error returns to the published notes.
+CONDUCTOR_DERIVED_AREA_MM2 = "2.405"
+
+# docs/01 22.4/23.4 name the safety class a commanded-OFF-with-current frame maps
+# to. A host tool may not decide that classification, so the token has to stay in
+# the published Gate-A and acceptance rows instead of being smoothed away.
+ANOMALY_TOKEN = "CONTROL_ELECTRICAL_ANOMALY"
+DUTY_ZERO_DECAY_SEQUENCE = "7.15 -> 0.56 -> 0.02 -> 0.0"
+DUTY_ZERO_ZERO_AT_DEVICE_MS = "829894"
 
 # The committed-capture spine. Each value is re-derived from
 # evidence/A/W04/tec-cooling-response-600s.csv on every run; if the capture or
@@ -95,6 +109,17 @@ def read(path: pathlib.Path) -> str:
     return path.read_text(encoding="utf-8", errors="replace")
 
 
+def _expected_pinned_names() -> set[str]:
+    """Every dossier file is pinned except the pin file itself and Python caches.
+
+    Pinning both directions catches a stray file either way: an added file with no
+    pin, and a pin pointing at a cache or a deleted file.
+    """
+    return {path.relative_to(DOSSIER).as_posix() for path in DOSSIER.rglob("*")
+            if path.is_file() and path.name != "SHA256SUMS.txt"
+            and "__pycache__" not in path.parts and path.suffix != ".pyc"}
+
+
 def check_pins(failures: list[str]) -> dict[str, str]:
     sums_path = DOSSIER / "SHA256SUMS.txt"
     pinned: dict[str, str] = {}
@@ -111,6 +136,10 @@ def check_pins(failures: list[str]) -> dict[str, str]:
                 failures.append(f"unparsable SHA256SUMS line: {line[:80]!r}")
             continue
         digest, rel = match.groups()
+        if "__pycache__" in rel or rel.endswith(".pyc"):
+            failures.append(f"{rel} is pinned but is a Python cache: only dossier "
+                            "artifacts may be hash-pinned")
+            continue
         pinned[rel] = digest
         target = DOSSIER / rel
         if not target.is_file():
@@ -124,6 +153,11 @@ def check_pins(failures: list[str]) -> dict[str, str]:
                              "build_w08_artifacts.py", "validate_w08.py"):
         if name not in pinned:
             failures.append(f"{name} is not hash-pinned")
+    expected = _expected_pinned_names()
+    for unpinned in sorted(expected - set(pinned)):
+        failures.append(f"{unpinned} is in the dossier but not hash-pinned")
+    for stale in sorted(set(pinned) - expected):
+        failures.append(f"{stale} is pinned but should not be (cache or deleted file)")
     return pinned
 
 
@@ -191,8 +225,33 @@ def check_honest_verdicts(failures: list[str]) -> None:
         failures.append("fuse-selection.md no longer returns NO_FREEZE")
     if "1.75" not in fuse or "2 x 2.5 mm2" not in fuse.replace("×", "x"):
         failures.append("fuse-selection.md lost the conductor deviation record")
+    # The corrected conductor record: 1.75 is a core DIAMETER, so the area is a
+    # derived ~2.405 mm2 under a stated solid-round assumption. Requiring all three
+    # parts is what stops the old "1.75 mm2" unit error coming back, and stops the
+    # narrowed gap being read as nominal 2.5 mm2 compliance.
+    for token in (CONDUCTOR_DERIVED_AREA_MM2, "core diameter", "unit error",
+                  "round solid", "UNVERIFIED"):
+        if token not in fuse:
+            failures.append(
+                f"fuse-selection.md lost the corrected conductor record {token!r}")
+    if re.search(r"1\.75\s*mm2", fuse.replace("²", "")):
+        failures.append("fuse-selection.md states 1.75 mm2 again: 1.75 is the core "
+                        "diameter in mm, not the cross-section")
+    # A compliance claim is only allowed inside a sentence that denies it - the
+    # same convention the dossier uses for PHYSICALLY_VERIFIED.
+    for line in fuse.splitlines():
+        if re.search(r"(nominal|canonical) 2\.5\s*mm2 compliance", line) and not any(
+                marker in line.lower() for marker in NEGATIONS):
+            failures.append("fuse-selection.md asserts 2.5 mm2 compliance instead of "
+                            f"denying it: {line[:80]!r}")
+            break
     if "BLOCKED_HARDWARE" not in fuse:
         failures.append("fuse-selection.md lost its status label")
+    # The fuse value is operator-reported only, and a catalogue entry says nothing
+    # about the installed body: keep both statements in the published note.
+    for token in ("operator-reported", "catalogue", "legible"):
+        if token not in fuse:
+            failures.append(f"fuse-selection.md lost the fuse-evidence limit {token!r}")
 
     yaml_text = read(DOSSIER / "operating-envelope-v1.yaml")
     for token in ("do_not_extrapolate", "off_register_latency_rule",
@@ -208,6 +267,25 @@ def check_honest_verdicts(failures: list[str]) -> None:
         failures.append("Gate-A-report.md no longer reports GATE A NOT CLOSED")
     if "exists_in_this_checkout" not in report and "In this checkout" not in report:
         failures.append("Gate-A-report.md lost the H0-H7 index resolution column")
+
+    # Finding 1: the safety candidate and the recorded decay must stay published,
+    # and the pass-criteria rows must not pre-decide them.
+    for name, text in (("Gate-A-report.md", report), ("acceptance.md", acceptance)):
+        if ANOMALY_TOKEN not in text:
+            failures.append(f"{name} lost the {ANOMALY_TOKEN} candidate class "
+                            "(docs/01 22.4/23.4) for the duty-0-with-current frame")
+        if re.search(r"no unresolved high-current anomaly\D{0,30}\bMET\b", text,
+                     re.IGNORECASE):
+            failures.append(f"{name} asserts the high-current-anomaly criterion as "
+                            "MET, which pre-decides a safety classification a host "
+                            "tool cannot make")
+    for name, text in (("Gate-A-report.md", report), ("acceptance.md", acceptance)):
+        if DUTY_ZERO_DECAY_SEQUENCE not in text.replace("→", "->"):
+            failures.append(f"{name} no longer records the duty-0 current decay "
+                            f"{DUTY_ZERO_DECAY_SEQUENCE}")
+        if DUTY_ZERO_ZERO_AT_DEVICE_MS not in text:
+            failures.append(f"{name} lost the device_ms at which the PZEM-reported "
+                            "current reaches zero")
 
 
 def check_thermal_rows(failures: list[str]) -> list[dict[str, str]]:
@@ -312,11 +390,17 @@ def check_spine(failures: list[str]) -> None:
         failures.append("duty-zero-current-frames.csv lost the 826894/7.15 A frame")
 
 
-def check_declaration(failures: list[str]) -> None:
+def bench_root() -> pathlib.Path:
+    """The bench tree to byte-check against, never a hard-coded developer path."""
+    return pathlib.Path(os.environ.get("CG_W08_BENCH_ROOT",
+                                       str(envelope.DEFAULT_BENCH_ROOT)))
+
+
+def check_declaration(failures: list[str]) -> int:
     path = DOSSIER / DECLARED_INPUT
     if not path.is_file():
         failures.append(f"{DECLARED_INPUT} is missing")
-        return
+        return 0
     declaration = json.loads(read(path))
     provenance = declaration.get("provenance", {})
     for key, value in (("reproducible_from_git", False),
@@ -324,25 +408,29 @@ def check_declaration(failures: list[str]) -> None:
                        ("originals_copied_into_repository", False),
                        ("trust_class", "LOCAL_BENCH")):
         if provenance.get(key) != value:
+            # name the file, not the parsed dict: a provenance regression has to
+            # be reported, not raise AttributeError out of the validator.
             failures.append(f"{DECLARED_INPUT} provenance.{key} is not {value!r}")
     sessions = declaration.get("sessions", {})
     if len(sessions) != 18:
         failures.append(f"{DECLARED_INPUT} declares {len(sessions)} sessions, "
                         "expected 18 (12 H7 stages + 6 H8 sessions)")
+    root = bench_root()
+    skipped = 0
     for label, bundle in sorted(sessions.items()):
         locator = str(bundle["path"])
         if locator.startswith(envelope.LOCAL_BENCH_MARKER):
             # A <local-bench> locator is resolved against this checkout's sibling
             # bench tree, exactly as the generator wrote it; a machine without
             # that tree skips the byte check, a machine with it must agree.
-            declared = envelope.DEFAULT_BENCH_ROOT / locator[
-                len(envelope.LOCAL_BENCH_MARKER):]
+            declared = root / locator[len(envelope.LOCAL_BENCH_MARKER):]
         else:
             failures.append(f"{label}: the declared locator {locator!r} is not a "
                             f"{envelope.LOCAL_BENCH_MARKER} locator")
             continue
         if not declared.is_file():
-            continue  # expected on a machine without the local bench tree
+            skipped += 1  # expected on a machine without the local bench tree
+            continue  # the NOT RUN note makes the skip visible instead of silent
         if sha256(declared) != bundle["sha256"]:
             failures.append(f"{label}: the local source file changed since the "
                             "declaration was derived")
@@ -350,7 +438,7 @@ def check_declaration(failures: list[str]) -> None:
     if cross is None:
         failures.append("the raw 600 s session is not declared, so the cross-check "
                         "against the committed CSV cannot run")
-        return
+        return skipped
     frames = envelope.classify(
         envelope.read_h8_csv(REPO_ROOT / envelope.H8_CSV, "W04-H8C-box-600s"))
     git_drive = envelope.drive_stats(frames)
@@ -363,6 +451,7 @@ def check_declaration(failures: list[str]) -> None:
     if git_thermal["t2"] != cross["source_summary"]["thermal"]["t2"]:
         failures.append("the declared raw stream and the committed CSV disagree on the "
                         "hot-side trajectory")
+    return skipped
 
 
 def check_no_stray_originals(failures: list[str]) -> None:
@@ -384,6 +473,9 @@ def check_no_stray_originals(failures: list[str]) -> None:
     return unlisted
 
 
+LOCAL_BENCH_NOTE = "local-bench original byte-checks: NOT RUN (bench tree absent)"
+
+
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8", errors="replace")
@@ -398,15 +490,19 @@ def main() -> int:
     check_honest_verdicts(failures)
     check_thermal_rows(failures)
     check_spine(failures)
-    check_declaration(failures)
+    bench_skips = check_declaration(failures)
 
+    if bench_skips:
+        print(LOCAL_BENCH_NOTE)
     if failures:
         print("W08 DOSSIER: FAIL")
         for failure in failures:
             print(f"  - {failure}")
         return 1
+    checked_note = (f"{bench_skips} byte-checks NOT RUN" if bench_skips
+                    else "local-bench originals byte-checked")
     print(f"W08 DOSSIER: OK ({len(pinned)} pinned files, spine re-derived from the "
-          "committed capture, no physical claim present)")
+          f"committed capture, no physical claim present; {checked_note})")
     return 0
 
 

@@ -46,20 +46,22 @@ defensibly suitable, **the gate fails; do not improvise silently**.
 
 | Item | Record |
 |---|---|
-| Branch conductor | **1.75 mm2** (operator-confirmed; size never re-derived here) |
-| Canonical ask | `2 x 2.5 mm2` - deviation still open |
-| Fuse body marking | never photographed; 15 A is operator-reported |
+| Branch conductor | recorded as **1.75**, which the operator corrected on 2026-11-02 to the **copper core diameter in mm**, not a cross-section: the "mm2" in the old record was a unit error. Reading it as a round solid core gives **2.405 mm2** = pi x (1.75/2)^2 |
+| Conductor shape assumption | **round solid core**, stated, not proven: a stranded core is not one round wire and only the printed marking settles it |
+| Canonical ask | `2 x 2.5 mm2` - deviation still open; the area gap is **~3.8 %**, not the ~30 % the old unit-error wording implied, and no nominal 2.5 mm2 compliance is claimed |
+| Termination | FDD2-250 faston rated 1.5-2.5 mm2 covers the derived 2.405 mm2 - a fit check, not an ampacity basis |
+| Fuse body marking | never photographed; nothing is legible on the installed body (no current rating, no 250 V, no glass/ceramic, no blade size - `evidence/A/W04/fuse-commissioning-note.md`); 15 A is operator-reported only, and a shop listing or catalogue entry is not evidence about installed hardware |
 | Insulation class / run length / bundling | not recorded anywhere |
-| Ampacity basis for 1.75 mm2 | none cited in this repository |
+| Ampacity basis for the installed conductor | none cited in this repository |
 | BOM audit | `evidence/A/W01/bom-audit.csv` HW-19 = `UNVERIFIED` |
 
 ## 4. Candidate table, argued against the observations only
 
 | Candidate | Relation to observed peak | Headroom A | Justified by observation alone | Why not |
 |---|---|---|---|---|
-| 10 A | observed peak 9.99 A | 0.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed 1.75 mm2 branch has no recorded insulation class, run length or bundling; the body marking has never been photographed |
-| 15 A | observed peak 9.99 A | 5.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed 1.75 mm2 branch has no recorded insulation class, run length or bundling; the body marking has never been photographed |
-| 20 A | observed peak 9.99 A | 10.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed 1.75 mm2 branch has no recorded insulation class, run length or bundling; the body marking has never been photographed |
+| 10 A | observed peak 9.99 A | 0.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed branch has no recorded ampacity basis: 2.405 mm2 is derived from a 1.75 mm core diameter under a solid-round assumption, with no insulation class, run length or bundling recorded and no marking photographed |
+| 15 A | observed peak 9.99 A | 5.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed branch has no recorded ampacity basis: 2.405 mm2 is derived from a 1.75 mm core diameter under a solid-round assumption, with no insulation class, run length or bundling recorded and no marking photographed |
+| 20 A | observed peak 9.99 A | 10.01 | NO | a fuse rating is the conductor's ampacity coordinate, and the installed branch has no recorded ampacity basis: 2.405 mm2 is derived from a 1.75 mm core diameter under a solid-round assumption, with no insulation class, run length or bundling recorded and no marking photographed |
 
 ## 5. Recommended versus observed - kept apart on purpose
 
@@ -73,6 +75,8 @@ defensibly suitable, **the gate fails; do not improvise silently**.
   2 x 2.5 mm2 deviation is closed by replacement rather than accepted.
 * **Not claimed:** compliance, suitability of the installed 15 A fuse,
   continuous duty, or any permission to energize the branch.
+* **Conductor reinterpretation, stated once:** the corrected record reads as ~2.405 mm2 on a solid-round assumption, ~3.8 % under the canonical 2.5 mm2 and inside the FDD2-250 1.5-2.5 mm2 termination range. That narrows the geometric gap; it does not close it, and it is still not a nominal 2.5 mm2 conductor: no marking was photographed, HW-19 stays UNVERIFIED, and a stranded core would make the derived area wrong in an unknown direction.
+* **Fuse evidence, stated once:** the 15 A value is operator-reported only. Nothing is legible on the installed body, and a shop listing or catalogue entry for a fuse of that rating is not evidence about installed hardware, so suitability stays unproven and the verdict stays NO_FREEZE.
 
 ## 6. Verdict
 
@@ -82,9 +86,10 @@ defensibly suitable, **the gate fails; do not improvise silently**.
 
 ## 7. What closes it
 
-1. photograph of the installed fuse body rating (and the spare 10 A)
-1. insulation temperature class, run length and routing/bundling of the installed 1.75 mm2 branch, with a cited ampacity table
-1. either acceptance of the 1.75 mm2 deviation with its basis, or replacement by the canonical 2 x 2.5 mm2 with photo + marking
+1. photograph of the installed fuse body rating (and the spare 10 A) read off that body: the 15 A figure is operator-reported today, nothing is legible on the installed body (no current rating, no 250 V, no glass/ceramic, no blade size), and a shop listing or catalogue entry for a fuse of that rating is not evidence about installed hardware
+1. insulation temperature class, run length and routing/bundling of the installed branch (a 1.75 mm core diameter, 2.405 mm2 if solid round), with a cited ampacity table for the real installation
+1. the conductor marking photographed, so the solid-round assumption is either confirmed or replaced by the printed cross-section; until then the 3.8 % gap to the canonical 2 x 2.5 mm2 ask is an assumption-based reading and HW-19 stays UNVERIFIED
+1. either acceptance of the conductor deviation with its basis, or replacement by the canonical 2 x 2.5 mm2 with photo + marking
 1. an IBT-2/terminal temperature observation during a long run (A-W08-03's fourth bullet, which no recorded frame measures)
 
 Status label for the whole file: **BLOCKED_HARDWARE** (physical inputs

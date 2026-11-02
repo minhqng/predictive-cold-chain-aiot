@@ -362,6 +362,48 @@ def _anomaly(source: str, frame: envelope.Frame, kind: str) -> dict[str, object]
     }
 
 
+ZERO_DUTY_FOLLOW_FRAMES = 6
+
+ZERO_DUTY_TRACE_NOTE = (
+    "the recorded sequence is what the PZEM itself reported while the applied duty "
+    "stayed 0; no independent instrument stands behind it, so it does not verify that "
+    "the branch was de-energized and it does not settle the anomaly classification"
+)
+
+
+def zero_duty_follow_through(frames: list[envelope.Frame],
+                             index: int) -> dict[str, object]:
+    """The recorded duty-0 frames after an applied-OFF-with-current frame.
+
+    The operator's 2026-11-02 correction asked for the whole decay to be recorded
+    instead of only the first held frame: for the committed 600 s capture the applied
+    duty stays 0 while the reported current falls 7.15 -> 0.56 -> 0.02 -> 0.0 A and
+    reaches zero at device_ms=829894. Nothing is interpolated here - each value is the
+    frame as recorded, and the walk stops at the first frame whose applied duty is not
+    0 (or that carries no applied duty at all), so a re-energized branch can never be
+    read as part of the decay.
+    """
+    trace: list[dict[str, object]] = []
+    for follow in frames[index + 1:index + 1 + ZERO_DUTY_FOLLOW_FRAMES]:
+        if follow.duty_applied != 0 or follow.current_a is None:
+            break
+        trace.append({"device_ms": envelope.r(follow.clock_ms, 0),
+                      "current_a": envelope.r(follow.current_a)})
+        if follow.current_a == 0.0:
+            break  # the decay is recorded up to the first zero, no further
+    returns_to_zero = next((t["device_ms"] for t in trace if t["current_a"] == 0.0),
+                            None)
+    return {
+        "frames_after_suspect": trace,
+        "zero_duty_current_sequence_a": (
+            [envelope.r(frames[index].current_a)] + [t["current_a"] for t in trace]),
+        "current_returns_to_zero_at_device_ms": returns_to_zero,
+        "applied_duty_stayed_zero_throughout": (
+            returns_to_zero is not None or bool(trace)),
+        "trace_provenance": ZERO_DUTY_TRACE_NOTE,
+    }
+
+
 def on_off_consistency(sources: dict[str, list[envelope.Frame]]) -> dict[str, object]:
     """Applied duty against measured current, per frame.
 
@@ -381,7 +423,7 @@ def on_off_consistency(sources: dict[str, list[envelope.Frame]]) -> dict[str, ob
     }
     anomalies: list[dict[str, object]] = []
     for source, frames in sorted(sources.items()):
-        for frame in frames:
+        for index, frame in enumerate(frames):
             applied, req, current = frame.duty_applied, frame.duty_req, frame.current_a
             if applied is None or current is None:
                 continue
@@ -400,8 +442,13 @@ def on_off_consistency(sources: dict[str, list[envelope.Frame]]) -> dict[str, ob
             else:
                 if current > envelope.OFF_STEADY_MAX_A:
                     buckets["applied_off_current_above_floor"] += 1
-                    anomalies.append(
-                        _anomaly(source, frame, "APPLIED_OFF_CURRENT_ABOVE_FLOOR"))
+                    anomaly = _anomaly(
+                        source, frame, "APPLIED_OFF_CURRENT_ABOVE_FLOOR")
+                    # Record the whole decay the operator confirmed, not only the
+                    # first held frame: which frames followed while the applied duty
+                    # stayed 0, and where the reported current reached zero.
+                    anomaly.update(zero_duty_follow_through(frames, index))
+                    anomalies.append(anomaly)
                 else:
                     buckets["applied_off_current_at_or_below_floor"] += 1
     return {
@@ -409,10 +456,15 @@ def on_off_consistency(sources: dict[str, list[envelope.Frame]]) -> dict[str, ob
         "anomaly_count": len(anomalies),
         "anomalies": anomalies,
         "status_label": "REAL_DATA_ANALYZED",
-        "note": ("APPLIED_OFF_CURRENT_ABOVE_FLOOR frames are candidate anomalies only: "
-                 "the same values repeated from the preceding driven frame is the "
-                 "competing register-holdover explanation, and this tool does not "
-                 "choose between them"),
+        "zero_duty_trace_provenance": ZERO_DUTY_TRACE_NOTE,
+        "note": ("APPLIED_OFF_CURRENT_ABOVE_FLOOR frames are candidate anomalies only, "
+                 "and two explanations compete without this host tool choosing "
+                 "between them: the canonical safety class CONTROL_ELECTRICAL_ANOMALY "
+                 "(docs/01 22.4 'Commanded OFF + unexpected current' and 23.4 'current "
+                 "while state should be OFF', high severity), and the register-holdover "
+                 "reading in which the same values merely repeat the preceding driven "
+                 "frame. The anomaly option stays open, exactly as docs/01 23.5 "
+                 "prefers UNKNOWN over invented certainty"),
     }
 
 
@@ -800,7 +852,7 @@ RUN_INDEX_COLUMNS = [
     "session", "trust", "file", "frames", "has_command_field", "has_applied_duty",
     "duty_permille_values", "driven_frames", "has_voltage", "has_current", "has_power",
     "has_energy", "thermal_channels", "electrical_status_recorded",
-    "usable_for_electrical_ablation", "why_not", "status_label",
+    "usable_for_electrical_ablation", "why_not", "caveats", "status_label",
 ]
 
 
@@ -874,6 +926,40 @@ def io_error_breakdown(audit_report: dict[str, object]) -> str:
         if count:
             parts.append(f"{row['source']} {count}")
     return "; ".join(parts) if parts else "none in any source"
+
+
+def applied_off_follow_through(audit_report: dict[str, object]
+                               ) -> list[dict[str, object]]:
+    """The applied-OFF anomalies that carry a recorded follow-through trace."""
+    consistency = audit_report["on_off_consistency"]
+    return [a for a in consistency["anomalies"]
+            if a["kind"] == "APPLIED_OFF_CURRENT_ABOVE_FLOOR"
+            and a.get("zero_duty_current_sequence_a")]
+
+
+def applied_off_follow_through_rows(audit_report: dict[str, object]) -> list[str]:
+    """One markdown row per applied-OFF frame: the decay as recorded, frame by frame."""
+    rows = []
+    for a in applied_off_follow_through(audit_report):
+        sequence = " -> ".join(str(v) for v in a["zero_duty_current_sequence_a"])
+        returns = a["current_returns_to_zero_at_device_ms"]
+        rows.append(f"| {a['source']} | {a['clock_ms']:.0f} | {sequence} | "
+                    f"{'%.0f' % returns if returns is not None else 'not observed'} |")
+    return rows
+
+
+def applied_off_follow_through_sentence(audit_report: dict[str, object]) -> str:
+    """The reading of that decay, and the limit of what it proves."""
+    provenance = audit_report["on_off_consistency"]["zero_duty_trace_provenance"]
+    return (
+        "For the committed capture the sequence is **7.15 -> 0.56 -> 0.02 -> 0.0 A**, "
+        "reaching zero at `device_ms=829894`. That decay supports register/transition "
+        "lag and weakens sustained-energization, and it is recorded here exactly as the "
+        f"operator confirmed it on 2026-11-02 - but {provenance}. A measured value and "
+        "a verified physical current are different claims, so the safety "
+        "qualification of the CONTROL_ELECTRICAL_ANOMALY candidate stays open, and a "
+        "short unpowered inspection does not close it: that classification and Member "
+        "D's unresolved thresholds gate the energized sessions as well.")
 
 
 def render_pzem_quality_report(audit_report: dict[str, object],
@@ -1078,6 +1164,19 @@ def render_pzem_quality_report(audit_report: dict[str, object],
         "OFF, applied duty 0, 7.15 A, an empty status cell, and every measured "
         "field identical to the two preceding driven frames - and it is "
         "**not** averaged into any peak.",
+        "",
+        "### What the meter reported after each applied-OFF frame above the floor",
+        "",
+        "The whole recorded decay, not only the first held frame. The applied duty "
+        "stayed 0 across each row below; the walk stops at the first frame whose "
+        "applied duty is not 0, and once the reported current reaches 0.0 A.",
+        "",
+        "| source | device_ms | PZEM-reported current A while applied duty stayed 0 | "
+        "returns to 0.0 A at device_ms |",
+        "|---|---|---|---|",
+    ] + applied_off_follow_through_rows(audit_report) + [
+        "",
+        applied_off_follow_through_sentence(audit_report),
         "",
         "## 6. Power consistency (A-W15-01's fourth bullet)",
         "",
