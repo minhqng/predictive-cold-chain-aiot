@@ -110,18 +110,29 @@ def _status_key(row: dict[str, str], key: str) -> str | None:
 
 
 def reading(row: dict[str, str], key: str) -> tuple[float | None, str]:
-    """(value, state) where state is ok / unqualified / invalid / absent."""
+    """(value, state) where state is ok / unqualified / invalid / absent.
+
+    `ok` requires a recorded OK, not the absence of a complaint: a field with no status
+    column is unqualified, because nothing in the capture ever vouched for it.
+    """
     raw = (row.get(key) or "").strip()
     if raw in _MISSING_VALUE:
         return None, "absent"
     status_key = _status_key(row, key)
-    state = "ok"
-    if status_key is not None:
+    if status_key is None:
+        # No status column exists for this field at all. That is not the same as a
+        # recorded OK: power and energy are carried by this capture without any
+        # validity field, and reading their silence as "fine" would qualify a whole
+        # column of numbers that nothing ever checked.
+        state = "unqualified"
+    else:
         status = (row.get(status_key) or "").strip()
         if status == "":
             state = "unqualified"
         elif status != "OK":
             return None, "invalid"
+        else:
+            state = "ok"
     try:
         return float(raw), state
     except ValueError:
@@ -226,7 +237,11 @@ def split_phases(rows: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
 
     return {
         "baseline": usable(rows[:first]),
-        "cooling": middle,
+        # The driven span is defined by its first and last cooling row, but a row inside
+        # it that carries no applied duty is not evidence of the driven phase. Leaving it
+        # in `cooling` while also listing it under `undetermined` counted the same row
+        # twice; the four lists must partition the capture.
+        "cooling": usable(middle),
         "recovery": usable(rows[last + 1:]),
         "undetermined": (pending(rows[:first]) + pending(middle)
                          + pending(rows[last + 1:])),
@@ -286,8 +301,10 @@ def phase_metrics(rows: list[dict[str, str]], phase: str,
 
     currents, current_unqualified, current_invalid = _column_stats(rows, "current_a")
     powers, power_unqualified, _ = _column_stats(rows, "power_w")
-    energies, _, _ = _column_stats(rows, "energy_wh")
+    energies, energy_unqualified, _ = _column_stats(rows, "energy_wh")
     voltages, voltage_unqualified, _ = _column_stats(rows, "voltage_v")
+    electrical_unqualified = (current_unqualified + voltage_unqualified
+                              + power_unqualified + energy_unqualified)
     doors = sorted({(row.get("door_open") or "MISSING").strip() or "MISSING" for row in rows})
     slope = trailing_slope_c_per_min(points)
     whole = _least_squares(points)
@@ -302,11 +319,14 @@ def phase_metrics(rows: list[dict[str, str]], phase: str,
         "current_rows_invalid": current_invalid,
         "power_rows_unqualified": power_unqualified,
         "voltage_rows_unqualified": voltage_unqualified,
-        "electrical_status_recorded": current_unqualified == 0,
+        "energy_rows_unqualified": energy_unqualified,
+        "electrical_rows_unqualified": electrical_unqualified,
+        "electrical_status_recorded": electrical_unqualified == 0,
         "electrical_status_note": (
-            "current/voltage carried no OK status in this capture: the values are "
-            "unqualified, not verified" if current_unqualified
-            else "current/voltage statuses were recorded"),
+            "no electrical column in this capture carries a recorded OK: current and "
+            "voltage have empty status cells and power/energy have no status column at "
+            "all, so the values are unqualified, not verified"
+            if electrical_unqualified else "every electrical status was recorded OK"),
         "duration_min": round(points[-1][0] - points[0][0], 4),
         "start_c": round(points[0][1], 4),
         "end_c": round(points[-1][1], 4),
@@ -314,6 +334,10 @@ def phase_metrics(rows: list[dict[str, str]], phase: str,
         "max_c": round(max(p[1] for p in points), 4),
         "delta_c": round(points[-1][1] - points[0][1], 4),
         "trailing_slope_is_not_a_phase_summary": True,
+        # Derived, so the claim above is checkable rather than decorative: if the two
+        # definitions ever return the same number, this says so instead of hiding it.
+        "trailing_differs_from_whole_phase": (slope is not None and whole is not None
+                                              and abs(slope - whole) > 1e-9),
         "slope_c_per_min": None if slope is None else round(slope, 6),
         "whole_phase_slope_c_per_min": None if whole is None else round(whole, 6),
         "minutes_to_1c": _time_to_move(points, phase, 1.0),

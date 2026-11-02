@@ -193,7 +193,9 @@ class MetricsTests(unittest.TestCase):
                             t1_c=value, t2_c=30.0 + 0.01 * index, t3_c=value - 0.1,
                             t4_c=value + 0.05))
         metrics = rep.phase_metrics(rows, "cooling", "tmean_airroles_v0")
-        self.assertTrue(metrics["trailing_slope_is_not_a_phase_summary"])
+        self.assertTrue(metrics["trailing_differs_from_whole_phase"])
+        self.assertNotEqual(metrics["slope_c_per_min"],
+                            metrics["whole_phase_slope_c_per_min"])
         self.assertGreater(metrics["slope_c_per_min"], 0.0)
         self.assertLess(metrics["whole_phase_slope_c_per_min"], 0.0)
         self.assertIn("trailing_window_least_squares_v0", metrics["slope_definition"])
@@ -330,6 +332,56 @@ class OverlayTests(unittest.TestCase):
         self.assertEqual(len(cooling_rows), cooling["samples"])
         self.assertEqual(cooling["partial_term_rows"] + cooling["no_term_rows"],
                          cooling["skipped_rows"])
+
+
+class QualificationTests(unittest.TestCase):
+    """Silence is not a check: no status column means no recorded validity."""
+
+    def test_a_column_with_no_status_column_is_unqualified(self) -> None:
+        self.assertEqual(rep.reading(row(power_w="68.0"), "power_w")[1], "unqualified")
+        self.assertEqual(rep.reading(row(current_a="7.0", current_status="OK"),
+                                     "current_a")[1], "ok")
+
+    def test_energy_and_power_count_toward_the_electrical_qualification(self) -> None:
+        """A segment whose current and voltage are checked, power and energy are not."""
+        rows = ramp(0, 4, 999, 0.01)
+        metrics = rep.phase_metrics(rows, "cooling", "tmean_airroles_v0")
+        self.assertEqual(metrics["current_rows_unqualified"], 0)
+        self.assertEqual(metrics["voltage_rows_unqualified"], 0)
+        self.assertEqual(metrics["power_rows_unqualified"], len(rows))
+        self.assertEqual(metrics["energy_rows_unqualified"], len(rows))
+        self.assertEqual(metrics["electrical_rows_unqualified"],
+                         metrics["current_rows_unqualified"]
+                         + metrics["voltage_rows_unqualified"]
+                         + metrics["power_rows_unqualified"]
+                         + metrics["energy_rows_unqualified"])
+        self.assertFalse(metrics["electrical_status_recorded"])
+
+    def test_a_recorded_ok_current_does_not_make_power_checked(self) -> None:
+        """One qualified column must not lend its status to the others."""
+        metrics = rep.phase_metrics(ramp(0, 4, 999, 0.01), "cooling", "tmean_airroles_v0")
+        self.assertEqual(metrics["current_rows_unqualified"], 0)
+        self.assertGreater(metrics["power_rows_unqualified"], 0)
+        self.assertFalse(metrics["electrical_status_recorded"])
+
+
+class PartitionTests(unittest.TestCase):
+    """The four phase lists must partition the capture, not overlap."""
+
+    def test_the_four_phase_lists_partition_the_capture(self) -> None:
+        rows = (ramp(0, 3, 0, 0.0)
+                + [row(device_ms=4000, pwm_applied_permille=999),
+                   row(device_ms=5000, pwm_applied_permille="", current_a="7.0"),
+                   row(device_ms=6000, pwm_applied_permille=999)]
+                + ramp(7000, 3, 0, 0.0))
+        parts = rep.split_phases(rows)
+        self.assertEqual(sum(len(v) for v in parts.values()), len(rows))
+        seen: list[str] = []
+        for segment in parts.values():
+            seen += [row["device_ms"] for row in segment]
+        self.assertEqual(len(seen), len(set(seen)), "a row is filed in two phases")
+        self.assertNotIn("5000", [row["device_ms"] for row in parts["cooling"]])
+        self.assertIn("5000", [row["device_ms"] for row in parts["undetermined"]])
 
 
 class ProvenanceTests(unittest.TestCase):
