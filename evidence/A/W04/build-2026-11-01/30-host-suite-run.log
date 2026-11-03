@@ -1,0 +1,23 @@
+# W04 host verification suite for the delivery tree, run 2026-11-01T16:00:42Z
+# command: py firmware/tools/run_all_checks_w04.py   (worktree A-W04-delivery, base origin/main 8b73da8)
+# 185 unittest tests + 3 static checkers + 3 dossier validators, all PASS, exit 0.
+# This log is itself pinned by ../SHA256SUMS.txt, so the run was captured to a scratch path,
+# copied here and the pins regenerated; the final unredirected run of the same command also
+# returned 7/7. No line of the suite output was edited.
+
+[PASS] host tools: unittest suite (W02 + W03 + W04)
+[PASS] firmware: W04 static contract checks
+[PASS] firmware: W03 static contract checks (regression)
+[PASS] firmware: W02 static contract checks (regression)
+[PASS] evidence: W02 dossier validator (regression)
+[PASS] evidence: W03 dossier validator (regression)
+[PASS] evidence: W04 dossier validator (hash pins, no flash images, honest verdict)
+
+W04 CHECKS: 7/7 passed
+Reminder: no check here compiles the firmware or touches hardware.
+Compile check: ESP-IDF v6.1 build, logged in evidence/A/W04/build-2026-11-01/.
+W04 FOUNDATION DELIVERED — PRODUCTION TEC OUTPUT STAGE COMPILED OUT AND NOT AUTHORIZED
+H6 bench energization already ran under operator supervision (2026-10-29, PWM 10%, 60s).
+Physical W04 work still missing: polarity record with photo, 5-boot/5-reset sweep,
+final fuse basis, 2x2.5 mm2 conductor-class audit, thermal channels in the first trace,
+and the canonical W04 deliverable files. See evidence/A/W04/acceptance.md.

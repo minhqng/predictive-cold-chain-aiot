@@ -1,0 +1,7 @@
+764792967f1a0910d20290c9c2a51611a7a6d3cb0441d2c175b4200d0f3ff10d *bootloader/bootloader.bin
+7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820 *partition_table/partition-table.bin
+573f9181a93029f4034058caf9118fa903f755c63518fcd103a35019fbc721e9 *coldguard_h6_bench.bin
+44d9b36d850a8fc1a8892f68964c1635919c147d06d186478636adf675425006 *coldguard_h6_bench.elf
+
+# rebuilt 2026-10-29 22:25 (PZEM read-policy fix), flashed 22:31; app+bootloader+parttable as read back from device
+963f3cd623b8c8fade910adda723c0f178e7bc303528b63ed6520fd12110858d *coldguard_h6_bench.bin

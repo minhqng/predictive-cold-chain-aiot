@@ -1,0 +1,12 @@
+39dd8332442fc45d394e70a41b7c7fac3bd16e2383a92f8f44cf085c4b15e299 *_w04-g1-evidence/fw-build/firmware/build/coldguard_firmware.bin
+73a7b9e7dcee89d4066cff79e865c619b503c33fe5e5bcc12a2e396e873566f2 *_w04-g1-evidence/fw-build/firmware/build/coldguard_firmware.elf
+b1aeaf744710bc1aa533c7ac428f814cd8ba8469fd304585cd344e1fa52aef94 *_w04-g1-evidence/fw-build/firmware/build/bootloader/bootloader.bin
+7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820 *_w04-g1-evidence/fw-build/firmware/build/partition_table/partition-table.bin
+---MTIMES---
+2026-10-29 18:15:59.712929100 +0700 _w04-g1-evidence/fw-build/firmware/build/coldguard_firmware.bin
+2026-10-29 18:14:45.976714300 +0700 A-W04-tec-commissioning/firmware/main/cg_commission.c
+2026-10-29 13:29:33.531973700 +0700 A-W04-tec-commissioning/firmware/main/coldguard_config.h
+2026-10-29 13:00:13.777660500 +0700 A-W04-tec-commissioning/firmware/main/cg_ds18b20.c
+2026-10-29 13:00:13.782720900 +0700 A-W04-tec-commissioning/firmware/main/cg_rom_map.c
+2026-10-29 13:29:18.569734400 +0700 A-W04-tec-commissioning/firmware/main/cg_telemetry.c
+2026-10-29 13:08:11.691341800 +0700 A-W04-tec-commissioning/firmware/main/app_main.c
