@@ -52,6 +52,7 @@ evidence/A/W07/** -text
 # Member A handoff contracts rehomed into W07
 evidence/A/HANDOFF/** -text
 
+<<<<<<< HEAD
 # W08 envelope/Gate-A dossier: hash-pinned in evidence/A/W08/SHA256SUMS.txt and
 # re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
 # those bytes on a core.autocrlf checkout and break every pin.
@@ -78,3 +79,10 @@ evidence/A/W12/** -text
 # on a checkout with core.autocrlf and break every pin.
 evidence/A/W13/** -text
 >>>>>>> origin/feat/a-w13-response-timing
+=======
+# W14 spatial/position QA dossier: every file is hash-pinned in
+# evidence/A/W14/SHA256SUMS.txt and re-checked by validate_w14.py, so the generated
+# JSON/CSV must keep their exact bytes. `text=auto eol=lf` would rewrite them on a
+# checkout with core.autocrlf and break every pin.
+evidence/A/W14/** -text
+>>>>>>> origin/feat/a-w14-spatial-statistics

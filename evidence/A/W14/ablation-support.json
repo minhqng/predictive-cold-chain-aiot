@@ -1,0 +1,1417 @@
+{
+  "canonical_rule": "docs/05A A-W14-02: do NOT unplug T2/T3 for core A1; B selects the feature set logically from the same runs",
+  "captures": [
+    {
+      "boot_ids": [
+        "56044b74"
+      ],
+      "capture": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "class": "THERMAL_RESPONSE",
+      "condition_columns": [
+        "device_ms",
+        "state",
+        "pwm_applied_permille",
+        "door_open",
+        "boot_id"
+      ],
+      "conditioning_fingerprint": "d1671cc668ca0fa1",
+      "independent_sessions": 1,
+      "physical_condition_control": {
+        "capture_fingerprint": "d1671cc668ca0fa1",
+        "condition_columns": [
+          "device_ms",
+          "state",
+          "pwm_applied_permille",
+          "door_open",
+          "boot_id"
+        ],
+        "fingerprints_stamped_on_variant_rows": [
+          "d1671cc668ca0fa1"
+        ],
+        "note": "the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/boot_id over the rows a statistic walked, so two variants that differ in anything but the probe set disagree here and are reported, not averaged",
+        "one_fingerprint_per_capture": true,
+        "phases_where_variants_disagree_on_used_rows": [],
+        "phases_with_no_usable_variant": [
+          "undetermined"
+        ],
+        "used_rows_fingerprint_per_phase": {
+          "baseline": [
+            "3f548d3e09f4d95a"
+          ],
+          "cooling": [
+            "8512f2f8a65e3c77"
+          ],
+          "recovery": [
+            "cfab6ca2eabf9ef5"
+          ],
+          "undetermined": []
+        }
+      },
+      "provenance": {
+        "device_ms_first": "904",
+        "device_ms_last": "956894",
+        "session": "H8 box-cooling 600 s, stage H8-C, 2026-11-01, image 01cedce3..."
+      },
+      "rows": 957,
+      "undetermined_rows": 0,
+      "variants": {
+        "air_pair_bottom_door_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0625,
+            "duration_min": 3.7498,
+            "end_c": 29.9375,
+            "feature_roles": [
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.0,
+            "mean_c": 29.9227,
+            "min_c": 29.875,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0299,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.875,
+            "trailing_slope_c_per_min": 0.011026,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_pair_bottom_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.02309
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.4375,
+            "duration_min": 9.9833,
+            "end_c": 21.5315,
+            "feature_roles": [
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.0,
+            "mean_c": 23.8411,
+            "min_c": 21.5315,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.648,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.969,
+            "trailing_slope_c_per_min": -0.081397,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_pair_bottom_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.828182
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.062,
+            "duration_min": 2.1667,
+            "end_c": 26.5935,
+            "feature_roles": [
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.5935,
+            "mean_c": 23.625,
+            "min_c": 21.5315,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.7488,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.5315,
+            "trailing_slope_c_per_min": 2.917246,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_pair_bottom_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 2.722882
+          }
+        },
+        "air_pair_center_bottom_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0935,
+            "duration_min": 3.7498,
+            "end_c": 29.9375,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.9685,
+            "mean_c": 29.9057,
+            "min_c": 29.844,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0346,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.844,
+            "trailing_slope_c_per_min": 0.027407,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_pair_center_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.028253
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.6875,
+            "duration_min": 9.9833,
+            "end_c": 21.25,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.9685,
+            "mean_c": 23.6503,
+            "min_c": 21.25,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.7594,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.9375,
+            "trailing_slope_c_per_min": -0.081897,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_pair_center_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.864815
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.281,
+            "duration_min": 2.1667,
+            "end_c": 26.531,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.531,
+            "mean_c": 23.4294,
+            "min_c": 21.25,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.8421,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.25,
+            "trailing_slope_c_per_min": 3.074948,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_pair_center_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 2.865837
+          }
+        },
+        "air_pair_center_door_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.094,
+            "duration_min": 3.7498,
+            "end_c": 30.125,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.1565,
+            "mean_c": 30.0869,
+            "min_c": 30.031,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0358,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.031,
+            "trailing_slope_c_per_min": 0.022957,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_pair_center_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.030211
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -9.0,
+            "duration_min": 9.9833,
+            "end_c": 21.1565,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.1565,
+            "mean_c": 23.4756,
+            "min_c": 21.1565,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.8253,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.1565,
+            "trailing_slope_c_per_min": -0.047016,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_pair_center_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.871316
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.656,
+            "duration_min": 2.1667,
+            "end_c": 26.8125,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.8125,
+            "mean_c": 23.5682,
+            "min_c": 21.1565,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.982,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.1565,
+            "trailing_slope_c_per_min": 3.299488,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_pair_center_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 3.090762
+          }
+        },
+        "air_t1_center_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.125,
+            "duration_min": 3.7498,
+            "end_c": 30.125,
+            "feature_roles": [
+              "CHAMBER_CENTER"
+            ],
+            "feature_terms": [
+              "t1_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.125,
+            "mean_c": 30.07,
+            "min_c": 30.0,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0439,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.0,
+            "trailing_slope_c_per_min": 0.039338,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_t1_center_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.035374
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -9.25,
+            "duration_min": 9.9833,
+            "end_c": 20.875,
+            "feature_roles": [
+              "CHAMBER_CENTER"
+            ],
+            "feature_terms": [
+              "t1_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.125,
+            "mean_c": 23.2848,
+            "min_c": 20.875,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.9362,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.125,
+            "trailing_slope_c_per_min": -0.047516,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_t1_center_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.90795
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.875,
+            "duration_min": 2.1667,
+            "end_c": 26.75,
+            "feature_roles": [
+              "CHAMBER_CENTER"
+            ],
+            "feature_terms": [
+              "t1_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.75,
+            "mean_c": 23.3726,
+            "min_c": 20.875,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 2.0753,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 20.875,
+            "trailing_slope_c_per_min": 3.457191,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_t1_center_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 3.233718
+          }
+        },
+        "air_t3_bottom_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.062,
+            "duration_min": 3.7498,
+            "end_c": 29.75,
+            "feature_roles": [
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.812,
+            "mean_c": 29.7415,
+            "min_c": 29.688,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0327,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.688,
+            "trailing_slope_c_per_min": 0.015475,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_t3_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.021133
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.125,
+            "duration_min": 9.9833,
+            "end_c": 21.625,
+            "feature_roles": [
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.812,
+            "mean_c": 24.0158,
+            "min_c": 21.625,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.5852,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.75,
+            "trailing_slope_c_per_min": -0.116278,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_t3_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.821681
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 4.687,
+            "duration_min": 2.1667,
+            "end_c": 26.312,
+            "feature_roles": [
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.312,
+            "mean_c": 23.4862,
+            "min_c": 21.625,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.6105,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.625,
+            "trailing_slope_c_per_min": 2.692706,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_t3_bottom_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 2.497957
+          }
+        },
+        "air_t4_near_door_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.063,
+            "duration_min": 3.7498,
+            "end_c": 30.125,
+            "feature_roles": [
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.188,
+            "mean_c": 30.1038,
+            "min_c": 30.062,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0337,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.062,
+            "trailing_slope_c_per_min": 0.006576,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "air_t4_near_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.025048
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.75,
+            "duration_min": 9.9833,
+            "end_c": 21.438,
+            "feature_roles": [
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.188,
+            "mean_c": 23.6663,
+            "min_c": 21.438,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.7149,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.188,
+            "trailing_slope_c_per_min": -0.046516,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "air_t4_near_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -0.834683
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.437,
+            "duration_min": 2.1667,
+            "end_c": 26.875,
+            "feature_roles": [
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.875,
+            "mean_c": 23.7639,
+            "min_c": 21.438,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.8889,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.438,
+            "trailing_slope_c_per_min": 3.141786,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "air_t4_near_door_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 2.947807
+          }
+        },
+        "hot_t2_surface_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0,
+            "duration_min": 3.7498,
+            "end_c": 29.875,
+            "feature_roles": [
+              "TEC_HOT_SIDE"
+            ],
+            "feature_terms": [
+              "t2_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 29.938,
+            "mean_c": 29.8887,
+            "min_c": 29.875,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.026,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.875,
+            "trailing_slope_c_per_min": -0.014386,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "hot_t2_surface_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.004887
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 9.687,
+            "duration_min": 9.9833,
+            "end_c": 39.562,
+            "feature_roles": [
+              "TEC_HOT_SIDE"
+            ],
+            "feature_terms": [
+              "t2_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 39.938,
+            "mean_c": 37.5119,
+            "min_c": 29.875,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.4034,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.875,
+            "trailing_slope_c_per_min": 0.194853,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "hot_t2_surface_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": 0.695021
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -7.937,
+            "duration_min": 2.1667,
+            "end_c": 31.625,
+            "feature_roles": [
+              "TEC_HOT_SIDE"
+            ],
+            "feature_terms": [
+              "t2_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 39.562,
+            "mean_c": 35.3798,
+            "min_c": 31.625,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 2.691,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 39.562,
+            "trailing_slope_c_per_min": -4.257636,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "hot_t2_surface_v0",
+            "variant_kind": "single_probe",
+            "variant_source": "cg_w14_spatial (W07 registers no single-probe set)",
+            "whole_phase_slope_c_per_min": -4.220135
+          }
+        },
+        "tmean_airroles_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0833,
+            "duration_min": 3.7498,
+            "end_c": 30.0,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.0417,
+            "mean_c": 29.9718,
+            "min_c": 29.9167,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0323,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.9167,
+            "trailing_slope_c_per_min": 0.020463,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "tmean_airroles_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 0.027185
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.7083,
+            "duration_min": 9.9833,
+            "end_c": 21.3127,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 30.0417,
+            "mean_c": 23.6557,
+            "min_c": 21.3127,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.7438,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 30.021,
+            "trailing_slope_c_per_min": -0.070104,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "tmean_airroles_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": -0.854771
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.333,
+            "duration_min": 2.1667,
+            "end_c": 26.6457,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.6457,
+            "mean_c": 23.5409,
+            "min_c": 21.3127,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.8575,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.3127,
+            "trailing_slope_c_per_min": 3.097228,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "tmean_airroles_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 2.89316
+          }
+        },
+        "tmean_chamber3_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0623,
+            "duration_min": 3.7498,
+            "end_c": 29.9167,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 29.9583,
+            "mean_c": 29.9001,
+            "min_c": 29.8543,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0263,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.8543,
+            "trailing_slope_c_per_min": 0.013476,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "tmean_chamber3_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 0.020464
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -2.5627,
+            "duration_min": 9.9833,
+            "end_c": 27.354,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 30.5837,
+            "mean_c": 28.2709,
+            "min_c": 27.1877,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 1.1383,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.9167,
+            "trailing_slope_c_per_min": 0.010353,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "tmean_chamber3_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": -0.34487
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.875,
+            "duration_min": 2.1667,
+            "end_c": 28.229,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c"
+            ],
+            "includes_hot_side": true,
+            "is_chamber_air": false,
+            "max_c": 28.229,
+            "mean_c": 27.4129,
+            "min_c": 26.9373,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 0.3992,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 27.354,
+            "trailing_slope_c_per_min": 0.630754,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "tmean_chamber3_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 0.503846
+          }
+        },
+        "tmean_t2excluded_v0": {
+          "baseline": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 0.0935,
+            "duration_min": 3.7498,
+            "end_c": 29.9375,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.9685,
+            "mean_c": 29.9057,
+            "min_c": 29.844,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "baseline",
+            "rows_read": 226,
+            "samples": 226,
+            "sd_within_session_sample_c": 0.0346,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.844,
+            "trailing_slope_c_per_min": 0.027407,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 226,
+            "used_rows_conditioning_fingerprint": "3f548d3e09f4d95a",
+            "variant": "tmean_t2excluded_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 0.028253
+          },
+          "cooling": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": -8.6875,
+            "duration_min": 9.9833,
+            "end_c": 21.25,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 29.9685,
+            "mean_c": 23.6503,
+            "min_c": 21.25,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "cooling",
+            "rows_read": 600,
+            "samples": 600,
+            "sd_within_session_sample_c": 2.7594,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 29.9375,
+            "trailing_slope_c_per_min": -0.081897,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 600,
+            "used_rows_conditioning_fingerprint": "8512f2f8a65e3c77",
+            "variant": "tmean_t2excluded_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": -0.864815
+          },
+          "recovery": {
+            "conditioning_fingerprint": "d1671cc668ca0fa1",
+            "delta_c": 5.281,
+            "duration_min": 2.1667,
+            "end_c": 26.531,
+            "feature_roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM"
+            ],
+            "feature_terms": [
+              "t1_c",
+              "t3_c"
+            ],
+            "includes_hot_side": false,
+            "is_chamber_air": true,
+            "max_c": 26.531,
+            "mean_c": 23.4294,
+            "min_c": 21.25,
+            "no_term_rows": 0,
+            "partial_term_rows": 0,
+            "phase": "recovery",
+            "rows_read": 131,
+            "samples": 131,
+            "sd_within_session_sample_c": 1.8421,
+            "skipped_rows": 0,
+            "slope_is_not_a_phase_summary": true,
+            "start_c": 21.25,
+            "trailing_slope_c_per_min": 3.074948,
+            "unqualified_rows": 0,
+            "usable": true,
+            "used_rows": 131,
+            "used_rows_conditioning_fingerprint": "cfab6ca2eabf9ef5",
+            "variant": "tmean_t2excluded_v0",
+            "variant_kind": "multi_probe",
+            "variant_source": "cg_thermal_repeatability.REPRESENTATIONS (imported, not copied)",
+            "whole_phase_slope_c_per_min": 2.865837
+          }
+        }
+      }
+    }
+  ],
+  "hot_side_policy": "TEC_HOT_SIDE is a surface on the TEC stack, never chamber air: no variant labelled is_chamber_air may include it (require_air raises instead)",
+  "notes": [
+    "Host analysis of committed captures: nothing was energized, flashed or moved.",
+    "Single-probe variants exist because A-W14-02 asks for one sensor set versus three; they are labelled by role so a reader sees which physical position a feature is standing for.",
+    "hot_t2_surface_v0 is published as a surface temperature and is excluded from every chamber-air statistic by require_air.",
+    "tmean_all4_v0 is a W07 sensitivity check, not an ablation candidate: it mixes a hot-side surface into an air mean, so it is dropped from ABLATION_VARIANTS."
+  ],
+  "per_variant_summary": {
+    "air_pair_bottom_door_v0": {
+      "delta_c_values": [
+        0.0625,
+        -8.4375,
+        5.062
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "air_pair_center_bottom_v0": {
+      "delta_c_values": [
+        0.0935,
+        -8.6875,
+        5.281
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "air_pair_center_door_v0": {
+      "delta_c_values": [
+        0.094,
+        -9.0,
+        5.656
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "air_t1_center_v0": {
+      "delta_c_values": [
+        0.125,
+        -9.25,
+        5.875
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "air_t3_bottom_v0": {
+      "delta_c_values": [
+        0.062,
+        -8.125,
+        4.687
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "air_t4_near_door_v0": {
+      "delta_c_values": [
+        0.063,
+        -8.75,
+        5.437
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "hot_t2_surface_v0": {
+      "delta_c_values": [
+        0.0,
+        9.687,
+        -7.937
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "tmean_airroles_v0": {
+      "delta_c_values": [
+        0.0833,
+        -8.7083,
+        5.333
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "tmean_chamber3_v0": {
+      "delta_c_values": [
+        0.0623,
+        -2.5627,
+        0.875
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    },
+    "tmean_t2excluded_v0": {
+      "delta_c_values": [
+        0.0935,
+        -8.6875,
+        5.281
+      ],
+      "independent_sessions": 1,
+      "not_a_distribution": true,
+      "phases": [
+        "baseline",
+        "cooling",
+        "recovery"
+      ],
+      "segment_kind": "segments of one boot",
+      "status": "SINGLE_SESSION_OBSERVATION",
+      "usable_segment_count": 3
+    }
+  },
+  "physical_condition_control": {
+    "captures": {
+      "evidence/A/W04/tec-cooling-response-600s.csv": {
+        "capture_fingerprint": "d1671cc668ca0fa1",
+        "condition_columns": [
+          "device_ms",
+          "state",
+          "pwm_applied_permille",
+          "door_open",
+          "boot_id"
+        ],
+        "fingerprints_stamped_on_variant_rows": [
+          "d1671cc668ca0fa1"
+        ],
+        "note": "the fingerprint hashes device_ms/state/pwm_applied_permille/door_open/boot_id over the rows a statistic walked, so two variants that differ in anything but the probe set disagree here and are reported, not averaged",
+        "one_fingerprint_per_capture": true,
+        "phases_where_variants_disagree_on_used_rows": [],
+        "phases_with_no_usable_variant": [
+          "undetermined"
+        ],
+        "used_rows_fingerprint_per_phase": {
+          "baseline": [
+            "3f548d3e09f4d95a"
+          ],
+          "cooling": [
+            "8512f2f8a65e3c77"
+          ],
+          "recovery": [
+            "cfab6ca2eabf9ef5"
+          ],
+          "undetermined": []
+        }
+      }
+    },
+    "note": "the flag is computed from the rows and never written as a literal, and validate_w14.py re-derives every fingerprint and every per-row device_ms -> feature_c/pwm/door/boot attribution from the committed capture, so the control is checked against the data instead of being asserted by this file",
+    "one_fingerprint_per_capture": true
+  },
+  "purpose": "A-W14-02 logical ablation support: one-sensor feature sets versus the three-sensor chamber-air set, taken from the same physical rows so a comparison is physical-condition-controlled, not run-to-run",
+  "schema": "w14-spatial-v0",
+  "variants": [
+    "tmean_airroles_v0",
+    "tmean_chamber3_v0",
+    "tmean_t2excluded_v0",
+    "air_t1_center_v0",
+    "air_t3_bottom_v0",
+    "air_t4_near_door_v0",
+    "hot_t2_surface_v0",
+    "air_pair_center_bottom_v0",
+    "air_pair_center_door_v0",
+    "air_pair_bottom_door_v0"
+  ],
+  "verdict": {
+    "ablation_differences_are_within_session_observations": true,
+    "independent_sessions": 1,
+    "min_sessions_for_a_repeat_distribution": 3,
+    "not_a_repeat_distribution": true,
+    "note": "variant differences below are measured on one session's rows, which controls physical conditions exactly and therefore says nothing about run-to-run behaviour: both facts are published together",
+    "repeat_distribution_computed": false
+  }
+}
