@@ -1,0 +1,367 @@
+{
+  "captures": [
+    {
+      "boot_ids": [
+        "56044b74"
+      ],
+      "capture": "tec-cooling-response-600s.csv",
+      "configuration": "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
+      "content_sha256": "8d80ecefb5de5531c08b69425c9197a31d5af83847ef1e9f4a0196da4a3b04b0",
+      "frames": 957,
+      "is_probe_identification": false,
+      "pzem_audit": {
+        "duty0_with_current_frames": {
+          "count": 12,
+          "idle_noise_floor_frames_max_a": 0.02,
+          "listed_individually_never_averaged": true,
+          "stale_register_frames": [
+            {
+              "current_a": 7.15,
+              "device_ms": "826894",
+              "power_w": 84.2,
+              "qualification": "UNQUALIFIED (empty current_status/voltage_status)",
+              "seq": "827",
+              "state": "COOLDOWN",
+              "voltage_v": 11.79
+            },
+            {
+              "current_a": 0.56,
+              "device_ms": "827894",
+              "power_w": 6.6,
+              "qualification": "UNQUALIFIED (empty current_status/voltage_status)",
+              "seq": "828",
+              "state": "COOLDOWN",
+              "voltage_v": 11.93
+            }
+          ]
+        },
+        "electrical_qualification": "UNQUALIFIED",
+        "envelope_reference": "W3 boot-default-off / W8 electrical envelope (sibling workstreams); this host audit reads the OFF/ON separation in the committed capture, it does not re-certify the envelope.",
+        "on_block_current_a": {
+          "mean": 7.2247,
+          "n": 600,
+          "note": "UNQUALIFIED figures; peak current 9.99 A is the observed branch peak (recomputed from this capture's frames)",
+          "peak": 9.99
+        },
+        "qualified_frame_evidence": {
+          "frames_with_nonempty_status": 0,
+          "frames_with_valid_status": 0,
+          "per_channel": {
+            "current_status": {
+              "absent": 957,
+              "error": 0,
+              "frames": 957,
+              "tokens_seen": [],
+              "unsupported": 0,
+              "valid": 0
+            },
+            "voltage_status": {
+              "absent": 957,
+              "error": 0,
+              "frames": 957,
+              "tokens_seen": [],
+              "unsupported": 0,
+              "valid": 0
+            }
+          },
+          "qualifying_token": "OK",
+          "total_frames": 957
+        },
+        "requirement": "A-W12-02",
+        "unqualified_reason": "no frame carries the producer's validating current/voltage status token; the committed capture leaves current_status and voltage_status empty in every row, and power_w/energy_wh have no status column at all, so no electrical value here is qualified",
+        "verdict": "OFF/ON separation observable; duty-0 stale-current frames isolated; electrical figures UNQUALIFIED pending a qualified channel"
+      },
+      "role_geometry_audit": {
+        "capture": "tec-cooling-response-600s.csv",
+        "contradictions": [],
+        "is_probe_identification": false,
+        "role_label_status": {
+          "t1": "UNLABELLED",
+          "t2": "LABELLED",
+          "t3": "UNLABELLED",
+          "t4": "UNLABELLED"
+        },
+        "slot_role_tokens_seen": {
+          "t1": [],
+          "t2": [
+            "HOT_SIDE"
+          ],
+          "t3": [],
+          "t4": []
+        },
+        "verdict": "CONSISTENT_WITH_FREEZE"
+      },
+      "sensor_consistency": {
+        "chamber_air_agreement": {
+          "max_c": 1.126,
+          "mean_c": 0.6539,
+          "min_c": 0.0,
+          "n": 957,
+          "stdev_c": 0.2889
+        },
+        "chamber_air_trio_pstdev": {
+          "max_c": 0.4606,
+          "mean_c": 0.2773,
+          "min_c": 0.0,
+          "n": 957,
+          "stdev_c": 0.114
+        },
+        "hot_side_reported_separately": true,
+        "independent_bme_air_reference": {
+          "max_c": 30.668,
+          "mean_c": 26.0717,
+          "min_c": 22.89,
+          "n": 957,
+          "stdev_c": 3.2031
+        },
+        "method": "per-slot arithmetic mean over frames where the slot carries a valid quality token (non-valid terms skipped and counted, never averaged); chamber-air agreement = max pairwise |dT| across (T1,T3,T4) and population stdev of that trio, both per frame then summarised. TEC_HOT_SIDE (T2) kept as a separate population (authored deviation, see representation_version).",
+        "representation_version": "chamber-air-trio-v1 (authored Member A deviation)",
+        "requirement": "A-W12-01",
+        "slot_offsets": {
+          "t1": {
+            "max_c": 30.125,
+            "mean_c": 24.8992,
+            "min_c": 20.875,
+            "n": 957,
+            "stdev_c": 3.7747
+          },
+          "t2": {
+            "max_c": 39.938,
+            "mean_c": 35.4198,
+            "min_c": 29.875,
+            "n": 957,
+            "stdev_c": 3.8169
+          },
+          "t3": {
+            "max_c": 29.812,
+            "mean_c": 25.2955,
+            "min_c": 21.625,
+            "n": 957,
+            "stdev_c": 3.2678
+          },
+          "t4": {
+            "max_c": 30.188,
+            "mean_c": 25.1999,
+            "min_c": 21.438,
+            "n": 957,
+            "stdev_c": 3.5404
+          }
+        }
+      }
+    }
+  ],
+  "cross_session_drift": {
+    "per_configuration": {
+      "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED": {
+        "mean_of_means_c": 24.8992,
+        "note": "single distinct physical session - intra-configuration drift NOT COMPUTABLE",
+        "range_c": null,
+        "sessions": 1
+      }
+    },
+    "pooled": null,
+    "pooled_refused_reason": "only one installed-image/limits configuration is committed on this branch; there is nothing to pool across configurations, and intra-configuration drift needs two distinct physical sessions."
+  },
+  "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_CAPTURES",
+  "gate_g3_input": {
+    "a_side_status": "NEED_USER_ACTION",
+    "blockers": [
+      {
+        "blocker": "no qualified electrical channel in the committed capture (current_status/voltage_status empty) - A-W12-02 figures are UNQUALIFIED",
+        "derivation": "COMPUTED_FROM_AUDIT",
+        "open": true
+      },
+      {
+        "blocker": "sensor fixtures, V1 mounting, terminals and cable routing have no post-freeze inspection record - A-W12-03 NEED_USER_ACTION",
+        "derivation": "AUTHORED_FROM_COMMITTED_EVIDENCE",
+        "open": true
+      },
+      {
+        "blocker": "fuse/conductor deviation remains open and uncertified - A-W12-03 BLOCKED_HARDWARE",
+        "derivation": "AUTHORED_FROM_COMMITTED_EVIDENCE",
+        "open": true
+      }
+    ],
+    "does_not_declare": "G3 GREEN (a whole-team gate this slice must not set)",
+    "provided_by": "Member A (host drift audit only)",
+    "requirement": "A-W12-05",
+    "statement": "plant stable enough for predictive development: CANNOT BE SIGNED OFF FROM HOST EVIDENCE ALONE",
+    "what_a_would_sign": "the committed datasets are internally consistent within each configuration, but the mechanical and electrical-qualification items above must close before A contributes a signoff"
+  },
+  "hardware_config_signoff": {
+    "approval_record": {
+      "approved_by": null,
+      "approved_on": null,
+      "evidence_ref": null,
+      "provenance_sha256": null,
+      "provenance_source": null,
+      "reason": "no approval record was supplied",
+      "valid": false
+    },
+    "approval_record_fields_required": [
+      "approval",
+      "approved_by",
+      "approved_on",
+      "evidence_ref",
+      "provenance_source"
+    ],
+    "captures_without_verified_configuration": [
+      "tec-cooling-response-600s.csv"
+    ],
+    "configuration_signoff_status": "UNRESOLVED",
+    "dataset_validity_table": [
+      {
+        "approval_provenance": {
+          "approved_by": null,
+          "approved_on": null,
+          "evidence_ref": null,
+          "provenance_sha256": null,
+          "provenance_source": null,
+          "reason": "no approval record was supplied",
+          "valid": false
+        },
+        "authorized_provenance_valid": false,
+        "capture": "tec-cooling-response-600s.csv",
+        "config_verification": "UNVERIFIED",
+        "configuration_evidence": {
+          "installed_image_identity": true,
+          "physical_inspection_reference_valid": false,
+          "probe_role_labels": false,
+          "role_map_consistent_with_freeze": true,
+          "sensor_rom_readback": false
+        },
+        "dataset_pooling_eligibility": [
+          "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
+          "CONSISTENT_WITH_FREEZE",
+          "UNQUALIFIED"
+        ],
+        "electrical_qualification": "UNQUALIFIED",
+        "evidence_derived_config_identity": "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
+        "evidence_reviewed": false,
+        "inspection_reference": {
+          "date": null,
+          "reason": "empty or placeholder reference",
+          "reference": "",
+          "reference_valid": false,
+          "sha256": null
+        },
+        "intended_hardware_config": "CG-HW-001",
+        "is_probe_identification": false,
+        "physical_session_identity": [
+          "56044b74"
+        ],
+        "reference_valid": false,
+        "review_binding": {
+          "bound_reference": "",
+          "bound_sha256": null,
+          "reason": "empty or placeholder reference",
+          "reviewed": false
+        },
+        "role_verdict": "CONSISTENT_WITH_FREEZE",
+        "verification_open_items": [
+          "DS18B20 ROM identities read back from the devices, not copied from the configuration table",
+          "probe role labels asserted by the capture itself for every frozen slot (t1, t2, t3, t4)",
+          "a dated, repository-resolvable physical inspection record naming this configuration - reference validity only, not evidence that anyone reviewed it",
+          "EVIDENCE_REVIEWED: a named person must bind this inspection record by recomputed content hash and cover every inspected aspect (currently: empty or placeholder reference)",
+          "AUTHORIZED_PROVENANCE: an approval traceable outside the host tooling is required (currently: no approval record was supplied)"
+        ]
+      }
+    ],
+    "host_cannot_verify_human_authenticity": true,
+    "inspection_aspects_required": [
+      "sensor_fixtures",
+      "v1_mounting",
+      "terminals",
+      "fuse_body_marking",
+      "conductor_marking"
+    ],
+    "intended_hardware_config": "CG-HW-001",
+    "must_not_pool": [
+      "probe-identification touch captures vs any plant capture",
+      "captures whose roles disagree with the freeze vs captures that follow it",
+      "captures from different installed images (configuration identity differs)",
+      "captures whose electrical qualification differs"
+    ],
+    "physical_acceptance_pending": true,
+    "poolable_groups": {
+      "('config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED', 'CONSISTENT_WITH_FREEZE', 'UNQUALIFIED')": [
+        "tec-cooling-response-600s.csv"
+      ]
+    },
+    "requirement": "A-W12-04",
+    "review_record_fields_required": [
+      "reviewed_by",
+      "reviewed_on",
+      "inspected_aspects",
+      "evidence"
+    ],
+    "verification_layers": {
+      "AUTHORIZED_PROVENANCE": "an approval of hardware-configuration-verification traced to a record outside the namespace this tool generates",
+      "EVIDENCE_REVIEWED": "a named person outside the host tooling bound each inspection record by recomputed SHA-256 and enumerated every inspected aspect",
+      "REFERENCE_VALID": "a dated, repository-resolvable, non-placeholder physical inspection record exists for every capture - the existence of a record, not an act by a person"
+    },
+    "verification_requirements": {
+      "installed_image_identity": "the installed image identified from this capture's own configuration identity",
+      "physical_inspection_reference_valid": "a dated, repository-resolvable physical inspection record naming this configuration - reference validity only, not evidence that anyone reviewed it",
+      "probe_role_labels": "probe role labels asserted by the capture itself for every frozen slot (t1, t2, t3, t4)",
+      "role_map_consistent_with_freeze": "no captured role token contradicts the operator-frozen slot->role map. This is a consistency test against the frozen map held in source; it is NOT proof that a probe has not physically moved since the freeze",
+      "sensor_rom_readback": "DS18B20 ROM identities read back from the devices, not copied from the configuration table"
+    },
+    "what_a_matching_hash_does_not_prove": "content binding only. It does not show that a physical inspection happened, that a probe has not moved since the freeze, or that a named person approved anything; those need the operator's own authorization provenance, which no host check can manufacture.",
+    "what_the_label_is_not": "CG-HW-001 is the intended label for this rig from the W01 as-built record. It is not a verified identity, not a signoff, and not evidence that two captures share a physical configuration - that is what evidence_derived_config_identity and the pooling columns say.",
+    "what_would_close_signoff": [
+      "photograph the installed fuse body and conductor marking (see A-W12-03 items)",
+      "read the DS18B20 ROMs back from the devices rather than from the config table",
+      "assert probe roles in the capture, or record the mapping as a witnessed inspection",
+      "a named person reviews the dated inspection record and binds it by content hash",
+      "a named person authorises hardware-configuration-verification through provenance this tooling does not author; a host audit cannot sign it"
+    ]
+  },
+  "mechanical_audit_checklist": [
+    {
+      "basis": "AUTHORED_FROM_COMMITTED_EVIDENCE (physical check the host cannot compute; it closes only when the named artifact changes)",
+      "check": "all four DS18B20 fixtures seated at their frozen positions (T1 center, T2 TEC hot side, T3 bottom, T4 near door)",
+      "closes_with": "a supervised re-identification or a photo of each fixture at its frozen position, matched to the frozen ROM ids; probe-identification touch captures do not count",
+      "item": "sensor_fixtures",
+      "observed": "the committed cooling capture stamps T1/T3/T4 role as UNASSIGNED (it predates the operator role freeze); T2 is stamped HOT_SIDE",
+      "status": "NEED_USER_ACTION"
+    },
+    {
+      "basis": "AUTHORED_FROM_COMMITTED_EVIDENCE (physical check the host cannot compute; it closes only when the named artifact changes)",
+      "check": "TEC cold/hot V1 mounting unchanged since the H8 sessions",
+      "closes_with": "a dated mounting/photo signoff from the operator, or a fresh thermal-resistance plausibility run supervised on the bench",
+      "item": "v1_mounting",
+      "observed": "no host artifact records a mounting torque/seat check after the H8 sessions; the hot-side peak 37.688 C in H8-A is data, not a mount check",
+      "status": "NEED_USER_ACTION"
+    },
+    {
+      "basis": "AUTHORED_FROM_COMMITTED_EVIDENCE (physical check the host cannot compute; it closes only when the named artifact changes)",
+      "check": "branch terminals and FDD2-250 fastons inspected (no discoloration, no looseness)",
+      "closes_with": "a supervised terminal-inspection note; this is a physical check the host cannot perform",
+      "item": "terminals",
+      "observed": "W01 as-built maps the faston as 1.5-2.5 mm^2 rated, which would cover the derived ~2.405 mm^2 copper area of the observed 1.75 mm core diameter - but that agreement rests on the unconfirmed solid-round assumption and on a termination inspection nobody has performed, so it is a lead, not a pass",
+      "status": "NEED_USER_ACTION"
+    },
+    {
+      "basis": "AUTHORED_FROM_COMMITTED_EVIDENCE (physical check the host cannot compute; it closes only when the named artifact changes)",
+      "check": "installed branch fuse rating and its suitability to the conductor",
+      "closes_with": "a photograph of the fuse body rating + conductor insulation class, run length and bundling so an ampacity can be stated (fuse note ~:53: 'no conductor evidence today -> no freeze')",
+      "item": "fuse",
+      "observed": "fuse reported 15 A but its marking was never photographed (evidence/A/W04/fuse-commissioning-note.md ~:36); observed conductor 1.75 mm copper-core diameter (operator-measured 2026-11-02); = 2.405 mm^2 of copper IF the core is solid round - that assumption is NOT confirmed, no marking photographed, no cross-section measured, no insulation class or routing recorded; canonical ask 2 x 2.5 mm^2; W01 HW-19 still UNVERIFIED",
+      "recommended_vs_observed": "observed = a 15 A fuse is reported installed; recommended = no rating is defensible without the conductor ampacity inputs. The deviation is open; this audit does not certify compliance.",
+      "status": "BLOCKED_HARDWARE"
+    },
+    {
+      "basis": "AUTHORED_FROM_COMMITTED_EVIDENCE (physical check the host cannot compute; it closes only when the named artifact changes)",
+      "check": "probe and power cable routing unchanged from the frozen geometry",
+      "closes_with": "a dated routing photo set matched to the geometry freeze",
+      "item": "cable_positions",
+      "observed": "routing/bundling not recorded anywhere in committed evidence",
+      "status": "NEED_USER_ACTION"
+    }
+  ],
+  "physical_verified": false,
+  "tool": "cg_w12_drift_audit.py",
+  "touches_hardware": false,
+  "week": "W12"
+}
