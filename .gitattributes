@@ -57,3 +57,5 @@ evidence/A/W13/** -text
 # and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
 # those bytes on a checkout with core.autocrlf and break every pin.
 evidence/A/W16/** -text
+
+evidence/A/W17/** -text
