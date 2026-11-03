@@ -131,6 +131,7 @@ evidence/A/W21/** -text
 =======
 
 evidence/A/W22/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w22-evidence-gap-repair
 =======
 
@@ -138,3 +139,7 @@ evidence/A/W22/** -text
 evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
 evidence/A/RC/** -text
 >>>>>>> origin/feat/a-w23-demo-recovery
+=======
+
+evidence/A/W24/** -text
+>>>>>>> origin/feat/a-w24-final-acceptance
