@@ -1,0 +1,6 @@
+version: 1.0
+limits:
+  max_allowed_current_a: 8.0
+  max_allowed_hot_side_temp_c: 65.0
+  max_communication_timeout_ms: 3000
+trip_action: FAIL_CLOSED_OUTPUT_OFF

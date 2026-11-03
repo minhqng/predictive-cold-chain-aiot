@@ -1,0 +1,14 @@
+{
+  "week": "W18",
+  "authority": "docs/05A §27",
+  "checklist_items": [
+    "fuse_verified",
+    "fan_operational",
+    "terminals_secured",
+    "sensors_online",
+    "pzem_responsive",
+    "output_stage_default_off"
+  ],
+  "verification_mode": "PRE_ENERGIZATION_MANDATORY",
+  "physical_state": "PENDING_BENCH_EXECUTION"
+}
