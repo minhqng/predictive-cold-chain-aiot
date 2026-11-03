@@ -5,43 +5,83 @@ import unittest
 from cg_w22_rerun_governance import (
     build_physical_limitation_record,
     evaluate_rerun_eligibility,
+    validate_rerun_log_entry,
 )
 
 
 class TestW22Governance(unittest.TestCase):
 
-    def test_evaluate_rerun_eligibility_approved(self):
-        ev = evaluate_rerun_eligibility("INVALID_PAIR_UNDER_PREDECLARED_RULE")
-        self.assertTrue(ev.approved)
-        self.assertIsNone(ev.rejection_reason)
+    def test_evaluate_rerun_eligibility_valid(self):
+        res = evaluate_rerun_eligibility(
+            reason="KNOWN_SENSOR_LOG_FAILURE",
+            original_attempt_id="RUN-ATTEMPT-001",
+            original_attempt_preserved=True,
+        )
+        self.assertTrue(res.approved)
+        self.assertIsNone(res.rejection_reason)
 
-    def test_evaluate_rerun_eligibility_forbidden_tuning(self):
-        ev = evaluate_rerun_eligibility("ADJUST_DOOR_TO_IMPROVE_CONTROLLER_B")
-        self.assertFalse(ev.approved)
-        self.assertIn("FORBIDDEN", ev.rejection_reason)
+    def test_evaluate_rerun_eligibility_forbidden_cherry_picking(self):
+        res = evaluate_rerun_eligibility(
+            reason="CHERRY_PICKING_DESIRED_OUTCOME",
+            original_attempt_id="RUN-ATTEMPT-001",
+            original_attempt_preserved=True,
+        )
+        self.assertFalse(res.approved)
+        self.assertIn("FORBIDDEN", res.rejection_reason)
 
-    def test_evaluate_rerun_eligibility_forbidden_p_hacking(self):
-        ev = evaluate_rerun_eligibility("EFFECT_NOT_STATISTICALLY_SIGNIFICANT")
-        self.assertFalse(ev.approved)
-        self.assertIn("FORBIDDEN", ev.rejection_reason)
+    def test_evaluate_rerun_eligibility_missing_original_attempt(self):
+        res = evaluate_rerun_eligibility(
+            reason="KNOWN_SENSOR_LOG_FAILURE",
+            original_attempt_id=None,
+            original_attempt_preserved=True,
+        )
+        self.assertFalse(res.approved)
+        self.assertIn("MISSING_ORIGINAL_ATTEMPT_ID", res.rejection_reason)
 
-    def test_evaluate_rerun_eligibility_unknown(self):
-        ev = evaluate_rerun_eligibility("OPERATOR_FEELS_LIKE_ANOTHER_TRY")
-        self.assertFalse(ev.approved)
-        self.assertIn("UNKNOWN_REASON", ev.rejection_reason)
+    def test_evaluate_rerun_eligibility_forbidden_purge(self):
+        res = evaluate_rerun_eligibility(
+            reason="KNOWN_SENSOR_LOG_FAILURE",
+            original_attempt_id="RUN-ATTEMPT-001",
+            original_attempt_preserved=False,  # Attempting to drop prior attempt!
+        )
+        self.assertFalse(res.approved)
+        self.assertIn("FORBIDDEN_PURGE", res.rejection_reason)
+
+    def test_validate_rerun_log_entry_valid(self):
+        entry = {
+            "rerun_id": "RERUN-01",
+            "original_attempt_id": "ATTEMPT-01",
+            "justification": "KNOWN_SENSOR_LOG_FAILURE",
+            "approved": True,
+            "prior_attempt_preserved": True,
+        }
+        ok, err = validate_rerun_log_entry(entry)
+        self.assertTrue(ok)
+        self.assertIsNone(err)
+
+    def test_validate_rerun_log_entry_discarded_prior(self):
+        entry = {
+            "rerun_id": "RERUN-02",
+            "original_attempt_id": "ATTEMPT-02",
+            "justification": "KNOWN_SENSOR_LOG_FAILURE",
+            "approved": True,
+            "prior_attempt_preserved": False,
+        }
+        ok, err = validate_rerun_log_entry(entry)
+        self.assertFalse(ok)
+        self.assertIn("DISCARDED_PRIOR_ATTEMPT", err)
 
     def test_build_physical_limitation_record(self):
         rec = build_physical_limitation_record(
-            scale="BENCHTOP_SINGLE_CHAMBER",
+            scale="1 unit",
             units_tested=1,
-            tec_uncertainty="V1_UNCHARACTERIZED_SEEBECK_LEAKAGE",
-            sensor_limitations=["1WIRE_BUS_CONTENTION", "SLOW_THERMAL_TIME_CONSTANT"],
-            ambient_effects="UNREGULATED_ROOM_TEMPERATURE",
-            pzem_limits="MODBUS_1S_HOLD_REGISTER_LATENCY",
+            tec_uncertainty="Single module Seebeck effect",
+            sensor_limitations=["750ms DS18B20 conversion"],
+            ambient_effects="Styrofoam non-hermetic chamber",
+            pzem_limits="1Hz Modbus RTU polling",
         )
-        self.assertEqual(rec["units_tested"], 1)
         self.assertTrue(rec["is_complete"])
-        self.assertEqual(len(rec["sensor_limitations"]), 2)
+        self.assertEqual(rec["units_tested"], 1)
 
 
 if __name__ == "__main__":
