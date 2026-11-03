@@ -57,7 +57,6 @@ import cg_w09_capture_parser as cp  # noqa: E402
 import cg_w09_export as run_export  # noqa: E402
 import cg_w09_run_protocol as protocol  # noqa: E402
 import cg_w09_validity as validity  # noqa: E402
-import cg_w10_door as door  # noqa: E402  (the door driver's citation status is registry evidence)
 
 STATUS_VOCABULARY = {
     "IMPLEMENTED", "HOST_VERIFIED", "REAL_DATA_ANALYZED", "PHYSICALLY_VERIFIED",
@@ -502,7 +501,7 @@ def main() -> int:
     # Untracked bytes cannot anchor a published claim - the rule the registry
     # states for the H8 frames, applied to the untracked door driver too.
     uncitable = [p for p in registry["external_positions"]
-                 if p.get("eligibility") == door.UNCITABLE_UNTRACKED_SOURCE]
+                 if p.get("eligibility") == validity.UNCITABLE_UNTRACKED_SOURCE]
     if not uncitable:
         failures.append(
             "the contact-inversion claim is published without its citation status; its only "
@@ -516,7 +515,7 @@ def main() -> int:
             )
     for name in ("README.md", "acceptance.md", "run-registry.json"):
         body = (DOSSIER / name).read_text(encoding="utf-8")
-        if "h8_door.c" in body and door.UNCITABLE_UNTRACKED_SOURCE not in body:
+        if "h8_door.c" in body and validity.UNCITABLE_UNTRACKED_SOURCE not in body:
             failures.append(f"{name} cites an untracked source as proof without its label")
 
     doc = protocol.document()

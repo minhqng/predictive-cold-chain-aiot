@@ -38,7 +38,7 @@ TEAM_DEPENDENCY · BLOCKED_HARDWARE.
 | byte-reproducible artifacts, repository-relative paths only | **met** — `--check` reproduces 9/9; the validator scans every pinned file for absolute developer paths |
 | validator pins hashes and re-checks verdict honesty | **met** — `validate_w09.py` re-derives 957 rows from the CSV, re-runs the validity layer, compares all published counts, and fails if any honest verdict was softened |
 | durable claims are separated from phase snapshots | **met** — §4 of the README labels every claim **MUST-KEEP** (rules: an absent qualifier is `UNKNOWN` and never a pass, a slope names its fit method, one boot's `run_id` segments are never joined, `PROBE_IDENTIFICATION` stays excluded, host tests are not physical verification, T2 is `TEC_HOT_SIDE` and never in chamber air) or **PHASE SNAPSHOT** (the figures of the single real thermal session filed today). `validate_w09.py` demands the durable tokens in every revision and the snapshot figures only while `run-registry.json` lists one real thermal capture, and **refuses** the single-session wording once a second is filed — so the honesty check cannot become a lock that fails the day the study succeeds. Exercised in both directions by `test_cg_w09_dossier_claims.py` |
-| tests fail when a rule breaks | **met** — 163 W09 host tests (`validate_w09.py` re-counts them and refuses a README that quotes a stale figure); the failover demonstration is in §4 |
+| tests fail when a rule breaks | **met** — 175 W09 host tests (`validate_w09.py` re-counts them and refuses a README that quotes a stale figure); the failover demonstration is in §4 |
 
 ## 3. What W09 does **not** claim
 

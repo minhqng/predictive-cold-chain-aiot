@@ -59,7 +59,7 @@ state alone — a working tree that also holds another worker's untracked files 
 archive extraction:
 
 ```bash
-git -C <repo> worktree add --detach <scratch>/w09-verify fix/a-w09-w10-review
+git -C <repo> worktree add --detach <scratch>/w09-verify feat/a-w09-dataset-tooling-restacked
 # from that directory run both runners and both validators, then remove the worktree
 ```
 
@@ -165,7 +165,7 @@ into one row per session.
   successive interval slopes is 0.0 for all three, which is the 0.0625 °C
   quantisation saying most 1 Hz steps are zero, not that the air stood still.
 * Cadence: 956 intervals, mean 999.99 ms, min 990, max 1000, 0 non-positive.
-* 163 W09 host tests check the rules against synthetic frames; they count fixture
+* 175 W09 host tests check the rules against synthetic frames; they count fixture
   rows, not plant measurements.
 
 ### 4.3 What has to change when a second real session is filed
@@ -215,6 +215,6 @@ into one row per session.
   the validator.
 * **`device_ms` is per-boot** and opening the COM port changes `boot_id`; host
   UTC is not device time, so `timestamp_utc` stays `UNAVAILABLE`.
-* **Host tests are not physical verification.** The 163 W09 host tests named in
+* **Host tests are not physical verification.** The 175 W09 host tests named in
   §4.2 check the rules; they do not measure the plant, and no verdict here may
   be reported as a physical confirmation.

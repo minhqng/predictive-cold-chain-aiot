@@ -56,10 +56,9 @@ sys.path.insert(0, str(TOOLS))
 
 import cg_w09_capture_parser as cp  # noqa: E402
 import cg_w09_export as run_export  # noqa: E402
+import cg_w09_noise as noise  # noqa: E402  (A-W09-04 gradient needs the measured noise)
 import cg_w09_run_protocol as protocol  # noqa: E402
 import cg_w09_validity as validity  # noqa: E402
-import cg_w10_door as door  # noqa: E402  (the door driver's citation status is registry evidence)
-import cg_w10_pairing as pairing  # noqa: E402  (A-W09-04 gradient needs the measured noise)
 
 BUILD_STAMP = "2026-11-02T00:00:00Z"  # pinned so --check is byte-reproducible
 BUILD_STAMP_MEANING = "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME"
@@ -170,7 +169,8 @@ EXTERNAL_POSITIONS = [
                   "manual touch a physical invalidation, so these frames may never enter "
                   "S1/S2/S4 or any thermal-response statistic",
         "enforced_by": "cg_w09_validity.EXCLUDED_SESSION_CLASSES, tested in "
-                       "test_cg_w09_validity.py and test_cg_w10_door.py",
+                       "test_cg_w09_validity.py (the W10 door tests of the stacked slice re-test "
+                       "the same refusal from the consumer side)",
     },
     {
         "capture_id": "H8-PHASE4E-RAW-FRAMES",
@@ -187,14 +187,15 @@ EXTERNAL_POSITIONS = [
         "capture_id": "H8-DOOR-DRIVER-SOURCE",
         "location": "worktree A-W04-tec-commissioning/firmware/h8-bench/main/",
         "session_class": "H8_BENCH_DRIVER_SOURCE",
-        "eligibility": door.UNCITABLE_UNTRACKED_SOURCE,
+        "eligibility": validity.UNCITABLE_UNTRACKED_SOURCE,
         "reason": "firmware/h8-bench/main/h8_door.c and the bench console driver are quoted by "
                   "the W10 door analysis as the code-level reason a frame cannot name its own "
                   "door state, but no git ref in this repository carries those files; the same "
                   "rule that excludes the untracked H8 frames applies to untracked source",
         "claim_kept": "the contact polarity inverts every reading between the two settings, so "
                       "door state needs a per-boot external attestation",
-        "claim_rests_on": "docs/01 §8.1/§8.2 plus the complementary mapping table in "
+        "claim_rests_on": "docs/01 §8.1/§8.2 plus the complementary mapping table that "
+                          "the W10 door slice stacked on this branch publishes as "
                           "cg_w10_door.MAPPING_BY_POLARITY",
         "action_required": "the H8 bench owner must commit the driver source; until then the "
                            "mechanism is stated with its citation status, not with a quotation",
@@ -502,7 +503,7 @@ def build_artifacts() -> dict[str, str]:
     validities = validity.evaluate_frames(frames)
     registry = build_registry(frames, export)
     ranges = healthy_ranges(frames)
-    ranges["per_probe_noise"] = pairing.probe_noise_profile(frames)
+    ranges["per_probe_noise"] = noise.probe_noise_profile(frames)
     index = run_export.build_run_index(
         [metadata_export],
         generated_at_utc=BUILD_STAMP,
