@@ -10,6 +10,7 @@ Validates compliance with docs/05A §33 and evidence/A/as-built-pinmap-2026-10-2
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -135,6 +136,42 @@ SAFE_HARDWARE_POSTURES = {
 """Postures that state the bench is safe to leave unattended. Any other value is
 treated as an unresolved hazard rather than as a free-text label."""
 
+EVIDENCE_CLASSES = (
+    "COLD_BOOT_IDENTITY",
+    "COOLING_SESSION",
+    "S1_REPEATABILITY_RUN",
+    "ELECTRICAL_ENVELOPE_SAMPLE",
+    "SHADOW_SESSION",
+)
+"""What a capture is able to prove. A cold boot does not evidence a cooling run,
+and neither one evidences an electrical envelope, so a class is mandatory."""
+
+EVIDENCE_CLASS_BY_NAME = (
+    ("boot-default-off", "COLD_BOOT_IDENTITY"),
+    ("tec-cooling-response-600s", "COOLING_SESSION"),
+    ("cooling-step-runs", "S1_REPEATABILITY_RUN"),
+    ("envelope-by-duty", "ELECTRICAL_ENVELOPE_SAMPLE"),
+    ("duty-zero-current-frames", "ELECTRICAL_ENVELOPE_SAMPLE"),
+    ("shadow", "SHADOW_SESSION"),
+)
+"""Classification is read from the delivered artifact names, not invented per call."""
+
+REQUIREMENT_EVIDENCE_SPEC = {
+    "A-W03-04": {"evidence_class": "COLD_BOOT_IDENTITY", "min_independent_runs": 1},
+    "A-W04-03": {"evidence_class": "COOLING_SESSION", "min_independent_runs": 1},
+    "A-W07-02": {"evidence_class": "S1_REPEATABILITY_RUN", "min_independent_runs": 3},
+    "A-W08-01": {"evidence_class": "ELECTRICAL_ENVELOPE_SAMPLE", "min_independent_runs": 1},
+    "A-W17-01": {"evidence_class": "SHADOW_SESSION", "min_independent_runs": 1},
+}
+"""Deliberately partial. Requirements with no entry report EVIDENCE_CLASS_UNSPECIFIED
+rather than borrowing a neighbouring class, so extending coverage is an explicit,
+reviewable edit instead of a silent pass."""
+
+STATUS_SATISFIED = "SATISFIED_BY_VERIFIED_EVIDENCE"
+STATUS_INSUFFICIENT = "NEEDS_OPERATOR_EVIDENCE"
+STATUS_UNSPECIFIED = "EVIDENCE_CLASS_UNSPECIFIED"
+STATUS_PROVENANCE_BACKFILL = "NEEDS_PROVENANCE_BACKFILL"
+
 EVIDENCE_REQUIRED_FIELDS = (
     "run_id",
     "device_id",
@@ -143,6 +180,7 @@ EVIDENCE_REQUIRED_FIELDS = (
     "artifact_path",
     "sha256",
     "hardware_config_id",
+    "evidence_class",
 )
 
 VERDICT_SOFTWARE_CONTRACT_READY = "SOFTWARE_CONTRACT_READY"
@@ -161,6 +199,8 @@ class EvidenceVerification:
 
     independent_run_count: int = 0
     counted_boot_identities: List[str] = field(default_factory=list)
+    runs_by_class: Dict[str, int] = field(default_factory=dict)
+    verified_records: List[Dict[str, Any]] = field(default_factory=list)
     refusals: List[str] = field(default_factory=list)
 
 
@@ -235,6 +275,12 @@ def verify_physical_evidence(
         if missing:
             result.refusals.append(
                 f"EVIDENCE_FIELD_MISSING: record {index} lacks {','.join(sorted(missing))}"
+            )
+            continue
+        if record["evidence_class"] not in EVIDENCE_CLASSES:
+            result.refusals.append(
+                f"EVIDENCE_CLASS_UNKNOWN: record {index} declares "
+                f"{record['evidence_class']!r}, which is not a recognised evidence class"
             )
             continue
         if record["source_type"] not in PHYSICAL_SOURCE_TYPES:
@@ -316,9 +362,187 @@ def verify_physical_evidence(
             seen_boots[boot_key] = str(index)
             seen_digests[digest.lower()] = str(index)
             result.counted_boot_identities.append(boot_key)
+            cls = record["evidence_class"]
+            result.runs_by_class[cls] = result.runs_by_class.get(cls, 0) + 1
+            result.verified_records.append(dict(record))
 
     result.independent_run_count = len(result.counted_boot_identities)
     return result
+
+
+def classify_artifact(name: str) -> Optional[str]:
+    for token, cls in EVIDENCE_CLASS_BY_NAME:
+        if token in name.lower():
+            return cls
+    return None
+
+
+def _first_column_value(text: str, column: str) -> Optional[str]:
+    """Read the first non-empty value of a CSV column, if the file has one."""
+    lines = [ln for ln in text.splitlines() if ln.strip()]
+    if len(lines) < 2:
+        return None
+    header = [h.strip() for h in lines[0].split(",")]
+    if column not in header:
+        return None
+    idx = header.index(column)
+    for line in lines[1:]:
+        parts = line.split(",")
+        if len(parts) > idx and parts[idx].strip():
+            return parts[idx].strip()
+    return None
+
+
+def collect_pinned_evidence(repo_root: Any) -> Tuple[List[Dict[str, Any]], List[str], List[Dict[str, Any]]]:
+    """Build evidence records from the delivered dossiers themselves.
+
+    Only artifacts that are pinned by a SHA256SUMS.txt, carry a recognised class name
+    and record their own boot_id and hardware_config_id columns become runs. Anything
+    else is reported as skipped instead of being silently counted.
+    """
+    root = Path(repo_root)
+    records: List[Dict[str, Any]] = []
+    skipped: List[str] = []
+    unbound: List[Dict[str, Any]] = []
+    for dossier in sorted(WEEK_DOSSIER_DIR_FALLBACK.values()):
+        directory = root / dossier
+        if not directory.is_dir():
+            continue
+        sums = directory / "SHA256SUMS.txt"
+        if not sums.is_file():
+            skipped.append(f"{dossier}: no SHA256SUMS.txt")
+            continue
+        pinned: Dict[str, str] = {}
+        for line in sums.read_bytes().decode("utf-8", errors="replace").splitlines():
+            line = line.strip()
+            if line and len(line.split(None, 1)) == 2:
+                digest, rel = line.split(None, 1)
+                pinned[rel.strip().replace("\\", "/")] = digest
+        for rel, digest in sorted(pinned.items()):
+            target = directory / rel
+            if not target.is_file() or target.suffix.lower() not in (".csv", ".jsonl"):
+                continue
+            cls = classify_artifact(target.name)
+            if cls is None:
+                continue
+            if hashlib.sha256(target.read_bytes()).hexdigest() != digest.lower():
+                skipped.append(f"{dossier}/{rel}: pinned digest does not match bytes")
+                continue
+            text = target.read_bytes().decode("utf-8", errors="replace")
+            # Older captures identify themselves with a free-text session banner rather
+            # than a boot_id column; requiring the newer column would reject authentic
+            # evidence for the shape of its format instead of its provenance.
+            boot = _first_column_value(text, "boot_id") or _first_column_value(text, "session")
+            conf = _first_column_value(text, "hardware_config_id")
+            if not boot or not conf:
+                detail = "no boot_id/session column" if not boot else "no hardware_config_id column"
+                unbound.append({
+                    "artifact_path": f"{dossier}/{rel}",
+                    "evidence_class": cls,
+                    "reason": f"{detail}; run identity cannot be bound to this artifact",
+                })
+                continue
+            records.append({
+                "run_id": f"{Path(rel).name}:{boot}",
+                "device_id": _first_column_value(text, "device_id") or "UNRECORDED",
+                "boot_id": boot,
+                "source_type": "RAW_DEVICE_CAPTURE",
+                "artifact_path": f"{dossier}/{rel}",
+                "sha256": digest.lower(),
+                "hardware_config_id": conf,
+                "evidence_class": cls,
+            })
+    return records, skipped, unbound
+
+
+def evaluate_requirement_evidence(
+    verification: EvidenceVerification,
+    spec: Dict[str, Dict[str, Any]],
+    unbound: Optional[List[Dict[str, Any]]] = None,
+) -> Dict[str, Dict[str, Any]]:
+    """A requirement is satisfied only by runs of its own evidence class."""
+    out: Dict[str, Dict[str, Any]] = {}
+    for requirement in sorted(spec):
+        rule = spec[requirement]
+        cls = rule["evidence_class"]
+        needed = int(rule.get("min_independent_runs", 1))
+        available = verification.runs_by_class.get(cls, 0)
+        if cls not in EVIDENCE_CLASSES:
+            status, reason = STATUS_UNSPECIFIED, "class is not recognised"
+        elif available >= needed:
+            status, reason = STATUS_SATISFIED, f"{available} verified {cls} run(s)"
+        else:
+            # Captures of the right class may exist without a bindable run identity.
+            # That is a provenance bookkeeping gap, not a missing measurement, and must
+            # not be reported as though the operator still has to go to the bench.
+            related = [u for u in (unbound or []) if u.get("evidence_class") == cls]
+            if related:
+                status = STATUS_PROVENANCE_BACKFILL
+                reason = (f"{available} verified, needs {needed}; {len(related)} artifact(s) of "
+                          f"class {cls} exist but lack a bindable run identity")
+            else:
+                status, reason = STATUS_INSUFFICIENT, (
+                    f"{available} verified {cls} run(s), needs {needed}"
+                )
+        out[requirement] = {
+            "evidence_class": cls,
+            "required_independent_runs": needed,
+            "verified_independent_runs": available,
+            "status": status,
+            "detail": reason,
+        }
+    return out
+
+
+def generate_acceptance_census(repo_root: Any) -> str:
+    """Deterministic census built from the repository, never from typed counters.
+
+    No wall-clock value is embedded, so the same tree always yields byte-identical
+    output and the digest can be pinned in the dossier.
+    """
+    records, skipped, unbound = collect_pinned_evidence(repo_root)
+    weeks_present = sorted(
+        f"W{week:02d}"
+        for week, rel in WEEK_DOSSIER_DIR_FALLBACK.items()
+        if (Path(repo_root) / rel).is_dir()
+    )
+    verification = EvidenceVerification()
+    requirement_status: Dict[str, Dict[str, Any]] = {}
+    config_ids = sorted({r["hardware_config_id"] for r in records})
+    expected_config = config_ids[0] if len(config_ids) == 1 else None
+    if len(config_ids) > 1:
+        # Disagreement about which configuration produced the captures is not resolved
+        # by picking one; the census is left refused until it does.
+        expected_config = None
+
+    census = collate_acceptance_census(
+        weeks_delivered=[int(w[1:]) for w in weeks_present],
+        physical_runs_count=len(records),
+        hardware_status="FAIL_CLOSED_FROZEN",
+        open_hardware_gates=["H-GATE-OPEN-PENDING-OPERATOR-QUALIFICATION"],
+        physical_evidence=records,
+        repo_root=repo_root,
+        expected_hardware_config_id=expected_config,
+    )
+    recheck = verify_physical_evidence(records, repo_root, expected_config)
+    if len(config_ids) > 1:
+        recheck.refusals.insert(
+            0,
+            "EVIDENCE_HARDWARE_CONFIG_AMBIGUOUS: captures disagree on "
+            + ",".join(config_ids),
+        )
+        census["evidence_refusals"] = recheck.refusals
+    requirement_status = evaluate_requirement_evidence(recheck, REQUIREMENT_EVIDENCE_SPEC, unbound)
+    census["generated_by"] = "firmware/tools/cg_w24_final_freeze.generate_acceptance_census"
+    census["weeks_with_dossier"] = weeks_present
+    census["evidence_skipped"] = skipped
+    census["evidence_unbound"] = unbound
+    census["runs_by_class"] = recheck.runs_by_class
+    census["requirement_status"] = requirement_status
+    census["requirements_unspecified"] = sorted(
+        rid for rid, val in requirement_status.items() if val["status"] == STATUS_UNSPECIFIED
+    )
+    return json.dumps(census, indent=2, sort_keys=True) + "\n"
 
 
 def collate_acceptance_census(

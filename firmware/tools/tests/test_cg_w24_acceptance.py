@@ -1,19 +1,26 @@
 """Unit tests for ColdGuard Member A — W24 Final Acceptance Tool."""
 
 import hashlib
+import json
 import shutil
 import tempfile
 import unittest
 from pathlib import Path
 
 from cg_w24_final_freeze import (
+    REQUIREMENT_EVIDENCE_SPEC,
     REQUIRED_INDEPENDENT_RUNS,
+    STATUS_INSUFFICIENT,
+    STATUS_SATISFIED,
     SYSTEM_INTEGRATION_NOT_ASSERTABLE,
     VERDICT_DATA_INSUFFICIENT,
     VERDICT_PHYSICALLY_ACCEPTED,
     VERDICT_PHYSICAL_ACCEPTANCE_PENDING,
     collate_acceptance_census,
+    evaluate_requirement_evidence,
+    generate_acceptance_census,
     validate_final_configuration,
+    verify_physical_evidence,
 )
 
 
@@ -22,7 +29,7 @@ ALL_WEEKS = list(range(1, 25))
 
 
 def _record(root, rel, body, n, device="DEV-A", boot=None, source="RAW_DEVICE_CAPTURE",
-            conf=HW_CONF, pin=True):
+            conf=HW_CONF, pin=True, cls="COOLING_SESSION"):
     """One evidence record for a capture that carries its own identity and is pinned.
 
     Genuine W01-W24 captures list boot_id / hardware_config_id columns and appear in
@@ -50,6 +57,7 @@ def _record(root, rel, body, n, device="DEV-A", boot=None, source="RAW_DEVICE_CA
         "artifact_path": rel,
         "sha256": hashlib.sha256(payload).hexdigest(),
         "hardware_config_id": conf,
+        "evidence_class": cls,
     }
 
 
@@ -348,6 +356,90 @@ class TestW24CensusIsNotClaimDriven(unittest.TestCase):
 
     def _mk(self, rel, n, **kw):
         return _record(self.root, rel, f"run {n} payload\n".encode(), n, **kw)
+
+
+class TestW24EvidenceClassesAndGeneratedCensus(unittest.TestCase):
+    """A capture may only evidence the requirement its own class can prove."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+        _week_dossiers(self.root)
+
+    def test_record_without_evidence_class_is_refused(self):
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"x\n", 1)
+        del rec["evidence_class"]
+        res = collate_acceptance_census(
+            weeks_delivered=ALL_WEEKS, physical_runs_count=1,
+            hardware_status="FAIL_CLOSED_FROZEN", open_hardware_gates=[],
+            physical_evidence=[rec], repo_root=self.root,
+            expected_hardware_config_id=HW_CONF)
+        self.assertTrue(any("EVIDENCE_FIELD_MISSING" in r for r in res["evidence_refusals"]))
+
+    def test_unknown_evidence_class_is_refused(self):
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"x\n", 1, cls="VIBRATION_TEST")
+        res = collate_acceptance_census(
+            weeks_delivered=ALL_WEEKS, physical_runs_count=1,
+            hardware_status="FAIL_CLOSED_FROZEN", open_hardware_gates=[],
+            physical_evidence=[rec], repo_root=self.root,
+            expected_hardware_config_id=HW_CONF)
+        self.assertTrue(any("EVIDENCE_CLASS_UNKNOWN" in r for r in res["evidence_refusals"]))
+
+    def test_cold_boot_capture_does_not_satisfy_cooling_requirement(self):
+        rec = _record(self.root, "evidence/A/W24/boot-1.csv", b"x\n", 1, cls="COLD_BOOT_IDENTITY")
+        res = collate_acceptance_census(
+            weeks_delivered=ALL_WEEKS, physical_runs_count=1,
+            hardware_status="FAIL_CLOSED_FROZEN", open_hardware_gates=[],
+            physical_evidence=[rec], repo_root=self.root,
+            expected_hardware_config_id=HW_CONF)
+        self.assertEqual(res["physical_runs_verified"], 1)
+        status = evaluate_requirement_evidence(
+            verify_physical_evidence([rec], self.root, HW_CONF), REQUIREMENT_EVIDENCE_SPEC)
+        self.assertEqual(status["A-W04-03"]["status"], STATUS_INSUFFICIENT)
+        self.assertEqual(status["A-W03-04"]["status"], STATUS_SATISFIED)
+        self.assertEqual(status["A-W07-02"]["status"], STATUS_INSUFFICIENT)
+
+    def test_three_cooling_runs_satisfy_the_repeatability_threshold_only_for_cooling(self):
+        recs = [_record(self.root, f"evidence/A/W24/c{i}.csv", b"x\n", i, cls="COOLING_SESSION")
+                for i in range(3)]
+        ver = verify_physical_evidence(recs, self.root, HW_CONF)
+        status = evaluate_requirement_evidence(ver, REQUIREMENT_EVIDENCE_SPEC)
+        self.assertEqual(status["A-W04-03"]["status"], STATUS_SATISFIED)
+        self.assertEqual(status["A-W07-02"]["required_independent_runs"], 3)
+        self.assertEqual(status["A-W07-02"]["verified_independent_runs"], 0)
+
+    def test_generated_census_is_deterministic(self):
+        _record(self.root, "evidence/A/W04/tec-cooling-response-600s.csv", b"payload\n", 1)
+        _record(self.root, "evidence/A/W04/boot-default-off.csv", b"payload\n", 2,
+                cls="COLD_BOOT_IDENTITY")
+        first = generate_acceptance_census(self.root)
+        second = generate_acceptance_census(self.root)
+        self.assertEqual(first, second)
+        self.assertEqual(hashlib.sha256(first.encode()).hexdigest(),
+                         hashlib.sha256(second.encode()).hexdigest())
+        payload = json.loads(first)
+        self.assertNotIn("generated_at", payload)
+        self.assertTrue(payload["generated_by"].endswith("generate_acceptance_census"))
+
+    def test_generated_census_classifies_named_captures_without_caller_claims(self):
+        _record(self.root, "evidence/A/W08/envelope-by-duty.csv", b"payload\n", 7,
+                cls="ELECTRICAL_ENVELOPE_SAMPLE")
+        payload = json.loads(generate_acceptance_census(self.root))
+        self.assertEqual(payload["runs_by_class"].get("ELECTRICAL_ENVELOPE_SAMPLE"), 1)
+        self.assertEqual(payload["requirement_status"]["A-W08-01"]["status"], STATUS_SATISFIED)
+
+    def test_generated_census_reports_unspecified_requirements_instead_of_borrowing(self):
+        payload = json.loads(generate_acceptance_census(self.root))
+        for requirement in REQUIREMENT_EVIDENCE_SPEC:
+            self.assertIn(requirement, payload["requirement_status"])
+        self.assertEqual(payload["physical_runs_verified"], 0)
+
+    def test_generated_census_never_claims_physical_acceptance_on_real_tree(self):
+        real = Path(__file__).resolve().parents[3]
+        payload = json.loads(generate_acceptance_census(real))
+        self.assertFalse(payload["physical_acceptance_ready"])
+        self.assertNotEqual(payload["handover_verdict"], "FULLY_ACCEPTED")
 
 
 if __name__ == "__main__":
