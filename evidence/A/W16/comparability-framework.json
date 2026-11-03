@@ -82,6 +82,7 @@
             "t4": null
           }
         },
+        "compared_as": "refused: one or both sides unlabelled",
         "current": null,
         "state": "MISSING_SIDE"
       },
