@@ -1,14 +1,38 @@
 {
   "week": "W19",
-  "authority": "docs/05A §28",
+  "authority": "docs/05A §28, docs/03 §34-36",
   "checks": [
     "hardware_config_check",
-    "initial_state_equilibrium",
+    "state_based_initial_equilibrium",
     "door_closed",
     "pzem_valid",
     "storage_ready",
-    "controller_identity_confirmed"
+    "controller_identity_confirmed",
+    "ambient_context_logging_active"
   ],
-  "equilibrium_band_c": 0.5,
-  "status": "SOFTWARE_READY"
+  "thermal_reset_criteria": {
+    "protocol": "DOC_03_SECTION_34",
+    "basis": "STATE_BASED (not clock-time based)",
+    "requirements": [
+      "Tmean within frozen start band [band_min_c, band_max_c]",
+      "gradient below frozen maximum",
+      "door closed verified by reed sensor",
+      "cooling state known (PWM=0 cooldown)",
+      "sensor quality flags valid"
+    ],
+    "tolerances_provenance": "Must freeze from pilot repeatability data; arbitrary +/- 0.5 C default is forbidden."
+  },
+  "pair_matching_criteria": {
+    "protocol": "DOC_03_SECTION_35",
+    "requirements": [
+      "identical scenario protocol",
+      "identical hardware config",
+      "identical disturbance duration",
+      "delta initial Tmean within frozen tolerance",
+      "delta initial gradient within frozen tolerance",
+      "ambient temperature context recorded for both runs"
+    ]
+  },
+  "attempt_preservation_policy": "ALL_ATTEMPTS_PRESERVED_NO_SILENT_DROPS",
+  "status": "SOFTWARE_READY / PENDING_OPERATOR_RUN"
 }

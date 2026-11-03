@@ -1,8 +1,10 @@
 {
-  "audit_version": "1.0",
+  "audit_version": "1.1",
   "evaluated_runs": 0,
   "physical_runs_recorded": 0,
+  "synchronized_shadow_runs": 0,
   "predictive_leak_detected": false,
-  "status": "SOFTWARE_READY",
-  "note": "Host auditing tools and alignment contracts verified. Physical shadow sessions pending operator execution."
+  "verdict": "DATA_INSUFFICIENT",
+  "reason": "ZERO_SYNCHRONIZED_SHADOW_RUNS_ON_HARDWARE",
+  "note": "Host auditing tools and envelope-bound contracts verified. Physical shadow sessions require simultaneous Controller B shadow decisions and Controller A baseline on hardware."
 }
