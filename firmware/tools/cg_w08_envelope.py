@@ -915,10 +915,23 @@ def drive_stats(frames: list[Frame]) -> dict[str, object]:
         "voltage_v": distribution([f.voltage_v for f in used]),
         "power_w": distribution([f.power_w for f in used]),
         "energy_wh": distribution([f.energy_wh for f in used]),
+        # NOT "holdovers": the frame this second mean adds back is the
+        # PRE_RUN_REGISTER frame - the very first frame of the *driven* block,
+        # which still carries the pre-START electrical registers (0.00 A, 0.00 W,
+        # the last pre-run voltage). The register holdovers this dossier names in
+        # holdover-frames.csv are duty-0 frames and are not in this population at
+        # all, so a "holdover" label here misattributed the 0.012 A / 0.14 W
+        # difference to a frame a reviewer could never find in the driven set.
         "mean_current_a_inclusive_of_holdovers": r(
             _fmean([f.current_a for f in block if f.current_a is not None])
         ) if block else None,
         "mean_current_a_excluding_holdovers": r(
+            _fmean([f.current_a for f in used])
+        ) if used else None,
+        "mean_current_a_inclusive_of_pre_run_register": r(
+            _fmean([f.current_a for f in block if f.current_a is not None])
+        ) if block else None,
+        "mean_current_a_excluding_pre_run_register": r(
             _fmean([f.current_a for f in used])
         ) if used else None,
         "electrical_status_recorded": all(
@@ -1231,7 +1244,10 @@ def _fmt(value: object) -> str:
     if value is None:
         return ""
     if isinstance(value, float):
-        return f"{value:g}"
+        # `:g` keeps 6 significant digits, which silently rewrote a device clock:
+        # 1833894 ms was published as 1.83389e+06, i.e. 1833890, in a pinned
+        # safety-trail row that a reader then cannot locate in the capture.
+        return f"{value:.0f}" if value.is_integer() else f"{value:g}"
     return str(value)
 
 
@@ -1249,7 +1265,8 @@ def render_duty_csv(envelope: dict[str, object]) -> str:
         "current_p95_a", "current_max_a",
         "voltage_min_v", "voltage_median_v", "voltage_max_v",
         "power_min_w", "power_median_w", "power_mean_w", "power_p95_w", "power_max_w",
-        "mean_current_incl_holdovers_a", "mean_current_excl_holdovers_a",
+        "mean_current_incl_pre_run_register_a",
+        "mean_current_excl_pre_run_register_a",
         "electrical_status_recorded",
     ]
     lines = [",".join(header)]
@@ -1267,8 +1284,10 @@ def render_duty_csv(envelope: dict[str, object]) -> str:
                 voltage.get("min"), voltage.get("median"), voltage.get("max"),
                 power.get("min"), power.get("median"), power.get("mean"),
                 power.get("p95"), power.get("max"),
-                entry["mean_current_a_inclusive_of_holdovers"],
-                entry["mean_current_a_excluding_holdovers"],
+                entry.get("mean_current_a_inclusive_of_pre_run_register",
+                          entry.get("mean_current_a_inclusive_of_holdovers")),
+                entry.get("mean_current_a_excluding_pre_run_register",
+                          entry.get("mean_current_a_excluding_holdovers")),
                 "true" if entry["electrical_status_recorded"] else "false",
             ]))
     return "\n".join(lines) + "\n"

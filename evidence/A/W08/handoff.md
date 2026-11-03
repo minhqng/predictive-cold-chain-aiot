@@ -1,12 +1,13 @@
 # W08 handoff — electrical envelope (Member A input only)
 
-Week: **A-W08-01…A-W08-05** · Branch `feat/a-w08-electrical-envelope` · Dossier
+Week: **A-W08-01…A-W08-05** · Branch `feat/a-w08-envelope-gate-a` · Dossier
 `evidence/A/W08/` · Host analysis only: no firmware change, no build, no port, no
 energization. Nothing in this file authorises energising the branch; each powered
 session needs the operator's explicit case-by-case GO.
 
-Source contract for this file: `evidence/A/HANDOFF/` on the `feat/a-handoff-contracts`
-branch (`coverage-matrix.md` A-W08 rows, `a-to-bcd-fields.md` §6.3,
+Source contract for this file: `evidence/A/HANDOFF/` as published on the **W07**
+branch `feat/a-w07-plant-repeatability` — those paths are not present in this
+checkout (`coverage-matrix.md` A-W08 rows, `a-to-bcd-fields.md` §6.3,
 `supervised-session-plan.md` §1-§4). Only W08's own rows are carried here; that
 directory is read-only and nothing is copied into it.
 
@@ -25,7 +26,7 @@ directory is read-only and nothing is copied into it.
 | Field | State | What D can rely on, and the limit |
 |---|---|---|
 | OFF electrical envelope | **AVAILABLE with one unresolved exception** | 355 steady duty-0 frames with current never above **0.02 A** (one PZEM LSB) plus 2 duty-0 frames above that floor, named individually. The exception is §4: this is a measured value, not a verified unenergized state |
-| Healthy ON current / power range | **ONE SESSION, UNQUALIFIED** | mean 7.2247 A including the pre-run holdover (7.2367 A excluding it), peak 9.99 A, mean 85.3015 W over 600 driven frames of one 600 s block. A range from one session is an observation, not a rating |
+| Healthy ON current / power range | **ONE SESSION, UNQUALIFIED** | 600 driven frames in one 600 s block. Mean current 7.2247 A over all 600 (7.2367 A over the 599 that drop the pre-run holdover frame), peak 9.99 A, mean power 85.1593 W over the same all-600 population and 85.3015 W over the 599 holdover-excluded frames published in `operating-envelope-v1.yaml` — the two means differ only because of that one holdover frame. A range from one session is an observation, not a rating |
 | Thermal response window | **ONE SESSION**, hot side only | TEC_HOT_SIDE plateaus at 37.688 °C in H8-B/C/D/E and reached 39.938 °C, still creeping, in the committed 600 s box run. Chamber-air response windows come from W13, not from W08 |
 | Default-off behaviour | **AVAILABLE** | the delivered build has the output stage compiled out, requested duty 0 and actuator enable disallowed; the enable state is *commanded but never observed* (`enable_readback=ren:0,len:0` in all 957 frames while `ren_command=1`) |
 | Physical failure evidence | **AVAILABLE, sparse** | no `fault_bits` anywhere, no fault ever injected (`fault_latency_us=-1`), fan not electronically observable, no interlock installed, and the §4 duty-0 frame |
@@ -47,10 +48,13 @@ directory is read-only and nothing is copied into it.
   (`evidence/A/W04/fuse-commissioning-note.md`). A shop listing or catalogue entry for
   a fuse of that rating is **not** evidence about installed hardware and is not treated
   as one here. Suitability is unproven; freezing a rating is NO-GO.
-* **Out of this slice's namespace.** `evidence/A/W04/fuse-commissioning-note.md` and
-  the `evidence/A/HANDOFF/` files still carry the old "1.75 mm²" phrasing on their own
-  branches. They are referenced, not edited; the coordinator needs one pass over them
-  so the corrected reading is consistent across Member A's branches.
+* **Out of this slice's namespace.** `evidence/A/W04/fuse-commissioning-note.md`
+  (W04, PR #13) still records the conductor as **1.75 mm² of cross-section** at its
+  table rows `:36`, `:37`, `:41`, `:50`, `:51` and `:59`, which contradicts the
+  corrected reading above; the `evidence/A/HANDOFF/` files on the W07 branch already
+  carry the correction. W08 references both and edits neither — the coordinator needs
+  one pass over the W04 note so the corrected reading is consistent across Member A's
+  branches.
 
 ## 4. The duty-0 frame stays open, and W08 does not close it
 

@@ -42,10 +42,42 @@ sys.path.insert(0, str(REPO_ROOT / "firmware" / "tools"))
 import cg_w08_envelope as envelope  # noqa: E402
 
 FORBIDDEN = "PHYSICALLY_VERIFIED"
-# A line may MENTION a physical word only to deny it. These are the denial
-# markers the dossier's own sentences use; a line without one is a claim.
-NEGATIONS = ("not", "never", "no ", "without", "refus", "unreach", "forbid",
-             "false", "none", "non-", "instead of", "rather than")
+# A line may MENTION a physical word only to deny it, and the denial has to sit in the
+# same clause as the mention. The earlier rule scanned the whole line for markers, so any
+# line containing "note", an "no " inside another word, or a denial about something
+# unrelated escaped: planting "The installed fuse is certified suitable for continuous
+# duty (note)." proved the guard was decorative. Matching is token-based, so the prefix
+# "not" cannot be satisfied by the word "note".
+CLAUSE_BOUNDARIES = (".", "!", "?", ";", "|")
+DENIAL_WORDS = frozenset({
+    "not", "never", "no", "none", "nothing", "neither", "nor", "without",
+    "cannot", "cant", "isnt", "wasnt", "doesnt", "didnt", "hasnt", "havent", "wont",
+})
+DENIAL_STEMS = ("refus", "unreach", "forbid", "disclaim", "deni", "negat",
+                "rather", "instead", "lack")
+
+
+def _clause_containing(line: str, idx: int) -> str:
+    start = 0
+    for boundary in CLAUSE_BOUNDARIES:
+        start = max(start, line.rfind(boundary, 0, idx) + 1)
+    end = len(line)
+    for boundary in CLAUSE_BOUNDARIES:
+        found = line.find(boundary, idx)
+        if 0 <= found < end:
+            end = found
+    return line[start:end]
+
+
+def denies_claim(line: str, phrase: str) -> bool:
+    """True only when the clause that holds `phrase` also holds a denial of it."""
+    idx = line.lower().find(phrase.lower())
+    if idx < 0:
+        return False
+    clause = _clause_containing(line.lower(), idx)
+    words = {w for w in clause.replace("'", "").replace("-", " ").split() if w.isalpha()}
+    return bool(words & DENIAL_WORDS) or any(s in clause for s in DENIAL_STEMS)
+
 
 GENERATED = (
     "operating-envelope-v1.yaml", "envelope-by-duty.csv", "holdover-frames.csv",
@@ -85,8 +117,16 @@ SPINE = {
     "driven_frames_used": 599,
     "current_max_a": 9.99,
     "current_median_a": 7.16,
-    "mean_current_excluding_holdovers_a": 7.2367,
-    "mean_current_including_holdovers_a": 7.2247,
+    "mean_current_excluding_pre_run_register_a": 7.2367,
+    "mean_current_including_pre_run_register_a": 7.2247,
+    # The single frame the two means disagree about is NOT a register holdover:
+    # it is seq 227, the first frame of the driven block, still carrying the
+    # pre-START electrical registers (0.00 A, 0.00 W, 11.95 V, energy unmoved at
+    # 108.0 Wh). Pinned so the mislabelling cannot come back.
+    "pre_run_register_seq": "227",
+    "pre_run_register_current_a": 0.0,
+    "pre_run_register_power_w": 0.0,
+    "pre_run_register_class": "PRE_RUN_REGISTER",
     "off_steady_max_current_a": 0.02,
     "holdover_seq": "827",
     "holdover_device_ms": 826894.0,
@@ -170,7 +210,7 @@ def check_no_physical_claim(failures: list[str]) -> None:
         if path.suffix == ".csv" and FORBIDDEN in text:
             failures.append(f"{rel}: the {FORBIDDEN} token appears in a CSV field")
         for number, line in enumerate(text.splitlines(), start=1):
-            if FORBIDDEN in line and not any(n in line.lower() for n in NEGATIONS):
+            if FORBIDDEN in line and not denies_claim(line, FORBIDDEN):
                 failures.append(f"{rel}:{number} asserts {FORBIDDEN}: "
                                 f"{line.strip()[:120]}")
         for pattern, why in (
@@ -184,7 +224,7 @@ def check_no_physical_claim(failures: list[str]) -> None:
         ):
             for number, line in enumerate(text.splitlines(), start=1):
                 match = pattern.search(line)
-                if match and not any(n in line.lower() for n in NEGATIONS):
+                if match and not denies_claim(line, match.group(0)):
                     failures.append(f"{rel}:{number}: {why} appeared "
                                     f"({match.group(0)!r}) in {line.strip()[:100]!r}")
 
@@ -240,8 +280,8 @@ def check_honest_verdicts(failures: list[str]) -> None:
     # A compliance claim is only allowed inside a sentence that denies it - the
     # same convention the dossier uses for PHYSICALLY_VERIFIED.
     for line in fuse.splitlines():
-        if re.search(r"(nominal|canonical) 2\.5\s*mm2 compliance", line) and not any(
-                marker in line.lower() for marker in NEGATIONS):
+        hit = re.search(r"(nominal|canonical) 2\.5\s*mm2 compliance", line)
+        if hit and not denies_claim(line, hit.group(0)):
             failures.append("fuse-selection.md asserts 2.5 mm2 compliance instead of "
                             f"denying it: {line[:80]!r}")
             break
@@ -297,7 +337,11 @@ def check_thermal_rows(failures: list[str]) -> list[dict[str, str]]:
     for row in rows:
         if row["continuous_rating_claimed"] != "false":
             failures.append(f"thermal row {row['session']} claims a continuous rating")
-        if row["limit_status"] != envelope_hot_side_limit_status():
+        # Compared against the literal the dossier is allowed to publish, not against
+        # the same constant the generator just wrote: comparing both to one constant is
+        # a check that cannot fail, and the whole point of the row is that no hot-side
+        # limit is established.
+        if "PROVISIONAL" not in row["limit_status"].upper():
             failures.append(f"thermal row {row['session']} no longer labels the "
                             "55 C ceiling provisional")
         if row["as_built_role"] != "TEC_HOT_SIDE":
@@ -333,10 +377,10 @@ def check_spine(failures: list[str]) -> None:
         "driven_frames_used": (drive["frames_used"], SPINE["driven_frames_used"]),
         "current_max_a": (drive["current_a"]["max"], SPINE["current_max_a"]),
         "current_median_a": (drive["current_a"]["median"], SPINE["current_median_a"]),
-        "mean_current_excl": (drive["mean_current_a_excluding_holdovers"],
-                              SPINE["mean_current_excluding_holdovers_a"]),
-        "mean_current_incl": (drive["mean_current_a_inclusive_of_holdovers"],
-                              SPINE["mean_current_including_holdovers_a"]),
+        "mean_current_excl": (drive["mean_current_a_excluding_pre_run_register"],
+                              SPINE["mean_current_excluding_pre_run_register_a"]),
+        "mean_current_incl": (drive["mean_current_a_inclusive_of_pre_run_register"],
+                              SPINE["mean_current_including_pre_run_register_a"]),
         "off_steady_max_a": (off["steady_max_current_a"],
                              SPINE["off_steady_max_current_a"]),
         "hot_side_max_c": (thermal["t2"]["max_c"], SPINE["hot_side_max_c"]),
@@ -347,6 +391,21 @@ def check_spine(failures: list[str]) -> None:
         if got != expected:
             failures.append(f"committed-capture spine changed on {name}: "
                             f"got {got}, pinned {expected}")
+    # The two driven means differ by exactly one frame, and that frame must stay
+    # identified from the raw capture rather than from a remembered label.
+    excluded = [f for f in frames if f.driven and f.classification != envelope.DRIVEN]
+    if [f.classification for f in excluded] != [SPINE["pre_run_register_class"]]:
+        failures.append(
+            "the driven block's excluded population is no longer exactly one "
+            f"{SPINE['pre_run_register_class']} frame: "
+            f"{[(f.seq, f.classification) for f in excluded]}")
+    elif (excluded[0].seq, excluded[0].current_a, excluded[0].power_w) != (
+            SPINE["pre_run_register_seq"], SPINE["pre_run_register_current_a"],
+            SPINE["pre_run_register_power_w"]):
+        failures.append(
+            f"the frame the two driven means disagree about is no longer seq "
+            f"{SPINE['pre_run_register_seq']} at 0.0 A / 0.0 W: got "
+            f"{(excluded[0].seq, excluded[0].current_a, excluded[0].power_w)}")
     holdovers = envelope.duty_zero_with_current(frames)
     if len(holdovers) != 2:
         failures.append(f"expected exactly 2 duty-0 frames above the steady floor in "
@@ -475,6 +534,53 @@ def check_no_stray_originals(failures: list[str]) -> None:
 
 LOCAL_BENCH_NOTE = "local-bench original byte-checks: NOT RUN (bench tree absent)"
 
+BOM_AUDIT = REPO_ROOT / "evidence" / "A" / "W01" / "bom-audit.csv"
+CONDUCTOR_ROW = "HW-19"
+# `UNVERIFIED` contains `VERIFIED`, so a substring test would let a stale
+# "HW-19 VERIFIED" claim pass as a denial. Statuses are matched as whole tokens.
+BOM_STATUSES = ("UNVERIFIED", "VERIFIED", "NOMINAL", "CONFIRMED", "CLOSED", "SATISFIED")
+
+
+def check_conductor_row_status(failures: list[str]) -> None:
+    """Every W08 HW-19 claim must match the live BOM audit row, not a remembered one.
+
+    The dossier asserts `HW-19 stays UNVERIFIED` in seven places. Nothing checked that
+    against evidence/A/W01/bom-audit.csv, so the claim could go stale (or a reviewer
+    could paste a "verified" verdict in) and the validator would still pass.
+    """
+    if not BOM_AUDIT.is_file():
+        failures.append(f"{CONDUCTOR_ROW} check has no BOM audit at {BOM_AUDIT.name}")
+        return
+    with BOM_AUDIT.open(encoding="utf-8-sig", newline="") as handle:
+        row = next((r for r in csv.DictReader(handle)
+                    if (r.get("id") or "").strip() == CONDUCTOR_ROW), None)
+    if row is None:
+        failures.append(f"{CONDUCTOR_ROW} is absent from bom-audit.csv, so the W08 "
+                        "conductor claim has no source row")
+        return
+    status = (row.get("inspection_status") or "").strip()
+    if status != "UNVERIFIED":
+        failures.append(
+            f"bom-audit.csv {CONDUCTOR_ROW} inspection_status is {status!r}, but the "
+            "W08 dossier states UNVERIFIED: the conductor deviation record is stale")
+    for path in sorted(DOSSIER.rglob("*")):
+        if not path.is_file() or path.suffix not in (".md", ".csv", ".yaml", ".json"):
+            continue
+        rel = path.relative_to(DOSSIER).as_posix()
+        text = read(path)
+        for number, line in enumerate(text.splitlines(), start=1):
+            if CONDUCTOR_ROW not in line:
+                continue
+            # A bare cross-reference to the row is fine; a status word is not, unless
+            # it is exactly UNVERIFIED (the lookbehind keeps VERIFIED out of it).
+            upgraded = [token for token in BOM_STATUSES if token != "UNVERIFIED"
+                        and re.search(rf"(?<![A-Z]){token}(?![A-Z])", line)]
+            if upgraded:
+                failures.append(
+                    f"{rel}:{number} mentions {CONDUCTOR_ROW} with {upgraded}, but "
+                    f"bom-audit.csv still records inspection_status={status!r}: "
+                    f"{line.strip()[:120]}")
+
 
 def main() -> int:
     if hasattr(sys.stdout, "reconfigure"):
@@ -487,6 +593,7 @@ def main() -> int:
             failures.append(f"{rel} exists but is not hash-pinned")
     check_no_physical_claim(failures)
     check_no_absolute_paths(failures)
+    check_conductor_row_status(failures)
     check_honest_verdicts(failures)
     check_thermal_rows(failures)
     check_spine(failures)

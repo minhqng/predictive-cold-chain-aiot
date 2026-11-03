@@ -1,6 +1,6 @@
 # A-W08 — Observed electrical envelope, hot-side sustainability and Gate A (Member A)
 
-Week: **W08** · Branch: `feat/a-w08-electrical-envelope` · Stacked on
+Week: **W08** · Branch: `feat/a-w08-envelope-gate-a` · Stacked on
 `feat/a-w06-command-ack` (head `4d31fe5`)
 Owner: Member A · Language: host Python 3.14 (`py`)
 Status: **OBSERVED ENVELOPE ANALYZED · GATE A NOT CLOSED · NO ENERGIZED TEST**

@@ -443,7 +443,10 @@ def _fmt(value: object) -> str:
     if isinstance(value, bool):
         return "true" if value else "false"
     if isinstance(value, float):
-        return f"{value:g}"
+        # `:g` keeps 6 significant digits, which silently rewrote a device clock:
+        # 1833894 ms was published as 1.83389e+06, i.e. 1833890, in a pinned
+        # safety-trail row that a reader then cannot locate in the capture.
+        return f"{value:.0f}" if value.is_integer() else f"{value:g}"
     return str(value)
 
 

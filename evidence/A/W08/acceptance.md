@@ -1,7 +1,7 @@
 # A-W08 acceptance
 
 Slice: W08 Gate A physical characterization + SAFE_LOCAL support · Branch
-`feat/a-w08-electrical-envelope` · Host analysis only (no firmware change, no
+`feat/a-w08-envelope-gate-a` · Host analysis only (no firmware change, no
 build, no port, no energization).
 
 Gate A: **NOT CLOSED**.
@@ -20,7 +20,7 @@ the question, this file records the gap instead of a number.
 | **A-W08-02** | Fuse finalization among 10 / 15 / 20 A with rationale; if none is defensibly suitable, the gate fails and no one improvises | **BLOCKED_HARDWARE** (+ **TEAM_DEPENDENCY** for the conductor deviation) | `fuse-selection.md` — verdict **NO_FREEZE**; observed peak 9.99 A committed (9.35 A H8-A, 9.16 A H7-100 %, declared) | photographed fuse marking (installed + spare) — the 15 A is **operator-reported only** and nothing is legible on the installed body, and a shop listing or catalogue entry is not evidence about installed hardware — plus the conductor's insulation class / run length / bundling and an ampacity table. Conductor record corrected 2026-11-02: the old "1.75 mm²" was a **unit error** for a **1.75 mm copper core diameter**, i.e. ≈2.405 mm² **if the core is round solid** — a ~4 % area gap to `2 × 2.5 mm²`, not ~30 %, and inside the FDD2-250 1.5–2.5 mm² termination rating. The assumption is stated, not proven, so no nominal 2.5 mm² compliance is claimed and `evidence/A/W01/bom-audit.csv` HW-19 stays `UNVERIFIED` |
 | **A-W08-03** | Long cooling test to observe whether response stays stable, performance collapses, protection triggers, terminals/IBT-2 behave abnormally | **REAL_DATA_ANALYZED** for three of the four bullets; **NEED_USER_ACTION** for the fourth | `thermal-sustainability.csv` — H8-B/C/D/E at 420/600/900/1800 s all plateau with TEC_HOT_SIDE max **37.688 °C** and final-minute drift within 0.032 K; the committed 600 s box run reached **39.938 °C** and was still creeping +0.176 K/min; H8-A at 178 s was still warming +1.457 K/min; `fault_bits=0` and `off_verify=PASS` in the recorded sessions | nothing in any frame measures the terminals, the IBT-2 case or the cable: that is an operator, touch-free observation during a supervised long run; and no continuous rating may be claimed, so the 55 °C margin is a distance to a provisional number |
 | **A-W08-04** | SAFE_LOCAL integration support with D: remove broker/backend, verify local Controller A input sensors remain available, verify local output behaviour | **TEAM_DEPENDENCY** | `safe-local-physical-inputs.csv` (SL-01…SL-14) and `Gate-A-report.md` §4 | the delivered firmware has no transport (`cloud=NOT_PROVISIONED`), no wall clock, no fan observation (`fan_readback=NOT_ELECTRONICALLY_VERIFIED`), no interlock (`interlock_state=NOT_INSTALLED`) — and the SAFE_LOCAL mode, its entry/exit rule and its limits belong to Member D |
-| **A-W08-05** | Gate A package indexing all H0–H7 artifacts | **IMPLEMENTED / HOST_VERIFIED** | `Gate-A-report.md`, `gate-a-artifact-index.csv` — 23 curated entries resolved against this checkout, 20 present, 3 recorded absent | `evidence/A/W07/**` is not in this checkout (stacked branch); the H7/H8 raw originals are not committed here; W04's own deviation rows stay open |
+| **A-W08-05** | Gate A package indexing all H0–H7 artifacts | **IMPLEMENTED / HOST_VERIFIED** | `Gate-A-report.md`, `gate-a-artifact-index.csv` — 23 curated entries resolved against this checkout, 20 present, 3 recorded absent | `evidence/A/W07/**` is not in this checkout (it ships on `feat/a-w07-plant-repeatability`, PR #18); the H7/H8 raw originals are not committed here; W04's own deviation rows stay open |
 | Deliverable | `operating-envelope-v1.yaml` | REAL_DATA_ANALYZED | generated, `--check` reproduces it byte-for-byte | — |
 | Deliverable | `fuse-selection.md` | BLOCKED_HARDWARE | generated | — |
 | Deliverable | `thermal-sustainability.csv` | REAL_DATA_ANALYZED | generated | — |
@@ -101,7 +101,8 @@ the question, this file records the gap instead of a number.
 | OQ-W08-3 | A-W08-04 | SAFE_LOCAL session (broker/backend removed and restored) — needs D's mode and C's transport first | TEAM_DEPENDENCY |
 | OQ-W08-4 | A-W08-01/05 | commit (hash-pin) the local H7/H8 captures so a reviewer can reproduce the ladder rows | NEED_USER_ACTION |
 
-Merged session plan and the W15 half: `evidence/A/W15/acceptance.md` §4 and
+Merged session plan and the W15 half: `evidence/A/W15/acceptance.md` §4 (on the W15
+branch `feat/a-w15-pzem-integrity`, PR #26 — not present in this checkout) and
 `gate-a-operator-queue.csv`.
 
 **OQ-W08-1 is necessary, not sufficient.** A short unpowered inspection produces the
