@@ -47,6 +47,7 @@ evidence/A/W06/** -text
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
 
+<<<<<<< HEAD
 # Member A handoff contracts rehomed into W07
 evidence/A/HANDOFF/** -text
 
@@ -54,3 +55,9 @@ evidence/A/HANDOFF/** -text
 # re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
 # those bytes on a core.autocrlf checkout and break every pin.
 evidence/A/W08/** -text
+=======
+# W11 S4/refusal dossier: hash-pinned in evidence/A/W11/SHA256SUMS.txt and
+# re-checked by validate_w11.py; `* text=auto eol=lf` would rewrite those bytes on a
+# core.autocrlf checkout and break every pin.
+evidence/A/W11/** -text
+>>>>>>> origin/feat/a-w11-refusal-protocol

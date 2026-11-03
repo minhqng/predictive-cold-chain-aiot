@@ -1,0 +1,100 @@
+{
+  "captures": [
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W04-TEC-COOLING-600S",
+      "eligibility": "S1_BASELINE_CANDIDATE",
+      "frames_total": 957,
+      "frames_usable_per_scenario": {
+        "HEALTHY_ELECTRICAL_RANGES": 0,
+        "S1_NORMAL_BASELINE": 0,
+        "S2_DOOR_DISTURBANCE": 0,
+        "S3_THERMAL_EFFECTIVENESS_DEGRADATION": 0,
+        "S4_ACTUATION_RESPONSE_FAULT": 0
+      },
+      "is_physical_measurement": true,
+      "kind": "csv_capture",
+      "parseable_by_the_delivered_parser": true,
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d",
+      "why_not_a_run": "these are frames inside one boot of one stage run that W09 already registers as a candidate; a run is a session, and this capture is not a new session"
+    },
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W04-G1-BOOT-60S",
+      "eligibility": "NOT_A_THERMAL_RUN",
+      "frames_usable_per_scenario": null,
+      "is_physical_measurement": true,
+      "kind": "telem_schema1",
+      "parseable_by_the_delivered_parser": false,
+      "path": "evidence/A/W04/g1/42-telemetry.csv",
+      "sha256": "864d320d8cabaa0845b481b11ef10db9d2ad066f1ba146ac7f8f81c3ee4eafd2",
+      "why_not_parseable": "source kind 'telem_schema1' is not a frame stream this parser reads; it is listed so that 'not counted' is never mistaken for 'counted as zero runs'"
+    },
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W05-TIMING-PILOT",
+      "eligibility": "NOT_A_THERMAL_RUN",
+      "frames_usable_per_scenario": null,
+      "is_physical_measurement": true,
+      "kind": "derived_timing_table",
+      "parseable_by_the_delivered_parser": false,
+      "path": "evidence/A/W05/timing-pilot-jitter.csv",
+      "sha256": "494013a74b568ec9482c4acc0f4e3e990657d3a8ef1c85bbf3c4fdcbf08121c0",
+      "why_not_parseable": "source kind 'derived_timing_table' is not a frame stream this parser reads; it is listed so that 'not counted' is never mistaken for 'counted as zero runs'"
+    },
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W05-SCHEMA-FIXTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "frames_usable_per_scenario": null,
+      "is_physical_measurement": false,
+      "kind": "schema_fixture",
+      "parseable_by_the_delivered_parser": false,
+      "path": "evidence/A/W05/schema-fixture.json",
+      "sha256": "056b841e9490f137cc953e1ab27fb83c3595740cd4a8025b81108bcc8c7ecabe",
+      "why_not_parseable": "source kind 'schema_fixture' is not a frame stream this parser reads; it is listed so that 'not counted' is never mistaken for 'counted as zero runs'"
+    },
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W06-DEMO-COMMAND-CAPTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "frames_usable_per_scenario": null,
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "parseable_by_the_delivered_parser": false,
+      "path": "evidence/A/W06/demo-command-capture.log",
+      "sha256": "6b83c45505702a603bf23af86e49842cf03cfb45d964e445bd66fb5d5c9513e1",
+      "why_not_parseable": "source kind 'host_command_fixture' is not a frame stream this parser reads; it is listed so that 'not counted' is never mistaken for 'counted as zero runs'"
+    },
+    {
+      "additional_s1_or_s2_runs_available": 0,
+      "capture_id": "W06-ACK-FIXTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "frames_usable_per_scenario": null,
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "parseable_by_the_delivered_parser": false,
+      "path": "evidence/A/W06/ack-fixture.json",
+      "sha256": "1a195a4a7fef0044be6b414152dc5352b065ecd03e6c1e39f4a239932a3c2237",
+      "why_not_parseable": "source kind 'host_command_fixture' is not a frame stream this parser reads; it is listed so that 'not counted' is never mistaken for 'counted as zero runs'"
+    }
+  ],
+  "honesty": [
+    "no frame here is counted as a run",
+    "one boot_id's segments are never registered as independent runs",
+    "a capture that cannot be parsed is stated as unparseable, not as zero usable frames"
+  ],
+  "requirement": "docs/05A \u00a720 A-W11-03 (dataset expansion on B's run plan)",
+  "s1_runs_certified_valid": 0,
+  "s2_pilot_disturbances_available": 0,
+  "s4_runs_publishable": 0,
+  "status_label": "REAL DATA NOT AVAILABLE -> NEED_USER_ACTION",
+  "target": "additional valid S1/S2 runs as B's plan requires",
+  "what_a_new_run_needs": [
+    "a supervised session executed against evidence/A/W09/run-protocol-v1.md",
+    "a capture committed to the repository so it can be hash-pinned",
+    "for S2: the per-boot door attestation and an operator-timed OPEN edge (evidence/A/W10/S2-protocol-v1.md)",
+    "for an S1 pair usable by S2: the same hardware_config_id, firmware_version, sensor ROMs and physical positions as the S2 run"
+  ]
+}

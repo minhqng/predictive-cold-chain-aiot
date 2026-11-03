@@ -1,0 +1,147 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "commands": [],
+  "commands_observed": 0,
+  "device_lane_audit": {
+    "command_electrical_disagreements": {
+      "floors_a": {
+        "basis": "PZEM-017 LSB is 0.01 A; the floors match cg_command_trace so the two tools cannot disagree about what 'drawing current' means",
+        "no_active_response_below": 0.05,
+        "residual_response_above": 0.5
+      },
+      "frames_scanned": 957,
+      "interpretation": "an applied duty with no current is the S4 signature; current with no applied duty is the same inequality in the other direction. Both are reported as candidates unless the current value carries an OK producer status.",
+      "no_active_response_candidates": [
+        {
+          "boot_id": "56044b74",
+          "current_a": 0.0,
+          "current_status_present": false,
+          "device_ms": 226894,
+          "electrically_qualified": false,
+          "pwm_applied_permille": 999,
+          "pwm_readback_permille": 999,
+          "pwm_req_permille": 1000,
+          "seq": 227,
+          "stage": "H8-C",
+          "state": "COOLING",
+          "stop_reason": "NONE"
+        }
+      ],
+      "qualified_no_active_response": [],
+      "qualified_residual_response": [],
+      "residual_response_candidates": [
+        {
+          "boot_id": "56044b74",
+          "current_a": 7.15,
+          "current_status_present": false,
+          "device_ms": 826894,
+          "electrically_qualified": false,
+          "pwm_applied_permille": 0,
+          "pwm_readback_permille": 0,
+          "pwm_req_permille": 0,
+          "seq": 827,
+          "stage": "H8-C",
+          "state": "COOLDOWN",
+          "stop_reason": "STAGE_DEADLINE"
+        },
+        {
+          "boot_id": "56044b74",
+          "current_a": 0.56,
+          "current_status_present": false,
+          "device_ms": 827894,
+          "electrically_qualified": false,
+          "pwm_applied_permille": 0,
+          "pwm_readback_permille": 0,
+          "pwm_req_permille": 0,
+          "seq": 828,
+          "stage": "H8-C",
+          "state": "COOLDOWN",
+          "stop_reason": "STAGE_DEADLINE"
+        }
+      ],
+      "row_account": {
+        "every_exclusion_has_a_named_reason": true,
+        "frames_scanned": 957,
+        "note": "reasons_never_fired is checked-and-found-none, which is not the same claim as did-not-check; an absent field and an unreadable field are excluded separately because they are different defects",
+        "reasons_never_fired": [
+          "APPLIED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+          "APPLIED_DUTY_IS_NOT_AN_INTEGER",
+          "CURRENT_FIELD_ABSENT_FROM_THIS_SOURCE",
+          "CURRENT_IS_NOT_A_NUMBER"
+        ],
+        "reconciles": true,
+        "rows_compared": 957,
+        "rows_excluded": {},
+        "rows_excluded_total": 0
+      },
+      "rows_without_a_producer_status": 3
+    },
+    "request_applied_divergence": {
+      "distinct_req_applied_readback_tuples": {
+        "(0, 0, 0)": 357,
+        "(1000, 999, 999)": 600
+      },
+      "duty_fields_never_agree": true,
+      "frames_where_applied_differs_from_requested": 600,
+      "frames_where_readback_differs_from_applied": 0,
+      "intent_vs_application": "NOT SEPARABLE IN THIS SOURCE unless a command observation exists: the three numbers above are all device-reported duty fields, so they separate three instruments from each other, never the request from its application. The intent lane comes from the command and its ACK, and a capture carrying no command observation carries no intent.",
+      "reading": "requested, applied and read-back are three separate device claims; a capture in which they never differ would give S4 nothing to distinguish",
+      "row_account": {
+        "frames_scanned": 957,
+        "reasons_never_fired": [
+          "REQUESTED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+          "REQUESTED_DUTY_IS_NOT_AN_INTEGER",
+          "APPLIED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+          "APPLIED_DUTY_IS_NOT_AN_INTEGER",
+          "READBACK_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+          "READBACK_DUTY_IS_NOT_AN_INTEGER"
+        ],
+        "reconciles": true,
+        "rows_compared": 957,
+        "rows_excluded": {},
+        "rows_excluded_total": 0
+      }
+    }
+  },
+  "honesty": [
+    "a refusal in this trace is a protocol verdict, not a physical non-action",
+    "command != electrical effect is asserted only where current carries an OK status",
+    "no lane here was filled by reading the request"
+  ],
+  "is_physical_measurement": true,
+  "physical_s4_position": {
+    "device_received_any_command": false,
+    "reasons": [
+      "this firmware has no transport at all",
+      "admission requires SOURCE_NOT_CANONICAL to clear, and no canonical network source is connected",
+      "expiry fails closed as EPOCH_UNSYNCHRONIZED because the device has no wall clock",
+      "docs/02 \u00a732.2: an ACK is protocol evidence, never physical verification"
+    ],
+    "status_label": "NEED_USER_ACTION"
+  },
+  "promotion_rules": {
+    "duplicate_statuses": [
+      "DUPLICATE_CANONICAL"
+    ],
+    "forbidden_lane_sources": [
+      "INFERRED_FROM_INTENT"
+    ],
+    "refusal_statuses": [
+      "REJECTED",
+      "EXPIRED",
+      "SAFETY_BLOCKED",
+      "INVALID_STATE",
+      "OUT_OF_RANGE"
+    ],
+    "rule": "intent may never populate the applied, electrical or thermal lane; a lane's source must be a device frame, a device ACK payload, an explicit host-fixture label, or an explicit absence"
+  },
+  "protocol_id": "S4-protocol-v1",
+  "sources": [
+    {
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    }
+  ],
+  "tool_version": "w11-s4-v1"
+}

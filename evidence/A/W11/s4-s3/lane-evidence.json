@@ -1,0 +1,198 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "chamber_air_slot_basis": {
+    "chamber_air_slots": [
+      "t1",
+      "t3",
+      "t4"
+    ],
+    "docs01_discrepancy": "docs/01 lines 823-825 name the probes T1 near-door / T2 central / T3 far-opposite, while the frozen as-built record places T1 in the chamber centre, T2 on the TEC hot side, T3 at the bottom and T4 near the door. The discrepancy is documented, not resolved by this tooling: no slot is remapped, and the canonical naming decision stays with the coordinator (TEAM_DEPENDENCY), as W09 already recorded it.",
+    "excluded_from_chamber_air": {
+      "t2": "TEC_HOT_SIDE is a heatsink, not chamber air"
+    },
+    "frozen_positions": {
+      "t1": "CHAMBER_CENTER",
+      "t2": "TEC_HOT_SIDE",
+      "t3": "CHAMBER_BOTTOM",
+      "t4": "CHAMBER_NEAR_DOOR"
+    },
+    "geometry_version": "as-built-2026-11-02-frozen",
+    "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+    "raw_role_fields_in_this_capture": {
+      "t1": [
+        "UNASSIGNED"
+      ],
+      "t2": [
+        "HOT_SIDE"
+      ],
+      "t3": [
+        "UNASSIGNED"
+      ],
+      "t4": [
+        "UNASSIGNED"
+      ]
+    },
+    "registry_gap": "evidence/A/W09/run-registry.json carries no geometry field, so the frozen positions are taken from the W09 export module rather than the registry. Reported as a gap; not a reason to re-derive a second geometry in W11",
+    "reused_not_rederived": "cg_w09_export.FROZEN_SENSOR_GEOMETRY / FROZEN_GEOMETRY_VERSION, the same record W09 published in evidence/A/W09/exports/CG-S1-H8C-600S.json; the capture list is read from evidence/A/W09/run-registry.json"
+  },
+  "command_electrical_disagreements": {
+    "floors_a": {
+      "basis": "PZEM-017 LSB is 0.01 A; the floors match cg_command_trace so the two tools cannot disagree about what 'drawing current' means",
+      "no_active_response_below": 0.05,
+      "residual_response_above": 0.5
+    },
+    "frames_scanned": 957,
+    "interpretation": "an applied duty with no current is the S4 signature; current with no applied duty is the same inequality in the other direction. Both are reported as candidates unless the current value carries an OK producer status.",
+    "no_active_response_candidates": [
+      {
+        "boot_id": "56044b74",
+        "current_a": 0.0,
+        "current_status_present": false,
+        "device_ms": 226894,
+        "electrically_qualified": false,
+        "pwm_applied_permille": 999,
+        "pwm_readback_permille": 999,
+        "pwm_req_permille": 1000,
+        "seq": 227,
+        "stage": "H8-C",
+        "state": "COOLING",
+        "stop_reason": "NONE"
+      }
+    ],
+    "qualified_no_active_response": [],
+    "qualified_residual_response": [],
+    "residual_response_candidates": [
+      {
+        "boot_id": "56044b74",
+        "current_a": 7.15,
+        "current_status_present": false,
+        "device_ms": 826894,
+        "electrically_qualified": false,
+        "pwm_applied_permille": 0,
+        "pwm_readback_permille": 0,
+        "pwm_req_permille": 0,
+        "seq": 827,
+        "stage": "H8-C",
+        "state": "COOLDOWN",
+        "stop_reason": "STAGE_DEADLINE"
+      },
+      {
+        "boot_id": "56044b74",
+        "current_a": 0.56,
+        "current_status_present": false,
+        "device_ms": 827894,
+        "electrically_qualified": false,
+        "pwm_applied_permille": 0,
+        "pwm_readback_permille": 0,
+        "pwm_req_permille": 0,
+        "seq": 828,
+        "stage": "H8-C",
+        "state": "COOLDOWN",
+        "stop_reason": "STAGE_DEADLINE"
+      }
+    ],
+    "row_account": {
+      "every_exclusion_has_a_named_reason": true,
+      "frames_scanned": 957,
+      "note": "reasons_never_fired is checked-and-found-none, which is not the same claim as did-not-check; an absent field and an unreadable field are excluded separately because they are different defects",
+      "reasons_never_fired": [
+        "APPLIED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+        "APPLIED_DUTY_IS_NOT_AN_INTEGER",
+        "CURRENT_FIELD_ABSENT_FROM_THIS_SOURCE",
+        "CURRENT_IS_NOT_A_NUMBER"
+      ],
+      "reconciles": true,
+      "rows_compared": 957,
+      "rows_excluded": {},
+      "rows_excluded_total": 0
+    },
+    "rows_without_a_producer_status": 3
+  },
+  "honesty": [
+    "candidates are labelled with the qualification their status field actually has",
+    "empty current_status is not OK, so no candidate is certified electrical evidence",
+    "TEC_HOT_SIDE (T2) is never used as chamber air"
+  ],
+  "is_physical_measurement": true,
+  "lane_view_of_one_active_frame": {
+    "APPLIED": {
+      "lane": "APPLIED",
+      "note": "applied 999 differs from requested 1000: a real divergence",
+      "qualified": true,
+      "source": "READ_FROM_DEVICE_FRAME",
+      "value": {
+        "applied_permille": 999,
+        "readback_permille": 999,
+        "requested_permille": 1000
+      }
+    },
+    "ELECTRICAL": {
+      "lane": "ELECTRICAL",
+      "note": "current_a carries no producer status in this source (empty is not OK), so it is a candidate observation and cannot certify an electrical claim",
+      "qualified": false,
+      "source": "NO_EVIDENCE_IN_THIS_SOURCE",
+      "value": {
+        "current_a": 0.0
+      }
+    },
+    "THERMAL": {
+      "lane": "THERMAL",
+      "note": "chamber-air slots only; TEC_HOT_SIDE excluded",
+      "qualified": true,
+      "source": "READ_FROM_DEVICE_FRAME",
+      "value": {
+        "t1": 30.125,
+        "t3": 29.75,
+        "t4": 30.188
+      }
+    },
+    "boot_id": "56044b74",
+    "seq": 227,
+    "state": "COOLING",
+    "stop_reason": "NONE"
+  },
+  "request_applied_divergence": {
+    "distinct_req_applied_readback_tuples": {
+      "(0, 0, 0)": 357,
+      "(1000, 999, 999)": 600
+    },
+    "duty_fields_never_agree": true,
+    "frames_where_applied_differs_from_requested": 600,
+    "frames_where_readback_differs_from_applied": 0,
+    "intent_vs_application": "NOT SEPARABLE IN THIS SOURCE unless a command observation exists: the three numbers above are all device-reported duty fields, so they separate three instruments from each other, never the request from its application. The intent lane comes from the command and its ACK, and a capture carrying no command observation carries no intent.",
+    "reading": "requested, applied and read-back are three separate device claims; a capture in which they never differ would give S4 nothing to distinguish",
+    "row_account": {
+      "frames_scanned": 957,
+      "reasons_never_fired": [
+        "REQUESTED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+        "REQUESTED_DUTY_IS_NOT_AN_INTEGER",
+        "APPLIED_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+        "APPLIED_DUTY_IS_NOT_AN_INTEGER",
+        "READBACK_DUTY_FIELD_ABSENT_FROM_THIS_SOURCE",
+        "READBACK_DUTY_IS_NOT_AN_INTEGER"
+      ],
+      "reconciles": true,
+      "rows_compared": 957,
+      "rows_excluded": {},
+      "rows_excluded_total": 0
+    }
+  },
+  "sources": [
+    {
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    }
+  ],
+  "status_label": "REAL_DATA_ANALYZED",
+  "thermal_noise_floor_for_the_s4_thermal_lane": {
+    "basis": "the S4 thermal lane is a comparison against this measured floor",
+    "chamber_air_slots": [
+      "t1",
+      "t3",
+      "t4"
+    ],
+    "single_frame_floor_c": 0.05383
+  },
+  "tool_version": "w11-s4-v1"
+}
