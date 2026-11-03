@@ -94,8 +94,8 @@ def main() -> int:
             REPO_ROOT / "evidence" / "A" / "W05",
         ),
         (
-            "tools: W05 timing pilot reproduced from the committed W04 capture",
-            [str(REPO_ROOT / "evidence" / "A" / "W05" / "build_timing_pilot.py")],
+            "tools: W05 timing pilot re-derived read-only against the committed capture",
+            [str(REPO_ROOT / "evidence" / "A" / "W05" / "build_timing_pilot.py"), "--check"],
             REPO_ROOT / "evidence" / "A" / "W05",
         ),
     ]

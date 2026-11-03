@@ -309,9 +309,19 @@ def run_checks() -> Checker:
                   "telemetry never invents a wall-clock timestamp")
     checker.check(re.search(r"\b(time|gmtime|localtime|gettimeofday)\s*\(", telemetry_stripped) is None,
                   "the telemetry formatter reads no host/system clock")
-    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 3
+    # A field with no probe behind it must say NOT_ASSIGNED *and* carry a missing
+    # value; inventing a number next to an unassigned label is the failure mode
+    # this pins. The hot side left this set when the operator-frozen as-built map
+    # identified ROM 28AEBF2200000006 as the TEC hot side - requiring
+    # NOT_ASSIGNED there would now force the emitter to discard a real
+    # measurement, which is the opposite of the honesty rule this check serves.
+    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 2
+                  and "t_cold_side_status=%s" in telemetry_stripped
+                  and "t_ambient_status=%s" in telemetry_stripped
+                  and telemetry_stripped.count("fmt_float(false, 0.0f,") >= 3
                   and "CG_TELEM_STATUS_NOT_PRESENT" in telemetry_stripped,
-                  "cold/hot/ambient are NOT_ASSIGNED and RH is SENSOR_NOT_PRESENT")
+                  "cold side and ambient are NOT_ASSIGNED with a missing value, and RH is "
+                  "SENSOR_NOT_PRESENT")
     checker.check("fmt_float" in telemetry_stripped,
                   "every numeric field goes through the validity-aware formatter")
     line_max = define_value(config, "CG_TELEMETRY_LINE_MAX")

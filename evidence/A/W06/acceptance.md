@@ -298,3 +298,30 @@ volatile store and reset behaviour, the desired/applied distinction, and the six
 unresolved operating limits. `LOCAL_TEST_NOT_CANONICAL` is retired in favour of the
 single admission token `SOURCE_NOT_CANONICAL`; nothing in the physical evidence
 claimed a device received a command, and that remains true.
+
+## Dated correction — 2026-11-03 (Member A, production RC)
+
+The row "T2 chamber-air vs hot-side semantics ... unchanged
+(`t_hot_side_c=nan NOT_ASSIGNED`)" is superseded by this date. The production
+emitter was sourcing `t_inside_c` from role T2, and the operator-frozen
+as-built map makes T2 (`28AEBF2200000006`) the TEC hot-side probe: all 957
+rows of `evidence/A/W04/tec-cooling-response-600s.csv` carry
+`t2_role=HOT_SIDE`, and that probe rose 29.875 → 39.938 °C while chamber air
+fell by roughly 9 °C. `t_inside_c` now comes from T1 with `t_inside_src=T1`,
+and the hot side is emitted as its own value with `t_hot_side_src=T2`. The
+schema number stayed at 3 and no required token was added, so previously
+committed captures still parse.
+
+Consequence for this dossier's artifacts: `demo-command-capture.log` embeds the
+W05 fixture's raw telemetry line, and `build_contract_artifacts.py` derives it,
+so the artifacts were regenerated and re-pinned. Before this correction the
+committed capture's telemetry line was a schema-2 line while the test that
+consumes it called it "the schema-3 telemetry line the harness emitted"; that
+mismatch is closed by regeneration, not by editing the log by hand.
+
+Unchanged by this correction: `cg_commission.c` still fails closed with
+`t_hot_side_valid=false` and the hot-side start-admission gate remains unwired,
+because `HOT_SIDE_LIMIT_NOT_ESTABLISHED` is an unquantified hardware quantity
+and a gate cannot be bound to a threshold that does not exist yet. `CG_CMD_SOURCE_NETWORK`
+still has no transport in this build. Nothing in this tree has run on hardware:
+the box still runs the H8 bench image, and no production image has been flashed.
