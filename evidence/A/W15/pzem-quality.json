@@ -1,0 +1,4931 @@
+{
+  "a3_provenance": [
+    {
+      "authentic_data_exists": "YES in 7-qualified sources: H8-A-180s, H8-B-420s, H8-C-600s-2026-10-31, H8-D-900s, H8-E-1800s, W03-132b-off-envelope, W04-H8C-box-600s-raw",
+      "caveat": "the committed 600 s CSV publishes the number with an EMPTY status cell, so its voltage values are unqualified",
+      "computable_now": "YES",
+      "feature": "branch_voltage_v",
+      "kind": "raw",
+      "producer_field": "voltage_v (+ voltage_v_status, voltage_v_age_ms on the bench wire; voltage_status in the delivered schema)",
+      "source_register": "input 0x0000, 0.01 V/count",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "status token == OK AND age within the acquisition period AND the frame is not a register-latency frame"
+    },
+    {
+      "authentic_data_exists": "YES: H8-A-180s, H8-B-420s, H8-C-600s-2026-10-31, H8-D-900s, H8-E-1800s, W03-132b-off-envelope, W04-H8C-box-600s-raw",
+      "caveat": "the PZEM current register lags one integration cycle, so the first post-OFF frame repeats the loaded value; that frame is a latency artefact, not a measurement",
+      "computable_now": "YES",
+      "feature": "branch_current_a",
+      "kind": "raw",
+      "producer_field": "current_a (+ current_a_status, current_a_age_ms)",
+      "source_register": "input 0x0001, 0.01 A/count",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "same as voltage; plus the 50 A shunt profile (holding 0x0003) is what the readback recorded"
+    },
+    {
+      "authentic_data_exists": "YES: H8-A-180s, H8-B-420s, H8-C-600s-2026-10-31, H8-D-900s, H8-E-1800s, W03-132b-off-envelope, W04-H8C-box-600s-raw",
+      "caveat": "true power, not V x I; agreement with V x I was checked per frame and stayed inside register quantisation",
+      "computable_now": "YES",
+      "feature": "branch_power_w",
+      "kind": "raw",
+      "producer_field": "power_w (+ power_w_status, power_w_age_ms)",
+      "source_register": "input 0x0002..0x0003 (low word first), 0.1 W/count",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "status OK; note the delivered CSV builder never emitted a power status column at all"
+    },
+    {
+      "authentic_data_exists": "values exist in H8-A-180s, H8-B-420s, H8-C-600s-2026-10-31, H8-D-900s, H8-E-1800s, W03-132b-off-envelope, W03-pzem-off-2026-10-20, W04-H8C-box-600s, W04-H8C-box-600s-raw but NONE of them are qualified (qualified sources: W03-132b-off-envelope)",
+      "caveat": "1 Wh quantum at ~85 W updates roughly every 42 s, so it cannot resolve a short run, and it never decreases inside a boot",
+      "computable_now": "NO (unqualified)",
+      "feature": "accumulated_energy_wh",
+      "kind": "raw",
+      "producer_field": "energy_wh ONLY - no status token and no age token exist on the bench wire",
+      "source_register": "input 0x0004..0x0005 (low word first), 1.0 Wh/count",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "NONE PUBLISHED: the value arrives with no validity companion, so it cannot be qualified at all"
+    },
+    {
+      "authentic_data_exists": "YES for the raw operands; the derived column agrees with reported power inside quantisation",
+      "caveat": "a consistency check, never a replacement for the power register",
+      "computable_now": "YES",
+      "feature": "v_times_i_power_w",
+      "kind": "derived",
+      "producer_field": "not published by the device; host-side only",
+      "source_register": "computed from input 0x0000 x 0x0001",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "both operands qualified and the frame is DRIVEN"
+    },
+    {
+      "authentic_data_exists": "YES: committed 600 s capture 108 -> 122 Wh (delta 14 Wh) against a 14.219 Wh trapezoidal integral of power",
+      "caveat": "the counter has no validity token; a 14 Wh delta carries a +-1 Wh quantum on each end, so 42 s of run time is the smallest interval it can speak about",
+      "computable_now": "YES, but resolution-limited",
+      "feature": "energy_delta_wh",
+      "kind": "derived",
+      "producer_field": "host-side, from energy_wh",
+      "source_register": "difference of input 0x0004..0x0005 across a run",
+      "status_label": "REAL_DATA_ANALYZED",
+      "validity_condition": "same boot_id, monotonic counter, run boundaries known"
+    },
+    {
+      "authentic_data_exists": "PARTIAL - one 600 s committed run at one duty level only",
+      "caveat": "duty-resolved power/temperature needs the ladder, which is local-bench only, and W07 repeatability, which is not in this checkout",
+      "computable_now": "NO for a duty-resolved model",
+      "feature": "specific_power_w_per_kelvin",
+      "kind": "derived",
+      "producer_field": "host-side",
+      "source_register": "power register / thermal channels",
+      "status_label": "TEAM_DEPENDENCY",
+      "validity_condition": "power qualified AND the thermal channel OK AND the sensor position frozen"
+    },
+    {
+      "authentic_data_exists": "NO",
+      "caveat": "a DC branch through an IBT-2 makes power factor meaningless anyway; the register was never read and no capture carries it",
+      "computable_now": "NO",
+      "feature": "power_factor / frequency",
+      "kind": "raw-register-not-published",
+      "producer_field": "absent from every frame of every source",
+      "source_register": "input 0x0006 (power factor) / 0x0007 (frequency) on the PZEM-017 - NOT read by this firmware, which reads 6 input registers (cg_modbus.py INPUT_REGISTER_COUNT)",
+      "status_label": "BLOCKED_HARDWARE",
+      "validity_condition": "n/a"
+    },
+    {
+      "authentic_data_exists": "NO bench capture carries them; the W05 fixture shows them as a host scenario",
+      "caveat": "this is the cleanest proof that the bench image and the delivered firmware are different producers of the same physical quantity",
+      "computable_now": "NO from authentic data",
+      "feature": "electrical_quality / producer liveness",
+      "kind": "derived",
+      "producer_field": "power_validity + electrical_quality + power_beats + power_max_gap_ms in the delivered schema (W05)",
+      "source_register": "host-side classification of the frames",
+      "status_label": "NEED_USER_ACTION",
+      "validity_condition": "requires the delivered schema's liveness counters, which the bench image's line does not emit"
+    }
+  ],
+  "a3_run_index": [
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        1000
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/75-run-100pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-100pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        200
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/40b-run-20pct-rev3.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-20pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        300
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/40c-run-30pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-30pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        400
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/61-run-40pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-40pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        500
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/63-run-50pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-50pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        600
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/65-run-60pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-60pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 19,
+      "duty_permille_values": [
+        600
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/67-run-60pct-diag.log",
+      "frames": 20,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-60pct-diag1",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 19,
+      "duty_permille_values": [
+        600
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/69-run-60pct-diag2.log",
+      "frames": 20,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-60pct-diag2",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 19,
+      "duty_permille_values": [
+        600
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/70-run-60pct-shunt.log",
+      "frames": 20,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-60pct-shunt",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        700
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/71-run-70pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-70pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        800
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/72-run-80pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-80pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "H7 ran the electrical-only image: the T2 value in the T line sits near ambient, so the run has a thermal FIELD but no thermal RESPONSE",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        900
+      ],
+      "electrical_status_recorded": "false",
+      "file": "<local-bench>/h7/73-run-90pct-rev4.log",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H7-90pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t2"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 179,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/phase4e/h8a-enable-fixed-2026-10-31/monitor/samples.jsonl",
+      "frames": 1023,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H8-A-180s",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 419,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/phase4e/h8b-run-2026-10-31/monitor/samples.jsonl",
+      "frames": 1086,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H8-B-420s",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 599,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/phase4e/h8c-2026-10-31/monitor/samples.jsonl",
+      "frames": 1195,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H8-C-600s-2026-10-31",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 899,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/phase4e/h8d-2026-10-31/monitor/samples.jsonl",
+      "frames": 1186,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H8-D-900s",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 1799,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/phase4e/h8e-2026-10-31/monitor/samples.jsonl",
+      "frames": 2915,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "H8-E-1800s",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "driven_frames": 0,
+      "duty_permille_values": [],
+      "electrical_status_recorded": "true",
+      "file": "evidence/A/W03/hardware-2026-10-27/raw/test-132b-off-envelope.csv",
+      "frames": 600,
+      "has_applied_duty": "no",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "W03-132b-off-envelope",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [],
+      "trust": "COMMITTED",
+      "usable_for_electrical_ablation": "no",
+      "why_not": "no driven frames"
+    },
+    {
+      "caveats": "",
+      "driven_frames": 0,
+      "duty_permille_values": [],
+      "electrical_status_recorded": "true",
+      "file": "evidence/A/W03/hardware-2026-10-20/raw/pzem-off.csv",
+      "frames": 601,
+      "has_applied_duty": "no",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "W03-pzem-off-2026-10-20",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [],
+      "trust": "COMMITTED",
+      "usable_for_electrical_ablation": "no",
+      "why_not": "no driven frames"
+    },
+    {
+      "caveats": "",
+      "driven_frames": 0,
+      "duty_permille_values": [],
+      "electrical_status_recorded": "false",
+      "file": "evidence/A/W04/g1/42-telemetry.csv",
+      "frames": 62,
+      "has_applied_duty": "no",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "no",
+      "has_energy": "no",
+      "has_power": "no",
+      "has_voltage": "no",
+      "session": "W04-G1-production-failclosed",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [],
+      "trust": "COMMITTED",
+      "usable_for_electrical_ablation": "no",
+      "why_not": "no driven frames"
+    },
+    {
+      "caveats": "",
+      "driven_frames": 59,
+      "duty_permille_values": [
+        100
+      ],
+      "electrical_status_recorded": "false",
+      "file": "evidence/A/W04/h6/first-tec-trace.csv",
+      "frames": 60,
+      "has_applied_duty": "yes",
+      "has_command_field": "no (single-valued stage duty)",
+      "has_current": "yes",
+      "has_energy": "no",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "W04-H6-10pct",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [],
+      "trust": "COMMITTED",
+      "usable_for_electrical_ablation": "no",
+      "why_not": "no thermal channel in the capture"
+    },
+    {
+      "caveats": "electrical values published without any validity token in this source (CSV status cells empty / absent)",
+      "driven_frames": 599,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "false",
+      "file": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "frames": 957,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "W04-H8C-box-600s",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "COMMITTED",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    },
+    {
+      "caveats": "",
+      "declared_in": "local-bench-observations.json",
+      "driven_frames": 599,
+      "duty_permille_values": [
+        999
+      ],
+      "electrical_status_recorded": "true",
+      "file": "<local-bench>/h8/box-cooling-600s-2026-11-01/monitor-final/samples.jsonl",
+      "frames": 957,
+      "has_applied_duty": "yes",
+      "has_command_field": "yes",
+      "has_current": "yes",
+      "has_energy": "yes",
+      "has_power": "yes",
+      "has_voltage": "yes",
+      "session": "W04-H8C-box-600s-raw",
+      "status_label": "REAL_DATA_ANALYZED",
+      "thermal_channels": [
+        "t1",
+        "t2",
+        "t3",
+        "t4"
+      ],
+      "trust": "LOCAL_BENCH",
+      "usable_for_electrical_ablation": "yes",
+      "why_not": ""
+    }
+  ],
+  "audit": {
+    "cadence_target_ms": 1000,
+    "clock_semantics": {
+      "authoritative_device_time": "device_ms within boot_id + seq (docs/01 18.3)",
+      "clock_uncertainty_rule": "docs/01 18.5: record uptime and sequence; do not manufacture false timestamp precision",
+      "per_source": {
+        "W03-132b-off-envelope": {
+          "boot_id_partitions_frames": [
+            "(no boot id in this source)"
+          ],
+          "device_clock": "device_ms",
+          "device_ms_frames": 600,
+          "device_ms_monotonic_non_decreasing": true,
+          "host_wall_clock_used_as_sample_time": false,
+          "note": "device_ms is per-boot uptime; a host timestamp is not device time, so no age or TTL here is claimed in absolute terms"
+        },
+        "W03-pzem-off-2026-10-20": {
+          "boot_id_partitions_frames": [
+            "(no boot id in this source)"
+          ],
+          "device_clock": "device_ms",
+          "device_ms_frames": 601,
+          "device_ms_monotonic_non_decreasing": true,
+          "host_wall_clock_used_as_sample_time": false,
+          "note": "device_ms is per-boot uptime; a host timestamp is not device time, so no age or TTL here is claimed in absolute terms"
+        },
+        "W04-G1-production-failclosed": {
+          "boot_id_partitions_frames": [
+            "(no boot id in this source)"
+          ],
+          "device_clock": "device_ms",
+          "device_ms_frames": 62,
+          "device_ms_monotonic_non_decreasing": true,
+          "host_wall_clock_used_as_sample_time": false,
+          "note": "device_ms is per-boot uptime; a host timestamp is not device time, so no age or TTL here is claimed in absolute terms"
+        },
+        "W04-H6-10pct": {
+          "boot_id_partitions_frames": [
+            "(no boot id in this source)"
+          ],
+          "device_clock": "device_ms",
+          "device_ms_frames": 60,
+          "device_ms_monotonic_non_decreasing": true,
+          "host_wall_clock_used_as_sample_time": false,
+          "note": "device_ms is per-boot uptime; a host timestamp is not device time, so no age or TTL here is claimed in absolute terms"
+        },
+        "W04-H8C-box-600s": {
+          "boot_id_partitions_frames": [
+            "INVALID",
+            "VALID"
+          ],
+          "device_clock": "device_ms",
+          "device_ms_frames": 957,
+          "device_ms_monotonic_non_decreasing": true,
+          "host_wall_clock_used_as_sample_time": false,
+          "note": "device_ms is per-boot uptime; a host timestamp is not device time, so no age or TTL here is claimed in absolute terms"
+        }
+      },
+      "raw_declares_no_wall_clock": true,
+      "stale_is_not_invalid": "docs/01 18.4: historical validity != control freshness",
+      "ttl_at_receipt_rule": "a TTL measured on arrival does not establish a command's original age; unverifiable absolute expiry fails closed"
+    },
+    "declaration_sha256": "303afec3bc2401c1d8f74acd813b2e258942f14cee42eb7e31bf616b194cc033",
+    "on_off_consistency": {
+      "anomalies": [
+        {
+          "classification": "PRE_RUN_REGISTER",
+          "clock_ms": 2.0,
+          "current_a": 0.0,
+          "duty_applied_permille": 100,
+          "electrical_status_recorded": false,
+          "kind": "APPLIED_ON_ZERO_CURRENT",
+          "seq": "13",
+          "source": "W04-H6-10pct"
+        },
+        {
+          "classification": "PRE_RUN_REGISTER",
+          "clock_ms": 226894.0,
+          "current_a": 0.0,
+          "duty_applied_permille": 999,
+          "electrical_status_recorded": false,
+          "kind": "APPLIED_ON_ZERO_CURRENT",
+          "seq": "227",
+          "source": "W04-H8C-box-600s"
+        },
+        {
+          "applied_duty_stayed_zero_throughout": true,
+          "classification": "OUTPUTS_OFF_REGISTER",
+          "clock_ms": 826894.0,
+          "current_a": 7.15,
+          "current_returns_to_zero_at_device_ms": 829894.0,
+          "duty_applied_permille": 0,
+          "electrical_status_recorded": false,
+          "frames_after_suspect": [
+            {
+              "current_a": 0.56,
+              "device_ms": 827894.0
+            },
+            {
+              "current_a": 0.02,
+              "device_ms": 828894.0
+            },
+            {
+              "current_a": 0.0,
+              "device_ms": 829894.0
+            }
+          ],
+          "kind": "APPLIED_OFF_CURRENT_ABOVE_FLOOR",
+          "seq": "827",
+          "source": "W04-H8C-box-600s",
+          "trace_provenance": "the recorded sequence is what the PZEM itself reported while the applied duty stayed 0; no independent instrument stands behind it, so it does not verify that the branch was de-energized and it does not settle the anomaly classification",
+          "zero_duty_current_sequence_a": [
+            7.15,
+            0.56,
+            0.02,
+            0.0
+          ]
+        },
+        {
+          "applied_duty_stayed_zero_throughout": true,
+          "classification": "OFF_SETTLING",
+          "clock_ms": 827894.0,
+          "current_a": 0.56,
+          "current_returns_to_zero_at_device_ms": 829894.0,
+          "duty_applied_permille": 0,
+          "electrical_status_recorded": false,
+          "frames_after_suspect": [
+            {
+              "current_a": 0.02,
+              "device_ms": 828894.0
+            },
+            {
+              "current_a": 0.0,
+              "device_ms": 829894.0
+            }
+          ],
+          "kind": "APPLIED_OFF_CURRENT_ABOVE_FLOOR",
+          "seq": "828",
+          "source": "W04-H8C-box-600s",
+          "trace_provenance": "the recorded sequence is what the PZEM itself reported while the applied duty stayed 0; no independent instrument stands behind it, so it does not verify that the branch was de-energized and it does not settle the anomaly classification",
+          "zero_duty_current_sequence_a": [
+            0.56,
+            0.02,
+            0.0
+          ]
+        }
+      ],
+      "anomaly_count": 4,
+      "buckets": {
+        "applied_off_current_above_floor": 2,
+        "applied_off_current_at_or_below_floor": 1549,
+        "applied_on_current_at_or_below_floor": 0,
+        "applied_on_current_flows": 658,
+        "applied_on_current_zero": 2,
+        "commanded_and_applied_differ": 600,
+        "commanded_on_but_applied_zero": 0
+      },
+      "note": "APPLIED_OFF_CURRENT_ABOVE_FLOOR frames are candidate anomalies only, and two explanations compete without this host tool choosing between them: the canonical safety class CONTROL_ELECTRICAL_ANOMALY (docs/01 22.4 'Commanded OFF + unexpected current' and 23.4 'current while state should be OFF', high severity), and the register-holdover reading in which the same values merely repeat the preceding driven frame. The anomaly option stays open, exactly as docs/01 23.5 prefers UNKNOWN over invented certainty",
+      "status_label": "REAL_DATA_ANALYZED",
+      "zero_duty_trace_provenance": "the recorded sequence is what the PZEM itself reported while the applied duty stayed 0; no independent instrument stands behind it, so it does not verify that the branch was de-energized and it does not settle the anomaly classification"
+    },
+    "pzem_registers": {
+      "current_a": {
+        "lsb": 0.01,
+        "register": "input 0x0001",
+        "unit": "A"
+      },
+      "energy_wh": {
+        "lsb": 1.0,
+        "register": "input 0x0004..0x0005 (low word first)",
+        "unit": "Wh"
+      },
+      "power_w": {
+        "lsb": 0.1,
+        "register": "input 0x0002..0x0003 (low word first)",
+        "unit": "W"
+      },
+      "voltage_v": {
+        "lsb": 0.01,
+        "register": "input 0x0000",
+        "unit": "V"
+      }
+    },
+    "quality_bitmasks": {
+      "bit_position_meaning_documented_in_repo": false,
+      "per_source": {},
+      "policy": "report the device-declared bitmask verbatim; do not map bits to meanings this repository does not define"
+    },
+    "schema": "cg-w15-pzem-quality-1",
+    "sources": [
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/75-run-100pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0507,
+            "delta_w": -0.0461,
+            "driven_frames": 59,
+            "mean_reported_power_w": 90.9203,
+            "mean_voltage_times_mean_current_w": 90.9665
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.098,
+          "mean_abs_delta_w": 0.0429,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-100pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/40b-run-20pct-rev3.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.2627,
+            "delta_w": -0.0538,
+            "driven_frames": 59,
+            "mean_reported_power_w": 20.422,
+            "mean_voltage_times_mean_current_w": 20.4758
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.085,
+          "mean_abs_delta_w": 0.0529,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-20pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/40c-run-30pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.1991,
+            "delta_w": -0.0554,
+            "driven_frames": 59,
+            "mean_reported_power_w": 27.7627,
+            "mean_voltage_times_mean_current_w": 27.8181
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0964,
+          "mean_abs_delta_w": 0.0546,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-30pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/61-run-40pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.1718,
+            "delta_w": -0.0587,
+            "driven_frames": 59,
+            "mean_reported_power_w": 34.1373,
+            "mean_voltage_times_mean_current_w": 34.196
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0936,
+          "mean_abs_delta_w": 0.0582,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-40pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/63-run-50pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.1024,
+            "delta_w": -0.0409,
+            "driven_frames": 59,
+            "mean_reported_power_w": 39.9525,
+            "mean_voltage_times_mean_current_w": 39.9935
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0987,
+          "mean_abs_delta_w": 0.041,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-50pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/65-run-60pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0934,
+            "delta_w": -0.0421,
+            "driven_frames": 59,
+            "mean_reported_power_w": 45.0864,
+            "mean_voltage_times_mean_current_w": 45.1286
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.098,
+          "mean_abs_delta_w": 0.0428,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-60pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 20,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 19,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/67-run-60pct-diag.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 19,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.098,
+            "delta_w": -0.0459,
+            "driven_frames": 19,
+            "mean_reported_power_w": 46.7579,
+            "mean_voltage_times_mean_current_w": 46.8038
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 20,
+          "max_abs_delta_w": 0.0812,
+          "mean_abs_delta_w": 0.0442,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 20
+          },
+          "frames": 20,
+          "frames_with_current_value": 20,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 20
+          }
+        },
+        "source": "H7-60pct-diag1",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 20,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 20,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 19,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/69-run-60pct-diag2.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 19,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0907,
+            "delta_w": -0.0425,
+            "driven_frames": 19,
+            "mean_reported_power_w": 46.7579,
+            "mean_voltage_times_mean_current_w": 46.8003
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 20,
+          "max_abs_delta_w": 0.088,
+          "mean_abs_delta_w": 0.0409,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 20
+          },
+          "frames": 20,
+          "frames_with_current_value": 20,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 20
+          }
+        },
+        "source": "H7-60pct-diag2",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 20,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 20,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 19,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/70-run-60pct-shunt.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 19,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0724,
+            "delta_w": -0.0465,
+            "driven_frames": 19,
+            "mean_reported_power_w": 64.1,
+            "mean_voltage_times_mean_current_w": 64.1465
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 20,
+          "max_abs_delta_w": 0.0975,
+          "mean_abs_delta_w": 0.0439,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 20
+          },
+          "frames": 20,
+          "frames_with_current_value": 20,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 20
+          }
+        },
+        "source": "H7-60pct-shunt",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 20,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 20,
+              "label_counts": {
+                "(empty)": 20
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 20,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/71-run-70pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0671,
+            "delta_w": -0.0473,
+            "driven_frames": 59,
+            "mean_reported_power_w": 70.4458,
+            "mean_voltage_times_mean_current_w": 70.4931
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0928,
+          "mean_abs_delta_w": 0.0458,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-70pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1010.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/72-run-80pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.065,
+            "delta_w": -0.0507,
+            "driven_frames": 59,
+            "mean_reported_power_w": 77.9525,
+            "mean_voltage_times_mean_current_w": 78.0032
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.095,
+          "mean_abs_delta_w": 0.0485,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-80pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1020.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "<local-bench>/h7/73-run-90pct-rev4.log",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0592,
+            "delta_w": -0.0502,
+            "driven_frames": 59,
+            "mean_reported_power_w": 84.7,
+            "mean_voltage_times_mean_current_w": 84.7502
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0976,
+          "mean_abs_delta_w": 0.048,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "H7-90pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 1010,
+            "max": 666.0,
+            "mean": 662.2871,
+            "median": 666.0,
+            "min": 646.0,
+            "p05": 656.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 13,
+          "early_gaps": 0,
+          "frames_with_clock": 1023,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 1022,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 1010,
+            "max": 666.0,
+            "mean": 662.2871,
+            "median": 666.0,
+            "min": 646.0,
+            "p05": 656.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 13,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 1010,
+            "max": 666.0,
+            "mean": 662.2871,
+            "median": 666.0,
+            "min": 646.0,
+            "p05": 656.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 13
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 5.0,
+          "counter_minus_integral_wh": 0.6691,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 6,
+          "energy_wh_first": 9.0,
+          "energy_wh_last": 14.0,
+          "frames": 1010,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 1021.99,
+          "trapezoidal_integral_of_power_wh": 4.3309,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/phase4e/h8a-enable-fixed-2026-10-31/monitor/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 179,
+            "IDLE_OFF": 828,
+            "NO_ELECTRICAL_VALUE": 13,
+            "OFF_SETTLING": 1,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 2,
+          "latency_frames": 3
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.06,
+            "delta_w": -0.0519,
+            "driven_frames": 179,
+            "mean_reported_power_w": 86.3933,
+            "mean_voltage_times_mean_current_w": 86.4452
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 1010,
+          "max_abs_delta_w": 0.098,
+          "mean_abs_delta_w": 0.009,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "producer read failures: the value cell is empty, the status token reads IO_ERROR and the age token reads -1 (sentinel)",
+          "current_status_token_counts": {
+            "IO_ERROR": 13,
+            "OK": 1010
+          },
+          "frames": 1023,
+          "frames_with_current_value": 1010,
+          "frames_without_any_electrical_value": 13,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 13,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "H8-A-180s",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 1023,
+              "max": 666.0,
+              "mean": 653.8583,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 1023,
+              "max": 666.0,
+              "mean": 653.8583,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 1023,
+              "max": 666.0,
+              "mean": 653.8583,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 1010,
+              "frames_with_a_value_and_OK_label": 1010,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 13,
+                "OK": 1010
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 1010,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 1023,
+              "label_counts": {
+                "(empty)": 1023
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 1010,
+              "frames_with_a_value_and_OK_label": 1010,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 13,
+                "OK": 1010
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 1010,
+              "frames_with_a_value_and_OK_label": 1010,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 13,
+                "OK": 1010
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 1023,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 1085,
+            "max": 666.0,
+            "mean": 661.7512,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 1,
+          "early_gaps": 0,
+          "frames_with_clock": 1086,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 1085,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 1085,
+            "max": 666.0,
+            "mean": 661.7512,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 1,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 1085,
+            "max": 666.0,
+            "mean": 661.7512,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 1
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 10.0,
+          "counter_minus_integral_wh": 0.0759,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 11,
+          "energy_wh_first": 14.0,
+          "energy_wh_last": 24.0,
+          "frames": 1085,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 1084.99,
+          "trapezoidal_integral_of_power_wh": 9.9241,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/phase4e/h8b-run-2026-10-31/monitor/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 419,
+            "IDLE_OFF": 664,
+            "NO_ELECTRICAL_VALUE": 1,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 1,
+          "latency_frames": 2
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0551,
+            "delta_w": -0.0469,
+            "driven_frames": 419,
+            "mean_reported_power_w": 85.0661,
+            "mean_voltage_times_mean_current_w": 85.113
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 1085,
+          "max_abs_delta_w": 0.098,
+          "mean_abs_delta_w": 0.018,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "producer read failures: the value cell is empty, the status token reads IO_ERROR and the age token reads -1 (sentinel)",
+          "current_status_token_counts": {
+            "IO_ERROR": 1,
+            "OK": 1085
+          },
+          "frames": 1086,
+          "frames_with_current_value": 1085,
+          "frames_without_any_electrical_value": 1,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 1,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "H8-B-420s",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 1086,
+              "max": 666.0,
+              "mean": 661.1409,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 1086,
+              "max": 666.0,
+              "mean": 661.1409,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 1086,
+              "max": 666.0,
+              "mean": 661.1409,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 1085,
+              "frames_with_a_value_and_OK_label": 1085,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 1,
+                "OK": 1085
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 1085,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 1086,
+              "label_counts": {
+                "(empty)": 1086
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 1085,
+              "frames_with_a_value_and_OK_label": 1085,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 1,
+                "OK": 1085
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 1085,
+              "frames_with_a_value_and_OK_label": 1085,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 1,
+                "OK": 1085
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 1086,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 1195,
+            "max": 666.0,
+            "mean": 661.5481,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 1195,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 1194,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 1195,
+            "max": 666.0,
+            "mean": 661.5481,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 1195,
+            "max": 666.0,
+            "mean": 661.5481,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 14.0,
+          "counter_minus_integral_wh": -0.1276,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 15,
+          "energy_wh_first": 24.0,
+          "energy_wh_last": 38.0,
+          "frames": 1195,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 1193.99,
+          "trapezoidal_integral_of_power_wh": 14.1276,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/phase4e/h8c-2026-10-31/monitor/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 599,
+            "IDLE_OFF": 594,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 1,
+          "latency_frames": 2
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0641,
+            "delta_w": -0.0544,
+            "driven_frames": 599,
+            "mean_reported_power_w": 84.7673,
+            "mean_voltage_times_mean_current_w": 84.8216
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 1195,
+          "max_abs_delta_w": 0.0997,
+          "mean_abs_delta_w": 0.0272,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "OK": 1195
+          },
+          "frames": 1195,
+          "frames_with_current_value": 1195,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "H8-C-600s-2026-10-31",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 1195,
+              "max": 666.0,
+              "mean": 661.5481,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 1195,
+              "max": 666.0,
+              "mean": 661.5481,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 1195,
+              "max": 666.0,
+              "mean": 661.5481,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 1195,
+              "frames_with_a_value_and_OK_label": 1195,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1195
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 1195,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 1195,
+              "label_counts": {
+                "(empty)": 1195
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 1195,
+              "frames_with_a_value_and_OK_label": 1195,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1195
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 1195,
+              "frames_with_a_value_and_OK_label": 1195,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1195
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 1195,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 1186,
+            "max": 666.0,
+            "mean": 660.9157,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 1186,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 1185,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 1186,
+            "max": 666.0,
+            "mean": 660.9157,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 1186,
+            "max": 666.0,
+            "mean": 660.9157,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 21.0,
+          "counter_minus_integral_wh": -0.1049,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 22,
+          "energy_wh_first": 38.0,
+          "energy_wh_last": 59.0,
+          "frames": 1186,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 1184.99,
+          "trapezoidal_integral_of_power_wh": 21.1049,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/phase4e/h8d-2026-10-31/monitor/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 899,
+            "IDLE_OFF": 284,
+            "OFF_SETTLING": 1,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 2,
+          "latency_frames": 3
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0648,
+            "delta_w": -0.0547,
+            "driven_frames": 899,
+            "mean_reported_power_w": 84.4149,
+            "mean_voltage_times_mean_current_w": 84.4696
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 1186,
+          "max_abs_delta_w": 0.0997,
+          "mean_abs_delta_w": 0.0415,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "OK": 1186
+          },
+          "frames": 1186,
+          "frames_with_current_value": 1186,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "H8-D-900s",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 1186,
+              "max": 666.0,
+              "mean": 660.9157,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 1186,
+              "max": 666.0,
+              "mean": 660.9157,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 1186,
+              "max": 666.0,
+              "mean": 660.9157,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 1186,
+              "frames_with_a_value_and_OK_label": 1186,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1186
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 1186,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 1186,
+              "label_counts": {
+                "(empty)": 1186
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 1186,
+              "frames_with_a_value_and_OK_label": 1186,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1186
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 1186,
+              "frames_with_a_value_and_OK_label": 1186,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 1186
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 1186,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 2913,
+            "max": 666.0,
+            "mean": 661.2592,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 2,
+          "early_gaps": 0,
+          "frames_with_clock": 2915,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 2914,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 2913,
+            "max": 666.0,
+            "mean": 661.2592,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 2,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 2913,
+            "max": 666.0,
+            "mean": 661.2592,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 2
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 42.0,
+          "counter_minus_integral_wh": -0.0576,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 43,
+          "energy_wh_first": 59.0,
+          "energy_wh_last": 101.0,
+          "frames": 2913,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 2911.99,
+          "trapezoidal_integral_of_power_wh": 42.0576,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/phase4e/h8e-2026-10-31/monitor/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 1799,
+            "IDLE_OFF": 1112,
+            "NO_ELECTRICAL_VALUE": 2,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 1,
+          "latency_frames": 2
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0887,
+            "delta_w": -0.0747,
+            "driven_frames": 1799,
+            "mean_reported_power_w": 84.1155,
+            "mean_voltage_times_mean_current_w": 84.1902
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 2913,
+          "max_abs_delta_w": 0.0985,
+          "mean_abs_delta_w": 0.0462,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "producer read failures: the value cell is empty, the status token reads IO_ERROR and the age token reads -1 (sentinel)",
+          "current_status_token_counts": {
+            "IO_ERROR": 2,
+            "OK": 2913
+          },
+          "frames": 2915,
+          "frames_with_current_value": 2913,
+          "frames_without_any_electrical_value": 2,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 2,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "H8-E-1800s",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 2915,
+              "max": 666.0,
+              "mean": 660.8048,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 2915,
+              "max": 666.0,
+              "mean": 660.8048,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 2915,
+              "max": 666.0,
+              "mean": 660.8048,
+              "median": 666.0,
+              "min": -1.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 2913,
+              "frames_with_a_value_and_OK_label": 2913,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 2,
+                "OK": 2913
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 2913,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 2915,
+              "label_counts": {
+                "(empty)": 2915
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 2913,
+              "frames_with_a_value_and_OK_label": 2913,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 2,
+                "OK": 2913
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 2913,
+              "frames_with_a_value_and_OK_label": 2913,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "IO_ERROR": 2,
+                "OK": 2913
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 2915,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 600,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 599,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "energy_consistency": {
+          "counter_delta_wh": 0.0,
+          "counter_minus_integral_wh": 0.0,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 1,
+          "energy_wh_first": 0.0,
+          "energy_wh_last": 0.0,
+          "frames": 600,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 598.99,
+          "trapezoidal_integral_of_power_wh": 0.0,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "evidence/A/W03/hardware-2026-10-27/raw/test-132b-off-envelope.csv",
+        "holdover": {
+          "classification_counts": {
+            "IDLE_OFF": 600
+          },
+          "driven_zero_current_frames": 0,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 0
+        },
+        "power_consistency": {
+          "aggregate_check": {},
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 600,
+          "max_abs_delta_w": 0.0,
+          "mean_abs_delta_w": 0.0,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": true,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "OK": 600
+          },
+          "frames": 600,
+          "frames_with_current_value": 600,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {
+            "29": 600
+          },
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "W03-132b-off-envelope",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 600,
+              "frames_with_a_value_and_OK_label": 600,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 600
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": true,
+              "frames_with_a_value": 600,
+              "frames_with_a_value_and_OK_label": 600,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 600
+              },
+              "qualified": true
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 600,
+              "frames_with_a_value_and_OK_label": 600,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 600
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 600,
+              "frames_with_a_value_and_OK_label": 600,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 600
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 600,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "poll",
+          "status_token_absent_on_wire": [],
+          "unqualified_columns": [],
+          "valueless_columns": []
+        },
+        "trust": "COMMITTED"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 601,
+          "gap_max_ms": 1004.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 600,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "energy_consistency": {
+          "counter_delta_wh": 0.0,
+          "counter_minus_integral_wh": 0.0,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 1,
+          "energy_wh_first": 0.0,
+          "energy_wh_last": 0.0,
+          "frames": 594,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 600.0,
+          "trapezoidal_integral_of_power_wh": 0.0,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "evidence/A/W03/hardware-2026-10-20/raw/pzem-off.csv",
+        "holdover": {
+          "classification_counts": {
+            "IDLE_OFF": 594,
+            "NO_ELECTRICAL_VALUE": 7
+          },
+          "driven_zero_current_frames": 0,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 0
+        },
+        "power_consistency": {
+          "aggregate_check": {},
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 594,
+          "max_abs_delta_w": 0.0,
+          "mean_abs_delta_w": 0.0,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": true,
+        "response_quality": {
+          "absence_reason": "host-side poll failures recorded explicitly with physical_fail=1",
+          "current_status_token_counts": {
+            "CRC_VALID": 594,
+            "INVALID": 7
+          },
+          "frames": 601,
+          "frames_with_current_value": 594,
+          "frames_without_any_electrical_value": 7,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 7,
+          "rx_len_counts": {
+            "28": 1,
+            "29": 6
+          },
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "W03-pzem-off-2026-10-20",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 594,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "CRC_VALID": 594,
+                "INVALID": 7
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": true,
+              "frames_with_a_value": 594,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "CRC_VALID": 594,
+                "INVALID": 7
+              },
+              "qualified": true
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 594,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "CRC_VALID": 594,
+                "INVALID": 7
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 594,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "CRC_VALID": 594,
+                "INVALID": 7
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 601,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "poll",
+          "status_token_absent_on_wire": [],
+          "unqualified_columns": [],
+          "valueless_columns": []
+        },
+        "trust": "COMMITTED"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 62,
+          "gap_max_ms": 1080.0,
+          "gap_median_ms": 980.0,
+          "gaps": 61,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "evidence/A/W04/g1/42-telemetry.csv",
+        "holdover": {
+          "classification_counts": {
+            "NO_ELECTRICAL_VALUE": 62
+          },
+          "driven_zero_current_frames": 0,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 0
+        },
+        "power_consistency": {
+          "aggregate_check": {},
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 0,
+          "max_abs_delta_w": null,
+          "mean_abs_delta_w": null,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "reproducible_from_git": true,
+        "response_quality": {
+          "absence_reason": "every frame is explicitly labelled without data: the producer is off, which is a declared absence, not a lost sample",
+          "current_status_token_counts": {
+            "INVALID": 61,
+            "NO_DATA": 1
+          },
+          "frames": 62,
+          "frames_with_current_value": 0,
+          "frames_without_any_electrical_value": 62,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 62,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "W04-G1-production-failclosed",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "INVALID": 61,
+                "NO_DATA": 1
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 62,
+              "label_counts": {
+                "(empty)": 62
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "INVALID": 61,
+                "NO_DATA": 1
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "INVALID": 61,
+                "NO_DATA": 1
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 62,
+          "note": "this source publishes validity tokens but no electrical values at all: every cell is empty and labelled INVALID/NO_DATA",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [],
+          "valueless_columns": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ]
+        },
+        "trust": "COMMITTED"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 60,
+          "gap_max_ms": 1013.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 59,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "energy_consistency": {
+          "frames": 0,
+          "verdict": "INSUFFICIENT_DATA"
+        },
+        "file": "evidence/A/W04/h6/first-tec-trace.csv",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 59,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 0,
+          "latency_frames": 1
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.3751,
+            "delta_w": -0.0422,
+            "driven_frames": 59,
+            "mean_reported_power_w": 11.2034,
+            "mean_voltage_times_mean_current_w": 11.2456
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 60,
+          "max_abs_delta_w": 0.0587,
+          "mean_abs_delta_w": 0.0415,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": true,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 60
+          },
+          "frames": 60,
+          "frames_with_current_value": 60,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {
+            "OK": 60
+          }
+        },
+        "source": "W04-H6-10pct",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 0,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 60,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 60,
+              "label_counts": {
+                "(empty)": 60
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 60,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power"
+          ],
+          "valueless_columns": [
+            "energy"
+          ]
+        },
+        "trust": "COMMITTED"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": false,
+          "current_age_ms": {
+            "count": 0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 957,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 956,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "energy_consistency": {
+          "counter_delta_wh": 14.0,
+          "counter_minus_integral_wh": -0.219,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 15,
+          "energy_wh_first": 108.0,
+          "energy_wh_last": 122.0,
+          "frames": 957,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 955.99,
+          "trapezoidal_integral_of_power_wh": 14.219,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "evidence/A/W04/tec-cooling-response-600s.csv",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 599,
+            "IDLE_OFF": 355,
+            "OFF_SETTLING": 1,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 2,
+          "latency_frames": 3
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0644,
+            "delta_w": -0.055,
+            "driven_frames": 599,
+            "mean_reported_power_w": 85.3015,
+            "mean_voltage_times_mean_current_w": 85.3565
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 957,
+          "max_abs_delta_w": 0.099,
+          "mean_abs_delta_w": 0.0349,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": true,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "(no token)": 957
+          },
+          "frames": 957,
+          "frames_with_current_value": 957,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "W04-H8C-box-600s",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 0
+            },
+            "power": {
+              "count": 0
+            },
+            "voltage": {
+              "count": 0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": false,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 957,
+              "label_counts": {
+                "(empty)": 957
+              },
+              "qualified": false
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 957,
+              "label_counts": {
+                "(empty)": 957
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": false,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 957,
+              "label_counts": {
+                "(empty)": 957
+              },
+              "qualified": false
+            },
+            "voltage": {
+              "any_label_present": false,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 957,
+              "label_counts": {
+                "(empty)": 957
+              },
+              "qualified": false
+            }
+          },
+          "electrical_status_recorded": false,
+          "frames": 957,
+          "note": "no per-value electrical validity token survived into this source: its V/I/P figures are unqualified and must be labelled as such",
+          "qualification_level": "none",
+          "status_token_absent_on_wire": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "unqualified_columns": [
+            "voltage",
+            "current",
+            "power",
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "COMMITTED"
+      },
+      {
+        "cadence": {
+          "age_token_recorded": true,
+          "current_age_ms": {
+            "count": 957,
+            "max": 666.0,
+            "mean": 661.2769,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "current_age_sentinel_frames": 0,
+          "early_gaps": 0,
+          "frames_with_clock": 957,
+          "gap_max_ms": 1000.0,
+          "gap_median_ms": 1000.0,
+          "gaps": 956,
+          "late_gaps": 0,
+          "nonpositive_gaps": 0,
+          "power_age_ms": {
+            "count": 957,
+            "max": 666.0,
+            "mean": 661.2769,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "power_age_sentinel_frames": 0,
+          "target_period_ms": 1000,
+          "tolerance_ms": 250,
+          "voltage_age_ms": {
+            "count": 957,
+            "max": 666.0,
+            "mean": 661.2769,
+            "median": 666.0,
+            "min": 636.0,
+            "p05": 646.0,
+            "p95": 666.0
+          },
+          "voltage_age_sentinel_frames": 0
+        },
+        "declared_in": "local-bench-observations.json",
+        "energy_consistency": {
+          "counter_delta_wh": 14.0,
+          "counter_minus_integral_wh": -0.219,
+          "counter_quantisation_wh": 1.0,
+          "decrease_events": [],
+          "distinct_counter_values": 15,
+          "energy_wh_first": 108.0,
+          "energy_wh_last": 122.0,
+          "frames": 957,
+          "monotonic_non_decreasing": true,
+          "note": "the counter is published in whole watt-hours with no validity token, so agreement to within 1 Wh is the strongest statement the data supports",
+          "span_s": 955.99,
+          "trapezoidal_integral_of_power_wh": 14.219,
+          "verdict": "COUNTER_WITHIN_QUANTISATION"
+        },
+        "file": "<local-bench>/h8/box-cooling-600s-2026-11-01/monitor-final/samples.jsonl",
+        "holdover": {
+          "classification_counts": {
+            "DRIVEN": 599,
+            "IDLE_OFF": 355,
+            "OFF_SETTLING": 1,
+            "OUTPUTS_OFF_REGISTER": 1,
+            "PRE_RUN_REGISTER": 1
+          },
+          "driven_zero_current_frames": 1,
+          "duty_zero_above_floor_frames": 2,
+          "latency_frames": 3
+        },
+        "power_consistency": {
+          "aggregate_check": {
+            "delta_percent": -0.0644,
+            "delta_w": -0.055,
+            "driven_frames": 599,
+            "mean_reported_power_w": 85.3015,
+            "mean_voltage_times_mean_current_w": 85.3565
+          },
+          "frames_beyond_tolerance": [],
+          "frames_beyond_tolerance_count": 0,
+          "frames_compared": 957,
+          "max_abs_delta_w": 0.099,
+          "mean_abs_delta_w": 0.0349,
+          "quantisation_tolerance_w": 0.18,
+          "verdict": "NO_MISMATCH_BEYOND_REGISTER_QUANTISATION"
+        },
+        "reproducible_from_git": false,
+        "response_quality": {
+          "absence_reason": "no missing samples in this source",
+          "current_status_token_counts": {
+            "OK": 957
+          },
+          "frames": 957,
+          "frames_with_current_value": 957,
+          "frames_without_any_electrical_value": 0,
+          "good_poll_rx_len": "25",
+          "no_response_expected_when_unpowered": true,
+          "non_ok_status_frames": 0,
+          "rx_len_counts": {},
+          "rx_len_semantics": "not comparable across collectors: the device-side H6/H7 trace counts echo + response (a good poll is rx_len=25 there), while the W03 host collector counts its own received length (28-29 observed). A threshold must never be shared between the two.",
+          "transport_class_counts": {}
+        },
+        "source": "W04-H8C-box-600s-raw",
+        "status_coverage": {
+          "age_ms": {
+            "current": {
+              "count": 957,
+              "max": 666.0,
+              "mean": 661.2769,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "power": {
+              "count": 957,
+              "max": 666.0,
+              "mean": 661.2769,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            },
+            "voltage": {
+              "count": 957,
+              "max": 666.0,
+              "mean": 661.2769,
+              "median": 666.0,
+              "min": 636.0,
+              "p05": 646.0,
+              "p95": 666.0
+            }
+          },
+          "columns": {
+            "current": {
+              "any_label_present": true,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 957,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 957
+              },
+              "qualified": true
+            },
+            "energy": {
+              "any_label_present": false,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 0,
+              "frames_without_a_label": 957,
+              "label_counts": {
+                "(empty)": 957
+              },
+              "qualified": false
+            },
+            "power": {
+              "any_label_present": true,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 957,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 957
+              },
+              "qualified": true
+            },
+            "voltage": {
+              "any_label_present": true,
+              "frames_with_a_value": 957,
+              "frames_with_a_value_and_OK_label": 957,
+              "frames_without_a_label": 0,
+              "label_counts": {
+                "OK": 957
+              },
+              "qualified": true
+            }
+          },
+          "electrical_status_recorded": true,
+          "frames": 957,
+          "note": "electrical values carry a validity token in this source",
+          "qualification_level": "field",
+          "status_token_absent_on_wire": [
+            "energy"
+          ],
+          "unqualified_columns": [
+            "energy"
+          ],
+          "valueless_columns": []
+        },
+        "trust": "LOCAL_BENCH"
+      }
+    ],
+    "status_label": "REAL_DATA_ANALYZED",
+    "summary": {
+      "explicit_producer_failures": 85,
+      "frames_total": 11242,
+      "frames_without_electrical_value": 85,
+      "io_error_frames": 16,
+      "latency_frames_total": 31,
+      "max_abs_v_times_i_delta_w": 0.0997,
+      "power_consistency_mismatch_frames": 0,
+      "sources": 23,
+      "sources_without_age_token": [
+        "H7-100pct",
+        "H7-20pct",
+        "H7-30pct",
+        "H7-40pct",
+        "H7-50pct",
+        "H7-60pct",
+        "H7-60pct-diag1",
+        "H7-60pct-diag2",
+        "H7-60pct-shunt",
+        "H7-70pct",
+        "H7-80pct",
+        "H7-90pct",
+        "W03-132b-off-envelope",
+        "W03-pzem-off-2026-10-20",
+        "W04-G1-production-failclosed",
+        "W04-H6-10pct",
+        "W04-H8C-box-600s"
+      ],
+      "sources_without_validity_token": [
+        "H7-100pct",
+        "H7-20pct",
+        "H7-30pct",
+        "H7-40pct",
+        "H7-50pct",
+        "H7-60pct",
+        "H7-60pct-diag1",
+        "H7-60pct-diag2",
+        "H7-60pct-shunt",
+        "H7-70pct",
+        "H7-80pct",
+        "H7-90pct",
+        "W04-G1-production-failclosed",
+        "W04-H6-10pct",
+        "W04-H8C-box-600s"
+      ],
+      "tolerance_w": 0.18
+    },
+    "zero_vs_absent": {
+      "W03-132b-off-envelope": {
+        "current": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 600,
+          "present": 600,
+          "status_label_counts": {
+            "OK": 600
+          },
+          "status_token_present": true
+        },
+        "energy": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 600,
+          "present": 600,
+          "status_label_counts": {
+            "OK": 600
+          },
+          "status_token_present": true
+        },
+        "power": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 600,
+          "present": 600,
+          "status_label_counts": {
+            "OK": 600
+          },
+          "status_token_present": true
+        },
+        "voltage": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 0,
+          "present": 600,
+          "status_label_counts": {
+            "OK": 600
+          },
+          "status_token_present": true
+        }
+      },
+      "W03-pzem-off-2026-10-20": {
+        "current": {
+          "absent_or_unparseable": 7,
+          "explicit_zero_with_value": 594,
+          "present": 594,
+          "status_label_counts": {
+            "CRC_VALID": 594,
+            "INVALID": 7
+          },
+          "status_token_present": true
+        },
+        "energy": {
+          "absent_or_unparseable": 7,
+          "explicit_zero_with_value": 594,
+          "present": 594,
+          "status_label_counts": {
+            "CRC_VALID": 594,
+            "INVALID": 7
+          },
+          "status_token_present": true
+        },
+        "power": {
+          "absent_or_unparseable": 7,
+          "explicit_zero_with_value": 594,
+          "present": 594,
+          "status_label_counts": {
+            "CRC_VALID": 594,
+            "INVALID": 7
+          },
+          "status_token_present": true
+        },
+        "voltage": {
+          "absent_or_unparseable": 7,
+          "explicit_zero_with_value": 0,
+          "present": 594,
+          "status_label_counts": {
+            "CRC_VALID": 594,
+            "INVALID": 7
+          },
+          "status_token_present": true
+        }
+      },
+      "W04-G1-production-failclosed": {
+        "current": {
+          "absent_or_unparseable": 62,
+          "explicit_zero_with_value": 0,
+          "present": 0,
+          "status_label_counts": {
+            "INVALID": 61,
+            "NO_DATA": 1
+          },
+          "status_token_present": true
+        },
+        "energy": {
+          "absent_or_unparseable": 62,
+          "explicit_zero_with_value": 0,
+          "present": 0,
+          "status_label_counts": {
+            "(empty status)": 62
+          },
+          "status_token_present": false
+        },
+        "power": {
+          "absent_or_unparseable": 62,
+          "explicit_zero_with_value": 0,
+          "present": 0,
+          "status_label_counts": {
+            "INVALID": 61,
+            "NO_DATA": 1
+          },
+          "status_token_present": true
+        },
+        "voltage": {
+          "absent_or_unparseable": 62,
+          "explicit_zero_with_value": 0,
+          "present": 0,
+          "status_label_counts": {
+            "INVALID": 61,
+            "NO_DATA": 1
+          },
+          "status_token_present": true
+        }
+      },
+      "W04-H6-10pct": {
+        "current": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 1,
+          "present": 60,
+          "status_label_counts": {
+            "(empty status)": 60
+          },
+          "status_token_present": false
+        },
+        "energy": {
+          "absent_or_unparseable": 60,
+          "explicit_zero_with_value": 0,
+          "present": 0,
+          "status_label_counts": {
+            "(empty status)": 60
+          },
+          "status_token_present": false
+        },
+        "power": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 1,
+          "present": 60,
+          "status_label_counts": {
+            "(empty status)": 60
+          },
+          "status_token_present": false
+        },
+        "voltage": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 0,
+          "present": 60,
+          "status_label_counts": {
+            "(empty status)": 60
+          },
+          "status_token_present": false
+        }
+      },
+      "W04-H8C-box-600s": {
+        "current": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 346,
+          "present": 957,
+          "status_label_counts": {
+            "(empty status)": 957
+          },
+          "status_token_present": false
+        },
+        "energy": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 0,
+          "present": 957,
+          "status_label_counts": {
+            "(empty status)": 957
+          },
+          "status_token_present": false
+        },
+        "power": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 346,
+          "present": 957,
+          "status_label_counts": {
+            "(empty status)": 957
+          },
+          "status_token_present": false
+        },
+        "voltage": {
+          "absent_or_unparseable": 0,
+          "explicit_zero_with_value": 0,
+          "present": 957,
+          "status_label_counts": {
+            "(empty status)": 957
+          },
+          "status_token_present": false
+        }
+      }
+    }
+  },
+  "provenance": {
+    "committed_inputs": [
+      "evidence/A/W04/tec-cooling-response-600s.csv",
+      "evidence/A/W04/h6/first-tec-trace.csv",
+      "evidence/A/W04/g1/42-telemetry.csv",
+      "evidence/A/W03/hardware-2026-10-27/raw/test-132b-off-envelope.csv",
+      "evidence/A/W03/hardware-2026-10-20/raw/pzem-off.csv"
+    ],
+    "declared_input": "evidence/A/W08/local-bench-observations.json",
+    "declared_input_sha256": "303afec3bc2401c1d8f74acd813b2e258942f14cee42eb7e31bf616b194cc033",
+    "local_bench_reproducible_from_git": false,
+    "note": "the local-bench rows in this payload are declared statistics from Member A's local W04 tree; the originals were read there and never copied into this repository"
+  },
+  "pwm_decision": {
+    "decision": "NOT_DECIDED",
+    "decision_vocabulary": [
+      "GO",
+      "NO-GO",
+      "NOT_DECIDED"
+    ],
+    "no_shame_clause": "docs/05A: 'No shame in NO-GO.' The energy-aware duty control is optional work; the core gates do not depend on it, and NOT_DECIDED is recorded as a defect of the parameter set, not of the plant.",
+    "requirement": "A-W15-04 PWM Go/No-Go (docs/05A section 24)",
+    "status_label": "BLOCKED_HARDWARE",
+    "thresholds": {
+      "criteria_resolved": 0,
+      "criteria_total": 6,
+      "failed_or_open_preconditions": [
+        "PWM-P1",
+        "PWM-P2",
+        "PWM-P4",
+        "PWM-P5",
+        "PWM-P7",
+        "PWM-P8",
+        "PWM-P9"
+      ],
+      "limits_unresolved": [
+        "CG_LIMIT_CURRENT_MAX_A",
+        "CG_LIMIT_VOLTAGE_MAX_V",
+        "CG_LIMIT_VOLTAGE_MIN_V",
+        "CG_LIMIT_HOT_SIDE_MAX_C",
+        "CG_LIMIT_DUTY_MAX_PERMILLE",
+        "CG_LIMIT_ON_TIME_MAX_MS"
+      ],
+      "preconditions_total": 9,
+      "unresolved_criteria_parameters": [
+        "duty_readback_tolerance_permille",
+        "power_per_duty_slope_tolerance",
+        "hot_side_margin_k",
+        "component_temp_max_c",
+        "energy_resolution_floor_wh",
+        "fuse_coordination_verdict"
+      ]
+    },
+    "what_this_file_is": "the METHODOLOGY. It deliberately does not decide Go, and it does not invent a threshold to make itself decidable.",
+    "why_not_go": [
+      "6 of 6 decision parameters are still UNRESOLVED: duty_readback_tolerance_permille, power_per_duty_slope_tolerance, hot_side_margin_k, component_temp_max_c, energy_resolution_floor_wh, fuse_coordination_verdict",
+      "safety preconditions not satisfied: PWM-P1, PWM-P2, PWM-P4, PWM-P5, PWM-P7, PWM-P8, PWM-P9",
+      "the delivered build cannot actuate at all (output stage compiled out, requested duty 0, actuator enable disallowed), so no criterion can be measured on it"
+    ]
+  },
+  "reference_check": {
+    "certified_calibration": false,
+    "energy_agreement": [
+      {
+        "counter_delta_wh": 0.0,
+        "integral_wh": 0.0,
+        "residual_wh": 0.0,
+        "source": "W03-132b-off-envelope",
+        "verdict": "COUNTER_WITHIN_QUANTISATION"
+      },
+      {
+        "counter_delta_wh": 0.0,
+        "integral_wh": 0.0,
+        "residual_wh": 0.0,
+        "source": "W03-pzem-off-2026-10-20",
+        "verdict": "COUNTER_WITHIN_QUANTISATION"
+      },
+      {
+        "counter_delta_wh": 14.0,
+        "integral_wh": 14.219,
+        "residual_wh": -0.219,
+        "source": "W04-H8C-box-600s",
+        "verdict": "COUNTER_WITHIN_QUANTISATION"
+      }
+    ],
+    "meter_evidence": "no calibration record for the PZEM-017 and none for the 50 A / 75 mV shunt exists in this repository (the shunt was seen in a photo only, SOURCE VERIFIED, never calibrated)",
+    "reported_instead": "plausibility and internal consistency",
+    "requirement": "A-W15-03 PZEM reference check",
+    "resolution_limits": {
+      "consequence": "a 1 Wh counter and a 0.1 W register cannot resolve a short-run efficiency difference; only run-integral comparisons are meaningful",
+      "current_lsb_a": 0.01,
+      "energy_lsb_wh": 1.0,
+      "power_lsb_w": 0.1,
+      "voltage_lsb_v": 0.01
+    },
+    "status_label": "NEED_USER_ACTION",
+    "trusted_independent_meter_available": false,
+    "v_times_i_agreement": {
+      "mismatch_frames": 0,
+      "sources_compared": [
+        "W03-132b-off-envelope",
+        "W03-pzem-off-2026-10-20",
+        "W04-H6-10pct",
+        "W04-H8C-box-600s"
+      ],
+      "tolerance_w": 0.18,
+      "worst_abs_delta_w": 0.099
+    },
+    "what_would_close_it": "one trusted reference meter (or a calibrated shunt channel) measured at several duty points against the PZEM, recorded in the same session"
+  },
+  "schema": "cg-w15-1",
+  "status_label": "REAL_DATA_ANALYZED"
+}

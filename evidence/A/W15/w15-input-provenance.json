@@ -1,0 +1,13 @@
+{
+  "committed_inputs": [
+    "evidence/A/W04/tec-cooling-response-600s.csv",
+    "evidence/A/W04/h6/first-tec-trace.csv",
+    "evidence/A/W04/g1/42-telemetry.csv",
+    "evidence/A/W03/hardware-2026-10-27/raw/test-132b-off-envelope.csv",
+    "evidence/A/W03/hardware-2026-10-20/raw/pzem-off.csv"
+  ],
+  "declared_input": "evidence/A/W08/local-bench-observations.json",
+  "declared_input_sha256": "303afec3bc2401c1d8f74acd813b2e258942f14cee42eb7e31bf616b194cc033",
+  "local_bench_reproducible_from_git": false,
+  "note": "the local-bench rows in this payload are declared statistics from Member A's local W04 tree; the originals were read there and never copied into this repository"
+}
