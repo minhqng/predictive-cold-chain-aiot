@@ -1,0 +1,150 @@
+{
+  "blocking_severities": [
+    "INVALID",
+    "UNKNOWN"
+  ],
+  "classifier_version": "w09-validity-v3",
+  "quality_counts": {
+    "DEGRADED": 0,
+    "INVALID": 17,
+    "UNKNOWN": 940,
+    "VALID": 0
+  },
+  "quality_counts_by_domain": {
+    "door": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 957,
+      "VALID": 0
+    },
+    "electrical": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 957,
+      "VALID": 0
+    },
+    "environment": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 957,
+      "VALID": 0
+    },
+    "producer": {
+      "DEGRADED": 940,
+      "INVALID": 17,
+      "UNKNOWN": 0,
+      "VALID": 0
+    },
+    "provenance": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 0,
+      "VALID": 957
+    },
+    "sequence": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 0,
+      "VALID": 957
+    },
+    "thermal": {
+      "DEGRADED": 0,
+      "INVALID": 0,
+      "UNKNOWN": 0,
+      "VALID": 957
+    }
+  },
+  "reason_codes_checked": [
+    "AIR_C_STATUS_ABSENT",
+    "COOLING_STATE_UNOBSERVED",
+    "COOLING_STATE_UNRECOGNISED",
+    "CURRENT_A_STATUS_ABSENT",
+    "DOOR_POLARITY_UNCONFIRMED",
+    "DOOR_STATE_UNKNOWN",
+    "DOOR_STATUS_ABSENT",
+    "DOOR_STATUS_NOT_OK",
+    "ELECTRICAL_UNQUALIFIED",
+    "ELECTRICAL_VALUE_MISSING",
+    "ENERGY_ACCUMULATOR_UNQUALIFIED",
+    "EXCLUDED_SESSION_CLASS_PROBE_IDENTIFICATION",
+    "FIELD_STALE_BY_AGE",
+    "FIELD_STATUS_NOT_OK",
+    "MASKS_ABSENT",
+    "NON_PHYSICAL_SOURCE",
+    "POWER_W_STATUS_ABSENT",
+    "PRESSURE_HPA_STATUS_ABSENT",
+    "PROBE_INVALID",
+    "PROBE_MISSING",
+    "PROBE_STALE",
+    "RH_PCT_STATUS_ABSENT",
+    "SEQ_DUPLICATE",
+    "SEQ_GAP",
+    "SNAPSHOT_INVALID",
+    "SNAPSHOT_UNREPORTED",
+    "T1_STATUS_ABSENT",
+    "T2_STATUS_ABSENT",
+    "T3_STATUS_ABSENT",
+    "T4_STATUS_ABSENT",
+    "VOLTAGE_V_STATUS_ABSENT"
+  ],
+  "reason_counts": {
+    "AIR_C_STATUS_ABSENT": 957,
+    "DOOR_POLARITY_UNCONFIRMED": 17,
+    "DOOR_STATE_UNKNOWN": 17,
+    "DOOR_STATUS_ABSENT": 957,
+    "ELECTRICAL_UNQUALIFIED": 2871,
+    "ENERGY_ACCUMULATOR_UNQUALIFIED": 957,
+    "MASKS_ABSENT": 957,
+    "POWER_W_STATUS_ABSENT": 957,
+    "RH_PCT_STATUS_ABSENT": 957,
+    "SNAPSHOT_INVALID": 17
+  },
+  "rows_thermally_usable_for_statistics": 940,
+  "rows_total": 957,
+  "rows_usable_for_baseline": 0,
+  "rows_usable_per_scenario": {
+    "HEALTHY_ELECTRICAL_RANGES": 0,
+    "S1_NORMAL_BASELINE": 0,
+    "S2_DOOR_DISTURBANCE": 0,
+    "S3_THERMAL_EFFECTIVENESS_DEGRADATION": 0,
+    "S4_ACTUATION_RESPONSE_FAULT": 0
+  },
+  "scenario_required_domains": {
+    "HEALTHY_ELECTRICAL_RANGES": [
+      "provenance",
+      "producer",
+      "electrical",
+      "sequence"
+    ],
+    "S1_NORMAL_BASELINE": [
+      "provenance",
+      "producer",
+      "thermal",
+      "environment",
+      "door",
+      "sequence"
+    ],
+    "S2_DOOR_DISTURBANCE": [
+      "provenance",
+      "producer",
+      "thermal",
+      "door",
+      "sequence"
+    ],
+    "S3_THERMAL_EFFECTIVENESS_DEGRADATION": [
+      "provenance",
+      "producer",
+      "thermal",
+      "electrical",
+      "sequence"
+    ],
+    "S4_ACTUATION_RESPONSE_FAULT": [
+      "provenance",
+      "producer",
+      "thermal",
+      "electrical",
+      "sequence"
+    ]
+  },
+  "usable_fraction": 0.0
+}

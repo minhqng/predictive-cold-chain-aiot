@@ -1,0 +1,318 @@
+{
+  "cadence": {
+    "max_interval_ms": 1000,
+    "mean_interval_ms": 999.99,
+    "median_interval_ms": 1000.0,
+    "min_interval_ms": 990,
+    "n_intervals": 956,
+    "nonpositive_intervals": 0
+  },
+  "cooldown_frames": 5,
+  "electrical_active_range": {
+    "current_a": {
+      "max": 9.99,
+      "mean": 7.2247,
+      "min": 0.0,
+      "n": 600
+    },
+    "frames": 600,
+    "power_w": {
+      "max": 117.4,
+      "mean": 85.1593,
+      "min": 0.0,
+      "n": 600
+    },
+    "pwm_applied_permille": {
+      "max": 999,
+      "mean": 999.0,
+      "min": 999,
+      "n": 600
+    },
+    "qualification": "UNQUALIFIED - current_status/voltage_status are empty in all 957 rows and no power_status column exists",
+    "usable_for_a_health_claim": false,
+    "voltage_v": {
+      "max": 11.95,
+      "mean": 11.7951,
+      "min": 11.76,
+      "n": 600
+    }
+  },
+  "electrical_domain_counts": {
+    "DEGRADED": 0,
+    "INVALID": 0,
+    "UNKNOWN": 957,
+    "VALID": 0
+  },
+  "electrical_off_range": {
+    "current_a": {
+      "max": 0.02,
+      "mean": 0.0005,
+      "min": 0.0,
+      "n": 335
+    },
+    "frames": 335,
+    "qualification": "UNQUALIFIED, same reason",
+    "usable_for_a_health_claim": false,
+    "voltage_v": {
+      "max": 11.95,
+      "mean": 11.9426,
+      "min": 11.93,
+      "n": 335
+    }
+  },
+  "gradient": {
+    "t1": {
+      "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+      "endpoint_gradient_c_per_s": -0.0034611,
+      "estimator_spread_c_per_s": 0.0077492,
+      "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+      "least_squares_gradient_c_per_s": -0.0112103,
+      "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+      "median_successive_interval_gradient_c_per_s": 0.0,
+      "n": 940,
+      "physical_position": "CHAMBER_CENTER",
+      "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+      "window": {
+        "definition": "every row this layer accepted for thermal use, in source order, per slot",
+        "doc_anchor": "docs/01 \u00a720.5",
+        "duration_s": 939.0,
+        "first_device_ms": 17894,
+        "last_device_ms": 956894,
+        "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+      }
+    },
+    "t3": {
+      "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+      "endpoint_gradient_c_per_s": -0.0035953,
+      "estimator_spread_c_per_s": 0.0065785,
+      "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+      "least_squares_gradient_c_per_s": -0.0101739,
+      "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+      "median_successive_interval_gradient_c_per_s": 0.0,
+      "n": 940,
+      "physical_position": "CHAMBER_BOTTOM",
+      "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+      "window": {
+        "definition": "every row this layer accepted for thermal use, in source order, per slot",
+        "doc_anchor": "docs/01 \u00a720.5",
+        "duration_s": 939.0,
+        "first_device_ms": 17894,
+        "last_device_ms": 956894,
+        "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+      }
+    },
+    "t4": {
+      "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+      "endpoint_gradient_c_per_s": -0.003394,
+      "estimator_spread_c_per_s": 0.0071199,
+      "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+      "least_squares_gradient_c_per_s": -0.010514,
+      "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+      "median_successive_interval_gradient_c_per_s": 0.0,
+      "n": 940,
+      "physical_position": "CHAMBER_NEAR_DOOR",
+      "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+      "window": {
+        "definition": "every row this layer accepted for thermal use, in source order, per slot",
+        "doc_anchor": "docs/01 \u00a720.5",
+        "duration_s": 939.0,
+        "first_device_ms": 17894,
+        "last_device_ms": 956894,
+        "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+      }
+    }
+  },
+  "honesty": [
+    "the electrical ranges below are numbers read out of real frames",
+    "they are not qualified measurements, so D and B must not cite them as health evidence",
+    "thermal figures are computed only over rows the validity layer accepted for thermal use"
+  ],
+  "per_probe_noise": {
+    "assumption": "floor(H) = z * sigma_second_diff / sqrt(H), where sigma_second_diff is the trend-immune second-difference sigma (std of second differences / sqrt(6)) reported by probe_noise_profile(), and z is the stated detection z-score (default 2.58). The 1/sqrt(H) factor assumes white-noise residuals over the horizon; autocorrelated drift would make the floor larger, not smaller, so this is an optimistic bound",
+    "estimator": "second-difference sigma (trend immune), pooled across accepted runs",
+    "probes": {
+      "t1": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.019032
+        ],
+        "physical_position": "CHAMBER_CENTER",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.019032
+      },
+      "t2": {
+        "excluded_from_chamber_mean": "TEC_HOT_SIDE is a heatsink, not chamber air",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.02457
+        ],
+        "physical_position": "TEC_HOT_SIDE",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.02457
+      },
+      "t3": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.020866
+        ],
+        "physical_position": "CHAMBER_BOTTOM",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.020866
+      },
+      "t4": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.018964
+        ],
+        "physical_position": "CHAMBER_NEAR_DOOR",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.018964
+      }
+    },
+    "quiescent_runs": [
+      {
+        "accepted_for_noise_estimation": true,
+        "duration_s": 208.0,
+        "end_device_ms": 225894,
+        "first_seq": 18,
+        "last_seq": 226,
+        "n_frames": 209,
+        "probes": {
+          "t1": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.018979,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.019032,
+            "slope_c_per_s": 0.0005774,
+            "stationary": true
+          },
+          "t2": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.02477,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.02457,
+            "slope_c_per_s": 6.85e-05,
+            "stationary": true
+          },
+          "t3": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.020889,
+            "max_abs_diff_c": 0.062,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.020866,
+            "slope_c_per_s": 0.0003292,
+            "stationary": true
+          },
+          "t4": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.018317,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.018964,
+            "slope_c_per_s": 0.0004223,
+            "stationary": true
+          }
+        },
+        "start_device_ms": 17894
+      },
+      {
+        "accepted_for_noise_estimation": false,
+        "duration_s": 125.0,
+        "end_device_ms": 956894,
+        "first_seq": 832,
+        "last_seq": 957,
+        "n_frames": 126,
+        "probes": {
+          "t1": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.02844,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.024377,
+            "slope_c_per_s": 0.0556625,
+            "stationary": false
+          },
+          "t2": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.027754,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.02216,
+            "slope_c_per_s": -0.0708765,
+            "stationary": false
+          },
+          "t3": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.025769,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.022713,
+            "slope_c_per_s": 0.0431316,
+            "stationary": false
+          },
+          "t4": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.025241,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.021201,
+            "slope_c_per_s": 0.0506694,
+            "stationary": false
+          }
+        },
+        "start_device_ms": 831894
+      }
+    ],
+    "quiescent_runs_found": 2,
+    "selection_rule": "contiguous runs of snapshot=VALID AND state=OFF AND duty=0, then rejected if the fitted slope exceeds the threshold",
+    "stationarity_threshold_c_per_s": 0.002
+  },
+  "requirement": "docs/05A \u00a718 A-W09-04 (healthy response reference)",
+  "source": {
+    "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+    "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+  },
+  "status_label": "REAL_DATA_ANALYZED",
+  "thermal_baseline": {
+    "t1_chamber_center": {
+      "end_c": 26.75,
+      "max_c": 30.125,
+      "min_c": 20.875,
+      "n": 940,
+      "start_c": 30.0,
+      "total_change_c": -3.25
+    },
+    "t3_chamber_bottom": {
+      "end_c": 26.312,
+      "max_c": 29.812,
+      "min_c": 21.625,
+      "n": 940,
+      "start_c": 29.688,
+      "total_change_c": -3.376
+    },
+    "t4_chamber_near_door": {
+      "end_c": 26.875,
+      "max_c": 30.188,
+      "min_c": 21.438,
+      "n": 940,
+      "start_c": 30.062,
+      "total_change_c": -3.187
+    }
+  },
+  "thermal_hot_side": {
+    "max_c": 39.938,
+    "min_c": 29.875,
+    "n": 957,
+    "never_in_chamber_mean": true,
+    "physical_position": "TEC_HOT_SIDE"
+  }
+}
