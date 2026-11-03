@@ -31,6 +31,36 @@ format and the chamber-air representation set — i.e. the pipeline — plus one
 cooling session for plumbing tests. **What B cannot consume:** any claim of dataset
 sufficiency. There are 0 valid S1 runs and 0 valid S2 disturbances.
 
+### Probe-role field added for B (this change)
+
+`ml/data-dictionary-v0.md:101` defines `t2_c` only as "Probe role T2" — a slot name, with
+no physical semantics. On the as-built rig that is unsafe for training data: the same field
+name carries chamber air in the W04-era synthetic generator (`ml/src/coldguard_ml/synthetic.py:334-337`
+builds `t2` around a shared `t_mean`, i.e. as an air probe) and a heatsink in every real
+capture (`t2_role=HOT_SIDE` on all 957 rows). Aggregating over `t1_c,t2_c,t3_c` therefore
+mixes two different physical quantities under one schema.
+
+New host-side field, additive and unpinned: `firmware/tools/cg_probe_roles.py`
+(`schema: coldguard.probe-roles/v0`) emits, per slot, `rom`, `physical_position`,
+`in_chamber_air_aggregate`, `exclusion_reason`, `position_provenance` and
+`independently_verified_no_movement`. Gate a chamber-air feature on
+`in_chamber_air_aggregate`, not on the slot name.
+
+```text
+py firmware/tools/cg_probe_roles.py <capture.csv> [--json out.json]
+```
+
+Two deliberate limits. It does not rewrite any committed export: `cg_build_sensor_csv.py`
+still emits `t1_c,t2_c,t3_c` with no role column, and its `max disagreement` is
+docs/01 §20.3 `G_T = Tmax - Tmin` over T1,T2,T3 — so on this rig that figure includes the
+hot-side probe and is a probe-disagreement statistic, not a chamber-air spatial gradient;
+its own footer already says "consistency check only". Historical evidence is not relabelled.
+And `independently_verified_no_movement` is `false` for every slot: position is
+OPERATOR_FROZEN_AS_BUILT, not re-measured (level 4 of the IHA-01 record is NOT_AVAILABLE).
+The row-level ROM binding for the S1 dataset (`{slot}_rom`, `{slot}_physical_position` per
+row) already exists in `cg_w09_export.py:707-708` on `fix/a-w09-w10-review`; B should read
+both from one reconciled source rather than let two role maps drift.
+
 ## §6.2 A → C (device/backend contract)
 
 | Required field | State | Source |

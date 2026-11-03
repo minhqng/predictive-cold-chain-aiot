@@ -29,6 +29,12 @@ definition, not the chamber, moves the number. Nothing picks a winner silently -
 every artifact carries ``representation``, ``representation_terms``,
 ``representation_roles`` and ``includes_hot_side``.
 
+The hot-side exclusion is not a declaration this module trusts. ``includes_hot_side``
+is re-derived from the ROM-keyed frozen map in ``cg_probe_roles`` (which keys the
+invariant on ROM ``28AEBF2200000006`` rather than on the string ``T2``), and
+``check_hot_side_guard`` runs at import: a representation whose terms average the
+hot-side probe cannot present itself as chamber air, and this file will not load.
+
 Statistics discipline
 
 * a partial mean (one term missing) is not the same quantity, so partial rows are
@@ -59,20 +65,69 @@ import pathlib
 import statistics
 import sys
 
+import cg_probe_roles
+
 SCHEMA_NOTE = "repeatability-v0"
 MIN_RUNS_DEFAULT = 3
 SLOPE_WINDOW_SAMPLES = 120
 SLOPE_METHOD = "trailing_window_least_squares"
 
-AS_BUILT_ROLES = {"t1_c": "CHAMBER_CENTER", "t2_c": "TEC_HOT_SIDE",
-                  "t3_c": "CHAMBER_BOTTOM", "t4_c": "CHAMBER_NEAR_DOOR"}
+AS_BUILT_ROLES = {
+    f"{slot}_c": cg_probe_roles.position_of_slot(slot)
+    for slot in cg_probe_roles.ALL_SLOTS
+}
 
+#: Which columns each mean averages. `includes_hot_side` below is what the dossier
+#: *declares*; the guard at the bottom of this block recomputes it from the frozen
+#: ROM map and refuses to import if the two disagree, so the declaration can no
+#: longer be the only thing standing between a hot-side probe and a chamber mean.
 REPRESENTATIONS: dict[str, dict[str, object]] = {
     "tmean_airroles_v0": {"terms": ("t1_c", "t3_c", "t4_c"), "includes_hot_side": False},
     "tmean_chamber3_v0": {"terms": ("t1_c", "t2_c", "t3_c"), "includes_hot_side": True},
     "tmean_t2excluded_v0": {"terms": ("t1_c", "t3_c"), "includes_hot_side": False},
     "tmean_all4_v0": {"terms": ("t1_c", "t2_c", "t3_c", "t4_c"), "includes_hot_side": True},
 }
+
+#: The representations the project publishes as chamber AIR. A term list that adds
+#: the hot-side column to any of these is a redefinition of chamber air, so it is
+#: refused outright rather than merely re-flagged.
+CHAMBER_AIR_REPRESENTATIONS = ("tmean_airroles_v0", "tmean_t2excluded_v0")
+
+
+def _derived_hot_side(representation: str) -> bool:
+    """Whether this mean averages the hot-side probe, per the frozen ROM map."""
+    return not cg_probe_roles.is_chamber_air_safe(terms_of(representation))
+
+
+def check_hot_side_guard() -> dict[str, object]:
+    """Re-derive every hot-side flag from the ROM map and refuse a false air claim.
+
+    Runs on import, and is callable from the tests and the validators, so the
+    invariant is enforced by the code rather than by the honesty of a literal.
+    Two failures are fatal and distinct: a representation published as chamber air
+    whose terms average the hot-side probe, and a declaration that disagrees with
+    what the frozen ROM map derives from the same term list.
+    """
+    for name in CHAMBER_AIR_REPRESENTATIONS:
+        if name not in REPRESENTATIONS:
+            raise cg_probe_roles.HotSideInChamberAirError(
+                f"{name!r} is in the chamber-air allow-list but has no term list, so "
+                f"its air safety cannot be checked")
+        cg_probe_roles.require_chamber_air(terms_of(name), name=name)
+    for name, declared in REPRESENTATIONS.items():
+        derived = _derived_hot_side(name)
+        if derived != bool(declared["includes_hot_side"]):
+            raise cg_probe_roles.HotSideInChamberAirError(
+                f"representation {name!r} declares includes_hot_side="
+                f"{declared['includes_hot_side']!r} but the frozen ROM map derives "
+                f"{derived!r} for its terms {terms_of(name)}")
+    return {
+        "hot_side_column": cg_probe_roles.HOT_SIDE_COLUMN,
+        "hot_side_rom": cg_probe_roles.HOT_SIDE_ROM,
+        "chamber_air_columns": list(cg_probe_roles.CHAMBER_AIR_COLUMNS),
+        "chamber_air_representations": list(CHAMBER_AIR_REPRESENTATIONS),
+        "geometry_class": cg_probe_roles.FROZEN_GEOMETRY_CLASS,
+    }
 
 OUTCOMES = (
     "start_c", "end_c", "delta_c", "min_c", "max_c",
@@ -94,7 +149,14 @@ def terms_of(representation: str) -> tuple[str, ...]:
 
 
 def includes_hot_side(representation: str) -> bool:
-    return bool(REPRESENTATIONS[representation]["includes_hot_side"])
+    """Whether this mean averages the hot-side probe.
+
+    Derived from the frozen ROM map, not from the `includes_hot_side` literal in
+    `REPRESENTATIONS`: the literal is a claim the guard checks, and this function
+    is the answer. That is the whole point - a representation cannot opt out of
+    the invariant by declaring itself clean while averaging a heatsink.
+    """
+    return _derived_hot_side(representation)
 
 
 def _status_key(row: dict[str, str], key: str) -> str | None:
@@ -537,6 +599,12 @@ def write_overlay_csv(path: pathlib.Path, reports: list[dict[str, object]]) -> N
     buffer = io.StringIO()
     csv.writer(buffer, lineterminator="\n").writerows(overlay_rows(reports))
     path.write_bytes(buffer.getvalue().encode("utf-8"))
+
+
+#: Fail closed at import: a chamber-air representation that averages the hot-side
+#: probe is a redefinition of chamber air, so this module refuses to load rather
+#: than let a tool downstream read a declaration it can no longer trust.
+HOT_SIDE_GUARD = check_hot_side_guard()
 
 
 def main(argv: list[str] | None = None) -> int:
