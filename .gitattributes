@@ -42,6 +42,7 @@ evidence/A/W05/** -text
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
 <<<<<<< HEAD
+<<<<<<< HEAD
 # W07 repeatability dossier: hash-pinned in evidence/A/W07/SHA256SUMS.txt and
 # re-checked by validate_w07.py. The generated JSON/JSONL/CSV must keep their exact
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
@@ -131,3 +132,9 @@ evidence/A/W21/** -text
 
 evidence/A/W22/** -text
 >>>>>>> origin/feat/a-w22-evidence-gap-repair
+=======
+
+# Member A release-candidate dossier: every file is hash-pinned in
+evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
+evidence/A/RC/** -text
+>>>>>>> origin/feat/a-w23-demo-recovery
