@@ -3,11 +3,14 @@
 Schema 1 is the ``#CG TELEM`` line emitted by the W04 delivery. Schema 2 adds
 the W05 telemetry foundation: device identity, per-field ages, the canonical
 data-quality vocabulary, producer liveness, accumulated energy, and the applied
-cooling state kept separate from the requested one.
+cooling state kept separate from the requested one. Schema 3 adds the W06
+command layer: the desired cooling state and the last command ACK verdict, kept
+apart from the applied state so "was asked" and "is doing" cannot be conflated
+downstream.
 
-Both schemas parse. A capture taken before W05 - the committed W04 evidence in
-``evidence/A/W04/`` - must stay readable, and the tests pin that: raising the
-firmware's serial schema does not rewrite history.
+All three parse. A capture taken before W05 - the committed W04 evidence in
+``evidence/A/W04/`` - and the W05 fixture must stay readable, and the tests pin
+that: raising the firmware's serial schema does not rewrite history.
 
 Evidence rules encoded here:
 
@@ -45,8 +48,8 @@ import dataclasses
 import math
 import re
 
-SCHEMA_VERSION = 2
-SUPPORTED_SCHEMAS = (1, 2)
+SCHEMA_VERSION = 3
+SUPPORTED_SCHEMAS = (1, 2, 3)
 PREFIX = "#CG TELEM"
 MISSING_TOKEN = "nan"
 UTC_UNAVAILABLE = "UNAVAILABLE"
@@ -145,11 +148,27 @@ W05_REQUIRED_FIELDS = (
 AGE_SATURATION_SENTINEL = 18446744073709551615
 AGE_FIELDS = ("thermal_age_ms", "power_age_ms", "door_age_ms")
 
-# Additive tokens: parsed, validated and retained, but deliberately not
+# A-W06-04. Mandatory from schema 3: a frame that cannot say what it was asked to
+# do cannot be used to audit a command lifecycle.
+W06_REQUIRED_FIELDS = (
+    "command_id",
+    "desired_cooling",
+    "desired_duty_permille",
+    "last_ack_status",
+    "last_ack_reason",
+)
+
+# Additive W06-era tokens: parsed, validated and retained, but deliberately not
 # in any required set, so the committed schema-1 and schema-2 captures keep
 # parsing. This is why the serial schema version stayed at 3 instead of a bump
 # that would orphan the W04/W05 dossiers.
 OPTIONAL_SOURCE_FIELDS = ("t_hot_side_src",)
+
+# Fields that are integers when present and the literal `nan` when the device has
+# no value to report. `desired_duty_permille=nan` next to `desired_cooling=NONE`
+# is the honest "nothing was requested" state; coercing it to 0 would invent an
+# explicit request to stay off.
+NANABLE_INT_FIELDS = ("desired_duty_permille",)
 
 FLOAT_FIELDS = {
     "t_inside_c",
@@ -241,6 +260,24 @@ COOLING_EVIDENCE_VOCABULARY = (
     "UNOBSERVED_NO_DATA",
 )
 OUTPUT_STAGE_VOCABULARY = ("ENABLED", "DISABLED")
+# docs/02 §32.1 (lines 2172-2186) closes the ACK status set. The command layer may not
+# invent a
+# verdict, and neither may the parser quietly accept one.
+ACK_STATUS_VOCABULARY = (
+    "ACCEPTED",
+    "REJECTED",
+    "DUPLICATE_CANONICAL",
+    "EXPIRED",
+    "SAFETY_BLOCKED",
+    "INVALID_STATE",
+    "OUT_OF_RANGE",
+)
+# `NONE` in the telemetry line means no command has been received in this boot.
+# That is not an ACK status and must not be coerced into one.
+TELEM_ACK_STATUS_VOCABULARY = ("NONE",) + ACK_STATUS_VOCABULARY
+# docs/01 2174-2189 fixes the cooling vocabulary at ON/OFF; NONE is the
+# no-command-received case.
+DESIRED_COOLING_VOCABULARY = ("NONE", "ON", "OFF")
 ROM_TOKEN_LEN = 16
 ROM_UNREAD = "UNREAD"
 
@@ -420,6 +457,15 @@ def _coerce(name: str, token: str) -> object:
         if not math.isfinite(value):
             raise TelemetryError(f"field {name!r} is not a finite number: {token!r}")
         return value
+    if name in NANABLE_INT_FIELDS:
+        if token == MISSING_TOKEN:
+            return None
+        if not INT_RE.match(token):
+            raise TelemetryError(f"field {name!r} is not an integer or {MISSING_TOKEN}: {token!r}")
+        value = int(token)
+        if value < 0:
+            raise TelemetryError(f"field {name!r} is negative: {token!r}")
+        return value
     if name in INTEGER_FIELDS:
         if not INT_RE.match(token):
             raise TelemetryError(f"field {name!r} is not an integer: {token!r}")
@@ -472,6 +518,29 @@ def _check_vocabulary(fields: dict[str, object]) -> None:
         value = fields.get(name)
         if value is not None and value not in allowed:
             raise TelemetryError(f"{name}={value!r} is not one of {', '.join(allowed)}")
+
+
+def _check_command_fields(fields: dict[str, object]) -> None:
+    """A-W06-04 invariants a dataset must not be able to violate.
+
+    A blocked or rejected request cannot become a desired state here, and a
+    received command must name its id. That is what stops a downstream reader
+    from treating a refused command as an applied one.
+    """
+    status = fields.get("last_ack_status")
+    if isinstance(status, str) and status not in TELEM_ACK_STATUS_VOCABULARY:
+        raise TelemetryError(
+            f"last_ack_status={status!r} is not one of {', '.join(TELEM_ACK_STATUS_VOCABULARY)}"
+        )
+    desired = fields.get("desired_cooling")
+    if isinstance(desired, str) and desired not in DESIRED_COOLING_VOCABULARY:
+        raise TelemetryError(
+            f"desired_cooling={desired!r} is not one of {', '.join(DESIRED_COOLING_VOCABULARY)}"
+        )
+    if desired in ("ON", "OFF") and status == "NONE":
+        raise TelemetryError("desired_cooling set while no command was acknowledged")
+    if desired == "NONE" and fields.get("command_id") != "NONE":
+        raise TelemetryError("command_id present with desired_cooling=NONE")
 
 
 def _check_identity(fields: dict[str, object]) -> None:
@@ -527,8 +596,10 @@ def parse_line(line: str, line_index: int = 0) -> TelemetryRecord:
         )
 
     required = list(REQUIRED_FIELDS + REQUIRED_STATUS_FIELDS)
-    if schema == str(SCHEMA_VERSION):
+    if schema in ("2", "3"):
         required += list(W05_REQUIRED_FIELDS)
+    if schema == "3":
+        required += list(W06_REQUIRED_FIELDS)
 
     missing = [name for name in required if name not in raw_fields]
     if missing:
@@ -553,8 +624,10 @@ def parse_line(line: str, line_index: int = 0) -> TelemetryRecord:
 
     _check_vocabulary(fields)
     _check_source_tokens(fields)
-    if schema == str(SCHEMA_VERSION):
+    if schema in ("2", "3"):
         _check_identity(fields)
+    if schema == "3":
+        _check_command_fields(fields)
 
     return TelemetryRecord(line_index=line_index, raw=text, raw_fields=raw_fields, fields=fields)
 

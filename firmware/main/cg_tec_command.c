@@ -109,6 +109,12 @@ static bool split_line(char *line, char **verb, char **arg)
         *arg = NULL;
         return true;
     }
+    /* The verb is split off the same way in both paths. Without this the
+     * two-token forms (ARM/CLEAR/START/RUN/PHASE) left *verb pointing at
+     * whatever the caller's uninitialised local held, and the dispatch below
+     * compared garbage - a latent defect the W06 harness caught by exercising
+     * those verbs for the first time. */
+    *verb = start;
     *space = '\0';
     *arg = space + 1;
     while (is_space(**arg)) {
@@ -121,6 +127,82 @@ static bool split_line(char *line, char **verb, char **arg)
     if (strchr(*arg, ' ') != NULL || strchr(*arg, '\t') != NULL) {
         return false; /* more than one argument */
     }
+    return true;
+}
+
+/* CMDTEST <id> <ON|OFF> <duty-permille>: the local canonical-command bridge.
+ * Split here rather than through split_line because it is the only verb with
+ * more than one argument, and a malformed test line must report which field
+ * failed instead of a generic arity error. */
+static bool parse_cmdtest(char *rest, cg_tec_command_t *out, const char **error)
+{
+    char *fields[3];
+    unsigned count = 0U;
+    char *cursor = rest;
+    unsigned long duty;
+    char *end;
+
+    while (count < 3U) {
+        while (is_space(*cursor)) {
+            cursor++;
+        }
+        if (*cursor == '\0') {
+            break;
+        }
+        fields[count++] = cursor;
+        while (*cursor != '\0' && !is_space(*cursor)) {
+            cursor++;
+        }
+        if (*cursor != '\0') {
+            *cursor = '\0';
+            cursor++;
+        }
+    }
+    while (*cursor != '\0' && is_space(*cursor)) {
+        cursor++;
+    }
+    if (count != 3U || *cursor != '\0') {
+        if (error != NULL) {
+            *error = count != 3U ? "CMDTEST_ARITY" : "CMDTEST_EXTRA_FIELDS";
+        }
+        return false;
+    }
+    if (!label_is_valid(fields[0]) || strlen(fields[0]) >= CG_TEC_CMD_ARG_MAX) {
+        if (error != NULL) {
+            *error = "CMDTEST_BAD_ID";
+        }
+        return false;
+    }
+    if (!(equals_ci(fields[1], "ON") || equals_ci(fields[1], "OFF"))) {
+        if (error != NULL) {
+            *error = "CMDTEST_BAD_COOLING";
+        }
+        return false;
+    }
+    for (char *p = fields[2]; *p != '\0'; p++) {
+        if (!is_digit(*p)) {
+            if (error != NULL) {
+                *error = "CMDTEST_BAD_DUTY";
+            }
+            return false;
+        }
+    }
+    duty = strtoul(fields[2], &end, 10);
+    if (end == fields[2] || *end != '\0' || duty > 1000UL) {
+        if (error != NULL) {
+            *error = "CMDTEST_BAD_DUTY";
+        }
+        return false;
+    }
+
+    memset(out, 0, sizeof(*out));
+    out->kind = CG_TEC_CMD_CMDTEST;
+    memcpy(out->arg, fields[0], strlen(fields[0]));
+    out->flag = equals_ci(fields[1], "ON") ? 1U : 0U;
+    /* OFF with a non-zero duty is kept as a parseable record: the canonical
+     * validator is the layer that decides it is out of range, so the console
+     * does not silently disagree with the contract about what "malformed" is. */
+    out->value = equals_ci(fields[1], "OFF") ? 0UL : duty;
     return true;
 }
 
@@ -160,6 +242,34 @@ bool cg_tec_command_parse(const char *line, cg_tec_command_t *out, const char **
     }
     memcpy(buffer, line, len);
     buffer[len] = '\0';
+
+    {
+        char *probe = buffer;
+        char *space;
+
+        while (is_space(*probe)) {
+            probe++;
+        }
+        space = strchr(probe, ' ');
+        if (space == NULL) {
+            space = strchr(probe, '\t');
+        }
+        if (space != NULL) {
+            char saved = *space;
+            *space = '\0';
+            if (equals_ci(probe, "CMDTEST")) {
+                *space = saved;
+                if (!parse_cmdtest(space + 1, out, error)) {
+                    return false;
+                }
+                if (error != NULL) {
+                    *error = "OK";
+                }
+                return true;
+            }
+            *space = saved;
+        }
+    }
 
     if (!split_line(buffer, &verb, &arg)) {
         if (error != NULL) {
@@ -298,6 +408,8 @@ const char *cg_tec_command_name(cg_tec_command_kind_t kind)
             return "PHASE";
         case CG_TEC_CMD_STATUS:
             return "STATUS";
+        case CG_TEC_CMD_CMDTEST:
+            return "CMDTEST";
         case CG_TEC_CMD_NONE:
         default:
             return "NONE";

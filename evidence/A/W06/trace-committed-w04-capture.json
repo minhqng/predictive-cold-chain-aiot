@@ -1,0 +1,28 @@
+{
+  "commands": [],
+  "provenance": {
+    "capture": "evidence/A/W04/g1/40-g1-boot-60s.log",
+    "kind": "committed device capture",
+    "note": "A real device capture, taken before W06, so it contains no command lines. The correct trace report for it is empty: no lifecycle stage may be claimed from bytes that never carried a command."
+  },
+  "summary": {
+    "ack_lines": 0,
+    "blocked_at": {
+      "APPLIED_STATE": 0,
+      "COMMAND_SEEN": 0,
+      "DEVICE_ACK": 0,
+      "ELECTRICAL_VERIFIED": 0,
+      "THERMAL_VERIFIED": 0
+    },
+    "commands_observed": 0,
+    "not_applied": 0,
+    "reached": {
+      "APPLIED_STATE": 0,
+      "COMMAND_SEEN": 0,
+      "DEVICE_ACK": 0,
+      "ELECTRICAL_VERIFIED": 0,
+      "THERMAL_VERIFIED": 0
+    },
+    "verdict": "NO_COMMAND_LINES_PRESENT"
+  }
+}

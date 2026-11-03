@@ -35,3 +35,9 @@ evidence/A/W04/build-2026-11-01/** -text
 # derived JSON/CSV must keep their exact bytes, because `text=auto eol=lf` would
 # rewrite line endings on a checkout with core.autocrlf and break every pin.
 evidence/A/W05/** -text
+
+# W06 command/ACK dossier: every file is hash-pinned in evidence/A/W06/SHA256SUMS.txt
+# and re-verified by validate_w06.py. The generated JSON/JSONL artifacts and the IDF
+# build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
+# checkout with core.autocrlf and break every pin.
+evidence/A/W06/** -text

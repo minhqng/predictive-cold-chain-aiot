@@ -204,9 +204,10 @@ in-flight code or in evidence that over-stated its own guard.
 
 `schema-fixture.json` in this dossier is a derived artifact: the committed
 generator re-renders it from the current firmware emitter. It has been
-re-derived on 2026-11-03 on **this** branch, so it still carries
-`schema_version=2` and `firmware_version=cg-w05-0.1.0` - schema 3 arrives with
-W06, not here. What changed is the probe the chamber-air value is taken from.
+re-derived on 2026-11-03, so it now carries `schema_version=3`,
+`firmware_version=cg-w06-0.1.0` and the as-built probe roles, and the
+validator's schema literal moved from 2 to 3 with it. Nothing else in this
+dossier changed.
 
 The re-derived frame now emits `t_inside_src=T1` (as-built
 `CHAMBER_CENTER`, ROM `287088CA00000051`) and `t_hot_side_src=T2` (as-built

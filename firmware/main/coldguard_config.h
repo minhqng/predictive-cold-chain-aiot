@@ -35,7 +35,7 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w05-0.1.0"
+#define CG_FIRMWARE_VERSION "cg-w06-0.1.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
 /* docs/01 2855-2876 makes calibration_id the identity of a calibration bundle
  * (DS18B20 cross-check, BME check, PZEM reference check, date, environment,
@@ -491,25 +491,33 @@
  * truncated.
  *
  * W02/W03 frames need 1536 bytes. The longest #CG TELEM line actually
- * observed in the committed W04 captures is 1012 bytes, so 2560 is headroom,
- * not a number taken from a guess. The value stays at 2560 because Member A's
+ * observed in the committed W04 captures is 1012 bytes, so 2560 was headroom,
+ * not a number taken from a guess (W05 rationale; W06 raises the budget below). The value stays at 2560 because Member A's
  * local H8 bench tree (deliberately outside this repository, fingerprinted in
  * evidence/A/W04/ARTIFACT-MANIFEST.md) reuses this guard and needs 2342; that
  * dependency is disclosed there instead of being documented as a W04 result.
  * W02/W03 output is unchanged and its captures stay parseable.
  *
- * SCHEMA 2 (W05). The raw serial line gains the A-W05-02 identity fields
+ * SCHEMA 2 (W05, kept for history). The raw serial line gained the A-W05-02 identity fields
  * (device_id, seq, calibration_id), the A-W05-05 per-source quality names, the
  * A-W05-04 per-field ages and producer sequences, and the A-W05-01 producer
  * liveness counters. This is the *serial* stream only: the canonical JSON
  * envelope in docs/02 604-620 keeps its own `schema_version: 1`, and bumping
  * the serial schema does not amend that contract. Every W04 field name keeps
  * its meaning and position-independent key, so firmware/tools/cg_telemetry_schema.py
- * parses schema 1 and schema 2 lines; the W04 captures committed in
- * evidence/A/W04/ must remain parseable, and the tests pin that. */
-#define CG_TELEMETRY_SCHEMA_VERSION 2
+ * parses schema 1, schema 2 and schema 3 lines; the W04 captures committed in
+ * evidence/A/W04/ must remain parseable, and the tests pin that.
+ *
+ * SCHEMA 3 (W06, current). The line gains the command layer: command_id,
+ * desired_cooling, desired_duty_permille, last_ack_status and last_ack_reason,
+ * so a capture can separate what the device was asked from what it did. Schemas
+ * 1 and 2 still parse unchanged. */
+#define CG_TELEMETRY_SCHEMA_VERSION 3
 #define CG_TELEMETRY_PERIOD_MS 1000
-#define CG_TELEMETRY_LINE_MAX 2560
+#define CG_TELEMETRY_LINE_MAX 3072
+/* W06 raised this from 2560: the schema-3 frame adds the command layer, and the
+ * harness-measured worst case is 2256 bytes. At 2560 that left 12 % headroom, which
+ * is too little for a budget whose violation silently drops observations. */
 
 /* ------------------------------------------------------------------ */
 /* W05 - producer liveness (A-W05-01 task boundaries)                   */
@@ -545,6 +553,23 @@
  * an observation time. Four door periods is 80 ms, far inside any deliberate
  * open interval used for a disturbance test, so it cannot erase a treatment. */
 #define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
+
+/* ------------------------------------------------------------------ */
+/* W06 - command/ACK                                                   */
+/* ------------------------------------------------------------------ */
+
+/* Budget for the #CG CMDACK line, measured by cg_w05/cg_w06 harness scenarios
+ * against the widest ACK the formatter can be given. It is a separate, much
+ * smaller stream than the telemetry line, so it does not share that budget, but
+ * it must still be a ceiling the worst case is known to fit: cg_log_raw_line()
+ * refuses an over-long line rather than truncating it, and a refused ACK would
+ * silently delete the evidence that a command was rejected.
+ *
+ * 768, not the 640 W06 first shipped with: the ACK now carries the required
+ * device_id field (docs/02 §32.3), which measured 592 bytes at the widest inputs
+ * the formatter can be handed - 92 % of 640, inside the buffer but outside the
+ * 10 % margin this budget exists to keep. */
+#define CG_COMMAND_ACK_LINE_MAX 768
 
 /* Local operator console on UART0 (the log console). Commands share the
  * terminal with the log stream; the parser rejects every line it does not
@@ -584,6 +609,9 @@
 #define CG_LOG_TEC "TEC"
 #define CG_LOG_TEC_LIMIT "TEC_LIMIT"
 #define CG_LOG_TELEM "TELEM"
+/* W06 command/ACK evidence line kind (docs/02 §32). A new line kind, so the
+ * serial grammar version stays 2 exactly as the W03 PZEM kinds did. */
+#define CG_LOG_CMDACK "CMDACK"
 #define CG_LOG_ERROR "ERR"
 
 /* Token printed instead of a number when a probe reading is not valid.
