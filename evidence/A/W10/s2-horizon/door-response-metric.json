@@ -1,0 +1,73 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "closes_when": [
+    "an operator-timed, per-boot-attested OPEN edge exists in a tracked capture",
+    "the same configuration has a paired S1 baseline",
+    "the chamber-air rise clears the measured floor"
+  ],
+  "is_physical_measurement": false,
+  "measured_from_the_committed_capture": {
+    "attestation": {
+      "attested_boot_ids": [],
+      "capture_boot_ids": [
+        "56044b74"
+      ],
+      "frame_can_state_which_mapping_was_used": false,
+      "frames_reporting_polarity_confirmed": 940,
+      "frames_total": 957,
+      "mapping_identity_is_externally_attested_only": true,
+      "present": false,
+      "reason": "NO_ATTESTATION: no operator attestation of the mapping was supplied",
+      "trustworthy": false
+    },
+    "door_state_segment_counts": {
+      "CLOSED_AS_REPORTED": 940,
+      "UNKNOWN": 17
+    },
+    "door_state_segment_counts_reading": "a *_AS_REPORTED segment is the device's own reported level, not a physically named door state; this block's own attestation is present=false, trustworthy=false, so no segment here may be quoted as OPEN or CLOSED",
+    "frames_total": 957,
+    "frames_usable_for_s2": 0,
+    "mc38_cross_check": {
+      "aligned": null,
+      "detected_open_to_closed_transitions": 0,
+      "device_reported_door_cycles": null,
+      "meaning": "MC-38 transitions are the machine ground truth only if the device's own cycle counter agrees with the detected edge count; a mismatch means an edge was missed"
+    },
+    "open_segments": 0,
+    "polarity_inversion": {
+      "conclusion": "no frames carry both door_raw and a confirmed polarity",
+      "contact_inversion": {
+        "action_required": "the H8 bench owner must commit the driver source",
+        "assertion_basis": "docs/01 \u00a78.1 (door semantics are subject to the actual polarity mapping) and \u00a78.2 (neither HIGH=OPEN nor LOW=OPEN may be assumed without physical verification), plus the mapping table this module carries",
+        "claim": "the two shipped polarity settings assign opposite door states to every raw level, so a capture cannot establish its own door narrative",
+        "closes_when": "the owning branch commits the door driver, after which the inversion is verifiable from tracked source",
+        "code_level_proof_location": "firmware/h8-bench/main/h8_door.c",
+        "code_level_proof_status": "UNCITABLE_UNTRACKED_SOURCE",
+        "why_not_citable": "that file is not git-tracked on any ref in this repository; it exists only in a sibling working tree, so it may not be quoted as the proof of a published claim"
+      },
+      "examples": [],
+      "frames_alone_can_name_door_state": false,
+      "frames_whose_state_inverts_under_the_other_polarity": 0,
+      "frames_with_raw_and_confirmed_polarity": 0,
+      "inversion_fraction": null
+    },
+    "s2_pilot_events": []
+  },
+  "metric": "door_open_edge -> chamber-air response",
+  "note": "this record states a gap; it is not a measurement of a disturbance",
+  "reason": "no committed capture contains a door-open event: the only real thermal capture reports door_open=0 in 940 frames and UNKNOWN in 17, with zero OPEN segments, so there is no edge to align a response to",
+  "requirement": "docs/05A \u00a719 A-W10-03/-05",
+  "status": "NOT_COMPUTABLE",
+  "what_is_computable_instead": {
+    "horizon_curve_c": {
+      "120s": 0.00267,
+      "300s": 0.00169,
+      "30s": 0.00534,
+      "600s": 0.00119,
+      "60s": 0.00378
+    },
+    "noise_floor_single_frame_c": 0.05383,
+    "reading": "the detection floor is measured; the door->response distribution is not, and publishing one would be inventing it"
+  }
+}
