@@ -1,0 +1,12 @@
+{
+  "taxonomy_version": "1.0",
+  "reason_codes": [
+    "DOOR_AJAR_AT_START",
+    "PZEM_NOT_VALID",
+    "INITIAL_TEMP_OUT_OF_BAND",
+    "COMMUNICATION_DROPOUT",
+    "OPERATOR_MANUAL_ABORT",
+    "HARDWARE_CONFIG_MISMATCH"
+  ],
+  "disposition": "RETAIN_RAW_WITH_INVALID_FLAG"
+}

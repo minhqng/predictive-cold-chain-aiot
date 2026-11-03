@@ -1,0 +1,14 @@
+{
+  "week": "W19",
+  "authority": "docs/05A §28",
+  "checks": [
+    "hardware_config_check",
+    "initial_state_equilibrium",
+    "door_closed",
+    "pzem_valid",
+    "storage_ready",
+    "controller_identity_confirmed"
+  ],
+  "equilibrium_band_c": 0.5,
+  "status": "SOFTWARE_READY"
+}
