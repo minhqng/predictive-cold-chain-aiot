@@ -1,0 +1,24 @@
+hardware_config_id: "HW-CONF-2026-11-03-FROZEN"
+firmware_version: "v1.0.0-rc1"
+pin_map:
+  one_wire_gpio: 4
+  bme280_sda_gpio: 21
+  bme280_scl_gpio: 22
+  door_reed_gpio: 19
+  pzem_tx_gpio: 17
+  pzem_rx_gpio: 16
+  ibt2_pwm_gpio: 18
+  ibt2_en_gpio: 5
+sensor_roms:
+  t1: "287088CA00000051"
+  t2: "28AEBF2200000006"
+  t3: "28CBE9CA00000072"
+  t4: "283BE5C9000000A9"
+sensor_positions:
+  t1: "CHAMBER_CENTER"
+  t2: "TEC_HOT_SIDE_BLOCK"
+  t3: "CHAMBER_BOTTOM"
+  t4: "NEAR_DOOR"
+fuse: "10A_BLADE_SLOT3_REMOVED_POSTURE"
+pzem_range: "0-10A_0-100V_DC"
+core_allowed_action: "FAIL_CLOSED_NO_AUTONOMOUS_ENERGIZATION"
