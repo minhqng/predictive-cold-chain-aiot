@@ -17,6 +17,8 @@ idf_component_register(
         "cg_tec_hw.c"
         "cg_tec_command.c"
         "cg_snapshot.c"
+        "cg_quality.c"
+        "cg_health.c"
         "cg_telemetry.c"
         "cg_console.c"
         "cg_commission.c"

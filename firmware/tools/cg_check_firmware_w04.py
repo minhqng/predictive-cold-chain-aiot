@@ -20,9 +20,9 @@ Checks:
 5.  Commission wiring - no invented cold/hot probe assignment, shipped
     limits used, UART console only, telemetry once per second, task
     watchdog registration.
-6.  Telemetry integrity - schema 1, `nan` for missing, no wall-clock
-    fabrication, cold/hot/ambient/RH marked not assigned, host schema
-    parity.
+6.  Telemetry integrity - firmware and host schema versions agree, `nan` for
+    missing, no wall-clock fabrication, cold/hot/ambient/RH marked not
+    assigned, host schema parity for the W04 field set.
 7.  Grammar guard - `cg_serial.GRAMMAR_VERSION` stays 2 (W04 only adds
     line kinds, never changes the existing grammar).
 8.  No network path - NETWORK_TOKEN scans sources, headers and CMake for any
@@ -298,7 +298,7 @@ def run_checks() -> Checker:
 
     # 6. Telemetry integrity --------------------------------------------
     checker.check(define_value(config, "CG_TELEMETRY_SCHEMA_VERSION") == str(telemetry_schema.SCHEMA_VERSION),
-                  "firmware and host agree on telemetry schema 1")
+                  "firmware and host agree on the current telemetry schema version")
     checker.check(define_value(config, "CG_INVALID_VALUE_TOKEN") == f'"{telemetry_schema.MISSING_TOKEN}"',
                   "missing values use the shared `nan` token")
     for field in telemetry_schema.REQUIRED_FIELDS + telemetry_schema.REQUIRED_STATUS_FIELDS:
@@ -309,9 +309,19 @@ def run_checks() -> Checker:
                   "telemetry never invents a wall-clock timestamp")
     checker.check(re.search(r"\b(time|gmtime|localtime|gettimeofday)\s*\(", telemetry_stripped) is None,
                   "the telemetry formatter reads no host/system clock")
-    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 3
+    # A field with no probe behind it must say NOT_ASSIGNED *and* carry a missing
+    # value; inventing a number next to an unassigned label is the failure mode
+    # this pins. The hot side left this set when the operator-frozen as-built map
+    # identified ROM 28AEBF2200000006 as the TEC hot side - requiring
+    # NOT_ASSIGNED there would now force the emitter to discard a real
+    # measurement, which is the opposite of the honesty rule this check serves.
+    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 2
+                  and "t_cold_side_status=%s" in telemetry_stripped
+                  and "t_ambient_status=%s" in telemetry_stripped
+                  and telemetry_stripped.count("fmt_float(false, 0.0f,") >= 3
                   and "CG_TELEM_STATUS_NOT_PRESENT" in telemetry_stripped,
-                  "cold/hot/ambient are NOT_ASSIGNED and RH is SENSOR_NOT_PRESENT")
+                  "cold side and ambient are NOT_ASSIGNED with a missing value, and RH is "
+                  "SENSOR_NOT_PRESENT")
     checker.check("fmt_float" in telemetry_stripped,
                   "every numeric field goes through the validity-aware formatter")
     line_max = define_value(config, "CG_TELEMETRY_LINE_MAX")

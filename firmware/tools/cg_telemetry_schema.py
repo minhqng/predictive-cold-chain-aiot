@@ -1,8 +1,13 @@
-"""ColdGuard W04 raw telemetry schema and parser (standard library only).
+"""ColdGuard raw telemetry schema and parser (standard library only).
 
-Schema 1 is the ``#CG TELEM`` line emitted once per second by
-``firmware/main/cg_telemetry.c``. This module turns that line into typed
-records for the acquisition and ML builders.
+Schema 1 is the ``#CG TELEM`` line emitted by the W04 delivery. Schema 2 adds
+the W05 telemetry foundation: device identity, per-field ages, the canonical
+data-quality vocabulary, producer liveness, accumulated energy, and the applied
+cooling state kept separate from the requested one.
+
+Both schemas parse. A capture taken before W05 - the committed W04 evidence in
+``evidence/A/W04/`` - must stay readable, and the tests pin that: raising the
+firmware's serial schema does not rewrite history.
 
 Evidence rules encoded here:
 
@@ -18,8 +23,20 @@ Evidence rules encoded here:
 * ``raw`` keeps the exact device line, so the immutable capture remains
   traceable after extraction.
 * Unknown ``key=value`` tokens are retained (forward compatibility) but
-  required schema-1 fields must all be present; a truncated or
-  incompatible line is rejected, not repaired.
+  required fields for the line's own schema must all be present; a truncated
+  or incompatible line is rejected, not repaired.
+* A ``*_src`` token names a *slot*, and a slot says nothing by itself about
+  whether its probe sits in chamber air or on the TEC hot side. ``source_rom``
+  and ``source_position`` resolve it through the line's own ``t1_rom``..
+  ``spare_rom`` fields to the frozen as-built position, so a consumer can prove
+  which ROM produced a chamber value instead of assuming the field name was
+  honest. Historical lines are never relabelled: the committed pre-W06 frames
+  that say ``t_inside_src=T2`` still parse, and ``chamber_source_is_hot_side``
+  is the read-only gate over them.
+* Vocabulary fields are checked against their closed token sets. A quality
+  name that is not one of ``VALID/DEGRADED/INVALID/UNKNOWN`` (docs/01 2263-2308)
+  is a contract violation, so rejecting it is the only way to keep
+  ``UNKNOWN`` from silently becoming something else downstream.
 """
 
 from __future__ import annotations
@@ -28,7 +45,8 @@ import dataclasses
 import math
 import re
 
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
+SUPPORTED_SCHEMAS = (1, 2)
 PREFIX = "#CG TELEM"
 MISSING_TOKEN = "nan"
 UTC_UNAVAILABLE = "UNAVAILABLE"
@@ -79,6 +97,60 @@ REQUIRED_STATUS_FIELDS = (
     "power_validity",
 )
 
+# A-W05-02 / -04 / -05 and the applied-state split. These are mandatory on a
+# schema-2 line: the point of W05 is that a frame states its own identity,
+# freshness and quality instead of leaving the reader to assume them.
+W05_REQUIRED_FIELDS = (
+    "device_id",
+    "seq",
+    "calibration_id",
+    "energy_wh",
+    "energy_status",
+    "thermal_age_ms",
+    "power_age_ms",
+    "door_age_ms",
+    "thermal_seq",
+    "power_seq",
+    "door_transitions",
+    "door_cycles",
+    "probes_valid",
+    "probes_expected",
+    "thermal_quality",
+    "environment_quality",
+    "door_quality",
+    "electrical_quality",
+    "quality",
+    "cooling_applied",
+    "cooling_applied_source",
+    "cooling_evidence",
+    "health",
+    "health_thermal",
+    "health_bme",
+    "health_door",
+    "health_power",
+    "health_telemetry",
+    "health_control",
+    "t1_rom",
+    "t2_rom",
+    "t3_rom",
+    "spare_rom",
+    "role_status",
+    "rom_source",
+)
+
+# The line's age fields carry no separate status token: they *are* the status. A
+# saturated value is therefore the sentinel the formatter writes when an
+# observation is timestamped after the frame's own clock, which means the two
+# clocks disagreed and no age can be trusted from that row.
+AGE_SATURATION_SENTINEL = 18446744073709551615
+AGE_FIELDS = ("thermal_age_ms", "power_age_ms", "door_age_ms")
+
+# Additive tokens: parsed, validated and retained, but deliberately not
+# in any required set, so the committed schema-1 and schema-2 captures keep
+# parsing. This is why the serial schema version stayed at 3 instead of a bump
+# that would orphan the W04/W05 dossiers.
+OPTIONAL_SOURCE_FIELDS = ("t_hot_side_src",)
+
 FLOAT_FIELDS = {
     "t_inside_c",
     "t_cold_side_c",
@@ -88,6 +160,7 @@ FLOAT_FIELDS = {
     "voltage_v",
     "current_a",
     "power_w",
+    "energy_wh",
 }
 
 INTEGER_FIELDS = {
@@ -98,6 +171,24 @@ INTEGER_FIELDS = {
     "boot_count",
     "pwm_duty",
     "door_raw",
+    "seq",
+    "thermal_age_ms",
+    "power_age_ms",
+    "door_age_ms",
+    "thermal_seq",
+    "power_seq",
+    "door_transitions",
+    "door_cycles",
+    "probes_valid",
+    "probes_expected",
+    "thermal_beats",
+    "power_beats",
+    "door_beats",
+    "control_beats",
+    "telemetry_beats",
+    "thermal_max_gap_ms",
+    "power_max_gap_ms",
+    "door_max_gap_ms",
 }
 
 # Fields whose numeric value is only trustworthy when their status is OK.
@@ -110,16 +201,184 @@ VALUE_STATUS_PAIRS = {
     "voltage_v": "voltage_status",
     "current_a": "current_status",
     "power_w": "power_status",
+    "energy_wh": "energy_status",
     "door_open": "door_status",
 }
+
+# Closed vocabularies. docs/01 2263-2308 freezes the four quality states; the
+# producer-health names are the firmware's cg_health_state_t plus the explicit
+# "not evaluated" value the formatter emits when no report was supplied.
+QUALITY_VOCABULARY = ("VALID", "DEGRADED", "INVALID", "UNKNOWN")
+QUALITY_FIELDS = (
+    "thermal_quality",
+    "environment_quality",
+    "door_quality",
+    "electrical_quality",
+    "quality",
+)
+# `sensor_validity` is the W04 legacy field. On a schema-1 line it carried the
+# thermal quality name, and it also carried NO_DATA before the first sample -
+# which is still true in schema 2 - so its accepted set is the quality vocabulary
+# plus that token. The five W05 names above are checked strictly.
+LEGACY_VOCABULARY = ("sensor_validity",)
+LEGACY_EXTRA_TOKENS = ("NO_DATA",)
+HEALTH_VOCABULARY = ("OK", "LATE", "MISSED", "NEVER", "UNKNOWN")
+HEALTH_FIELDS = (
+    "health",
+    "health_thermal",
+    "health_bme",
+    "health_door",
+    "health_power",
+    "health_telemetry",
+    "health_control",
+)
+COOLING_APPLIED_VOCABULARY = ("ON", "OFF")
+COOLING_EVIDENCE_VOCABULARY = (
+    "MEASURED_APPLIED_AND_DRAWING",
+    "MEASURED_IDLE_AND_ZERO",
+    "MEASURED_CONTRADICTS_APPLIED",
+    "UNOBSERVED_STALE",
+    "UNOBSERVED_NO_DATA",
+)
+OUTPUT_STAGE_VOCABULARY = ("ENABLED", "DISABLED")
+ROM_TOKEN_LEN = 16
+ROM_UNREAD = "UNREAD"
+
+# --- Probe role authority ----------------------------------------------------
+# ROM -> physical position, keyed on the 8 ROM bytes rather than on a slot
+# literal. The strings are deliberately identical to the host role authority in
+# ``firmware/tools/cg_probe_roles.py`` (A-W07-plant-repeatability worktree): if
+# the two layers named the same probe differently, a chamber-air aggregate could
+# silently re-admit the hot side again.
+#
+# This is the operator-frozen as-built record, not a remeasurement - independent
+# proof of no movement after the freeze is NOT_AVAILABLE (IHA-01 level 4) - and
+# it never relabels a historical capture. It resolves the *present* line only.
+HOT_SIDE_ROM = "28AEBF2200000006"
+ROM_POSITION_BY_ROM = {
+    "287088CA00000051": "CHAMBER_CENTER",
+    "28AEBF2200000006": "TEC_HOT_SIDE",
+    "28CBE9CA00000072": "CHAMBER_BOTTOM",
+    "283BE5C9000000A9": "CHAMBER_NEAR_DOOR",
+}
+CHAMBER_AIR_ROMS = frozenset(
+    rom for rom, position in ROM_POSITION_BY_ROM.items() if position != "TEC_HOT_SIDE"
+)
+CHAMBER_AIR_POSITIONS = frozenset({"CHAMBER_CENTER", "CHAMBER_BOTTOM", "CHAMBER_NEAR_DOOR"})
+NON_AIR_POSITIONS = frozenset({"TEC_HOT_SIDE"})
+
+# Slot -> ROM, the same direction `cg_probe_roles.SLOT_TO_ROM` publishes. `T4`
+# is the spare slot's slot name; the line spells its ROM field `spare_rom`.
+SLOT_TO_ROM = {
+    "T1": "287088CA00000051",
+    "T2": "28AEBF2200000006",
+    "T3": "28CBE9CA00000072",
+    "T4": "283BE5C9000000A9",
+}
+
+# The ``*_src`` token a line emits -> the field carrying that slot's ROM.
+SRC_TOKEN_TO_ROM_FIELD = {
+    "T1": "t1_rom",
+    "T2": "t2_rom",
+    "T3": "t3_rom",
+    "T4": "spare_rom",
+    "SPARE": "spare_rom",
+}
+
+# Slots the frozen map says are chamber air, in the uppercase slot vocabulary
+# ``cg_serial.MEASUREMENT_ROLES`` uses. Callers that need an air-only spread pass
+# these; the historical all-roles defaults are left alone so already published
+# artifacts keep meaning what they meant.
+CHAMBER_AIR_ROLE_NAMES = tuple(
+    slot for slot, rom in SLOT_TO_ROM.items() if rom in CHAMBER_AIR_ROMS
+)
+HOT_SIDE_ROLE_NAME = "T2"
+
+
+def position_of_rom(rom: str | None) -> str | None:
+    """The frozen physical position of a ROM, or None when it is not in the map."""
+    return ROM_POSITION_BY_ROM.get((rom or "").upper().strip())
+
+
+def source_slot(record: TelemetryRecord, src_field: str) -> str | None:
+    """The slot token a value field names as its source, normalised to the map."""
+    token = record.fields.get(src_field)
+    if not isinstance(token, str):
+        return None
+    key = token.upper()
+    if key not in SRC_TOKEN_TO_ROM_FIELD:
+        return None
+    return "T4" if key == "SPARE" else key
+
+
+def source_rom(record: TelemetryRecord, src_field: str) -> str | None:
+    """The ROM a value field's ``*_src`` token names.
+
+    Prefers the ROM the line itself carried (a per-frame cross-check of the
+    frozen map against what the emitter put on the wire); falls back to the
+    frozen slot table for the pre-W05 lines, which name a slot but carry no ROM
+    field. Returns None only when the slot is unknown or reads ``UNREAD`` -
+    absence of identity, which is not a claim of agreement.
+    """
+    slot = source_slot(record, src_field)
+    if slot is None:
+        return None
+    rom = record.fields.get(SRC_TOKEN_TO_ROM_FIELD[slot])
+    if isinstance(rom, str) and rom != ROM_UNREAD:
+        return rom.upper()
+    return SLOT_TO_ROM.get(slot)
+
+
+def source_position(record: TelemetryRecord, src_field: str) -> str | None:
+    """The frozen physical position behind a value field's ``*_src`` token."""
+    return position_of_rom(source_rom(record, src_field))
+
+
+def chamber_source_is_hot_side(record: TelemetryRecord) -> bool:
+    """True when ``t_inside_c`` is reported as coming from the hot-side probe.
+
+    Read-only: it names the defect instead of inventing a role, and it is what
+    lets a consumer gate historical frames - every committed W04 line says
+    ``t_inside_src=T2``, and the W04 cooling capture labels that slot
+    ``t2_role=HOT_SIDE`` in all 957 rows - without the parser rewriting them.
+    """
+    return source_rom(record, "t_inside_src") == HOT_SIDE_ROM
+
+
+def _check_source_tokens(fields: dict[str, object]) -> None:
+    """A ``*_src`` token must name a slot, and a slot's ROM must be the frozen one.
+
+    History is preserved on both counts: the closed set is the four known slots,
+    so a pre-W05 ``t_inside_src=T2`` still parses, and lines that carry no ROM
+    field are not asked for one. But a line that *does* put a ROM on the wire
+    under a slot name is making an identity claim, and a claim that contradicts
+    the frozen map means the probes moved - after which no chamber aggregate
+    built from that capture means anything, so it is refused at the parser
+    rather than passed through as provenance.
+    """
+    for name in ("t_inside_src", "t_hot_side_src"):
+        token = fields.get(name)
+        if isinstance(token, str) and token.upper() not in SRC_TOKEN_TO_ROM_FIELD:
+            raise TelemetryError(
+                f"{name}={token!r} names no slot in the frozen ROM map "
+                f"({', '.join(sorted(SRC_TOKEN_TO_ROM_FIELD))})"
+            )
+    for slot, rom in SLOT_TO_ROM.items():
+        carried = fields.get(SRC_TOKEN_TO_ROM_FIELD[slot])
+        if isinstance(carried, str) and carried != ROM_UNREAD and carried != rom:
+            raise TelemetryError(
+                f"{SRC_TOKEN_TO_ROM_FIELD[slot]}={carried!r} is not the frozen ROM of "
+                f"slot {slot} ({rom}); the as-built map and the device disagree"
+            )
 
 HEX_RE = re.compile(r"^0[xX][0-9A-Fa-f]{1,8}$")
 FLOAT_RE = re.compile(r"^[+-]?(?:\d+(?:\.\d*)?|\.\d+)(?:[eE][+-]?\d+)?$")
 INT_RE = re.compile(r"^[+-]?\d+$")
+ROM_RE = re.compile(r"^[0-9A-F]{16}$")
 
 
 class TelemetryError(ValueError):
-    """Raised for a line that is not a well-formed schema-1 telemetry line."""
+    """Raised for a line that is not a well-formed telemetry line."""
 
 
 @dataclasses.dataclass(frozen=True)
@@ -164,7 +423,10 @@ def _coerce(name: str, token: str) -> object:
     if name in INTEGER_FIELDS:
         if not INT_RE.match(token):
             raise TelemetryError(f"field {name!r} is not an integer: {token!r}")
-        return int(token)
+        value = int(token)
+        if value < 0:
+            raise TelemetryError(f"field {name!r} is negative: {token!r}")
+        return value
     if name == "door_open":
         if token == MISSING_TOKEN:
             return None
@@ -178,8 +440,65 @@ def _coerce(name: str, token: str) -> object:
     return token
 
 
+def _check_vocabulary(fields: dict[str, object]) -> None:
+    for name in QUALITY_FIELDS:
+        value = fields.get(name)
+        if value is None:
+            continue
+        if value not in QUALITY_VOCABULARY:
+            raise TelemetryError(
+                f"{name}={value!r} is not one of {', '.join(QUALITY_VOCABULARY)}"
+            )
+    for name in LEGACY_VOCABULARY:
+        value = fields.get(name)
+        if value is None:
+            continue
+        allowed = QUALITY_VOCABULARY + LEGACY_EXTRA_TOKENS
+        if value not in allowed:
+            raise TelemetryError(f"{name}={value!r} is not one of {', '.join(allowed)}")
+    for name in HEALTH_FIELDS:
+        value = fields.get(name)
+        if value is None:
+            continue
+        if value not in HEALTH_VOCABULARY:
+            raise TelemetryError(
+                f"{name}={value!r} is not one of {', '.join(HEALTH_VOCABULARY)}"
+            )
+    for name, allowed in (
+        ("cooling_applied", COOLING_APPLIED_VOCABULARY),
+        ("cooling_evidence", COOLING_EVIDENCE_VOCABULARY),
+        ("output_stage", OUTPUT_STAGE_VOCABULARY),
+    ):
+        value = fields.get(name)
+        if value is not None and value not in allowed:
+            raise TelemetryError(f"{name}={value!r} is not one of {', '.join(allowed)}")
+
+
+def _check_identity(fields: dict[str, object]) -> None:
+    """A-W05-02: identity must be self-consistent, not merely present."""
+    if fields["device_id"] == "":
+        raise TelemetryError("device_id is empty")
+    if fields["seq"] < 1:
+        raise TelemetryError(f"seq must start at 1 within a boot, got {fields['seq']}")
+    for name in ("t1_rom", "t2_rom", "t3_rom", "spare_rom"):
+        token = fields.get(name)
+        if not isinstance(token, str):
+            continue
+        if token != ROM_UNREAD and not ROM_RE.match(token):
+            raise TelemetryError(
+                f"{name}={token!r} is not 16 uppercase hex bytes or {ROM_UNREAD}"
+            )
+    probes_valid = fields.get("probes_valid")
+    probes_expected = fields.get("probes_expected")
+    if isinstance(probes_valid, int) and isinstance(probes_expected, int):
+        if probes_valid > probes_expected:
+            raise TelemetryError(
+                f"probes_valid={probes_valid} exceeds probes_expected={probes_expected}"
+            )
+
+
 def parse_line(line: str, line_index: int = 0) -> TelemetryRecord:
-    """Parse one telemetry line; raise TelemetryError if it is not schema 1."""
+    """Parse one telemetry line; raise TelemetryError if it is malformed."""
     text = line.rstrip("\r\n")
     tokens = text.split(" ")
     if len(tokens) < 3 or tokens[0] != "#CG" or tokens[1] != "TELEM":
@@ -201,15 +520,22 @@ def parse_line(line: str, line_index: int = 0) -> TelemetryRecord:
     schema = raw_fields.get("schema")
     if schema is None:
         raise TelemetryError("missing schema field")
-    if schema != str(SCHEMA_VERSION):
-        raise TelemetryError(f"schema {schema!r} is not supported (expected {SCHEMA_VERSION})")
+    if schema not in {str(value) for value in SUPPORTED_SCHEMAS}:
+        raise TelemetryError(
+            f"schema {schema!r} is not supported (expected one of "
+            f"{'/'.join(str(v) for v in SUPPORTED_SCHEMAS)})"
+        )
 
-    missing = [name for name in REQUIRED_FIELDS + REQUIRED_STATUS_FIELDS if name not in raw_fields]
+    required = list(REQUIRED_FIELDS + REQUIRED_STATUS_FIELDS)
+    if schema == str(SCHEMA_VERSION):
+        required += list(W05_REQUIRED_FIELDS)
+
+    missing = [name for name in required if name not in raw_fields]
     if missing:
         raise TelemetryError("missing required fields: " + ", ".join(missing))
 
-    # The device has no wall clock. A schema-1 line that carries a timestamp
-    # (or a different provenance token) did not come from this firmware, and
+    # The device has no wall clock. A line that carries a timestamp (or a
+    # different provenance token) did not come from this firmware, and
     # accepting it would let an invented measurement time into the dataset.
     if raw_fields["timestamp_utc"] != UTC_UNAVAILABLE:
         raise TelemetryError(
@@ -224,6 +550,11 @@ def parse_line(line: str, line_index: int = 0) -> TelemetryRecord:
     fields: dict[str, object] = {}
     for key, value in raw_fields.items():
         fields[key] = _coerce(key, value)
+
+    _check_vocabulary(fields)
+    _check_source_tokens(fields)
+    if schema == str(SCHEMA_VERSION):
+        _check_identity(fields)
 
     return TelemetryRecord(line_index=line_index, raw=text, raw_fields=raw_fields, fields=fields)
 

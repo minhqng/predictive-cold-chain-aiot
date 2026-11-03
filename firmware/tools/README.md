@@ -102,7 +102,10 @@ interlock, ESTOP, CLEAR, heartbeat, rollback phần cứng). Test Python tự t�
 qua `vswhere`, hoặc `cc`/`gcc` nếu có.
 
 Quy tắc dữ liệu W04: `nan` → ô rỗng/`None`, không bao giờ thành 0;
-`timestamp_utc=UNAVAILABLE` vì thiết bị không có đồng hồ thực; `t_cold_side_c`,
-`t_hot_side_c`, `t_ambient_c` là `NOT_ASSIGNED` và RH là `SENSOR_NOT_PRESENT`
-cho tới khi có phép đo/gán probe thật. Kế hoạch cổng G0–G5 nằm trong
+`timestamp_utc=UNAVAILABLE` vì thiết bị không có đồng hồ thực; `t_ambient_c` và
+`t_cold_side_c` là `NOT_ASSIGNED` và RH là `SENSOR_NOT_PRESENT` cho tới khi có
+phép đo/gán probe thật. `t_inside_c` lấy từ T1 (`CHAMBER_CENTER`), còn
+`t_hot_side_c` lấy từ T2 (`TEC_HOT_SIDE` — ROM `28AEBF2200000006`, mặt tản nhiệt
+TEC, không phải không khí trong buồng); mỗi field tự khai nguồn qua
+`t_inside_src` / `t_hot_side_src`. Kế hoạch cổng G0–G5 nằm trong
 `docs/06-tec-commissioning-safety-and-limits.md`.

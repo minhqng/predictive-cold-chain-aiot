@@ -88,9 +88,25 @@ void cg_door_poll(cg_door_t *door, uint64_t now_us, bool *edge_out,
 cg_door_state_t cg_door_state(const cg_door_t *door)
 {
 #if CG_DOOR_POLARITY_CONFIRMED
+    /* D25: the build-time constant authorizes the raw -> semantic mapping only.
+     * The reading stays unattested until a physical open/close observation is
+     * recorded for this boot, so a reset can never leak a confirmed state. */
+    if (!door->polarity_attested) {
+        return CG_DOOR_UNVERIFIED;
+    }
     return (door->raw_committed == CG_DOOR_RAW_OPEN_LEVEL) ? CG_DOOR_OPEN : CG_DOOR_CLOSED;
 #else
     (void)door;
     return CG_DOOR_UNVERIFIED;
 #endif
+}
+
+bool cg_door_polarity_attested(const cg_door_t *door)
+{
+    return cg_door_state(door) != CG_DOOR_UNVERIFIED;
+}
+
+void cg_door_attest_polarity(cg_door_t *door)
+{
+    door->polarity_attested = true;
 }
