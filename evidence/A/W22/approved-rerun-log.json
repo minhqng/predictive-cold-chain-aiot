@@ -1,6 +1,7 @@
 {
   "week": "W22",
-  "authority": "docs/05A §31",
+  "authority": "docs/05A §31, docs/03",
+  "preservation_policy": "ALL_PRIOR_ATTEMPTS_RETAINED_NO_DELETION",
   "approved_reruns": [],
   "rejected_rerun_requests": [],
   "status": "SOFTWARE_READY",
