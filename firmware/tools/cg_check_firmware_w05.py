@@ -111,11 +111,33 @@ def run_checks() -> Checker:
     # Value AND status bound to the same field. A check that only required
     # `t_hot_side_c=%s` plus the literal somewhere in the file still passed after
     # the hot-side status argument was swapped for a real reading.
-    checker.check("fmt_float(false, 0.0f, t_hot, sizeof(t_hot)), CG_TELEM_STATUS_NOT_ASSIGNED"
-                  in telemetry_c,
-                  "the hot-side field is hard-wired to a missing value with NOT_ASSIGNED")
-    checker.check("t_inside_src=T2" in telemetry_c,
-                  "the chamber-air channel still names its source ROM role")
+    # The hot side is now a real observation: what must be pinned is that its
+    # value and its status both come from the hot-side role, so a chamber reading
+    # cannot be dropped in beside a mismatched status token again.
+    checker.check("snap->t_c[CG_TELEM_HOT_SIDE_ROLE], t_hot, sizeof(t_hot))" in telemetry_c
+                  and "t_hot_side_status=%s t_hot_side_src=%s" in telemetry_c
+                  and "t_hot_side_status, CG_TELEM_HOT_SIDE_SRC)" in telemetry_c,
+                  "the hot-side field's value, status and source token all come from "
+                  "the hot-side role")
+    # The invariant that broke: chamber air was sourced from the hot-side probe.
+    # Keyed on the named role macros, not on a slot literal, so renaming a slot
+    # cannot make this check pass by accident.
+    checker.check("t_inside_status = thermal_status(snap, CG_TELEM_CHAMBER_AIR_ROLE, now_ms);"
+                  in telemetry_c
+                  and "snap->t_c[CG_TELEM_CHAMBER_AIR_ROLE], t_inside, sizeof(t_inside))"
+                  in telemetry_c
+                  and "t_inside_src=%s" in telemetry_c
+                  and "t_inside_status, CG_TELEM_CHAMBER_AIR_SRC)" in telemetry_c,
+                  "the chamber-air field's value, status and source token all come from "
+                  "the chamber-air role")
+    checker.check("CG_TELEM_CHAMBER_AIR_ROLE CG_ROLE_T1" in config
+                  and "CG_TELEM_HOT_SIDE_ROLE CG_ROLE_T2" in config,
+                  "the chamber-air and hot-side roles are bound to distinct slots and "
+                  "the hot side is T2, the ROM the as-built map puts on the TEC")
+    checker.check("CG_TELEM_CHAMBER_AIR_ROLE CG_ROLE_T2" not in config
+                  and "CG_ROLE_T2" not in telemetry_c,
+                  "the emitter addresses probes only through the two named role macros, so "
+                  "a chamber-air read of the hot-side probe cannot be written by accident")
 
     # 3. Coherence -------------------------------------------------------
     for field in ("thermal_obs_ms", "power_obs_ms", "door_obs_ms", "thermal_seq", "power_seq",

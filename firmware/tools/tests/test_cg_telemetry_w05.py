@@ -91,6 +91,7 @@ class FormatterFixtureTests(unittest.TestCase):
         record = schema.parse_line(harness_fixture_line())
         known = set(schema.REQUIRED_FIELDS) | set(schema.REQUIRED_STATUS_FIELDS)
         known |= set(schema.W05_REQUIRED_FIELDS)
+        known |= set(getattr(schema, "OPTIONAL_SOURCE_FIELDS", ()))
         known |= set(schema.INTEGER_FIELDS) | set(schema.FLOAT_FIELDS)
         known |= {
             # Vocabulary-only or descriptive fields the parser keeps as strings.
@@ -279,6 +280,65 @@ class BuilderHandoffTests(unittest.TestCase):
         w05_row = dict(zip(header, second))
         self.assertEqual(w05_row["schema"], "2")
         self.assertEqual(w05_row["device_id"], "coldguard-001")
+
+
+class ProbeRoleAuthorityTests(unittest.TestCase):
+    """The line has to be honest about which probe produced the chamber value.
+
+    Run against the formatter's own bytes, not a hand-typed fixture, so pointing
+    ``t_inside_c`` back at the hot-side probe fails here even while every field
+    name still looks right.
+    """
+
+    def test_emitted_chamber_source_is_a_chamber_air_probe(self) -> None:
+        record = schema.parse_line(harness_fixture_line())
+        self.assertEqual(schema.source_slot(record, "t_inside_src"), "T1")
+        self.assertEqual(schema.source_rom(record, "t_inside_src"), "287088CA00000051")
+        self.assertEqual(schema.source_position(record, "t_inside_src"), "CHAMBER_CENTER")
+        self.assertFalse(schema.chamber_source_is_hot_side(record))
+
+    def test_emitted_hot_side_source_is_the_hot_side_probe(self) -> None:
+        record = schema.parse_line(harness_fixture_line())
+        self.assertEqual(schema.source_position(record, "t_hot_side_src"), "TEC_HOT_SIDE")
+        self.assertEqual(schema.source_rom(record, "t_hot_side_src"), schema.HOT_SIDE_ROM)
+
+    def test_chamber_air_slot_set_excludes_the_hot_side(self) -> None:
+        self.assertEqual(schema.CHAMBER_AIR_ROLE_NAMES, ("T1", "T3", "T4"))
+        self.assertNotIn(schema.HOT_SIDE_ROLE_NAME, schema.CHAMBER_AIR_ROLE_NAMES)
+        self.assertNotIn(schema.HOT_SIDE_ROM, schema.CHAMBER_AIR_ROMS)
+        self.assertEqual(schema.position_of_rom(schema.HOT_SIDE_ROM), "TEC_HOT_SIDE")
+
+    def test_source_token_naming_no_slot_is_rejected(self) -> None:
+        with self.assertRaises(schema.TelemetryError) as ctx:
+            schema.parse_line(v2_line(t_inside_src="T9"))
+        self.assertIn("names no slot", str(ctx.exception))
+
+    def test_slot_rom_disagreeing_with_the_frozen_map_is_rejected(self) -> None:
+        """The device put a ROM on the wire that is not that slot's frozen ROM: the
+        geometry moved, so no chamber aggregate from this frame means anything."""
+        with self.assertRaises(schema.TelemetryError) as ctx:
+            schema.parse_line(v2_line(t1_rom="28AEBF2200000006"))
+        self.assertIn("the as-built map and the device disagree", str(ctx.exception))
+
+    def test_unread_rom_is_absence_of_identity_not_a_mismatch(self) -> None:
+        record = schema.parse_line(v2_line(t1_rom="UNREAD"))
+        self.assertEqual(record.value("t1_rom"), "UNREAD")
+        # Falls back to the frozen slot table rather than reporting a conflict.
+        self.assertEqual(schema.source_position(record, "t_inside_src"), "CHAMBER_CENTER")
+
+
+class HotSideHistoryTests(unittest.TestCase):
+    def test_committed_hot_side_sourced_frames_are_flagged_not_rewritten(self) -> None:
+        """The 222 pre-W06 lines that reported the heatsink as chamber air must
+        still parse unchanged - history is not relabelled - while a consumer can
+        still see that they were mislabelled."""
+        records, report = schema.read_capture(W04_CAPTURE)
+        self.assertEqual(report["rejected"], [], "a real W04 line was rejected")
+        self.assertGreaterEqual(len(records), 10)
+        self.assertTrue(all(r.value("t_inside_src") == "T2" for r in records))
+        self.assertTrue(all(schema.chamber_source_is_hot_side(r) for r in records))
+        self.assertTrue(all(schema.source_position(r, "t_inside_src") == "TEC_HOT_SIDE"
+                            for r in records))
 
 
 if __name__ == "__main__":

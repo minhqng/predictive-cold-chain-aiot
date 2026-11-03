@@ -10,7 +10,8 @@ Checks, in order:
 3. ``acceptance.md`` still states the honest W05 verdict: software-complete with
    the physical capture unauthorized, not a PASS/GREEN week;
 4. ``schema-fixture.json`` still declares itself a rendered frame and **not** a
-   physical measurement, and carries schema 2;
+   physical measurement, and carries the schema the current emitter produces
+   (2: the W05 emitter is still schema 2; schema 3 arrives with W06);
 5. the timing pilot names the committed capture it was derived from, that capture
    exists, and the pilot is labelled as a 60-second W04 window rather than the
    30-minute W05 study;
@@ -106,6 +107,13 @@ def main() -> int:
             failures.append("schema-fixture.json no longer declares the frame synthetic")
         if "raw_line" not in fixture or not fixture["raw_line"].startswith("#CG TELEM schema=2 "):
             failures.append("schema-fixture.json lost its raw firmware-rendered line")
+        raw = fixture.get("raw_line", "")
+        if " t_inside_src=T1" not in raw:
+            failures.append("schema-fixture.json chamber-air value is not sourced from the "
+                            "as-built CHAMBER_CENTER probe T1 (287088CA00000051)")
+        if " t_hot_side_src=T2" not in raw:
+            failures.append("schema-fixture.json does not source the hot-side value from the "
+                            "as-built TEC_HOT_SIDE probe T2 (28AEBF2200000006)")
 
     pilot_path = DOSSIER / "timing-pilot.json"
     if not pilot_path.is_file():

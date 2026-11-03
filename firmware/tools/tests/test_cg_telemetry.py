@@ -23,6 +23,10 @@ import cg_build_telemetry  # noqa: E402
 import cg_telemetry_schema as schema  # noqa: E402
 
 
+# The W04-era (schema 1) grammar, kept as the parser wrote it: that line reported
+# the heatsink probe as chamber air (t_inside_src=T2) and had no hot-side reading.
+# It is history, not the current contract - see test_cg_telemetry_w05.py for the
+# live role checks.
 def telem_line(
     uptime_ms: int = 12345,
     run_id: str = "UNSET",

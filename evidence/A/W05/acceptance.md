@@ -199,3 +199,25 @@ in-flight code or in evidence that over-stated its own guard.
     same table's own 1078 ms bin, and the budget guard was documented as 85 %
     where the test enforces 90 %. All three corrected, together with the fixture
     length after the field additions (1873 typical / 2098 worst case).
+
+## Dated correction — 2026-11-03 (Member A, production RC)
+
+`schema-fixture.json` in this dossier is a derived artifact: the committed
+generator re-renders it from the current firmware emitter. It has been
+re-derived on 2026-11-03 on **this** branch, so it still carries
+`schema_version=2` and `firmware_version=cg-w05-0.1.0` - schema 3 arrives with
+W06, not here. What changed is the probe the chamber-air value is taken from.
+
+The re-derived frame now emits `t_inside_src=T1` (as-built
+`CHAMBER_CENTER`, ROM `287088CA00000051`) and `t_hot_side_src=T2` (as-built
+`TEC_HOT_SIDE`, ROM `28AEBF2200000006`). The previous emitter sourced the
+chamber-air value from T2, which is the hot-side probe; that was a real defect
+and the validator now refuses a fixture that loses either source token.
+
+What this does NOT change: no 30-minute capture exists, the fixture is still
+`is_synthetic_frame=true` / `is_physical_measurement=false`, and no schema-3
+frame has ever been on the wire from a device. The schema-2/1841-2069-byte
+history above stays as the record of what was actually measured on the serial
+link. `firmware/tools/run_all_checks_w05.py` now invokes the generator with
+`--check`; before this change it ran in write mode, so every run silently
+rewrote the evidence that the step before it had just hash-verified.

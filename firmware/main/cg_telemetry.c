@@ -161,6 +161,7 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
     char e_buf[24];
     char raw[CG_ROLE_COUNT][24];
     const char *t_inside_status;
+    const char *t_hot_side_status;
     const char *t_status[CG_ROLE_COUNT];
     const char *p_status;
     const char *sensor_validity;
@@ -185,7 +186,13 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
     now_ms = frame->uptime_ms;
     cg_tec_get_status(frame->ctl, &tec);
 
-    t_inside_status = thermal_status(snap, CG_ROLE_T2, now_ms);
+    /* Chamber air and the hot side are bound to their own roles here, once, so
+     * no emitter below can quietly pull a heatsink reading into the chamber
+     * field: ROM 28AEBF2200000006 sits on the TEC hot side in the operator-frozen
+     * as-built map, and in the 2026-11-01 run it peaked at 39.938 C while chamber
+     * air fell about 8.7 C - the opposite sign to air. */
+    t_inside_status = thermal_status(snap, CG_TELEM_CHAMBER_AIR_ROLE, now_ms);
+    t_hot_side_status = thermal_status(snap, CG_TELEM_HOT_SIDE_ROLE, now_ms);
     for (int role = 0; role < CG_ROLE_COUNT; role++) {
         t_status[role] = thermal_status(snap, role, now_ms);
     }
@@ -257,18 +264,25 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
            frame->role_status != NULL ? frame->role_status : CG_TELEM_ROM_UNREAD,
            CG_TELEM_ROM_SOURCE);
 
-    append(&cursor, &left, &overflow, " t_inside_c=%s t_inside_status=%s t_inside_src=T2",
-           fmt_float(strcmp(t_inside_status, CG_TELEM_STATUS_OK) == 0, snap->t_c[CG_ROLE_T2],
-                     t_inside, sizeof(t_inside)),
-           t_inside_status);
+    append(&cursor, &left, &overflow, " t_inside_c=%s t_inside_status=%s t_inside_src=%s",
+           fmt_float(strcmp(t_inside_status, CG_TELEM_STATUS_OK) == 0,
+                     snap->t_c[CG_TELEM_CHAMBER_AIR_ROLE], t_inside, sizeof(t_inside)),
+           t_inside_status, CG_TELEM_CHAMBER_AIR_SRC);
+
+    /* The hot side travels in its own field, which is what the schema has always
+     * reserved for it: naming it here stops a heatsink reading from being
+     * reachable under a chamber-air name. */
+    append(&cursor, &left, &overflow,
+           " t_hot_side_c=%s t_hot_side_status=%s t_hot_side_src=%s",
+           fmt_float(strcmp(t_hot_side_status, CG_TELEM_STATUS_OK) == 0,
+                     snap->t_c[CG_TELEM_HOT_SIDE_ROLE], t_hot, sizeof(t_hot)),
+           t_hot_side_status, CG_TELEM_HOT_SIDE_SRC);
 
     append(&cursor, &left, &overflow,
            " t_cold_side_c=%s t_cold_side_status=%s"
-           " t_hot_side_c=%s t_hot_side_status=%s"
            " t_ambient_c=%s t_ambient_status=%s"
            " relative_humidity_pct=%s relative_humidity_status=%s",
            fmt_float(false, 0.0f, t_cold, sizeof(t_cold)), CG_TELEM_STATUS_NOT_ASSIGNED,
-           fmt_float(false, 0.0f, t_hot, sizeof(t_hot)), CG_TELEM_STATUS_NOT_ASSIGNED,
            fmt_float(false, 0.0f, t_ambient, sizeof(t_ambient)), CG_TELEM_STATUS_NOT_ASSIGNED,
            fmt_float(false, 0.0f, rh, sizeof(rh)), CG_TELEM_STATUS_NOT_PRESENT);
 
