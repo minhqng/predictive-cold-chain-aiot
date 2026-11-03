@@ -38,6 +38,11 @@ typedef struct {
     uint32_t discarded_edges; /* raw edges not explained by a commit:
                                  raw_edges - transitions (never negative) */
     bool initialised;
+    /* D25: raw level -> OPEN/CLOSED is only a valid measurement once the
+     * polarity has been attested for THIS boot. cg_door_init()'s memset
+     * clears it, so a reset returns the door to unattested regardless of the
+     * build-time CG_DOOR_POLARITY_CONFIRMED constant. */
+    bool polarity_attested;
 } cg_door_t;
 
 /* Configures CG_PIN_MC38 (GPIO35 as-built) as a pulled input and
@@ -58,5 +63,17 @@ void cg_door_poll(cg_door_t *door, uint64_t now_us, bool *edge_out,
 /* Semantic state. While polarity is not commissioned the answer is
  * CG_DOOR_UNVERIFIED - never a guess (docs/01 section 8.2). */
 cg_door_state_t cg_door_state(const cg_door_t *door);
+
+/* True only when the polarity is BOTH a commissioned capability
+ * (CG_DOOR_POLARITY_CONFIRMED) and attested for this boot. Drives the
+ * snapshot door-known flag and the DOOR_POLARITY line so a reader can tell
+ * "confirmed this boot" apart from "unattested after a reset" (D25). */
+bool cg_door_polarity_attested(const cg_door_t *door);
+
+/* Records a per-boot polarity attestation made by a physical open/close
+ * observation. Nothing in the shipped build calls it - the MC-38 polarity is
+ * not commissioned (docs/01 8.2) - so the door stays UNVERIFIED. It exists so
+ * the compile-time constant alone can never authorize a confirmed reading. */
+void cg_door_attest_polarity(cg_door_t *door);
 
 const char *cg_door_state_name(cg_door_state_t state);
