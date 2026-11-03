@@ -124,12 +124,32 @@ def main() -> int:
     check_references(census, fails)
     check_weeks(census, fails, warns)
 
+    # A census that does not come from the tool carries no evidence binding, so it
+    # cannot be trusted as proof of anything. Warn-only let a hand-authored file pass.
     if not (TOOL_CENSUS_KEYS & set(census)):
-        warns.append(
+        fails.append(
             "acceptance-census.json is hand-authored: it carries none of the keys emitted by "
-            "firmware/tools/cg_w24_final_freeze.collate_acceptance_census(), so the tool's "
-            "evidence binding does not cover this artifact"
+            "firmware/tools/cg_w24_final_freeze.collate_acceptance_census(), so nothing here is "
+            "bound to verified evidence"
         )
+    claimed = str(census.get("acceptance_verdict", "")) + str(census.get("handover_verdict", ""))
+    if "ACCEPT" in claimed.upper() and "BLOCK" not in claimed.upper():
+        if not census.get("physical_evidence"):
+            fails.append(
+                f"census asserts {claimed!r} without any physical_evidence records to re-verify"
+            )
+        else:
+            sys.path.insert(0, str(REPO / "firmware" / "tools"))
+            from cg_w24_final_freeze import verify_physical_evidence
+            again = verify_physical_evidence(
+                census["physical_evidence"], REPO,
+                census.get("expected_hardware_config_id"),
+            )
+            if again.independent_run_count < census.get("physical_runs_verified", 0):
+                fails.append(
+                    f"census claims {census['physical_runs_verified']} verified runs but "
+                    f"re-verification finds {again.independent_run_count}"
+                )
 
     for message in fails:
         print(f"FAIL: {message}")

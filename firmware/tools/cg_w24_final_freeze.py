@@ -117,6 +117,23 @@ REQUIRED_INDEPENDENT_RUNS = 3
 (physical_runs_count >= 3) so the threshold is not silently re-invented here."""
 
 PHYSICAL_SOURCE_TYPES = {"RAW_DEVICE_CAPTURE"}
+"""Only authentic device captures count toward physical acceptance. Host fixtures,
+simulator output and derived tables are excluded, so an artefact copied from a test
+cannot lift a census to PHYSICALLY_ACCEPTED."""
+
+EVIDENCE_ROOT = "evidence"
+
+WEEK_DOSSIER_DIR_FALLBACK = {w: f"{EVIDENCE_ROOT}/A/W{w:02d}" for w in range(1, 25)}
+WEEK_DOSSIER_DIR_FALLBACK[23] = f"{EVIDENCE_ROOT}/A/RC"
+"""Where each week's dossier lives. W23 delivers the release-candidate package under
+evidence/A/RC/, so a week number is not the same thing as a directory name."""
+
+SAFE_HARDWARE_POSTURES = {
+    "FAIL_CLOSED_FROZEN",
+    "DE_ENERGIZED_SAFE_POSTURE_PSU_OFF_FUSE_REMOVED",
+}
+"""Postures that state the bench is safe to leave unattended. Any other value is
+treated as an unresolved hazard rather than as a free-text label."""
 
 EVIDENCE_REQUIRED_FIELDS = (
     "run_id",
@@ -147,16 +164,51 @@ class EvidenceVerification:
     refusals: List[str] = field(default_factory=list)
 
 
+def _pinned_digests(root: Path, artifact: Path) -> List[str]:
+    """Digests that any SHA256SUMS.txt at or above `artifact` records for it.
+
+    Citing an arbitrary readable file is not evidence. A capture counts only if a
+    dossier pin file lists its path and digest, which is how the W01-W24 dossiers
+    already record their own artifacts.
+    """
+    digests: List[str] = []
+    directory = artifact.parent
+    root_r = root.resolve()
+    while True:
+        sums = directory / "SHA256SUMS.txt"
+        if sums.is_file():
+            try:
+                text = sums.read_bytes().decode("utf-8", errors="replace")
+            except OSError:
+                text = ""
+            for line in text.splitlines():
+                line = line.strip()
+                if not line or len(line.split(None, 1)) < 2:
+                    continue
+                digest, rel = line.split(None, 1)
+                target = directory / rel.strip().replace("\\", "/")
+                try:
+                    if target.is_file() and target.resolve() == artifact.resolve():
+                        digests.append(digest.lower())
+                except OSError:
+                    continue
+        if directory == root_r or directory.parent == directory:
+            break
+        directory = directory.parent
+    return digests
+
+
 def verify_physical_evidence(
     physical_evidence: Optional[List[Dict[str, Any]]],
     repo_root: Any,
     expected_hardware_config_id: Optional[str],
 ) -> EvidenceVerification:
-    """Bind each claimed run to a real file whose bytes match its recorded hash.
+    """Bind each claimed run to a pinned capture whose own bytes record its identity.
 
-    A count alone is not evidence: without this step a caller could reach
-    PHYSICALLY_ACCEPTED by typing a number. Runs sharing a device boot id are
-    segments of one power cycle, so they count once.
+    A count alone is not evidence, and neither is the mere existence of some file:
+    a record must name a pinned artifact whose bytes carry the claimed boot id and
+    hardware configuration. Runs sharing a device boot id are segments of one power
+    cycle, so they count once.
     """
     result = EvidenceVerification()
     if not physical_evidence:
@@ -165,14 +217,21 @@ def verify_physical_evidence(
     if repo_root is None:
         result.refusals.append("PHYSICAL_EVIDENCE_ABSENT: repo_root required to verify artifacts")
         return result
+    if not expected_hardware_config_id:
+        result.refusals.append(
+            "PHYSICAL_EVIDENCE_ABSENT: expected_hardware_config_id required, so a stale "
+            "configuration cannot be accepted by omission"
+        )
+        return result
 
-    root = Path(repo_root)
+    root = Path(repo_root).resolve()
     seen_boots: Dict[str, str] = {}
+    seen_digests: Dict[str, str] = {}
     for index, record in enumerate(physical_evidence):
         if not isinstance(record, dict):
             result.refusals.append(f"EVIDENCE_FIELD_MISSING: record {index} is not a mapping")
             continue
-        missing = [k for k in EVIDENCE_REQUIRED_FIELDS if not record.get(k)]
+        missing = [k for k in EVIDENCE_REQUIRED_FIELDS if record.get(k) in (None, "")]
         if missing:
             result.refusals.append(
                 f"EVIDENCE_FIELD_MISSING: record {index} lacks {','.join(sorted(missing))}"
@@ -184,37 +243,79 @@ def verify_physical_evidence(
                 f"{record['source_type']!r} cannot support physical acceptance"
             )
             continue
-        if expected_hardware_config_id and record["hardware_config_id"] != expected_hardware_config_id:
+        if record["hardware_config_id"] != expected_hardware_config_id:
             result.refusals.append(
                 f"EVIDENCE_HARDWARE_CONFIG_MISMATCH: record {index} is "
                 f"{record['hardware_config_id']!r}, expected {expected_hardware_config_id!r}"
             )
             continue
 
-        artifact = root / record["artifact_path"]
-        if not artifact.is_file():
+        rel = str(record["artifact_path"]).replace("\\", "/")
+        if rel.startswith("/") or ".." in Path(rel).parts:
             result.refusals.append(
-                f"EVIDENCE_ARTIFACT_MISSING: record {index} cites {record['artifact_path']!r}, "
-                "which does not exist in this tree"
+                f"EVIDENCE_ARTIFACT_UNTRUSTED: record {index} cites {rel!r}, which is not a "
+                "repository-relative path"
             )
             continue
-        digest = hashlib.sha256(artifact.read_bytes()).hexdigest()
-        if digest.lower() != str(record["sha256"]).lower():
+        if not rel.startswith(f"{EVIDENCE_ROOT}/"):
             result.refusals.append(
-                f"EVIDENCE_HASH_MISMATCH: record {index} {record['artifact_path']!r} "
-                f"recorded {record['sha256']}, bytes are {digest}"
+                f"EVIDENCE_ARTIFACT_UNTRUSTED: record {index} cites {rel!r} outside {EVIDENCE_ROOT}/"
             )
             continue
 
-        boot_key = f"{record['device_id']}|{record['boot_id']}"
-        if boot_key in seen_boots:
+        artifact = root / rel
+        if not artifact.is_file() or root not in artifact.resolve().parents:
             result.refusals.append(
-                f"EVIDENCE_RUN_NOT_INDEPENDENT: record {index} shares boot {boot_key} with "
-                f"record {seen_boots[boot_key]}"
+                f"EVIDENCE_ARTIFACT_MISSING: record {index} cites {rel!r}, which does not exist "
+                "inside this tree"
             )
             continue
-        seen_boots[boot_key] = str(index)
-        result.counted_boot_identities.append(boot_key)
+        raw = artifact.read_bytes()
+        digest = hashlib.sha256(raw).hexdigest()
+        if digest.lower() != str(record["sha256"]).lower():
+            result.refusals.append(
+                f"EVIDENCE_HASH_MISMATCH: record {index} {rel!r} recorded {record['sha256']}, "
+                f"bytes are {digest}"
+            )
+            continue
+        pinned = _pinned_digests(root, artifact)
+        if not pinned:
+            result.refusals.append(
+                f"EVIDENCE_ARTIFACT_UNPINNED: record {index} {rel!r} is not listed in any "
+                "SHA256SUMS.txt, so it is not a declared dossier artifact"
+            )
+            continue
+        if digest.lower() not in pinned:
+            result.refusals.append(
+                f"EVIDENCE_ARTIFACT_UNPINNED: record {index} {rel!r} digest {digest} does not "
+                "match any pinned value"
+            )
+            continue
+        # The identity has to exist at the source, not only in the claim about it.
+        for field_name in ("boot_id", "hardware_config_id"):
+            if str(record[field_name]).encode() not in raw:
+                result.refusals.append(
+                    f"EVIDENCE_IDENTITY_NOT_IN_ARTIFACT: record {index} claims {field_name}="
+                    f"{record[field_name]!r}, which does not appear in {rel!r}"
+                )
+                break
+        else:
+            if digest.lower() in seen_digests:
+                result.refusals.append(
+                    f"EVIDENCE_RUN_NOT_INDEPENDENT: record {index} duplicates the bytes already "
+                    f"counted for record {seen_digests[digest.lower()]}"
+                )
+                continue
+            boot_key = f"{record['device_id']}|{record['boot_id']}"
+            if boot_key in seen_boots:
+                result.refusals.append(
+                    f"EVIDENCE_RUN_NOT_INDEPENDENT: record {index} shares boot {boot_key} with "
+                    f"record {seen_boots[boot_key]}"
+                )
+                continue
+            seen_boots[boot_key] = str(index)
+            seen_digests[digest.lower()] = str(index)
+            result.counted_boot_identities.append(boot_key)
 
     result.independent_run_count = len(result.counted_boot_identities)
     return result
@@ -241,18 +342,35 @@ def collate_acceptance_census(
     delivered_set = set(weeks_delivered)
     unexpected_weeks = sorted(delivered_set - expected_weeks)
     all_weeks_delivered = (delivered_set == expected_weeks)
-    gates = [] if open_hardware_gates == [] else open_hardware_gates
     gate_register_absent = open_hardware_gates is None
+    gates = () if gate_register_absent else tuple(open_hardware_gates)
 
     verification = verify_physical_evidence(
         physical_evidence, repo_root, expected_hardware_config_id
     )
+
+    posture_safe = hardware_status in SAFE_HARDWARE_POSTURES
+    if not posture_safe:
+        verification.refusals.append(
+            f"HARDWARE_POSTURE_UNSAFE: {hardware_status!r} is not a recognised fail-closed "
+            f"posture; physical acceptance cannot be granted while the bench state is unknown"
+        )
+
+    # A claimed week should have a dossier behind it, not only a number in a list.
+    weeks_without_dossier: List[str] = []
+    if repo_root is not None:
+        for week in sorted(delivered_set & expected_weeks):
+            rel = WEEK_DOSSIER_DIR_FALLBACK.get(week, f"{EVIDENCE_ROOT}/A/W{week:02d}")
+            if not (Path(repo_root) / rel).is_dir():
+                weeks_without_dossier.append(f"W{week:02d}")
 
     software_ready = all_weeks_delivered
     physical_ready = (
         software_ready
         and not gate_register_absent
         and len(gates) == 0
+        and posture_safe
+        and not weeks_without_dossier
         and verification.independent_run_count >= REQUIRED_INDEPENDENT_RUNS
     )
 
@@ -279,17 +397,21 @@ def collate_acceptance_census(
         "missing_weeks": sorted(list(expected_weeks - delivered_set)),
         "unexpected_week_ids": unexpected_weeks,
         "all_weeks_accounted_for": all_weeks_delivered,
+        "weeks_without_dossier": weeks_without_dossier,
         "physical_runs_claimed": physical_runs_count,
         "physical_runs_verified": verification.independent_run_count,
         "verified_boot_identities": verification.counted_boot_identities,
         "evidence_refusals": verification.refusals,
         "gate_register_supplied": not gate_register_absent,
         "hardware_status": hardware_status,
-        "open_hardware_gates": [] if gates is None else list(gates),
-        "open_hardware_gates_count": 0 if gates is None else len(gates),
+        "hardware_posture_safe": posture_safe,
+        "open_hardware_gates": [] if gate_register_absent else list(gates),
+        # None, not 0: an unknown register must not read downstream as "no gates".
+        "open_hardware_gates_count": None if gate_register_absent else len(gates),
         "software_contract_ready": software_ready,
-        # Member A cannot certify a cross-team round trip; the claim needs B/C/D evidence.
-        "system_integration_verified": SYSTEM_INTEGRATION_NOT_ASSERTABLE,
+        # Member A cannot certify a cross-team round trip; that claim needs B/C/D evidence.
+        "system_integration_verified": False,
+        "system_integration_note": SYSTEM_INTEGRATION_NOT_ASSERTABLE,
         "physical_acceptance_ready": physical_ready,
         "acceptance_verdict": acceptance_verdict,
         "handover_verdict": handover_verdict,

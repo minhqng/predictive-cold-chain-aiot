@@ -1,6 +1,7 @@
 """Unit tests for ColdGuard Member A — W24 Final Acceptance Tool."""
 
 import hashlib
+import shutil
 import tempfile
 import unittest
 from pathlib import Path
@@ -21,20 +22,42 @@ ALL_WEEKS = list(range(1, 25))
 
 
 def _record(root, rel, body, n, device="DEV-A", boot=None, source="RAW_DEVICE_CAPTURE",
-            conf=HW_CONF):
-    """One evidence record whose hash matches the bytes actually on disk."""
+            conf=HW_CONF, pin=True):
+    """One evidence record for a capture that carries its own identity and is pinned.
+
+    Genuine W01-W24 captures list boot_id / hardware_config_id columns and appear in
+    their dossier's SHA256SUMS.txt, so the fixtures reproduce that shape instead of
+    inventing a rule real evidence could not satisfy.
+    """
+    boot_id = boot if boot is not None else f"BOOT-{n}"
     path = Path(root) / rel
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_bytes(body)
+    payload = (
+        f"boot_id,device_id,hardware_config_id,note\r\n"
+        f"{boot_id},{device},{conf},run {n} payload\r\n"
+    ).encode() + body
+    path.write_bytes(payload)
+    if pin:
+        sums = path.parent / "SHA256SUMS.txt"
+        line = f"{hashlib.sha256(payload).hexdigest()}  {path.name}\r\n"
+        with sums.open("a", encoding="utf-8", newline="") as fh:
+            fh.write(line)
     return {
         "run_id": f"RUN-{n}",
         "device_id": device,
-        "boot_id": boot if boot is not None else f"BOOT-{n}",
+        "boot_id": boot_id,
         "source_type": source,
         "artifact_path": rel,
-        "sha256": hashlib.sha256(body).hexdigest(),
+        "sha256": hashlib.sha256(payload).hexdigest(),
         "hardware_config_id": conf,
     }
+
+
+def _week_dossiers(root):
+    """Every claimed week needs a dossier directory, not only a number."""
+    from cg_w24_final_freeze import WEEK_DOSSIER_DIR_FALLBACK
+    for rel in WEEK_DOSSIER_DIR_FALLBACK.values():
+        (Path(root) / rel).mkdir(parents=True, exist_ok=True)
 
 
 class TestW24FinalAcceptance(unittest.TestCase):
@@ -146,6 +169,7 @@ class TestW24CensusIsNotClaimDriven(unittest.TestCase):
         self.tmp = tempfile.TemporaryDirectory()
         self.addCleanup(self.tmp.cleanup)
         self.root = Path(self.tmp.name)
+        _week_dossiers(self.root)
 
     def census(self, **kw):
         base = dict(weeks_delivered=ALL_WEEKS, physical_runs_count=0,
@@ -229,12 +253,98 @@ class TestW24CensusIsNotClaimDriven(unittest.TestCase):
         recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
                 for i in range(REQUIRED_INDEPENDENT_RUNS)]
         res = self.census(physical_evidence=recs)
-        self.assertEqual(res["system_integration_verified"], SYSTEM_INTEGRATION_NOT_ASSERTABLE)
+        self.assertIs(res["system_integration_verified"], False)
+        self.assertEqual(res["system_integration_note"], SYSTEM_INTEGRATION_NOT_ASSERTABLE)
 
     def test_out_of_range_week_id_is_surfaced(self):
         res = self.census(weeks_delivered=ALL_WEEKS + [99])
         self.assertEqual(res["unexpected_week_ids"], [99])
         self.assertFalse(res["all_weeks_accounted_for"])
+
+    def test_absent_gate_register_reports_unknown_not_zero(self):
+        res = collate_acceptance_census(
+            weeks_delivered=ALL_WEEKS, physical_runs_count=5,
+            hardware_status="FAIL_CLOSED_FROZEN",
+        )
+        self.assertIsNone(res["open_hardware_gates_count"])
+        self.assertEqual(res["open_hardware_gates"], [])
+
+    def test_citing_an_arbitrary_repo_file_is_refused(self):
+        """Pointing at any readable file is not a capture: it must be declared evidence."""
+        (self.root / "README.md").write_text("not a capture\n", encoding="utf-8")
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1)
+        rec["artifact_path"] = "README.md"
+        rec["sha256"] = hashlib.sha256(
+            (self.root / "README.md").read_bytes()).hexdigest()
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_ARTIFACT_UNTRUSTED" in r for r in res["evidence_refusals"]))
+        self.assertFalse(res["physical_acceptance_ready"])
+
+    def test_unpinned_artifact_is_refused(self):
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1, pin=False)
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_ARTIFACT_UNPINNED" in r for r in res["evidence_refusals"]))
+        self.assertEqual(res["physical_runs_verified"], 0)
+
+    def test_parent_traversal_path_is_refused(self):
+        outside = self.root.parent / "outside-run.csv"
+        try:
+            outside.write_bytes(b"boot_id,BOOT-1\npayload\n")
+            self.addCleanup(outside.unlink, missing_ok=True)
+            rec = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1)
+            rec["artifact_path"] = "../outside-run.csv"
+            rec["sha256"] = hashlib.sha256(outside.read_bytes()).hexdigest()
+            res = self.census(physical_evidence=[rec])
+            self.assertTrue(any("EVIDENCE_ARTIFACT_UNTRUSTED" in r for r in res["evidence_refusals"]))
+            self.assertFalse(res["physical_acceptance_ready"])
+        except OSError:
+            self.skipTest("cannot write beside the sandbox root on this platform")
+
+    def test_absolute_path_is_refused(self):
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1)
+        rec["artifact_path"] = str(self.root / "evidence/A/W24/run1.csv")
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_ARTIFACT_UNTRUSTED" in r for r in res["evidence_refusals"]))
+
+    def test_identical_bytes_cited_as_three_runs_count_once(self):
+        first = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1, boot="BOOT-1")
+        copy = _record(self.root, "evidence/A/W24/copy.csv", b"payload\n", 1, boot="BOOT-1")
+        res = self.census(physical_evidence=[first, copy])
+        self.assertEqual(res["physical_runs_verified"], 1)
+        self.assertTrue(any("EVIDENCE_RUN_NOT_INDEPENDENT" in r for r in res["evidence_refusals"]))
+
+    def test_boot_id_not_present_in_the_bytes_is_refused(self):
+        rec = _record(self.root, "evidence/A/W24/run1.csv", b"payload\n", 1)
+        rec["boot_id"] = "BOOT-FABRICATED"
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(
+            any("EVIDENCE_IDENTITY_NOT_IN_ARTIFACT" in r for r in res["evidence_refusals"]))
+
+    def test_missing_expected_config_refuses_all_records(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i) for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_evidence=recs, expected_hardware_config_id=None)
+        self.assertEqual(res["physical_runs_verified"], 0)
+        self.assertTrue(any("PHYSICAL_EVIDENCE_ABSENT" in r for r in res["evidence_refusals"]))
+
+    def test_unrecognised_hardware_posture_blocks_acceptance(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_evidence=recs, hardware_status="ENERGIZED_LIVE_HAZARD_UNRESOLVED")
+        self.assertFalse(res["hardware_posture_safe"])
+        self.assertFalse(res["physical_acceptance_ready"])
+
+    def test_week_claim_without_a_dossier_blocks_acceptance(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        shutil.rmtree(self.root / "evidence/A/W07")
+        res = self.census(physical_evidence=recs)
+        self.assertEqual(res["weeks_without_dossier"], ["W07"])
+        self.assertFalse(res["physical_acceptance_ready"])
+
+    def test_system_integration_is_a_boolean_and_a_note(self):
+        res = self.census(physical_runs_count=3)
+        self.assertIs(res["system_integration_verified"], False)
+        self.assertEqual(res["system_integration_note"], SYSTEM_INTEGRATION_NOT_ASSERTABLE)
 
     def _mk(self, rel, n, **kw):
         return _record(self.root, rel, f"run {n} payload\n".encode(), n, **kw)
