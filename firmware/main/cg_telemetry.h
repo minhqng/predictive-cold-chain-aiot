@@ -14,12 +14,28 @@
  *   time. The host adds a capture timestamp when it converts the capture;
  *   the device time axis is elapsed_ms/run_elapsed_ms.
  *
- * Channel assignment is explicit and does not exceed the evidence:
- *   T1/T2/T3 are chamber probes; T2 is reported as t_inside_c (src=T2).
- *   No probe is assigned to the cold side, the hot side or the ambient, so
- *   those fields are nan with status NOT_ASSIGNED.
+ * Channel assignment is explicit and does not exceed the evidence. Positions
+ * are the operator-frozen as-built map (coldguard_config.h, ROM -> position),
+ * not independently verified hardware fact:
+ *   T1 CHAMBER_CENTER  -> t_inside_c (src=T1), the only chamber-air probe the
+ *                         acquisition path samples today.
+ *   T2 TEC_HOT_SIDE    -> t_hot_side_c (src=T2). It is a heatsink surface and
+ *                         never feeds a chamber-air value; in the 2026-11-01
+ *                         600 s run it peaked at 39.938 C while chamber air fell
+ *                         about 8.7 C, and all 957 rows of that capture label it
+ *                         t2_role=HOT_SIDE.
+ *   T3 CHAMBER_BOTTOM and T4/SPARE CHAMBER_NEAR_DOOR are reported per-role in
+ *                         raw_t3_c / raw_spare_c and are not aggregated here.
+ *   No probe is assigned to the cold side or the ambient, so those fields are
+ *   nan with status NOT_ASSIGNED.
  *   The BME280 is not implemented (A-W02-06 pending), so relative humidity
  *   is nan with status SENSOR_NOT_PRESENT.
+ *
+ * The serial schema stays at 3 for this correction: t_hot_side_c and
+ * t_hot_side_status were already in the line, and the new t_hot_side_src is an
+ * additive token the host parser retains without requiring, so no committed
+ * capture is orphaned. Bumping the version would have invalidated the W04 and
+ * W05 dossier pins for no gain in meaning.
  *
  * What W05 adds, and why each group is here:
  *   A-W05-02 identity  device_id + boot_id + seq is the dedup key the backend

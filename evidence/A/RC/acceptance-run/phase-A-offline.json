@@ -1,0 +1,172 @@
+{
+    "phase":  "PHASE_A_OFFLINE",
+    "summary":  "PHASE_A: 2 passed, 0 failed, 4 not_run",
+    "failed":  0,
+    "checks":  [
+                   {
+                       "id":  "w06_superset",
+                       "role":  "required",
+                       "label":  "RC superset driver (unit suite + W02..W06 static checks + W02..W06 dossier validators + contract artifacts)",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks_w06.py",
+                       "cwd":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\",
+                       "command":  "C:\\WINDOWS\\py.exe -3 C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks_w06.py",
+                       "exit_code":  0,
+                       "verdict":  "PASS",
+                       "reason":  "",
+                       "checks":  [
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "host tools: unittest suite (W02 + W03 + W04 + W05 + W06)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "firmware: W06 static contract checks"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "firmware: W05 static contract checks (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "firmware: W04 static contract checks (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "firmware: W03 static contract checks (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "firmware: W02 static contract checks (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "evidence: W02 dossier validator (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "evidence: W03 dossier validator (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "evidence: W04 dossier validator (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "evidence: W05 dossier validator (regression)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "evidence: W06 dossier validator (hash pins, honest verdict)"
+                                      },
+                                      {
+                                          "marker":  "PASS",
+                                          "text":  "tools: W06 contract artifacts reproduce from the real sources"
+                                      }
+                                  ],
+                       "surfaced_not_run":  [
+                                                "A-W06-05 and A-W06-06 remain open physically: there is no transport, no backend",
+                                                "reset-command log are recorded as NEED_USER_ACTION rather than simulated."
+                                            ],
+                       "output_tail":  [
+                                           "[PASS] host tools: unittest suite (W02 + W03 + W04 + W05 + W06)",
+                                           "[PASS] firmware: W06 static contract checks",
+                                           "[PASS] firmware: W05 static contract checks (regression)",
+                                           "[PASS] firmware: W04 static contract checks (regression)",
+                                           "[PASS] firmware: W03 static contract checks (regression)",
+                                           "[PASS] firmware: W02 static contract checks (regression)",
+                                           "[PASS] evidence: W02 dossier validator (regression)",
+                                           "[PASS] evidence: W03 dossier validator (regression)",
+                                           "[PASS] evidence: W04 dossier validator (regression)",
+                                           "[PASS] evidence: W05 dossier validator (regression)",
+                                           "[PASS] evidence: W06 dossier validator (hash pins, honest verdict)",
+                                           "[PASS] tools: W06 contract artifacts reproduce from the real sources",
+                                           "",
+                                           "W06 CHECKS: 12/12 passed",
+                                           "Reminder: no check here compiled the firmware or touched hardware.",
+                                           "Compile check: ESP-IDF v6.1 build, logged in evidence/A/W06/build/.",
+                                           "A-W06-05 and A-W06-06 remain open physically: there is no transport, no backend",
+                                           "issuer, and no authorized energized session, so the physical trace and the",
+                                           "reset-command log are recorded as NEED_USER_ACTION rather than simulated."
+                                       ],
+                       "stdout_log":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\tools\\acceptance\\output\\20261103T114812Z\\phaseA_w06_superset.out.txt"
+                   },
+                   {
+                       "id":  "w01_validator",
+                       "role":  "required",
+                       "label":  "W01 hardware-audit dossier validator (not covered by the W06 driver)",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\evidence\\A\\W01\\validate_w01.py",
+                       "cwd":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\evidence\\A\\W01",
+                       "command":  "C:\\WINDOWS\\py.exe -3 C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\evidence\\A\\W01\\validate_w01.py",
+                       "exit_code":  0,
+                       "verdict":  "PASS",
+                       "reason":  "",
+                       "checks":  [
+
+                                  ],
+                       "surfaced_not_run":  [
+
+                                            ],
+                       "output_tail":  [
+                                           "W01 STRUCTURE PASS: 24 BOM rows; 25 photo records; file references valid.",
+                                           "KH?NG PH?I B?I TEST NGHI?M THU V?T L? / HARDWARE FREEZE."
+                                       ],
+                       "stdout_log":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\tools\\acceptance\\output\\20261103T114812Z\\phaseA_w01_validator.out.txt"
+                   },
+                   {
+                       "id":  "w02_driver",
+                       "label":  "legacy W02 wave driver",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks.py",
+                       "verdict":  "NOT_RUN",
+                       "exit_code":  null,
+                       "reason":  "optional entrypoint; -IncludeLegacyWaveDrivers not passed",
+                       "checks":  [
+
+                                  ],
+                       "output_tail":  [
+
+                                       ]
+                   },
+                   {
+                       "id":  "w03_driver",
+                       "label":  "legacy W03 wave driver",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks_w03.py",
+                       "verdict":  "NOT_RUN",
+                       "exit_code":  null,
+                       "reason":  "optional entrypoint; -IncludeLegacyWaveDrivers not passed",
+                       "checks":  [
+
+                                  ],
+                       "output_tail":  [
+
+                                       ]
+                   },
+                   {
+                       "id":  "w04_driver",
+                       "label":  "legacy W04 wave driver",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks_w04.py",
+                       "verdict":  "NOT_RUN",
+                       "exit_code":  null,
+                       "reason":  "optional entrypoint; -IncludeLegacyWaveDrivers not passed",
+                       "checks":  [
+
+                                  ],
+                       "output_tail":  [
+
+                                       ]
+                   },
+                   {
+                       "id":  "w05_driver",
+                       "label":  "legacy W05 wave driver",
+                       "path":  "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W06-command-ack\\firmware\\tools\\run_all_checks_w05.py",
+                       "verdict":  "NOT_RUN",
+                       "exit_code":  null,
+                       "reason":  "optional entrypoint; -IncludeLegacyWaveDrivers not passed",
+                       "checks":  [
+
+                                  ],
+                       "output_tail":  [
+
+                                       ]
+                   }
+               ]
+}
