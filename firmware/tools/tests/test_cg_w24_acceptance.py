@@ -1,11 +1,40 @@
 """Unit tests for ColdGuard Member A — W24 Final Acceptance Tool."""
 
+import hashlib
+import tempfile
 import unittest
+from pathlib import Path
 
 from cg_w24_final_freeze import (
+    REQUIRED_INDEPENDENT_RUNS,
+    SYSTEM_INTEGRATION_NOT_ASSERTABLE,
+    VERDICT_DATA_INSUFFICIENT,
+    VERDICT_PHYSICALLY_ACCEPTED,
+    VERDICT_PHYSICAL_ACCEPTANCE_PENDING,
     collate_acceptance_census,
     validate_final_configuration,
 )
+
+
+HW_CONF = "HW-CONF-2026-10-27-ASBUILT-V2"
+ALL_WEEKS = list(range(1, 25))
+
+
+def _record(root, rel, body, n, device="DEV-A", boot=None, source="RAW_DEVICE_CAPTURE",
+            conf=HW_CONF):
+    """One evidence record whose hash matches the bytes actually on disk."""
+    path = Path(root) / rel
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(body)
+    return {
+        "run_id": f"RUN-{n}",
+        "device_id": device,
+        "boot_id": boot if boot is not None else f"BOOT-{n}",
+        "source_type": source,
+        "artifact_path": rel,
+        "sha256": hashlib.sha256(body).hexdigest(),
+        "hardware_config_id": conf,
+    }
 
 
 class TestW24FinalAcceptance(unittest.TestCase):
@@ -108,6 +137,107 @@ class TestW24FinalAcceptance(unittest.TestCase):
         self.assertFalse(census["all_weeks_accounted_for"])
         self.assertFalse(census["software_contract_ready"])
         self.assertEqual(census["handover_verdict"], "INCOMPLETE")
+
+
+class TestW24CensusIsNotClaimDriven(unittest.TestCase):
+    """A caller must not be able to reach physical acceptance by typing numbers."""
+
+    def setUp(self):
+        self.tmp = tempfile.TemporaryDirectory()
+        self.addCleanup(self.tmp.cleanup)
+        self.root = Path(self.tmp.name)
+
+    def census(self, **kw):
+        base = dict(weeks_delivered=ALL_WEEKS, physical_runs_count=0,
+                    hardware_status="FAIL_CLOSED_FROZEN", open_hardware_gates=[],
+                    repo_root=self.root, expected_hardware_config_id=HW_CONF)
+        base.update(kw)
+        return collate_acceptance_census(**base)
+
+    def test_counts_alone_cannot_grant_physical_acceptance(self):
+        res = self.census(physical_runs_count=9999, physical_evidence=None)
+        self.assertFalse(res["physical_acceptance_ready"])
+        self.assertEqual(res["acceptance_verdict"], VERDICT_DATA_INSUFFICIENT)
+        self.assertNotEqual(res["handover_verdict"], "FULLY_ACCEPTED")
+
+    def test_absent_gate_register_is_unknown_not_zero_gates(self):
+        res = collate_acceptance_census(
+            weeks_delivered=ALL_WEEKS, physical_runs_count=5,
+            hardware_status="FAIL_CLOSED_FROZEN",
+        )
+        self.assertFalse(res["gate_register_supplied"])
+        self.assertEqual(res["acceptance_verdict"], VERDICT_DATA_INSUFFICIENT)
+
+    def test_cited_artifact_that_does_not_exist_is_refused(self):
+        good = [self._mk(f"evidence/A/W24/run{i}.csv", i) for i in range(2)]
+        bad = dict(self._mk("evidence/A/W24/run9.csv", 9))
+        bad["artifact_path"] = "evidence/A/RC/remaining-hardware-gates.md"
+        res = self.census(physical_runs_count=3, physical_evidence=good + [bad])
+        self.assertEqual(res["physical_runs_verified"], 2)
+        self.assertTrue(any("EVIDENCE_ARTIFACT_MISSING" in r for r in res["evidence_refusals"]))
+        self.assertFalse(res["physical_acceptance_ready"])
+
+    def test_recorded_hash_that_does_not_match_bytes_is_refused(self):
+        rec = self._mk("evidence/A/W24/run1.csv", 1)
+        rec["sha256"] = "0" * 64
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_HASH_MISMATCH" in r for r in res["evidence_refusals"]))
+        self.assertEqual(res["physical_runs_verified"], 0)
+
+    def test_host_fixture_cannot_count_as_physical_run(self):
+        rec = self._mk("evidence/A/W24/run1.csv", 1, source="HOST_SYNTHETIC_FIXTURE")
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_SOURCE_SYNTHETIC" in r for r in res["evidence_refusals"]))
+        self.assertEqual(res["physical_runs_verified"], 0)
+
+    def test_segments_of_one_boot_count_as_one_independent_run(self):
+        recs = [self._mk(f"evidence/A/W24/seg{i}.csv", i, boot="BOOT-SAME")
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_runs_count=3, physical_evidence=recs)
+        self.assertEqual(res["physical_runs_verified"], 1)
+        self.assertTrue(any("EVIDENCE_RUN_NOT_INDEPENDENT" in r for r in res["evidence_refusals"]))
+        self.assertFalse(res["physical_acceptance_ready"])
+
+    def test_other_hardware_config_is_refused(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i, conf="HW-CONF-OLD-V1")
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_evidence=recs)
+        self.assertTrue(any("EVIDENCE_HARDWARE_CONFIG_MISMATCH" in r for r in res["evidence_refusals"]))
+
+    def test_incomplete_record_is_refused(self):
+        rec = self._mk("evidence/A/W24/run1.csv", 1)
+        del rec["device_id"]
+        res = self.census(physical_evidence=[rec])
+        self.assertTrue(any("EVIDENCE_FIELD_MISSING" in r for r in res["evidence_refusals"]))
+
+    def test_positive_control_genuine_independent_runs_are_accepted(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_runs_count=REQUIRED_INDEPENDENT_RUNS, physical_evidence=recs)
+        self.assertEqual(res["physical_runs_verified"], REQUIRED_INDEPENDENT_RUNS)
+        self.assertTrue(res["physical_acceptance_ready"])
+        self.assertEqual(res["acceptance_verdict"], VERDICT_PHYSICALLY_ACCEPTED)
+
+    def test_open_gates_with_verified_runs_stay_pending(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_evidence=recs, open_hardware_gates=["H-GATE-1"])
+        self.assertFalse(res["physical_acceptance_ready"])
+        self.assertEqual(res["acceptance_verdict"], VERDICT_PHYSICAL_ACCEPTANCE_PENDING)
+
+    def test_member_a_never_asserts_system_integration(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_evidence=recs)
+        self.assertEqual(res["system_integration_verified"], SYSTEM_INTEGRATION_NOT_ASSERTABLE)
+
+    def test_out_of_range_week_id_is_surfaced(self):
+        res = self.census(weeks_delivered=ALL_WEEKS + [99])
+        self.assertEqual(res["unexpected_week_ids"], [99])
+        self.assertFalse(res["all_weeks_accounted_for"])
+
+    def _mk(self, rel, n, **kw):
+        return _record(self.root, rel, f"run {n} payload\n".encode(), n, **kw)
 
 
 if __name__ == "__main__":
