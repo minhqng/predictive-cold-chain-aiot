@@ -42,11 +42,14 @@ def main() -> int:
 
     report_path = DIR / "shadow-audit-report.json"
     data = json.loads(report_path.read_text(encoding="utf-8"))
-    if data.get("physical_runs_recorded") != 0:
+    if data.get("physical_runs_recorded") != 0 or data.get("synchronized_shadow_runs") != 0:
         print("FAIL: Dishonest physical run claim")
         return 1
+    if data.get("verdict") != "DATA_INSUFFICIENT":
+        print("FAIL: Verdict must be DATA_INSUFFICIENT pending real synchronized shadow data")
+        return 1
 
-    print("W17 DOSSIER: OK (pins verify, shadow protocol intact, zero fabricated runs)")
+    print("W17 DOSSIER: OK (pins verify, shadow protocol intact, envelope-bound limits, DATA_INSUFFICIENT honestly preserved)")
     return 0
 
 
