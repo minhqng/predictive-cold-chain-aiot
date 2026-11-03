@@ -1,0 +1,466 @@
+{
+  "blocking_gates": [
+    "GATE-HWCONFIG",
+    "GATE-BOOT-IDENTITY",
+    "GATE-SENSOR-IDENTITY",
+    "GATE-SENSOR-POSITION",
+    "GATE-ELECTRICAL-RANGE",
+    "GATE-INITIAL-STATE",
+    "GATE-DOOR-STATE",
+    "GATE-OUTPUT-GATE",
+    "GATE-STORAGE-ONLINE",
+    "GATE-SUPERVISION",
+    "GATE-END-REASON",
+    "GATE-MANUAL-INTERVENTION",
+    "GATE-VALIDITY-CANDIDATE",
+    "GATE-PROVENANCE-PIN",
+    "GATE-SESSION-CLASS",
+    "GATE-NON-PHYSICAL-FILTER",
+    "GATE-S2-DISTURBANCE-CONTROL",
+    "GATE-S4-NO-PROMOTION"
+  ],
+  "firmware_observability_counts": {
+    "HOST_ONLY": 6,
+    "OBSERVABLE": 5,
+    "PARTIAL": 9
+  },
+  "gate_counts": {
+    "AFTER_RUN": 9,
+    "BEFORE_RUN": 9,
+    "DURING_RUN": 2
+  },
+  "gates": [
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01; docs/03 \u00a75 run manifest",
+      "failure_action": "stop: a frame from an unidentified configuration cannot enter a run",
+      "firmware_fields": [
+        "hardware_config_id",
+        "pin_map_version",
+        "firmware_version"
+      ],
+      "firmware_observability": "OBSERVABLE",
+      "gate_id": "GATE-HWCONFIG",
+      "host_method": "match the boot line `#CG LOG v=.. fw=.. hw=.. device=.. pin_map=..` against the frozen as-built record for the campaign",
+      "note": "committed evidence carries hw=CG-HW-001, pin_map=2, fw=cg-w04-0.1.0",
+      "phase": "BEFORE_RUN",
+      "requirement": "hardware config",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/02 \u00a74.2 identity",
+      "failure_action": "stop: opening the port resets the board, so a boot_id first seen mid-capture means the early frames belong to another boot",
+      "firmware_fields": [
+        "boot_id",
+        "reset_cause",
+        "run_id"
+      ],
+      "firmware_observability": "OBSERVABLE",
+      "gate_id": "GATE-BOOT-IDENTITY",
+      "host_method": "open the capture before ARM so the boot line is inside the file",
+      "note": "the probe-identification session changed boot_id per touch window for exactly this reason",
+      "phase": "BEFORE_RUN",
+      "requirement": "one boot_id per run, recorded before the run starts",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01; docs/01 \u00a719.3 (unknown DS18B20 identity is INVALID)",
+      "failure_action": "stop: a probe whose identity is unknown cannot drive a derived state",
+      "firmware_fields": [
+        "t1_role",
+        "t2_role",
+        "t3_role",
+        "t4_role",
+        "probes_valid",
+        "probes_expected",
+        "missing"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-SENSOR-IDENTITY",
+      "host_method": "ROM ids come from the per-boot `#CG ROM role=.. rom=.. present=..` lines, not from the frame; the frame carries slot roles only",
+      "note": "PARTIAL because the H8S frame has no ROM field. The slot->position mapping is OPERATOR-FROZEN (T1 centre, T2 TEC hot side, T3 bottom, T4 near door) and is recorded *by-source* from the firmware ROM table; it is not verified by readback",
+      "phase": "BEFORE_RUN",
+      "requirement": "sensor identity",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-03 (sensor moved invalidates a run)",
+      "failure_action": "invalidate the run; a moved probe is a physical invalidation",
+      "firmware_fields": [],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-SENSOR-POSITION",
+      "host_method": "operator visual confirmation against the frozen geometry record; the 2026-11-02 PROBE_IDENTIFICATION session is the identity record but must never be reused as thermal data",
+      "note": "the device cannot see its own probes being moved; slot roles stay ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING in the boot line",
+      "phase": "BEFORE_RUN",
+      "requirement": "each probe is physically where the frozen geometry says it is",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01; docs/01 \u00a719.3 (wrong PZEM range is INVALID)",
+      "failure_action": "stop: an unqualified electrical column makes the run's energy and active-range claims unusable",
+      "firmware_fields": [
+        "voltage_v_status",
+        "current_a_status",
+        "power_w_status",
+        "limits_policy",
+        "limits_operator_approved",
+        "off_current_limit_a",
+        "energy_wh"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-ELECTRICAL-RANGE",
+      "host_method": "confirm the PZEM configuration and the limit table the boot line echoes",
+      "note": "PARTIAL: the frame reports a status per electrical field and the approved limit policy, but not the instrument's configured range. The committed CSV carries voltage_status/current_status EMPTY in all 957 rows, which is exactly the failure this gate exists to catch",
+      "phase": "BEFORE_RUN",
+      "requirement": "PZEM range",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01; docs/03 \u00a75 initial_condition",
+      "failure_action": "stop: a run without a valid initial condition has no baseline to differ from",
+      "firmware_fields": [
+        "state",
+        "stage",
+        "snapshot",
+        "air_c",
+        "t1",
+        "t2",
+        "t3",
+        "t4",
+        "rh_pct",
+        "pressure_hpa"
+      ],
+      "firmware_observability": "OBSERVABLE",
+      "gate_id": "GATE-INITIAL-STATE",
+      "host_method": "record the first VALID frame as the run's initial condition",
+      "note": "docs/03 \u00a75 wants target_state, tmean_c, tmax_c, gradient_c and door state here",
+      "phase": "BEFORE_RUN",
+      "requirement": "initial state",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01; docs/03 \u00a75 (initial_condition.door: CLOSED); docs/05A \u00a719 A-W10-02",
+      "failure_action": "do not start: door_open=UNKNOWN is not CLOSED. A polarity confirmation only makes the level nameable, it does not prove the magnet reaches the switch",
+      "firmware_fields": [
+        "door_open",
+        "door_raw",
+        "door_status",
+        "door_polarity",
+        "door_age_ms",
+        "door_cycles"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-DOOR-STATE",
+      "host_method": "operator confirms the lid is seated; MC-38 polarity is confirmed per boot with `DOOR NEAR_LOW|NEAR_HIGH <token>`",
+      "note": "the strongest available statement is sensor level + confirmed polarity. The 2026-11-01 MC-38 work documents a stuck-high input that `DOOR NEAR_HIGH` made the firmware echo as CLOSED (door_open=0, snapshot=VALID), which is why this gate stays PARTIAL rather than OBSERVABLE",
+      "phase": "BEFORE_RUN",
+      "requirement": "door closed at rest, with a machine-readable state",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a717 pass criteria; docs/05A \u00a718 A-W09-01",
+      "failure_action": "stop: an unknown output posture is a safety posture change",
+      "firmware_fields": [
+        "interlock_state",
+        "supervised_bench",
+        "supervised_authorized",
+        "physical_output",
+        "limits_enforced"
+      ],
+      "firmware_observability": "OBSERVABLE",
+      "gate_id": "GATE-OUTPUT-GATE",
+      "host_method": "read the `#CG H8 ACTUATOR` and BOOT_POLICY lines",
+      "note": "committed H8 frames report supervised_bench=1 with supervised_authorized=0",
+      "phase": "BEFORE_RUN",
+      "requirement": "the actuator gate and interlock posture are known before ARM",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01",
+      "failure_action": "stop: a run with no raw file is not evidence-grade and cannot be replayed",
+      "firmware_fields": [],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-STORAGE-ONLINE",
+      "host_method": "the capture host confirms the file is open and growing, and that rejections are being written beside samples rather than dropped",
+      "note": "the device has no non-volatile run storage; `cloud=NOT_PROVISIONED` in every frame and there is no transport in this firmware",
+      "phase": "BEFORE_RUN",
+      "requirement": "storage online (capture is actually being written)",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": false,
+      "doc_anchor": "docs/05A \u00a718 A-W09-03 (missing key telemetry)",
+      "failure_action": "record as a validity finding; a gap invalidates the affected interval, not necessarily the run",
+      "firmware_fields": [
+        "seq",
+        "device_ms",
+        "host_ack_seq"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-CADENCE",
+      "host_method": "gap statistics on the host clock, e.g. the W05 timing pilot method",
+      "note": "device_ms is per-boot uptime; the host clock owns the cadence claim",
+      "phase": "DURING_RUN",
+      "requirement": "the declared cadence is met (1 Hz nominal) and gaps are counted",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a717 pass criteria (safe physical envelope); docs/04 \u00a75.2",
+      "failure_action": "stop the stage",
+      "firmware_fields": [
+        "supervised_bench",
+        "supervised_authorized"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-SUPERVISION",
+      "host_method": "operator attestation in the run manifest",
+      "note": "supervised_bench is a compile-time posture, not a live human-presence sensor",
+      "phase": "DURING_RUN",
+      "requirement": "an operator is at the bench for the whole energized run",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01",
+      "failure_action": "record; an unexplained end reason makes the run a validity candidate only after review",
+      "firmware_fields": [
+        "stop_reason",
+        "state",
+        "fault_bits",
+        "fault"
+      ],
+      "firmware_observability": "OBSERVABLE",
+      "gate_id": "GATE-END-REASON",
+      "host_method": "confirm the last frame's stop_reason is consistent with how the stage ended",
+      "note": "the committed 600 s capture ends with stop_reason=STAGE_DEADLINE on 131 rows",
+      "phase": "AFTER_RUN",
+      "requirement": "end reason",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01",
+      "failure_action": "invalidate the run physically (A-W09-03) and keep the raw attempt",
+      "firmware_fields": [],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-MANUAL-INTERVENTION",
+      "host_method": "the control file (commands actually sent) plus the operator's note; the device cannot see a hand on a probe or a magnet near a sensor",
+      "note": "this is the gate the 2026-11-02 touch-identification session fails by design: every frame there has a hand on a probe, which is why it is excluded from S1/S2/S4",
+      "phase": "AFTER_RUN",
+      "requirement": "manual intervention logged",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": false,
+      "doc_anchor": "docs/05A \u00a718 A-W09-01",
+      "failure_action": "record; unexplained anomalies escalate to the campaign owner",
+      "firmware_fields": [
+        "fault_bits",
+        "fault",
+        "off_verify",
+        "host_ack_reject"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-ANOMALY",
+      "host_method": "operator observation plus host-side validity analysis",
+      "note": "fault_bits is a device-side vocabulary; a thermal excursion with no fault bit is invisible to the device",
+      "phase": "AFTER_RUN",
+      "requirement": "anomaly recorded",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-03; docs/03 \u00a76 run lifecycle (COMPLETED_RAW -> VALIDITY_REVIEW)",
+      "failure_action": "no valid S1 ID is issued; the attempt stays in the registry",
+      "firmware_fields": [
+        "snapshot"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-VALIDITY-CANDIDATE",
+      "host_method": "cg_w09_validity.evaluate_frames() over the raw capture; the producer's snapshot flag is a first pass, not the verdict",
+      "note": "never delete an invalid attempt (A-W09-03)",
+      "phase": "AFTER_RUN",
+      "requirement": "validity candidate assigned",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/04 \u00a77 evidence ownership; docs/05A \u00a718 A-W09-02",
+      "failure_action": "the export is not published",
+      "firmware_fields": [],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-PROVENANCE-PIN",
+      "host_method": "SHA-256 of each source recorded in the export and in SHA256SUMS.txt",
+      "note": "a dataset whose bytes are not pinned cannot be re-derived later",
+      "phase": "AFTER_RUN",
+      "requirement": "every ingested source file is hash-pinned",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-03",
+      "failure_action": "reject the frames; PROBE_IDENTIFICATION may never enter S1/S2/S4",
+      "firmware_fields": [],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-SESSION-CLASS",
+      "host_method": "cg_w09_validity rejects frames whose run label is an excluded class",
+      "note": "enforced by label match, not by inspecting temperatures, so it cannot be defeated by a plausible-looking touch window",
+      "phase": "AFTER_RUN",
+      "requirement": "the run's session class is eligible for the dataset it is entering",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a718 A-W09-02",
+      "failure_action": "the export raises instead of writing",
+      "firmware_fields": [],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-NON-PHYSICAL-FILTER",
+      "host_method": "every export refuses a source whose provenance has is_physical_measurement=false",
+      "note": "validated by validate_w09.py and by the W09/W10/W11 unit tests",
+      "phase": "AFTER_RUN",
+      "requirement": "a host fixture can never be published as a run",
+      "scenario_scope": [
+        "S1_NORMAL_BASELINE",
+        "S2_DOOR_DISTURBANCE",
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a719 A-W10-02/03",
+      "failure_action": "the disturbance is not an S2 pilot event; record it as an incidental door observation instead",
+      "firmware_fields": [
+        "door_open",
+        "door_cycles",
+        "device_ms"
+      ],
+      "firmware_observability": "HOST_ONLY",
+      "gate_id": "GATE-S2-DISTURBANCE-CONTROL",
+      "host_method": "MC-38 transition as machine ground truth plus the operator timer as a secondary check",
+      "note": "an incidental OPEN window inside a commissioning stage is not a protocolised disturbance and is not counted as one",
+      "phase": "AFTER_RUN",
+      "requirement": "for S2, the disturbance was operator-controlled and timed",
+      "scenario_scope": [
+        "S2_DOOR_DISTURBANCE"
+      ]
+    },
+    {
+      "blocking": true,
+      "doc_anchor": "docs/05A \u00a720 A-W11-01/02; docs/02 \u00a732.2",
+      "failure_action": "reject the trace",
+      "firmware_fields": [
+        "last_ack_status",
+        "desired_cooling",
+        "desired_duty_permille"
+      ],
+      "firmware_observability": "PARTIAL",
+      "gate_id": "GATE-S4-NO-PROMOTION",
+      "host_method": "cg_w11_s4 refuses a trace that infers applied evidence from intent",
+      "note": "applied state must be read from the device, not from what was requested",
+      "phase": "AFTER_RUN",
+      "requirement": "for S4, a refused command never appears as an applied action",
+      "scenario_scope": [
+        "S4_ACTUATION_RESPONSE_FAULT"
+      ]
+    }
+  ],
+  "gates_firmware_cannot_observe": [
+    "GATE-SENSOR-POSITION",
+    "GATE-STORAGE-ONLINE",
+    "GATE-PROVENANCE-PIN",
+    "GATE-SESSION-CLASS",
+    "GATE-NON-PHYSICAL-FILTER",
+    "GATE-S2-DISTURBANCE-CONTROL"
+  ],
+  "honesty_notes": [
+    "a gate is OBSERVABLE only when a shipped frame field decides it",
+    "door polarity confirmation names a level; it does not prove a physical door position",
+    "firmware has no run storage and no transport: storage and command issuance are host/operator gates by construction",
+    "an invalid attempt is recorded, never deleted (docs/05A \u00a718 A-W09-03)"
+  ],
+  "phases": [
+    "BEFORE_RUN",
+    "DURING_RUN",
+    "AFTER_RUN"
+  ],
+  "protocol_version": "w09-run-protocol-v1",
+  "source_requirement": "docs/05A \u00a718 A-W09-01 (Week 09 run checklist)"
+}
