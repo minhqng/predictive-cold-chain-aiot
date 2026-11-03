@@ -1,0 +1,10 @@
+{
+  "week": "W21",
+  "requirement": "A-W21-03",
+  "fault_actions": [
+    "Mark electrical_quality as DEGRADED or INVALID",
+    "Set current_status and voltage_status to TIMEOUT",
+    "Force actuator output stage to disabled (duty = 0)"
+  ],
+  "status": "SOFTWARE_VERIFIED"
+}
