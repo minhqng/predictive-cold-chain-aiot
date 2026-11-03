@@ -1,0 +1,34 @@
+{
+  "certified_with": "Member D",
+  "forbidden_labels": [
+    "PHYSICALLY_VERIFIED (from host evidence)",
+    "TEAM_GATE_G4_GREEN"
+  ],
+  "freeze_condition": "only when every COMPARISON dimension matches AND all required_evidence items are closed AND a W16 re-measurement exists",
+  "host_slice_may_set_frozen": false,
+  "required_evidence": {
+    "allowed_action_still_valid": {
+      "must_show": "same six limits posture and duty range as baseline",
+      "status": "OPEN"
+    },
+    "h8_reactive_verification_stable": {
+      "must_show": "W16 OFF/ON/response within the W13-W15 envelope",
+      "note": "requires the A-W16-01 re-run",
+      "status": "OPEN"
+    },
+    "no_hardware_safety_issue": {
+      "must_show": "fuse/conductor deviation resolved or accepted",
+      "note": "fuse remains unphotographed / uncertified",
+      "status": "OPEN"
+    }
+  },
+  "requirement": "A-W16-04",
+  "status_labels_allowed": [
+    "IMPLEMENTED",
+    "HOST_VERIFIED",
+    "REAL_DATA_ANALYZED",
+    "NEED_USER_ACTION",
+    "TEAM_DEPENDENCY",
+    "BLOCKED_HARDWARE"
+  ]
+}

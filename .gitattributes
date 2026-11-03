@@ -79,6 +79,7 @@ evidence/A/W12/** -text
 # and re-checked by validate_w13.py; `text=auto eol=lf` would rewrite those bytes
 # on a checkout with core.autocrlf and break every pin.
 evidence/A/W13/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w13-response-timing
 =======
 # W14 spatial/position QA dossier: every file is hash-pinned in
@@ -93,3 +94,10 @@ evidence/A/W14/** -text
 # re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
 evidence/A/W15/** -text
 >>>>>>> origin/feat/a-w15-pzem-integrity
+=======
+
+# W16 comparability dossier: every file is hash-pinned in evidence/A/W16/SHA256SUMS.txt
+# and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
+# those bytes on a checkout with core.autocrlf and break every pin.
+evidence/A/W16/** -text
+>>>>>>> origin/feat/a-w16-comparability

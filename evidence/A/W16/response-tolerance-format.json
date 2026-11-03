@@ -1,0 +1,27 @@
+{
+  "fields": {
+    "disturbance_tolerance": {
+      "definition_ref": "frozen candidate critical definition (D)",
+      "unit": "C",
+      "value": "NOT_MEASURED"
+    },
+    "gradient": {
+      "definition_ref": "docs/01 section 20.3 G_T = Tmax - Tmin (chamber air)",
+      "unit": "C",
+      "value": "NOT_MEASURED"
+    },
+    "initial_state": {
+      "definition_ref": "docs/01 derived thermal-state section 20",
+      "unit": null,
+      "value": "NOT_MEASURED"
+    },
+    "reset_criterion": {
+      "definition_ref": "docs/01 section 20.6 recovery measured after action",
+      "unit": null,
+      "value": "NOT_MEASURED"
+    }
+  },
+  "policy": "no field may be filled from host evidence; a W16 re-run is required first",
+  "requirement": "A-W16-03",
+  "signed_off_with": "Member B"
+}

@@ -1,0 +1,5 @@
+item,ask,status,host_can_compute,why
+off_envelope,short OFF-envelope idle current at the frozen geometry,NEED_USER_ACTION,False,a fresh supervised OFF capture is a physical action
+core_on_point,core ON point current/power at the frozen duty,NEED_USER_ACTION,False,requires an authorized energized session
+response_delay,response delay re-measured on the same geometry,TEAM_DEPENDENCY,False,needs the W16 capture to compare against the W13 baseline
+s2_disturbance,S2 disturbance response,NEED_USER_ACTION,False,S2 is a physical disturbance run; also tied to the door->critical gap
