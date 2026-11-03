@@ -41,3 +41,6 @@ evidence/A/W05/** -text
 # build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
+
+# Member A release-candidate dossier: every file is hash-pinned in
+evidence/A/RC/** -text
