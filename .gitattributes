@@ -110,4 +110,9 @@ evidence/A/W17/** -text
 =======
 
 evidence/A/W18/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w18-controller-b-enablement
+=======
+
+evidence/A/W19/** -text
+>>>>>>> origin/feat/a-w19-campaign-wave1
