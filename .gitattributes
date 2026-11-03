@@ -105,4 +105,9 @@ evidence/A/W16/** -text
 =======
 
 evidence/A/W17/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w17-shadow-mode
+=======
+
+evidence/A/W18/** -text
+>>>>>>> origin/feat/a-w18-controller-b-enablement
