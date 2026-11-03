@@ -1,0 +1,194 @@
+{
+  "attestation": {
+    "attested_boot_ids": [],
+    "capture_boot_ids": [
+      "56044b74"
+    ],
+    "frame_can_state_which_mapping_was_used": false,
+    "frames_reporting_polarity_confirmed": 940,
+    "frames_total": 957,
+    "mapping_identity_is_externally_attested_only": true,
+    "present": false,
+    "reason": "NO_ATTESTATION: no operator attestation of the mapping was supplied",
+    "trustworthy": false
+  },
+  "boot_ids": [
+    "56044b74"
+  ],
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "events": [
+    {
+      "boot_id": "56044b74",
+      "cycles_reported_by_device": null,
+      "duration_s": 15.99,
+      "end_device_ms": 16894,
+      "end_seq": 17,
+      "event_class": "STARTUP_POLARITY_PENDING",
+      "event_id": "56044b74-001-UNKNOWN",
+      "is_physical_measurement": true,
+      "n_frames": 17,
+      "not_s2_because": [
+        "DOOR_MAPPING_NOT_ATTESTED_FOR_THIS_BOOT",
+        "DOOR_STATE_UNKNOWN_IS_NOT_A_NAMED_TRANSITION",
+        "NO_OPERATOR_CONTROLLED_TIMING",
+        "NO_PROTOCOL_ID_FOR_THIS_EVENT"
+      ],
+      "not_s2_details": {
+        "DOOR_MAPPING_NOT_ATTESTED_FOR_THIS_BOOT": "NO_ATTESTATION: no operator attestation of the mapping was supplied",
+        "NO_OPERATOR_CONTROLLED_TIMING": "docs/05A \u00a719 A-W10-02 wants a planned duration; an incidental window inside a commissioning stage is not a pilot disturbance",
+        "NO_PROTOCOL_ID_FOR_THIS_EVENT": "without a protocol id the run is not one of the planned trials"
+      },
+      "recovery": {
+        "following_reference_c": {
+          "t1": 30.0124,
+          "t3": 29.7066,
+          "t4": 30.062
+        },
+        "following_state": "CLOSED_AS_REPORTED"
+      },
+      "run_id": "run-00000000",
+      "start_device_ms": 904,
+      "start_seq": 1,
+      "state": "UNKNOWN",
+      "state_semantics": "REPORTED_BY_FRAME_ONLY_NOT_PHYSICALLY_NAMED",
+      "thermal_rise": {
+        "excluded_slots": {
+          "t2": "TEC_HOT_SIDE is a heatsink, not chamber air",
+          "tec_hot_side_value_during_event": null
+        },
+        "t1": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        },
+        "t3": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        },
+        "t4": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        }
+      },
+      "timing_uncertainty": {
+        "basis": "1 Hz frame stream; MC-38 50 ms debounce on a 10 ms poll",
+        "duration_uncertainty_s": 1.0,
+        "edge_uncertainty_s": 1.0
+      }
+    },
+    {
+      "boot_id": "56044b74",
+      "cycles_reported_by_device": null,
+      "duration_s": 939.0,
+      "end_device_ms": 956894,
+      "end_seq": 957,
+      "event_class": "UNATTESTED_DOOR_TRANSITION",
+      "event_id": "56044b74-002-CLOSED_AS_REPORTED",
+      "is_physical_measurement": true,
+      "n_frames": 940,
+      "not_s2_because": [
+        "DOOR_MAPPING_NOT_ATTESTED_FOR_THIS_BOOT",
+        "CLOSED_RUN_IS_A_REST_STATE_NOT_A_DISTURBANCE",
+        "NO_OPERATOR_CONTROLLED_TIMING",
+        "NO_PROTOCOL_ID_FOR_THIS_EVENT"
+      ],
+      "not_s2_details": {
+        "DOOR_MAPPING_NOT_ATTESTED_FOR_THIS_BOOT": "NO_ATTESTATION: no operator attestation of the mapping was supplied",
+        "NO_OPERATOR_CONTROLLED_TIMING": "docs/05A \u00a719 A-W10-02 wants a planned duration; an incidental window inside a commissioning stage is not a pilot disturbance",
+        "NO_PROTOCOL_ID_FOR_THIS_EVENT": "without a protocol id the run is not one of the planned trials"
+      },
+      "recovery": {},
+      "run_id": "run-00000000",
+      "start_device_ms": 17894,
+      "start_seq": 18,
+      "state": "CLOSED_AS_REPORTED",
+      "state_semantics": "REPORTED_BY_FRAME_ONLY_NOT_PHYSICALLY_NAMED",
+      "thermal_rise": {
+        "excluded_slots": {
+          "t2": "TEC_HOT_SIDE is a heatsink, not chamber air",
+          "tec_hot_side_value_during_event": null
+        },
+        "t1": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        },
+        "t3": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        },
+        "t4": {
+          "n": 0,
+          "peak_c": null,
+          "rise_c": null
+        }
+      },
+      "timing_uncertainty": {
+        "basis": "1 Hz frame stream; MC-38 50 ms debounce on a 10 ms poll",
+        "duration_uncertainty_s": 1.0,
+        "edge_uncertainty_s": 1.0
+      }
+    }
+  ],
+  "frames_total": 957,
+  "frames_usable_for_s2": 0,
+  "honesty": [
+    "door_open=UNKNOWN is kept as its own state and never renamed CLOSED",
+    "an unattested segment is named *_AS_REPORTED, never OPEN or CLOSED: a reading is not a state until a per-boot attestation says it is",
+    "an incidental OPEN window inside a commissioning stage is not an S2 pilot event",
+    "thermal rise is measured on chamber-air slots; TEC_HOT_SIDE is reported separately",
+    "a host fixture returns events, and every one of them says so"
+  ],
+  "mc38_alignment_cross_check": {
+    "aligned": null,
+    "detected_open_to_closed_transitions": 0,
+    "device_reported_door_cycles": null,
+    "meaning": "MC-38 transitions are the machine ground truth only if the device's own cycle counter agrees with the detected edge count; a mismatch means an edge was missed"
+  },
+  "polarity_inversion": {
+    "conclusion": "no frames carry both door_raw and a confirmed polarity",
+    "contact_inversion": {
+      "action_required": "the H8 bench owner must commit the driver source",
+      "assertion_basis": "docs/01 \u00a78.1 (door semantics are subject to the actual polarity mapping) and \u00a78.2 (neither HIGH=OPEN nor LOW=OPEN may be assumed without physical verification), plus the mapping table this module carries",
+      "claim": "the two shipped polarity settings assign opposite door states to every raw level, so a capture cannot establish its own door narrative",
+      "closes_when": "the owning branch commits the door driver, after which the inversion is verifiable from tracked source",
+      "code_level_proof_location": "firmware/h8-bench/main/h8_door.c",
+      "code_level_proof_status": "UNCITABLE_UNTRACKED_SOURCE",
+      "why_not_citable": "that file is not git-tracked on any ref in this repository; it exists only in a sibling working tree, so it may not be quoted as the proof of a published claim"
+    },
+    "examples": [],
+    "frames_alone_can_name_door_state": false,
+    "frames_whose_state_inverts_under_the_other_polarity": 0,
+    "frames_with_raw_and_confirmed_polarity": 0,
+    "inversion_fraction": null
+  },
+  "run_label": "H8C_BOX_COOLING_600S",
+  "s2_pilot_events": [],
+  "source": {
+    "is_physical_measurement": true,
+    "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+    "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+  },
+  "state_run_counts": {
+    "CLOSED_AS_REPORTED": 940,
+    "UNKNOWN": 17
+  },
+  "timing": {
+    "cadence_basis": "1 Hz committed frame stream of evidence/A/W04/tec-cooling-response-600s.csv",
+    "cross_check": "sum of detected OPEN->CLOSED transitions must equal the device's final door_cycles; a mismatch means the capture missed an edge and the pilot run is not usable",
+    "debounce_ms": 50,
+    "edge_time_uncertainty_s": 1.0,
+    "machine_counter_field": "door_cycles",
+    "minimum_resolvable_open_duration_s": 1.0,
+    "note": "a 50 ms debounce on a 10 ms poll is far inside one telemetry interval, so the machine ground truth is quantised by the 1 Hz frame stream, not by the sensor; an operator timer remains the only sub-second check (docs/05A \u00a719 A-W10-02)",
+    "poll_ms": 10,
+    "telemetry_hz": 1.0,
+    "timing_basis": "UNCITABLE_UNTRACKED_SOURCE: firmware/h8-bench/main/h8_door.c"
+  },
+  "tool_version": "w10-door-v1",
+  "unknown_is_not_closed": true
+}
