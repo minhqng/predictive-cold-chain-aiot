@@ -247,15 +247,34 @@ class W05CheckerTests(unittest.TestCase):
         self.assertIn("so DEGRADED is reachable", " ".join(checker.failures))
 
     def test_hot_side_status_argument_swap_is_caught(self) -> None:
-        """A chamber reading routed into the hot-side field with a real status
-        token. The old check only required the literal somewhere in the file."""
+        """The hot-side value bound to the chamber-air status token. Pinning the
+        value/status/src triple, rather than a hard-wired nan, is what still
+        catches it now that the hot side carries a real reading."""
         checker = self.run_with(
             TELEMETRY,
-            "fmt_float(false, 0.0f, t_hot, sizeof(t_hot)), CG_TELEM_STATUS_NOT_ASSIGNED",
-            "fmt_float(snap->t_valid[CG_ROLE_T2], snap->t_c[CG_ROLE_T2], t_hot, "
-            "sizeof(t_hot)), t_inside_status",
+            "t_hot_side_status, CG_TELEM_HOT_SIDE_SRC)",
+            "t_inside_status, CG_TELEM_HOT_SIDE_SRC)",
         )
-        self.assertIn("the hot-side field is hard-wired to a missing value with NOT_ASSIGNED",
+        self.assertIn("the hot-side field's value, status and source token all come from",
+                      " ".join(checker.failures))
+
+    def test_chamber_air_routed_to_the_hot_side_is_caught(self) -> None:
+        """The defect this pass fixed: binding the chamber-air field to the
+        hot-side probe. Relabelling the slot in the config must not be able to
+        make the emitter honest again by accident."""
+        checker = self.run_with(CONFIG, "CG_TELEM_CHAMBER_AIR_ROLE CG_ROLE_T1",
+                                "CG_TELEM_CHAMBER_AIR_ROLE CG_ROLE_T2")
+        self.assertIn("the chamber-air and hot-side roles are bound to distinct slots",
+                      " ".join(checker.failures))
+        self.assertIn("a chamber-air read of the hot-side probe cannot be written",
+                      " ".join(checker.failures))
+
+    def test_emitter_role_literal_is_caught(self) -> None:
+        """Re-introducing a bare hot-side role literal in the emitter."""
+        checker = self.run_with(TELEMETRY, "    p_status = power_status(snap, now_ms);",
+                                "    (void)snap->t_c[CG_ROLE_T2];\n    "
+                                "p_status = power_status(snap, now_ms);")
+        self.assertIn("a chamber-air read of the hot-side probe cannot be written",
                       " ".join(checker.failures))
 
     def test_rom_emit_deletion_is_caught(self) -> None:

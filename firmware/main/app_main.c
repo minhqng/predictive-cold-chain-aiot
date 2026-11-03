@@ -80,7 +80,7 @@ static void door_task(void *arg)
     (void)arg;
 
     cg_door_init(&s_door);
-    cg_log_door_polarity(CG_DOOR_POLARITY_CONFIRMED == 1, CG_DOOR_RAW_OPEN_LEVEL);
+    cg_log_door_polarity(cg_door_polarity_attested(&s_door), CG_DOOR_RAW_OPEN_LEVEL);
 
     while (true) {
         uint64_t now_us = (uint64_t)esp_timer_get_time();
@@ -88,8 +88,10 @@ static void door_task(void *arg)
         cg_door_poll(&s_door, now_us, &edge, &level, &commit);
         /* W05: the door publication now carries its own observation time and
          * its edge counters, so the telemetry can state a door age and prove
-         * the debounce state machine is still advancing. */
-        cg_snapshot_publish_door(CG_DOOR_POLARITY_CONFIRMED == 1,
+         * the debounce state machine is still advancing. D25: door-known is the
+         * per-boot polarity attestation, not the compile-time constant, so a
+         * reset boot reports the door as unattested until it is attested again. */
+        cg_snapshot_publish_door(cg_door_polarity_attested(&s_door),
                                  cg_door_state(&s_door) == CG_DOOR_OPEN, s_door.raw_committed,
                                  now_us / 1000ULL, s_door.transitions, s_door.cycles);
         cg_health_registry_beat(CG_PRODUCER_DOOR, now_us / 1000ULL);

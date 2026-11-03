@@ -31,7 +31,7 @@ DOSSIER = REPO / "evidence" / "A" / "W14"
 TOOLS = REPO / "firmware" / "tools"
 H8 = REPO / "evidence" / "A" / "W04" / "tec-cooling-response-600s.csv"
 TOOL_FILES = ("cg_thermal_repeatability.py", "cg_w14_spatial.py", "cg_w14_sensor_qa.py",
-              "cg_w14_pairing.py")
+              "cg_w14_pairing.py", "cg_probe_roles.py")
 # Written from parts so this test file never carries a path the validator's own
 # absolute-path scan looks for - the point of the case is the planted artifact.
 BS = chr(92)
