@@ -1,0 +1,93 @@
+source,frames,qualification_level,column,frames_with_a_value,frames_without_a_label,label_counts,qualified,electrical_status_recorded
+H7-100pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-100pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-100pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-100pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-20pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-20pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-20pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-20pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-30pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-30pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-30pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-30pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-40pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-40pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-40pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-40pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-50pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-50pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-50pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-50pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-60pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-60pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-60pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-60pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-60pct-diag1,20,none,voltage,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag1,20,none,current,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag1,20,none,power,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag1,20,none,energy,0,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag2,20,none,voltage,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag2,20,none,current,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag2,20,none,power,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-diag2,20,none,energy,0,20,"{""(empty)"": 20}",false,false
+H7-60pct-shunt,20,none,voltage,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-shunt,20,none,current,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-shunt,20,none,power,20,20,"{""(empty)"": 20}",false,false
+H7-60pct-shunt,20,none,energy,0,20,"{""(empty)"": 20}",false,false
+H7-70pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-70pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-70pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-70pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-80pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-80pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-80pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-80pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H7-90pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+H7-90pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+H7-90pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+H7-90pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+H8-A-180s,1023,field,voltage,1010,0,"{""IO_ERROR"": 13, ""OK"": 1010}",true,true
+H8-A-180s,1023,field,current,1010,0,"{""IO_ERROR"": 13, ""OK"": 1010}",true,true
+H8-A-180s,1023,field,power,1010,0,"{""IO_ERROR"": 13, ""OK"": 1010}",true,true
+H8-A-180s,1023,field,energy,1010,1023,"{""(empty)"": 1023}",false,true
+H8-B-420s,1086,field,voltage,1085,0,"{""IO_ERROR"": 1, ""OK"": 1085}",true,true
+H8-B-420s,1086,field,current,1085,0,"{""IO_ERROR"": 1, ""OK"": 1085}",true,true
+H8-B-420s,1086,field,power,1085,0,"{""IO_ERROR"": 1, ""OK"": 1085}",true,true
+H8-B-420s,1086,field,energy,1085,1086,"{""(empty)"": 1086}",false,true
+H8-C-600s-2026-10-31,1195,field,voltage,1195,0,"{""OK"": 1195}",true,true
+H8-C-600s-2026-10-31,1195,field,current,1195,0,"{""OK"": 1195}",true,true
+H8-C-600s-2026-10-31,1195,field,power,1195,0,"{""OK"": 1195}",true,true
+H8-C-600s-2026-10-31,1195,field,energy,1195,1195,"{""(empty)"": 1195}",false,true
+H8-D-900s,1186,field,voltage,1186,0,"{""OK"": 1186}",true,true
+H8-D-900s,1186,field,current,1186,0,"{""OK"": 1186}",true,true
+H8-D-900s,1186,field,power,1186,0,"{""OK"": 1186}",true,true
+H8-D-900s,1186,field,energy,1186,1186,"{""(empty)"": 1186}",false,true
+H8-E-1800s,2915,field,voltage,2913,0,"{""IO_ERROR"": 2, ""OK"": 2913}",true,true
+H8-E-1800s,2915,field,current,2913,0,"{""IO_ERROR"": 2, ""OK"": 2913}",true,true
+H8-E-1800s,2915,field,power,2913,0,"{""IO_ERROR"": 2, ""OK"": 2913}",true,true
+H8-E-1800s,2915,field,energy,2913,2915,"{""(empty)"": 2915}",false,true
+W03-132b-off-envelope,600,poll,voltage,600,0,"{""OK"": 600}",true,true
+W03-132b-off-envelope,600,poll,current,600,0,"{""OK"": 600}",true,true
+W03-132b-off-envelope,600,poll,power,600,0,"{""OK"": 600}",true,true
+W03-132b-off-envelope,600,poll,energy,600,0,"{""OK"": 600}",true,true
+W03-pzem-off-2026-10-20,601,poll,voltage,594,0,"{""CRC_VALID"": 594, ""INVALID"": 7}",true,true
+W03-pzem-off-2026-10-20,601,poll,current,594,0,"{""CRC_VALID"": 594, ""INVALID"": 7}",true,true
+W03-pzem-off-2026-10-20,601,poll,power,594,0,"{""CRC_VALID"": 594, ""INVALID"": 7}",true,true
+W03-pzem-off-2026-10-20,601,poll,energy,594,0,"{""CRC_VALID"": 594, ""INVALID"": 7}",true,true
+W04-G1-production-failclosed,62,field,voltage,0,0,"{""INVALID"": 61, ""NO_DATA"": 1}",true,false
+W04-G1-production-failclosed,62,field,current,0,0,"{""INVALID"": 61, ""NO_DATA"": 1}",true,false
+W04-G1-production-failclosed,62,field,power,0,0,"{""INVALID"": 61, ""NO_DATA"": 1}",true,false
+W04-G1-production-failclosed,62,field,energy,0,62,"{""(empty)"": 62}",false,false
+W04-H6-10pct,60,none,voltage,60,60,"{""(empty)"": 60}",false,false
+W04-H6-10pct,60,none,current,60,60,"{""(empty)"": 60}",false,false
+W04-H6-10pct,60,none,power,60,60,"{""(empty)"": 60}",false,false
+W04-H6-10pct,60,none,energy,0,60,"{""(empty)"": 60}",false,false
+W04-H8C-box-600s,957,none,voltage,957,957,"{""(empty)"": 957}",false,false
+W04-H8C-box-600s,957,none,current,957,957,"{""(empty)"": 957}",false,false
+W04-H8C-box-600s,957,none,power,957,957,"{""(empty)"": 957}",false,false
+W04-H8C-box-600s,957,none,energy,957,957,"{""(empty)"": 957}",false,false
+W04-H8C-box-600s-raw,957,field,voltage,957,0,"{""OK"": 957}",true,true
+W04-H8C-box-600s-raw,957,field,current,957,0,"{""OK"": 957}",true,true
+W04-H8C-box-600s-raw,957,field,power,957,0,"{""OK"": 957}",true,true
+W04-H8C-box-600s-raw,957,field,energy,957,957,"{""(empty)"": 957}",false,true
