@@ -100,4 +100,9 @@ evidence/A/W15/** -text
 # and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
 # those bytes on a checkout with core.autocrlf and break every pin.
 evidence/A/W16/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w16-comparability
+=======
+
+evidence/A/W17/** -text
+>>>>>>> origin/feat/a-w17-shadow-mode

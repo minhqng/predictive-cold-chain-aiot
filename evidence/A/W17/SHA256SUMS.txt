@@ -1,0 +1,4 @@
+e006152d1fb15f679e1fe95519fc2d7442c15ada355d3c7de0288409b114f193  shadow-alignment-spec.json
+8df1fa7eb91c23d2d48a4d71346e086bf904088601dbd7d7b9fa278eb5d15fb0  shadow-audit-report.json
+6422c63abd1e8e0a46a5db05e450e09216e66d73f1165a92d415f65efa8ee992  shadow-mode-protocol.md
+6567a0d3a8608d9a7f71d3af07ccc6b0b9dbae1fc5338bb738b7f6396ce3eae4  validate_w17.py

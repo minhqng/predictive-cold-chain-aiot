@@ -1,0 +1,24 @@
+{
+  "week": "W17",
+  "authority": "docs/05A §26",
+  "requirements": [
+    "A-W17-01",
+    "A-W17-02",
+    "A-W17-03",
+    "A-W17-04"
+  ],
+  "required_channels": [
+    "t_inside_c",
+    "t_inside_status",
+    "t_cold_side_c",
+    "t_hot_side_c",
+    "door_open",
+    "door_status",
+    "voltage_v",
+    "current_a",
+    "power_w",
+    "quality"
+  ],
+  "thermal_anomaly_rate_threshold_c_per_sec": 0.5,
+  "physical_execution_state": "PENDING_OPERATOR_RUN"
+}
