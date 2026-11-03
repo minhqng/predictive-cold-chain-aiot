@@ -147,7 +147,8 @@ def build_fixture_file() -> dict[str, str]:
 
     record = schema.parse_line(line)
     payload = {
-        "artifact": "A-W05 schema 2 telemetry fixture",
+        "artifact": (f"A-W05 telemetry fixture, schema {record.value('schema')}, "
+                     "re-derived from the current emitter"),
         "generated_by": "evidence/A/W05/build_timing_pilot.py",
         "rendered_by": "firmware/main/cg_telemetry.c via firmware/tools/tests/cg_w05_harness.c",
         "compiler": compiler,

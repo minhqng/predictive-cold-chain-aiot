@@ -47,3 +47,7 @@ evidence/A/W06/** -text
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
+
+# Member A release-candidate dossier: every file is hash-pinned in
+evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
+evidence/A/RC/** -text
