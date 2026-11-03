@@ -115,4 +115,9 @@ evidence/A/W18/** -text
 =======
 
 evidence/A/W19/** -text
+<<<<<<< HEAD
 >>>>>>> origin/feat/a-w19-campaign-wave1
+=======
+
+evidence/A/W20/** -text
+>>>>>>> origin/feat/a-w20-campaign-wave2

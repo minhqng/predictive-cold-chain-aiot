@@ -1,0 +1,11 @@
+{
+  "week": "W20",
+  "authority": "docs/05A §29",
+  "campaign_wave2_runs": 0,
+  "target_pairs": 0,
+  "completed_pairs": 0,
+  "runs": [],
+  "pair_matching_rule": "TRUE_MATCHED_PAIR_ID_REQUIRED",
+  "status": "SOFTWARE_READY",
+  "note": "Wave 2 pair completion and freeze tools verified. Physical wave 2 runs pending operator execution."
+}
