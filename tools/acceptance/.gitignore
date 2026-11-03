@@ -1,3 +1,0 @@
-# Acceptance runner output is regenerated per run and reaches tens of MB.
-# Only the curated copies under evidence/A/RC/acceptance-run/ are committed.
-output/
