@@ -117,5 +117,98 @@ class TestW17ShadowAudit(unittest.TestCase):
         self.assertFalse(result.predictive_leak_detected)
 
 
+class TestW17EvidenceIsPerFrame(unittest.TestCase):
+    """Shadow isolation must be evaluated on every frame, and absence must refuse."""
+
+    BASE = {
+        "t_inside_c": 5.0, "t_inside_status": "OK", "t_cold_side_c": 3.0,
+        "t_hot_side_c": 28.0, "door_open": False, "door_status": "OK",
+        "voltage_v": 12.0, "current_a": 4.5, "power_w": 54.0, "quality": "OK",
+        "pwm_duty": 800,
+    }
+
+    def session(self, n=4, mutate=None):
+        frames = []
+        for i in range(n):
+            frame = dict(self.BASE, seq=i + 1, uptime_ms=1000 * (i + 1), elapsed_ms=1000 * (i + 1))
+            if mutate and i in mutate:
+                mutate[i](frame)
+            frames.append(frame)
+        return frames
+
+    def audit(self, frames, n=None):
+        n = n if n is not None else len(frames)
+        return audit_shadow_session(
+            frames,
+            shadow_commands=[0] * n,
+            authorized_controller_a_duties=[800] * n,
+        )
+
+    def test_complete_session_still_passes(self):
+        """Positive control: the guards must not have become an always-refuse stub."""
+        self.assertEqual(self.audit(self.session()).verdict, "PASS")
+
+    def test_channel_missing_only_on_middle_frame_is_not_pass(self):
+        frames = self.session(4, mutate={2: lambda f: f.pop("current_a")})
+        result = self.audit(frames)
+        self.assertEqual(result.verdict, "CHANNEL_MISMATCH")
+        self.assertIn("current_a", result.missing_b_channels)
+        self.assertEqual(result.details["frames_with_missing_channels"], 1)
+
+    def test_channel_missing_only_on_last_frame_is_not_pass(self):
+        frames = self.session(3, mutate={2: lambda f: f.pop("quality")})
+        result = self.audit(frames)
+        self.assertEqual(result.verdict, "CHANNEL_MISMATCH")
+        self.assertIn("quality", result.missing_b_channels)
+
+    def test_absent_applied_duty_is_refused_instead_of_read_as_zero(self):
+        frames = self.session(3, mutate={1: lambda f: f.pop("pwm_duty")})
+        result = self.audit(frames)
+        self.assertEqual(result.verdict, "DATA_INSUFFICIENT")
+        self.assertEqual(result.details["frames_without_applied_duty"], [1])
+
+    def test_nan_applied_duty_is_refused(self):
+        frames = self.session(3, mutate={0: lambda f: f.update(pwm_duty=float("nan"))})
+        result = self.audit(frames)
+        self.assertEqual(result.verdict, "DATA_INSUFFICIENT")
+        self.assertEqual(result.details["frames_without_applied_duty"], [0])
+
+    def test_stream_without_sequence_identity_does_not_pass(self):
+        frames = [dict(f) for f in self.session(3)]
+        for frame in frames:
+            frame.pop("seq")
+            frame.pop("uptime_ms")
+            frame.pop("elapsed_ms")
+        result = audit_shadow_session(frames, shadow_commands=[0] * 3,
+                                      authorized_controller_a_duties=[800] * 3)
+        self.assertEqual(result.verdict, "SEQUENCE_ERROR")
+        self.assertTrue(any("missing or invalid seq" in e for e in result.frame_sequence_errors))
+        self.assertTrue(any("uptime_ms" in e for e in result.frame_sequence_errors))
+
+    def test_desynchronised_shadow_arrays_refuse_without_raising(self):
+        frames = self.session(3)
+        result = audit_shadow_session(frames, shadow_commands=[0, 0],
+                                      authorized_controller_a_duties=[800] * 3)
+        self.assertEqual(result.verdict, "DATA_INSUFFICIENT")
+        self.assertIn("desynchronised", result.details["note"])
+
+    def test_nan_chamber_temperature_is_not_treated_as_compliant(self):
+        frames = self.session(3)
+        frames[1]["t_inside_c"] = float("nan")
+        result = self.audit(frames)
+        self.assertEqual(result.verdict, "CHANNEL_MISMATCH")
+        self.assertIn("t_inside_c", result.missing_b_channels)
+
+    def test_monitor_skips_unusable_samples_without_claiming_clean(self):
+        frames = self.session(3)
+        frames[1]["t_inside_c"] = float("nan")
+        self.assertEqual(monitor_plant_anomalies(frames), [])
+        frames[1]["t_inside_c"] = 5.0
+        frames[2]["t_inside_c"] = 40.0
+        anomalies = monitor_plant_anomalies(frames)
+        self.assertTrue(anomalies and anomalies[0]["index"] == 2)
+        self.assertEqual(anomalies[0]["reason"], "CHAMBER_RATE_EXCEEDS_W08_ENVELOPE")
+
+
 if __name__ == "__main__":
     unittest.main()
