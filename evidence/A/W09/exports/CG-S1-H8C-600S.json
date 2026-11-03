@@ -1,0 +1,938 @@
+{
+  "boot_id": "56044b74",
+  "boot_id_status": "SOURCE_CARRIED_SINGLE",
+  "boot_ids": [
+    "56044b74"
+  ],
+  "cadence": {
+    "declared_hz": 1.0,
+    "evidence": "device_ms successive deltas and seq monotonicity",
+    "measured": {
+      "max_interval_ms": 1000,
+      "mean_interval_ms": 999.99,
+      "median_interval_ms": 1000.0,
+      "min_interval_ms": 990,
+      "n_intervals": 956,
+      "nonpositive_intervals": 0
+    }
+  },
+  "derived_thermal_states": {
+    "geometry_version": "as-built-2026-11-02-frozen",
+    "gradient_c_per_s": {
+      "t1": {
+        "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+        "endpoint_gradient_c_per_s": -0.0034611,
+        "estimator_spread_c_per_s": 0.0077492,
+        "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+        "least_squares_gradient_c_per_s": -0.0112103,
+        "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+        "median_successive_interval_gradient_c_per_s": 0.0,
+        "n": 940,
+        "physical_position": "CHAMBER_CENTER",
+        "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+        "window": {
+          "definition": "every row this layer accepted for thermal use, in source order, per slot",
+          "doc_anchor": "docs/01 \u00a720.5",
+          "duration_s": 939.0,
+          "first_device_ms": 17894,
+          "last_device_ms": 956894,
+          "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+        }
+      },
+      "t3": {
+        "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+        "endpoint_gradient_c_per_s": -0.0035953,
+        "estimator_spread_c_per_s": 0.0065785,
+        "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+        "least_squares_gradient_c_per_s": -0.0101739,
+        "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+        "median_successive_interval_gradient_c_per_s": 0.0,
+        "n": 940,
+        "physical_position": "CHAMBER_BOTTOM",
+        "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+        "window": {
+          "definition": "every row this layer accepted for thermal use, in source order, per slot",
+          "doc_anchor": "docs/01 \u00a720.5",
+          "duration_s": 939.0,
+          "first_device_ms": 17894,
+          "last_device_ms": 956894,
+          "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+        }
+      },
+      "t4": {
+        "endpoint_estimator": "(last - first) / duration; an endpoint statistic that is blind to the path between the ends. On an evenly spaced series it equals the mean of the successive interval slopes, which is why the two agree exactly here",
+        "endpoint_gradient_c_per_s": -0.003394,
+        "estimator_spread_c_per_s": 0.0071199,
+        "least_squares_estimator": "ordinary least squares of value on device_ms over the whole window (least_squares_slope_c_per_s); uses every row, so it follows the trend the row set actually has",
+        "least_squares_gradient_c_per_s": -0.010514,
+        "median_estimator": "median of the per-interval slopes; the DS18B20 quantises at 0.0625 degC, so most 1 Hz intervals step by nothing and a median of 0 states that the box held frame to frame, not that it did not drift",
+        "median_successive_interval_gradient_c_per_s": 0.0,
+        "n": 940,
+        "physical_position": "CHAMBER_NEAR_DOOR",
+        "reading": "the two gradient figures are different estimators of different questions and are published apart; quoting either one as 'the gradient' without naming the estimator and the window repeats the ambiguity docs/01 \u00a720.5 forbids",
+        "window": {
+          "definition": "every row this layer accepted for thermal use, in source order, per slot",
+          "doc_anchor": "docs/01 \u00a720.5",
+          "duration_s": 939.0,
+          "first_device_ms": 17894,
+          "last_device_ms": 956894,
+          "temperature_representation": "the raw single-probe value of this slot; not a chamber-air mean and not Tmean"
+        }
+      }
+    },
+    "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+    "states": {
+      "chamber_air_mean": {
+        "definition": "mean of per-slot means over CHAMBER_CENTER/CHAMBER_BOTTOM/CHAMBER_NEAR_DOOR",
+        "excluded": {
+          "t2": "TEC_HOT_SIDE is a heatsink, not chamber air"
+        },
+        "mean_c": 25.0449,
+        "n_frames": 2820,
+        "n_slots": 3,
+        "per_slot_mean_c": {
+          "t1": 24.8069,
+          "t3": 25.2159,
+          "t4": 25.112
+        },
+        "slots": [
+          "t1",
+          "t3",
+          "t4"
+        ],
+        "use_for_physics": true
+      },
+      "docs01_20_1_literal_tmean": {
+        "contamination_reason": "the \u00a720.1 term T2 is, on the frozen as-built geometry, TEC_HOT_SIDE; averaging it into a chamber-air state mixes a heatsink temperature into the plant variable. The slot-name-vs-position discrepancy in docs/01 \u00a720.1 is an open project issue that W09 records rather than resolves",
+        "definition": "docs/01 \u00a720.1 literally: mean(T1,T2,T3) of raw slot names",
+        "mean_c": 28.5143,
+        "n_frames": 2820,
+        "n_slots": 3,
+        "per_slot_mean_c": {
+          "t1": 24.8069,
+          "t2": 35.5201,
+          "t3": 25.2159
+        },
+        "quality_label": "CONTAMINATED_ON_THIS_RIG",
+        "use_for_physics": false
+      },
+      "t1_chamber_center": {
+        "definition": "raw slot t1 at its frozen position",
+        "first_c": 30.0,
+        "last_c": 26.75,
+        "max_c": 30.125,
+        "mean_c": 24.8069,
+        "min_c": 20.875,
+        "n": 940,
+        "physical_position": "CHAMBER_CENTER",
+        "source_slot": "t1",
+        "use_for_physics": true
+      },
+      "t2_tec_hot_side": {
+        "definition": "raw slot t2 at its frozen position",
+        "first_c": 29.875,
+        "last_c": 31.625,
+        "max_c": 39.938,
+        "mean_c": 35.5201,
+        "min_c": 29.875,
+        "n": 940,
+        "physical_position": "TEC_HOT_SIDE",
+        "source_slot": "t2",
+        "use_for_physics": true
+      },
+      "t3_chamber_bottom": {
+        "definition": "raw slot t3 at its frozen position",
+        "first_c": 29.688,
+        "last_c": 26.312,
+        "max_c": 29.812,
+        "mean_c": 25.2159,
+        "min_c": 21.625,
+        "n": 940,
+        "physical_position": "CHAMBER_BOTTOM",
+        "source_slot": "t3",
+        "use_for_physics": true
+      },
+      "t4_chamber_near_door": {
+        "definition": "raw slot t4 at its frozen position",
+        "first_c": 30.062,
+        "last_c": 26.875,
+        "max_c": 30.188,
+        "mean_c": 25.112,
+        "min_c": 21.438,
+        "n": 940,
+        "physical_position": "CHAMBER_NEAR_DOOR",
+        "source_slot": "t4",
+        "use_for_physics": true
+      },
+      "tec_hot_side": {
+        "definition": "raw slot t2, physical position TEC_HOT_SIDE, reported alone",
+        "max_c": 39.938,
+        "mean_c": 35.5201,
+        "n": 940,
+        "never_in_chamber_mean": true,
+        "use_for_physics": true
+      }
+    }
+  },
+  "device_id": "NOT_CARRIED_BY_THIS_ENCODING",
+  "device_run_label": "H8C_BOX_COOLING_600S",
+  "experiment_phase": {
+    "counts": {
+      "ACTIVE_COOLING": 600,
+      "COOLDOWN": 5,
+      "OFF_IDLE": 335,
+      "PRE_FIRST_SNAPSHOT": 17
+    },
+    "per_frame_field": "frames[].experiment_phase"
+  },
+  "export_version": "w09-run-export-v2",
+  "firmware_version": "cg-w04-0.1.0",
+  "frames": {
+    "columns_per_row": [
+      "seq",
+      "run_id",
+      "boot_id",
+      "device_id",
+      "hardware_config_id",
+      "firmware_version",
+      "device_ms",
+      "timestamp_utc",
+      "timestamp_utc_status",
+      "host_capture_time_utc",
+      "source_path",
+      "source_kind",
+      "source_line_index",
+      "dedup_key",
+      "experiment_phase",
+      "quality",
+      "usable_for",
+      "producer_quality",
+      "thermal_quality",
+      "environment_quality",
+      "electrical_quality",
+      "door_quality",
+      "sequence_quality",
+      "provenance_quality",
+      "invalidation_reasons",
+      "stage",
+      "state",
+      "stop_reason",
+      "snapshot",
+      "pwm_req_permille",
+      "pwm_applied_permille",
+      "pwm_readback_permille",
+      "door_open",
+      "door_polarity",
+      "t1",
+      "t1_status",
+      "t1_role",
+      "t1_age_ms",
+      "t1_rom",
+      "t1_physical_position",
+      "t2",
+      "t2_status",
+      "t2_role",
+      "t2_age_ms",
+      "t2_rom",
+      "t2_physical_position",
+      "t3",
+      "t3_status",
+      "t3_role",
+      "t3_age_ms",
+      "t3_rom",
+      "t3_physical_position",
+      "t4",
+      "t4_status",
+      "t4_role",
+      "t4_age_ms",
+      "t4_rom",
+      "t4_physical_position",
+      "air_c",
+      "rh_pct",
+      "pressure_hpa",
+      "voltage_v",
+      "current_a",
+      "power_w",
+      "energy_wh"
+    ],
+    "companion_file": "exports/CG-S1-H8C-600S.row-validity.csv",
+    "reason": "kept out of the metadata file so the dossier stays reviewable; every field the row contract demands is a column of this file, and the fields no encoding can carry per row are stated there rather than left out",
+    "row_contract": {
+      "companion_csv_columns": [
+        "seq",
+        "run_id",
+        "boot_id",
+        "device_id",
+        "hardware_config_id",
+        "firmware_version",
+        "device_ms",
+        "timestamp_utc",
+        "timestamp_utc_status",
+        "host_capture_time_utc",
+        "source_path",
+        "source_kind",
+        "source_line_index",
+        "dedup_key",
+        "experiment_phase",
+        "quality",
+        "usable_for",
+        "producer_quality",
+        "thermal_quality",
+        "environment_quality",
+        "electrical_quality",
+        "door_quality",
+        "sequence_quality",
+        "provenance_quality",
+        "invalidation_reasons",
+        "stage",
+        "state",
+        "stop_reason",
+        "snapshot",
+        "pwm_req_permille",
+        "pwm_applied_permille",
+        "pwm_readback_permille",
+        "door_open",
+        "door_polarity",
+        "t1",
+        "t1_status",
+        "t1_role",
+        "t1_age_ms",
+        "t1_rom",
+        "t1_physical_position",
+        "t2",
+        "t2_status",
+        "t2_role",
+        "t2_age_ms",
+        "t2_rom",
+        "t2_physical_position",
+        "t3",
+        "t3_status",
+        "t3_role",
+        "t3_age_ms",
+        "t3_rom",
+        "t3_physical_position",
+        "t4",
+        "t4_status",
+        "t4_role",
+        "t4_age_ms",
+        "t4_rom",
+        "t4_physical_position",
+        "air_c",
+        "rh_pct",
+        "pressure_hpa",
+        "voltage_v",
+        "current_a",
+        "power_w",
+        "energy_wh"
+      ],
+      "declared_by": "docs/05A \u00a718 A-W09-03 (log the invalidation, never delete the attempt) and the W09 pass criterion 'every exported row carries ...'",
+      "delivered_per_row": {
+        "experiment_phase": [
+          "experiment_phase"
+        ],
+        "identity": [
+          "seq",
+          "run_id",
+          "boot_id",
+          "device_id",
+          "hardware_config_id",
+          "firmware_version"
+        ],
+        "invalidation_reason": [
+          "invalidation_reasons"
+        ],
+        "measurement_quality_state": [
+          "producer_quality",
+          "thermal_quality",
+          "environment_quality",
+          "electrical_quality",
+          "door_quality",
+          "sequence_quality",
+          "provenance_quality"
+        ],
+        "provenance": [
+          "source_path",
+          "source_kind",
+          "source_line_index",
+          "dedup_key"
+        ],
+        "sensor_rom_and_physical_position": [
+          "t1_rom",
+          "t1_physical_position",
+          "t2_rom",
+          "t2_physical_position",
+          "t3_rom",
+          "t3_physical_position",
+          "t4_rom",
+          "t4_physical_position"
+        ],
+        "time": [
+          "device_ms",
+          "timestamp_utc",
+          "timestamp_utc_status",
+          "host_capture_time_utc"
+        ]
+      },
+      "not_available_per_row": {
+        "calibration_id": "NOT AVAILABLE PER ROW (docs/05B \u00a76 lists it as mandatory; no shipped H8S or CSV encoding carries a calibration id, so W09 states the gap instead of publishing a column of nulls)",
+        "device_id": "NOT AVAILABLE (NOT_CARRIED_BY_THIS_ENCODING); the literal token is delivered per row so the dedup key cannot be mistaken for a cross-device join",
+        "host_capture_time_utc": "NOT AVAILABLE where the source is a derived table rather than a host transcript; the committed W04 CSV carries no host capture time, so the column is delivered empty",
+        "schema_version": "NOT AVAILABLE PER ROW (the derived table carries no per-row schema token; the run-level schema_version is the only place it could appear and it is null for this encoding)",
+        "timestamp_utc": "NOT AVAILABLE (DEVICE_HAS_NO_WALL_CLOCK); the column is delivered and empty, and timestamp_utc_status states the reason on the row"
+      },
+      "verified_by": "cg_w09_export._assert_complete() checks every row against this contract, and validate_w09.py compares the published companion header against companion_csv_columns"
+    },
+    "rows": 957
+  },
+  "hardware_config_id": "CG-HW-001",
+  "invalidation": {
+    "policy": "no row is deleted; every row keeps its reason codes (docs/05A \u00a718 A-W09-03)",
+    "rows_thermally_usable": 940,
+    "rows_usable_for_this_scenarios_required_domains": 0,
+    "summary": {
+      "blocking_severities": [
+        "INVALID",
+        "UNKNOWN"
+      ],
+      "classifier_version": "w09-validity-v3",
+      "quality_counts": {
+        "DEGRADED": 0,
+        "INVALID": 17,
+        "UNKNOWN": 940,
+        "VALID": 0
+      },
+      "quality_counts_by_domain": {
+        "door": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "electrical": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "environment": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "producer": {
+          "DEGRADED": 940,
+          "INVALID": 17,
+          "UNKNOWN": 0,
+          "VALID": 0
+        },
+        "provenance": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        },
+        "sequence": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        },
+        "thermal": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        }
+      },
+      "reason_codes_checked": [
+        "AIR_C_STATUS_ABSENT",
+        "COOLING_STATE_UNOBSERVED",
+        "COOLING_STATE_UNRECOGNISED",
+        "CURRENT_A_STATUS_ABSENT",
+        "DOOR_POLARITY_UNCONFIRMED",
+        "DOOR_STATE_UNKNOWN",
+        "DOOR_STATUS_ABSENT",
+        "DOOR_STATUS_NOT_OK",
+        "ELECTRICAL_UNQUALIFIED",
+        "ELECTRICAL_VALUE_MISSING",
+        "ENERGY_ACCUMULATOR_UNQUALIFIED",
+        "EXCLUDED_SESSION_CLASS_PROBE_IDENTIFICATION",
+        "FIELD_STALE_BY_AGE",
+        "FIELD_STATUS_NOT_OK",
+        "MASKS_ABSENT",
+        "NON_PHYSICAL_SOURCE",
+        "POWER_W_STATUS_ABSENT",
+        "PRESSURE_HPA_STATUS_ABSENT",
+        "PROBE_INVALID",
+        "PROBE_MISSING",
+        "PROBE_STALE",
+        "RH_PCT_STATUS_ABSENT",
+        "SEQ_DUPLICATE",
+        "SEQ_GAP",
+        "SNAPSHOT_INVALID",
+        "SNAPSHOT_UNREPORTED",
+        "T1_STATUS_ABSENT",
+        "T2_STATUS_ABSENT",
+        "T3_STATUS_ABSENT",
+        "T4_STATUS_ABSENT",
+        "VOLTAGE_V_STATUS_ABSENT"
+      ],
+      "reason_counts": {
+        "AIR_C_STATUS_ABSENT": 957,
+        "DOOR_POLARITY_UNCONFIRMED": 17,
+        "DOOR_STATE_UNKNOWN": 17,
+        "DOOR_STATUS_ABSENT": 957,
+        "ELECTRICAL_UNQUALIFIED": 2871,
+        "ENERGY_ACCUMULATOR_UNQUALIFIED": 957,
+        "MASKS_ABSENT": 957,
+        "POWER_W_STATUS_ABSENT": 957,
+        "RH_PCT_STATUS_ABSENT": 957,
+        "SNAPSHOT_INVALID": 17
+      },
+      "rows_thermally_usable_for_statistics": 940,
+      "rows_total": 957,
+      "rows_usable_for_baseline": 0,
+      "rows_usable_per_scenario": {
+        "HEALTHY_ELECTRICAL_RANGES": 0,
+        "S1_NORMAL_BASELINE": 0,
+        "S2_DOOR_DISTURBANCE": 0,
+        "S3_THERMAL_EFFECTIVENESS_DEGRADATION": 0,
+        "S4_ACTUATION_RESPONSE_FAULT": 0
+      },
+      "scenario_required_domains": {
+        "HEALTHY_ELECTRICAL_RANGES": [
+          "provenance",
+          "producer",
+          "electrical",
+          "sequence"
+        ],
+        "S1_NORMAL_BASELINE": [
+          "provenance",
+          "producer",
+          "thermal",
+          "environment",
+          "door",
+          "sequence"
+        ],
+        "S2_DOOR_DISTURBANCE": [
+          "provenance",
+          "producer",
+          "thermal",
+          "door",
+          "sequence"
+        ],
+        "S3_THERMAL_EFFECTIVENESS_DEGRADATION": [
+          "provenance",
+          "producer",
+          "thermal",
+          "electrical",
+          "sequence"
+        ],
+        "S4_ACTUATION_RESPONSE_FAULT": [
+          "provenance",
+          "producer",
+          "thermal",
+          "electrical",
+          "sequence"
+        ]
+      },
+      "usable_fraction": 0.0
+    }
+  },
+  "is_physical_measurement": true,
+  "per_field_quality": {
+    "air_c_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "ABSENT_FROM_ENCODING": 957
+      },
+      "values_present": 957
+    },
+    "current_a_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "NONE_OR_EMPTY": 957
+      },
+      "values_present": 957
+    },
+    "door_open": {
+      "frames_total": 957,
+      "status_tally": {
+        "0": 940,
+        "UNKNOWN": 17
+      },
+      "values_present": null
+    },
+    "door_polarity": {
+      "frames_total": 957,
+      "status_tally": {
+        "CONFIRMED": 940,
+        "UNCONFIRMED": 17
+      },
+      "values_present": null
+    },
+    "door_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "ABSENT_FROM_ENCODING": 957
+      },
+      "values_present": 0
+    },
+    "fan": {
+      "frames_total": 957,
+      "status_tally": {
+        "OPERATOR_CONFIRMED": 940,
+        "UNCONFIRMED": 17
+      },
+      "values_present": null
+    },
+    "fan_readback": {
+      "frames_total": 957,
+      "status_tally": {
+        "NOT_ELECTRONICALLY_VERIFIED": 957
+      },
+      "values_present": null
+    },
+    "limits_policy": {
+      "frames_total": 957,
+      "status_tally": {
+        "APPROVED": 957
+      },
+      "values_present": null
+    },
+    "power_w_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "ABSENT_FROM_ENCODING": 957
+      },
+      "values_present": 957
+    },
+    "pressure_hpa_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "OK": 957
+      },
+      "values_present": 957
+    },
+    "pwm_applied_permille": {
+      "frames_total": 957,
+      "status_tally": {
+        "0": 357,
+        "999": 600
+      },
+      "values_present": null
+    },
+    "rh_pct_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "ABSENT_FROM_ENCODING": 957
+      },
+      "values_present": 957
+    },
+    "snapshot": {
+      "frames_total": 957,
+      "status_tally": {
+        "INVALID": 17,
+        "VALID": 940
+      },
+      "values_present": null
+    },
+    "stage": {
+      "frames_total": 957,
+      "status_tally": {
+        "H8-C": 738,
+        "NONE": 219
+      },
+      "values_present": null
+    },
+    "state": {
+      "frames_total": 957,
+      "status_tally": {
+        "COOLDOWN": 5,
+        "COOLING": 600,
+        "OFF": 352
+      },
+      "values_present": null
+    },
+    "stop_reason": {
+      "frames_total": 957,
+      "status_tally": {
+        "NONE": 826,
+        "STAGE_DEADLINE": 131
+      },
+      "values_present": null
+    },
+    "t1_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "OK": 957
+      },
+      "values_present": 957
+    },
+    "t2_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "OK": 957
+      },
+      "values_present": 957
+    },
+    "t3_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "OK": 957
+      },
+      "values_present": 957
+    },
+    "t4_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "OK": 957
+      },
+      "values_present": 957
+    },
+    "voltage_v_status": {
+      "frames_total": 957,
+      "status_tally": {
+        "NONE_OR_EMPTY": 957
+      },
+      "values_present": 957
+    }
+  },
+  "provenance": {
+    "export_version": "w09-run-export-v2",
+    "ingested_at_utc": "2026-11-02T00:00:00Z",
+    "ingestion_host_clock": "HOST - the device cannot state an ingestion time",
+    "notes": [
+      "build stamp 2026-11-02T00:00:00Z is HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+      "single-run candidate: between-run repeatability is not demonstrated by one capture"
+    ],
+    "sources": [
+      {
+        "is_physical_measurement": true,
+        "note": "derived 1 Hz table of the H8 box-cooling stage run",
+        "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+        "repo_tracked": true,
+        "run_label": "H8C_BOX_COOLING_600S",
+        "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d",
+        "source_kind": "csv_capture"
+      }
+    ]
+  },
+  "row_contract": {
+    "companion_csv_columns": [
+      "seq",
+      "run_id",
+      "boot_id",
+      "device_id",
+      "hardware_config_id",
+      "firmware_version",
+      "device_ms",
+      "timestamp_utc",
+      "timestamp_utc_status",
+      "host_capture_time_utc",
+      "source_path",
+      "source_kind",
+      "source_line_index",
+      "dedup_key",
+      "experiment_phase",
+      "quality",
+      "usable_for",
+      "producer_quality",
+      "thermal_quality",
+      "environment_quality",
+      "electrical_quality",
+      "door_quality",
+      "sequence_quality",
+      "provenance_quality",
+      "invalidation_reasons",
+      "stage",
+      "state",
+      "stop_reason",
+      "snapshot",
+      "pwm_req_permille",
+      "pwm_applied_permille",
+      "pwm_readback_permille",
+      "door_open",
+      "door_polarity",
+      "t1",
+      "t1_status",
+      "t1_role",
+      "t1_age_ms",
+      "t1_rom",
+      "t1_physical_position",
+      "t2",
+      "t2_status",
+      "t2_role",
+      "t2_age_ms",
+      "t2_rom",
+      "t2_physical_position",
+      "t3",
+      "t3_status",
+      "t3_role",
+      "t3_age_ms",
+      "t3_rom",
+      "t3_physical_position",
+      "t4",
+      "t4_status",
+      "t4_role",
+      "t4_age_ms",
+      "t4_rom",
+      "t4_physical_position",
+      "air_c",
+      "rh_pct",
+      "pressure_hpa",
+      "voltage_v",
+      "current_a",
+      "power_w",
+      "energy_wh"
+    ],
+    "declared_by": "docs/05A \u00a718 A-W09-03 (log the invalidation, never delete the attempt) and the W09 pass criterion 'every exported row carries ...'",
+    "delivered_per_row": {
+      "experiment_phase": [
+        "experiment_phase"
+      ],
+      "identity": [
+        "seq",
+        "run_id",
+        "boot_id",
+        "device_id",
+        "hardware_config_id",
+        "firmware_version"
+      ],
+      "invalidation_reason": [
+        "invalidation_reasons"
+      ],
+      "measurement_quality_state": [
+        "producer_quality",
+        "thermal_quality",
+        "environment_quality",
+        "electrical_quality",
+        "door_quality",
+        "sequence_quality",
+        "provenance_quality"
+      ],
+      "provenance": [
+        "source_path",
+        "source_kind",
+        "source_line_index",
+        "dedup_key"
+      ],
+      "sensor_rom_and_physical_position": [
+        "t1_rom",
+        "t1_physical_position",
+        "t2_rom",
+        "t2_physical_position",
+        "t3_rom",
+        "t3_physical_position",
+        "t4_rom",
+        "t4_physical_position"
+      ],
+      "time": [
+        "device_ms",
+        "timestamp_utc",
+        "timestamp_utc_status",
+        "host_capture_time_utc"
+      ]
+    },
+    "not_available_per_row": {
+      "calibration_id": "NOT AVAILABLE PER ROW (docs/05B \u00a76 lists it as mandatory; no shipped H8S or CSV encoding carries a calibration id, so W09 states the gap instead of publishing a column of nulls)",
+      "device_id": "NOT AVAILABLE (NOT_CARRIED_BY_THIS_ENCODING); the literal token is delivered per row so the dedup key cannot be mistaken for a cross-device join",
+      "host_capture_time_utc": "NOT AVAILABLE where the source is a derived table rather than a host transcript; the committed W04 CSV carries no host capture time, so the column is delivered empty",
+      "schema_version": "NOT AVAILABLE PER ROW (the derived table carries no per-row schema token; the run-level schema_version is the only place it could appear and it is null for this encoding)",
+      "timestamp_utc": "NOT AVAILABLE (DEVICE_HAS_NO_WALL_CLOCK); the column is delivered and empty, and timestamp_utc_status states the reason on the row"
+    },
+    "verified_by": "cg_w09_export._assert_complete() checks every row against this contract, and validate_w09.py compares the published companion header against companion_csv_columns"
+  },
+  "run_id": null,
+  "run_id_status": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+  "run_ids": [
+    "run-00000000",
+    "run-00000001"
+  ],
+  "scenario_candidate": "S1_NORMAL_BASELINE",
+  "scenario_candidate_basis": "a candidate, not a certified run: docs/03 \u00a731 defines the scenario and this export only states that the capture is compatible with it",
+  "schema_version": null,
+  "sensors": [
+    {
+      "boot_present": "1",
+      "boot_status": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "exclusion_reason": "",
+      "in_chamber_air_mean": true,
+      "physical_position": "CHAMBER_CENTER",
+      "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+      "raw_role_in_capture": [
+        "UNASSIGNED"
+      ],
+      "raw_slot": "t1",
+      "role_discrepancy": "the capture's slot roles are commissioning-era assignments (UNASSIGNED/HOT_SIDE); the frozen 2026-11-02 record is the position authority",
+      "rom": "287088CA00000051",
+      "rom_readback_verified": false,
+      "rom_source": "BOOT_LOG_CG_ROM_LINE"
+    },
+    {
+      "boot_present": "1",
+      "boot_status": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "exclusion_reason": "TEC_HOT_SIDE is a heatsink, not chamber air",
+      "in_chamber_air_mean": false,
+      "physical_position": "TEC_HOT_SIDE",
+      "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+      "raw_role_in_capture": [
+        "HOT_SIDE"
+      ],
+      "raw_slot": "t2",
+      "role_discrepancy": "the capture's slot roles are commissioning-era assignments (UNASSIGNED/HOT_SIDE); the frozen 2026-11-02 record is the position authority",
+      "rom": "28AEBF2200000006",
+      "rom_readback_verified": false,
+      "rom_source": "BOOT_LOG_CG_ROM_LINE"
+    },
+    {
+      "boot_present": "1",
+      "boot_status": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "exclusion_reason": "",
+      "in_chamber_air_mean": true,
+      "physical_position": "CHAMBER_BOTTOM",
+      "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+      "raw_role_in_capture": [
+        "UNASSIGNED"
+      ],
+      "raw_slot": "t3",
+      "role_discrepancy": "the capture's slot roles are commissioning-era assignments (UNASSIGNED/HOT_SIDE); the frozen 2026-11-02 record is the position authority",
+      "rom": "28CBE9CA00000072",
+      "rom_readback_verified": false,
+      "rom_source": "BOOT_LOG_CG_ROM_LINE"
+    },
+    {
+      "boot_present": "1",
+      "boot_status": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "exclusion_reason": "",
+      "in_chamber_air_mean": true,
+      "physical_position": "CHAMBER_NEAR_DOOR",
+      "position_source": "OPERATOR_FROZEN_AS_BUILT_2026-11-02_PROBE_IDENTIFICATION_RECORD_NOT_REMEASURED_BY_W09",
+      "raw_role_in_capture": [
+        "UNASSIGNED"
+      ],
+      "raw_slot": "t4",
+      "role_discrepancy": "the capture's slot roles are commissioning-era assignments (UNASSIGNED/HOT_SIDE); the frozen 2026-11-02 record is the position authority",
+      "rom": "283BE5C9000000A9",
+      "rom_readback_verified": false,
+      "rom_source": "BOOT_LOG_CG_ROM_LINE"
+    }
+  ],
+  "status_label": "REAL_DATA_ANALYZED",
+  "timestamp_semantics": {
+    "device_timestamp_utc": null,
+    "doc_anchor": "docs/02 \u00a74.3, cg_telemetry_schema module contract",
+    "host_capture_time": "ADDED_BY_HOST_BESIDE_DEVICE_TIME_NEVER_IN_PLACE_OF_IT",
+    "measurement_time_axis": "DEVICE_UPTIME_MS",
+    "timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+    "timestamp_utc_status": "UNAVAILABLE"
+  },
+  "uptime_semantics": {
+    "cross_join_rule": "join on (device_id, boot_id, seq); never on device_ms alone",
+    "doc_anchor": "docs/02 \u00a74.2/\u00a74.3",
+    "field": "device_ms",
+    "meaning": "ESP32 uptime since this boot_id; not a wall clock",
+    "resets_on": "every boot - opening the monitor port resets the board and changes boot_id"
+  }
+}

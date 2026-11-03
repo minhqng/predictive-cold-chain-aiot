@@ -1,0 +1,134 @@
+{
+  "blocked_run_ids": [
+    {
+      "boot_id": "56044b74",
+      "device_run_label": "H8C_BOX_COOLING_600S",
+      "reasons": [
+        "run_id_status=UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID: source run_id segments ['run-00000000', 'run-00000001'] under one boot_id are not independent runs and no joined run_id exists in the source, so none can be published for a join",
+        "majority of frames unusable"
+      ],
+      "run_id": null,
+      "usable_fraction": 0.0
+    }
+  ],
+  "dedup_key": [
+    "device_id",
+    "boot_id",
+    "seq"
+  ],
+  "generated_at_utc": "2026-11-02T00:00:00Z",
+  "honesty": [
+    "usable_fraction is measured, not assumed",
+    "a run with a majority of unusable frames is not handed to B as a valid S1 ID",
+    "a run whose source run_id is ambiguous is not handed to B either: no joined identifier is invented for it",
+    "every source byte is SHA-256 pinned, so this index can be re-derived"
+  ],
+  "index_version": "w09-run-index-v1",
+  "keys_unique": true,
+  "notes": [
+    "valid S1 IDs are a handoff to Member B (docs/05A \u00a718 Handoff)",
+    "a candidate is not a certified run; see run-registry.json for the gap",
+    "the artifact name 'CG-S1-H8C-600S' is a host label for this export file, not a device run_id: the source run_id segments are ambiguous and are listed in blocked_run_ids instead of being published to B"
+  ],
+  "runs": [
+    {
+      "boot_id": "56044b74",
+      "boot_id_status": "SOURCE_CARRIED_SINGLE",
+      "device_id": "NOT_CARRIED_BY_THIS_ENCODING",
+      "device_run_label": "H8C_BOX_COOLING_600S",
+      "firmware_version": "cg-w04-0.1.0",
+      "frames_thermally_usable_for_statistics": 940,
+      "frames_total": 957,
+      "frames_usable_for_baseline": 0,
+      "frames_usable_per_scenario": {
+        "HEALTHY_ELECTRICAL_RANGES": 0,
+        "S1_NORMAL_BASELINE": 0,
+        "S2_DOOR_DISTURBANCE": 0,
+        "S3_THERMAL_EFFECTIVENESS_DEGRADATION": 0,
+        "S4_ACTUATION_RESPONSE_FAULT": 0
+      },
+      "hardware_config_id": "CG-HW-001",
+      "is_physical_measurement": true,
+      "quality_counts": {
+        "DEGRADED": 0,
+        "INVALID": 17,
+        "UNKNOWN": 940,
+        "VALID": 0
+      },
+      "quality_counts_by_domain": {
+        "door": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "electrical": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "environment": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0
+        },
+        "producer": {
+          "DEGRADED": 940,
+          "INVALID": 17,
+          "UNKNOWN": 0,
+          "VALID": 0
+        },
+        "provenance": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        },
+        "sequence": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        },
+        "thermal": {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957
+        }
+      },
+      "run_id": null,
+      "run_id_status": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+      "run_ids": [
+        "run-00000000",
+        "run-00000001"
+      ],
+      "scenario_candidate": "S1_NORMAL_BASELINE",
+      "source_paths": [
+        "evidence/A/W04/tec-cooling-response-600s.csv"
+      ],
+      "source_sha256": {
+        "evidence/A/W04/tec-cooling-response-600s.csv": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+      },
+      "status_label": "REAL_DATA_ANALYZED",
+      "top_invalidation_reasons": {
+        "AIR_C_STATUS_ABSENT": 957,
+        "DOOR_POLARITY_UNCONFIRMED": 17,
+        "DOOR_STATE_UNKNOWN": 17,
+        "DOOR_STATUS_ABSENT": 957,
+        "ELECTRICAL_UNQUALIFIED": 2871,
+        "ENERGY_ACCUMULATOR_UNQUALIFIED": 957,
+        "MASKS_ABSENT": 957,
+        "POWER_W_STATUS_ABSENT": 957,
+        "RH_PCT_STATUS_ABSENT": 957,
+        "SNAPSHOT_INVALID": 17
+      },
+      "usable_fraction": 0.0
+    }
+  ],
+  "runs_total": 1,
+  "runs_usable_majority": 0,
+  "valid_s1_run_ids_for_member_b": []
+}
