@@ -7,8 +7,8 @@
       "frames_total": 957,
       "frames_usable_per_scenario": {
         "HEALTHY_ELECTRICAL_RANGES": 0,
-        "S1_NORMAL_BASELINE": 940,
-        "S2_DOOR_DISTURBANCE": 940,
+        "S1_NORMAL_BASELINE": 0,
+        "S2_DOOR_DISTURBANCE": 0,
         "S3_THERMAL_EFFECTIVENESS_DEGRADATION": 0,
         "S4_ACTUATION_RESPONSE_FAULT": 0
       },
