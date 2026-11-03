@@ -71,8 +71,8 @@
       "path": "evidence/A/W05/schema-fixture.json",
       "scenario_screen": null,
       "session": "W05 schema fixture",
-      "sha256": "056b841e9490f137cc953e1ab27fb83c3595740cd4a8025b81108bcc8c7ecabe",
-      "size_bytes": 8000,
+      "sha256": "1ffda6e667129242eb0381486aaa367d8ef0fb76255ec087c75a1e351bced032",
+      "size_bytes": 8552,
       "status_label": "HOST_VERIFIED"
     },
     {
@@ -89,8 +89,8 @@
       "path": "evidence/A/W06/demo-command-capture.log",
       "scenario_screen": null,
       "session": "W06 host harness",
-      "sha256": "6b83c45505702a603bf23af86e49842cf03cfb45d964e445bd66fb5d5c9513e1",
-      "size_bytes": 4536,
+      "sha256": "9a6a47a0119c9303cb8c24094b878c78e1999b538fd5267a17f0ead281b3ec06",
+      "size_bytes": 4668,
       "status_label": "HOST_VERIFIED"
     },
     {
@@ -116,7 +116,7 @@
     {
       "capture_id": "W07-PROBE-IDENTIFICATION",
       "eligibility": "PERMANENTLY_EXCLUDED",
-      "enforced_by": "cg_w09_validity.EXCLUDED_SESSION_CLASSES, tested in test_cg_w09_validity.py and test_cg_w10_door.py",
+      "enforced_by": "cg_w09_validity.EXCLUDED_SESSION_CLASSES, tested in test_cg_w09_validity.py (the W10 door tests of the stacked slice re-test the same refusal from the consumer side)",
       "location": "worktree A-W07-plant-repeatability/evidence/A/W07/probe-identification/",
       "reason": "every frame was taken with a hand on a probe; docs/05A \u00a718 A-W09-03 makes a manual touch a physical invalidation, so these frames may never enter S1/S2/S4 or any thermal-response statistic",
       "session_class": "PROBE_IDENTIFICATION"
@@ -133,7 +133,7 @@
       "action_required": "the H8 bench owner must commit the driver source; until then the mechanism is stated with its citation status, not with a quotation",
       "capture_id": "H8-DOOR-DRIVER-SOURCE",
       "claim_kept": "the contact polarity inverts every reading between the two settings, so door state needs a per-boot external attestation",
-      "claim_rests_on": "docs/01 \u00a78.1/\u00a78.2 plus the complementary mapping table in cg_w10_door.MAPPING_BY_POLARITY",
+      "claim_rests_on": "docs/01 \u00a78.1/\u00a78.2 plus the complementary mapping table that the W10 door slice stacked on this branch publishes as cg_w10_door.MAPPING_BY_POLARITY",
       "eligibility": "UNCITABLE_UNTRACKED_SOURCE",
       "location": "worktree A-W04-tec-commissioning/firmware/h8-bench/main/",
       "reason": "firmware/h8-bench/main/h8_door.c and the bench console driver are quoted by the W10 door analysis as the code-level reason a frame cannot name its own door state, but no git ref in this repository carries those files; the same rule that excludes the untracked H8 frames applies to untracked source",
