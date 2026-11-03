@@ -12,6 +12,8 @@ from cg_w24_final_freeze import (
     REQUIRED_INDEPENDENT_RUNS,
     STATUS_INSUFFICIENT,
     STATUS_SATISFIED,
+    STATUS_INSUFFICIENT,
+    STATUS_SATISFIED,
     SYSTEM_INTEGRATION_NOT_ASSERTABLE,
     VERDICT_DATA_INSUFFICIENT,
     VERDICT_PHYSICALLY_ACCEPTED,
@@ -245,15 +247,41 @@ class TestW24CensusIsNotClaimDriven(unittest.TestCase):
     def test_positive_control_genuine_independent_runs_are_accepted(self):
         recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
                 for i in range(REQUIRED_INDEPENDENT_RUNS)]
-        res = self.census(physical_runs_count=REQUIRED_INDEPENDENT_RUNS, physical_evidence=recs)
+        covered = {
+            "A-W04-03": {"status": STATUS_SATISFIED},
+            "A-W07-02": {"status": STATUS_SATISFIED},
+        }
+        res = self.census(physical_runs_count=REQUIRED_INDEPENDENT_RUNS,
+                          physical_evidence=recs, requirement_status=covered)
         self.assertEqual(res["physical_runs_verified"], REQUIRED_INDEPENDENT_RUNS)
         self.assertTrue(res["physical_acceptance_ready"])
         self.assertEqual(res["acceptance_verdict"], VERDICT_PHYSICALLY_ACCEPTED)
 
+    def test_runs_without_requirement_coverage_cannot_be_fully_accepted(self):
+        """Counts plus a satisfied run tally is still not a claim about requirements."""
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        res = self.census(physical_runs_count=REQUIRED_INDEPENDENT_RUNS, physical_evidence=recs)
+        self.assertEqual(res["physical_runs_verified"], REQUIRED_INDEPENDENT_RUNS)
+        self.assertFalse(res["physical_acceptance_ready"])
+        self.assertEqual(res["acceptance_verdict"], VERDICT_DATA_INSUFFICIENT)
+        self.assertNotEqual(res["handover_verdict"], "FULLY_ACCEPTED")
+
+    def test_unsatisfied_requirement_blocks_full_acceptance(self):
+        recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
+                for i in range(REQUIRED_INDEPENDENT_RUNS)]
+        covered = {
+            "A-W04-03": {"status": STATUS_SATISFIED},
+            "A-W08-01": {"status": STATUS_INSUFFICIENT},
+        }
+        res = self.census(physical_evidence=recs, requirement_status=covered)
+        self.assertFalse(res["physical_acceptance_ready"])
+
     def test_open_gates_with_verified_runs_stay_pending(self):
         recs = [self._mk(f"evidence/A/W24/run{i}.csv", i)
                 for i in range(REQUIRED_INDEPENDENT_RUNS)]
-        res = self.census(physical_evidence=recs, open_hardware_gates=["H-GATE-1"])
+        res = self.census(physical_evidence=recs, open_hardware_gates=["H-GATE-1"],
+                          requirement_status={"A-W04-03": {"status": STATUS_SATISFIED}})
         self.assertFalse(res["physical_acceptance_ready"])
         self.assertEqual(res["acceptance_verdict"], VERDICT_PHYSICAL_ACCEPTANCE_PENDING)
 
