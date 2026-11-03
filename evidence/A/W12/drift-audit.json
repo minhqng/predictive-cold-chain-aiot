@@ -189,14 +189,47 @@
     "what_a_would_sign": "the committed datasets are internally consistent within each configuration, but the mechanical and electrical-qualification items above must close before A contributes a signoff"
   },
   "hardware_config_signoff": {
+    "approval_record": {
+      "approved_by": null,
+      "approved_on": null,
+      "evidence_ref": null,
+      "provenance_sha256": null,
+      "provenance_source": null,
+      "reason": "no approval record was supplied",
+      "valid": false
+    },
+    "approval_record_fields_required": [
+      "approval",
+      "approved_by",
+      "approved_on",
+      "evidence_ref",
+      "provenance_source"
+    ],
     "captures_without_verified_configuration": [
       "tec-cooling-response-600s.csv"
     ],
     "configuration_signoff_status": "UNRESOLVED",
     "dataset_validity_table": [
       {
+        "approval_provenance": {
+          "approved_by": null,
+          "approved_on": null,
+          "evidence_ref": null,
+          "provenance_sha256": null,
+          "provenance_source": null,
+          "reason": "no approval record was supplied",
+          "valid": false
+        },
+        "authorized_provenance_valid": false,
         "capture": "tec-cooling-response-600s.csv",
         "config_verification": "UNVERIFIED",
+        "configuration_evidence": {
+          "installed_image_identity": true,
+          "physical_inspection_reference_valid": false,
+          "probe_role_labels": false,
+          "role_map_consistent_with_freeze": true,
+          "sensor_rom_readback": false
+        },
         "dataset_pooling_eligibility": [
           "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
           "CONSISTENT_WITH_FREEZE",
@@ -204,19 +237,43 @@
         ],
         "electrical_qualification": "UNQUALIFIED",
         "evidence_derived_config_identity": "config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED",
+        "evidence_reviewed": false,
+        "inspection_reference": {
+          "date": null,
+          "reason": "empty or placeholder reference",
+          "reference": "",
+          "reference_valid": false,
+          "sha256": null
+        },
         "intended_hardware_config": "CG-HW-001",
         "is_probe_identification": false,
         "physical_session_identity": [
           "56044b74"
         ],
+        "reference_valid": false,
+        "review_binding": {
+          "bound_reference": "",
+          "bound_sha256": null,
+          "reason": "empty or placeholder reference",
+          "reviewed": false
+        },
         "role_verdict": "CONSISTENT_WITH_FREEZE",
         "verification_open_items": [
-          "sensor ROM identity taken from the configuration table, not read back from the devices",
-          "probe role labels not asserted by the capture: {'t1': 'UNLABELLED', 't2': 'LABELLED', 't3': 'UNLABELLED', 't4': 'UNLABELLED'}",
-          "installed image not identified in the capture itself",
-          "no physical configuration inspection record (photo with scale, mounting method/height/clearance, terminal and conductor marking)"
+          "DS18B20 ROM identities read back from the devices, not copied from the configuration table",
+          "probe role labels asserted by the capture itself for every frozen slot (t1, t2, t3, t4)",
+          "a dated, repository-resolvable physical inspection record naming this configuration - reference validity only, not evidence that anyone reviewed it",
+          "EVIDENCE_REVIEWED: a named person must bind this inspection record by recomputed content hash and cover every inspected aspect (currently: empty or placeholder reference)",
+          "AUTHORIZED_PROVENANCE: an approval traceable outside the host tooling is required (currently: no approval record was supplied)"
         ]
       }
+    ],
+    "host_cannot_verify_human_authenticity": true,
+    "inspection_aspects_required": [
+      "sensor_fixtures",
+      "v1_mounting",
+      "terminals",
+      "fuse_body_marking",
+      "conductor_marking"
     ],
     "intended_hardware_config": "CG-HW-001",
     "must_not_pool": [
@@ -225,18 +282,39 @@
       "captures from different installed images (configuration identity differs)",
       "captures whose electrical qualification differs"
     ],
+    "physical_acceptance_pending": true,
     "poolable_groups": {
       "('config:image=01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f|limits=APPROVED', 'CONSISTENT_WITH_FREEZE', 'UNQUALIFIED')": [
         "tec-cooling-response-600s.csv"
       ]
     },
     "requirement": "A-W12-04",
+    "review_record_fields_required": [
+      "reviewed_by",
+      "reviewed_on",
+      "inspected_aspects",
+      "evidence"
+    ],
+    "verification_layers": {
+      "AUTHORIZED_PROVENANCE": "an approval of hardware-configuration-verification traced to a record outside the namespace this tool generates",
+      "EVIDENCE_REVIEWED": "a named person outside the host tooling bound each inspection record by recomputed SHA-256 and enumerated every inspected aspect",
+      "REFERENCE_VALID": "a dated, repository-resolvable, non-placeholder physical inspection record exists for every capture - the existence of a record, not an act by a person"
+    },
+    "verification_requirements": {
+      "installed_image_identity": "the installed image identified from this capture's own configuration identity",
+      "physical_inspection_reference_valid": "a dated, repository-resolvable physical inspection record naming this configuration - reference validity only, not evidence that anyone reviewed it",
+      "probe_role_labels": "probe role labels asserted by the capture itself for every frozen slot (t1, t2, t3, t4)",
+      "role_map_consistent_with_freeze": "no captured role token contradicts the operator-frozen slot->role map. This is a consistency test against the frozen map held in source; it is NOT proof that a probe has not physically moved since the freeze",
+      "sensor_rom_readback": "DS18B20 ROM identities read back from the devices, not copied from the configuration table"
+    },
+    "what_a_matching_hash_does_not_prove": "content binding only. It does not show that a physical inspection happened, that a probe has not moved since the freeze, or that a named person approved anything; those need the operator's own authorization provenance, which no host check can manufacture.",
     "what_the_label_is_not": "CG-HW-001 is the intended label for this rig from the W01 as-built record. It is not a verified identity, not a signoff, and not evidence that two captures share a physical configuration - that is what evidence_derived_config_identity and the pooling columns say.",
     "what_would_close_signoff": [
       "photograph the installed fuse body and conductor marking (see A-W12-03 items)",
       "read the DS18B20 ROMs back from the devices rather than from the config table",
       "assert probe roles in the capture, or record the mapping as a witnessed inspection",
-      "a named person signs the configuration record; a host audit cannot sign it"
+      "a named person reviews the dated inspection record and binds it by content hash",
+      "a named person authorises hardware-configuration-verification through provenance this tooling does not author; a host audit cannot sign it"
     ]
   },
   "mechanical_audit_checklist": [

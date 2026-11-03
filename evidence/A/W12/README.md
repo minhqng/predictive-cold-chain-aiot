@@ -1,6 +1,6 @@
 # A-W12 — Drift audit and Month-3 physical/data signoff inputs (Member A)
 
-Week: **W12** · Branch: `feat/a-w12-physical-readiness` · Owner: Member A
+Week: **W12** · Branch: `feat/a-w12-config-qa` · Owner: Member A
 Status: **HOST DRIFT AUDIT ONLY · NO HARDWARE · NO PHYSICAL SIGNOFF · G3 INPUT IS AN A-SIDE BLOCKED STATE**
 
 This dossier answers the Week-12 objective — *do the datasets collected so far
@@ -18,7 +18,7 @@ W12 is **not** a GREEN week.
 | **A-W12-01** sensor consistency recheck | Per-slot probe offset (mean) and chamber-air agreement grouped strictly by configuration; the TEC hot side is never folded into a chamber-air statistic | `cg_w12_drift_audit.py`, `drift-audit.json` |
 | **A-W12-02** PZEM zero/active audit | duty-0-with-current frames listed **individually** (never averaged), electrical figures labelled `UNQUALIFIED`, OFF/ON separation compared to the envelope | same |
 | **A-W12-03** mechanical audit | Machine-readable checklist: sensor fixtures, V1 mounting, terminals, fuse, cable positions — each with a status and the exact evidence that closes it | `mechanical-audit-checklist.csv` |
-| **A-W12-04** hardware-config signoff | Runs grouped under `CG-HW-001` with a configuration-grouped **dataset validity table** showing which captures may not be pooled | `dataset-validity.csv`, `drift-audit.json` |
+| **A-W12-04** hardware-config signoff | The dataset-validity table separates four different things - the rig's **intended label**, its **evidence-derived identity**, its **physical session identity** and its **verification status** - and verification is earned in three layers (`REFERENCE_VALID` record, hash-bound `EVIDENCE_REVIEWED`, externally traceable `AUTHORIZED_PROVENANCE`). Grouping and must-not-pool rules are computed today; every capture stays `config_verification: UNVERIFIED` and the signoff stays `UNRESOLVED`, because no review or human authorization exists yet | `dataset-validity.csv`, `drift-audit.json` |
 | **A-W12-05** gate G3 input | Member-A signoff input with named blockers; explicitly does **not** declare G3 GREEN | `gate-g3-input.json` |
 
 ## 2. Files

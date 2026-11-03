@@ -16,7 +16,11 @@ Artifacts:
     A-W12-03 as a flat table: item, check, status, what closes each item.
 
 ``dataset-validity.csv``
-    A-W12-04 configuration-grouped table showing which captures may not be pooled.
+    A-W12-04 configuration-grouped table: the intended label, the evidence-derived
+    identity, the physical session identity, the three verification layers
+    (reference / review / authorized provenance) each shown separately, the resulting
+    config_verification, and which captures may not be pooled. The nested per-layer
+    records themselves live in drift-audit.json.
 
 ``gate-g3-input.json``
     A-W12-05: the Member-A signoff input with named blockers and the explicit
@@ -51,6 +55,23 @@ def _strip_volatile(report: dict[str, object]) -> dict[str, object]:
     return report
 
 
+def _cell(value: object) -> object:
+    """Render one dataset-validity cell.
+
+    The dataset table now carries nested evidence (per-capture requirement booleans and
+    the open-item list), so the CSV must state the same facts the JSON does rather than
+    print a Python repr that a consumer could misread.
+    """
+    if isinstance(value, dict):
+        return ";".join(f"{key}={'met' if item is True else 'missing' if item is False else item}"
+                        for key, item in sorted(value.items()))
+    if isinstance(value, (list, tuple)):
+        return ";".join(str(item) for item in value)
+    if value is None:
+        return ""
+    return value
+
+
 def build_artifacts() -> dict[str, str]:
     paths = w12.default_captures()
     if not paths:
@@ -79,10 +100,14 @@ def build_artifacts() -> dict[str, str]:
 
     buf = io.StringIO()
     rows = report["hardware_config_signoff"]["dataset_validity_table"]
-    writer = csv.DictWriter(buf, fieldnames=list(rows[0].keys()), lineterminator="\n")
+    # The nested per-layer records are published in drift-audit.json; the CSV keeps the columns a
+    # consumer filters on, so a cell never buries a status under three paragraphs of reason text.
+    columns = [key for key in rows[0].keys()
+               if key not in {"inspection_reference", "review_binding", "approval_provenance"}]
+    writer = csv.DictWriter(buf, fieldnames=columns, lineterminator="\n")
     writer.writeheader()
     for r in rows:
-        writer.writerow(r)
+        writer.writerow({k: (_cell(r.get(k))) for k in columns})
     artifacts["dataset-validity.csv"] = buf.getvalue()
 
     return artifacts

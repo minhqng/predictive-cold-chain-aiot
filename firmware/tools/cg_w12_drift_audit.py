@@ -51,6 +51,7 @@ import datetime as _dt
 import hashlib
 import json
 import pathlib
+import re
 import statistics
 import sys
 
@@ -657,56 +658,307 @@ def mechanical_audit_checklist() -> list[dict[str, object]]:
 # A-W12-04 hardware config signoff + dataset validity table
 # ---------------------------------------------------------------------------
 INTENDED_HARDWARE_CONFIG = "CG-HW-001"   # the label W01's as-built record gives this rig
+# Verification is split into three layers that are earned separately, because a name is not
+# evidence, a readable file is not an inspection, and a matching hash is not a person's act:
+#   REFERENCE_VALID        a dated, resolvable, repository-relative record exists
+#   EVIDENCE_REVIEWED      a named person bound that exact record by recomputed content hash
+#   AUTHORIZED_PROVENANCE  an approval traceable to a record this tooling does not author
+# Only the third layer, on top of the other two, may produce a VERIFIED configuration - and even
+# then the claim is provenance-level. Host code cannot prove a physical inspection happened, that
+# a probe has not moved, or that a human intended anything, so physical acceptance stays pending.
+CONFIGURATION_EVIDENCE_REQUIREMENTS = {
+    "sensor_rom_readback": ("DS18B20 ROM identities read back from the devices, not copied "
+                            "from the configuration table"),
+    "probe_role_labels": ("probe role labels asserted by the capture itself for every frozen "
+                          "slot (t1, t2, t3, t4)"),
+    "role_map_consistent_with_freeze": ("no captured role token contradicts the operator-frozen "
+                                        "slot->role map. This is a consistency test against the "
+                                        "frozen map held in source; it is NOT proof that a probe "
+                                        "has not physically moved since the freeze"),
+    "installed_image_identity": ("the installed image identified from this capture's own "
+                                 "configuration identity"),
+    "physical_inspection_reference_valid": ("a dated, repository-resolvable physical inspection "
+                                            "record naming this configuration - reference "
+                                            "validity only, not evidence that anyone reviewed it"),
+}
+INSPECTION_ASPECTS = ("sensor_fixtures", "v1_mounting", "terminals", "fuse_body_marking",
+                      "conductor_marking")
+REVIEW_RECORD_FIELDS = ("reviewed_by", "reviewed_on", "inspected_aspects", "evidence")
+APPROVAL_RECORD_FIELDS = ("approval", "approved_by", "approved_on", "evidence_ref",
+                          "provenance_source")
+APPROVAL_SCOPE = "hardware-configuration-verification"
+PLACEHOLDER_REF_TOKENS = {"todo", "tbd", "none", "n/a", "na", "unknown", "x", "placeholder", "-"}
+SELF_AUTHORED_NAMESPACE = "evidence/A/W12"
+DATE_PATTERN = re.compile(r"20\d{2}-\d{2}-\d{2}")
+# A signoff is a person's act. These words name host machinery or roles, never an identifiable
+# human, so they can neither review a physical inspection nor approve a configuration.
+NON_HUMAN_PARTIES = ("host", "tool", "audit", "agent", "validator", "script", "python",
+                     "cg_w12_drift_audit", "validate_w12", "coordinator", "ci", "bot",
+                     "member a", "operator a", "system", "automation")
 
 
-def _verification_open_items(cap: dict[str, object]) -> list[str]:
-    """What is missing before this capture's configuration could be called verified.
+def _human_party(value: object) -> str:
+    """A named person, or the empty string when the value is host tooling, a role or absent."""
+    text_value = str(value or "").strip()
+    if not text_value:
+        return ""
+    if any(token in text_value.lower() for token in NON_HUMAN_PARTIES):
+        return ""
+    return text_value
 
-    Derived per capture rather than written once as a constant, so a future capture that
-    does carry ROM readback or labelled roles closes its own items instead of leaving a
-    hardcoded UNVERIFIED forever - and, the other way round, so nothing here can be read
-    as certified while the physical evidence is absent.
+
+def _traceable_ref(ref: object) -> dict[str, object]:
+    """REFERENCE_VALID: the record resolves in the repository, is dated, and is not a placeholder.
+
+    The weakest layer by design: nothing here shows a human looked at the rig, only that a
+    well-formed record exists at a path a consumer can open.
+    """
+    value = str(ref or "").strip()
+    out: dict[str, object] = {"reference": value, "reference_valid": False, "date": None,
+                              "sha256": None, "reason": "no reference given"}
+    if not value or value.lower() in PLACEHOLDER_REF_TOKENS:
+        out["reason"] = "empty or placeholder reference"
+        return out
+    if re.match(r"^[A-Za-z]:[\\/]", value) or value.startswith(("/", "~", "..")):
+        out["reason"] = "reference is not repository-relative"
+        return out
+    candidate = REPO_ROOT / value.replace("\\", "/")
+    if not candidate.is_file():
+        out["reason"] = "referenced record does not resolve in the repository"
+        return out
+    try:
+        data = candidate.read_bytes()
+    except OSError as exc:
+        out["reason"] = f"referenced record unreadable: {exc.__class__.__name__}"
+        return out
+    stamp = (DATE_PATTERN.search(candidate.name)
+             or DATE_PATTERN.search(data.decode("utf-8", errors="replace")[:8000]))
+    if stamp is None:
+        out["reason"] = ("no ISO YYYY-MM-DD date in the referenced record or its name, which is "
+                         "what a dated physical inspection asks for")
+        return out
+    out["reference_valid"] = True
+    out["date"] = stamp.group(0)
+    out["sha256"] = hashlib.sha256(data).hexdigest()
+    out["reason"] = ""
+    return out
+
+
+def _slot_tokens_disagree_with_freeze(tokens: dict[str, object]) -> bool:
+    """True when any captured role token conflicts with the operator-frozen map for its slot."""
+    for slot, role in FROZEN_SLOT_ROLES.items():
+        seen = tokens.get(slot) or []
+        names = [seen] if isinstance(seen, str) else list(seen)
+        frozen = role.upper()
+        for name in names:
+            token = str(name or "").strip().upper()
+            if not token or token in ROLE_UNASSIGNED_TOKENS:
+                continue
+            if token != frozen and token not in frozen and frozen not in token:
+                return True
+    return False
+
+
+def _configuration_evidence(cap: dict[str, object]) -> dict[str, bool]:
+    """The capture-side census, failing closed on absence and on contradiction.
+
+    ``probe_role_labels`` and ``role_map_consistent_with_freeze`` stay separate on purpose: four
+    slots can be fully labelled and still disagree with the freeze (a hot-side token in the centre
+    slot is labelled, not correct), and a labelled-but-contradictory rig must never be verifiable.
     """
     role = cap.get("role_geometry_audit", {}) or {}
-    items: list[str] = []
-    if not role.get("rom_readback_verified"):
-        items.append("sensor ROM identity taken from the configuration table, not read back "
-                     "from the devices")
     labels = role.get("role_label_status") or {}
-    if any(str(state).upper() != "LABELLED" for state in labels.values()):
-        items.append(f"probe role labels not asserted by the capture: {labels or 'none seen'}")
-    if not cap.get("image_sha256"):
-        items.append("installed image not identified in the capture itself")
-    items.append("no physical configuration inspection record (photo with scale, mounting "
-                 "method/height/clearance, terminal and conductor marking)")
+    frozen_slots = sorted(FROZEN_SLOT_ROLES)
+    labelled = bool(frozen_slots) and all(
+        str(labels.get(slot, "")).upper() == "LABELLED" for slot in frozen_slots)
+    contradictions = role.get("contradictions") or []
+    consistent = (not contradictions
+                  and str(role.get("verdict") or "").upper() == "CONSISTENT_WITH_FREEZE"
+                  and not _slot_tokens_disagree_with_freeze(
+                      role.get("slot_role_tokens_seen") or {}))
+    identity = str(cap.get("configuration") or "")
+    inspection = _traceable_ref(cap.get("physical_inspection_ref"))
+    return {
+        "sensor_rom_readback": bool(role.get("rom_readback_verified")),
+        "probe_role_labels": bool(labelled),
+        "role_map_consistent_with_freeze": bool(consistent),
+        "installed_image_identity": identity.startswith("config:image="),
+        "physical_inspection_reference_valid": bool(inspection["reference_valid"]),
+    }
+
+
+def _evidence_reviewed(cap: dict[str, object], review: object) -> dict[str, object]:
+    """EVIDENCE_REVIEWED: a named person bound THIS capture's record, by hash, aspect by aspect.
+
+    A plausible dated document that merely contains the expected words is not a review. The bound
+    hash is recomputed from the file, so a self-declared hash cannot drift, and host tooling or a
+    role name can never be the reviewer.
+    """
+    binding = _traceable_ref(cap.get("physical_inspection_ref"))
+    out: dict[str, object] = {"reviewed": False, "reason": "",
+                              "bound_reference": binding.get("reference"),
+                              "bound_sha256": binding.get("sha256")}
+    if not binding["reference_valid"]:
+        out["reason"] = str(binding.get("reason") or "reference not valid")
+        return out
+    if not isinstance(review, dict):
+        out["reason"] = "no operator review record was supplied"
+        return out
+    missing = [key for key in REVIEW_RECORD_FIELDS if not review.get(key)]
+    if missing:
+        out["reason"] = f"review record lacks {missing}"
+        return out
+    reviewer = _human_party(review.get("reviewed_by"))
+    if not reviewer:
+        out["reason"] = ("the reviewer is not a named person outside the host tooling; a tool "
+                         "cannot review a physical inspection")
+        return out
+    if not DATE_PATTERN.fullmatch(str(review.get("reviewed_on") or "").strip()):
+        out["reason"] = "review date is not an ISO YYYY-MM-DD"
+        return out
+    aspects = {str(item).strip() for item in (review.get("inspected_aspects") or [])}
+    gaps = [aspect for aspect in INSPECTION_ASPECTS if aspect not in aspects]
+    if gaps:
+        out["reason"] = f"review does not cover every inspected aspect, missing {gaps}"
+        return out
+    bound = {str(item.get("path")): str(item.get("sha256"))
+             for item in (review.get("evidence") or []) if isinstance(item, dict)}
+    declared = bound.get(str(binding["reference"]))
+    if declared is None:
+        out["reason"] = "the review record does not bind this capture's inspection reference"
+        return out
+    if declared != binding["sha256"]:
+        out["reason"] = ("the review binds a hash that does not match the referenced record: the "
+                         "document reviewed is not the document published")
+        return out
+    out.update({"reviewed": True, "reviewer": reviewer,
+                "reviewed_on": str(review["reviewed_on"]).strip(), "reason": ""})
+    return out
+
+
+def _approval_provenance(approval: object) -> dict[str, object]:
+    """AUTHORIZED_PROVENANCE: an approval traceable to a record this tooling does not author.
+
+    A matching hash proves content binding only, never that an inspection happened or that a
+    person approved anything. So an approval is not accepted merely because it carries a name, a
+    date and a correct hash: its provenance source must resolve, sit outside the namespace this
+    tool generates, name the configuration it approves, carry a date of its own, and the approving
+    party must be a person outside the host tooling. Even then the claim stays provenance-level.
+    """
+    out: dict[str, object] = {"valid": False, "reason": "", "approved_by": None,
+                              "approved_on": None, "evidence_ref": None,
+                              "provenance_source": None, "provenance_sha256": None}
+    if not isinstance(approval, dict):
+        out["reason"] = "no approval record was supplied"
+        return out
+    missing = [key for key in APPROVAL_RECORD_FIELDS
+               if not str(approval.get(key) or "").strip()]
+    if missing:
+        out["reason"] = f"approval record lacks {missing}"
+        return out
+    if str(approval.get("approval") or "").strip() != APPROVAL_SCOPE:
+        out["reason"] = f"approval does not declare {APPROVAL_SCOPE!r}; it authorises something else"
+        return out
+    person = _human_party(approval.get("approved_by"))
+    if not person:
+        out["reason"] = ("the approving party is not a named person outside the host tooling; no "
+                         "tool, agent, validator or role can sign a physical configuration off")
+        return out
+    if not DATE_PATTERN.fullmatch(str(approval.get("approved_on") or "").strip()):
+        out["reason"] = "approval date is not an ISO YYYY-MM-DD"
+        return out
+    source = str(approval.get("provenance_source") or "").strip().replace("\\", "/")
+    if source.lower().startswith(SELF_AUTHORED_NAMESPACE.lower()):
+        out["reason"] = ("the approval's provenance source sits inside the namespace this tool "
+                         "generates, so it is self-authored and cannot attest itself")
+        return out
+    binding = _traceable_ref(source)
+    if not binding["reference_valid"]:
+        out["reason"] = str(binding.get("reason") or "provenance source not resolvable")
+        return out
+    evidence = _traceable_ref(approval.get("evidence_ref"))
+    if not evidence["reference_valid"]:
+        out["reason"] = str(evidence.get("reason") or "approval evidence not resolvable")
+        return out
+    body = (REPO_ROOT / source).read_text(encoding="utf-8", errors="replace")
+    if INTENDED_HARDWARE_CONFIG not in body:
+        out["reason"] = (f"the provenance record never names the configuration it purports to "
+                         f"approve ({INTENDED_HARDWARE_CONFIG})")
+        return out
+    if not DATE_PATTERN.search(body):
+        out["reason"] = "the provenance record carries no date of its own"
+        return out
+    out.update({"valid": True, "approved_by": person,
+                "approved_on": str(approval["approved_on"]).strip(),
+                "evidence_ref": evidence["reference"], "provenance_source": source,
+                "provenance_sha256": binding["sha256"], "reason": ""})
+    return out
+
+
+def _verification_open_items(evidence: dict[str, bool], review: dict[str, object],
+                             provenance: dict[str, object]) -> list[str]:
+    """What is missing before this capture's configuration could be called verified.
+
+    Derived per capture rather than hardcoded, so a future capture that does carry ROM readback,
+    consistent labels, a pinned image and a traceable dated record closes its own items - and the
+    other way round, so nothing reads as certified while a layer is unmet. Review and approval are
+    listed apart from the evidence census because they are acts by a person, not properties of a
+    capture.
+    """
+    items = [CONFIGURATION_EVIDENCE_REQUIREMENTS[key]
+             for key, satisfied in evidence.items() if not satisfied]
+    if not review.get("reviewed"):
+        items.append("EVIDENCE_REVIEWED: a named person must bind this inspection record by "
+                     "recomputed content hash and cover every inspected aspect (currently: "
+                     f"{review.get('reason')})")
+    if not provenance.get("valid"):
+        items.append("AUTHORIZED_PROVENANCE: an approval traceable outside the host tooling is "
+                     f"required (currently: {provenance.get('reason')})")
     return items
 
 
-def hardware_config_signoff(captures: list[dict[str, object]]) -> dict[str, object]:
+def hardware_config_signoff(captures: list[dict[str, object]],
+                           review: dict[str, object] | None = None,
+                           approval: dict[str, object] | None = None
+                           ) -> dict[str, object]:
     """Separate what the rig is CALLED from what has been VERIFIED about it.
 
-    Four different things were collapsed into one field before: the intended label
-    CG-HW-001, the identity derived from capture evidence, the physical session identity,
-    and the signoff state. A dataset-validity row stamped hardware_config_id=CG-HW-001
-    reads like a certified configuration even while A-W12-04 signoff is unresolved, which
-    is how an unverified configuration gets pooled by a consumer that trusts the column.
+    Four different things were collapsed into one field before: the intended label CG-HW-001, the
+    identity derived from capture evidence, the physical session identity and the signoff state. A
+    dataset-validity row stamped ``hardware_config_id: CG-HW-001`` reads like a certified
+    configuration even while A-W12-04 signoff is unresolved, which is how an unverified
+    configuration gets pooled by a consumer that trusts the column.
 
-    Pooling eligibility is still computed, so legitimate comparisons across independent
-    sessions of one verified configuration remain possible; it is the *certification* that
-    this function refuses to imply.
+    A row is VERIFIED only when all three layers hold: every capture-side evidence requirement
+    (including role-map consistency with the freeze), a hash-bound named review of the physical
+    inspection record, and an approval traceable to provenance this tooling does not author. An
+    empty ``verification_open_items``, a resolvable file or a matching hash is not sufficient.
+    Pooling eligibility is still computed, so legitimate comparisons across independent sessions
+    of one configuration remain possible; it is the certification this refuses to imply.
     """
+    provenance = _approval_provenance(approval)
     rows = []
     for cap in captures:
         role = cap.get("role_geometry_audit", {}) or {}
         pzem = cap.get("pzem_audit", {}) or {}
-        open_items = _verification_open_items(cap)
+        evidence = _configuration_evidence(cap)
+        review_state = _evidence_reviewed(cap, review)
+        reference_valid = all(evidence.values())
+        verified = bool(reference_valid and review_state["reviewed"] and provenance["valid"])
         rows.append({
             "capture": cap.get("capture"),
             "intended_hardware_config": INTENDED_HARDWARE_CONFIG,
             "evidence_derived_config_identity": cap.get("configuration"),
             "physical_session_identity": sorted(cap.get("boot_ids") or []),
-            "config_verification": "UNVERIFIED" if open_items else "VERIFIED",
-            "verification_open_items": open_items,
+            "configuration_evidence": evidence,
+            "reference_valid": bool(reference_valid),
+            "evidence_reviewed": bool(review_state["reviewed"]),
+            "authorized_provenance_valid": bool(provenance["valid"]),
+            "inspection_reference": _traceable_ref(cap.get("physical_inspection_ref")),
+            "review_binding": review_state,
+            "approval_provenance": provenance,
+            "config_verification": "VERIFIED" if verified else "UNVERIFIED",
+            "verification_open_items": _verification_open_items(evidence, review_state, provenance),
             "is_probe_identification": role.get("is_probe_identification"),
             "role_verdict": role.get("verdict"),
             "electrical_qualification": pzem.get("electrical_qualification"),
@@ -717,22 +969,56 @@ def hardware_config_signoff(captures: list[dict[str, object]]) -> dict[str, obje
     for row in rows:
         groups.setdefault(str(row["dataset_pooling_eligibility"]), []).append(row["capture"])
     unverified = [row["capture"] for row in rows if row["config_verification"] == "UNVERIFIED"]
+    # READY_FOR_SIGNOFF needs every technical requirement AND the named reviews: a resolvable
+    # reference alone never lifts the state out of UNRESOLVED.
+    prerequisites = bool(rows) and all(row["reference_valid"] and row["evidence_reviewed"]
+                                      for row in rows)
+    if rows and not unverified:
+        signoff_status = "SIGNED_OFF"
+    elif prerequisites:
+        signoff_status = "READY_FOR_SIGNOFF"
+    else:
+        signoff_status = "UNRESOLVED"
     return {
         "requirement": "A-W12-04",
         "intended_hardware_config": INTENDED_HARDWARE_CONFIG,
-        "configuration_signoff_status": "UNRESOLVED" if unverified else "READY_FOR_SIGNOFF",
+        "configuration_signoff_status": signoff_status,
+        "verification_layers": {
+            "REFERENCE_VALID": ("a dated, repository-resolvable, non-placeholder physical "
+                                "inspection record exists for every capture - the existence of a "
+                                "record, not an act by a person"),
+            "EVIDENCE_REVIEWED": ("a named person outside the host tooling bound each inspection "
+                                  "record by recomputed SHA-256 and enumerated every inspected "
+                                  "aspect"),
+            "AUTHORIZED_PROVENANCE": ("an approval of hardware-configuration-verification traced "
+                                      "to a record outside the namespace this tool generates"),
+        },
+        "host_cannot_verify_human_authenticity": True,
+        "physical_acceptance_pending": not bool(provenance["valid"]),
+        "approval_record": provenance,
+        "approval_record_fields_required": list(APPROVAL_RECORD_FIELDS),
+        "review_record_fields_required": list(REVIEW_RECORD_FIELDS),
+        "inspection_aspects_required": list(INSPECTION_ASPECTS),
+        "verification_requirements": dict(CONFIGURATION_EVIDENCE_REQUIREMENTS),
         "captures_without_verified_configuration": unverified,
         "what_the_label_is_not": ("CG-HW-001 is the intended label for this rig from the W01 "
                                   "as-built record. It is not a verified identity, not a "
-                                  "signoff, and not evidence that two captures share a "
-                                  "physical configuration - that is what "
-                                  "evidence_derived_config_identity and the pooling columns "
-                                  "say."),
+                                  "signoff, and not evidence that two captures share a physical "
+                                  "configuration - that is what evidence_derived_config_identity "
+                                  "and the pooling columns say."),
+        "what_a_matching_hash_does_not_prove": ("content binding only. It does not show that a "
+                                                "physical inspection happened, that a probe has "
+                                                "not moved since the freeze, or that a named "
+                                                "person approved anything; those need the "
+                                                "operator's own authorization provenance, which "
+                                                "no host check can manufacture."),
         "what_would_close_signoff": [
             "photograph the installed fuse body and conductor marking (see A-W12-03 items)",
             "read the DS18B20 ROMs back from the devices rather than from the config table",
             "assert probe roles in the capture, or record the mapping as a witnessed inspection",
-            "a named person signs the configuration record; a host audit cannot sign it",
+            "a named person reviews the dated inspection record and binds it by content hash",
+            "a named person authorises hardware-configuration-verification through provenance "
+            "this tooling does not author; a host audit cannot sign it",
         ],
         "dataset_validity_table": rows,
         "poolable_groups": {g: names for g, names in groups.items()},
@@ -744,6 +1030,8 @@ def hardware_config_signoff(captures: list[dict[str, object]]) -> dict[str, obje
         ],
     }
 
+
+# ---------------------------------------------------------------------------
 
 # ---------------------------------------------------------------------------
 # A-W12-05 gate G3 input (A-side only, never a whole-team claim)

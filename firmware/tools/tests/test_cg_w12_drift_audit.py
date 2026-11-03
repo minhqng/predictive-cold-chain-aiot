@@ -13,6 +13,7 @@ import pathlib
 import sys
 import tempfile
 import unittest
+from unittest import mock
 
 # The W12 validator is imported below to unit-test its honesty helper. Importing
 # it would otherwise drop a ``validate_w12.*.pyc`` into the W12 dossier, which is
@@ -454,8 +455,9 @@ class ConfigIdentitySeparationTests(unittest.TestCase):
         self.assertEqual(len(out["poolable_groups"]), 2)
 
     def test_missing_image_evidence_is_named_as_an_open_item(self) -> None:
+        """Installed-image evidence comes from the configuration identity, not a side field."""
         cap = self._cap("a.csv", "img1", ["b1"])
-        cap["image_sha256"] = None
+        cap["configuration"] = "boot:b1|limits:UNRESOLVED|content:deadbeefdeadbeef"
         out = w12.hardware_config_signoff([cap])
         items = out["dataset_validity_table"][0]["verification_open_items"]
         self.assertTrue(any("image" in item.lower() for item in items), items)
@@ -465,6 +467,362 @@ class ConfigIdentitySeparationTests(unittest.TestCase):
                                                      roles_frozen=False)])
         items = out["dataset_validity_table"][0]["verification_open_items"]
         self.assertTrue(any("role labels" in item.lower() for item in items), items)
+
+
+class ConfigIdentityLayersTests(unittest.TestCase):
+    """Three layers, each earned separately: reference, hash-bound review, authorized provenance.
+
+    Inspection and approval references are repository-relative by contract, so each test points
+    ``w12.REPO_ROOT`` at a temp dir for its duration. No inspection, review or approval record is
+    ever written into the real repository, and no real capture is made to look verified.
+    """
+
+    ASPECTS = ("sensor_fixtures", "v1_mounting", "terminals", "fuse_body_marking",
+               "conductor_marking")
+
+    def setUp(self) -> None:
+        self._tmp = tempfile.TemporaryDirectory()
+        self.root = pathlib.Path(self._tmp.name)
+        patcher = mock.patch.object(w12, "REPO_ROOT", self.root)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+        self.addCleanup(self._tmp.cleanup)
+
+    def write_record(self, rel: str, *, date: str = "2026-11-03",
+                     body: str | None = None) -> str:
+        path = self.root / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(body if body is not None else (
+            f"# Physical configuration inspection {date}\n\n"
+            "CG-HW-001: sensor fixtures, V1 mounting, terminals, the fuse body marking and the "
+            "conductor marking were inspected.\n"), encoding="utf-8", newline="\n")
+        return rel
+
+    def review(self, ref: str, *, reviewer: str = "V. Nguyen", on: str = "2026-11-03",
+               aspects=None, sha: str | None = None, bind: bool = True) -> dict:
+        return {"reviewed_by": reviewer, "reviewed_on": on,
+                "inspected_aspects": list(aspects if aspects is not None else self.ASPECTS),
+                "evidence": [{"path": ref, "sha256": sha if sha is not None
+                              else w12._traceable_ref(ref)["sha256"]}] if bind else []}
+
+    def approval(self, ref: str, *, by: str = "V. Nguyen", on: str = "2026-11-03",
+                 scope: str | None = None, source: str | None = None) -> dict:
+        return {"approval": scope or w12.APPROVAL_SCOPE, "approved_by": by, "approved_on": on,
+                "evidence_ref": ref, "provenance_source": source or ref}
+
+    def capture(self, ref: str | None = None) -> dict:
+        cap = {"capture": "a.csv", "configuration": "config:image=img1|limits=APPROVED",
+               "boot_ids": ["b1"],
+               "role_geometry_audit": {
+                   "is_probe_identification": False, "rom_readback_verified": True,
+                   "role_label_status": {s: "LABELLED" for s in ("t1", "t2", "t3", "t4")},
+                   "slot_role_tokens_seen": {"t1": ["CHAMBER_CENTER"], "t2": ["TEC_HOT_SIDE"],
+                                             "t3": ["CHAMBER_BOTTOM"],
+                                             "t4": ["CHAMBER_NEAR_DOOR"]},
+                   "contradictions": [], "verdict": "CONSISTENT_WITH_FREEZE"},
+               "pzem_audit": {"electrical_qualification": "UNQUALIFIED"}}
+        if ref is not None:
+            cap["physical_inspection_ref"] = ref
+        return cap
+
+    def test_placeholder_references_never_satisfy_the_inspection_requirement(self) -> None:
+        for bad in ("", "   ", "TODO", "x", "none", "unknown", "C:/absolute/path.md",
+                    "/home/op/x.md", "evidence/A/W04/no-such-record-2026-11-03.md"):
+            self.assertFalse(w12._traceable_ref(bad)["reference_valid"], bad)
+
+    def test_reference_valid_alone_is_not_a_review_and_not_an_approval(self) -> None:
+        """F-3/F-4: a dated file on disk proves only that a record exists."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        out = w12.hardware_config_signoff([self.capture(ref)])
+        row = out["dataset_validity_table"][0]
+        self.assertTrue(row["reference_valid"], row["inspection_reference"])
+        self.assertFalse(row["evidence_reviewed"])
+        self.assertFalse(row["authorized_provenance_valid"])
+        self.assertEqual(row["config_verification"], "UNVERIFIED")
+        self.assertEqual(out["configuration_signoff_status"], "UNRESOLVED",
+                         "REFERENCE_VALID alone must not reach READY_FOR_SIGNOFF")
+
+    def test_review_without_approval_reaches_ready_for_signoff(self) -> None:
+        """F-5: prerequisites complete, approval absent -> READY_FOR_SIGNOFF, still UNVERIFIED."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        out = w12.hardware_config_signoff([self.capture(ref)], review=self.review(ref))
+        row = out["dataset_validity_table"][0]
+        self.assertTrue(row["evidence_reviewed"], row["review_binding"])
+        self.assertEqual(out["configuration_signoff_status"], "READY_FOR_SIGNOFF")
+        self.assertEqual(row["config_verification"], "UNVERIFIED")
+        self.assertTrue(out["physical_acceptance_pending"])
+
+    def test_missing_review_blocks_ready_for_signoff(self) -> None:
+        """F-5 regression: every evidence flag satisfied, no hash-bound review -> UNRESOLVED."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        cap = self.capture(ref)
+        self.assertTrue(all(w12._configuration_evidence(cap).values()), cap)
+        out = w12.hardware_config_signoff([cap], approval=self.approval(ref))
+        self.assertEqual(out["configuration_signoff_status"], "UNRESOLVED")
+        self.assertEqual(out["dataset_validity_table"][0]["config_verification"], "UNVERIFIED")
+
+    def test_unrelated_dated_document_is_not_the_bound_evidence(self) -> None:
+        """F-4 adversarial: plausible, dated, keyword-matching, but not the bound record."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        decoy = self.write_record("inspection-2026-11-03-decoy.md",
+                                  body="# Inspection note 2026-11-03\n\n"
+                                       "CG-HW-001 fuse and conductor markings were discussed.\n")
+        wrong = self.review(ref, sha=w12._traceable_ref(decoy)["sha256"])
+        row = w12.hardware_config_signoff([self.capture(ref)],
+                                          review=wrong)["dataset_validity_table"][0]
+        self.assertFalse(row["evidence_reviewed"])
+        self.assertIn("does not match", str(row["review_binding"]["reason"]))
+
+    def test_a_review_missing_an_aspect_is_not_a_review(self) -> None:
+        ref = self.write_record("inspection-2026-11-03.md")
+        partial = self.review(ref, aspects=list(self.ASPECTS[:3]))
+        row = w12.hardware_config_signoff([self.capture(ref)],
+                                          review=partial)["dataset_validity_table"][0]
+        self.assertFalse(row["evidence_reviewed"])
+        self.assertIn("missing", str(row["review_binding"]["reason"]))
+
+    def test_a_name_date_and_matching_hash_alone_do_not_authorize(self) -> None:
+        """F-4 correction 2: a record this tooling authored cannot attest a human approval."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        cap, review = self.capture(ref), self.review(ref)
+        inside = self.write_record("evidence/A/W12/approval-2026-11-03.md")
+        out = w12.hardware_config_signoff([cap], review=review,
+                                          approval=self.approval(ref, source=inside))
+        self.assertFalse(out["dataset_validity_table"][0]["authorized_provenance_valid"])
+        self.assertIn("self-authored", str(out["approval_record"]["reason"]))
+        for fake in ("Member A coordinator", "validate_w12", "the host audit", "CI bot"):
+            out = w12.hardware_config_signoff([cap], review=review,
+                                              approval=self.approval(ref, by=fake))
+            self.assertFalse(out["dataset_validity_table"][0]["authorized_provenance_valid"],
+                             fake)
+
+    def test_approval_provenance_must_name_the_configuration_it_approves(self) -> None:
+        """A dated record that never names CG-HW-001 cannot authorize its configuration."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        unrelated = self.write_record("unrelated-2026-11-03.md",
+                                      body="# Bench note 2026-11-03\n\nNothing here names "
+                                           "the rig configuration.\n")
+        out = w12.hardware_config_signoff(
+            [self.capture(ref)], review=self.review(ref),
+            approval=self.approval(ref, source=unrelated))
+        self.assertFalse(out["dataset_validity_table"][0]["authorized_provenance_valid"])
+        self.assertIn("never names the configuration", str(out["approval_record"]["reason"]))
+        control = w12.hardware_config_signoff(
+            [self.capture(ref)], review=self.review(ref),
+            approval=self.approval(ref, source="inspection-2026-11-03.md"))
+        self.assertTrue(control["dataset_validity_table"][0]["authorized_provenance_valid"],
+                        control["approval_record"])
+
+    def test_incomplete_approval_record_falls_back_to_ready_for_signoff(self) -> None:
+        """F-5 regression: a partial approval must not sign anything off."""
+        ref = self.write_record("inspection-2026-11-03.md")
+        cap, review, full = self.capture(ref), self.review(ref), self.approval(ref)
+        self.assertTrue(w12.hardware_config_signoff(
+            [cap], review=review, approval=full)["dataset_validity_table"][0]
+            ["authorized_provenance_valid"])
+        for field in tuple(full):
+            partial = dict(full, **{field: ""})
+            out = w12.hardware_config_signoff([cap], review=review, approval=partial)
+            self.assertEqual(out["configuration_signoff_status"], "READY_FOR_SIGNOFF",
+                             f"a blank {field} still signed the configuration off")
+            self.assertEqual(out["dataset_validity_table"][0]["config_verification"],
+                             "UNVERIFIED", field)
+
+    def test_signed_off_state_requires_all_three_layers(self) -> None:
+        ref = self.write_record("inspection-2026-11-03.md")
+        out = w12.hardware_config_signoff([self.capture(ref)], review=self.review(ref),
+                                          approval=self.approval(ref))
+        row = out["dataset_validity_table"][0]
+        self.assertEqual(out["configuration_signoff_status"], "SIGNED_OFF")
+        self.assertEqual(row["config_verification"], "VERIFIED")
+        self.assertFalse(out["physical_acceptance_pending"])
+        self.assertTrue(out["host_cannot_verify_human_authenticity"],
+                        "even SIGNED_OFF must not claim proof of a human act")
+
+
+class ConfigIdentityRoleConsistencyTests(unittest.TestCase):
+    """F-1: a fully labelled capture whose role map contradicts the freeze is never verifiable."""
+
+    @staticmethod
+    def _cap(**changes):
+        base = {"capture": "a.csv", "configuration": "config:image=img1|limits=APPROVED",
+                "boot_ids": ["b1"],
+                "role_geometry_audit": {
+                    "is_probe_identification": False, "rom_readback_verified": True,
+                    "role_label_status": {s: "LABELLED" for s in ("t1", "t2", "t3", "t4")},
+                    "slot_role_tokens_seen": {"t1": ["CHAMBER_CENTER"], "t2": ["TEC_HOT_SIDE"],
+                                              "t3": ["CHAMBER_BOTTOM"],
+                                              "t4": ["CHAMBER_NEAR_DOOR"]},
+                    "contradictions": [], "verdict": "CONSISTENT_WITH_FREEZE"},
+                "pzem_audit": {"electrical_qualification": "UNQUALIFIED"}}
+        base.update(changes)
+        return base
+
+    def test_labelled_but_contradictory_t2_is_not_consistent(self) -> None:
+        cap = self._cap()
+        cap["role_geometry_audit"] = dict(
+            cap["role_geometry_audit"],
+            slot_role_tokens_seen={"t1": ["CHAMBER_CENTER"], "t2": ["CHAMBER_CENTER"],
+                                   "t3": ["CHAMBER_BOTTOM"], "t4": ["CHAMBER_NEAR_DOOR"]},
+            verdict="ROLE_DISAGREEMENT",
+            contradictions=[{"slot": "t2", "observed_role": "CHAMBER_CENTER",
+                             "kind": "ROLE_CONTRADICTION"}])
+        evidence = w12._configuration_evidence(cap)
+        self.assertTrue(evidence["probe_role_labels"], "labels are present; consistency is not")
+        self.assertFalse(evidence["role_map_consistent_with_freeze"])
+        out = w12.hardware_config_signoff([cap])
+        self.assertEqual(out["dataset_validity_table"][0]["config_verification"], "UNVERIFIED")
+        self.assertEqual(out["configuration_signoff_status"], "UNRESOLVED")
+
+    def test_probe_identification_capture_never_becomes_a_verified_configuration(self) -> None:
+        cap = self._cap()
+        cap["role_geometry_audit"] = dict(cap["role_geometry_audit"],
+                                          verdict="PROBE_IDENTIFICATION_EXCLUDED",
+                                          is_probe_identification=True,
+                                          role_label_status={}, slot_role_tokens_seen={})
+        self.assertFalse(w12._configuration_evidence(cap)["probe_role_labels"])
+        self.assertFalse(w12._configuration_evidence(cap)["role_map_consistent_with_freeze"])
+
+    def test_unlabelled_slots_are_named_as_an_open_item(self) -> None:
+        cap = self._cap()
+        cap["role_geometry_audit"] = dict(cap["role_geometry_audit"],
+                                          role_label_status={"t1": "UNLABELLED"},
+                                          slot_role_tokens_seen={"t2": ["TEC_HOT_SIDE"]},
+                                          verdict="ROLES_UNASSIGNED_LABEL_GAP")
+        out = w12.hardware_config_signoff([cap])
+        items = out["dataset_validity_table"][0]["verification_open_items"]
+        self.assertTrue(any("probe role labels" in item.lower() for item in items), items)
+
+    def test_missing_image_evidence_is_named_as_an_open_item(self) -> None:
+        cap = self._cap(configuration="boot:b1|limits:UNRESOLVED|content:deadbeef")
+        out = w12.hardware_config_signoff([cap])
+        items = out["dataset_validity_table"][0]["verification_open_items"]
+        self.assertTrue(any("installed image" in item.lower() for item in items), items)
+
+    def test_two_independent_boots_of_one_identity_stay_poolable(self) -> None:
+        first, second = self._cap(), dict(self._cap(), boot_ids=["b2"])
+        out = w12.hardware_config_signoff([first, second])
+        self.assertEqual(len(out["poolable_groups"]), 1,
+                         "a legitimate two-session comparison was split")
+
+    def test_different_images_never_share_a_pooling_group(self) -> None:
+        first = self._cap()
+        second = dict(first, configuration="config:image=img2|limits=APPROVED")
+        self.assertEqual(len(w12.hardware_config_signoff([first, second])["poolable_groups"]), 2)
+
+    def test_contradictory_geometry_cannot_be_pooled_as_one_verified_config(self) -> None:
+        good = self._cap()
+        clash = dict(good, role_geometry_audit=dict(good["role_geometry_audit"],
+                                                    verdict="ROLE_DISAGREEMENT"))
+        self.assertEqual(len(w12.hardware_config_signoff([good, clash])["poolable_groups"]), 2)
+
+    def test_a_capture_with_no_provenance_fields_stays_unverified(self) -> None:
+        out = w12.hardware_config_signoff([{"capture": "mystery.csv"}])
+        row = out["dataset_validity_table"][0]
+        self.assertEqual(row["config_verification"], "UNVERIFIED")
+        self.assertTrue(row["verification_open_items"])
+
+
+class ConfigIdentityValidatorTests(unittest.TestCase):
+    """F-2: validate_w12 must fail the identity defect itself, not a stale hash.
+
+    Fixtures carry a capture name that resolves to no file, so the independent layer refuses
+    rather than trusting the published census; the committed-capture cases live in the mutation
+    battery, which regenerates pins and still expects a semantic failure.
+    """
+
+    @staticmethod
+    def _audit(row_changes=None, **signoff_changes):
+        row = {"capture": "uncommitted-fixture.csv",
+               "intended_hardware_config": w12.INTENDED_HARDWARE_CONFIG,
+               "evidence_derived_config_identity": "config:image=img1|limits=APPROVED",
+               "physical_session_identity": ["b1"],
+               "configuration_evidence": {key: False for key in
+                                          w12.CONFIGURATION_EVIDENCE_REQUIREMENTS
+                                          if key != "installed_image_identity"},
+               "reference_valid": False, "evidence_reviewed": False,
+               "authorized_provenance_valid": False,
+               "inspection_reference": {"reference": "", "reference_valid": False},
+               "review_binding": {"reviewed": False, "reason": "no operator review record was "
+                                                                "supplied"},
+               "approval_provenance": {"valid": False, "reason": "no approval record was supplied"},
+               "config_verification": "UNVERIFIED",
+               "verification_open_items": ["something is still open"],
+               "is_probe_identification": False, "role_verdict": "CONSISTENT_WITH_FREEZE",
+               "electrical_qualification": "UNQUALIFIED",
+               "dataset_pooling_eligibility": ("c", "CONSISTENT_WITH_FREEZE", "UNQUALIFIED")}
+        row.update(row_changes or {})
+        signoff = {"requirement": "A-W12-04",
+                   "intended_hardware_config": w12.INTENDED_HARDWARE_CONFIG,
+                   "configuration_signoff_status": "UNRESOLVED",
+                   "host_cannot_verify_human_authenticity": True,
+                   "physical_acceptance_pending": True,
+                   "approval_record": {"valid": False},
+                   "verification_layers": {"REFERENCE_VALID": "a dated resolvable record",
+                                           "EVIDENCE_REVIEWED": "a named person bound it by hash",
+                                           "AUTHORIZED_PROVENANCE": "external approval"},
+                   "dataset_validity_table": [row]}
+        signoff.update(signoff_changes)
+        return {"captures": [], "hardware_config_signoff": signoff}
+
+    def test_a_claim_without_a_resolvable_capture_is_refused(self) -> None:
+        failed = validate_w12.check_config_identity_claims(self._audit())
+        self.assertTrue(any("no committed capture file" in f for f in failed), failed)
+
+    def test_the_bare_config_id_column_is_rejected_whatever_the_label_says(self) -> None:
+        """F-6 sibling: the guard no longer depends on the literal CG-HW-001."""
+        for label in (w12.INTENDED_HARDWARE_CONFIG, "CG-HW-999"):
+            audit = self._audit(row_changes={"hardware_config_id": label,
+                                             "intended_hardware_config": label})
+            failed = validate_w12.check_config_identity_claims(audit)
+            self.assertTrue(any("hardware_config_id" in f for f in failed), (label, failed))
+
+    def test_verified_row_without_a_layer_is_rejected(self) -> None:
+        for changes in ({"config_verification": "VERIFIED", "verification_open_items": []},
+                        {"config_verification": "VERIFIED", "verification_open_items": [],
+                         "reference_valid": True},
+                        {"config_verification": "VERIFIED", "verification_open_items": [],
+                         "reference_valid": True, "evidence_reviewed": True}):
+            failed = validate_w12.check_config_identity_claims(self._audit(row_changes=changes))
+            self.assertTrue(failed, f"{sorted(changes)} slipped through")
+
+    def test_review_and_authorization_are_not_capture_evidence(self) -> None:
+        census = dict(w12.CONFIGURATION_EVIDENCE_REQUIREMENTS)
+        changes = {"config_verification": "VERIFIED", "verification_open_items": [],
+                   "reference_valid": True, "evidence_reviewed": True,
+                   "authorized_provenance_valid": True,
+                   "configuration_evidence": {"sensor_rom_readback": True,
+                                              "probe_role_labels": True,
+                                              "role_map_consistent_with_freeze": True,
+                                              "installed_image_identity": True,
+                                              "physical_inspection_reference_valid": True,
+                                              "evidence_reviewed": True}}
+        failed = validate_w12.check_config_identity_claims(self._audit(row_changes=changes))
+        self.assertTrue(any("human acts" in f for f in failed), failed)
+        self.assertTrue(census)
+
+    def test_state_machine_combinations_are_rejected(self) -> None:
+        cases = [{"configuration_signoff_status": "SIGNED_OFF"},
+                 {"configuration_signoff_status": "READY_FOR_SIGNOFF"},
+                 {"configuration_signoff_status": "NOT_A_STATE"},
+                 {"configuration_signoff_status": "SIGNED_OFF",
+                  "physical_acceptance_pending": True}]
+        for changes in cases:
+            failed = validate_w12.check_config_identity_claims(self._audit(**changes))
+            self.assertTrue(failed, f"{changes} slipped through")
+
+    def test_dossier_cannot_claim_verification_the_artifact_withholds(self) -> None:
+        claim = ("| **A-W12-04** | Hardware config signoff under `CG-HW-001` "
+                 "| **HOST_VERIFIED** | all committed captures are under the verified "
+                 "configuration |")
+        self.assertTrue(validate_w12.claims_verified_configuration(claim))
+        for honest in (
+                "| **A-W12-04** | signoff inputs for `CG-HW-001` | **HOST_ANALYZED / "
+                "SIGNOFF_UNRESOLVED** | `config_verification: UNVERIFIED` |",
+                "CG-HW-001 is the intended label; it is not a verified identity and no "
+                "signoff was issued.",
+                "The validity table never claims the hardware configuration was verified."):
+            self.assertEqual(validate_w12.claims_verified_configuration(honest), [], honest)
 
 
 class ConductorUnitTests(unittest.TestCase):
