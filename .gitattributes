@@ -1,5 +1,4 @@
 * text=auto eol=lf
-
 *.png binary
 *.jpg binary
 *.jpeg binary
@@ -7,7 +6,6 @@
 *.webp binary
 *.pdf binary
 *.mp4 binary
-
 # W03 bench archives: raw captures, firmware sketches and collectors must keep
 # their exact bytes because the SHA-256 values are pinned in SHA256SUMS.txt and
 # verified by verify_capture.py / verify_test132b.py. Without `-text`, a clean
@@ -20,7 +18,6 @@ evidence/A/W03/hardware-2026-10-27/firmware/** -text
 evidence/A/W03/build-native-windows-2026-10-27/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28-integrated/raw/** -text
-
 # W04 commissioning dossier: raw H6 serial captures, the G1/G2a host logs, the
 # 2026-10-29 IDF build logs and the 2026-11-01 delivery build log keep their
 # exact bytes, because validate_w04.py pins their SHA-256 in SHA256SUMS.txt and
@@ -29,117 +26,59 @@ evidence/A/W04/h6/** -text
 evidence/A/W04/g1/** -text
 evidence/A/W04/g2a/** -text
 evidence/A/W04/build-2026-11-01/** -text
-
 # W05 telemetry dossier: every file in evidence/A/W05/ is hash-pinned in
 # SHA256SUMS.txt and re-verified by validate_w05.py. The IDF build log and the
 # derived JSON/CSV must keep their exact bytes, because `text=auto eol=lf` would
 # rewrite line endings on a checkout with core.autocrlf and break every pin.
 evidence/A/W05/** -text
-
 # W06 command/ACK dossier: every file is hash-pinned in evidence/A/W06/SHA256SUMS.txt
 # and re-verified by validate_w06.py. The generated JSON/JSONL artifacts and the IDF
 # build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W06/** -text
-<<<<<<< HEAD
-<<<<<<< HEAD
 # W07 repeatability dossier: hash-pinned in evidence/A/W07/SHA256SUMS.txt and
 # re-checked by validate_w07.py. The generated JSON/JSONL/CSV must keep their exact
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
-
-<<<<<<< HEAD
 # Member A handoff contracts rehomed into W07
 evidence/A/HANDOFF/** -text
-
-<<<<<<< HEAD
 # W08 envelope/Gate-A dossier: hash-pinned in evidence/A/W08/SHA256SUMS.txt and
 # re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
 # those bytes on a core.autocrlf checkout and break every pin.
 evidence/A/W08/** -text
-<<<<<<< HEAD
-=======
 # W11 S4/refusal dossier: hash-pinned in evidence/A/W11/SHA256SUMS.txt and
 # re-checked by validate_w11.py; `* text=auto eol=lf` would rewrite those bytes on a
 # core.autocrlf checkout and break every pin.
 evidence/A/W11/** -text
->>>>>>> origin/feat/a-w11-refusal-protocol
-=======
-
 # W12 configuration/data-QA dossier: every file is hash-pinned in
 # evidence/A/W12/SHA256SUMS.txt and re-checked by validate_w12.py, so the generated
 # JSON/CSV must keep their exact bytes. The repo default `* text=auto eol=lf` would
 # rewrite them on a checkout with core.autocrlf and break every pin.
 evidence/A/W12/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w12-config-qa
-=======
-
 # W13 dossier: every file is hash-pinned in evidence/A/W13/SHA256SUMS.txt
 # and re-checked by validate_w13.py; `text=auto eol=lf` would rewrite those bytes
 # on a checkout with core.autocrlf and break every pin.
 evidence/A/W13/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w13-response-timing
-=======
 # W14 spatial/position QA dossier: every file is hash-pinned in
 # evidence/A/W14/SHA256SUMS.txt and re-checked by validate_w14.py, so the generated
 # JSON/CSV must keep their exact bytes. `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W14/** -text
->>>>>>> origin/feat/a-w14-spatial-statistics
-=======
-
 # W15 PZEM-integrity dossier: hash-pinned in evidence/A/W15/SHA256SUMS.txt and
 # re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
 evidence/A/W15/** -text
->>>>>>> origin/feat/a-w15-pzem-integrity
-=======
-
 # W16 comparability dossier: every file is hash-pinned in evidence/A/W16/SHA256SUMS.txt
 # and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
 # those bytes on a checkout with core.autocrlf and break every pin.
 evidence/A/W16/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w16-comparability
-=======
-
 evidence/A/W17/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w17-shadow-mode
-=======
-
 evidence/A/W18/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w18-controller-b-enablement
-=======
-
 evidence/A/W19/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w19-campaign-wave1
-=======
-
 evidence/A/W20/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w20-campaign-wave2
-=======
-
 evidence/A/W21/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w21-reliability-soak
-=======
-
 evidence/A/W22/** -text
-<<<<<<< HEAD
->>>>>>> origin/feat/a-w22-evidence-gap-repair
-=======
-
 # Member A release-candidate dossier: every file is hash-pinned in
-evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
+# evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
 evidence/A/RC/** -text
->>>>>>> origin/feat/a-w23-demo-recovery
-=======
-
 evidence/A/W24/** -text
->>>>>>> origin/feat/a-w24-final-acceptance
