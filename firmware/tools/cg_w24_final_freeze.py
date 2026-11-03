@@ -553,6 +553,7 @@ def collate_acceptance_census(
     physical_evidence: Optional[List[Dict[str, Any]]] = None,
     repo_root: Any = None,
     expected_hardware_config_id: Optional[str] = None,
+    requirement_status: Optional[Dict[str, Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """A-W24-04: Structured Member A final acceptance package census.
 
@@ -589,17 +590,27 @@ def collate_acceptance_census(
                 weeks_without_dossier.append(f"W{week:02d}")
 
     software_ready = all_weeks_delivered
+    requirements_covered = bool(requirement_status) and all(
+        entry.get("status") == STATUS_SATISFIED for entry in requirement_status.values()
+    )
     physical_ready = (
         software_ready
         and not gate_register_absent
         and len(gates) == 0
         and posture_safe
         and not weeks_without_dossier
+        and requirements_covered
         and verification.independent_run_count >= REQUIRED_INDEPENDENT_RUNS
     )
 
     if not software_ready:
         acceptance_verdict = VERDICT_INCOMPLETE
+    elif not requirements_covered:
+        # Physical acceptance is a claim about requirements, not about run counts. Runs
+        # of one evidence class cannot certify requirements that need another class, so
+        # a census without satisfied requirement coverage refuses for lack of evidence
+        # rather than reading as "almost accepted".
+        acceptance_verdict = VERDICT_DATA_INSUFFICIENT
     elif physical_ready:
         acceptance_verdict = VERDICT_PHYSICALLY_ACCEPTED
     elif gate_register_absent or (verification.refusals and not verification.counted_boot_identities):
