@@ -29,7 +29,8 @@ def telem_line(seq: int = 1, uptime_ms: int = 1_000_000,
                output_stage: str = "DISABLED", state: str = "OFF",
                cooling: str = "OFF", boot: str = "abcd0123",
                fault: str = "0x00000000", humidity: float | None = None,
-               ambient: float | None = None) -> str:
+               ambient: float | None = None, supervised: int = 0,
+               interlock: str = "ABSENT", bench_policy: str = "NORMAL") -> str:
     line = fixture("telem_schema3.txt")
     line = _set(line, "seq", seq)
     line = _set(line, "uptime_ms", uptime_ms)
@@ -60,6 +61,8 @@ def telem_line(seq: int = 1, uptime_ms: int = 1_000_000,
     if ambient is not None:
         line = _set(line, "t_ambient_c", f"{ambient:.2f}")
         line = _set(line, "t_ambient_status", "OK")
+    line += (f" supervised_bench={supervised} supervised_authorized=0"
+             f" interlock={interlock} bench_policy={bench_policy}")
     return line
 
 
@@ -103,6 +106,9 @@ def h8_boot_lines(token: str = "DEADBEEF", boot_id: str = "b45af2ff") -> list[st
         "interlock=NOT_INSTALLED snapshot_ms=1000 host_ack_timeout_ms=3000 reset_marker=1",
         "#CG H8 BOOT_OFF_CURRENT off_current_limit_a=0.200 off_current_approved=1 "
         "off_current_test_enforce=0",
+        "#CG TEC_LIMITS test_mode=BENCH_ENDURANCE operator_approved=1 "
+        "simulated_enforcement=0 policy_enabled=1 required_mask=0x4f "
+        "required_resolved=1 all_resolved=0 stage_f_guard=1 endurance_stages=0",
     ]
 
 

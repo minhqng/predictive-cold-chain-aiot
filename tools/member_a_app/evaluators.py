@@ -814,6 +814,20 @@ def _arm_and_start(ctx: TestContext, duration_s: int) -> tuple[bool, Any]:
     token = device.snapshot.auth_token
     if not token:
         token = ctx.ask_text("Enter the 8-hex ARM token printed at boot (#CG AUTH)").strip()
+    frame = ctx.latest_frame()
+    supervised = (str(frame.kv.get("supervised_bench")) == "1"
+                  or str(frame.kv.get("bench_policy", "")).upper().startswith("SUPERVISED"))
+    if supervised:
+        cursor = device.event_cursor()
+        device.send(protocol.supervise(token), "SUPERVISE")
+        event = ctx.wait_for_event(
+            lambda item: item.kind == "TEC" and item.kv.get("event") == "SUPERVISE",
+            6, cursor)
+        result = event.kv.get("result") if event is not None else None
+        if result != "SUPERVISED_AUTHORIZED":
+            ctx.save_measurements()
+            ctx.block(f"SUPERVISE_REFUSED: {result}")
+        ctx.check("supervise_authorized", True, detail=str(result))
     if not ctx.ask_confirm(f"Send ARM with boot token {token}? This authorizes one bounded run."):
         ctx.block("ARM_NOT_CONFIRMED")
     cursor = device.event_cursor()

@@ -574,6 +574,13 @@ def arm(token: str) -> bytes:
     return f"ARM {token.upper()}\n".encode("ascii")
 
 
+def supervise(token: str) -> bytes:
+    """Supervised-bench interlock authorization (same boot token as ARM)."""
+    if not _TOKEN_RE.match(token or ""):
+        raise CommandError("SUPERVISE token must be exactly 8 hexadecimal characters")
+    return f"SUPERVISE {token.upper()}\n".encode("ascii")
+
+
 def clear(token: str) -> bytes:
     if not _TOKEN_RE.match(token or ""):
         raise CommandError("CLEAR token must be exactly 8 hexadecimal characters")

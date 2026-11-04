@@ -1243,8 +1243,14 @@ class AcceptanceApp(tk.Tk):
                        "Continue?"):
             return
         try:
+            supervised = (frame is not None
+                          and (str(frame.kv.get("supervised_bench")) == "1"
+                               or str(frame.kv.get("bench_policy", "")).upper()
+                               .startswith("SUPERVISED")))
+            if supervised:
+                self.device.send(protocol.supervise(token), "manual SUPERVISE")
             self.device.send(command, "manual ARM")
-            self.status_var.set("ARM sent")
+            self.status_var.set("SUPERVISE + ARM sent" if supervised else "ARM sent")
         except Exception as exc:
             messagebox.showerror("ARM", str(exc))
 

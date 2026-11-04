@@ -205,6 +205,60 @@ class ReviewRegressionTests(unittest.TestCase):
         self.assertTrue(any(check.name == "stop_confirmed" and check.passed
                             for check in context.checks))
 
+    def test_canonical_supervised_arm_sends_supervise_first(self) -> None:
+        self.device.feed_line(
+            "#CG AUTH token=DEADBEEF ttl_ms=120000 clear_requires_token=1")
+        for index in range(20):
+            self.device.feed_line(telem_line(
+                seq=index + 1, uptime_ms=1_000_000 + index * 1000,
+                output_stage="ENABLED", state="OFF", cooling="OFF", current=0.0,
+                supervised=1, interlock="ABSENT",
+                bench_policy="SUPERVISED_HOT_SIDE_ONLY"))
+        context = self.context("A-W04-05")
+        seen = 0
+
+        def responder() -> None:
+            nonlocal seen
+            while True:
+                sent = list(self.device.sent)
+                for command in sent[seen:]:
+                    text = command.decode("ascii").strip()
+                    if text.startswith("SUPERVISE"):
+                        self.device.feed_line(
+                            "#CG TEC event=SUPERVISE result=SUPERVISED_AUTHORIZED reason=OK "
+                            "state=OFF fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 "
+                            "starts=0 stops=0 estops=0 faults=0 refusals=0 fan=1")
+                    elif text.startswith("ARM"):
+                        self.device.feed_line(
+                            "#CG TEC event=ARM result=ARMED reason=OK state=ARMED "
+                            "fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=0 "
+                            "stops=0 estops=0 faults=0 refusals=0 fan=1")
+                    elif text.startswith("START"):
+                        self.device.feed_line(
+                            "#CG TEC event=START result=START_OK reason=OK state=COOLING "
+                            "fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=60000 "
+                            "starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1")
+                    elif text == "STOP":
+                        self.device.feed_line(
+                            "#CG TEC event=STOP result=OK reason=OPERATOR_STOP "
+                            "state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=1000 "
+                            "remaining_ms=0 starts=1 stops=1 estops=0 faults=0 refusals=0 fan=1")
+                seen = len(sent)
+                time.sleep(0.01)
+
+        threading.Thread(target=responder, daemon=True).start()
+        started, _ = evaluators._arm_and_start(context, 60)
+        self.assertTrue(started)
+        evaluators._stop_cooling(context)
+        commands = [command.decode("ascii").strip() for command in self.device.sent]
+        supervise = next(i for i, command in enumerate(commands) if command.startswith("SUPERVISE"))
+        arm = next(i for i, command in enumerate(commands) if command.startswith("ARM"))
+        start = next(i for i, command in enumerate(commands) if command.startswith("START"))
+        self.assertLess(supervise, arm)
+        self.assertLess(arm, start)
+        self.assertTrue(any(check.name == "supervise_authorized" and check.passed
+                            for check in context.checks))
+
     def test_actuation_refuses_nonzero_off_baseline(self) -> None:
         for index in range(25):
             self.device.feed_line(telem_line(seq=index + 1,
