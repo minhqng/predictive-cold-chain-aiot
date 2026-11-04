@@ -20,10 +20,16 @@ from .runner import TestContext
 def handler_bom_csv(ctx: TestContext) -> None:
     import csv
 
-    path = ctx.ask_file("Attach bom-audit.csv with HW-01..HW-24 rows", [("CSV", "*.csv")])
-    if not path:
-        ctx.block("BOM_CSV_NOT_PROVIDED")
-    ctx.attach(path)
+    imported = ctx.imported_first(".csv")
+    if imported is not None:
+        path = ctx.imported_path(imported)
+        if imported not in ctx.evidence:
+            ctx.evidence.append(imported)
+    else:
+        path = ctx.ask_file("Attach bom-audit.csv with HW-01..HW-24 rows", [("CSV", "*.csv")])
+        if not path:
+            ctx.block("BOM_CSV_NOT_PROVIDED")
+        ctx.attach(path)
     try:
         with pathlib.Path(path).open(encoding="utf-8-sig", newline="") as handle:
             rows = list(csv.DictReader(handle))
@@ -33,16 +39,30 @@ def handler_bom_csv(ctx: TestContext) -> None:
     ids = {str(row.get("id", row.get("ID", ""))).strip().upper() for row in rows}
     expected = {f"HW-{index:02d}" for index in range(1, 25)}
     missing = sorted(expected - ids)
-    headers = set(rows[0].keys()) if rows else set()
-    required_headers = {"present", "quantity", "marking", "condition"}
-    missing_headers = sorted(required_headers - {header.lower() for header in headers})
+    headers = {header.lower(): header for header in (rows[0].keys() if rows else [])}
+    presence_key = "present" if "present" in headers else "inspection_status"
+    quantity_key = "quantity" if "quantity" in headers else "observed_qty"
+    marking_key = "marking" if "marking" in headers else "visible_marking"
+    condition_key = "condition" if "condition" in headers else "physical_condition"
+    missing_headers = [key for key, present in (
+        (presence_key, presence_key in headers),
+        (quantity_key, quantity_key in headers),
+        (marking_key, marking_key in headers),
+        (condition_key, condition_key in headers)) if not present]
     incomplete_rows = [
         row for row in rows
-        if not str(row.get("present", "")).strip() or not str(row.get("condition", "")).strip()
+        if not str(row.get(presence_key, "")).strip()
+        or not str(row.get(quantity_key, "")).strip()
+        or not str(row.get(condition_key, "")).strip()
+    ]
+    substitutions = [
+        str(row.get("id", "")).strip().upper() for row in rows
+        if str(row.get("inspection_status", "")).strip().upper() == "UNAPPROVED_SUBSTITUTION"
     ]
     ctx.measurements.update({"rows": len(rows), "ids": sorted(ids), "missing": missing,
                              "missing_headers": missing_headers,
-                             "incomplete_rows": len(incomplete_rows)})
+                             "incomplete_rows": len(incomplete_rows),
+                             "unapproved_substitutions": substitutions})
     ctx.check("bom_has_24_items", len(ids & expected) == 24,
               detail=f"{len(ids & expected)}/24", failure_reason="BOM_ITEMS_MISSING")
     ctx.check("bom_ids_canonical", not missing, detail=str(missing),
@@ -52,6 +72,8 @@ def handler_bom_csv(ctx: TestContext) -> None:
     ctx.check("bom_rows_populated", len(incomplete_rows) == 0,
               detail=f"{len(incomplete_rows)} incomplete",
               failure_reason="BOM_ROWS_INCOMPLETE")
+    ctx.check("no_unapproved_substitution", not substitutions,
+              detail=str(substitutions), failure_reason="UNAPPROVED_SUBSTITUTION")
     ctx.check("bom_row_count", len(rows) >= 24, detail=str(len(rows)),
               failure_reason="BOM_ROWS_TOO_FEW")
     ctx.save_measurements()
@@ -59,8 +81,43 @@ def handler_bom_csv(ctx: TestContext) -> None:
 
 def handler_photo_inventory(ctx: TestContext) -> None:
     subjects = list(ctx.definition.params.get("subjects", []))
+    imported = [record for record in ctx.imported_files()
+                if str(record.get("stored", "")).lower().endswith((".jpg", ".jpeg", ".png"))]
+    keywords = {
+        "dual ESP32 board — component side": ("esp32", "component"),
+        "dual ESP32 board — solder side": ("esp32", "back"),
+        "DS18B20 labels/probes": ("ds18b20",),
+        "BME280 module": ("bme280",),
+        "MC-38 reed switch": ("mc38",),
+        "PZEM-017": ("pzem",),
+        "50 A / 75 mV shunt": ("shunt", "marking"),
+        "RS-485 transceiver module": ("rs485",),
+        "IBT-2 module": ("ibt2",),
+        "TEC1-12715 SKU marking": ("tec",),
+        "V1 thermal assembly": ("v1",),
+        "12 V PSU nameplate": ("psu", "label"),
+        "fuse box and fuse set": ("fuse",),
+    }
     missing = []
     for subject in subjects:
+        candidates = []
+        needles = keywords.get(subject, (subject.lower(),))
+        for record in imported:
+            name = f"{record.get('stored', '')} {record.get('source_path', '')}".lower()
+            if all(needle in name for needle in needles):
+                candidates.append(record)
+        accepted = None
+        for record in candidates:
+            if ctx.ask_confirm(
+                    f"The imported photo '{record.get('stored')}' is the required "
+                    f"'{subject}'. Confirm it shows the right subject."):
+                accepted = record
+                break
+        if accepted is not None:
+            if accepted not in ctx.evidence:
+                ctx.evidence.append(accepted)
+            ctx.check(f"photo:{subject}", True, detail=f"imported {accepted.get('stored')}")
+            continue
         path = ctx.ask_file(f"Attach the photo for: {subject}")
         if not path:
             missing.append(subject)

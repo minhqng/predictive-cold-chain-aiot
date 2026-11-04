@@ -50,6 +50,7 @@ TEC_STATES = {"BOOT", "OFF", "ARMED", "COOLING", "COOLDOWN", "FAULT_LATCH", "UNK
 
 _HEX8_RE = re.compile(r"^[0-9A-Fa-f]{8}$")
 _HEX16_RE = re.compile(r"^[0-9A-Fa-f]{16}$")
+_H8_TOKEN_RE = re.compile(r"^[0-9A-Fa-f]{1,8}$")
 _SAFE_LABEL_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._:-]{0,35}$")
 _TOKEN_RE = re.compile(r"^[0-9A-Fa-f]{8}$")
 _PHASES = {"UNSET", "G0", "G1", "G2", "G3", "G4", "G5", "TEC_OFF"}
@@ -484,6 +485,22 @@ def parse_line(line: str, host_time: _dt.datetime | None = None) -> ParsedLine:
     if kind == "H8S":
         return ParsedLine(kind="H8S", raw=text, host_time=stamp, kv=kv,
                           frame=parse_telemetry("H8S", text, kv, stamp))
+    if kind == "H8":
+        event = tokens[2] if len(tokens) > 2 else ""
+        if event in {"BOOT", "BOOT_POLICY", "BOOT_OFF_CURRENT"}:
+            token = kv.get("token")
+            auth = token.upper() if token and _H8_TOKEN_RE.match(token) else None
+            boot = None
+            if event == "BOOT":
+                boot = BootIdentity(
+                    boot_id=kv.get("boot_id"),
+                    firmware_version=kv.get("firmware"),
+                )
+            return ParsedLine(kind=f"H8_{event}", raw=text, host_time=stamp, kv=kv,
+                              boot=boot, auth_token=auth)
+        if event == "CMD":
+            return ParsedLine(kind="H8_CMD", raw=text, host_time=stamp, kv=kv)
+        return ParsedLine(kind="H8", raw=text, host_time=stamp, kv=kv)
     if kind == "BOOT":
         if kv.get("event") == "IDENTITY":
             boot = BootIdentity(

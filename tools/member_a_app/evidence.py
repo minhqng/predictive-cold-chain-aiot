@@ -88,12 +88,16 @@ class SessionStore:
         self.results_dir = self.root / "results"
         self.measure_dir = self.root / "measurements"
         self.attach_dir = self.root / "attachments"
+        self.imports_dir = self.root / "imports"
+        self.bench_dir = self.root / "bench-results"
+        self.imports_manifest = self.imports_dir / "manifest.json"
         existing = _read_json(self.session_file, None)
         if existing is None:
             if not create:
                 raise EvidenceError(f"no session at {self.root}")
             self.root.mkdir(parents=True, exist_ok=True)
-            for folder in (self.raw_dir, self.results_dir, self.measure_dir, self.attach_dir):
+            for folder in (self.raw_dir, self.results_dir, self.measure_dir, self.attach_dir,
+                           self.imports_dir, self.bench_dir):
                 folder.mkdir(parents=True, exist_ok=True)
             self.session = {
                 "schema": SESSION_SCHEMA,
@@ -111,7 +115,8 @@ class SessionStore:
             self._save_session()
         else:
             self.session = existing
-            for folder in (self.raw_dir, self.results_dir, self.measure_dir, self.attach_dir):
+            for folder in (self.raw_dir, self.results_dir, self.measure_dir, self.attach_dir,
+                           self.imports_dir, self.bench_dir):
                 folder.mkdir(parents=True, exist_ok=True)
         self._raw_handle = (self.raw_dir / "serial.jsonl").open("a", encoding="utf-8")
         self._telemetry_handle = (self.raw_dir / "telemetry.jsonl").open("a", encoding="utf-8")
@@ -197,6 +202,7 @@ class SessionStore:
             self._telemetry_handle.write(
                 json.dumps(_jsonable(record), ensure_ascii=False) + "\n")
             self._telemetry_handle.flush()
+            os.fsync(self._telemetry_handle.fileno())
     def results(self) -> dict[str, TestResult]:
         out: dict[str, TestResult] = {}
         for path in sorted(self.results_dir.glob("*.json")):
@@ -285,6 +291,80 @@ class SessionStore:
             "size": stored.stat().st_size,
             "captured_at": now_iso(),
         }
+
+    def import_evidence(self, test_id: str, source: str | pathlib.Path,
+                        category: str = "documentary") -> dict[str, Any]:
+        if not _SAFE_ID_RE.match(test_id):
+            raise EvidenceError(f"bad test id {test_id!r}")
+        src = pathlib.Path(source)
+        if not src.is_file():
+            raise EvidenceError(f"evidence file not found: {src}")
+        if src.stat().st_size == 0:
+            raise EvidenceError(f"evidence file is empty: {src}")
+        digest = sha256_file(src)
+        safe_name = _SAFE_NAME_RE.sub("_", src.name)[:120] or "evidence"
+        folder = self.imports_dir / test_id
+        folder.mkdir(parents=True, exist_ok=True)
+        stored = folder / f"{digest[:12]}-{safe_name}"
+        with self._lock:
+            manifest = _read_json(self.imports_manifest, {"schema": 1, "sources": []})
+            sources = manifest.setdefault("sources", [])
+            for existing in sources:
+                if (existing.get("test_id") == test_id
+                        and existing.get("sha256") == digest
+                        and existing.get("stored") == str(stored.relative_to(self.root))):
+                    stored_path = self.root / existing["stored"]
+                    if stored_path.is_file():
+                        return existing
+                    shutil.copy2(src, stored_path)
+                    existing["size"] = stored_path.stat().st_size
+                    existing["imported_at"] = now_iso()
+                    manifest["updated_at"] = now_iso()
+                    _write_json_atomic(self.imports_manifest, manifest)
+                    return existing
+            if not stored.exists():
+                shutil.copy2(src, stored)
+            record = {
+                "test_id": test_id,
+                "category": category,
+                "source_path": str(src),
+                "stored": str(stored.relative_to(self.root)),
+                "sha256": digest,
+                "size": stored.stat().st_size,
+                "imported_at": now_iso(),
+            }
+            sources.append(record)
+            manifest["updated_at"] = now_iso()
+            _write_json_atomic(self.imports_manifest, manifest)
+            return record
+
+    def imported_for(self, test_id: str) -> list[dict[str, Any]]:
+        manifest = _read_json(self.imports_manifest, {"sources": []})
+        return [record for record in manifest.get("sources", [])
+                if record.get("test_id") == test_id]
+
+    def imported_manifest(self) -> list[dict[str, Any]]:
+        manifest = _read_json(self.imports_manifest, {"sources": []})
+        return list(manifest.get("sources", []))
+
+    def record_bench_result(self, kind: str, payload: dict[str, Any]) -> dict[str, Any]:
+        stamp = _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%S%f")
+        path = self.bench_dir / f"{kind}-{stamp}.json"
+        payload = dict(payload)
+        payload.setdefault("recorded_at", now_iso())
+        payload.setdefault("session_id", self.session_id)
+        _write_json_atomic(path, payload)
+        return {"stored": str(path.relative_to(self.root)), "sha256": sha256_file(path),
+                "size": path.stat().st_size}
+
+    def bench_results(self) -> list[dict[str, Any]]:
+        out = []
+        for path in sorted(self.bench_dir.glob("*.json"), reverse=True):
+            payload = _read_json(path, None)
+            if isinstance(payload, dict):
+                payload["_path"] = str(path.relative_to(self.root))
+                out.append(payload)
+        return out
 
     def verify_attachments(self) -> list[dict[str, Any]]:
         problems: list[dict[str, Any]] = []

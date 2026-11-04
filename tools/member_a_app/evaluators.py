@@ -255,6 +255,14 @@ def handler_documentary(ctx: TestContext) -> None:
 
 def handler_numeric(ctx: TestContext) -> None:
     params = ctx.definition.params
+    imported = ctx.imported_files()
+    if imported:
+        ctx.operator.info(
+            ctx.definition.test_id,
+            "Existing evidence is imported and attached; read the value from it instead of "
+            "recreating the measurement: " + ", ".join(
+                str(record.get("stored")) for record in imported),
+        )
     values: dict[str, float] = {}
     for spec in params.get("measurements", []):
         value = ctx.ask_number(spec["label"], spec.get("unit", ""),

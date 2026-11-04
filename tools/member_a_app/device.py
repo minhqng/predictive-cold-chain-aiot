@@ -53,6 +53,9 @@ class DeviceSnapshot:
     last_ack: protocol.AckRecord | None = None
     last_tec_event: str | None = None
     door_polarity: str | None = None
+    h8: dict[str, Any] = dataclasses.field(default_factory=dict)
+    h8_last_result: str | None = None
+    h8_ack_count: int = 0
     last_error: str | None = None
     rx_lines: int = 0
     tx_commands: int = 0
@@ -71,6 +74,7 @@ class DeviceSnapshot:
             "calibration_id": boot.calibration_id,
             "firmware_kind": self.firmware_kind,
             "port": self.port,
+            "h8": dict(self.h8) if self.h8 else {},
         }
 
 
@@ -105,6 +109,7 @@ class DeviceLink:
         self._frames: collections.deque[protocol.TelemetryFrame] = collections.deque(maxlen=20000)
         self._event_cursor = 0
         self._frame_cursor = 0
+        self.h8_ack_enabled = False
         self.snapshot = DeviceSnapshot()
 
     def open(self, port: str, baud: int = protocol.BAUD) -> None:
@@ -142,6 +147,7 @@ class DeviceLink:
 
     def _stop_reader(self) -> None:
         with self._lock:
+            self.h8_ack_enabled = False
             stop_event = self._reader_stop
             reader = self._reader
             self._reader_stop = None
@@ -178,6 +184,9 @@ class DeviceLink:
             self.snapshot.auth_token = None
             self.snapshot.last_frame = None
             self.snapshot.boot = protocol.BootIdentity()
+            self.snapshot.h8.clear()
+            self.snapshot.h8_last_result = None
+            self.snapshot.h8_ack_count = 0
         time.sleep(max(0.0, gap_s))
         with self._lock:
             try:
@@ -198,6 +207,9 @@ class DeviceLink:
             self.snapshot.auth_token = None
             self.snapshot.last_frame = None
             self.snapshot.boot = protocol.BootIdentity()
+            self.snapshot.h8.clear()
+            self.snapshot.h8_last_result = None
+            self.snapshot.h8_ack_count = 0
         return True
 
     def reopen_after_cold_boot(self) -> bool:
@@ -277,6 +289,22 @@ class DeviceLink:
                 self.snapshot.boot = self.snapshot.boot.merged(parsed.boot)
             if parsed.auth_token:
                 self.snapshot.auth_token = parsed.auth_token
+            if parsed.kind == "H8_BOOT":
+                self.snapshot.firmware_kind = "H8_BENCH"
+                for key in ("test_mode", "mandatory_roles", "mandatory_probes",
+                            "supervised", "reset_cause", "sim_cooling"):
+                    if key in parsed.kv:
+                        self.snapshot.h8[key] = parsed.kv[key]
+            elif parsed.kind in {"H8_BOOT_POLICY", "H8_BOOT_OFF_CURRENT"}:
+                self.snapshot.firmware_kind = "H8_BENCH"
+                for key, value in parsed.kv.items():
+                    self.snapshot.h8[key] = value
+            elif parsed.kind == "H8_CMD":
+                self.snapshot.h8_last_result = parsed.kv.get("result")
+                results = self.snapshot.h8.setdefault("cmd_results", [])
+                if isinstance(results, list):
+                    results.append({key: value for key, value in parsed.kv.items()})
+                    del results[:-30]
             if parsed.rom is not None:
                 self.snapshot.rom_map[parsed.rom.role] = parsed.rom
             if parsed.frame is not None:
@@ -291,6 +319,16 @@ class DeviceLink:
                     hardware_config_id=parsed.frame.hardware_config_id,
                     calibration_id=parsed.frame.calibration_id,
                 ))
+                if parsed.frame.is_h8 and self.snapshot.boot.device_id is None:
+                    self.snapshot.boot = self.snapshot.boot.merged(
+                        protocol.BootIdentity(device_id="H8_BENCH"))
+                if parsed.frame.is_h8:
+                    for key in ("test_mode", "supervised_bench", "supervised_authorized",
+                                "stage", "off_current_approved", "limits_operator_approved",
+                                "limits_enforced", "interlock_state", "fan",
+                                "door_polarity"):
+                        if key in parsed.frame.kv:
+                            self.snapshot.h8[key] = parsed.frame.kv[key]
                 for role, key in (("T1", "t1_rom"), ("T2", "t2_rom"),
                                   ("T3", "t3_rom"), ("SPARE", "spare_rom")):
                     rom = (parsed.frame.kv.get(key) or "").upper()
@@ -316,8 +354,38 @@ class DeviceLink:
             self._store.append_raw("RX", parsed.raw, stamp.isoformat())
             if parsed.frame is not None:
                 self._store.append_telemetry(parsed.frame)
+        if self.h8_ack_enabled and parsed.frame is not None and parsed.frame.is_h8:
+            try:
+                self.send_h8_ack(parsed.frame)
+            except Exception as exc:
+                with self._lock:
+                    self.snapshot.last_error = f"H8_ACK_SEND_FAILED: {exc}"
         self._notify()
         return parsed
+
+    def set_h8_ack(self, enabled: bool) -> None:
+        self.h8_ack_enabled = bool(enabled)
+
+    def send_h8_ack(self, frame: protocol.TelemetryFrame) -> bytes | None:
+        from . import protocol_h8
+        command = protocol_h8.ack_from_frame(frame)
+        if command is None:
+            return None
+        self.send(command, "H8 host ACK")
+        with self._lock:
+            self.snapshot.h8_ack_count += 1
+        return command
+
+    def wait_for_h8_cmd(self, result_prefix: str, timeout_s: float,
+                        cursor: int | None = None) -> protocol.ParsedLine | None:
+        return self.wait_for_event(
+            lambda event: event.kind == "H8_CMD"
+            and str(event.kv.get("result", "")).startswith(result_prefix),
+            timeout_s, cursor)
+
+    def wait_for_h8_state(self, state: str, timeout_s: float) -> protocol.TelemetryFrame | None:
+        return self.wait_for_frame(
+            lambda frame: frame.is_h8 and frame.state == state, timeout_s)
 
     def _notify(self) -> None:
         with self._lock:

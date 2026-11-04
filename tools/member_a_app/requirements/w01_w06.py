@@ -17,7 +17,7 @@ DEFINITIONS = [
       DOCUMENTARY, NO_POWER, "photo_inventory",
       params={"subjects": [
           "dual ESP32 board — component side", "dual ESP32 board — solder side",
-          "DS18B20 probe labels", "BME280 module", "MC-38 reed switch", "PZEM-017",
+          "DS18B20 labels/probes", "BME280 module", "MC-38 reed switch", "PZEM-017",
           "50 A / 75 mV shunt", "RS-485 transceiver module", "IBT-2 module",
           "TEC1-12715 SKU marking", "V1 thermal assembly", "12 V PSU nameplate",
           "fuse box and fuse set"]},

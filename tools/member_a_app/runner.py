@@ -158,17 +158,35 @@ class TestContext:
         self.evidence.append(record)
         return record
 
+    def imported_files(self) -> list[dict[str, Any]]:
+        return self.store.imported_for(self.definition.test_id)
+
+    def imported_first(self, suffix: str | None = None) -> dict[str, Any] | None:
+        for record in self.imported_files():
+            stored = str(record.get("stored", ""))
+            if suffix is None or stored.lower().endswith(suffix.lower()):
+                return record
+        return None
+
+    def imported_path(self, record: dict[str, Any]) -> str:
+        return str(self.store.root / record["stored"])
+
     def require_attachment(self, message: str, minimum: int = 1,
                            kinds: list[tuple[str, str]] | None = None) -> int:
-        attached = 0
-        for index in range(max(1, minimum)):
-            path = self.ask_file(f"{message} (evidence {index + 1}/{minimum})", kinds)
+        imported = self.imported_files()
+        for record in imported:
+            if record not in self.evidence:
+                self.evidence.append(record)
+        attached = len(imported)
+        maximum = max(1, minimum)
+        for index in range(attached, maximum):
+            path = self.ask_file(f"{message} (evidence {index + 1}/{maximum})", kinds)
             if path is None:
                 break
             if self.attach(path) is not None:
                 attached += 1
         self.check("evidence_attached", attached >= minimum,
-                   detail=f"{attached}/{minimum} files",
+                   detail=f"{attached}/{minimum} files (imported={len(imported)})",
                    failure_reason="REQUIRED_EVIDENCE_MISSING")
         return attached
 
@@ -270,6 +288,15 @@ class TestContext:
             self.store.update_measurements(self._measurement_record, payload)
 
 
+PROFILE_INDEPENDENT_HANDLERS = frozenset({
+    "documentary", "numeric", "bom_csv", "photo_inventory", "token_scan",
+    "max3485", "fuse", "fuse_final", "decision", "team_evidence", "composite",
+    "evidence_audit", "handover", "evidence_gap_list", "rerun_evidence",
+    "invalidation_log", "protocol_freeze", "rehearsal", "campaign_manifest",
+    "pzem_reference", "dataset_support", "derived", "polarity", "unsupported",
+})
+
+
 class TestRunner:
     def __init__(self, store: SessionStore, device: DeviceLink | None,
                  operator: OperatorInterface, definitions: Iterable[TestDefinition],
@@ -362,6 +389,12 @@ class TestRunner:
                 return f"PREREQUISITE_NOT_RUN {prerequisite}"
             if result.outcome is not Outcome.PASS:
                 return f"PREREQUISITE_{result.outcome.value} {prerequisite}: {result.failure_reason}"
+        if self.device is not None and definition.handler not in PROFILE_INDEPENDENT_HANDLERS:
+            frame = self.device.latest_frame()
+            if frame is not None and frame.is_h8:
+                return ("H8_BENCH_IMAGE: canonical W06 telemetry/command fields are absent; "
+                        "use the H8 read-only/bench profile; this canonical requirement is "
+                        "INCOMPLETE, not PASS")
         return None
 
     def _record_incomplete(self, definition: TestDefinition, reason: str) -> TestResult:

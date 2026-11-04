@@ -21,6 +21,24 @@ class LaunchTests(unittest.TestCase):
         self.assertEqual(completed.returncode, 0, completed.stderr)
         self.assertIn("definitions=114 errors=0", completed.stdout)
 
+    def test_compat_static_matrix(self) -> None:
+        completed = subprocess.run(
+            [sys.executable, str(APP), "--compat"],
+            cwd=str(REPO), capture_output=True, text=True, timeout=60)
+        self.assertEqual(completed.returncode, 0, completed.stderr)
+        output = completed.stdout
+        self.assertIn("H8_BENCH", output)
+        self.assertIn("CANONICAL_W06", output)
+        self.assertIn("Stage F", output)
+        self.assertIn("LIVE: NOT RUN", output)
+
+    def test_capture_h8_without_port_is_not_run(self) -> None:
+        completed = subprocess.run(
+            [sys.executable, str(APP), "--capture-h8"],
+            cwd=str(REPO), capture_output=True, text=True, timeout=60)
+        self.assertEqual(completed.returncode, 2, completed.stderr)
+        self.assertIn("NOT RUN", completed.stdout)
+
     def test_gui_smoke_launch(self) -> None:
         completed = subprocess.run(
             [sys.executable, str(APP), "--smoke"],

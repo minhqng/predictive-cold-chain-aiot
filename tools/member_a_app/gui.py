@@ -15,10 +15,11 @@ import tkinter as tk
 from tkinter import filedialog, messagebox, scrolledtext, simpledialog, ttk
 from typing import Any
 
-from . import protocol
+from . import compat, evidence_import, protocol
 from .charts import LiveChart
 from .device import DeviceError, DeviceLink, list_ports
 from .evidence import APP_VERSION, SessionStore
+from .h8_bench import H8Bench
 from .model import Outcome, SafetyClass, TestDefinition, TestMode, TestResult, now_iso
 from .requirements import DEFINITIONS, by_week, get as get_definition, validate
 from .runner import TestRunner
@@ -237,6 +238,7 @@ class AcceptanceApp(tk.Tk):
         self._running = False
         self._results_dirty = True
         self._last_identity: tuple[Any, ...] | None = None
+        self._last_bench_refresh = 0.0
         self._build_style()
         self._build_ui()
         self.protocol("WM_DELETE_WINDOW", self._on_close)
@@ -424,6 +426,7 @@ class AcceptanceApp(tk.Tk):
         notebook.pack(fill="both", expand=True)
         self._build_dashboard(notebook)
         self._build_detail(notebook)
+        self._build_bench(notebook)
         self._build_console(notebook)
         self._build_evidence(notebook)
 
@@ -449,6 +452,8 @@ class AcceptanceApp(tk.Tk):
         menu.add_cascade(label="Session", menu=session)
         tools = tk.Menu(menu, tearoff=False)
         tools.add_command(label="Campaign settings…", command=self._open_settings)
+        tools.add_command(label="Import existing W01-W04 evidence",
+                          command=self._import_existing_evidence)
         tools.add_command(label="Create BOM audit template", command=self._create_bom_template)
         tools.add_command(label="Open session folder", command=self._open_session_folder)
         menu.add_cascade(label="Tools", menu=tools)
@@ -464,7 +469,8 @@ class AcceptanceApp(tk.Tk):
         identity = ttk.LabelFrame(tab, text="Device identity", padding=6)
         identity.pack(fill="x", padx=6, pady=(6, 2))
         fields = ["device_id", "boot_id", "firmware", "hardware_config", "pin_map",
-                  "calibration", "firmware_kind", "port"]
+                  "calibration", "firmware_kind", "port", "h8_mode", "h8_stage",
+                  "h8_supervised", "h8_ack"]
         for index, field in enumerate(fields):
             ttk.Label(identity, text=field + ":").grid(row=index // 4, column=(index % 4) * 2,
                                                        sticky="w", padx=(0, 3), pady=1)
@@ -528,6 +534,36 @@ class AcceptanceApp(tk.Tk):
         bar.pack(fill="x", padx=6, pady=(0, 6))
         ttk.Button(bar, text="Run this test", command=self._run_selected).pack(side="left")
 
+    def _build_bench(self, notebook: ttk.Notebook) -> None:
+        tab = ttk.Frame(notebook)
+        notebook.add(tab, text="Bench readiness")
+        bar = ttk.Frame(tab)
+        bar.pack(fill="x", padx=6, pady=6)
+        self.h8_read_only_button = ttk.Button(
+            bar, text="Read-only H8 capture 60 s", command=self._start_h8_read_only)
+        self.h8_read_only_button.pack(side="left")
+        self.h8_stage_f_button = ttk.Button(
+            bar, text="Supervised Stage F check (30 s, 20 %)",
+            command=self._start_h8_stage_f)
+        self.h8_stage_f_button.pack(side="left", padx=6)
+        ttk.Button(bar, text="Import W01-W04 evidence",
+                   command=self._import_existing_evidence).pack(side="left", padx=6)
+        ttk.Button(bar, text="Open bench results",
+                   command=self._open_bench_folder).pack(side="left")
+        split = ttk.PanedWindow(tab, orient="vertical")
+        split.pack(fill="both", expand=True, padx=6, pady=(0, 6))
+        compat_frame = ttk.LabelFrame(split, text="Detected image compatibility")
+        split.add(compat_frame, weight=1)
+        self.bench_compat_text = scrolledtext.ScrolledText(
+            compat_frame, wrap="word", state="disabled", font=("Consolas", 10), height=12)
+        self.bench_compat_text.pack(fill="both", expand=True, padx=4, pady=4)
+        result_frame = ttk.LabelFrame(split, text="Bench results")
+        split.add(result_frame, weight=1)
+        self.bench_result_text = scrolledtext.ScrolledText(
+            result_frame, wrap="word", state="disabled", font=("Consolas", 10))
+        self.bench_result_text.pack(fill="both", expand=True, padx=4, pady=4)
+        self._refresh_bench()
+
     def _build_console(self, notebook: ttk.Notebook) -> None:
         tab = ttk.Frame(notebook)
         notebook.add(tab, text="Console")
@@ -552,6 +588,8 @@ class AcceptanceApp(tk.Tk):
         ttk.Button(bar, text="Export 114-ID report", command=self._export_report).pack(side="left")
         ttk.Button(bar, text="Export telemetry CSV", command=self._export_telemetry).pack(
             side="left", padx=6)
+        ttk.Button(bar, text="Import W01-W04 evidence",
+                   command=self._import_existing_evidence).pack(side="left", padx=6)
         ttk.Button(bar, text="Verify evidence", command=self._verify_evidence).pack(
             side="left", padx=6)
         ttk.Button(bar, text="Open folder", command=self._open_session_folder).pack(side="left")
@@ -626,6 +664,9 @@ class AcceptanceApp(tk.Tk):
             f"  NOT_RUN    {counts.get('NOT_RUN', 0)}",
             f"  TOTAL      {len(DEFINITIONS)}",
             "",
+            f"Imported W01-W04 files: {len(self.store.imported_manifest())}",
+            f"H8 bench results: {len(self.store.bench_results())}",
+            "",
             f"Evidence integrity: {'OK' if not problems else str(len(problems)) + ' problem(s)'}",
         ]
         for problem in problems[:20]:
@@ -641,6 +682,120 @@ class AcceptanceApp(tk.Tk):
         self.evidence_text.delete("1.0", "end")
         self.evidence_text.insert("1.0", "\n".join(lines))
         self.evidence_text.configure(state="disabled")
+
+    def _refresh_bench(self) -> None:
+        if not hasattr(self, "bench_compat_text"):
+            return
+        result = compat.classify(self.device.snapshot)
+        lines = [f"{name}: {value}" for name, value in result.capability_rows()]
+        lines += ["", "Notes:", *[f"- {note}" for note in result.notes], "",
+                  f"Connected: {self.device.snapshot.connected}"]
+        self.bench_compat_text.configure(state="normal")
+        self.bench_compat_text.delete("1.0", "end")
+        self.bench_compat_text.insert("1.0", "\n".join(lines))
+        self.bench_compat_text.configure(state="disabled")
+        h8 = result.kind == "H8_BENCH"
+        state = "normal" if h8 and not self._running else "disabled"
+        if hasattr(self, "h8_read_only_button"):
+            self.h8_read_only_button.configure(state=state)
+            self.h8_stage_f_button.configure(state=state)
+        bench_lines = []
+        for payload in self.store.bench_results()[:20]:
+            bench_lines.append(
+                f"{payload.get('recorded_at', '')} {payload.get('kind', '')} "
+                f"{payload.get('outcome', '')} {payload.get('reason', '')} [{payload.get('_path')}]")
+        self.bench_result_text.configure(state="normal")
+        self.bench_result_text.delete("1.0", "end")
+        self.bench_result_text.insert("1.0", "\n".join(bench_lines) or
+                                      "No H8 bench results in this session.")
+        self.bench_result_text.configure(state="disabled")
+
+    def _require_h8(self) -> bool:
+        frame = self.device.latest_frame()
+        if not self.device.snapshot.connected or frame is None:
+            messagebox.showwarning("H8 readiness", "Connect the device and wait for telemetry first.")
+            return False
+        if not frame.is_h8:
+            messagebox.showwarning(
+                "H8 readiness",
+                "This action requires the H8 bench image (#CG H8S). The canonical W06 "
+                "acceptance tests are on the Requirements tab.")
+            return False
+        return True
+
+    def _start_generic_worker(self, function, label: str) -> None:
+        if self._running:
+            messagebox.showinfo("Busy", "A test or bench action is already running.")
+            return
+        self.operator.reset_cancel()
+        self._set_running(True)
+        self.status_var.set(f"{label} running…")
+
+        def worker() -> None:
+            try:
+                payload = function()
+                self.ui_queue.put(("bench_done", payload))
+            except Exception as exc:
+                self.ui_queue.put(("error", f"{label}: {exc}"))
+            finally:
+                self.ui_queue.put(("generic_done", None))
+
+        self.worker = threading.Thread(target=worker, name="cg-h8-bench", daemon=True)
+        self.worker.start()
+
+    def _start_h8_read_only(self) -> None:
+        if not self._require_h8():
+            return
+        if not messagebox.askyesno(
+                "H8 read-only capture",
+                "Capture 60 s of H8S telemetry. This sends NO commands to the device. Continue?"):
+            return
+        self._start_generic_worker(
+            lambda: H8Bench(self.device, self.store, self.operator).read_only(60),
+            "H8 read-only capture")
+
+    def _start_h8_stage_f(self) -> None:
+        if not self._require_h8():
+            return
+        if not messagebox.askyesno(
+                "H8 Stage F supervised check",
+                "This may energize the TEC for a 30 s, 20 % Stage F check.\n\n"
+                "The app will require your prechecks, the boot token, fan confirmation, "
+                "door polarity, SUPERVISE and ARM. The H8 firmware refuses START if the "
+                "Stage F guard, limits, host ACK or OFF-current gate are not satisfied.\n\n"
+                "Continue?"):
+            return
+        self._start_generic_worker(
+            lambda: H8Bench(self.device, self.store, self.operator).supervised_stage_f(),
+            "H8 Stage F check")
+
+    def _import_existing_evidence(self) -> None:
+        try:
+            summary = evidence_import.import_all(self.store)
+        except Exception as exc:
+            messagebox.showerror("Evidence import", str(exc))
+            return
+        lines = [
+            f"Imported: {summary['imported']}",
+            f"Duplicates skipped: {summary['skipped_duplicate']}",
+            f"Missing patterns: {len(summary['missing'])}",
+            f"Errors: {len(summary['errors'])}",
+        ]
+        for test_id, count in sorted(summary["by_test"].items()):
+            lines.append(f"{test_id}: {count}")
+        if summary["errors"]:
+            lines.append("")
+            lines.extend(str(error) for error in summary["errors"][:10])
+        messagebox.showinfo("W01-W04 evidence import", "\n".join(lines))
+        self._results_dirty = True
+        self._refresh_evidence()
+        self._refresh_bench()
+
+    def _open_bench_folder(self) -> None:
+        try:
+            os.startfile(self.store.bench_dir)
+        except Exception as exc:
+            messagebox.showerror("Open bench results", str(exc))
 
     def _show_selected(self) -> None:
         selection = self.tree.selection()
@@ -779,6 +934,9 @@ class AcceptanceApp(tk.Tk):
             if self.device.snapshot.connected and self.device.snapshot.last_frame is not None:
                 if time.monotonic() - self._last_frame_time > 4.0:
                     self.status_var.set("No telemetry for more than 4 s")
+            if time.monotonic() - self._last_bench_refresh > 2.0:
+                self._last_bench_refresh = time.monotonic()
+                self._refresh_bench()
         except Exception as exc:
             self.status_var.set(f"Device poll error: {exc}")
         self.after(150, self._poll_device)
@@ -822,10 +980,16 @@ class AcceptanceApp(tk.Tk):
                                        else frame.pwm_duty))
         self.value_vars["fault"].set(f"0x{frame.fault_bits:08X}" if frame.fault_bits
                                      else "0x00000000")
+        self.identity_vars["h8_mode"].set(fmt(snapshot.h8.get("test_mode")))
+        self.identity_vars["h8_stage"].set(fmt(frame.test_phase))
+        self.identity_vars["h8_supervised"].set(fmt(
+            snapshot.h8.get("supervised_bench") or snapshot.h8.get("supervised")))
+        self.identity_vars["h8_ack"].set(str(snapshot.h8_ack_count))
         stage = (frame.output_stage or "UNKNOWN").upper()
         if frame.is_h8:
-            self.banner_var.set("H8 benchmark image detected. Canonical W06 acceptance tests "
-                                "that need #CG TELEM command semantics will be INCOMPLETE.")
+            self.banner_var.set("H8 benchmark image detected — use the Bench readiness tab for "
+                                "read-only H8S capture and the supervised Stage F probe. "
+                                "Canonical W06 tests are INCOMPLETE on this image.")
         elif stage == "DISABLED":
             self.banner_var.set("Output stage is compiled out. Tests that need TEC energization "
                                 "will be INCOMPLETE; manual START is disabled.")
@@ -905,6 +1069,15 @@ class AcceptanceApp(tk.Tk):
             elif kind == "batch_done":
                 self._set_running(False)
                 self.status_var.set("Batch finished")
+                self.progress["value"] = 0.0
+                self._results_dirty = True
+            elif kind == "bench_done":
+                payload = message[1]
+                self.status_var.set(f"{payload.get('kind')} {payload.get('outcome')}")
+                self._results_dirty = True
+                self._refresh_bench()
+            elif kind == "generic_done":
+                self._set_running(False)
                 self.progress["value"] = 0.0
                 self._results_dirty = True
             elif kind == "error":
@@ -1037,6 +1210,7 @@ class AcceptanceApp(tk.Tk):
         else:
             self.connect_button.configure(state="normal")
             self.disconnect_button.configure(state="disabled")
+        self._refresh_bench()
 
     def _stop_test(self) -> None:
         self.operator.cancel()
@@ -1051,6 +1225,13 @@ class AcceptanceApp(tk.Tk):
     # Manual controls
     # ------------------------------------------------------------------
     def _send_arm(self) -> None:
+        frame = self.device.latest_frame()
+        if frame is not None and frame.is_h8:
+            messagebox.showerror(
+                "ARM",
+                "The H8 image uses a different command grammar. Use the Bench readiness tab "
+                "(SUPERVISE/STAGE F/FAN/DOOR/ARM); no canonical ARM was sent.")
+            return
         token = self.token_var.get().strip()
         try:
             command = protocol.arm(token)
@@ -1073,7 +1254,10 @@ class AcceptanceApp(tk.Tk):
             messagebox.showwarning("START", "No telemetry yet.")
             return
         if frame.is_h8:
-            messagebox.showerror("START", "H8 bench image detected; canonical START is unavailable.")
+            messagebox.showerror(
+                "START",
+                "The H8 image uses the Bench readiness Stage F flow, not canonical START. "
+                "No command was sent.")
             return
         if (frame.output_stage or "").upper() != "ENABLED":
             messagebox.showerror("START", "The output stage is compiled out; START is refused by design.")
@@ -1225,7 +1409,10 @@ class AcceptanceApp(tk.Tk):
             "- A-W06-06 is INCOMPLETE until an accepted command state exists (network transport); "
             "the local console source is refused before the idempotency store.\n"
             "- The installed H8 bench image speaks #CG H8S, not the canonical W06 console; "
-            "hardware-specific tests will report INCOMPLETE.\n"
+            "canonical hardware tests are INCOMPLETE. Use Bench readiness for read-only H8S "
+            "capture and a supervised Stage F probe.\n"
+            "- W01-W04 documentary evidence can be imported from the authoritative corpora "
+            "instead of being recreated; import never marks a requirement PASS.\n"
             "- PWM duty control is not exposed by the canonical console.")
 
     def _on_close(self) -> None:

@@ -91,3 +91,62 @@ def rom_lines() -> list[str]:
         "#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
         "#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
     ]
+
+
+def h8_boot_lines(token: str = "DEADBEEF", boot_id: str = "b45af2ff") -> list[str]:
+    return [
+        f"#CG H8 BOOT boot_id={boot_id} token={token} schema=3 firmware=h8-bench "
+        "test_mode=BENCH_ENDURANCE mandatory_roles=HOT_SIDE "
+        "mandatory_probes=T1,T2,T3,T4 supervised=1 reset_cause=USB sim_cooling=0",
+        "#CG H8 BOOT_POLICY limits=SHIPPED actuator=REAL physical_output=ENABLED "
+        "stages=A:180,B:420,C:600,D:900,E:1800,F:30 pwm=100 check_pwm=20 "
+        "interlock=NOT_INSTALLED snapshot_ms=1000 host_ack_timeout_ms=3000 reset_marker=1",
+        "#CG H8 BOOT_OFF_CURRENT off_current_limit_a=0.200 off_current_approved=1 "
+        "off_current_test_enforce=0",
+    ]
+
+
+def h8s_line(seq: int = 1, run_id: str = "run-00000000", state: str = "OFF",
+             stage: str = "NONE", current: float = 0.0, voltage: float = 11.9,
+             power: float | None = None, t1: float = 29.0, t2: float = 30.0,
+             t3: float = 29.0, t4: float = 29.0, fault: str = "0x0",
+             pwm: int = 0, fan: str = "UNCONFIRMED",
+             door_polarity: str = "UNCONFIRMED", door: int = 1,
+             supervised: str = "1", supervised_authorized: str = "0") -> str:
+    line = fixture("h8s_sample.txt")
+    line = _set(line, "seq", seq)
+    line = _set(line, "run_id", run_id)
+    line = _set(line, "state", state)
+    line = _set(line, "stage", stage)
+    line = _set(line, "snapshot", "VALID")
+    line = _set(line, "fault_bits", fault)
+    line = _set(line, "voltage_v", f"{voltage:.3f}")
+    line = _set(line, "voltage_v_status", "OK")
+    line = _set(line, "current_a", f"{current:.3f}")
+    line = _set(line, "current_a_status", "OK")
+    line = _set(line, "power_w", f"{(voltage * current if power is None else power):.3f}")
+    line = _set(line, "power_w_status", "OK")
+    line = _set(line, "t1", f"{t1:.3f}")
+    line = _set(line, "t2", f"{t2:.3f}")
+    line = _set(line, "t3", f"{t3:.3f}")
+    line = _set(line, "t4", f"{t4:.3f}")
+    line = _set(line, "pwm_req_permille", pwm)
+    line = _set(line, "pwm_applied_permille", pwm)
+    line = _set(line, "pwm_readback_permille", pwm)
+    line = _set(line, "fan", fan)
+    line = _set(line, "door_polarity", door_polarity)
+    line = _set(line, "door_open", door)
+    line = _set(line, "door_status", "OK")
+    line = _set(line, "supervised_bench", supervised)
+    line = _set(line, "supervised_authorized", supervised_authorized)
+    line = _set(line, "test_mode", "BENCH_ENDURANCE")
+    line = _set(line, "mandatory_roles", "HOT_SIDE")
+    line = _set(line, "limits_operator_approved", 1)
+    line = _set(line, "limits_enforced", 1)
+    line = _set(line, "off_current_approved", 1)
+    return line
+
+
+def h8_cmd(result: str, **fields: object) -> str:
+    body = " ".join(f"{key}={value}" for key, value in fields.items())
+    return f"#CG H8 CMD result={result}" + (f" {body}" if body else "")
