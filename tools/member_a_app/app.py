@@ -5,6 +5,7 @@ r"""Launch the ColdGuard Member A hardware acceptance application.
     py -3 tools\member_a_app\app.py --compat [--port COM4]
     py -3 tools\member_a_app\app.py --capture-h8 --port COM4 --seconds 30
     py -3 tools\member_a_app\app.py --import-evidence --session <dir>
+    py -3 tools\member_a_app\app.py --readiness [--port COM4] [--session <dir>]
 """
 
 from __future__ import annotations
@@ -57,6 +58,57 @@ def _compat(port: str | None) -> int:
         return 2
     finally:
         link.close()
+
+
+def _latest_acceptance_session() -> pathlib.Path:
+    import json
+    candidates: list[pathlib.Path] = []
+    for folder in ("h8-captures", "app-sessions"):
+        base = APP_ROOT / "evidence" / "A" / folder
+        if base.is_dir():
+            candidates.extend(path for path in base.glob("*/session.json")
+                              if path.is_file())
+    if not candidates:
+        raise FileNotFoundError("no acceptance session found")
+    def result_count(path: pathlib.Path) -> int:
+        try:
+            return len(json.loads(path.read_text(encoding="utf-8")).get("results", {}))
+        except (OSError, ValueError):
+            return 0
+    return max(candidates, key=lambda path: (result_count(path), path.stat().st_mtime)).parent
+
+
+def _readiness(port: str | None, session: str | None, out: str | None,
+               probe_commands: bool) -> int:
+    from member_a_app import readiness
+    from member_a_app.device import DeviceLink
+    from member_a_app.evidence import SessionStore
+
+    root = pathlib.Path(session) if session else _latest_acceptance_session()
+    store = SessionStore(root, create=False)
+    link = None
+    snapshot = readiness.CapabilitySnapshot()
+    try:
+        if port:
+            link = DeviceLink(None)
+            try:
+                link.open(port)
+                snapshot = readiness.build_snapshot(link, probe_commands=probe_commands)
+            except Exception as exc:
+                print(f"READINESS: live probe unavailable ({exc})")
+            finally:
+                if link is not None:
+                    link.close()
+        rows = readiness.evaluate(DEFINITIONS, store.results(), snapshot)
+        print(readiness.markdown(rows))
+        target = pathlib.Path(out) if out else root
+        paths = readiness.write_report(DEFINITIONS, store.results(), snapshot, target)
+        print(f"readiness report: {paths['markdown']}")
+        print("summary: " + " ".join(
+            f"{state}={count}" for state, count in readiness.summarize(rows).items()))
+        return 0
+    finally:
+        store.close()
 
 
 def _capture_h8(port: str | None, seconds: float, out_dir: str | None) -> int:
@@ -122,6 +174,11 @@ def main() -> int:
     parser.add_argument("--compat", action="store_true", help="print the image compatibility matrix")
     parser.add_argument("--capture-h8", action="store_true", help="read-only H8S capture")
     parser.add_argument("--import-evidence", action="store_true", help="import W01-W04 evidence")
+    parser.add_argument("--readiness", action="store_true",
+                        help="execution-readiness gate for the 114 workflows")
+    parser.add_argument("--readiness-out", help="readiness report directory")
+    parser.add_argument("--no-command-probe", action="store_true",
+                        help="do not send the non-actuating STATUS readiness probe")
     parser.add_argument("--port", help="COM port, e.g. COM4")
     parser.add_argument("--seconds", type=float, default=30.0)
     parser.add_argument("--out", help="capture/session output directory")
@@ -135,6 +192,9 @@ def main() -> int:
         return _capture_h8(args.port, args.seconds, args.out)
     if args.import_evidence:
         return _import_evidence(args.session)
+    if args.readiness:
+        return _readiness(args.port, args.session, args.readiness_out,
+                          not args.no_command_probe)
     smoke = args.smoke
     if smoke:
         os.environ["CG_ACCEPTANCE_SMOKE"] = "1"

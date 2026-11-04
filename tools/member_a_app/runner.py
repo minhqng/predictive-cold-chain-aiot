@@ -212,8 +212,9 @@ class TestContext:
         if not math.isfinite(requested) or requested <= 0.0:
             raise TestBlocked(f"CAPTURE_DURATION_INVALID requested={requested}")
         # A real capture is bounded here, not left to a caller's duration
-        # value. The longest canonical window currently requested is 600 s.
-        hard_limit = float(self.config.get("max_capture_s", 900.0))
+        # value. A-W05-03 requires 1800 s; 1900 s leaves setup margin while
+        # still refusing unbounded/absurd windows.
+        hard_limit = float(self.config.get("max_capture_s", 1900.0))
         if requested > hard_limit:
             raise TestBlocked(
                 f"CAPTURE_DURATION_EXCEEDS_LIMIT requested={requested:.0f}s "
