@@ -108,15 +108,36 @@ static void bme_task(void *arg)
 
     for (;;) {
         result = cg_bme280_sample(&port, &state, &obs);
+#if !CG_BME280_TRIM_LAYOUT_CONFIRMED
+        /* Fail closed at the integration point, where board policy lives. The
+         * bus, the identity and the raw codes are real, but the dig_H4/dig_H5
+         * nibble packing and the signedness of dig_H1/H3 were not settled for
+         * this build, so a published number could be wrong in a way nothing
+         * downstream can detect. Only a reading that would have been published
+         * is refused: a genuine absence or bus fault must keep its own name,
+         * otherwise this gate would silently rewrite "no module here" into
+         * "module unverified" and the operator would chase a trim problem that
+         * does not exist. */
+        if (obs.valid) {
+            obs.valid = false;
+            result = CG_BME_READ_TRIM_UNCONFIRMED;
+        }
+#endif
         /* The cycle completed, so the producer is alive and its answer is
          * timestamped - including the answer "no device acknowledges this
          * address". Liveness is the task's; the sensor's validity is obs.valid.
          * Conflating them is what made an absent module look like a dead
          * producer and kept the collapsed health from ever reading OK. */
         now_ms = (uint64_t)(esp_timer_get_time() / 1000);
+        /* The snapshot carries the producer's own observation time, not the loop
+         * time. Publishing now_ms here would make the ambient age always read
+         * ~0 ms, so bme_age_ms could never cross CG_TELEM_STALE_ENV_MS and the
+         * STALE state would be unreachable in firmware no matter how long the
+         * module stayed silent. The heartbeat stays on now_ms: that measures the
+         * task, which is what liveness is about. */
         cg_snapshot_publish_env(cg_bme280_is_present(&state), obs.valid, obs.temperature_c,
                                 obs.relative_humidity_pct, (uint8_t)state.state,
-                                (uint8_t)result, address, state.seq, now_ms);
+                                (uint8_t)result, address, state.seq, obs.obs_ms);
         cg_health_registry_beat(CG_PRODUCER_BME, now_ms);
 
         /* Only transitions are printed: the ambient values already reach the

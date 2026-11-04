@@ -83,6 +83,15 @@
  * ABSENT rather than guessing if neither acknowledges. */
 #define CG_BME280_I2C_ADDR_EVIDENCED 0x76
 #define CG_BME280_I2C_ADDR_ALT 0x77
+/* The BME280 packs dig_H4 and dig_H5 as shared nibbles across 0xE3-0xE5, and the
+ * two authoritative descriptions consulted for this build disagree on which byte
+ * supplies the high nibble of each. dig_H1 and dig_H3 are also reported as
+ * unsigned by one source and signed by the datasheet prose. Until one fitted
+ * module is compared against a known-good instrument, the decode is UNCONFIRMED,
+ * and an unconfirmed decode must not reach the wire stamped OK: a wrong
+ * humidity is indistinguishable from a real one downstream. Set this to 1 only
+ * with a captured comparison in evidence/. */
+#define CG_BME280_TRIM_LAYOUT_CONFIRMED 0
 /* MC-38 moved from GPIO34 to GPIO35; GPIO34 now carries BME280 SCL. */
 #define CG_PIN_MC38 35
 /* Naming debt: the as-built RS-485 part is a TTL485-V2.0 auto-direction module

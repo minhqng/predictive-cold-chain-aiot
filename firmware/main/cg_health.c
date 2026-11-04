@@ -79,10 +79,12 @@ cg_health_state_t cg_health_producer_state(const cg_producer_t *p, uint64_t now_
  * a producer that has never beaten outranks OK, because a silent task must not
  * be certified healthy by another task's traffic; but a producer that IS
  * speaking and is late or missing outranks a never-beaten one, because that is a
- * detected regression in something that was running. Consequence to keep in
- * mind: while BME280 is unimplemented, `overall` is NEVER even on a perfectly
- * healthy device, so consumers must read the per-producer names, not only
- * `health`. */
+ * detected regression in something that was running. Consumers must still read
+ * the per-producer names rather than only `health`, because the collapsed value
+ * cannot say which producer regressed. The BME280 producer now beats every
+ * completed cycle, so a permanently-NEVER ambient slot means the task is not
+ * running at all - the I2C bus could not be created - and not that no humidity
+ * module is fitted. */
 static int health_rank(cg_health_state_t state)
 {
     switch (state) {

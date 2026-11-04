@@ -363,8 +363,25 @@ def run_checks() -> Checker:
         "CG_BME_STATE_ABSENT" in all_sources and "cg_bme280_is_present" in all_sources,
         "absence stays a nameable state rather than being assumed or scored as a fault",
     )
-    idf_src = strip_comments((FIRMWARE_MAIN / "cg_bme280_idf.c").read_text(encoding="utf-8"))
+    # The real publication gate lives in the producer task, not in the driver, so
+    # a grep over cg_bme280.c alone cannot prove a value is not fabricated. These
+    # two assertions pin the gate itself: the ambient pair may only reach the
+    # snapshot through obs.valid, and the trim decode stays fail-closed until
+    # someone flips the macro deliberately with evidence in hand.
+    app_src = strip_comments((FIRMWARE_MAIN / "app_main.c").read_text(encoding="utf-8"))
+    checker.check(
+        "obs.valid" in app_src and "cg_snapshot_publish_env(cg_bme280_is_present(&state), obs.valid" in app_src,
+        "the ambient publication is gated by the producer's own validity flag",
+    )
+    cfg_src = (FIRMWARE_MAIN / "coldguard_config.h").read_text(encoding="utf-8")
+    checker.check(
+        re.search(r"^#define\s+CG_BME280_TRIM_LAYOUT_CONFIRMED\s+0\s*$", cfg_src, re.MULTILINE)
+        is not None,
+        "the humidity trim decode stays fail-closed by default; enabling it must be a "
+        "deliberate change backed by a comparison against a reference instrument",
+    )
     pure_src = strip_comments((FIRMWARE_MAIN / "cg_bme280.c").read_text(encoding="utf-8"))
+    idf_src = strip_comments((FIRMWARE_MAIN / "cg_bme280_idf.c").read_text(encoding="utf-8"))
     checker.check(
         "driver/i2c_master.h" in idf_src and "driver/i2c_master.h" not in pure_src,
         "the transport boundary is real: only cg_bme280_idf.c reaches the I2C driver, "

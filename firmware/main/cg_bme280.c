@@ -145,6 +145,7 @@ const char *cg_bme280_read_result_name(cg_bme_read_result_t r)
         case CG_BME_READ_NOT_READY:      return "NOT_READY";
         case CG_BME_READ_OUT_OF_RANGE:   return "OUT_OF_RANGE";
         case CG_BME_READ_SHORT:          return "SHORT_READ";
+        case CG_BME_READ_TRIM_UNCONFIRMED: return "TRIM_UNCONFIRMED";
         default:                         return "ERROR";
     }
 }
@@ -279,17 +280,13 @@ cg_bme_read_result_t cg_bme280_sample(const cg_bme280_port_t *port, cg_bme280_t 
     now = port->now_ms(port->ctx);
     out->obs_ms = now;
 
-    if (s->state == CG_BME_STATE_ABSENT) {
-        out->reason = CG_BME_READ_ABSENT;
-        return CG_BME_READ_ABSENT;
-    }
-    if (s->state == CG_BME_STATE_IDENTITY_BAD) {
-        out->reason = CG_BME_READ_NACK;
-        return CG_BME_READ_NACK;
-    }
     if (s->state != CG_BME_STATE_READY) {
-        /* Re-probe under backoff so a module that was reset or hot-reseated can
-         * return without a reboot, and so a dead bus is not polled at full rate. */
+        /* Every non-ready state re-probes under the backoff gate, including
+         * ABSENT and IDENTITY_BAD. Returning early for those two would make them
+         * terminal: a module that is simply slow to power up, or one that was
+         * hot-reseated, would stay declared absent for the whole uptime while the
+         * comment below promised recovery without a reboot. The backoff bound
+         * keeps a genuinely dead bus from being polled at full rate. */
         if (s->backoff_until_ms != 0u && now < s->backoff_until_ms) {
             out->reason = CG_BME_READ_NOT_READY;
             return CG_BME_READ_NOT_READY;
@@ -373,11 +370,14 @@ const char *cg_bme280_state_name(cg_bme280_state_t state)
 
 bool cg_bme280_is_present(const cg_bme280_t *s)
 {
-    /* READY and FAULT both mean a module has been seen on the bus: FAULT is a
-     * module that used to answer and has started failing its transactions, not
-     * an absence. ABSENT and IDENTITY_BAD are declared findings about the
-     * address, not about this producer's own liveness - the task that owns this
-     * state keeps beating its heartbeat either way, and the health layer must
-     * not read a quiet module as a crashed one. */
-    return s != NULL && (s->state == CG_BME_STATE_READY || s->state == CG_BME_STATE_FAULT);
+    /* Presence means this module was seen answering with a BME280 identity at
+     * some point. Requiring the confirmed chip id is what makes FAULT mean
+     * "a sensor that is fitted has started misbehaving": an unpowered or
+     * disconnected module leaves the bus floating, and the very first probe then
+     * returns a bus timeout rather than a NACK. Counting that FAULT as presence
+     * would report "a module is here and is failing" when nothing has ever
+     * answered - and would keep the declared-absent path unreachable for the most
+     * likely real condition. */
+    return s != NULL && s->chip_id == CG_BME280_CHIP_ID &&
+           (s->state == CG_BME_STATE_READY || s->state == CG_BME_STATE_FAULT);
 }

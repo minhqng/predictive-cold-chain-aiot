@@ -120,10 +120,13 @@ bool cg_bme280_idf_open(cg_bme280_port_t *port, uint8_t *address_out)
     bus_cfg.scl_io_num = CG_PIN_BME280_SCL;
     bus_cfg.clk_source = I2C_CLK_SRC_DEFAULT;
     bus_cfg.glitch_ignore_cnt = 7;
-    /* v6.1 has no per-line pullup field on the bus config; the internal
-     * pullups are one flag. The board's own 4.7 k external pullups are what the
-     * 100 kHz clock actually relies on - the driver documents the internal ones
-     * as too weak for a loaded bus. */
+    /* v6.1 has no per-line pull-up field on the bus config; the internal pull-ups
+     * are one flag. External pull-ups are reported for this board but never
+     * verified: evidence/A/W01/hardware-audit-w01.md records the 4.7k resistor as
+     * "no photo/measurement", and evidence/A/W04/g0-electrical-verification.md
+     * says it cannot prove where that resistor sits. The internal flag is enabled
+     * because the bus may have none at all; whether 100 kHz actually works on this
+     * board is an operator confirmation item, not something this line asserts. */
     bus_cfg.flags.enable_internal_pullup = true;
 
     err = i2c_new_master_bus(&bus_cfg, &s_bus);

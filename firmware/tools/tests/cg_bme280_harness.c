@@ -102,6 +102,47 @@ static void load_scratch(void)
     data[3] = (uint8_t)0x5D; data[4] = (uint8_t)0xB0;                   /* hum raw    */
 }
 
+/* Behaviour pin, NOT verification. dig_H4/dig_H5 are shared-nibble 12-bit signed
+ * fields and the exact byte pairing was not settled from an authoritative source
+ * for this build, so these numbers record what the current decode does rather
+ * than what the datasheet mandates. If someone re-derives the packing from the
+ * datasheet, this scenario must change - and the operator must then re-check
+ * reported humidity against a reference instrument. See
+ * evidence/A/HANDOFF/ambient-channel-bme280.md sec.5. */
+static void pin_trim_decode(void)
+{
+    uint8_t pin_tp[CG_BME280_CALIB_T_BYTES];
+    uint8_t pin_hb[CG_BME280_CALIB_H_BLOCK];
+    cg_bme280_calib_t c;
+    size_t i;
+
+    for (i = 0; i < sizeof(pin_tp); i++) {
+        pin_tp[i] = 0u;
+    }
+    pin_tp[0] = 0x00u; pin_tp[1] = 0x80u;   /* dig_T1 = 0x8000 = 32768        */
+    pin_tp[2] = 0x00u; pin_tp[3] = 0xA8u;   /* dig_T2 = 0xA800 -> -22528      */
+    pin_tp[4] = 0x00u; pin_tp[5] = 0x55u;   /* dig_T3 = 0x5500 -> 21760       */
+    for (i = 0; i < sizeof(pin_hb); i++) {
+        pin_hb[i] = 0u;
+    }
+    pin_hb[0] = 0x00u; pin_hb[1] = 0x80u;   /* dig_H2 = 0x8000 -> -32768      */
+    pin_hb[2] = 0x65u;                      /* dig_H3 = 0x65 as an unsigned byte */
+    pin_hb[3] = 0x21u;                      /* shares nibbles with H4 and H5  */
+    pin_hb[4] = 0x43u;
+    pin_hb[6] = 0x80u;                      /* dig_H6 -> -128 as int8_t       */
+
+    cg_bme280_parse_calib(pin_tp, 0x20u, pin_hb, &c);
+    check(c.dig_t1 == 32768u, "pin: dig_T1 unsigned 16-bit");
+    check(c.dig_t2 == -22528, "pin: dig_T2 signed 16-bit");
+    check(c.dig_h2 == -32768, "pin: dig_H2 signed 16-bit");
+    check(c.dig_h3 == 0x65u, "pin: dig_H3 decoded as unsigned");
+    check(c.dig_h6 == -128, "pin: dig_H6 decoded as signed");
+    /* 0x65 & 0xF0 = 0x60 -> <<4 = 0x600; 0x21 & 0x0F = 0x01 */
+    check(c.dig_h4 == (int16_t)0x601, "pin: dig_H4 nibble pairing as implemented");
+    /* 0x43 & 0xF0 = 0x40 -> <<4 = 0x400; 0x21 >> 4 = 0x02 */
+    check(c.dig_h5 == (int16_t)0x402, "pin: dig_H5 nibble pairing as implemented");
+}
+
 int main(void)
 {
     cg_bme280_port_t port;
@@ -117,6 +158,7 @@ int main(void)
     port.now_ms = fake_now;
     port.settle_ms = fake_settle;
     load_scratch();
+    pin_trim_decode();
 
     /* 1. nominal probe: identity, NVM wait, trim, control writes */
     scenario = SCEN_OK;

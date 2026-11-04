@@ -7,15 +7,21 @@
  * is cg_bme280_idf.c. That split is what lets firmware/tools/tests/
  * cg_bme280_harness.c compile the real, unchanged decision logic.
  *
- * Bosch facts this file depends on (BME280 datasheet, and the Bosch reference
- * driver bme280_defs.h / compensate_* functions, consulted rather than
- * recalled): chip id 0x60 at 0xD0; CTRL_HUM 0xF2, STATUS 0xF3, CTRL_MEAS 0xF4,
- * CONFIG 0xF5, RESET 0xE0; mode sleep 0 / forced 1 / normal 3; osrs_h occupies
- * CTRL_HUM bits 2:0, osrs_p CTRL_MEAS bits 4:2, osrs_t bits 7:5, mode bits 1:0;
- * STATUS bit 0 is the NVM-im-update flag that must clear before calibration is
- * trustworthy. Temperature and humidity compensation are the datasheet's
- * fixed-point forms, including its -4000/8500 (dC) and 102400 (mg/m^3*1000)
- * clamps.
+ * Bosch facts this file depends on (BME280 datasheet plus the Bosch reference
+ * driver, looked up rather than recalled): chip id 0x60 at 0xD0; CTRL_HUM 0xF2,
+ * STATUS 0xF3, CTRL_MEAS 0xF4, CONFIG 0xF5, RESET 0xE0; sleep/forced/normal
+ * 0/1/3; osrs_h 2:0, osrs_p 4:2, osrs_t 7:5; STATUS bit 0 is the NVM im_update
+ * flag that must clear before calibration is trustworthy; temperature and
+ * humidity compensation follow the datasheet's fixed-point forms, including its
+ * -4000/8500 (dC) and 102400 clamps.
+ *
+ * What did NOT settle: the dig_H4/dig_H5 nibble packing across 0xE3-0xE5 and the
+ * signedness of dig_H1/dig_H3. The two authoritative descriptions consulted for
+ * this build disagree, and no fitted module has been compared against a
+ * known-good instrument. The decode below is therefore a candidate, not a
+ * verified one, and cg_bme280_idf.c's caller refuses to publish anything until
+ * CG_BME280_TRIM_LAYOUT_CONFIRMED is set with evidence. See
+ * evidence/A/W02/acceptance.md section 9.
  *
  * What this module never does: it never publishes a value it did not read. A
  * missing sensor is ABSENT, a failed transaction is a failure with the previous
@@ -115,7 +121,11 @@ typedef enum {
     CG_BME_READ_IM_NOT_READY,
     CG_BME_READ_NOT_READY,
     CG_BME_READ_OUT_OF_RANGE,
-    CG_BME_READ_SHORT
+    CG_BME_READ_SHORT,
+    /* Set by the caller that owns board policy, not by the transport: the trim
+     * bytes were decoded, but the nibble layout they were decoded with has never
+     * been confirmed against a fitted module, so no number may be published. */
+    CG_BME_READ_TRIM_UNCONFIRMED
 } cg_bme_read_result_t;
 
 typedef struct {
