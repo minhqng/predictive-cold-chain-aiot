@@ -8,6 +8,7 @@ write PASS for a simulated session or for a test that executed no check.
 from __future__ import annotations
 
 import dataclasses
+import math
 import queue
 import time
 from typing import Any, Callable, Iterable, Sequence
@@ -207,12 +208,22 @@ class TestContext:
                 stop_predicate: Callable[[Sequence[protocol.TelemetryFrame]], bool] | None = None,
                 label: str = "") -> list[protocol.TelemetryFrame]:
         device = self.require_live_device()
+        requested = float(duration_s)
+        if not math.isfinite(requested) or requested <= 0.0:
+            raise TestBlocked(f"CAPTURE_DURATION_INVALID requested={requested}")
+        # A real capture is bounded here, not left to a caller's duration
+        # value. The longest canonical window currently requested is 600 s.
+        hard_limit = float(self.config.get("max_capture_s", 900.0))
+        if requested > hard_limit:
+            raise TestBlocked(
+                f"CAPTURE_DURATION_EXCEEDS_LIMIT requested={requested:.0f}s "
+                f"max={hard_limit:.0f}s")
         scale = 1.0
         cursor = device.frame_cursor()
         if device.is_simulated and self.config.get("fast_simulation", True):
             scale = 0.0
             cursor = 0
-        duration = max(0.0, float(duration_s) * scale)
+        duration = requested * scale
         frames: list[protocol.TelemetryFrame] = []
         started = time.monotonic()
         while True:

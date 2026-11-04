@@ -52,6 +52,20 @@ class RunnerTests(unittest.TestCase):
             values.setdefault("uptime_ms", 1_000_000 + index * 1000)
             self.device.feed_line(telem_line(**values))
 
+    def test_capture_is_bounded_and_rejects_overlong_duration(self) -> None:
+        self.device.feed_line(telem_line(seq=1, uptime_ms=1_000_000))
+        context = TestContext(get("A-W02-04"), self.store, self.device,
+                              self.operator,
+                              {"fast_simulation": False, "max_capture_s": 1.0})
+        started = time.monotonic()
+        with self.assertRaises(TestBlocked) as bounded:
+            context.capture(0.2, min_frames=1)
+        self.assertLess(time.monotonic() - started, 2.0)
+        self.assertIn("INSUFFICIENT_TELEMETRY", bounded.exception.reason)
+        with self.assertRaises(TestBlocked) as caught:
+            context.capture(5.0, min_frames=1)
+        self.assertIn("CAPTURE_DURATION_EXCEEDS_LIMIT", caught.exception.reason)
+
     def test_simulated_session_cannot_pass(self) -> None:
         self.feed(30)
         result = self.runner.run("A-W05-04")
