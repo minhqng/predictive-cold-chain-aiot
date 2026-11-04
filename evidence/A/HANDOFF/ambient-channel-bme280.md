@@ -18,7 +18,7 @@ These are deliberately not collapsed into one "done".
 |---|---|---|
 | SOFTWARE_IMPLEMENTED | **yes** | `firmware/main/cg_bme280.c`/`.h` (decision logic, injected port), `firmware/main/cg_bme280_idf.c` (ESP-IDF v6.1 I2C transport), registered in `firmware/main/CMakeLists.txt` with `esp_driver_i2c` |
 | HOST_VERIFIED | **yes** | `firmware/tools/tests/cg_bme280_harness.c` (decision logic against a scripted bus) and `cg_bme280_integration_harness.c` (real publication path + real formatter), both compiled and executed under MSVC `/W4 /WX`; `firmware/tools/tests/test_cg_bme280_harness.py`, `test_cg_bme280_integration.py` |
-| ESP_IDF_BUILD_VERIFIED | **yes** | `idf.py set-target esp32s3 && idf.py build` on `feat/a-bme280-environment-producer`, 0 errors and 0 warnings, `coldguard_firmware.bin` 268 864 bytes, SHA-256 `a4bd283f2fea9bc497e87dfe76fae2893ef85267d071005094929685aa1cbba0` |
+| ESP_IDF_BUILD_VERIFIED | **yes** | `idf.py set-target esp32s3 && idf.py build` on `feat/a-bme280-environment-producer`, 0 errors and 0 warnings, `coldguard_firmware.bin` 268 912 bytes, SHA-256 `6f6bfaa929549f322568af6473fc2a42efe8edd87d36712f689e347cd1c010b0` |
 | HARDWARE_VERIFIED | **no** | Never flashed, never read from a board. See §5 for the specific measurements still outstanding. |
 
 Nothing in this document should be read as A-W02-06 being physically accepted.
@@ -43,6 +43,16 @@ choice: `backend/src/coldguard_backend/validation.py:61-62` requires the pair
 `normalized_store.py:91-92,171-172` already declares and writes the columns
 `t_air_c` and `rh_pct`. Member A reused the pre-existing serial fields instead of
 inventing new ones, which is why this is a mapping task and not a schema change.
+
+**Current production behaviour, stated plainly:** `CG_BME280_TRIM_LAYOUT_CONFIRMED` is
+`0` in `coldguard_config.h`, so the producer refuses every reading that would otherwise
+be published and the ambient pair reaches the wire as `nan`. Consumers must therefore
+see `None` for ambient on every capture taken from this build. The plumbing, the
+validity rules and the tests below are live and exercised on the host; the numbers are
+not, because the `dig_H4`/`dig_H5` nibble pairing and the signedness of `dig_H1`/`dig_H3`
+were not settled from an authoritative source and shipping a guess would put an
+unverifiable number into a dataset. Setting that macro to `1` is an operator action that
+requires a captured comparison against a reference instrument.
 
 ## 3. Validity rules a consumer must implement
 
@@ -109,7 +119,25 @@ change, so Member A left the behaviour alone and is raising it instead:
    ESP32/V1 in its final location. This is the half of A-W02-06 that has never been
    measured at all.
 
-## 6. `hardware_config_id` is still not resolved — do not treat these as equal
+## 7. Consumer gap Member B must decide on
+
+`firmware/tools/cg_w17_shadow_audit.py:18-29` lists `REQUIRED_B_MODEL_CHANNELS`
+(`t_inside_c`, `t_inside_status`, `t_cold_side_c`, `t_hot_side_c`, `door_open`,
+`door_status`, `voltage_v`, `current_a`, `power_w`, `quality`) and
+`NUMERIC_B_MODEL_CHANNELS` at `:44-46`. **Neither list contains the ambient pair.**
+That was correct while the device emitted `NOT_ASSIGNED`/`SENSOR_NOT_PRESENT`
+permanently; it is a decision now rather than an accident, because the fields carry
+real data some of the time.
+
+Consequences of leaving it as is: `verify_b_model_alignment()` will keep reporting a
+session as aligned whether or not ambient was measured, and a frame whose
+`t_ambient_c` is `nan` will not be counted as a missing channel. If Member B wants
+ambient in the feature set, adding it to `REQUIRED_B_MODEL_CHANNELS` makes it
+mandatory for a valid run, which would invalidate every capture taken before this
+firmware. The conservative option is a separate, optional ambient channel list so
+existing runs stay valid. **Owner: Member B.** Member A does not change B's model
+definition.
+
 
 Two identifiers are in use for what may be one thing, and **no provenance in the
 repository links them**:

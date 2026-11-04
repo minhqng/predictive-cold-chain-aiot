@@ -10,7 +10,7 @@ succeeded but nothing in the repository let a reader check that.
 | Item | Value |
 |---|---|
 | Branch | `feat/a-bme280-environment-producer` |
-| Commit built | `6600e110a10f65020926cd42ae4f546ac2c05774` |
+| Commit built | `f35b39e80268c0a8edff5a03b16f42388e2f55e0` |
 | Project | `firmware/` (`project(coldguard_firmware)`) |
 | Target | `esp32s3` (`CONFIG_IDF_TARGET="esp32s3"` in `firmware/sdkconfig.defaults`) |
 | ESP-IDF | v6.1.0 at `C:\Espressif\v6.1\esp-idf` |
@@ -19,8 +19,8 @@ succeeded but nothing in the repository let a reader check that.
 | Commands | `idf.py set-target esp32s3` then `idf.py build` |
 | Result | `SET_TARGET_EXIT=0`, `BUILD_EXIT=0` |
 | Diagnostics | 0 errors, 0 warnings (count of `error:` and `warning:` in the log) |
-| Artifact | `coldguard_firmware.bin`, 268864 bytes |
-| Artifact SHA-256 | `a4bd283f2fea9bc497e87dfe76fae2893ef85267d071005094929685aa1cbba0` |
+| Artifact | `coldguard_firmware.bin`, 268912 bytes |
+| Artifact SHA-256 | `6f6bfaa929549f322568af6473fc2a42efe8edd87d36712f689e347cd1c010b0` |
 
 ## How to reproduce, and the honest limit
 
@@ -39,7 +39,7 @@ records for the W04 build. Verify the inputs first with `source-hashes.txt`:
 cd <repo root> && sha256sum -c evidence/A/W02/bme280-esp-idf-build-2026-11-04/source-hashes.txt
 ```
 
-If every source hash matches `6600e110a10f65020926cd42ae4f546ac2c05774`, a rebuild exercises the same bytes this
+If every source hash matches `f35b39e80268c0a8edff5a03b16f42388e2f55e0`, a rebuild exercises the same bytes this
 record describes. A matching image hash is NOT expected and is not a failure.
 
 ## What this record does NOT prove
@@ -82,7 +82,7 @@ Successfully created ESP32-S3 image.
 
 Generated C:/cgb/bme/firmware/build/coldguard_firmware.bin
 [1103/1103] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\cgb\bme\firmware\build && C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe C:/Espressif/v6.1/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/cgb/bme/firmware/build/partition_table/partition-table.bin C:/cgb/bme/firmware/build/coldguard_firmware.bin"
-coldguard_firmware.bin binary size 0x41a40 bytes. Smallest app partition is 0x100000 bytes. 0xbe5c0 bytes (74%) free.
+coldguard_firmware.bin binary size 0x41a70 bytes. Smallest app partition is 0x100000 bytes. 0xbe590 bytes (74%) free.
 
 Executing action: all (aliases: build)
 Running ninja in directory C:\cgb\bme\firmware\build
