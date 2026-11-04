@@ -138,11 +138,17 @@ def handler_photo_inventory(ctx: TestContext) -> None:
 
 
 def handler_token_scan(ctx: TestContext) -> None:
-    path = ctx.ask_file("Attach the legacy-assumption scan report (text/Markdown)",
-                        [("Text", "*.txt *.md"), ("All", "*.*")])
-    if not path:
-        ctx.block("SCAN_REPORT_NOT_PROVIDED")
-    ctx.attach(path)
+    imported = ctx.imported_first()
+    if imported is not None:
+        path = ctx.imported_path(imported)
+        if imported not in ctx.evidence:
+            ctx.evidence.append(imported)
+    else:
+        path = ctx.ask_file("Attach the legacy-assumption scan report (text/Markdown)",
+                            [("Text", "*.txt *.md"), ("All", "*.*")])
+        if not path:
+            ctx.block("SCAN_REPORT_NOT_PROVIDED")
+        ctx.attach(path)
     try:
         text = pathlib.Path(path).read_text(encoding="utf-8", errors="replace").lower()
     except Exception as exc:

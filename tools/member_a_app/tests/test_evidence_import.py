@@ -69,6 +69,15 @@ class EvidenceImportTests(unittest.TestCase):
         self.assertEqual(result.outcome, Outcome.PASS, result.failure_reason)
         self.assertGreaterEqual(len(result.evidence), 13)
 
+    def test_token_scan_uses_imported_evidence(self) -> None:
+        import_all(self.store)
+        operator = AutoOperator({})
+        runner = TestRunner(self.store, self.device, operator, [get("A-W01-05")])
+        result = runner.run("A-W01-05")
+        self.assertEqual(result.outcome, Outcome.PASS, result.failure_reason)
+        self.assertTrue(any("legacy-assumption-check.md" in str(item.get("stored", ""))
+                            for item in result.evidence))
+
     def test_documentary_uses_imported_evidence(self) -> None:
         import_all(self.store)
         operator = AutoOperator({"choose": ["Confirmed"] * 10,
