@@ -114,6 +114,9 @@ class TelemetryParsingTests(unittest.TestCase):
 class CommandBuilderTests(unittest.TestCase):
     def test_valid_builders(self) -> None:
         self.assertEqual(protocol.arm("DEADBEEF"), b"ARM DEADBEEF\n")
+        self.assertEqual(protocol.arm("72aedb31"), b"ARM 72aedb31\n")
+        self.assertEqual(protocol.supervise("72aedb31"), b"SUPERVISE 72aedb31\n")
+        self.assertEqual(protocol.clear("72aedb31"), b"CLEAR 72aedb31\n")
         self.assertEqual(protocol.start(10), b"START 10\n")
         self.assertEqual(protocol.stop(), b"STOP\n")
         self.assertEqual(protocol.estop(), b"ESTOP\n")

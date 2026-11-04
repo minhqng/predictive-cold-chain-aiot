@@ -571,14 +571,14 @@ def parse_line(line: str, host_time: _dt.datetime | None = None) -> ParsedLine:
 def arm(token: str) -> bytes:
     if not _TOKEN_RE.match(token or ""):
         raise CommandError("ARM token must be exactly 8 hexadecimal characters")
-    return f"ARM {token.upper()}\n".encode("ascii")
+    return f"ARM {token}\n".encode("ascii")
 
 
 def supervise(token: str) -> bytes:
     """Supervised-bench interlock authorization (same boot token as ARM)."""
     if not _TOKEN_RE.match(token or ""):
         raise CommandError("SUPERVISE token must be exactly 8 hexadecimal characters")
-    return f"SUPERVISE {token.upper()}\n".encode("ascii")
+    return f"SUPERVISE {token}\n".encode("ascii")
 
 
 def door_attest() -> bytes:
@@ -589,7 +589,7 @@ def door_attest() -> bytes:
 def clear(token: str) -> bytes:
     if not _TOKEN_RE.match(token or ""):
         raise CommandError("CLEAR token must be exactly 8 hexadecimal characters")
-    return f"CLEAR {token.upper()}\n".encode("ascii")
+    return f"CLEAR {token}\n".encode("ascii")
 
 
 def start(seconds: int) -> bytes:
