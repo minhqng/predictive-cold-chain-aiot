@@ -32,6 +32,24 @@ REQUIRED_B_MODEL_CHANNELS = (
 # Any rate above 0.10 K/s (6.0 K/min) in chamber air represents physical anomaly or sensor glitch
 ENVELOPE_BOUND_CHAMBER_MAX_RATE_C_PER_SEC = 0.10
 
+# The plant reports at ~1 Hz, so a five second silence means the following rate is
+# computed across a gap rather than measured continuously; a diluted K/s over such a
+# gap can hide a real excursion.
+MAX_INTER_FRAME_INTERVAL_MS = 5000
+
+# monitor_plant_anomalies compares adjacent samples, so a single-frame session cannot
+# evidence anything about thermal behaviour at all.
+MIN_SESSION_FRAMES = 2
+
+NUMERIC_B_MODEL_CHANNELS = (
+    "t_inside_c", "t_cold_side_c", "t_hot_side_c", "voltage_v", "current_a", "power_w",
+)
+STATUS_B_MODEL_CHANNELS = ("t_inside_status", "door_status", "quality")
+
+UNUSABLE_NUMERIC_SENTINELS = (-9999.0, -9999)
+"""Placeholder magnitudes some capture paths write instead of a measurement. They are
+not measurements, so they must not count as evidence."""
+
 
 @dataclass
 class ShadowAuditResult:
@@ -88,8 +106,15 @@ def verify_frame_sequence_and_cadence(frames: List[Dict[str, Any]]) -> List[str]
             prev_seq = seq
 
         if uptime is not None:
-            if prev_uptime is not None and uptime <= prev_uptime:
-                errors.append(f"FRAME_{idx}: Non-monotonic timestamp {prev_uptime} -> {uptime}")
+            if prev_uptime is not None:
+                if uptime <= prev_uptime:
+                    errors.append(f"FRAME_{idx}: Non-monotonic timestamp {prev_uptime} -> {uptime}")
+                elif uptime - prev_uptime > MAX_INTER_FRAME_INTERVAL_MS:
+                    errors.append(
+                        f"FRAME_{idx}: Cadence gap {uptime - prev_uptime} ms exceeds "
+                        f"{MAX_INTER_FRAME_INTERVAL_MS} ms, so rates across this interval "
+                        "are interpolated rather than observed"
+                    )
             prev_uptime = uptime
 
     return errors
@@ -124,10 +149,11 @@ def verify_predictive_isolation(
 
 
 def verify_b_model_alignment(record: Dict[str, Any]) -> List[str]:
-    """A-W17-03: Verify all channels required by Member B exist and are usable.
+    """A-W17-03: Verify all channels required by Member B exist and carry a usable value.
 
-    A NaN or infinite reading is present but meaningless, so it counts as missing:
-    comparing against NaN is always False and would otherwise look compliant.
+    Presence is not usability. A NaN/infinite reading compares as false against every
+    threshold, an empty status string asserts nothing, and a placeholder magnitude such
+    as -9999 is a marker rather than a measurement, so all three count as missing.
     """
     missing = []
     for channel in REQUIRED_B_MODEL_CHANNELS:
@@ -138,7 +164,20 @@ def verify_b_model_alignment(record: Dict[str, Any]) -> List[str]:
         if value is None:
             missing.append(channel)
             continue
-        if isinstance(value, float) and _is_missing_number(value):
+        if channel in NUMERIC_B_MODEL_CHANNELS:
+            if _is_missing_number(value) or value in UNUSABLE_NUMERIC_SENTINELS:
+                missing.append(channel)
+            continue
+        if channel == "door_open":
+            if isinstance(value, bool) or str(value).strip() in ("0", "1"):
+                continue
+            missing.append(channel)
+            continue
+        if isinstance(value, str):
+            if not value.strip():
+                missing.append(channel)
+            continue
+        if _is_missing_number(value):
             missing.append(channel)
     return missing
 
@@ -196,6 +235,17 @@ def audit_shadow_session(
     verdict is DATA_INSUFFICIENT, never PASS!
     """
     n = len(telemetry_records)
+    if n > 0 and n < MIN_SESSION_FRAMES:
+        return ShadowAuditResult(
+            records_evaluated=n,
+            predictive_leak_detected=False,
+            missing_b_channels=verify_b_model_alignment(telemetry_records[0]),
+            anomalies_detected=[],
+            frame_sequence_errors=["SESSION_TOO_SHORT: fewer than 2 frames cannot evidence "
+                                   "thermal behaviour or shadow isolation"],
+            verdict="DATA_INSUFFICIENT",
+            details={"note": "Session shorter than the minimum comparable frame pair"},
+        )
     if n == 0:
         return ShadowAuditResult(
             records_evaluated=0,
@@ -261,6 +311,31 @@ def audit_shadow_session(
                         "isolation cannot be evaluated for this session",
                 "frames_without_applied_duty": frames_without_applied_duty,
             },
+        )
+
+    if shadow_commands is authorized_controller_a_duties:
+        return ShadowAuditResult(
+            records_evaluated=n,
+            predictive_leak_detected=False,
+            missing_b_channels=missing_channels,
+            anomalies_detected=[],
+            frame_sequence_errors=seq_errors,
+            verdict="DATA_INSUFFICIENT",
+            details={"note": "Shadow decisions are the same object as the Controller A "
+                             "authorised duties, so isolation is unfalsifiable by construction"},
+        )
+    if shadow_commands is not None and authorized_controller_a_duties is not None \
+            and len(shadow_commands) == len(authorized_controller_a_duties) \
+            and all(s == a for s, a in zip(shadow_commands, authorized_controller_a_duties)):
+        return ShadowAuditResult(
+            records_evaluated=n,
+            predictive_leak_detected=False,
+            missing_b_channels=missing_channels,
+            anomalies_detected=[],
+            frame_sequence_errors=seq_errors,
+            verdict="DATA_INSUFFICIENT",
+            details={"note": "Shadow decision equals the authorised Controller A duty on every "
+                             "frame, so a leak could not be detected even if one occurred"},
         )
 
     try:
