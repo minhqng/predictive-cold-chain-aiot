@@ -109,6 +109,30 @@ static const char *power_status(const cg_snapshot_t *snap, uint64_t now_ms)
 }
 
 /*
+ * The ambient channel has three different reasons to carry no value, and they
+ * must not collapse into one token: no producer cycle has completed yet
+ * (NO_DATA), the bus is up but no module acknowledges it
+ * (SENSOR_NOT_PRESENT - a declared configuration fact), and a module that
+ * answers but produced a refused reading (INVALID). docs/01 forbids a missing
+ * reading being presented as a measured one, which is what a single "0.0" or a
+ * carried-forward last value would have done.
+ */
+static const char *env_status(const cg_snapshot_t *snap, uint64_t now_ms)
+{
+    if (!snap->env_observed) {
+        return CG_TELEM_STATUS_NO_DATA;
+    }
+    if (!snap->env_present) {
+        return CG_TELEM_STATUS_NOT_PRESENT;
+    }
+    if (now_ms < snap->env_obs_ms ||
+        now_ms - snap->env_obs_ms > (uint64_t)CG_TELEM_STALE_ENV_MS) {
+        return CG_TELEM_STATUS_STALE;
+    }
+    return snap->env_valid ? CG_TELEM_STATUS_OK : CG_TELEM_STATUS_INVALID;
+}
+
+/*
  * Does the electrical observation corroborate the output the control layer was
  * left driving? Only MEASURED_MATCHES_APPLIED and MEASURED_ZERO are statements
  * about the branch; the other two mean the PZEM could not be asked. A stale or
@@ -164,6 +188,7 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
     const char *t_hot_side_status;
     const char *t_status[CG_ROLE_COUNT];
     const char *p_status;
+    const char *env_status_text;
     const char *sensor_validity;
     const char *applied;
     const char *evidence;
@@ -197,6 +222,7 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
         t_status[role] = thermal_status(snap, role, now_ms);
     }
     p_status = power_status(snap, now_ms);
+    env_status_text = env_status(snap, now_ms);
     sensor_validity = snap->thermal_observed ? cg_quality_name((cg_thermal_quality_t)snap->thermal_quality)
                                              : CG_TELEM_STATUS_NO_DATA;
 
@@ -221,15 +247,24 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
      * still carried in door_raw. */
     quality_in.door_state = source_state(snap->door_observed, snap->door_obs_ms, now_ms,
                                          CG_TELEM_STALE_DOOR_MS, snap->door_known);
-    quality_in.door_age_over_limit = quality_in.door_age_ms > quality_in.door_age_limit_ms;
-    quality_in.bme_state = CG_SRC_EMPTY;
-    quality_in.bme_present = false;
+    /* The ambient producer publishes a timestamp for every completed cycle,
+     * including a cycle that concluded the module is absent, so an absent device
+     * reads as DEGRADED by presence and a silent one reads as STALE by age. */
+    quality_in.bme_state = source_state(snap->env_observed, snap->env_obs_ms, now_ms,
+                                        CG_TELEM_STALE_ENV_MS, snap->env_valid);
+    quality_in.bme_present = snap->env_present;
     quality_in.thermal_age_ms = obs_age_ms(snap->thermal_obs_ms, now_ms);
     quality_in.power_age_ms = obs_age_ms(snap->power_obs_ms, now_ms);
     quality_in.door_age_ms = obs_age_ms(snap->door_obs_ms, now_ms);
+    quality_in.bme_age_ms = obs_age_ms(snap->env_obs_ms, now_ms);
     quality_in.thermal_age_limit_ms = CG_TEC_STALE_THERMAL_MS;
     quality_in.power_age_limit_ms = CG_TEC_STALE_POWER_MS;
     quality_in.door_age_limit_ms = CG_TELEM_STALE_DOOR_MS;
+    quality_in.bme_age_limit_ms = CG_TELEM_STALE_ENV_MS;
+    /* Set after the ages and limits above: computing this flag from the
+     * zero-initialised struct made the stale-door cross-check always false,
+     * which is the one thing the comment on door_age_over_limit forbids. */
+    quality_in.door_age_over_limit = quality_in.door_age_ms > quality_in.door_age_limit_ms;
     cg_quality_eval(&quality_in, &quality);
 
     applied = tec.outputs_energized ? CG_TELEM_APPLIED_ON : CG_TELEM_APPLIED_OFF;
@@ -278,13 +313,19 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
                      snap->t_c[CG_TELEM_HOT_SIDE_ROLE], t_hot, sizeof(t_hot)),
            t_hot_side_status, CG_TELEM_HOT_SIDE_SRC);
 
+    /* The ambient pair travels together: both come from the same BME280
+     * transaction, so both carry the same status. A temperature that arrived
+     * without humidity (a BMP280 answering 0x57) is refused inside the producer
+     * and reaches here as INVALID, never as half a reading. */
     append(&cursor, &left, &overflow,
            " t_cold_side_c=%s t_cold_side_status=%s"
            " t_ambient_c=%s t_ambient_status=%s"
            " relative_humidity_pct=%s relative_humidity_status=%s",
            fmt_float(false, 0.0f, t_cold, sizeof(t_cold)), CG_TELEM_STATUS_NOT_ASSIGNED,
-           fmt_float(false, 0.0f, t_ambient, sizeof(t_ambient)), CG_TELEM_STATUS_NOT_ASSIGNED,
-           fmt_float(false, 0.0f, rh, sizeof(rh)), CG_TELEM_STATUS_NOT_PRESENT);
+           fmt_float(strcmp(env_status_text, CG_TELEM_STATUS_OK) == 0, snap->env_temperature_c,
+                     t_ambient, sizeof(t_ambient)), env_status_text,
+           fmt_float(strcmp(env_status_text, CG_TELEM_STATUS_OK) == 0, snap->env_humidity_pct,
+                     rh, sizeof(rh)), env_status_text);
 
     if (!snap->door_known) {
         append(&cursor, &left, &overflow, " door_open=%s door_status=%s door_raw=%d",

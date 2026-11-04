@@ -12,13 +12,18 @@
  *     committed DOOR_STATE line after the debounce window (A-W02-07);
  *   - polls the PZEM-017 over Modbus RTU read-only and prints one PZEM line
  *     per real poll, plus the boot config/range readback (A-W03-03/04);
+ *   - samples the BME280 ambient channel over I2C and publishes each completed
+ *     cycle - including a definitive "no module acknowledges this address" -
+ *     into the snapshot and the health registry (A-W02-06);
  *   - runs the W04 TEC commissioning controller: fail-closed state machine,
  *     local-token authorization, fault latch, bounded run duration and the
  *     raw `#CG TELEM` experiment stream. The output stage is compiled out,
  *     so the delivered build cannot energize the branch (docs/06).
  *
  * Not implemented on purpose: MQTT/telemetry publishing, cloud commands and
- * cooling actuation. BME280 stays a pending physical test (A-W02-06).
+ * cooling actuation. The BME280 producer is implemented, but the physical
+ * acceptance half of A-W02-06 (mounting position, and whether the ESP32/V1
+ * heats the probe) is still an open bench question.
  */
 #include <stdio.h>
 #include <string.h>
@@ -32,6 +37,8 @@
 #include "nvs_flash.h"
 
 #include "coldguard_config.h"
+#include "cg_bme280.h"
+#include "cg_bme280_idf.h"
 #include "cg_commission.h"
 #include "cg_door.h"
 #include "cg_ds18b20.h"
@@ -69,6 +76,66 @@ static uint32_t boot_count_next(void)
     nvs_close(handle);
 
     return count;
+}
+
+static void bme_task(void *arg)
+{
+    static cg_bme280_t state;
+    static cg_bme280_port_t port;
+    static cg_bme280_obs_t obs;
+    cg_bme_read_result_t result;
+    uint8_t address = 0u;
+    int last_state = -1;
+    int last_reason = -1;
+    uint64_t now_ms;
+
+    (void)arg;
+
+    if (!cg_bme280_idf_open(&port, &address)) {
+        /* The bus itself could not be created. Deleting the task is the honest
+         * outcome: the producer then reports as never-running in the health
+         * layer instead of beating a heartbeat for a sensor that was never
+         * asked. Nothing else in the application depends on this task. */
+        cg_log_error("bme280=BUS_INIT_FAIL sda=%d scl=%d", CG_PIN_BME280_SDA,
+                     CG_PIN_BME280_SCL);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    cg_bme280_reset(&state);
+    cg_log_line("%s %s event=BME280_BUS bus=UP addr=0x%02X sda=%d scl=%d", CG_LOG_PREFIX,
+                CG_LOG_TEC, (unsigned)address, CG_PIN_BME280_SDA, CG_PIN_BME280_SCL);
+
+    for (;;) {
+        result = cg_bme280_sample(&port, &state, &obs);
+        /* The cycle completed, so the producer is alive and its answer is
+         * timestamped - including the answer "no device acknowledges this
+         * address". Liveness is the task's; the sensor's validity is obs.valid.
+         * Conflating them is what made an absent module look like a dead
+         * producer and kept the collapsed health from ever reading OK. */
+        now_ms = (uint64_t)(esp_timer_get_time() / 1000);
+        cg_snapshot_publish_env(cg_bme280_is_present(&state), obs.valid, obs.temperature_c,
+                                obs.relative_humidity_pct, (uint8_t)state.state,
+                                (uint8_t)result, address, state.seq, now_ms);
+        cg_health_registry_beat(CG_PRODUCER_BME, now_ms);
+
+        /* Only transitions are printed: the ambient values already reach the
+         * host on the TELEM line, so a second 1 Hz line would add serial
+         * traffic without adding evidence. */
+        if ((int)state.state != last_state || (int)result != last_reason) {
+            cg_log_line("%s %s event=BME280_STATE state=%s reason=%s addr=0x%02X seq=%lu "
+                        "t_c=%s rh_pct=%s",
+                        CG_LOG_PREFIX, CG_LOG_TEC, cg_bme280_state_name(state.state),
+                        cg_bme280_read_result_name(result), (unsigned)address,
+                        (unsigned long)state.seq,
+                        obs.valid ? "MEASURED" : CG_INVALID_VALUE_TOKEN,
+                        obs.valid ? "MEASURED" : CG_INVALID_VALUE_TOKEN);
+            last_state = (int)state.state;
+            last_reason = (int)result;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(CG_SAMPLE_PERIOD_MS));
+    }
 }
 
 static void door_task(void *arg)
@@ -279,6 +346,10 @@ void app_main(void)
 
     (void)xTaskCreate(door_task, "cg_door", 3072, NULL, 6, NULL);
     (void)xTaskCreate(sensor_task, "cg_sensor", 4096, NULL, 5, NULL);
+    /* A-W02-06: the ambient producer. It shares the sensor cadence and owns no
+     * actuator path; if the I2C bus cannot be created the task deletes itself
+     * and the health layer reports the producer as never-running. */
+    (void)xTaskCreate(bme_task, "cg_bme", 4096, NULL, 5, NULL);
 
     /* W04: controller + local console + raw telemetry. It starts in OFF and
      * cannot energize anything in this build (output stage compiled out). */

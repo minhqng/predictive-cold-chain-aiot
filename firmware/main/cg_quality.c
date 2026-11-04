@@ -77,15 +77,21 @@ static const char *thermal_quality(const cg_quality_input_t *in)
 static const char *environment_quality(const cg_quality_input_t *in)
 {
     if (!in->bme_present) {
-        /* Humidity is not a mandatory chamber-air source and its absence here
-         * is a *known* configuration fact, not an undetermined one: docs/01
-         * §19.2 DEGRADED ("a defined degraded path remains legal") is the right
-         * name, and §19.4 UNKNOWN would wrongly imply the firmware cannot tell
-         * whether the sensor is there. It still keeps the collapsed `quality`
-         * from reading VALID in this build. */
+        /* Two states collapse here and that is deliberate. A definitive "no
+         * module acknowledges the bus" is a *known* configuration fact, so
+         * DEGRADED is right and §19.4 UNKNOWN would wrongly imply the firmware
+         * cannot tell whether the sensor is there. A producer that has not
+         * completed its first cycle yet is genuinely undetermined, but
+         * `environment_quality` is part of the vocabulary Members B and C parse,
+         * so giving those two cases different names is a cross-team contract
+         * change, not a Member A local refinement - it is raised as an open
+         * item in the handoff instead of being decided here. */
         return CG_Q_DEGRADED;
     }
-    return cg_source_quality_name(in->bme_state, 0);
+    /* Same independent cross-check the other groups get: the caller cannot make
+     * an old ambient observation look fresh by labelling the state FRESH_OK. */
+    return cg_source_quality_name(in->bme_state,
+                                  in->bme_age_ms > in->bme_age_limit_ms);
 }
 
 static const char *door_quality(const cg_quality_input_t *in)

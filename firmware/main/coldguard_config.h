@@ -76,6 +76,13 @@
 #define CG_PIN_BME280_SDA 21
 /* SCL moved from GPIO33 to GPIO34 when the BME280 header was wired. */
 #define CG_PIN_BME280_SCL 34
+/* BME280 strap addresses. evidence/A/W02/bme280/ records a real bench module
+ * answering 0x76 (chip id 0x60) - but on the pre-rework wiring, with SCL still
+ * on GPIO33. The strap itself has never been read on this board, so the
+ * transport probes both instead of asserting one, and the producer reports
+ * ABSENT rather than guessing if neither acknowledges. */
+#define CG_BME280_I2C_ADDR_EVIDENCED 0x76
+#define CG_BME280_I2C_ADDR_ALT 0x77
 /* MC-38 moved from GPIO34 to GPIO35; GPIO34 now carries BME280 SCL. */
 #define CG_PIN_MC38 35
 /* Naming debt: the as-built RS-485 part is a TTL485-V2.0 auto-direction module
@@ -553,6 +560,13 @@
  * an observation time. Four door periods is 80 ms, far inside any deliberate
  * open interval used for a disturbance test, so it cannot erase a treatment. */
 #define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
+
+/* Same rule for the ambient channel once the producer publishes a timestamp: an
+ * environment reading older than this is STALE, not current. Four producer
+ * periods is 4 s - long enough that one missed I2C transaction does not flip the
+ * quality group, short enough that a module that has stopped answering is not
+ * still presented as the room's current temperature. */
+#define CG_TELEM_STALE_ENV_MS (4 * CG_HEALTH_BME_PERIOD_MS)
 
 /* ------------------------------------------------------------------ */
 /* W06 - command/ACK                                                   */

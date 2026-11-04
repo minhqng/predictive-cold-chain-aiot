@@ -4,6 +4,8 @@ idf_component_register(
         "cg_rom_map.c"
         "cg_onewire.c"
         "cg_ds18b20.c"
+        "cg_bme280.c"
+        "cg_bme280_idf.c"
         "cg_door.c"
         "cg_safety.c"
         "cg_log.c"
@@ -28,6 +30,7 @@ idf_component_register(
     # GPIO APIs (driver/gpio.h) live in esp_driver_gpio and UART APIs
     # (driver/uart.h) live in esp_driver_uart on ESP-IDF v6.x: the legacy
     # "driver" meta-component no longer re-exports those headers. Both must
-    # be direct requirements of this component.
-    PRIV_REQUIRES esp_driver_gpio esp_driver_uart
+    # be direct requirements of this component. esp_driver_i2c is the same
+    # split for the BME280 transport (driver/i2c_master.h).
+    PRIV_REQUIRES esp_driver_gpio esp_driver_uart esp_driver_i2c
 )

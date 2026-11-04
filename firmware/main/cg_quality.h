@@ -55,10 +55,14 @@ typedef struct {
     uint64_t power_age_limit_ms;
     uint64_t door_age_ms;
     uint64_t door_age_limit_ms;
+    uint64_t bme_age_ms;
+    uint64_t bme_age_limit_ms;
     /* The door gets the same independent age cross-check as thermal and power:
      * a caller must not be able to hide a stale door level by labelling it
-     * fresh. BME has no observation time in this build (the driver is not
-     * implemented), so its group is decided by presence alone. */
+     * fresh. The environment group gets that same cross-check now that the
+     * BME280 producer publishes an observation time (A-W02-06); presence alone
+     * is no longer enough to decide it, because a module that answered once and
+     * went quiet must read as STALE rather than as a fresh ambient value. */
     int door_age_over_limit;
     int bme_present;
     cg_source_state_t thermal_state;

@@ -96,6 +96,24 @@ void cg_snapshot_publish_door(bool known, bool open, int raw, uint64_t obs_ms,
     CG_SNAP_UNLOCK();
 }
 
+void cg_snapshot_publish_env(bool present, bool valid, float temperature_c,
+                             float humidity_pct, uint8_t state, uint8_t reason,
+                             uint8_t i2c_addr, uint32_t seq, uint64_t obs_ms)
+{
+    CG_SNAP_LOCK();
+    s_snap.env_present = present;
+    s_snap.env_valid = valid;
+    s_snap.env_temperature_c = temperature_c;
+    s_snap.env_humidity_pct = humidity_pct;
+    s_snap.env_state = state;
+    s_snap.env_reason = reason;
+    s_snap.env_i2c_addr = i2c_addr;
+    s_snap.env_observed = true;
+    s_snap.env_seq = seq;
+    s_snap.env_obs_ms = obs_ms;
+    CG_SNAP_UNLOCK();
+}
+
 void cg_snapshot_read(cg_snapshot_t *out)
 {
     CG_SNAP_LOCK();

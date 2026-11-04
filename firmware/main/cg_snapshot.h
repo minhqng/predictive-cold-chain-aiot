@@ -64,6 +64,22 @@ typedef struct {
     uint64_t door_obs_ms;
     uint32_t door_transitions;
     uint32_t door_cycles;
+
+    /* Ambient environment (A-W02-06). `env_observed` becomes true once the
+     * producer has completed a cycle with the bus up - including a cycle whose
+     * answer was "no device acknowledged". Absence is therefore an observation
+     * with a time, not the absence of one, which is what lets the reader tell a
+     * quiet module from a dead producer. */
+    bool env_observed;
+    bool env_present;
+    bool env_valid;
+    uint64_t env_obs_ms;
+    uint32_t env_seq;
+    float env_temperature_c;
+    float env_humidity_pct;
+    uint8_t env_state;  /* cg_bme280_state_t  */
+    uint8_t env_reason; /* cg_bme_read_result_t */
+    uint8_t env_i2c_addr;
 } cg_snapshot_t;
 
 void cg_snapshot_init(void);
@@ -74,6 +90,14 @@ void cg_snapshot_publish_power(bool valid, float voltage_v, float current_a, flo
                                float energy_wh, uint32_t seq, uint64_t obs_ms);
 void cg_snapshot_publish_door(bool known, bool open, int raw, uint64_t obs_ms,
                               uint32_t transitions, uint32_t cycles);
+
+/* Publishes one ambient cycle. `present` is the producer's belief that a module
+ * is on the bus; `valid` is false for every refusal path, so the last good value
+ * is never carried forward as if it were current - the same rule
+ * cg_snapshot_publish_power() applies to a failed electrical poll. */
+void cg_snapshot_publish_env(bool present, bool valid, float temperature_c,
+                             float humidity_pct, uint8_t state, uint8_t reason,
+                             uint8_t i2c_addr, uint32_t seq, uint64_t obs_ms);
 
 /* Copies the latest snapshot. Every field keeps its own observation time. */
 void cg_snapshot_read(cg_snapshot_t *out);
