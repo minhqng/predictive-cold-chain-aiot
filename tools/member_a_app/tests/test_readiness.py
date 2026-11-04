@@ -84,6 +84,24 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(self.item("A-W08-05", snap).state,
                          readiness.NEEDS_EXISTING_PREREQUISITE)
 
+    def test_live_snapshot_waits_for_first_pzem_poll(self) -> None:
+        import threading
+        import time
+        from member_a_app.device import FakeDeviceLink
+        from member_a_app.tests.helpers import telem_line
+
+        link = FakeDeviceLink(None)
+        link.feed_line(telem_line(seq=1, uptime_ms=1000, voltage=0.0,
+                                  current=0.0))
+        def later() -> None:
+            time.sleep(0.3)
+            link.feed_line(telem_line(seq=2, uptime_ms=2000, voltage=11.95,
+                                      current=0.0))
+        threading.Thread(target=later, daemon=True).start()
+        snapshot = readiness.build_snapshot(link, probe_commands=False, wait_s=0.1)
+        self.assertTrue(snapshot.psu_present)
+        self.assertAlmostEqual(snapshot.frame.voltage_v, 11.95)
+
     def test_limits_are_parsed_from_boot_events(self) -> None:
         events = [protocol.parse_line(
             "#CG TEC_LIMIT name=on_time_max_ms state=RESOLVED value=190000.0000 "

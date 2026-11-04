@@ -122,6 +122,17 @@ def build_snapshot(link: DeviceLink | None, probe_commands: bool = True,
     if frame is None:
         return snap
     snap.connected = True
+    # The PZEM first Modbus poll can arrive ~7 s after boot. Do not classify
+    # the PSU as absent from an early frame that predates it.
+    psu_deadline = time.monotonic() + 12.0
+    while time.monotonic() < psu_deadline:
+        if (frame.voltage_v is not None
+                and 11.5 <= float(frame.voltage_v) <= 12.5):
+            break
+        time.sleep(0.2)
+        newer = link.latest_frame()
+        if newer is not None:
+            frame = newer
     snap.frame = frame
     snap.firmware_kind = link.snapshot.firmware_kind
     snap.output_stage = frame.output_stage
