@@ -315,13 +315,23 @@ def run_checks() -> Checker:
     # identified ROM 28AEBF2200000006 as the TEC hot side - requiring
     # NOT_ASSIGNED there would now force the emitter to discard a real
     # measurement, which is the opposite of the honesty rule this check serves.
-    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 2
+    checker.check(telemetry_stripped.count("CG_TELEM_STATUS_NOT_ASSIGNED") >= 1
                   and "t_cold_side_status=%s" in telemetry_stripped
-                  and "t_ambient_status=%s" in telemetry_stripped
-                  and telemetry_stripped.count("fmt_float(false, 0.0f,") >= 3
+                  and "fmt_float(false, 0.0f," in telemetry_stripped,
+                  "the cold side stays NOT_ASSIGNED with a missing value rather than a number")
+    # A-W02-06 moved the ambient pair out of the permanently-missing set: the
+    # BME280 producer now feeds it. The rule this check exists for is unchanged -
+    # a number may only appear behind its own validity gate - so the requirement
+    # is now that t_ambient/RH are formatted from the snapshot under a status the
+    # producer derived, never from a constant and never as a carried-forward last
+    # reading. An unfitted module must still reach the line as SENSOR_NOT_PRESENT.
+    checker.check("t_ambient_status=%s" in telemetry_stripped
+                  and "relative_humidity_status=%s" in telemetry_stripped
+                  and "env_status(snap, now_ms)" in telemetry_stripped
+                  and 'strcmp(env_status_text, CG_TELEM_STATUS_OK) == 0' in telemetry_stripped
                   and "CG_TELEM_STATUS_NOT_PRESENT" in telemetry_stripped,
-                  "cold side and ambient are NOT_ASSIGNED with a missing value, and RH is "
-                  "SENSOR_NOT_PRESENT")
+                  "ambient T/RH reach the line only through the producer's own validity "
+                  "gate, and an absent module still reads SENSOR_NOT_PRESENT")
     checker.check("fmt_float" in telemetry_stripped,
                   "every numeric field goes through the validity-aware formatter")
     line_max = define_value(config, "CG_TELEMETRY_LINE_MAX")

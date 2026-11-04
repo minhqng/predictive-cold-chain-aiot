@@ -25,9 +25,10 @@ certify anything it cannot see:
    sensor initialisation.
 8. Build completeness - every ``.c`` file in ``firmware/main`` must be
    listed in ``CMakeLists.txt``.
-9. No BME280 driver anywhere in ``firmware/main`` (sources *and* headers)
-   - A-W02-06 is a pending physical test; the firmware must not pretend
-   to own it yet.
+9. BME280 driver honesty - ``firmware/main`` owns an ambient producer
+   (A-W02-06). The driver must be registered in the build, must refuse to
+   publish a reading it did not measure, and must not claim the physical
+   acceptance half of A-W02-06, which is still an open bench question.
 10. No unmeasurable counters - the ROM summary must not print an
     "unknown devices" count (W02 has no bus scan).
 11. GPIO ownership - the effective pin map must match the as-built map and
@@ -329,14 +330,46 @@ def run_checks() -> Checker:
     missing = [name for name in sources if f'"{name}"' not in cmake]
     checker.check(not missing, f"CMakeLists lists every source file (missing: {missing or 'none'})")
 
-    # 9. No BME280 driver yet (sources *and* headers)
+    # 9. BME280 driver honesty (A-W02-06): the software half is owned here, the
+    #    physical half is not, and the checker must be able to tell those apart.
     main_files = sorted(path.name for path in FIRMWARE_MAIN.glob("*.c") if path.is_file())
     main_files += sorted(path.name for path in FIRMWARE_MAIN.glob("*.h") if path.is_file())
     all_sources = "\n".join(
         strip_comments((FIRMWARE_MAIN / name).read_text(encoding="utf-8")) for name in main_files
     )
-    bme_tokens = re.findall(r"bme280_[a-z_]*|i2c_driver_install|bme280_read", all_sources)
-    checker.check(not bme_tokens, "no BME280 driver claim anywhere in firmware/main (A-W02-06 stays pending)")
+    checker.check(
+        (FIRMWARE_MAIN / "cg_bme280.c").is_file() and (FIRMWARE_MAIN / "cg_bme280.h").is_file(),
+        "the ambient producer exists in firmware/main (A-W02-06 software half)",
+    )
+    checker.check(
+        "esp_driver_i2c" in cmake,
+        "the main component requires esp_driver_i2c (the v6.x split means the "
+        "legacy driver meta-component no longer re-exports i2c_master.h)",
+    )
+    bme_src = strip_comments((FIRMWARE_MAIN / "cg_bme280.c").read_text(encoding="utf-8"))
+    checker.check(
+        bme_src.count("out->valid = true") == 1,
+        "exactly one site may declare an ambient reading valid (docs/01 forbids a "
+        "fabricated reading standing in for a measured one)",
+    )
+    checker.check(
+        bme_src.count("s->seq++") == 1,
+        "exactly one site may consume an ambient sequence number, so a refused "
+        "transaction cannot mint one",
+    )
+    # The physical half of A-W02-06 stays open: the firmware must keep absence a
+    # distinct, reported state rather than assuming a module is fitted.
+    checker.check(
+        "CG_BME_STATE_ABSENT" in all_sources and "cg_bme280_is_present" in all_sources,
+        "absence stays a nameable state rather than being assumed or scored as a fault",
+    )
+    idf_src = strip_comments((FIRMWARE_MAIN / "cg_bme280_idf.c").read_text(encoding="utf-8"))
+    pure_src = strip_comments((FIRMWARE_MAIN / "cg_bme280.c").read_text(encoding="utf-8"))
+    checker.check(
+        "driver/i2c_master.h" in idf_src and "driver/i2c_master.h" not in pure_src,
+        "the transport boundary is real: only cg_bme280_idf.c reaches the I2C driver, "
+        "which is what lets the host harness compile the decision logic unchanged",
+    )
 
     # Grammar tokens the host tools depend on
     for token in ("LOG", "BOOT", "ROM", "ROMS", "SAMPLE", "DOOR_EDGE", "DOOR_STATE", "DOOR_POLARITY", "SAFETY"):
