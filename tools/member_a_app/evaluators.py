@@ -637,9 +637,37 @@ def _run_valid(scenario: str, metrics: dict, params: dict[str, Any]) -> tuple[bo
     return True, ""
 
 
+def _ensure_door_attested(ctx: TestContext) -> None:
+    frame = ctx.latest_frame()
+    if frame is not None and frame.door_open is not None:
+        return
+    device = ctx.require_live_device()
+    if not ctx.ask_confirm(
+            "Door is CLOSED and the MC-38 raw level is 0 (NEAR_LOW). Attest the "
+            "polarity for this boot?"):
+        ctx.block("DOOR_NOT_ATTESTED")
+    device.send(protocol.door_attest(), "DOOR attest")
+    deadline = time.monotonic() + 5.0
+    while time.monotonic() < deadline:
+        frame = device.latest_frame()
+        if frame is not None and frame.door_open is not None:
+            ctx.check("door_attested", frame.door_open is False,
+                      detail=f"door_open={frame.door_open}",
+                      failure_reason="DOOR_REPORTS_OPEN")
+            if frame.door_open is not False:
+                ctx.block("DOOR_REPORTS_OPEN")
+            return
+        if ctx.operator.cancelled():
+            raise TestBlocked("OPERATOR_CANCELLED")
+        time.sleep(0.25)
+    ctx.block("DOOR_ATTESTATION_NOT_OBSERVED")
+
+
 def handler_run_series(ctx: TestContext) -> None:
     params = ctx.definition.params
     scenario = params.get("scenario", "S1")
+    if scenario == "WARMUP":
+        _ensure_door_attested(ctx)
     required = int(params.get("runs_required", 1))
     duration = float(params.get("duration_s", 300))
     requires_actuation = bool(params.get("requires_actuation", False))

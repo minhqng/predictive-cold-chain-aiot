@@ -581,6 +581,11 @@ def supervise(token: str) -> bytes:
     return f"SUPERVISE {token.upper()}\n".encode("ascii")
 
 
+def door_attest() -> bytes:
+    """Request a per-boot MC-38 polarity attestation after physical confirmation."""
+    return b"DOOR\n"
+
+
 def clear(token: str) -> bytes:
     if not _TOKEN_RE.match(token or ""):
         raise CommandError("CLEAR token must be exactly 8 hexadecimal characters")
