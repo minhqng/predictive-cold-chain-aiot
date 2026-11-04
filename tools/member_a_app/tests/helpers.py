@@ -43,6 +43,7 @@ def telem_line(seq: int = 1, uptime_ms: int = 1_000_000,
     line = _set(line, "raw_t3_c", f"{t3:.4f}")
     line = _set(line, "raw_spare_c", f"{spare:.4f}")
     line = _set(line, "door_open", door)
+    line = _set(line, "door_raw", 1 if door else 0)
     line = _set(line, "door_status", "OK")
     line = _set(line, "voltage_v", f"{voltage:.4f}")
     line = _set(line, "current_a", f"{current:.4f}")

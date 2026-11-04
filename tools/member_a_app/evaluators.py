@@ -646,16 +646,20 @@ def _ensure_door_attested(ctx: TestContext) -> None:
             "Door is CLOSED and the MC-38 raw level is 0 (NEAR_LOW). Attest the "
             "polarity for this boot?"):
         ctx.block("DOOR_NOT_ATTESTED")
+    boot_id = device.snapshot.boot.boot_id
     device.send(protocol.door_attest(), "DOOR attest")
     deadline = time.monotonic() + 5.0
     while time.monotonic() < deadline:
         frame = device.latest_frame()
-        if frame is not None and frame.door_open is not None:
-            ctx.check("door_attested", frame.door_open is False,
-                      detail=f"door_open={frame.door_open}",
-                      failure_reason="DOOR_REPORTS_OPEN")
-            if frame.door_open is not False:
-                ctx.block("DOOR_REPORTS_OPEN")
+        if (frame is not None and frame.door_open is not None
+                and frame.boot_id == boot_id):
+            raw = frame.kv.get("door_raw")
+            ctx.check("door_attested",
+                      frame.door_open is False and str(raw) == "0",
+                      detail=f"door_open={frame.door_open} raw={raw}",
+                      failure_reason="DOOR_REPORTS_OPEN_OR_RAW_MISMATCH")
+            if frame.door_open is not False or str(raw) != "0":
+                ctx.block("DOOR_REPORTS_OPEN_OR_RAW_MISMATCH")
             return
         if ctx.operator.cancelled():
             raise TestBlocked("OPERATOR_CANCELLED")

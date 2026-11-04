@@ -259,6 +259,28 @@ class ReviewRegressionTests(unittest.TestCase):
         self.assertTrue(any(check.name == "supervise_authorized" and check.passed
                             for check in context.checks))
 
+    def test_door_attestation_requires_same_boot_closed_raw_zero(self) -> None:
+        unknown = (telem_line(seq=1, uptime_ms=1_000_000, door=0)
+                   .replace("door_open=0", "door_open=UNKNOWN")
+                   .replace("door_status=OK", "door_status=UNVERIFIED"))
+        self.device.feed_line(unknown)
+        context = self.context("A-W07-02")
+        sent = False
+
+        def responder() -> None:
+            nonlocal sent
+            while not sent:
+                if any(command == b"DOOR\n" for command in self.device.sent):
+                    self.device.feed_line(telem_line(seq=2, uptime_ms=1_001_000,
+                                                     door=0, boot="abcd0123"))
+                    sent = True
+                time.sleep(0.01)
+
+        threading.Thread(target=responder, daemon=True).start()
+        evaluators._ensure_door_attested(context)
+        self.assertTrue(any(check.name == "door_attested" and check.passed
+                            for check in context.checks))
+
     def test_actuation_refuses_nonzero_off_baseline(self) -> None:
         for index in range(25):
             self.device.feed_line(telem_line(seq=index + 1,
