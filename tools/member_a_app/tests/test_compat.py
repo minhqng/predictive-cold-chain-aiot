@@ -35,11 +35,30 @@ class CompatibilityTests(unittest.TestCase):
         self.assertTrue(result.h8_console_commands)
         self.assertTrue(result.h8_host_ack_required)
         self.assertTrue(result.h8_stage_f_probe)
+        self.assertTrue(result.h8_stage_f_approved)
+        self.assertIn(("H8 Stage F probe", "APPROVED"), result.capability_rows())
         self.assertEqual(result.output_stage, "H8_STAGE_ENGINE")
         self.assertTrue(result.supervised)
         self.assertTrue(result.off_current_approved)
         self.assertEqual(result.firmware_version, "h8-bench")
         self.assertEqual(result.device_id, "H8_BENCH")
+
+    def test_h8_stage_f_unapproved_and_unreported_are_distinct(self) -> None:
+        for line in h8_boot_lines()[:3]:
+            self.device.feed_line(line)
+        self.device.feed_line(h8s_line())
+        unreported = compat.classify(self.device.snapshot)
+        self.assertIsNone(unreported.h8_stage_f_approved)
+        self.assertIn(("H8 Stage F probe", "IMPLEMENTED_APPROVAL_UNREPORTED"),
+                      unreported.capability_rows())
+
+        self.device.feed_line(
+            "#CG TEC_LIMITS test_mode=BENCH_ENDURANCE stage_f_guard=0 "
+            "endurance_stages=0")
+        unapproved = compat.classify(self.device.snapshot)
+        self.assertFalse(unapproved.h8_stage_f_approved)
+        self.assertIn(("H8 Stage F probe", "IMPLEMENTED_APPROVAL_UNAPPROVED"),
+                      unapproved.capability_rows())
 
     def test_canonical_profile_reports_disabled_stage_and_no_accepted_path(self) -> None:
         for line in boot_lines():

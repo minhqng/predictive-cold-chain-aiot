@@ -117,7 +117,7 @@ class H8BenchTests(unittest.TestCase):
         self._start_sim()
         cooling = protocol.parse_line(h8s_line(
             state="COOLING", run_id="run-00000001", seq=2, current=1.8,
-            pwm=200, t2=31.0, fan="CONFIRMED", door_polarity="NEAR_LOW")).frame
+            pwm=199, t2=31.0, fan="CONFIRMED", door_polarity="NEAR_LOW")).frame
         assert cooling is not None
         original = h8_bench._capture
         h8_bench._capture = lambda *args, **kwargs: ([cooling], None)  # type: ignore[assignment]
@@ -140,6 +140,22 @@ class H8BenchTests(unittest.TestCase):
         self.assertTrue(payload["measurements"]["ack_count"] >= 1)
         self.assertTrue(self.store.bench_results())
 
+    def test_supervised_stage_f_rejects_pwm_outside_quantization(self) -> None:
+        self._start_sim()
+        cooling = protocol.parse_line(h8s_line(
+            state="COOLING", run_id="run-00000001", seq=2, current=1.8,
+            pwm=202, t2=31.0, fan="CONFIRMED", door_polarity="NEAR_LOW")).frame
+        assert cooling is not None
+        original = h8_bench._capture
+        h8_bench._capture = lambda *args, **kwargs: ([cooling], None)  # type: ignore[assignment]
+        try:
+            payload = H8Bench(self.device, self.store, self.operator).supervised_stage_f()
+        finally:
+            h8_bench._capture = original  # type: ignore[assignment]
+        self.assertEqual(payload["outcome"], "FAIL")
+        self.assertTrue(any(item.get("failure_reason") == "H8_PWM_NOT_200_PERMILLE"
+                            for item in payload["checks"]))
+
     def test_supervised_stage_f_refusal_is_incomplete_and_disarms(self) -> None:
         self._start_sim("START_STAGE_F_GUARD_UNAPPROVED")
         payload = H8Bench(self.device, self.store, self.operator).supervised_stage_f()
@@ -149,6 +165,16 @@ class H8BenchTests(unittest.TestCase):
         self.assertIn("STAGE F", sent)
         self.assertIn("STOP", sent)
         self.assertFalse(any(command.startswith("STAGE A") for command in sent))
+
+    def test_start_not_confirmed_never_energizes_and_disarms(self) -> None:
+        self._start_sim()
+        self.operator.answers["confirm"] = [True, True, True, True, False]
+        payload = H8Bench(self.device, self.store, self.operator).supervised_stage_f()
+        self.assertEqual(payload["outcome"], "INCOMPLETE")
+        self.assertIn("H8_STAGE_F_START_NOT_CONFIRMED", payload["reason"])
+        sent = [command.decode("ascii").strip() for command in self.device.sent]
+        self.assertNotIn("START", sent)
+        self.assertIn("STOP", sent)
 
     def test_precheck_refusal_sends_no_commands(self) -> None:
         self.operator.answers["confirm"] = [False] * 5

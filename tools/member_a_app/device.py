@@ -299,6 +299,14 @@ class DeviceLink:
                 self.snapshot.firmware_kind = "H8_BENCH"
                 for key, value in parsed.kv.items():
                     self.snapshot.h8[key] = value
+            elif parsed.kind == "TEC_LIMITS" and "stage_f_guard" in parsed.kv:
+                # Boot-time authorization flags; the H8 image reports the
+                # Stage F guard here, not in the telemetry frame.
+                for key in ("stage_f_guard", "endurance_stages",
+                            "operator_approved", "required_resolved",
+                            "all_resolved"):
+                    if key in parsed.kv:
+                        self.snapshot.h8[key] = parsed.kv[key]
             elif parsed.kind == "H8_CMD":
                 self.snapshot.h8_last_result = parsed.kv.get("result")
                 results = self.snapshot.h8.setdefault("cmd_results", [])

@@ -85,6 +85,19 @@ class ReadinessTests(unittest.TestCase):
             self.assertEqual(item.state, readiness.NEEDS_FIRMWARE_CAPABILITY)
             self.assertIn("BME_PRODUCER_ABSENT", item.reasons)
 
+    def test_s4_tests_need_a_refusal_image_not_a_stage_enabled_one(self) -> None:
+        enabled = readiness.CapabilitySnapshot(
+            connected=True, firmware_kind="CANONICAL", output_stage="ENABLED",
+            command_transport=True, psu_present=True, door_known=True)
+        disabled = readiness.CapabilitySnapshot(
+            connected=True, firmware_kind="CANONICAL", output_stage="DISABLED",
+            command_transport=True, psu_present=True, door_known=True)
+        item = self.item("A-W11-01", enabled)
+        self.assertEqual(item.state, readiness.NEEDS_FIRMWARE_CAPABILITY)
+        self.assertIn("OUTPUT_STAGE_ENABLED_S4_REQUIRES_REFUSAL_IMAGE", item.reasons)
+        self.assertNotIn("OUTPUT_STAGE_ENABLED_S4_REQUIRES_REFUSAL_IMAGE",
+                         self.item("A-W11-01", disabled).reasons)
+
     def test_psu_and_prerequisite_states(self) -> None:
         snap = readiness.CapabilitySnapshot(
             connected=True, firmware_kind="CANONICAL", output_stage="ENABLED",

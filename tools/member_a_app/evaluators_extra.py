@@ -379,13 +379,21 @@ def handler_reset_criterion(ctx: TestContext) -> None:
                          label="initial state")
     latest = frames[-1]
     tmean_now = analysis.tmean(latest)
-    gradient_now = analysis.gradient(latest)
+    spatial_spread = analysis.gradient(latest)
+    tmean_series = [v for v in (analysis.tmean(f) for f in frames) if v is not None]
+    # The reset criterion's gradient bound limits how far the state may still be
+    # MOVING (Tmean change across the capture window), not the instantaneous
+    # cross-probe spread, which is a placement property bounded by A-W12-01/A-W14-02.
+    temporal_gradient = (abs(tmean_series[-1] - tmean_series[0])
+                         if len(tmean_series) >= 2 else None)
     if tmean_now is None:
         ctx.block("CHAMBER_TEMPERATURE_UNAVAILABLE")
     lower = ctx.ask_number("Reset criterion lower Tmean bound (C)", "C", -20.0, 60.0)
     upper = ctx.ask_number("Reset criterion upper Tmean bound (C)", "C", lower, 60.0)
     gradient_max = ctx.ask_number("Reset criterion maximum gradient (C)", "C", 0.0, 20.0)
-    ctx.measurements.update({"tmean_now_c": tmean_now, "gradient_now_c": gradient_now,
+    ctx.measurements.update({"tmean_now_c": tmean_now,
+                             "gradient_now_c": temporal_gradient,
+                             "spatial_spread_c": spatial_spread,
                              "tmean_min_c": lower, "tmean_max_c": upper,
                              "gradient_max_c": gradient_max,
                              "door_closed": latest.door_open is False,
@@ -396,8 +404,9 @@ def handler_reset_criterion(ctx: TestContext) -> None:
               failure_reason="RESET_BAND_INVALID")
     ctx.check("measured_state_inside_band", lower <= tmean_now <= upper,
               detail=f"{tmean_now}", failure_reason="CURRENT_STATE_OUTSIDE_BAND")
-    ctx.check("gradient_bounded", gradient_now is not None and gradient_now <= gradient_max,
-              detail=f"{gradient_now} vs {gradient_max}",
+    ctx.check("gradient_bounded", temporal_gradient is not None
+              and temporal_gradient <= gradient_max,
+              detail=f"{temporal_gradient} vs {gradient_max}",
               failure_reason="CURRENT_GRADIENT_OUTSIDE_BOUND")
     ctx.check("door_closed", latest.door_open is False, failure_reason="DOOR_NOT_CLOSED")
     ctx.check("cooling_off", not latest.cooling_on, failure_reason="COOLING_NOT_OFF")

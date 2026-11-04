@@ -497,6 +497,18 @@ class SessionStore:
             "evidence_integrity": {"ok": not verification, "problems": verification},
             "session_digest": self.session_digest(),
             "results": rows,
+            "bench_results": [
+                {
+                    "kind": item.get("kind"),
+                    "outcome": item.get("outcome"),
+                    "reason": item.get("reason"),
+                    "recorded_at": item.get("recorded_at") or item.get("written_at"),
+                    "firmware_kind": item.get("firmware_kind"),
+                    "supersedes": item.get("supersedes"),
+                    "path": item.get("_path"),
+                }
+                for item in self.bench_results()
+            ],
         }
         _write_json_atomic(json_path, payload)
         import csv
@@ -552,6 +564,26 @@ class SessionStore:
                 f"{row['checks_passed']}/{row['checks_total']} | {row['evidence_count']} | "
                 f"{row.get('attempts', 1)} | {reason} |"
             )
+        if payload.get("bench_results"):
+            lines += [
+                "",
+                "## H8 bench results (not canonical requirement outcomes)",
+                "",
+                "| Recorded | Kind | Outcome | Reason | Supersedes | Evidence |",
+                "|---|---|---|---|---|---|",
+            ]
+            for item in payload["bench_results"]:
+                reason = (item.get("reason") or "").replace("|", "\\|")
+                lines.append(
+                    f"| {item.get('recorded_at') or ''} | {item.get('kind') or ''} | "
+                    f"{item.get('outcome') or ''} | {reason} | "
+                    f"{item.get('supersedes') or ''} | `{item.get('path') or ''}` |")
+            lines += [
+                "",
+                "A record with a `Supersedes` entry corrects a validator defect on the "
+                "same saved telemetry; it is not a new hardware run.",
+            ]
+            lines.append("")
         lines += ["", "## Canonical criteria", ""]
         for row in payload["results"]:
             lines.append(f"### {row['test_id']} — {row['title']}")

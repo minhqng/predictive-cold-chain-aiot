@@ -135,6 +135,21 @@ class SessionStoreTests(unittest.TestCase):
         csv_text = pathlib.Path(paths["csv"]).read_text(encoding="utf-8")
         self.assertEqual(len(csv_text.strip().splitlines()), 115)
 
+    def test_report_lists_bench_results_without_changing_outcomes(self) -> None:
+        self.store.record_result(result_for("A-W01-01"))
+        self.store.record_bench_result("h8-stage-f", {
+            "kind": "h8-stage-f", "outcome": "PASS", "reason": "",
+            "written_at": "2026-11-04T10:30:00+00:00", "firmware_kind": "H8_BENCH",
+        })
+        paths = self.store.export_report(DEFINITIONS)
+        payload = json.loads(pathlib.Path(paths["json"]).read_text(encoding="utf-8"))
+        self.assertEqual(payload["summary"]["NOT_RUN"], 113)
+        self.assertEqual(payload["summary"]["PASS"], 1)
+        self.assertEqual(payload["bench_results"][0]["kind"], "h8-stage-f")
+        markdown = pathlib.Path(paths["markdown"]).read_text(encoding="utf-8")
+        self.assertIn("H8 bench results (not canonical requirement outcomes)", markdown)
+        self.assertIn("h8-stage-f", markdown)
+
     def test_session_digest_changes_when_result_is_added(self) -> None:
         first = self.store.session_digest()
         self.store.record_result(result_for("A-W01-01"))

@@ -333,6 +333,22 @@ class H8Bench:
                 raise RuntimeError(f"H8_ARM_REFUSED result={result}")
             _check(checks, "armed", True, detail=str(result))
 
+            # Last gate before the only step that energizes the TEC. The
+            # prechecks happen before SUPERVISE/ARM; this asks again for the
+            # test-specific START so a queued flow cannot energize unattended.
+            if not self.operator.confirm(
+                    "H8 Stage F START",
+                    "All prechecks, SUPERVISE, STAGE F, FAN, DOOR, ACK and ARM "
+                    "are complete.\n\nConfirm the test-specific START: energize "
+                    "the TEC at 20 % for 30 s now?"):
+                try:
+                    send(protocol_h8.stop(), "STOP after START not confirmed")
+                except Exception:
+                    pass
+                raise RuntimeError("H8_STAGE_F_START_NOT_CONFIRMED")
+            _check(checks, "start_confirmed", True,
+                   detail="operator confirmed TEC energization at START")
+
             result = command_and_result(protocol_h8.start(), "START Stage F", "START_",
                                         timeout=8.0)
             if result not in {"START_OK", "START_OK_SUPERVISED"}:
@@ -385,8 +401,10 @@ class H8Bench:
                        failure_reason="H8_CURRENT_UNVERIFIED")
             pwm_values = [item.pwm_applied for item in frames if item.pwm_applied is not None]
             if pwm_values:
-                _check(checks, "pwm_stage_f", max(pwm_values) == 200,
-                       detail=f"max={max(pwm_values)}",
+                # 200 permille maps to 1638/8192 counts, which the firmware
+                # itself accepts as one-count quantisation (199.95 permille).
+                _check(checks, "pwm_stage_f", abs(max(pwm_values) - 200) <= 1,
+                       detail=f"max={max(pwm_values)} (200 +/- 1)",
                        failure_reason="H8_PWM_NOT_200_PERMILLE")
             else:
                 _check(checks, "pwm_stage_f", False,

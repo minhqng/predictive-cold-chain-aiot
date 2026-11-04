@@ -349,6 +349,44 @@ def warmup_metrics(frames: Sequence[TelemetryFrame]) -> dict:
     }
 
 
+def _exponential_tau(seconds: Sequence[float], temps: Sequence[float]) -> dict:
+    """Empirical cooling time-constant proxy.
+
+    Fits ln((T - T_final) / (T_start - T_final)) against time over the cooling
+    window and returns tau = -1/slope. A limited empirical summary only: it
+    assumes a single dominant exponential and is reported with its fit quality
+    and the measured drop so the limitation is visible in evidence.
+    """
+    pairs = [(t, value) for t, value in zip(seconds, temps) if value is not None]
+    if len(pairs) < 10:
+        return {"tau_s": None, "method": "EXPONENTIAL_FIT_LN_REMAINING", "reason": "TOO_FEW_POINTS"}
+    t0 = pairs[0][0]
+    xs = [t - t0 for t, _ in pairs]
+    ys = [value for _, value in pairs]
+    start, final = ys[0], ys[-1]
+    drop = start - final
+    if drop <= 0.2:
+        return {"tau_s": None, "method": "EXPONENTIAL_FIT_LN_REMAINING",
+                "reason": "DROP_TOO_SMALL", "drop_c": drop}
+    remaining = [(value - final) / drop for value in ys]
+    points = [(x, math.log(value)) for x, value in zip(xs, remaining) if value > 0.05]
+    if len(points) < 6:
+        return {"tau_s": None, "method": "EXPONENTIAL_FIT_LN_REMAINING",
+                "reason": "FIT_POINTS_INSUFFICIENT", "drop_c": drop}
+    px = [item[0] for item in points]
+    py = [item[1] for item in points]
+    slope = linear_slope(px, py)
+    if slope is None or slope >= 0:
+        return {"tau_s": None, "method": "EXPONENTIAL_FIT_LN_REMAINING",
+                "reason": "NO_DECAY", "drop_c": drop}
+    intercept = mean(py) - slope * mean(px)
+    ss_tot = sum((value - mean(py)) ** 2 for value in py)
+    ss_res = sum((value - (intercept + slope * x)) ** 2 for x, value in points)
+    r2 = 1.0 - ss_res / ss_tot if ss_tot > 0 else None
+    return {"tau_s": -1.0 / slope, "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "drop_c": drop, "r2": r2, "points": len(points)}
+
+
 def cooling_step_metrics(frames: Sequence[TelemetryFrame]) -> dict:
     on_indexes = [index for index, frame in enumerate(frames) if frame.cooling_on]
     first_on = on_indexes[0] if on_indexes else None
@@ -381,8 +419,7 @@ def cooling_step_metrics(frames: Sequence[TelemetryFrame]) -> dict:
     return {
         "frames": len(frames),
         "cooling_frames": len(active),
-        "baseline_mean_c": baseline,
-        "min_chamber_c": min(valid_temps) if valid_temps else None,
+        "baseline_mean_c": baseline,        "min_chamber_c": min(valid_temps) if valid_temps else None,
         "end_chamber_c": valid_temps[-1] if valid_temps else None,
         "chamber_drop_c": (baseline - min(valid_temps)) if baseline is not None and valid_temps else None,
         "current_mean_a": mean(valid_currents),
@@ -395,6 +432,10 @@ def cooling_step_metrics(frames: Sequence[TelemetryFrame]) -> dict:
         "fan_on_all": all((frame.fan or "").upper() == "ON" for frame in active if frame.fan),
         "fault_bits_max": max((frame.fault_bits or 0) for frame in frames),
         "applied_on_frames": sum(1 for frame in active if frame.cooling_on),
+        "time_constant": _exponential_tau(
+            [seconds for seconds, value in zip(frame_seconds(active), temps)
+             if value is not None],
+            [value for value in temps if value is not None]),
     }
 
 

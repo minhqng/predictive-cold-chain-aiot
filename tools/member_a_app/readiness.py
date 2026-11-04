@@ -264,6 +264,13 @@ def evaluate(definitions: Iterable[TestDefinition],
         if (definition.test_id in {"A-W02-06", "A-W05-04", "A-W05-05"}
                 and snap.connected and snap.bme_present is False):
             reasons.append("BME_PRODUCER_ABSENT")
+        if (definition.handler in {"s4_method", "s4_refusal"}
+                and snap.connected
+                and str(snap.output_stage or "").upper() == "ENABLED"):
+            # The S4 method/refusal tests require an image whose output stage is
+            # compiled out; on a stage-enabled image the handlers block, so the
+            # queue must not advertise them as ready.
+            reasons.append("OUTPUT_STAGE_ENABLED_S4_REQUIRES_REFUSAL_IMAGE")
         if requires_operator:
             reasons.append("OPERATOR_CONFIRMATION_REQUIRED")
             if definition.handler == "run_series" and scenario == "WARMUP" \

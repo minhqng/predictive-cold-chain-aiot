@@ -123,6 +123,20 @@ class DoorAndStepTests(unittest.TestCase):
         self.assertEqual(metrics["cooling_frames"], 15)
         self.assertAlmostEqual(metrics["current_mean_a"], 5.0)
         self.assertGreater(metrics["chamber_drop_c"] or 0, 1.0)
+        self.assertEqual(metrics["time_constant"]["method"], "EXPONENTIAL_FIT_LN_REMAINING")
+        self.assertGreater(metrics["time_constant"]["tau_s"] or 0, 0)
+
+    def test_time_constant_needs_a_real_drop(self) -> None:
+        frames = []
+        for index in range(20):
+            cooling = "ON" if index >= 5 else "OFF"
+            current = 5.0 if index >= 5 else 0.0
+            frames.append(frame(seq=index + 1, uptime_ms=1_000_000 + index * 1000,
+                                t1=25.0, t3=25.0, spare=25.0, current=current,
+                                cooling=cooling, state="COOLING" if cooling == "ON" else "OFF"))
+        metrics = analysis.cooling_step_metrics(frames)
+        self.assertIsNone(metrics["time_constant"]["tau_s"])
+        self.assertEqual(metrics["time_constant"]["reason"], "DROP_TOO_SMALL")
 
 
 if __name__ == "__main__":

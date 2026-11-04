@@ -14,8 +14,8 @@ from member_a_app import analysis, evaluators, protocol
 from member_a_app.device import FakeDeviceLink
 from member_a_app.evidence import SessionStore
 from member_a_app.model import Outcome, TestBlocked
-from member_a_app.requirements import get
-from member_a_app.runner import AutoOperator, TestContext
+from member_a_app.requirements import DEFINITIONS, get
+from member_a_app.runner import AutoOperator, TestContext, TestRunner
 
 
 class ReviewRegressionTests(unittest.TestCase):
@@ -338,6 +338,51 @@ class RomFallbackTests(unittest.TestCase):
                 self.assertEqual(device.snapshot.rom_map["T2"].rom, "28AEBF2200000006")
             finally:
                 store.close()
+
+
+class ResetCriterionGradientTests(unittest.TestCase):
+    """The reset-criterion gradient bound limits temporal Tmean movement, not the
+    instantaneous cross-probe spread (which A-W12-01/A-W14-02 bound instead)."""
+
+    def _run(self, lines):
+        with tempfile.TemporaryDirectory() as temp:
+            store = SessionStore(pathlib.Path(temp) / "session", operator="tester")
+            try:
+                device = FakeDeviceLink(store)
+                for line in boot_lines() + rom_lines() + lines:
+                    device.feed_line(line)
+                operator = AutoOperator({"number": [29.5, 30.6, 0.05],
+                                         "text": ["state-based criterion, temporal gradient"],
+                                         "confirm": [True] * 5})
+                context = TestContext(get("A-W07-05"), store, device, operator,
+                                      {"fast_simulation": True})
+                evaluators.HANDLERS["reset_criterion"](context)
+                return context
+            finally:
+                store.close()
+
+    def test_flat_state_with_wide_spatial_spread_passes(self):
+        lines = [telem_line(seq=i + 1, uptime_ms=1_000_000 + i * 1000,
+                            t1=30.00, t3=29.69, spare=30.06, t2=29.80,
+                            output_stage="ENABLED") for i in range(12)]
+        context = self._run(lines)
+        by_name = {c.name: c for c in context.checks}
+        self.assertTrue(by_name["gradient_bounded"].passed, by_name["gradient_bounded"].detail)
+        self.assertTrue(all(c.passed for c in context.checks),
+                        [(c.name, c.detail) for c in context.checks if not c.passed])
+
+    def test_drifting_state_is_rejected_despite_tight_spatial_spread(self):
+        lines = []
+        for i in range(12):
+            base = 29.95 + 0.09 * i / 11.0
+            lines.append(telem_line(seq=i + 1, uptime_ms=1_000_000 + i * 1000,
+                                    t1=base + 0.01, t3=base - 0.01, spare=base,
+                                    t2=base, output_stage="ENABLED"))
+        context = self._run(lines)
+        by_name = {c.name: c for c in context.checks}
+        self.assertFalse(by_name["gradient_bounded"].passed)
+        self.assertIn("CURRENT_GRADIENT_OUTSIDE_BOUND",
+                      [c.failure_reason for c in context.checks if not c.passed])
 
 
 if __name__ == "__main__":
