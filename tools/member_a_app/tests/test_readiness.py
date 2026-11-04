@@ -75,6 +75,16 @@ class ReadinessTests(unittest.TestCase):
         self.assertEqual(self.item("A-W01-01", snap).state,
                          readiness.HARDWARE_NONCOMPLIANT)
 
+    def test_bme_absent_is_firmware_capability(self) -> None:
+        snap = readiness.CapabilitySnapshot(
+            connected=True, firmware_kind="CANONICAL", output_stage="ENABLED",
+            command_transport=True, psu_present=True, door_known=True,
+            bme_present=False)
+        for test_id in ("A-W05-04", "A-W05-05"):
+            item = self.item(test_id, snap)
+            self.assertEqual(item.state, readiness.NEEDS_FIRMWARE_CAPABILITY)
+            self.assertIn("BME_PRODUCER_ABSENT", item.reasons)
+
     def test_psu_and_prerequisite_states(self) -> None:
         snap = readiness.CapabilitySnapshot(
             connected=True, firmware_kind="CANONICAL", output_stage="ENABLED",

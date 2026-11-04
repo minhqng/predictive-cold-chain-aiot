@@ -68,6 +68,7 @@ class CapabilitySnapshot:
     command_transport: bool | None = None
     psu_present: bool | None = None
     door_known: bool | None = None
+    bme_present: bool | None = None
     limits: dict[str, float] = dataclasses.field(default_factory=dict)
     frame: protocol.TelemetryFrame | None = None
 
@@ -137,6 +138,10 @@ def build_snapshot(link: DeviceLink | None, probe_commands: bool = True,
     snap.firmware_kind = link.snapshot.firmware_kind
     snap.output_stage = frame.output_stage
     snap.door_known = frame.door_open is not None
+    humidity_status = str(frame.kv.get("relative_humidity_status") or "")
+    snap.bme_present = (True if humidity_status == "OK"
+                        else (False if humidity_status == "SENSOR_NOT_PRESENT"
+                              else None))
     snap.psu_present = (frame.voltage_v is not None
                         and 11.5 <= float(frame.voltage_v) <= 12.5)
     events, _ = link.events_since(0)
@@ -256,6 +261,9 @@ def evaluate(definitions: Iterable[TestDefinition],
                     f"DURATION_EXCEEDS_FIRMWARE_LIMIT:{duration:.0f}s>{on_time/1000.0:.0f}s")
         if requires_psu and snap.connected and snap.psu_present is not True:
             reasons.append("PSU_OFF_OR_PZEM_UNAVAILABLE")
+        if (definition.test_id in {"A-W02-06", "A-W05-04", "A-W05-05"}
+                and snap.connected and snap.bme_present is False):
+            reasons.append("BME_PRODUCER_ABSENT")
         if requires_operator:
             reasons.append("OPERATOR_CONFIRMATION_REQUIRED")
             if definition.handler == "run_series" and scenario == "WARMUP" \
@@ -264,7 +272,7 @@ def evaluate(definitions: Iterable[TestDefinition],
 
         firmware = any(item.startswith(("COMMAND_TRANSPORT", "OUTPUT_STAGE",
                                         "H8_IMAGE", "DURATION_EXCEEDS_",
-                                        "NO_TELEMETRY"))
+                                        "NO_TELEMETRY", "BME_PRODUCER"))
                        for item in reasons)
         if hardware:
             state = HARDWARE_NONCOMPLIANT
