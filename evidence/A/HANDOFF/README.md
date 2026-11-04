@@ -9,10 +9,16 @@ canonical rule as a Member A opinion.
 |---|---|---|
 | [`coverage-matrix.md`](coverage-matrix.md) | all | For each of the 44 assigned `A-W07-01..A-W16-04` items: current state, where the artifact is, and precisely what is missing |
 | [`a-to-bcd-fields.md`](a-to-bcd-fields.md) | B, C, D | Field by field against docs/05A §6.1-§6.3: which handoff fields exist in committed data now, which are unqualified, and which do not exist yet |
+| [`ambient-channel-bme280.md`](ambient-channel-bme280.md) | B, C, D | The BME280 ambient pair: producer, consumer, unit, validity semantics and compatibility result per field, the four verification levels kept separate, the physical measurements still outstanding, and the open `environment_quality` vocabulary decision |
 | [`supervised-session-plan.md`](supervised-session-plan.md) | operator + Member D | The GO/NO-GO gate, then one consolidated set of supervised sessions with prerequisites, exact actions, independent-run counts, capture mechanism, invalidation rules and which requirements each authentic run serves |
 
 ## Read-this-first summary
 
+- **The ambient channel is now real in firmware, and still unverified on hardware.**
+  `t_ambient_c` / `relative_humidity_pct` moved from permanently-unassigned to producer
+  data: implemented, host-verified and ESP-IDF build-verified, but never flashed. Members
+  B and C must treat them as `None` until a board is read.
+  [`ambient-channel-bme280.md`](ambient-channel-bme280.md) is the contract.
 - **One item is delivered as a PR today:** A-W07-01/04/05 on PR #18 (unmerged). Everything
   else from W08 to W16 is tooling on task branches, under review or under repair.
 - **Thirteen items are blocked on physical sessions, not on code.** No host test, artifact
