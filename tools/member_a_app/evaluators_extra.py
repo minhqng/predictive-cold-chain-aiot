@@ -475,17 +475,20 @@ def handler_drift_recheck(ctx: TestContext) -> None:
                          label="drift recheck")
     current = analysis.consistency_metrics(frames)
     baseline_roles = baseline.measurements.get("per_role", {})
-    deltas = {}
-    for role in analysis.ALL_ROLES:
-        old = (baseline_roles.get(role) or {}).get("mean_c")
-        new = (current.get("per_role", {}).get(role) or {}).get("mean_c")
-        deltas[role] = ((new - old) if isinstance(old, (int, float)) and isinstance(new, (int, float))
-                        else None)
-    ctx.measurements.update({"current": current, "deltas": deltas})
+    max_offset, common_shift = analysis.offset_drift(
+        baseline_roles, current.get("per_role", {}))
+    # A-W12-01 is "max offset drift", not absolute chamber level: a common-mode
+    # ambient ramp moves all chamber probes together and is not a sensor
+    # offset. T2 is excluded by analysis.CHAMBER_ROLES.
+    ctx.measurements.update({
+        "current": current,
+        "criterion": "CHAMBER_AIR_OFFSET_DRIFT",
+        "max_abs_offset_delta_c": max_offset,
+        "common_mode_delta_c": common_shift,
+        "max_abs_delta_c": max_offset,
+    })
     ctx.check_closed("valid_rate", current["valid_rate"], 0.9, None)
-    max_delta = max((abs(value) for value in deltas.values() if value is not None), default=None)
-    ctx.measurements["max_abs_delta_c"] = max_delta
-    ctx.check_closed("max_abs_delta_c", max_delta, None,
+    ctx.check_closed("max_abs_delta_c", max_offset, None,
                      ctx.definition.params.get("max_drift_c", 0.3))
     ctx.save_measurements()
 

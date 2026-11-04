@@ -102,6 +102,21 @@ class ReadinessTests(unittest.TestCase):
         self.assertTrue(snapshot.psu_present)
         self.assertAlmostEqual(snapshot.frame.voltage_v, 11.95)
 
+    def test_chamber_offset_drift_ignores_common_mode_and_hot_side(self) -> None:
+        from member_a_app import analysis
+
+        baseline = {"T1": {"mean_c": 30.0}, "T3": {"mean_c": 29.8},
+                    "SPARE": {"mean_c": 30.2}, "T2": {"mean_c": 40.0}}
+        current = {"T1": {"mean_c": 30.4}, "T3": {"mean_c": 30.2},
+                   "SPARE": {"mean_c": 30.6}, "T2": {"mean_c": 40.2}}
+        offset, common = analysis.offset_drift(baseline, current)
+        self.assertAlmostEqual(common, 0.4, places=6)
+        self.assertAlmostEqual(offset, 0.0, places=6)
+        shifted = {"T1": {"mean_c": 31.0}, "T3": {"mean_c": 30.2},
+                   "SPARE": {"mean_c": 30.6}}
+        offset, _ = analysis.offset_drift(baseline, shifted)
+        self.assertGreater(offset, 0.3)
+
     def test_limits_are_parsed_from_boot_events(self) -> None:
         events = [protocol.parse_line(
             "#CG TEC_LIMIT name=on_time_max_ms state=RESOLVED value=190000.0000 "

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import math
 import statistics
-from typing import Iterable, Sequence
+from typing import Any, Iterable, Mapping, Sequence
 
 from .protocol import TelemetryFrame
 
@@ -149,6 +149,33 @@ def _seq_regressions(frames: Sequence[TelemetryFrame]) -> int:
             regressions += 1
         previous = (frame.boot_id, frame.seq)
     return regressions
+
+
+def chamber_role_offsets(per_role: Mapping[str, Mapping[str, Any]]) -> dict[str, float]:
+    """Per-role offsets from the chamber-air common mean (T1/T3/SPARE)."""
+    means = {}
+    for role in CHAMBER_ROLES:
+        value = (per_role.get(role) or {}).get("mean_c")
+        if isinstance(value, (int, float)):
+            means[role] = float(value)
+    if len(means) < 2:
+        return {}
+    common = mean(list(means.values()))
+    return {role: value - common for role, value in means.items()}
+
+
+def offset_drift(baseline: Mapping[str, Mapping[str, Any]],
+                 current: Mapping[str, Mapping[str, Any]]) -> tuple[float | None, float | None]:
+    """Max absolute chamber offset drift and common-mode level shift."""
+    base_offsets = chamber_role_offsets(baseline)
+    now_offsets = chamber_role_offsets(current)
+    common = [role for role in base_offsets if role in now_offsets]
+    if not common:
+        return None, None
+    deltas = [abs(now_offsets[role] - base_offsets[role]) for role in common]
+    base_level = mean([float(baseline[role]["mean_c"]) for role in common])
+    now_level = mean([float(current[role]["mean_c"]) for role in common])
+    return max(deltas), now_level - base_level
 
 
 def consistency_metrics(frames: Sequence[TelemetryFrame], roles: Sequence[str] = ALL_ROLES) -> dict:
