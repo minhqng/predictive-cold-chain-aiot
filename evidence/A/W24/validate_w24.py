@@ -10,6 +10,7 @@ from __future__ import annotations
 import hashlib
 import json
 import pathlib
+import re
 import sys
 
 DIR = pathlib.Path(__file__).resolve().parent
@@ -79,9 +80,9 @@ def check_references(census: dict, fails: list[str]) -> None:
 
 
 def check_weeks(census: dict, fails: list[str], warns: list[str]) -> None:
-    claimed = census.get("weeks_accounted_for")
+    claimed = census.get("delivered_week_count")
     if not isinstance(claimed, int):
-        fails.append("census has no integer weeks_accounted_for")
+        fails.append("census has no integer delivered_week_count")
         return
     supported = []
     unsupported = []
@@ -99,16 +100,61 @@ def check_weeks(census: dict, fails: list[str], warns: list[str]) -> None:
         )
     if not census.get("open_hardware_gates_count"):
         return
-    status = str(census.get("physical_acceptance_status", ""))
-    if "BLOCKED" not in status:
+    # The generated census reports readiness as booleans plus a verdict, not a free-text
+    # status string, so the agreement check has to read those.
+    if census.get("physical_acceptance_ready"):
         fails.append(
-            f"physical_acceptance_status={status!r} while "
-            f"open_hardware_gates_count={census['open_hardware_gates_count']}"
+            f"physical_acceptance_ready is true while "
+            f"{census['open_hardware_gates_count']} hardware gates are open"
         )
+    verdict = str(census.get("acceptance_verdict", ""))
+    if verdict == "PHYSICALLY_ACCEPTED" or "FULLY_ACCEPTED" in str(census.get("handover_verdict", "")):
+        fails.append(
+            f"acceptance_verdict={verdict!r} / handover={census.get('handover_verdict')!r} "
+            f"while {census['open_hardware_gates_count']} hardware gates are open"
+        )
+    # The gate list must come from a register that is actually delivered, otherwise the
+    # count is an assertion about hardware state with no source.
+    register = WEEK_DOSSIER_DIR[23] + "/remaining-hardware-gates.md"
+    if not (REPO / register).is_file():
+        fails.append(f"gate register {register} is absent, so the open-gate count is unsourced")
+    else:
+        listed = set(re.findall(r"H-GATE-[0-9]+",
+                                (REPO / register).read_text(encoding="utf-8", errors="replace")))
+        reported = set(census.get("open_hardware_gates", []))
+        if reported and reported != listed:
+            fails.append(
+                f"census gates {sorted(reported)} do not match the delivered register "
+                f"{sorted(listed)}"
+            )
     warns.append(
         "open hardware gates remain: "
         f"{census['open_hardware_gates_count']} recorded, physical acceptance cannot be claimed"
     )
+
+
+def check_generated_census(census: dict, fails: list, repo: pathlib.Path) -> None:
+    """The committed census must be byte-reproducible from the delivered generator.
+
+    Comparing the file against a freshly generated one removes the whole class of
+    hand-authored acceptance claims: a stale, edited or invented census simply stops
+    matching its own source of truth.
+    """
+    tools = repo / "firmware" / "tools"
+    if str(tools) not in sys.path:
+        sys.path.insert(0, str(tools))
+    try:
+        from cg_w24_final_freeze import generate_acceptance_census
+    except Exception as exc:  # noqa: BLE001
+        fails.append(f"census generator is not importable, cannot verify provenance: {exc}")
+        return
+    expected = generate_acceptance_census(repo).encode("utf-8")
+    if CENSUS_FILE.read_bytes() != expected:
+        fails.append(
+            "acceptance-census.json is not reproducible from "
+            "cg_w24_final_freeze.generate_acceptance_census(); the committed census and the "
+            "delivered repository disagree"
+        )
 
 
 def main() -> int:
@@ -126,12 +172,7 @@ def main() -> int:
 
     # A census that does not come from the tool carries no evidence binding, so it
     # cannot be trusted as proof of anything. Warn-only let a hand-authored file pass.
-    if not (TOOL_CENSUS_KEYS & set(census)):
-        fails.append(
-            "acceptance-census.json is hand-authored: it carries none of the keys emitted by "
-            "firmware/tools/cg_w24_final_freeze.collate_acceptance_census(), so nothing here is "
-            "bound to verified evidence"
-        )
+    check_generated_census(census, fails, REPO)
     claimed = str(census.get("acceptance_verdict", "")) + str(census.get("handover_verdict", ""))
     if "ACCEPT" in claimed.upper() and "BLOCK" not in claimed.upper():
         if not census.get("physical_evidence"):

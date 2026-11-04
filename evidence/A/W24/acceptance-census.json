@@ -1,9 +1,157 @@
 {
-  "total_member_a_weeks": 24,
-  "weeks_accounted_for": 24,
-  "software_contracts_status": "READY_FOR_SOFTWARE_DEVELOPMENT",
-  "physical_acceptance_status": "BLOCKED_ON_HARDWARE_GATES",
-  "hardware_posture": "DE_ENERGIZED_SAFE_POSTURE_PSU_OFF_FUSE_REMOVED",
-  "open_hardware_gates_reference": "evidence/A/RC/remaining-hardware-gates.md",
-  "open_hardware_gates_count": 10
+  "acceptance_verdict": "DATA_INSUFFICIENT",
+  "all_weeks_accounted_for": true,
+  "delivered_week_count": 24,
+  "delivered_weeks": [
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17,
+    18,
+    19,
+    20,
+    21,
+    22,
+    23,
+    24
+  ],
+  "evidence_refusals": [],
+  "evidence_skipped": [
+    "evidence/A/W01: no SHA256SUMS.txt",
+    "evidence/A/W02: no SHA256SUMS.txt",
+    "evidence/A/W03: no SHA256SUMS.txt"
+  ],
+  "evidence_unbound": [
+    {
+      "artifact_path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "evidence_class": "COOLING_SESSION",
+      "reason": "no hardware_config_id column; run identity cannot be bound to this artifact"
+    },
+    {
+      "artifact_path": "evidence/A/W07/cooling-step-runs.jsonl",
+      "evidence_class": "S1_REPEATABILITY_RUN",
+      "reason": "no boot_id/session column; run identity cannot be bound to this artifact"
+    },
+    {
+      "artifact_path": "evidence/A/W08/duty-zero-current-frames.csv",
+      "evidence_class": "ELECTRICAL_ENVELOPE_SAMPLE",
+      "reason": "no boot_id/session column; run identity cannot be bound to this artifact"
+    },
+    {
+      "artifact_path": "evidence/A/W08/envelope-by-duty.csv",
+      "evidence_class": "ELECTRICAL_ENVELOPE_SAMPLE",
+      "reason": "no boot_id/session column; run identity cannot be bound to this artifact"
+    }
+  ],
+  "expected_week_count": 24,
+  "gate_register_supplied": true,
+  "generated_by": "firmware/tools/cg_w24_final_freeze.generate_acceptance_census",
+  "handover_verdict": "READY_FOR_SOFTWARE_INTEGRATION_PHYSICAL_ACCEPTANCE_BLOCKED",
+  "hardware_posture_safe": true,
+  "hardware_status": "FAIL_CLOSED_FROZEN",
+  "missing_weeks": [],
+  "open_hardware_gates": [
+    "H-GATE-1",
+    "H-GATE-10",
+    "H-GATE-2",
+    "H-GATE-3",
+    "H-GATE-4",
+    "H-GATE-5",
+    "H-GATE-6",
+    "H-GATE-7",
+    "H-GATE-8",
+    "H-GATE-9"
+  ],
+  "open_hardware_gates_count": 10,
+  "physical_acceptance_ready": false,
+  "physical_runs_claimed": 1,
+  "physical_runs_verified": 1,
+  "requirement_status": {
+    "A-W03-04": {
+      "detail": "1 verified COLD_BOOT_IDENTITY run(s)",
+      "evidence_class": "COLD_BOOT_IDENTITY",
+      "required_independent_runs": 1,
+      "status": "SATISFIED_BY_VERIFIED_EVIDENCE",
+      "verified_independent_runs": 1
+    },
+    "A-W04-03": {
+      "detail": "0 verified, needs 1; 1 artifact(s) of class COOLING_SESSION exist but lack a bindable run identity",
+      "evidence_class": "COOLING_SESSION",
+      "required_independent_runs": 1,
+      "status": "NEEDS_PROVENANCE_BACKFILL",
+      "verified_independent_runs": 0
+    },
+    "A-W07-02": {
+      "detail": "0 verified, needs 3; 1 artifact(s) of class S1_REPEATABILITY_RUN exist but lack a bindable run identity",
+      "evidence_class": "S1_REPEATABILITY_RUN",
+      "required_independent_runs": 3,
+      "status": "NEEDS_PROVENANCE_BACKFILL",
+      "verified_independent_runs": 0
+    },
+    "A-W08-01": {
+      "detail": "0 verified, needs 1; 2 artifact(s) of class ELECTRICAL_ENVELOPE_SAMPLE exist but lack a bindable run identity",
+      "evidence_class": "ELECTRICAL_ENVELOPE_SAMPLE",
+      "required_independent_runs": 1,
+      "status": "NEEDS_PROVENANCE_BACKFILL",
+      "verified_independent_runs": 0
+    },
+    "A-W17-01": {
+      "detail": "0 verified SHADOW_SESSION run(s), needs 1",
+      "evidence_class": "SHADOW_SESSION",
+      "required_independent_runs": 1,
+      "status": "NEEDS_OPERATOR_EVIDENCE",
+      "verified_independent_runs": 0
+    }
+  },
+  "requirements_unspecified": [],
+  "runs_by_class": {
+    "COLD_BOOT_IDENTITY": 1
+  },
+  "software_contract_ready": true,
+  "system_integration_note": "NOT_VERIFIABLE_BY_MEMBER_A_ALONE",
+  "system_integration_verified": false,
+  "unexpected_week_ids": [],
+  "verified_boot_identities": [
+    "UNRECORDED|227e6f67"
+  ],
+  "weeks_with_dossier": [
+    "W01",
+    "W02",
+    "W03",
+    "W04",
+    "W05",
+    "W06",
+    "W07",
+    "W08",
+    "W09",
+    "W10",
+    "W11",
+    "W12",
+    "W13",
+    "W14",
+    "W15",
+    "W16",
+    "W17",
+    "W18",
+    "W19",
+    "W20",
+    "W21",
+    "W22",
+    "W23",
+    "W24"
+  ],
+  "weeks_without_dossier": []
 }
