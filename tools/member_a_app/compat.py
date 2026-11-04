@@ -32,6 +32,7 @@ class ImageCompatibility:
     h8_console_commands: bool
     h8_host_ack_required: bool
     h8_stage_f_probe: bool
+    h8_stage_f_approved: bool | None
     h8_endurance_stages_present: bool
     output_stage: str | None
     supervised: bool | None
@@ -52,8 +53,8 @@ class ImageCompatibility:
              "YES" if self.accepted_canonical_commands else "NO"),
             ("H8 console verbs", "YES" if self.h8_console_commands else "NO"),
             ("H8 host ACK required", "YES" if self.h8_host_ack_required else "NO"),
-            ("H8 Stage F probe", "IMPLEMENTED_APPROVAL_UNREPORTED"
-             if self.h8_stage_f_probe else "NO"),
+            ("H8 Stage F probe", _stage_f_label(self.h8_stage_f_probe,
+                                                self.h8_stage_f_approved)),
             ("H8 A-E endurance stages", "PRESENT_NOT_USED" if self.h8_endurance_stages_present else "NO"),
             ("W06 output stage", self.output_stage or "UNKNOWN"),
             ("H8 supervised bench", _tri(self.supervised)),
@@ -66,6 +67,14 @@ def _tri(value: bool | None) -> str:
     if value is None:
         return "UNKNOWN"
     return "YES" if value else "NO"
+
+
+def _stage_f_label(present: bool, approved: bool | None) -> str:
+    if not present:
+        return "NO"
+    if approved is None:
+        return "IMPLEMENTED_APPROVAL_UNREPORTED"
+    return "APPROVED" if approved else "IMPLEMENTED_APPROVAL_UNAPPROVED"
 
 
 def _flag(value: Any) -> bool | None:
@@ -88,6 +97,17 @@ def classify(snapshot: DeviceSnapshot) -> ImageCompatibility:
     if kind == "H8_BENCH":
         supervised = _flag(h8.get("supervised_bench", h8.get("supervised")))
         off_approved = _flag(h8.get("off_current_approved"))
+        stage_f_approved = _flag(h8.get("stage_f_guard"))
+        if stage_f_approved is True:
+            stage_f_note = ("H8 Stage F guards are approved in this image (2.5 A, "
+                            "HOT_SIDE 45 C, +3 C/30 s); START still requires the "
+                            "supervised gates and a fresh host ACK.")
+        elif stage_f_approved is False:
+            stage_f_note = ("H8 Stage F guards are not approved in this image; "
+                            "Stage F START is refused.")
+        else:
+            stage_f_note = ("H8 Stage F is the only conservative supervised probe; "
+                            "the image has not reported its approval, so START may refuse.")
         return ImageCompatibility(
             kind="H8_BENCH",
             device_id=snapshot.boot.device_id,
@@ -100,6 +120,7 @@ def classify(snapshot: DeviceSnapshot) -> ImageCompatibility:
             h8_console_commands=True,
             h8_host_ack_required=True,
             h8_stage_f_probe=True,
+            h8_stage_f_approved=stage_f_approved,
             h8_endurance_stages_present=True,
             output_stage="H8_STAGE_ENGINE",
             supervised=supervised,
@@ -108,13 +129,32 @@ def classify(snapshot: DeviceSnapshot) -> ImageCompatibility:
             notes=(
                 "Read-only H8S telemetry is supported.",
                 "Canonical W06 acceptance tests are INCOMPLETE on this image.",
-                "H8 Stage F is the only conservative supervised probe; the image does not report its approval, so START may refuse.",
+                stage_f_note,
                 "H8 A-E are endurance stages and are not used for acceptance.",
                 "H8 START requires a fresh host ACK and the FAN, DOOR, SUPERVISE and ARM gates.",
             ),
         )
     if kind == "CANONICAL":
         stage = (frame.output_stage if frame is not None else None) or "UNKNOWN"
+        if stage == "ENABLED":
+            canonical_notes = (
+                "Canonical W06 telemetry and console verbs are supported.",
+                "The output stage is ENABLED; START requires SUPERVISE, ARM, START, "
+                "resolved bench limits, a valid HOT_SIDE probe and fresh power data.",
+                "The local CMDTEST bridge is refused at the source gate; accepted/idempotent "
+                "commands need Member C's network transport.",
+                "The bench interlock is reported ABSENT; only the supervised bench policy "
+                "satisfies that gate.",
+            )
+        else:
+            canonical_notes = (
+                "Canonical W06 telemetry and console verbs are supported.",
+                "The local CMDTEST bridge is refused at the source gate; accepted/idempotent "
+                "commands need Member C's network transport.",
+                "The shipped image compiles the output stage out; supervised START is refused.",
+                "A stage-enabled image requires a reviewed hardware adapter; it is not a "
+                "build-only change.",
+            )
         return ImageCompatibility(
             kind="CANONICAL_W06",
             device_id=snapshot.boot.device_id,
@@ -127,17 +167,13 @@ def classify(snapshot: DeviceSnapshot) -> ImageCompatibility:
             h8_console_commands=False,
             h8_host_ack_required=False,
             h8_stage_f_probe=False,
+            h8_stage_f_approved=None,
             h8_endurance_stages_present=False,
             output_stage=stage,
             supervised=None,
             off_current_approved=None,
             h8_stages=None,
-            notes=(
-                "Canonical W06 telemetry and console verbs are supported.",
-                "The local CMDTEST bridge is refused at the source gate; accepted/idempotent commands need Member C's network transport.",
-                "The shipped image compiles the output stage out; supervised START is refused.",
-                "A stage-enabled image requires a reviewed hardware adapter; it is not a build-only change.",
-            ),
+            notes=canonical_notes,
         )
     return ImageCompatibility(
         kind="UNKNOWN",
@@ -151,6 +187,7 @@ def classify(snapshot: DeviceSnapshot) -> ImageCompatibility:
         h8_console_commands=False,
         h8_host_ack_required=False,
         h8_stage_f_probe=False,
+        h8_stage_f_approved=None,
         h8_endurance_stages_present=False,
         output_stage=None,
         supervised=None,
