@@ -437,7 +437,7 @@ class DeviceLink:
     def wait_for_boot(self, previous_boot_id: str | None, timeout_s: float,
                       cursor: int | None = None) -> protocol.BootIdentity | None:
         def is_new_boot(event: protocol.ParsedLine) -> bool:
-            if event.kind not in {"BOOT", "LOG"} or event.boot is None:
+            if event.kind not in {"BOOT", "LOG", "H8_BOOT"} or event.boot is None:
                 return False
             boot_id = event.boot.boot_id
             return bool(boot_id and boot_id != previous_boot_id)

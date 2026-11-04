@@ -8,7 +8,7 @@ import threading
 import time
 import unittest
 
-from .helpers import boot_lines, rom_lines, telem_line
+from .helpers import boot_lines, h8_boot_lines, rom_lines, telem_line
 
 from member_a_app.device import FakeDeviceLink
 from member_a_app.evidence import SessionStore
@@ -111,6 +111,16 @@ class FakeDeviceTests(unittest.TestCase):
         self.assertEqual(self.device.sent, [b"STATUS\n"])
         with self.assertRaises(Exception):
             self.device.send(b"STATUS")
+
+    def test_wait_for_boot_accepts_h8_boot_line(self) -> None:
+        def responder() -> None:
+            time.sleep(0.1)
+            self.device.feed_line(h8_boot_lines()[0])
+        threading.Thread(target=responder, daemon=True).start()
+        boot = self.device.wait_for_boot("previous-boot", 2)
+        self.assertIsNotNone(boot)
+        assert boot is not None
+        self.assertEqual(boot.boot_id, "b45af2ff")
 
     def test_wait_for_ack(self) -> None:
         def responder() -> None:
