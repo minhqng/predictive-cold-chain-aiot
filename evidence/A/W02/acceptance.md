@@ -280,3 +280,46 @@ Vòng phản biện thứ hai — **không do tác giả thực hiện** — đ�
   nhãn vật lý (`A-W02-02`), bài cửa firmware + `door-test.csv` + cờ polarity (`A-W02-07`),
   H0 deferred (`A-W02-01`), CSV consistency từ firmware ≥600 mẫu, ảnh setup/đặt đầu dò,
   sketch bench `NOT_IN_REPO`, `hardware_config_id` `NOT_ASSIGNED`.
+
+---
+
+## §9 Bản ghi cập nhật có ngày: 2026-11-04 — driver BME280 đã vào firmware
+
+Bổ sung này KHÔNG viết lại §1–§8. Các mục trên vẫn là hồ sơ lịch sử của phiên bench
+2026-10-18 (khi đó SCL còn ở GPIO33). Nội dung dưới đây chỉ mô tả trạng thái hiện hành
+của nhánh `feat/a-bme280-environment-producer`.
+
+Tách bạch bốn mức, không gộp thành một chữ "xong":
+
+| Mức | Trạng thái | Bằng chứng **đã commit trong repo** |
+|---|---|---|
+| SOFTWARE_IMPLEMENTED | **DONE** | `firmware/main/cg_bme280.c`, `cg_bme280.h` (logic thuần, port bơm vào), `cg_bme280_idf.c` (I2C ESP-IDF v6.1), đăng ký trong `firmware/main/CMakeLists.txt` kèm `esp_driver_i2c` |
+| HOST_VERIFIED | **DONE** | `firmware/tools/tests/cg_bme280_harness.c` + `cg_bme280_integration_harness.c` và hai script `test_cg_bme280_harness.py`, `test_cg_bme280_integration.py` — biên dịch và chạy chính `firmware/main` không sửa |
+| ESP_IDF_BUILD_VERIFIED | **ĐẠT CỤC BỘ — PROVENANCE_BACKFILL_NEEDED** | `idf.py set-target esp32s3 && idf.py build` chạy trên máy dev cho `BUILD_EXIT=0`, 0 error, 0 warning, `coldguard_firmware.bin` = 268 864 byte, SHA-256 `a4bd283f2fea9bc497e87dfe76fae2893ef85267d071005094929685aa1cbba0`. **Log build và ảnh firmware KHÔNG được commit trong nhánh này**, nên tuyên bố đó hiện chưa kiểm chứng lại được từ repo. Hành động còn lại: commit log build + `SHA256SUMS.txt` cho artifact, hoặc chạy lại build từ đúng commit này trong CI. |
+| HARDWARE_VERIFIED | **PENDING_TEST** | Chưa flash, chưa đọc trên board. |
+
+Ba hạng mục vật lý của A-W02-06 vẫn mở, và phần mềm không tự đóng được:
+
+1. **Địa chỉ I²C trên mạch hiện tại.** Transport probe `0x76` rồi `0x77` thay vì đoán một
+   địa chỉ. Bằng chứng `evidence/A/W02/bme280/` cho thấy module từng trả lời `0x76`
+   (chip id `0x60`) **khi SCL còn ở GPIO33**; header đã hàn lại sang GPIO34
+   (`evidence/A/as-built-pinmap-2026-10-27.md`), nên con số cũ không còn là bằng chứng
+   cho wiring hiện hành. Cần: dòng `event=BME280_BUS … addr=0x…` từ board thật.
+2. **Cách giải nibble trim độ ẩm.** `dig_H4`/`dig_H5` được cài đúng datasheet và đã chứng
+   minh tính tất định trên host, nhưng **chưa** đối chiếu với module thật nào.
+3. **Vị trí gá cuối và tự sấy nóng** (đầu dò có bị ESP32/V1 làm nóng không) — chưa từng đo.
+
+Vì ba mục trên còn mở, **A-W02-06 vẫn KHÔNG PASS đầy đủ**. Trạng thái đúng của nó hiện là
+`SOFTWARE DONE — BENCH VERIFIED (STANDALONE, SCL=GPIO33) — ESP-IDF BUILD VERIFIED CỤC BỘ —
+HARDWARE PENDING_TEST`.
+
+Hai thay đổi hành vi tiêu dùng cần lưu ý (chi tiết trong
+`evidence/A/HANDOFF/ambient-channel-bme280.md`):
+
+- `CG_PRODUCER_BME` now beats on every completed cycle **including a cycle that
+  concluded the module is absent**. So `health_bme=LATE/NEVER` now means the task is not
+  running — a real fault — and no longer means "this board has no humidity sensor".
+- While the module is absent or unasked, `environment_quality` deliberately stays
+  `DEGRADED`. Splitting "known absent" from "not asked yet" would rename a vocabulary
+  that Members B and C parse, so it is raised as a team decision instead of being
+  changed inside Member A.
