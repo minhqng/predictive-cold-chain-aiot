@@ -56,6 +56,10 @@ TELEMETRY_HANDLERS = {
     "telemetry", "applied_state", "sensor_enumeration", "code_audit",
     "reset_series", "run_series", "actuation_trace", "soak", "degraded_sensor",
     "degraded_pzem", "hil_smoke", "pzem_range", "pzem_link",
+    # These handlers read a live device (require_live_device / latest_frame /
+    # capture); without a connected device their handler always blocks, so they
+    # must never be advertised READY_NOW.
+    "command_reset", "door_timing", "s4_method", "state_reset", "safe_local",
 }
 HARDWARE_FAILURE_TOKENS = ("UNAPPROVED_SUBSTITUTION", "vcc_3v3_ABOVE_MAXIMUM")
 

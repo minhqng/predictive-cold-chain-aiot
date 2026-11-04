@@ -85,6 +85,25 @@ class ReadinessTests(unittest.TestCase):
             self.assertEqual(item.state, readiness.NEEDS_FIRMWARE_CAPABILITY)
             self.assertIn("BME_PRODUCER_ABSENT", item.reasons)
 
+    def test_device_only_handlers_are_not_ready_without_a_connected_device(self) -> None:
+        # command_reset, door_timing, s4_method, state_reset and safe_local all read
+        # a live device (require_live_device / latest_frame / capture); with the
+        # device OFF their handler always blocks, so readiness must not advertise
+        # them READY_NOW.
+        snap = readiness.CapabilitySnapshot(connected=False, firmware_kind="CANONICAL")
+        for test_id in ("A-W06-06", "A-W10-02", "A-W11-01", "A-W19-04", "A-W21-04"):
+            item = self.item(test_id, snap)
+            self.assertNotEqual(item.state, readiness.READY_NOW, msg=test_id)
+            self.assertIn("DEVICE_NOT_CONNECTED", item.reasons)
+        # Sanity: a connected device with the right profile clears the gate.
+        self.results["A-W07-05"] = result(Outcome.PASS)
+        connected = readiness.CapabilitySnapshot(
+            connected=True, firmware_kind="CANONICAL", output_stage="DISABLED",
+            command_transport=True, psu_present=True, door_known=True)
+        item = self.item("A-W19-04", connected)
+        self.assertNotIn("DEVICE_NOT_CONNECTED", item.reasons)
+        self.assertEqual(item.state, readiness.READY_NOW)
+
     def test_s4_tests_need_a_refusal_image_not_a_stage_enabled_one(self) -> None:
         enabled = readiness.CapabilitySnapshot(
             connected=True, firmware_kind="CANONICAL", output_stage="ENABLED",
