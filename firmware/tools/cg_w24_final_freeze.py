@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import re
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
@@ -494,6 +495,22 @@ def evaluate_requirement_evidence(
     return out
 
 
+def read_open_hardware_gates(repo_root: Any) -> Optional[List[str]]:
+    """Read the open gate register from the delivered release-candidate dossier.
+
+    Returns None when the register is absent: an unknown gate state must not be read as
+    "no open gates".
+    """
+    register = Path(repo_root) / GATE_REGISTER_PATH
+    if not register.is_file():
+        return None
+    text = register.read_bytes().decode("utf-8", errors="replace")
+    return sorted({m.group(0) for m in re.finditer(r"H-GATE-[0-9]+", text)})
+
+
+GATE_REGISTER_PATH = f"{EVIDENCE_ROOT}/A/RC/remaining-hardware-gates.md"
+
+
 def generate_acceptance_census(repo_root: Any) -> str:
     """Deterministic census built from the repository, never from typed counters.
 
@@ -519,7 +536,7 @@ def generate_acceptance_census(repo_root: Any) -> str:
         weeks_delivered=[int(w[1:]) for w in weeks_present],
         physical_runs_count=len(records),
         hardware_status="FAIL_CLOSED_FROZEN",
-        open_hardware_gates=["H-GATE-OPEN-PENDING-OPERATOR-QUALIFICATION"],
+        open_hardware_gates=read_open_hardware_gates(repo_root),
         physical_evidence=records,
         repo_root=repo_root,
         expected_hardware_config_id=expected_config,
