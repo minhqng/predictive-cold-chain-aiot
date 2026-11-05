@@ -1,0 +1,41 @@
+hardware_config_id: "HW-CONF-2026-10-27-ASBUILT-V2"
+evidence_class: "AS_BUILT_BENCH_AUDITED"
+status: "FROZEN_WITH_OPEN_HARDWARE_GATES"
+
+firmware_identity:
+  running_bench_image_sha256: "01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f"
+  running_bench_build: "H8 bench endurance build"
+  rc_production_candidate_image: "evidence/A/RC/build-manifest.json"
+  production_flash_status: "PENDING_H_GATE_1 (bench box runs H8 bench build, not production RC)"
+
+pin_map_v2:
+  one_wire_gpio: 33
+  bme280_sda_gpio: 21
+  bme280_scl_gpio: 34
+  door_reed_gpio: 35
+  pzem_tx_gpio: 36
+  pzem_rx_gpio: 37
+  ibt2_rpwm_gpio: 5
+  ibt2_r_en_gpio: 6
+  ibt2_l_en_gpio: 10
+  ibt2_lpwm: "GND_TIED"
+
+sensor_roms:
+  t1: "287088CA00000051"
+  t2: "28AEBF2200000006"
+  t3: "28CBE9CA00000072"
+  t4: "283BE5C9000000A9"
+
+sensor_positions:
+  t1: "CHAMBER_CENTER"
+  t2: "TEC_HOT_SIDE"
+  t3: "CHAMBER_BOTTOM"
+  t4: "NEAR_DOOR"
+
+power_and_protection:
+  fuse_type: "15A blade fuse"
+  fuse_slot_3_posture: "REMOVED (TEC output stage physically isolated)"
+  fuse_freeze_status: "NO_FREEZE (awaiting H-GATE-5 contact resistance under load)"
+  pzem_shunt: "FL-2 0.5 50A/75mV external shunt (register 0x0002 = 0x0001)"
+  psu_state: "12V OFF"
+  core_allowed_action: "FAIL_CLOSED_NO_AUTONOMOUS_ENERGIZATION"
