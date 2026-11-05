@@ -1,0 +1,5 @@
+capture,record,value,unit,config_era_tag,note
+first-tec-trace.csv,command_to_electrical_delay,1.094,s,trace-file (no boot_id/image column; boot continuity unverified),MEASURED
+(cooling capture),command_to_thermal_delay_min,0.85,min,image=01cedce3|boot=56044b74,MEASURED
+(cooling capture),cooling_tau_proxy,174.0,s,image=01cedce3|boot=56044b74,MEASURED
+(cooling capture),recovery_tau_proxy,86.0,s,image=01cedce3|boot=56044b74,MEASURED
