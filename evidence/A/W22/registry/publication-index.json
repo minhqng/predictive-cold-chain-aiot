@@ -7,12 +7,13 @@
     "A-W22-01": {
       "criterion": "With leader/B identify physical evidence gaps.",
       "record": "evidence/A/W22/registry/A-W22-01.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_NOT_APPLICABLE_SESSION_META_RECORD",
       "artifact_paths": [
         "evidence/A/W22/registry/A-W22-01.json",
         "evidence/A/W22/A-W22-01-EVIDENCE-GAP-LIST-20261105.md",
         "evidence/A/W22/registry/measurements/A-W22-01-20261104T181236033131-d8384d.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W22/registry/A-W22-01.json#identity_provenance"
     },
     "A-W22-03": {
       "criterion": "Write the scale, single-unit, TEC/V1 uncertainty, sensor limitations, ambient effects and PZEM limits.",
@@ -28,10 +29,10 @@
     {
       "dest": "evidence/A/W22/registry/A-W22-01.json",
       "source_sha256": "9f906ec7e6f4d74c0d8050cf9635d98390f3a53487341247c2fd92aa2769997b",
-      "published_sha256": "3026ee7887281780e05b53c8efbd9832f0e04330b3ed024c9850e52c1fd43ade",
+      "published_sha256": "d889280be3b4bfba6845bb5874cdb064dcd9e16f2a79875bc7396c57b93ef8ca",
       "source_capture_path": "results/A-W22-01.json",
       "source_bytes": 1966,
-      "bytes": 2521,
+      "bytes": 4556,
       "requirement": "A-W22-01",
       "transformed_record": true,
       "transformation_sequence": [
