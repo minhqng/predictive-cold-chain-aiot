@@ -1,0 +1,66 @@
+{
+  "checks": [
+    {
+      "detail": " value=3 expected=3",
+      "failure_reason": "",
+      "name": "samples_present",
+      "passed": true
+    },
+    {
+      "detail": " value=36.02",
+      "failure_reason": "",
+      "name": "median_present",
+      "passed": true
+    },
+    {
+      "detail": " value='FIRST_SUSTAINED_CHAMBER_DROP_0_2C_TWO_FRAMES'",
+      "failure_reason": "",
+      "name": "method_documented",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:15:29.218+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:15:29.218+00:00",
+      "original": "A-W13-02",
+      "path": "evidence/A/W13/registry/measurements/A-W13-02-20261104T171529211883-c33f9b.json",
+      "sha256": "bef70854dae3750ab8cdf426fb7806ee643a9911b7f9f084473e1300d0e8e76c",
+      "size": 352,
+      "stored": "evidence/A/W13/registry/measurements/A-W13-02-20261104T171529211883-c33f9b.json",
+      "source_sha256": "627f1c5e5c7ea8dffa5d32fe0353ab2d90d7b21a30dd61269511e66c2388d6c7",
+      "source_size": 370
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "delay_samples_s": [
+      37.04,
+      35.0,
+      36.02
+    ],
+    "max_s": 37.04,
+    "median_s": 36.02,
+    "method": "FIRST_SUSTAINED_CHAMBER_DROP_0_2C_TWO_FRAMES",
+    "n": 3,
+    "p95_s": 37.04
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:15:29.205+00:00",
+  "test_id": "A-W13-02",
+  "publication_provenance": {
+    "source_record_sha256": "425978d2df2cfd81e813768d917f64786ba44f6c14ffde45c9c38443a2304f2c",
+    "source_capture_relative_path": "results/A-W13-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}

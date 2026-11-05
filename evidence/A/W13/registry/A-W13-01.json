@@ -1,0 +1,65 @@
+{
+  "checks": [
+    {
+      "detail": " value=3 expected=3",
+      "failure_reason": "",
+      "name": "samples_present",
+      "passed": true
+    },
+    {
+      "detail": " value=1.02",
+      "failure_reason": "",
+      "name": "median_present",
+      "passed": true
+    },
+    {
+      "detail": " value=1.02",
+      "failure_reason": "",
+      "name": "p95_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:15:29.190+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:15:29.190+00:00",
+      "original": "A-W13-01",
+      "path": "evidence/A/W13/registry/measurements/A-W13-01-20261104T171529182324-8e57f2.json",
+      "sha256": "44fe0db6ccdc46839226aae289bcebf98ea6b8ccbf38bcaa4e4816045993a12c",
+      "size": 285,
+      "stored": "evidence/A/W13/registry/measurements/A-W13-01-20261104T171529182324-8e57f2.json",
+      "source_sha256": "9699a6ef487d7a2c9d6516ea3c631131d409ac0a062e114236a79e0b4814f91d",
+      "source_size": 302
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "delay_samples_s": [
+      1.02,
+      1.02,
+      1.02
+    ],
+    "max_s": 1.02,
+    "median_s": 1.02,
+    "n": 3,
+    "p95_s": 1.02
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:15:29.176+00:00",
+  "test_id": "A-W13-01",
+  "publication_provenance": {
+    "source_record_sha256": "8e46f843babdb1347e6044fe38273be4c4895a90bdf7e016db10a528991e1a68",
+    "source_capture_relative_path": "results/A-W13-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}

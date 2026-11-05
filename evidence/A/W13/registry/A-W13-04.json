@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "detail": " value=3 expected=3",
+      "failure_reason": "",
+      "name": "samples_present",
+      "passed": true
+    },
+    {
+      "detail": " value=62.58580612582802",
+      "failure_reason": "",
+      "name": "median_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:15:29.246+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:15:29.246+00:00",
+      "original": "A-W13-04",
+      "path": "evidence/A/W13/registry/measurements/A-W13-04-20261104T171529240574-66c727.json",
+      "sha256": "912d849d9d3fef8d61e170fa02ed3662cb03147d16d883a4e844ea26a283413e",
+      "size": 332,
+      "stored": "evidence/A/W13/registry/measurements/A-W13-04-20261104T171529240574-66c727.json",
+      "source_sha256": "5f5b2b47a27d27a8bdcd3251b082cc159a779b6995032bbd52ed6a82b4c61d85",
+      "source_size": 348
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "median_s": 62.58580612582802,
+    "n": 3,
+    "p95_s": 63.128306356410256,
+    "tau_samples_s": [
+      61.686283206272805,
+      62.58580612582802,
+      63.128306356410256
+    ]
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:15:29.233+00:00",
+  "test_id": "A-W13-04",
+  "publication_provenance": {
+    "source_record_sha256": "0873a6df3fe4abb7e2157826bbbd46867fa9c61407d855a59665ac339cc1ea29",
+    "source_capture_relative_path": "results/A-W13-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}
