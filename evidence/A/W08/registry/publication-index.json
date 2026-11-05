@@ -7,22 +7,24 @@
     "A-W08-01": {
       "criterion": "Derive allowed action state, healthy current range, healthy power range, OFF current envelope, thermal response window and stop conditions from W04-W07; do not extrapolate outside the measured region.",
       "record": "evidence/A/W08/registry/A-W08-01.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
       "artifact_paths": [
         "evidence/A/W08/registry/A-W08-01.json",
         "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W08/registry/A-W08-01.json#identity_provenance"
     },
     "A-W08-02": {
       "criterion": "Choose 10 A, 15 A or 20 A from measured current, transients, wiring and terminal behaviour; if none is defensible the gate fails rather than improvising.",
       "record": "evidence/A/W08/registry/A-W08-02.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_RESOLVED_FROM_MEASURED_SOURCES",
       "artifact_paths": [
         "evidence/A/W08/registry/A-W08-02.json",
         "evidence/A/W08/attachments/fuse-selection.md",
         "evidence/A/W08/attachments/fuse-block-holder-20261105.png",
         "evidence/A/W08/registry/measurements/A-W08-02-20261104T174919045341-ed1cf1.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W08/registry/A-W08-02.json#identity_provenance"
     },
     "A-W08-04": {
       "criterion": "With D: remove the broker/backend, verify local Controller A inputs remain available and local output behaviour is safe.",
@@ -38,10 +40,10 @@
     {
       "dest": "evidence/A/W08/registry/A-W08-01.json",
       "source_sha256": "6f2fb4f54ac814b951f3d63adeb172f2c17b8edd70e4d824a592e132d5557a27",
-      "published_sha256": "51ac0d8d6e2786e14a1aa481f5e843dc33c4b69e4340c77937b764e0a5b3e673",
+      "published_sha256": "e820913aec78c22b437def4bd3b5f4c6b71b92434969bb18151c7c542c2863c3",
       "source_capture_path": "results/A-W08-01.json",
       "source_bytes": 1692,
-      "bytes": 2243,
+      "bytes": 6338,
       "requirement": "A-W08-01",
       "transformed_record": true,
       "transformation_sequence": [
@@ -65,10 +67,10 @@
     {
       "dest": "evidence/A/W08/registry/A-W08-02.json",
       "source_sha256": "0aa18393d1a07347dee5b47268e7c955d1a03e9e17ff919c8b1dd3b0c4f43d8a",
-      "published_sha256": "ef3bee8bebe39ca60ad503c7b6be099f6e92b4ee55484cb0286414460448df9f",
+      "published_sha256": "9b401ee931bb9d56dd8506c2109310207ddbcd88a595ed822d45ccfae6005b90",
       "source_capture_path": "results/A-W08-02.json",
       "source_bytes": 4064,
-      "bytes": 4555,
+      "bytes": 7425,
       "requirement": "A-W08-02",
       "transformed_record": true,
       "transformation_sequence": [
