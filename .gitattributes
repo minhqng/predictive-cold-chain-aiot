@@ -47,3 +47,6 @@ evidence/A/W06/** -text
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md -text

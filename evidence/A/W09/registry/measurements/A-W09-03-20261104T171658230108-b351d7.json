@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-11-04T17:16:58.230+00:00",
+  "measurements": {
+    "invalid_attempts": 0,
+    "missing_reasons": []
+  },
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "test_id": "A-W09-03"
+}

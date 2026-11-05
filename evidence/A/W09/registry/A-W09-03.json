@@ -1,0 +1,62 @@
+{
+  "checks": [
+    {
+      "detail": "[]",
+      "failure_reason": "INVALID_ATTEMPT_WITHOUT_REASON",
+      "name": "invalid_attempts_retained_with_reason",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:16:58.236+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:16:58.230+00:00",
+      "original": "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
+      "sha256": "14d54a31b098f0af51a72115ca1863dedbb782f0b138cddd3e9a98f58a56dbd5",
+      "size": 4360,
+      "stored": "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
+      "path": "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
+      "source_sha256": "072232d521fd7758d9f3b148192b04206b92cd10c5328c308fe1f45260c828af",
+      "source_size": 4433
+    },
+    {
+      "captured_at": "2026-11-04T17:16:58.236+00:00",
+      "original": "A-W09-03",
+      "path": "evidence/A/W09/registry/measurements/A-W09-03-20261104T171658230108-b351d7.json",
+      "sha256": "e4351c53de0297da277aafd29817f15c89d52b6713750c9b301934a1520c2e21",
+      "size": 213,
+      "stored": "evidence/A/W09/registry/measurements/A-W09-03-20261104T171658230108-b351d7.json",
+      "source_sha256": "0b121326ed21416a7b54f01fe4624225bb400fb354142457a4a7a86619c6579e",
+      "source_size": 223
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "invalid_attempts": 0,
+    "missing_reasons": []
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-04T17:16:58.209+00:00",
+  "test_id": "A-W09-03",
+  "publication_provenance": {
+    "source_record_sha256": "d17c0655c3d5a488182b1dad629461bc240e2e4ac7c5f2296d80c9a73d06f432",
+    "source_capture_relative_path": "results/A-W09-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}
