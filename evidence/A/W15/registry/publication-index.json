@@ -7,21 +7,22 @@
     "A-W15-02": {
       "criterion": "Identify runs containing command, applied state, V/I/P and thermal response for B's electrical ablation.",
       "record": "evidence/A/W15/registry/A-W15-02.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
       "artifact_paths": [
         "evidence/A/W15/registry/A-W15-02.json",
         "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W15/registry/A-W15-02.json#identity_provenance"
     }
   },
   "artifacts": [
     {
       "dest": "evidence/A/W15/registry/A-W15-02.json",
       "source_sha256": "079b409521fd5ef1f52acd8fe3d38be3580396d72161a3c7976d1aecba4f97ea",
-      "published_sha256": "4509730cde251eb8cb06824088e30a80ceac234811de6842d9c9ef34396f6065",
+      "published_sha256": "4eef736b56527a736c093a928d275811b7a601b91e082f13bdcd091a13e1d546",
       "source_capture_path": "results/A-W15-02.json",
       "source_bytes": 1173,
-      "bytes": 1799,
+      "bytes": 4225,
       "requirement": "A-W15-02",
       "transformed_record": true,
       "transformation_sequence": [
