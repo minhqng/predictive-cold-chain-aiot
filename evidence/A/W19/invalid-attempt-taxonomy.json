@@ -1,0 +1,21 @@
+{
+  "taxonomy_version": "1.1",
+  "authority": "docs/05A §28, docs/03 §34-36",
+  "reason_codes": [
+    "DOOR_AJAR_AT_START",
+    "PZEM_NOT_VALID",
+    "INITIAL_TEMP_OUT_OF_BAND",
+    "INITIAL_GRADIENT_EXCEEDED",
+    "COOLING_STATE_UNKNOWN",
+    "COMMUNICATION_DROPOUT",
+    "OPERATOR_MANUAL_ABORT",
+    "HARDWARE_CONFIG_MISMATCH",
+    "SCENARIO_PROTOCOL_MISMATCH",
+    "DISTURBANCE_DURATION_MISMATCH",
+    "PAIR_TMEAN_MISMATCH",
+    "PAIR_GRADIENT_MISMATCH",
+    "AMBIENT_NOT_RECORDED"
+  ],
+  "disposition": "RETAIN_RAW_WITH_INVALID_FLAG",
+  "silent_omission_prohibited": true
+}

@@ -91,3 +91,15 @@ evidence/A/W11/** -text
 evidence/A/W16/** -text
 evidence/A/W17/** -text
 evidence/A/W18/** -text
+
+evidence/A/W19/** -text
+
+evidence/A/W20/** -text
+
+evidence/A/W21/** -text
+
+evidence/A/W22/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W22/A-W22-01-EVIDENCE-GAP-LIST-20261105.md -text
+evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md -text

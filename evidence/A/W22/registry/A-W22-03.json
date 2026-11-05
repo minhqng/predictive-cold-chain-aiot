@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Scale limitation recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Single-unit limitation recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:TEC/V1 uncertainty recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Sensor limitations recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Ambient effects recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:PZEM limits recorded",
+      "passed": true
+    },
+    {
+      "detail": "6/6 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T18:12:36.011+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T18:12:36.011+00:00",
+      "original": "evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md",
+      "sha256": "66880118f4ab527551afd6b2e03e9480cf854c8e56f547bfa63628999cfdd03b",
+      "size": 9529,
+      "stored": "evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md",
+      "path": "evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "each 'recorded' item was verified against the attached summary before confirming; no physical attestation or leader signoff is claimed",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T18:12:36.007+00:00",
+  "test_id": "A-W22-03",
+  "publication_provenance": {
+    "source_record_sha256": "d1fa985cc66679cf6a4fbe8455871d2c0b88f5dfa19dbfba311501d00033bf46",
+    "source_capture_relative_path": "results/A-W22-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+    "excluded_supporting_artifacts": []
+  }
+}

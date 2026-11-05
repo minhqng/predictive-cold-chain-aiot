@@ -1,0 +1,104 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "GAP_LIST_EMPTY",
+      "name": "gap_list_recorded",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T18:12:36.042+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T18:12:36.042+00:00",
+      "original": "A-W22-01",
+      "path": "evidence/A/W22/registry/measurements/A-W22-01-20261104T181236033131-d8384d.json",
+      "sha256": "f67ce34ca8f53a8ec3b0f418cefdb78f9ae5e45ccbe82bb0ab7146511404bef0",
+      "size": 1024,
+      "stored": "evidence/A/W22/registry/measurements/A-W22-01-20261104T181236033131-d8384d.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "gap_count": 4,
+    "gaps": [
+      {
+        "outcome": "FAIL",
+        "reason": "UNAPPROVED_SUBSTITUTION",
+        "test_id": "A-W01-01"
+      },
+      {
+        "outcome": "FAIL",
+        "reason": "vcc_3v3_ABOVE_MAXIMUM",
+        "test_id": "A-W03-02"
+      },
+      {
+        "outcome": "INCOMPLETE",
+        "reason": "NETWORK_TRANSPORT_UNAVAILABLE: the local source gate precedes field-level validation, so canonical duty/device/expiry checks are unreachable",
+        "test_id": "A-W06-01"
+      },
+      {
+        "outcome": "INCOMPLETE",
+        "reason": "NETWORK_COMMAND_TRANSPORT_UNAVAILABLE: duplicate-canonical requires the docs/02 NETWORK source; the local console source is rejected before the idempotency store, so this cannot be physically executed in this build",
+        "test_id": "A-W06-02"
+      }
+    ]
+  },
+  "notes": "statement is Member A's identification from the machine-derived ledger; leader/B concurrence outstanding, not invented",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-04T18:12:36.028+00:00",
+  "test_id": "A-W22-01",
+  "publication_provenance": {
+    "source_record_sha256": "9f906ec7e6f4d74c0d8050cf9635d98390f3a53487341247c2fd92aa2769997b",
+    "source_capture_relative_path": "results/A-W22-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_NOT_APPLICABLE_SESSION_META_RECORD",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W22-01",
+    "resolution": "SESSION_META_RECORD_NO_DEVICE_CLAIM",
+    "device_verified": false,
+    "identity_basis": "NOT_APPLICABLE",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [],
+    "linkage_checks": [
+      {
+        "name": "record_source",
+        "value": "OPERATOR_MEASUREMENT",
+        "match": true,
+        "expected_or_source": "OPERATOR_MEASUREMENT"
+      },
+      {
+        "name": "result_set_sha256",
+        "value": "a9271a6ddbd11d2123bb08e1bd5f19a7d1732a0c5b4ff154d75f62f062530a7e",
+        "match": true,
+        "expected_or_source": "a9271a6ddbd11d2123bb08e1bd5f19a7d1732a0c5b4ff154d75f62f062530a7e"
+      },
+      {
+        "name": "capture_session_digest",
+        "value": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+        "match": true,
+        "expected_or_source": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2"
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "identity_scope": "SESSION_META_RECORD",
+    "result_set_source": "acceptance-report.json pinned by the frozen handoff",
+    "note": "This record summarizes result-level metadata; it makes no device-level measurement, so a per-item device identity is not applicable. The binding is the session digest and the pinned result set."
+  }
+}
