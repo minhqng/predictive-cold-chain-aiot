@@ -1,0 +1,85 @@
+{
+  "checks": [
+    {
+      "detail": " value=1.02",
+      "failure_reason": "",
+      "name": "electrical_delay_recorded",
+      "passed": true
+    },
+    {
+      "detail": " value=36.02",
+      "failure_reason": "",
+      "name": "thermal_delay_recorded",
+      "passed": true
+    },
+    {
+      "detail": " value=0.6187499999999986 expected=0.2",
+      "failure_reason": "",
+      "name": "chamber_dropped",
+      "passed": true
+    },
+    {
+      "detail": " value=60 expected=1",
+      "failure_reason": "",
+      "name": "applied_on",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:16:00.460+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:16:00.460+00:00",
+      "original": "A-W04-07",
+      "path": "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json",
+      "sha256": "c04ea7a7c97a2e1665f5dfa4ea54d8a3e1ddf2e5e70582355d89a6af60eac3c7",
+      "size": 1109,
+      "stored": "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "applied_on_frames": 60,
+    "baseline_mean_c": 30.05625,
+    "baseline_off_current_max_a": 0.0,
+    "chamber_drop_c": 0.6187499999999986,
+    "cooling_frames": 60,
+    "current_max_a": 4.99,
+    "current_mean_a": 4.424,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 29.4375,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 70,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 29.4375,
+    "off_current_limit_a": 0.05,
+    "power_mean_w": 52.37833333333333,
+    "safety_stop_reason": null,
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 36.02,
+    "time_constant": {
+      "limitation": "SINGLE_STEP_EMPIRICAL_PROXY_NOT_A_PHYSICAL_MODEL",
+      "method": "SLOPE_63_PERCENT",
+      "tau_s": 47.96
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:16:00.446+00:00",
+  "test_id": "A-W04-07",
+  "publication_provenance": {
+    "source_record_sha256": "224402e15af1529df4b5acfc86e34ecb8f5883340f7e9d22fdde42619b9d3f0a",
+    "source_capture_relative_path": "results/A-W04-07.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}

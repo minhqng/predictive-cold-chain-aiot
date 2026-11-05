@@ -1,0 +1,155 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "71c3b1b6362ac57e4816a06290f48126d9bcf66b",
+  "requirements": {
+    "A-W04-01": {
+      "criterion": "Build 12 V PSU -> fuse box -> selected commissioning fuse -> IBT-2 -> TEC branch -> shunt/return, with the V1 fan on a protected auxiliary branch and logic via XL4015.",
+      "record": "evidence/A/W04/registry/A-W04-01.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W04/registry/A-W04-01.json"
+      ]
+    },
+    "A-W04-02": {
+      "criterion": "Ensure the TEC path uses 2x2.5 mm2, fan/aux uses 2x0.75 mm2 and signals use jumpers; no primary TEC current passes through PCT218 or jumpers.",
+      "record": "evidence/A/W04/registry/A-W04-02.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W04/registry/A-W04-02.json"
+      ]
+    },
+    "A-W04-03": {
+      "criterion": "Start with a conservative legal fuse choice derived from measured ramp/current planning; do not assume 15 A from the TEC name.",
+      "record": "evidence/A/W04/registry/A-W04-03.json",
+      "identity_status": "OWN_CAPTURE_FILES_ONLY",
+      "artifact_paths": [
+        "evidence/A/W04/registry/A-W04-03.json",
+        "evidence/A/W04/registry/measurements/A-W04-03-20261104T093057280807-4567fd.json"
+      ]
+    },
+    "A-W04-05": {
+      "criterion": "Use low/conservative control; check current, branch power, intended cold side, hot-side behaviour, V1 fan and terminals/wires; stop immediately on abnormality.",
+      "record": "evidence/A/W04/registry/A-W04-05.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W04/registry/A-W04-05.json",
+        "evidence/A/W04/registry/measurements/A-W04-05-20261104T155331969757-92ac44.json",
+        "evidence/A/W04/registry/measurements/A-W04-05-20261104T155727995397-9a64b6.json",
+        "evidence/A/W04/registry/bench/a-w04-05-post-off-20261104T155512111451.json",
+        "evidence/A/W04/registry/bench/a-w04-05-post-off-20261104T155828563193.json"
+      ]
+    },
+    "A-W04-07": {
+      "criterion": "Capture command/applied state, V/I/P, T1/T2/T3 and time; plot electrical response and thermal direction.",
+      "record": "evidence/A/W04/registry/A-W04-07.json",
+      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "artifact_paths": [
+        "evidence/A/W04/registry/A-W04-07.json",
+        "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W04/registry/A-W04-01.json",
+      "source_sha256": "515c169b56dcf4bc2de58753891bb267dc76d32991ea5770a657470cf50c217f",
+      "published_sha256": "484270f0cad08f8a9774557f9a2d6923e324d26b31c80ea1c14da7813065a967",
+      "source_capture_path": "results/A-W04-01.json",
+      "bytes": 2856,
+      "requirement": "A-W04-01",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W04/registry/A-W04-02.json",
+      "source_sha256": "94bace9c4fe37134525cdfe79b59b2d137a91e673a4740536aa9031584cc9ce9",
+      "published_sha256": "1dda053d34d3731b81200756357353a9fcd5d668c753440f55852c3f6af94fc2",
+      "source_capture_path": "results/A-W04-02.json",
+      "bytes": 2884,
+      "requirement": "A-W04-02",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W04/registry/A-W04-03.json",
+      "source_sha256": "943815034367242acf6e3b956e16c63731c403a78086e4f8b11a80bdf400639c",
+      "published_sha256": "ea4c4131dec652412e90c0c158ff5a074a9fa099b1a0df319e4f982df23c9670",
+      "source_capture_path": "results/A-W04-03.json",
+      "bytes": 2704,
+      "requirement": "A-W04-03",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W04/registry/measurements/A-W04-03-20261104T093057280807-4567fd.json",
+      "source_sha256": "c3c082f9b25e33bcd1480386412560c5ac57065780bc32fae11f3e1c0b0eeb04",
+      "published_sha256": "c3c082f9b25e33bcd1480386412560c5ac57065780bc32fae11f3e1c0b0eeb04",
+      "source_capture_path": "measurements/A-W04-03-20261104T093057280807-4567fd.json",
+      "bytes": 326,
+      "requirement": "A-W04-03",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W04/registry/A-W04-05.json",
+      "source_sha256": "4c923d41a6dc9a50b9206d1ebcde686efd599ffad2f0187fc03f82f771b57b56",
+      "published_sha256": "f9f8ab32abbcbfc6120dd87186873e55359a92cf3e71a0aedf4f88843fbdf575",
+      "source_capture_path": "results/A-W04-05.json",
+      "bytes": 4688,
+      "requirement": "A-W04-05",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W04/registry/measurements/A-W04-05-20261104T155331969757-92ac44.json",
+      "source_sha256": "47932350e788a4351ba386219fba951840a3bf88fd0078240dd85118fa66dbbe",
+      "published_sha256": "47932350e788a4351ba386219fba951840a3bf88fd0078240dd85118fa66dbbe",
+      "source_capture_path": "measurements/A-W04-05-20261104T155331969757-92ac44.json",
+      "bytes": 229,
+      "requirement": "A-W04-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W04/registry/measurements/A-W04-05-20261104T155727995397-9a64b6.json",
+      "source_sha256": "bfdb62750fdfb98a26fac9611ead4e931603926f38a2574ad0e43fa4b255e294",
+      "published_sha256": "bfdb62750fdfb98a26fac9611ead4e931603926f38a2574ad0e43fa4b255e294",
+      "source_capture_path": "measurements/A-W04-05-20261104T155727995397-9a64b6.json",
+      "bytes": 1110,
+      "requirement": "A-W04-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W04/registry/bench/a-w04-05-post-off-20261104T155512111451.json",
+      "source_sha256": "4d72b6cab5a304c229804dae71c2c378cfaf449ac58906c7e4b5485523ccd323",
+      "published_sha256": "4d72b6cab5a304c229804dae71c2c378cfaf449ac58906c7e4b5485523ccd323",
+      "source_capture_path": "bench-results/a-w04-05-post-off-20261104T155512111451.json",
+      "bytes": 439,
+      "requirement": "A-W04-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W04/registry/bench/a-w04-05-post-off-20261104T155828563193.json",
+      "source_sha256": "60cf1bdb8d2a22a753ca7f5db789462e999dff66175cf8b004949f2a733fa3cc",
+      "published_sha256": "60cf1bdb8d2a22a753ca7f5db789462e999dff66175cf8b004949f2a733fa3cc",
+      "source_capture_path": "bench-results/a-w04-05-post-off-20261104T155828563193.json",
+      "bytes": 408,
+      "requirement": "A-W04-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W04/registry/A-W04-07.json",
+      "source_sha256": "224402e15af1529df4b5acfc86e34ecb8f5883340f7e9d22fdde42619b9d3f0a",
+      "published_sha256": "1986b6ebd0fcff7e68867feced42e102d71bf288191d71d9481e6ebae3b77dbb",
+      "source_capture_path": "results/A-W04-07.json",
+      "bytes": 2908,
+      "requirement": "A-W04-07",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json",
+      "source_sha256": "c04ea7a7c97a2e1665f5dfa4ea54d8a3e1ddf2e5e70582355d89a6af60eac3c7",
+      "published_sha256": "c04ea7a7c97a2e1665f5dfa4ea54d8a3e1ddf2e5e70582355d89a6af60eac3c7",
+      "source_capture_path": "measurements/A-W04-07-20261104T171600454484-734feb.json",
+      "bytes": 1109,
+      "requirement": "A-W04-07",
+      "transformed_record": false
+    }
+  ]
+}

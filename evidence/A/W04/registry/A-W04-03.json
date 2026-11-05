@@ -1,0 +1,79 @@
+{
+  "checks": [
+    {
+      "detail": "15 A",
+      "failure_reason": "FUSE_NOT_FROM_PURCHASED_SET",
+      "name": "fuse_in_purchased_set",
+      "passed": true
+    },
+    {
+      "detail": "15.0 vs 9.35",
+      "failure_reason": "FUSE_HEADROOM_INSUFFICIENT",
+      "name": "fuse_has_headroom",
+      "passed": true
+    },
+    {
+      "detail": "15.0 vs 9.35",
+      "failure_reason": "FUSE_BELOW_TRANSIENT",
+      "name": "fuse_covers_transient",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "FUSE_RATIONALE_EMPTY",
+      "name": "rationale_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=1)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T09:30:57.285+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.767+00:00",
+      "sha256": "2342bbbf3b38350267a981e5759f7023b03dbce307bc5b8c6f4e32f19dec322f",
+      "size": 4895,
+      "source_path": "evidence/A/W04/fuse-commissioning-note.md",
+      "stored": "evidence/A/W04/fuse-commissioning-note.md",
+      "test_id": "A-W04-03"
+    },
+    {
+      "captured_at": "2026-11-04T09:30:57.285+00:00",
+      "original": "A-W04-03",
+      "path": "evidence/A/W04/registry/measurements/A-W04-03-20261104T093057280807-4567fd.json",
+      "sha256": "c3c082f9b25e33bcd1480386412560c5ac57065780bc32fae11f3e1c0b0eeb04",
+      "size": 326,
+      "stored": "evidence/A/W04/registry/measurements/A-W04-03-20261104T093057280807-4567fd.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "fuse_a": 15.0,
+    "rationale": "imported authoritative W01-W04 evidence; no new physical inspection",
+    "steady_a": 9.35,
+    "transient_a": 9.35
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-04T09:30:57.279+00:00",
+  "test_id": "A-W04-03",
+  "publication_provenance": {
+    "source_record_sha256": "943815034367242acf6e3b956e16c63731c403a78086e4f8b11a80bdf400639c",
+    "source_capture_relative_path": "results/A-W04-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "OWN_CAPTURE_FILES_ONLY",
+    "excluded_supporting_artifacts": []
+  }
+}

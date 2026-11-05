@@ -1,0 +1,15 @@
+{
+  "authorization": "operator authorized one A-W04-05 START 50% 60 s",
+  "boot_id": "5562b609",
+  "current_a": 0.0,
+  "fault_bits": 0,
+  "kind": "a-w04-05-post-off",
+  "outcome": "PASS",
+  "pwm_applied": 0,
+  "reason": "",
+  "recorded_at": "2026-11-04T15:58:28.563+00:00",
+  "session_id": "20261104T092140Z",
+  "source": "H8_BENCH",
+  "state": "OFF",
+  "written_at": "2026-11-04T15:58:28Z"
+}
