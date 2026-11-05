@@ -1,0 +1,123 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:V1 location fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:TEC seated evenly in the stack",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Thermal paste thin and even",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Fan mounted",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Cold side inside the chamber",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Hot side outside the chamber",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Chamber penetration sealed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Sensor fixture installed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:MC-38 alignment fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:TEC is not energized during this inspection",
+      "passed": true
+    },
+    {
+      "detail": "10/10 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "2/2 files (imported=2)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T09:30:57.248+00:00",
+  "evidence": [
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.560+00:00",
+      "sha256": "7537ff47deea3ba85d86ef21712b6e699054ccf79a681e0d5e2ec43bd71b2983",
+      "size": 202333,
+      "source_path": "evidence/A/W01/photos/01-overview-wiring.jpg",
+      "stored": "evidence/A/W01/photos/01-overview-wiring.jpg",
+      "test_id": "A-W02-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.568+00:00",
+      "sha256": "94e9b6294783070656c5136881bcbace2508eb28fdf10decc9da9bb87aec4815",
+      "size": 9527,
+      "source_path": "evidence/A/W02/bench-procedure-w02.md",
+      "stored": "evidence/A/W02/bench-procedure-w02.md",
+      "test_id": "A-W02-01"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "imported authoritative W01-W04 evidence; no new physical inspection",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T09:30:57.246+00:00",
+  "test_id": "A-W02-01",
+  "publication_provenance": {
+    "source_record_sha256": "9fd1a8326c109676392d46301630e0f87fa9cecbd42b12866d12c29b770f026f",
+    "source_capture_relative_path": "results/A-W02-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+    "excluded_supporting_artifacts": []
+  }
+}

@@ -1,0 +1,67 @@
+{
+  "captured_at": "2026-11-04T18:13:51.089+00:00",
+  "measurements": {
+    "hardware_config_id": "CG-HW-001",
+    "run_count": 11,
+    "runs": [
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": 1,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 1,
+        "test_id": "A-W07-03",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-03",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-03",
+        "valid": true
+      }
+    ]
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W12-04"
+}

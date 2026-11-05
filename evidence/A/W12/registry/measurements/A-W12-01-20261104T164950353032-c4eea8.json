@@ -1,0 +1,57 @@
+{
+  "captured_at": "2026-11-04T16:49:50.353+00:00",
+  "measurements": {
+    "common_mode_delta_c": 0.8585845622333537,
+    "criterion": "CHAMBER_AIR_OFFSET_DRIFT",
+    "current": {
+      "frames": 600,
+      "max_instantaneous_spread_c": 0.4375,
+      "max_pairwise_mean_difference_c": 0.37750417362270383,
+      "pairwise_mean_difference_c": {
+        "T1-SPARE": 0.03735392320534103,
+        "T1-T2": 0.3401502504173628,
+        "T1-T3": 0.33388981636059967,
+        "T2-SPARE": 0.37750417362270383,
+        "T2-T3": 0.006260434056763131,
+        "T3-SPARE": 0.3712437395659407
+      },
+      "per_role": {
+        "SPARE": {
+          "max_c": 30.25,
+          "mean_c": 30.22443656093489,
+          "min_c": 30.1875,
+          "n": 599,
+          "sd_c": 0.03075393466181447
+        },
+        "T1": {
+          "max_c": 30.25,
+          "mean_c": 30.18708263772955,
+          "min_c": 30.125,
+          "n": 599,
+          "sd_c": 0.014451837868586538
+        },
+        "T2": {
+          "max_c": 29.875,
+          "mean_c": 29.846932387312187,
+          "min_c": 29.8125,
+          "n": 599,
+          "sd_c": 0.03111351833024558
+        },
+        "T3": {
+          "max_c": 29.875,
+          "mean_c": 29.85319282136895,
+          "min_c": 29.8125,
+          "n": 599,
+          "sd_c": 0.02981408331251686
+        }
+      },
+      "valid_frames": 599,
+      "valid_rate": 0.9983333333333333
+    },
+    "max_abs_delta_c": 0.023289742162862836,
+    "max_abs_offset_delta_c": 0.023289742162862836
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W12-01"
+}

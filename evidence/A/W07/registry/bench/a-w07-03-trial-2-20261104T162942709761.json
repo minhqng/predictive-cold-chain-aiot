@@ -1,0 +1,76 @@
+{
+  "authorization": "operator authorized A-W07-03 run 2 of 3 START 180 s at 50% (physical presence confirmed 2026-11-04T16:24Z)",
+  "boot_id": "be89bf4a",
+  "checks": [
+    {
+      "detail": "#CG TEC event=START result=OK reason=COOLING state=COOLING fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=180100 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+      "name": "start_accepted",
+      "passed": true
+    },
+    {
+      "detail": "None",
+      "name": "no_safety_stop",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "run_valid",
+      "passed": true
+    },
+    {
+      "name": "post_off",
+      "passed": true
+    }
+  ],
+  "commands": [],
+  "kind": "a-w07-03-trial-2",
+  "measurements": {
+    "applied_on_frames": 180,
+    "baseline_frames": 10,
+    "baseline_mean_c": 30.102083333333333,
+    "boot_id": "be89bf4a",
+    "chamber_drop_c": 2.2687500000000007,
+    "cooling_frames": 185,
+    "current_max_a": 5.03,
+    "current_mean_a": 4.292162162162162,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 27.833333333333332,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 196,
+    "hot_side_max_c": 33.5625,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 27.833333333333332,
+    "post_current_a": 0.0,
+    "post_fault_bits": 0,
+    "post_state": "OFF",
+    "power_mean_w": 50.810270270270266,
+    "preflight_limits": {
+      "current_max_a": "6.0000",
+      "duty_max_permille": "500.0000",
+      "hot_side_max_c": "45.0000",
+      "on_time_max_ms": "190000.0000",
+      "voltage_max_v": "13.0000",
+      "voltage_min_v": "11.0000"
+    },
+    "safety_stop_reason": null,
+    "stabilization_slope_c_per_min": -0.0004862461794943415,
+    "stabilization_spread_c": 0.04166666666666785,
+    "start_event": "#CG TEC event=START result=OK reason=COOLING state=COOLING fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=180100 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 35.0,
+    "time_constant": {
+      "drop_c": 2.25,
+      "method": "EXPONENTIAL_FIT_LN_REMAINING",
+      "points": 171,
+      "r2": 0.9119085729174824,
+      "tau_s": 62.58580612582802
+    },
+    "trial": 2
+  },
+  "outcome": "PASS",
+  "recorded_at": "2026-11-04T16:29:42.709+00:00",
+  "session_id": "20261104T092140Z",
+  "source": "H8_BENCH",
+  "written_at": "2026-11-04T16:29:42Z"
+}

@@ -1,0 +1,587 @@
+{
+  "checks": [
+    {
+      "detail": "3/3",
+      "failure_reason": "",
+      "name": "valid_run_count",
+      "passed": true
+    },
+    {
+      "detail": "[(500,)]",
+      "failure_reason": "",
+      "name": "same_core_action",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:14:06.992785+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T16:13:22.334+00:00",
+      "original": "a-w07-03-trial-1-20261104T161322334177.json",
+      "path": "evidence/A/W07/registry/bench/a-w07-03-trial-1-20261104T161322334177.json",
+      "sha256": "7bee96e6214a81a4817fd0325203416dfda1dbbd1839582e84d357abac192c62",
+      "size": 2022,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T16:29:42.761+00:00",
+      "original": "a-w07-03-trial-2-20261104T162942709761.json",
+      "path": "evidence/A/W07/registry/bench/a-w07-03-trial-2-20261104T162942709761.json",
+      "sha256": "439d0961a4f1e6121e739c0117caace523009033889500681817edf81befe5fa",
+      "size": 2535,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T17:15:03.957+00:00",
+      "original": "a-w07-03-trial-3-20261104T171503395704.json",
+      "path": "evidence/A/W07/registry/bench/a-w07-03-trial-3-20261104T171503395704.json",
+      "sha256": "42960fd84a56ce89e64328ee2d8457f0c333fc1b94109c26733d655c77912036",
+      "size": 2613,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T16:24:30.370000+00:00",
+      "original": "a-w07-03-trial-2-be89bf4a.jsonl",
+      "path": "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
+      "sha256": "467763d62f93ed513e53189aaaa73c9207189dc53bce9b3a5094657cb1448902",
+      "size": 482214,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T17:09:52.005000+00:00",
+      "original": "a-w07-03-trial-3-f44c9bed.jsonl",
+      "path": "evidence/A/W07/registry/trials/a-w07-03-trial-3-f44c9bed.jsonl",
+      "sha256": "aa3a8df91ccb41707b395947acea34745b431faec08e96f0c493f0d41f6029e1",
+      "size": 482269,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T16:52:23.299731+00:00",
+      "original": "stabilization-witness-a-w07-03-run3.json",
+      "path": "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+      "sha256": "1ecf50fec68c5a61246e84c3f5852512fe52e8be018293a18d48d546333ceb5c",
+      "size": 2836,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "attempts": 3,
+    "command_mode": "SUPERVISED_BENCH 180s 50% per operator authorization",
+    "current_max_a": 5.03,
+    "current_mean_a": 4.288233362394653,
+    "evaluated_from": "trials/a-w07-03-trial-*.jsonl + session raw",
+    "power_max_w": null,
+    "power_mean_w": 50.764230359391654,
+    "runs": [
+      {
+        "attempt": 1,
+        "ended_at": "2026-11-04T16:12:26.865128+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.0625,
+          "chamber_drop_c": 2.270833333333332,
+          "cooling_frames": 186,
+          "current_max_a": 4.94,
+          "current_mean_a": 4.270483870967742,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.833333333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.5625,
+          "hot_side_start_c": 29.875,
+          "min_chamber_c": 27.791666666666668,
+          "power_mean_w": 50.55215053763441,
+          "start_tmean_c": 30.083333333333332,
+          "thermal_delay_s": 37.04,
+          "time_constant": {
+            "drop_c": 2.229166666666668,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 169,
+            "r2": 0.9068597551607962,
+            "tau_s": 61.686283206272805
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T16:09:12.029967+00:00",
+        "valid": true,
+        "boot_id": "6d7dd125",
+        "pre_start_stabilization_gate": {
+          "slope_c_per_min": -0.012434009447067924,
+          "spread_c": 0.0416666666666643,
+          "criteria": {
+            "slope_max_c_per_min": 0.02,
+            "spread_max_c": 0.05,
+            "min_frames": 50,
+            "window_frames": 60
+          },
+          "verdict": "STABLE",
+          "note": "Recorded by the trial runner on this boot immediately before START; this is the 60-frame pre-START gate, not the separate two-window witness."
+        }
+      },
+      {
+        "attempt": 2,
+        "ended_at": "2026-11-04T16:28:46.378190+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.102083333333333,
+          "chamber_drop_c": 2.2687500000000007,
+          "cooling_frames": 185,
+          "current_max_a": 5.03,
+          "current_mean_a": 4.292162162162162,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.833333333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.5625,
+          "hot_side_start_c": 29.875,
+          "min_chamber_c": 27.833333333333332,
+          "power_mean_w": 50.810270270270266,
+          "start_tmean_c": 30.104166666666668,
+          "thermal_delay_s": 35.0,
+          "time_constant": {
+            "drop_c": 2.25,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 171,
+            "r2": 0.9119085729174824,
+            "tau_s": 62.58580612582802
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T16:25:32.406480+00:00",
+        "valid": true,
+        "boot_id": "be89bf4a",
+        "pre_start_stabilization_gate": {
+          "slope_c_per_min": -0.0004862461794943415,
+          "spread_c": 0.04166666666666785,
+          "criteria": {
+            "slope_max_c_per_min": 0.02,
+            "spread_max_c": 0.05,
+            "min_frames": 50,
+            "window_frames": 60
+          },
+          "verdict": "STABLE",
+          "note": "Recorded by the trial runner on this boot immediately before START; this is the 60-frame pre-START gate, not the separate two-window witness."
+        }
+      },
+      {
+        "attempt": 3,
+        "ended_at": "2026-11-04T17:14:06.992785+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.039583333333336,
+          "chamber_drop_c": 2.2687500000000043,
+          "cooling_frames": 185,
+          "current_max_a": 4.99,
+          "current_mean_a": 4.302054054054054,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.770833333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.625,
+          "hot_side_start_c": 29.8125,
+          "min_chamber_c": 27.770833333333332,
+          "power_mean_w": 50.93027027027027,
+          "start_tmean_c": 30.020833333333332,
+          "thermal_delay_s": 36.02,
+          "time_constant": {
+            "drop_c": 2.2708333333333357,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 171,
+            "r2": 0.9117315945656634,
+            "tau_s": 63.128306356410256
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T17:10:53.026901+00:00",
+        "valid": true,
+        "boot_id": "f44c9bed",
+        "pre_start_stabilization_gate": {
+          "slope_c_per_min": -0.002118644067796851,
+          "spread_c": 0.020833333333335702,
+          "criteria": {
+            "slope_max_c_per_min": 0.02,
+            "spread_max_c": 0.05,
+            "min_frames": 50,
+            "window_frames": 60
+          },
+          "verdict": "STABLE",
+          "note": "Recorded by the trial runner on this boot immediately before START; this is the 60-frame pre-START gate, not the separate two-window witness."
+        }
+      }
+    ],
+    "summary": {
+      "chamber_drop_c": {
+        "cv": 0.0005300033070886856,
+        "max": 2.270833333333332,
+        "mean": 2.2694444444444457,
+        "min": 2.2687500000000007,
+        "n": 3,
+        "sd": 0.001202813060809601
+      },
+      "current_mean_a": {
+        "cv": 0.0037655652662971647,
+        "max": 4.302054054054054,
+        "mean": 4.288233362394653,
+        "min": 4.270483870967742,
+        "n": 3,
+        "sd": 0.016147622603210007
+      },
+      "electrical_delay_s": {
+        "cv": 0.0,
+        "max": 1.02,
+        "mean": 1.02,
+        "min": 1.02,
+        "n": 3,
+        "sd": 0.0
+      },
+      "thermal_delay_s": {
+        "cv": 0.02831760133259299,
+        "max": 37.04,
+        "mean": 36.02,
+        "min": 35.0,
+        "n": 3,
+        "sd": 1.0199999999999996
+      }
+    },
+    "valid_runs": 3
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "attempt": 1,
+      "ended_at": "2026-11-04T16:12:26.865128+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.0625,
+        "chamber_drop_c": 2.270833333333332,
+        "cooling_frames": 186,
+        "current_max_a": 4.94,
+        "current_mean_a": 4.270483870967742,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.833333333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.5625,
+        "hot_side_start_c": 29.875,
+        "min_chamber_c": 27.791666666666668,
+        "power_mean_w": 50.55215053763441,
+        "start_tmean_c": 30.083333333333332,
+        "thermal_delay_s": 37.04,
+        "time_constant": {
+          "drop_c": 2.229166666666668,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 169,
+          "r2": 0.9068597551607962,
+          "tau_s": 61.686283206272805
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T16:09:12.029967+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "ended_at": "2026-11-04T16:28:46.378190+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.102083333333333,
+        "chamber_drop_c": 2.2687500000000007,
+        "cooling_frames": 185,
+        "current_max_a": 5.03,
+        "current_mean_a": 4.292162162162162,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.833333333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.5625,
+        "hot_side_start_c": 29.875,
+        "min_chamber_c": 27.833333333333332,
+        "power_mean_w": 50.810270270270266,
+        "start_tmean_c": 30.104166666666668,
+        "thermal_delay_s": 35.0,
+        "time_constant": {
+          "drop_c": 2.25,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 171,
+          "r2": 0.9119085729174824,
+          "tau_s": 62.58580612582802
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T16:25:32.406480+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "ended_at": "2026-11-04T17:14:06.992785+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.039583333333336,
+        "chamber_drop_c": 2.2687500000000043,
+        "cooling_frames": 185,
+        "current_max_a": 4.99,
+        "current_mean_a": 4.302054054054054,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.770833333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.625,
+        "hot_side_start_c": 29.8125,
+        "min_chamber_c": 27.770833333333332,
+        "power_mean_w": 50.93027027027027,
+        "start_tmean_c": 30.020833333333332,
+        "thermal_delay_s": 36.02,
+        "time_constant": {
+          "drop_c": 2.2708333333333357,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 171,
+          "r2": 0.9117315945656634,
+          "tau_s": 63.128306356410256
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T17:10:53.026901+00:00",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T16:09:12.029967+00:00",
+  "test_id": "A-W07-03",
+  "publication_provenance": {
+    "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+    "source_capture_relative_path": "results/A-W07-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_STABILIZATION_WITNESS_UNRESOLVED",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured.",
+    "retained_limitation": "The separate stabilization witness (boot 82b2d6b6, a different boot) remains NOT_REUSABLE and its raw input is unpublished. No same-boot pre-run window long enough for the stricter two-consecutive-90 s witness exists: trial 3 has ~60 s before COOLING and its last-60-frame pre-COOLING recompute is NOT_STABLE (spread 0.0625 > 0.05). The per-trial 60-frame gate values below were recorded on the trial boot and are preserved as recorded, not re-certified as the two-window witness."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W07-03",
+    "resolution": "IDENTITY_RESOLVED_STABILIZATION_WITNESS_UNRESOLVED",
+    "device_verified": false,
+    "identity_basis": "PER_TRIAL_SAME_BOOT",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W07-03",
+        "role": "TRIAL_1_SAME_BOOT",
+        "trial": 1,
+        "boot_id": "6d7dd125",
+        "identity_source": "raw/telemetry.jsonl (boot-filtered)",
+        "identity_source_sha256": "3abfe7ee498347a54c7f171d5c6cb39fe43b25c5756296ab25b72550cbaecaf2",
+        "frames": 313,
+        "first_host_time": "2026-11-04T16:08:09.982578+00:00",
+        "last_host_time": "2026-11-04T16:13:22.005641+00:00",
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED",
+        "t1_rom": "287088CA00000051",
+        "t2_rom": "28AEBF2200000006",
+        "t3_rom": "28CBE9CA00000072",
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "EXCLUDED_BY_FROZEN_HANDOFF"
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "TRIAL_2_SAME_BOOT",
+        "trial": 2,
+        "boot_id": "be89bf4a",
+        "identity_source": "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
+        "identity_source_sha256": "467763d62f93ed513e53189aaaa73c9207189dc53bce9b3a5094657cb1448902",
+        "frames": 313,
+        "first_host_time": "2026-11-04T16:24:30.369959+00:00",
+        "last_host_time": "2026-11-04T16:29:42.383084+00:00",
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED",
+        "t1_rom": "287088CA00000051",
+        "t2_rom": "28AEBF2200000006",
+        "t3_rom": "28CBE9CA00000072",
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "PUBLISHED_REGISTRY_ARTIFACT",
+        "raw_telemetry_witness": {
+          "source": "raw/telemetry.jsonl (boot-filtered)",
+          "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+          "sha256": "3d953929fe9df25f02f071a36a3eaf6c8b607ccfe794db7f54a657793d875c13",
+          "frames": 313,
+          "first_host_time": "2026-11-04T16:24:30.369959+00:00",
+          "last_host_time": "2026-11-04T16:29:42.383084+00:00"
+        }
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "TRIAL_3_SAME_BOOT",
+        "trial": 3,
+        "boot_id": "f44c9bed",
+        "identity_source": "evidence/A/W07/registry/trials/a-w07-03-trial-3-f44c9bed.jsonl",
+        "identity_source_sha256": "aa3a8df91ccb41707b395947acea34745b431faec08e96f0c493f0d41f6029e1",
+        "frames": 313,
+        "first_host_time": "2026-11-04T17:09:50.992782+00:00",
+        "last_host_time": "2026-11-04T17:15:03.004596+00:00",
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED",
+        "t1_rom": "287088CA00000051",
+        "t2_rom": "28AEBF2200000006",
+        "t3_rom": "28CBE9CA00000072",
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "PUBLISHED_REGISTRY_ARTIFACT",
+        "raw_telemetry_witness": {
+          "source": "raw/telemetry.jsonl (boot-filtered)",
+          "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+          "sha256": "c9c09ad5c4faabfdd45baf746664ddc721bf8eadbf364014815177424b6578f8",
+          "frames": 313,
+          "first_host_time": "2026-11-04T17:09:50.992782+00:00",
+          "last_host_time": "2026-11-04T17:15:03.004596+00:00"
+        }
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "trial_1_boot_id",
+        "value": "6d7dd125",
+        "match": true,
+        "expected_or_source": "6d7dd125"
+      },
+      {
+        "name": "trial_2_boot_id",
+        "value": "be89bf4a",
+        "match": true,
+        "expected_or_source": "be89bf4a"
+      },
+      {
+        "name": "trial_3_boot_id",
+        "value": "f44c9bed",
+        "match": true,
+        "expected_or_source": "f44c9bed"
+      },
+      {
+        "name": "device_tuple_consistent_across_trials",
+        "value": true,
+        "match": true,
+        "expected_or_source": true
+      },
+      {
+        "name": "trial_1_stabilization_recorded",
+        "value": {
+          "slope_c_per_min": -0.012434009447067924,
+          "spread_c": 0.0416666666666643
+        },
+        "match": true
+      },
+      {
+        "name": "trial_2_stabilization_recorded",
+        "value": {
+          "slope_c_per_min": -0.0004862461794943415,
+          "spread_c": 0.04166666666666785
+        },
+        "match": true
+      },
+      {
+        "name": "trial_3_stabilization_recorded",
+        "value": {
+          "slope_c_per_min": -0.002118644067796851,
+          "spread_c": 0.020833333333335702
+        },
+        "match": true
+      }
+    ],
+    "limitation": "The separate stabilization witness (boot 82b2d6b6, a different boot) remains NOT_REUSABLE and its raw input is unpublished. No same-boot pre-run window long enough for the stricter two-consecutive-90 s witness exists: trial 3 has ~60 s before COOLING and its last-60-frame pre-COOLING recompute is NOT_STABLE (spread 0.0625 > 0.05). The per-trial 60-frame gate values below were recorded on the trial boot and are preserved as recorded, not re-certified as the two-window witness.",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "stabilization": {
+      "criteria": {
+        "slope_max_c_per_min": 0.02,
+        "spread_max_c": 0.05,
+        "min_frames": 50,
+        "window_frames": 60
+      },
+      "per_trial": {
+        "1": {
+          "recorded": {
+            "slope_c_per_min": -0.012434009447067924,
+            "spread_c": 0.0416666666666643
+          },
+          "independent_raw_recompute": {
+            "slope_c_per_min": -0.007676,
+            "spread_c": 0.041667,
+            "verdict": "STABLE"
+          }
+        },
+        "2": {
+          "recorded": {
+            "slope_c_per_min": -0.0004862461794943415,
+            "spread_c": 0.04166666666666785
+          },
+          "independent_raw_recompute": {
+            "slope_c_per_min": -0.000382,
+            "spread_c": 0.041667,
+            "verdict": "STABLE"
+          }
+        },
+        "3": {
+          "recorded": {
+            "slope_c_per_min": -0.002118644067796851,
+            "spread_c": 0.020833333333335702
+          },
+          "independent_raw_recompute": {
+            "slope_c_per_min": 0.000972,
+            "spread_c": 0.0625,
+            "verdict": "NOT_STABLE"
+          }
+        }
+      },
+      "separate_witness": {
+        "path": "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+        "verdict": "NOT_REUSABLE",
+        "witness_boot_id": "82b2d6b6",
+        "reason": "different boot from run 3 (f44c9bed); its own windows were NOT_STABLE (spread 0.0625)"
+      }
+    }
+  }
+}

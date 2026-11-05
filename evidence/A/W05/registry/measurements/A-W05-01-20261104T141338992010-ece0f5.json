@@ -1,0 +1,21 @@
+{
+  "captured_at": "2026-11-04T14:13:38.991+00:00",
+  "measurements": {
+    "frames": 60,
+    "has_quality": true,
+    "health_unknown": 0,
+    "power_timeout_bounded": false,
+    "producer_health_fields": {
+      "health_bme": "NEVER",
+      "health_control": "OK",
+      "health_door": "OK",
+      "health_power": "OK",
+      "health_telemetry": "OK",
+      "health_thermal": "OK"
+    },
+    "telemetry_continues": true
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W05-01"
+}

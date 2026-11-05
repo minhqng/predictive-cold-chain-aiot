@@ -20,3 +20,87 @@ evidence/A/W03/hardware-2026-10-27/firmware/** -text
 evidence/A/W03/build-native-windows-2026-10-27/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28/raw/** -text
 evidence/A/W03/build-native-windows-2026-10-28-integrated/raw/** -text
+
+# W04 commissioning dossier: raw H6 serial captures, the G1/G2a host logs, the
+# 2026-10-29 IDF build logs and the 2026-11-01 delivery build log keep their
+# exact bytes, because validate_w04.py pins their SHA-256 in SHA256SUMS.txt and
+# a CRLF rewrite would break every pin on a clean checkout.
+evidence/A/W04/h6/** -text
+evidence/A/W04/g1/** -text
+evidence/A/W04/g2a/** -text
+evidence/A/W04/build-2026-11-01/** -text
+
+# W05 telemetry dossier: every file in evidence/A/W05/ is hash-pinned in
+# SHA256SUMS.txt and re-verified by validate_w05.py. The IDF build log and the
+# derived JSON/CSV must keep their exact bytes, because `text=auto eol=lf` would
+# rewrite line endings on a checkout with core.autocrlf and break every pin.
+evidence/A/W05/** -text
+
+# W06 command/ACK dossier: every file is hash-pinned in evidence/A/W06/SHA256SUMS.txt
+# and re-verified by validate_w06.py. The generated JSON/JSONL artifacts and the IDF
+# build log must keep their exact bytes; `text=auto eol=lf` would rewrite them on a
+# checkout with core.autocrlf and break every pin.
+evidence/A/W06/** -text
+# W07 repeatability dossier: hash-pinned in evidence/A/W07/SHA256SUMS.txt and
+# re-checked by validate_w07.py. The generated JSON/JSONL/CSV must keep their exact
+# bytes, because `text=auto eol=lf` would rewrite them on a checkout with
+# core.autocrlf and break every pin.
+evidence/A/W07/** -text
+
+# Member A handoff contracts rehomed into W07
+evidence/A/HANDOFF/** -text
+# Preserve the exact published capture-document bytes.
+evidence/A/W07/A-W07-02-CORRECTION-20261104.md -text
+# W14 spatial/position QA dossier: every file is hash-pinned in
+# evidence/A/W14/SHA256SUMS.txt and re-checked by validate_w14.py, so the generated
+# JSON/CSV must keep their exact bytes. `text=auto eol=lf` would rewrite them on a
+# checkout with core.autocrlf and break every pin.
+evidence/A/W14/** -text
+# W12 configuration/data-QA dossier: every file is hash-pinned in
+# evidence/A/W12/SHA256SUMS.txt and re-checked by validate_w12.py, so the generated
+# JSON/CSV must keep their exact bytes. The repo default `* text=auto eol=lf` would
+# rewrite them on a checkout with core.autocrlf and break every pin.
+evidence/A/W12/** -text
+evidence/A/W12/A-W12-01-CONDITIONS-20261104.md -text
+evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md -text
+# W13 dossier: every file is hash-pinned in evidence/A/W13/SHA256SUMS.txt
+# and re-checked by validate_w13.py; `text=auto eol=lf` would rewrite those bytes
+# on a checkout with core.autocrlf and break every pin.
+evidence/A/W13/** -text
+# W08 envelope/Gate-A dossier: hash-pinned in evidence/A/W08/SHA256SUMS.txt and
+# re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
+# those bytes on a core.autocrlf checkout and break every pin.
+evidence/A/W08/** -text
+evidence/A/W08/attachments/fuse-selection.md -text
+# W15 PZEM-integrity dossier: hash-pinned in evidence/A/W15/SHA256SUMS.txt and
+# re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
+evidence/A/W15/** -text
+evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md -text
+evidence/A/W02/attachments/5d58af7a0145-door-polarity-observation.json -text
+# Member A release-candidate dossier: every file is hash-pinned in
+evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
+evidence/A/RC/** -text
+# W11 S4/refusal dossier: hash-pinned in evidence/A/W11/SHA256SUMS.txt and
+# re-checked by validate_w11.py; `* text=auto eol=lf` would rewrite those bytes on a
+# core.autocrlf checkout and break every pin.
+evidence/A/W11/** -text
+
+# W16 comparability dossier: every file is hash-pinned in evidence/A/W16/SHA256SUMS.txt
+# and re-checked by validate_w16.py; the repo default `* text=auto eol=lf` would rewrite
+# those bytes on a checkout with core.autocrlf and break every pin.
+evidence/A/W16/** -text
+evidence/A/W17/** -text
+evidence/A/W18/** -text
+
+evidence/A/W19/** -text
+
+evidence/A/W20/** -text
+
+evidence/A/W21/** -text
+
+evidence/A/W22/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W22/A-W22-01-EVIDENCE-GAP-LIST-20261105.md -text
+evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md -text
+evidence/A/W24/** -text

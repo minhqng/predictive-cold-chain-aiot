@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-11-04T17:15:29.182+00:00",
+  "measurements": {
+    "delay_samples_s": [
+      1.02,
+      1.02,
+      1.02
+    ],
+    "max_s": 1.02,
+    "median_s": 1.02,
+    "n": 3,
+    "p95_s": 1.02
+  },
+  "repetitions": [],
+  "source": "DERIVED",
+  "test_id": "A-W13-01"
+}

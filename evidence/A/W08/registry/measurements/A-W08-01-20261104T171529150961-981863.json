@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-11-04T17:15:29.150+00:00",
+  "measurements": {
+    "healthy_current_max_a": 4.424,
+    "healthy_current_min_a": 4.288233362394653,
+    "healthy_power_max_w": 52.37833333333333,
+    "healthy_power_min_w": 50.764230359391654,
+    "off_current_max_a": 0.0,
+    "sources": [
+      "A-W04-05",
+      "A-W07-03"
+    ]
+  },
+  "repetitions": [],
+  "source": "DERIVED",
+  "test_id": "A-W08-01"
+}

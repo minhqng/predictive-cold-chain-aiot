@@ -37,6 +37,11 @@ typedef enum {
     CG_QUALITY_VALID = 0,  /* all three measurement roles valid */
     CG_QUALITY_DEGRADED,   /* exactly one measurement role invalid */
     CG_QUALITY_INVALID,    /* two or more measurement roles invalid */
+    /* W05 adds the fourth canonical state (docs/01 2263-2308). The driver never
+     * derives it - read_all() always resolves to one of the three above - so it
+     * exists for the snapshot's pre-first-publication state, where nothing has
+     * been observed yet and "invalid" would claim more than the evidence. */
+    CG_QUALITY_UNKNOWN,
 } cg_thermal_quality_t;
 
 typedef struct {
@@ -44,6 +49,12 @@ typedef struct {
     cg_thermal_quality_t quality;
     uint8_t required_present;        /* T1..T3 present at last enumeration */
     uint8_t known_present;           /* all four frozen ROMs present */
+    /* W05: how many of the measurement roles (T1..T3, per the frozen map)
+     * returned a valid reading on the last shared conversion. Counted from the
+     * map's is_measurement_role flag, never from an index, so SPARE can never
+     * be counted into a chamber-air figure by accident. */
+    uint8_t measurement_ok;
+    uint8_t measurement_expected;
 } cg_thermal_snapshot_t;
 
 /* Configures the bus and writes the 12-bit resolution configuration to

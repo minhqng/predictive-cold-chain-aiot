@@ -1,0 +1,14 @@
+{
+  "captured_at": "2026-11-04T13:51:21.848+00:00",
+  "measurements": {
+    "applied_source": [
+      "FIRMWARE_OUTPUT_STATE"
+    ],
+    "default_off_frames": 30,
+    "frames": 30,
+    "with_applied_field": 30
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W06-04"
+}

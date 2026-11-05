@@ -1,0 +1,125 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "LOCAL_CHANNEL_MISSING:T1",
+      "name": "local_channel:T1",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "LOCAL_CHANNEL_MISSING:T2",
+      "name": "local_channel:T2",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "LOCAL_CHANNEL_MISSING:T3",
+      "name": "local_channel:T3",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "LOCAL_CHANNEL_MISSING:door",
+      "name": "local_channel:door",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "LOCAL_CHANNEL_MISSING:pzem",
+      "name": "local_channel:pzem",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "SAFE_LOCAL_DEFAULT_OFF_BROKEN",
+      "name": "default_off_preserved",
+      "passed": true
+    },
+    {
+      "detail": "0",
+      "failure_reason": "REBOOT_DURING_LOCAL_TEST",
+      "name": "no_reboot",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "broker_removed",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 94,
+    "boot_id": "4b555191",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T17:30:14.322+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:30:14.322+00:00",
+      "original": "A-W08-04",
+      "path": "evidence/A/W08/registry/measurements/A-W08-04-20261104T173014308456-9031a3.json",
+      "sha256": "9d515d77d51107f6b3a328c468387b7730c4b8ef2a72c94b68ce4bc668af01cb",
+      "size": 819,
+      "stored": "evidence/A/W08/registry/measurements/A-W08-04-20261104T173014308456-9031a3.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "local_channels": {
+      "T1": true,
+      "T2": true,
+      "T3": true,
+      "door": true,
+      "pzem": true
+    },
+    "metrics": {
+      "boot_changes": 0,
+      "boot_ids": [
+        "4b555191"
+      ],
+      "boot_ids_complete": true,
+      "coverage": 1.0,
+      "current_max_a": 0.0,
+      "duration_s": 58.97999999999996,
+      "electrical_valid_rate": 1.0,
+      "fault_bits_complete": true,
+      "fault_bits_max": 0,
+      "frames": 60,
+      "hot_side_max_c": 29.875,
+      "quality_counts": {
+        "DEGRADED": 60
+      },
+      "state_counts": {
+        "OFF": 60
+      },
+      "thermal_valid_rate": 1.0
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:29:14.306+00:00",
+  "test_id": "A-W08-04",
+  "publication_provenance": {
+    "source_record_sha256": "79daa69d89c907ac48e5dd3b3c2ee58cc0d49f2f3883e690a9bccaf7b4140c40",
+    "source_capture_relative_path": "results/A-W08-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

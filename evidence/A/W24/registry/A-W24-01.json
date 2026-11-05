@@ -1,0 +1,119 @@
+{
+  "checks": [
+    {
+      "detail": " value='coldguard-001'",
+      "failure_reason": "",
+      "name": "device_id",
+      "passed": true
+    },
+    {
+      "detail": " value='CG-HW-001'",
+      "failure_reason": "",
+      "name": "hardware_config",
+      "passed": true
+    },
+    {
+      "detail": " value='cg-w06-0.1.0'",
+      "failure_reason": "",
+      "name": "firmware_version",
+      "passed": true
+    },
+    {
+      "detail": " value=2",
+      "failure_reason": "",
+      "name": "pin_map",
+      "passed": true
+    },
+    {
+      "detail": " value=4 expected=4",
+      "failure_reason": "",
+      "name": "four_roms",
+      "passed": true
+    },
+    {
+      "detail": " value=15.0",
+      "failure_reason": "",
+      "name": "fuse",
+      "passed": true
+    },
+    {
+      "detail": " value='50A'",
+      "failure_reason": "",
+      "name": "pzem_profile",
+      "passed": true
+    },
+    {
+      "detail": " value='SUPERVISED_ON_WITHIN_MEASURED_ENVELOPE' expected=['UNKNOWN']",
+      "failure_reason": "",
+      "name": "allowed_action",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 95,
+    "boot_id": "d674902a",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T17:57:26.016+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:57:26.016+00:00",
+      "original": "A-W24-01",
+      "path": "evidence/A/W24/registry/measurements/A-W24-01-20261104T175726009386-4a594a.json",
+      "sha256": "90f4248465f6f8e354956387c3e3f014a7d62d1494195ff5b4565c50b9636576",
+      "size": 841,
+      "stored": "evidence/A/W24/registry/measurements/A-W24-01-20261104T175726009386-4a594a.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "allowed_action": "SUPERVISED_ON_WITHIN_MEASURED_ENVELOPE",
+    "boot_id": "d674902a",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_version": "cg-w06-0.1.0",
+    "fuse_a": 15.0,
+    "hardware_config_id": "CG-HW-001",
+    "output_stage": "ENABLED",
+    "pin_map": 2,
+    "positions": {
+      "SPARE": "CHAMBER_NEAR_DOOR",
+      "T1": "CHAMBER_CENTER",
+      "T2": "TEC_HOT_SIDE",
+      "T3": "CHAMBER_BOTTOM"
+    },
+    "pzem_profile": "50A",
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "unique_rom_count": 4
+  },
+  "notes": "configuration frozen from this boot's live identity and the A-W08-02 fuse record; conductor/terminal ratings remain UNVERIFIED as documented",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:57:16.000+00:00",
+  "test_id": "A-W24-01",
+  "publication_provenance": {
+    "source_record_sha256": "d62186fea3f85fe7fc5bf37f0dd88975ad05ef5f3606363aa6e92b426ff3999f",
+    "source_capture_relative_path": "results/A-W24-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

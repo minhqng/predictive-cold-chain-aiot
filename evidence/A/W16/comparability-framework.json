@@ -1,0 +1,184 @@
+{
+  "a_w16_01_rerun_requirements": [
+    {
+      "ask": "short OFF-envelope idle current at the frozen geometry",
+      "host_can_compute": false,
+      "item": "off_envelope",
+      "status": "NEED_USER_ACTION",
+      "why": "a fresh supervised OFF capture is a physical action"
+    },
+    {
+      "ask": "core ON point current/power at the frozen duty",
+      "host_can_compute": false,
+      "item": "core_on_point",
+      "status": "NEED_USER_ACTION",
+      "why": "requires an authorized energized session"
+    },
+    {
+      "ask": "response delay re-measured on the same geometry",
+      "host_can_compute": false,
+      "item": "response_delay",
+      "status": "TEAM_DEPENDENCY",
+      "why": "needs the W16 capture to compare against the W13 baseline"
+    },
+    {
+      "ask": "S2 disturbance response",
+      "host_can_compute": false,
+      "item": "s2_disturbance",
+      "status": "NEED_USER_ACTION",
+      "why": "S2 is a physical disturbance run; also tied to the door->critical gap"
+    }
+  ],
+  "baseline_signatures": [
+    {
+      "boot_ids": [
+        "56044b74"
+      ],
+      "cadence_hz": 1.0,
+      "capture": "tec-cooling-response-600s.csv",
+      "frames": 957,
+      "geometry_roles": {
+        "consistent_with_freeze": true,
+        "fully_labelled": false,
+        "observed": {
+          "t1": null,
+          "t2": "HOT_SIDE",
+          "t3": null,
+          "t4": null
+        }
+      },
+      "hardware_config_id": "UNVERIFIED",
+      "image_sha256": "01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f",
+      "is_probe_identification": false,
+      "limits_policy": "APPROVED",
+      "physical_output": "UNQUALIFIED(empty column)"
+    }
+  ],
+  "comparison_dimensions": [
+    "geometry_roles",
+    "cadence_hz",
+    "limits_policy",
+    "image_sha256",
+    "physical_output",
+    "hardware_config_id"
+  ],
+  "configuration_drift": [],
+  "cross_era_comparison": {
+    "comparison_allowed": false,
+    "dimension_table": {
+      "cadence_hz": {
+        "baseline": 1.0,
+        "current": null,
+        "state": "MISSING_SIDE"
+      },
+      "geometry_roles": {
+        "baseline": {
+          "consistent_with_freeze": true,
+          "fully_labelled": false,
+          "observed": {
+            "t1": null,
+            "t2": "HOT_SIDE",
+            "t3": null,
+            "t4": null
+          }
+        },
+        "compared_as": "refused: one or both sides unlabelled",
+        "current": null,
+        "state": "MISSING_SIDE"
+      },
+      "hardware_config_id": {
+        "baseline": "UNVERIFIED",
+        "current": null,
+        "state": "MISSING_SIDE"
+      },
+      "image_sha256": {
+        "baseline": "01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f",
+        "current": null,
+        "state": "MISSING_SIDE"
+      },
+      "limits_policy": {
+        "baseline": "APPROVED",
+        "current": null,
+        "state": "MISSING_SIDE"
+      },
+      "physical_output": {
+        "baseline": "UNQUALIFIED(empty column)",
+        "current": null,
+        "state": "MISSING_SIDE"
+      }
+    },
+    "note": "a dimension in MISSING_SIDE/MISMATCH means the two eras are not the same physical/software configuration and their response may not be directly compared; MISSING_SIDE is raised on ABSENCE of evidence (null/unlabelled/UNQUALIFIED/UNVERIFIED), never counted as a match",
+    "requirement": "A-W16-02",
+    "verdict": "BLOCKED"
+  },
+  "evidence_kind": "HOST_FRAMEWORK_ON_COMMITTED_CAPTURES",
+  "final_freeze_evidence_schema": {
+    "certified_with": "Member D",
+    "forbidden_labels": [
+      "PHYSICALLY_VERIFIED (from host evidence)",
+      "TEAM_GATE_G4_GREEN"
+    ],
+    "freeze_condition": "only when every COMPARISON dimension matches AND all required_evidence items are closed AND a W16 re-measurement exists",
+    "host_slice_may_set_frozen": false,
+    "required_evidence": {
+      "allowed_action_still_valid": {
+        "must_show": "same six limits posture and duty range as baseline",
+        "status": "OPEN"
+      },
+      "h8_reactive_verification_stable": {
+        "must_show": "W16 OFF/ON/response within the W13-W15 envelope",
+        "note": "requires the A-W16-01 re-run",
+        "status": "OPEN"
+      },
+      "no_hardware_safety_issue": {
+        "must_show": "fuse/conductor deviation resolved or accepted",
+        "note": "fuse remains unphotographed / uncertified",
+        "status": "OPEN"
+      }
+    },
+    "requirement": "A-W16-04",
+    "status_labels_allowed": [
+      "IMPLEMENTED",
+      "HOST_VERIFIED",
+      "REAL_DATA_ANALYZED",
+      "NEED_USER_ACTION",
+      "TEAM_DEPENDENCY",
+      "BLOCKED_HARDWARE"
+    ]
+  },
+  "frozen": false,
+  "no_g4_claim": true,
+  "physical_verified": false,
+  "response_tolerance_format": {
+    "fields": {
+      "disturbance_tolerance": {
+        "definition_ref": "frozen candidate critical definition (D)",
+        "unit": "C",
+        "value": "NOT_MEASURED"
+      },
+      "gradient": {
+        "definition_ref": "docs/01 section 20.3 G_T = Tmax - Tmin (chamber air)",
+        "unit": "C",
+        "value": "NOT_MEASURED"
+      },
+      "initial_state": {
+        "definition_ref": "docs/01 derived thermal-state section 20",
+        "unit": null,
+        "value": "NOT_MEASURED"
+      },
+      "reset_criterion": {
+        "definition_ref": "docs/01 section 20.6 recovery measured after action",
+        "unit": null,
+        "value": "NOT_MEASURED"
+      }
+    },
+    "policy": "no field may be filled from host evidence; a W16 re-run is required first",
+    "requirement": "A-W16-03",
+    "signed_off_with": "Member B"
+  },
+  "tool": "cg_w16_comparability.py",
+  "touches_hardware": false,
+  "verdict": "NO_FREEZE (host slice; W16 re-measurement not present)",
+  "w16_snapshot_present": false,
+  "week": "W16"
+}

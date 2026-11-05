@@ -1,0 +1,151 @@
+{
+  "checks": [
+    {
+      "detail": "15 A",
+      "failure_reason": "FUSE_NOT_FROM_PURCHASED_SET",
+      "name": "fuse_in_purchased_set",
+      "passed": true
+    },
+    {
+      "detail": "15.0 vs 9.35",
+      "failure_reason": "FUSE_HEADROOM_INSUFFICIENT",
+      "name": "fuse_has_headroom",
+      "passed": true
+    },
+    {
+      "detail": "15.0 vs 9.35",
+      "failure_reason": "FUSE_BELOW_TRANSIENT",
+      "name": "fuse_covers_transient",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "FUSE_RATIONALE_EMPTY",
+      "name": "rationale_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    },
+    {
+      "detail": "15.0 vs peak 5.03",
+      "failure_reason": "FINAL_FUSE_TOO_SMALL",
+      "name": "final_fuse_above_measured_peak",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:49:19.058+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:49:19.044+00:00",
+      "original": "evidence/A/W08/attachments/fuse-block-holder-20261105.png",
+      "sha256": "15c6c9a33e353f91debf65fd382e9020611400a650cb60e5fdda3ffcd0d62dda",
+      "size": 825789,
+      "stored": "evidence/A/W08/attachments/fuse-block-holder-20261105.png",
+      "path": "evidence/A/W08/attachments/fuse-block-holder-20261105.png"
+    },
+    {
+      "captured_at": "2026-11-04T17:49:19.058+00:00",
+      "original": "A-W08-02",
+      "path": "evidence/A/W08/registry/measurements/A-W08-02-20261104T174919045341-ed1cf1.json",
+      "sha256": "0e85fec7c064267012d8b9e2617472baa526e762dd34158431cf405758088f61",
+      "size": 1604,
+      "stored": "evidence/A/W08/registry/measurements/A-W08-02-20261104T174919045341-ed1cf1.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "fuse_a": 15.0,
+    "measured_peak_a": 5.03,
+    "rationale": "Chosen 15 A: the only rating in the actual inventory (2x1 A, 1x5 A, 1x15 A; no 10 A or 20 A exist) that clears both measured bases - bench profile peak 5.03 A (A-W04-05 and the three A-W07-03 trials, 500 permille cap) requires >= 6.29 A, and the imported W01-W04 full-duty record (9.35 A steady and transient at 100 % duty) requires >= 11.69 A. 15 A is also the rating recorded as installed in that imported record (fuse_a=15.0). Transient behaviour: no inrush measurement exists; the highest observed instantaneous current is the 5.03 A PZEM peak at 500 permille, and H7 stepped 20-100 % duty without a trip. Terminal and wiring behaviour: continuity 0.2 ohm per control line and 0.2 ohm across the shunt path (G0 record), no fault bits and no protection event in any powered capture of this session. UNVERIFIED and NOT claimed: conductor cross-section (BOM HW-19 '2x2.5 mm2' has no readable jacket marking in any photo), TB4506 terminal-block rating (substituted for frozen TB4504, CR-A-W01-02), ferrule type on the TEC branch, and any certified ampacity or fuse coordination. Operator statement 2026-11-05: the installed hardware is the available configuration and no further manufacturer ratings or certifications are obtainable; this selection is a documented hardware evidence limitation, not a certification.",
+    "steady_a": 9.35,
+    "transient_a": 9.35
+  },
+  "notes": "UNVERIFIED by design: conductor cross-section, terminal-block rating, TEC-branch ferrule type; no certified ampacity, fuse coordination or long-term safety is claimed from this result. Photo shows the holder; the installed fuse marking is not legible in any available photo and the operator confirmed no further certification is obtainable (2026-11-05).",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-04T17:49:19.030+00:00",
+  "test_id": "A-W08-02",
+  "publication_provenance": {
+    "source_record_sha256": "0aa18393d1a07347dee5b47268e7c955d1a03e9e17ff919c8b1dd3b0c4f43d8a",
+    "source_capture_relative_path": "results/A-W08-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_FROM_MEASURED_SOURCES",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W08-02",
+    "resolution": "OPERATOR_SELECTION_FROM_IDENTIFIED_SOURCES",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W04-05",
+        "role": "MEASUREMENT_SOURCE",
+        "published_record": "evidence/A/W04/registry/A-W04-05.json",
+        "published_commit": "9841799b3387774eeb46d82b9fa1f0220f4d22be",
+        "published_sha256": "f9f8ab32abbcbfc6120dd87186873e55359a92cf3e71a0aedf4f88843fbdf575",
+        "source_record_sha256": "4c923d41a6dc9a50b9206d1ebcde686efd599ffad2f0187fc03f82f771b57b56",
+        "boot_id": "5562b609",
+        "boot_count": 79,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "MEASUREMENT_SOURCE",
+        "published_record": "evidence/A/W07/registry/A-W07-03.json",
+        "published_commit": "5921a5c4a0cce39fd1598d88ecee090e558f12cc",
+        "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
+        "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "measured_peak_a==A-W07-03.current_max_a",
+        "value": 5.03,
+        "match": true,
+        "expected_or_source": 5.03
+      },
+      {
+        "name": "measured_peak_a>=A-W04-05.current_max_a",
+        "value": 5.03,
+        "match": true,
+        "expected_or_source": 4.99
+      },
+      {
+        "name": "fuse_rating_above_peak",
+        "value": 15.0,
+        "match": true,
+        "expected_or_source": 5.03
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "selection_basis": "operator fuse selection from measured branch currents; the operator rationale is retained in measurements.rationale"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "total_member_a_weeks": 24,
+  "weeks_accounted_for": 24,
+  "software_contracts_status": "READY_FOR_SOFTWARE_DEVELOPMENT",
+  "physical_acceptance_status": "BLOCKED_ON_HARDWARE_GATES",
+  "hardware_posture": "DE_ENERGIZED_SAFE_POSTURE_PSU_OFF_FUSE_REMOVED",
+  "open_hardware_gates_reference": "evidence/A/RC/remaining-hardware-gates.md",
+  "open_hardware_gates_count": 10
+}

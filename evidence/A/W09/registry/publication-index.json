@@ -1,0 +1,101 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "b0ba03e83a0340bb7cabc93dfee9af6d85cfac58",
+  "requirements": {
+    "A-W09-01": {
+      "criterion": "Before a run check hardware config, sensor identity, PZEM range, initial state, door and storage; after a run record end reason, manual intervention, anomaly and validity candidate.",
+      "record": "evidence/A/W09/registry/A-W09-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W09/registry/A-W09-01.json",
+        "evidence/A/W09/registry/measurements/A-W09-01-20261104T182716136729-5bd833.json"
+      ]
+    },
+    "A-W09-03": {
+      "criterion": "Log sensor movement, manual touch, fan anomaly, missing key telemetry and unexpected power events; never delete an invalid attempt.",
+      "record": "evidence/A/W09/registry/A-W09-03.json",
+      "identity_status": "IDENTITY_NOT_APPLICABLE_SESSION_META_RECORD",
+      "artifact_paths": [
+        "evidence/A/W09/registry/A-W09-03.json",
+        "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
+        "evidence/A/W09/registry/measurements/A-W09-03-20261104T171658230108-b351d7.json"
+      ],
+      "identity_provenance": "evidence/A/W09/registry/A-W09-03.json#identity_provenance"
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W09/registry/A-W09-01.json",
+      "source_sha256": "8ae357529b4d357e0100985dc5021d70a3f9011b8376e1a65e2ad6327c8863d6",
+      "published_sha256": "03f8053018d4aad11c471a6653273582169017a1d886ad1d664d9081e08fac7d",
+      "source_capture_path": "results/A-W09-01.json",
+      "source_bytes": 2893,
+      "bytes": 3505,
+      "requirement": "A-W09-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W09/registry/measurements/A-W09-01-20261104T182716136729-5bd833.json",
+      "source_sha256": "a53ba14f16ea05c3e8364167ea39c2946233c9d2a3e5a6cc4a896eadea3973ea",
+      "published_sha256": "879e1e0ee5fe9f59820297369ea8b4a55a0dcdd46efea97fc13255f6cbf3f67e",
+      "source_capture_path": "measurements/A-W09-01-20261104T182716136729-5bd833.json",
+      "source_bytes": 268,
+      "bytes": 256,
+      "requirement": "A-W09-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W09/registry/A-W09-03.json",
+      "source_sha256": "d17c0655c3d5a488182b1dad629461bc240e2e4ac7c5f2296d80c9a73d06f432",
+      "published_sha256": "0654be6c7f6a5b5e5b8dc86af605910b1d264cc4d7acd247760bc444edb85478",
+      "source_capture_path": "results/A-W09-03.json",
+      "source_bytes": 1698,
+      "bytes": 4480,
+      "requirement": "A-W09-03",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
+      "source_sha256": "072232d521fd7758d9f3b148192b04206b92cd10c5328c308fe1f45260c828af",
+      "published_sha256": "14d54a31b098f0af51a72115ca1863dedbb782f0b138cddd3e9a98f58a56dbd5",
+      "source_capture_path": "A-W09-03-INVALIDATION-LOG-20261105.md",
+      "source_bytes": 4433,
+      "bytes": 4360,
+      "requirement": "A-W09-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W09/registry/measurements/A-W09-03-20261104T171658230108-b351d7.json",
+      "source_sha256": "0b121326ed21416a7b54f01fe4624225bb400fb354142457a4a7a86619c6579e",
+      "published_sha256": "e4351c53de0297da277aafd29817f15c89d52b6713750c9b301934a1520c2e21",
+      "source_capture_path": "measurements/A-W09-03-20261104T171658230108-b351d7.json",
+      "source_bytes": 223,
+      "bytes": 213,
+      "requirement": "A-W09-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    }
+  ]
+}

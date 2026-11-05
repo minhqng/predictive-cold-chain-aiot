@@ -1,0 +1,61 @@
+# A-W07-05 - initial/reset criterion candidate, version 0.
+#
+# Read and validated by firmware/tools/cg_reset_criterion.py. This file is a
+# CANDIDATE, not a frozen threshold set: docs/05A A-W07-05 asks for a state-based
+# criterion and the W07 pass criteria say no arbitrary universal threshold is
+# required, so every number here must come from measured repeatability. Until it
+# does, the status stays UNRESOLVED and the evaluator can only ever answer UNKNOWN
+# - never READY - for the gate that depends on it.
+#
+# `owner` records who can set the value, not who wishes to.
+schema: reset-criterion-v0
+status: CANDIDATE_NOT_FROZEN
+owner: Member A proposes; Member D owns control thresholds; the docs/01 logical T1/T2/T3 naming discrepancy is a project-level decision, the as-built positions are not
+applies_to: deciding whether the chamber may be treated as reset before a run starts
+notes: see evidence/A/W07/repeatability-report.md for the measurements this list is waiting on
+
+parameters:
+  # The mean this criterion is measured on. The 2026-11-02 operator-confirmed
+  # as-built geometry puts T1 at chamber centre, T3 at the bottom and T4/SPARE near
+  # the door, with T2 on the TEC hot side - so the chamber-air set is (T1,T3,T4),
+  # and the literal mean(T1,T2,T3) of docs/01 2312-2316 would average a hot-side
+  # surface into an air temperature. On the one committed run the two differ by a
+  # factor of 3.40 (-2.5627 C against -8.7083 C), so this is not a rounding choice.
+  # Enforced, not decorative: the evaluator refuses a state measured on a different
+  # representation, and refuses any representation that includes the hot-side probe,
+  # so the open docs/01 naming question cannot be settled silently by the data path.
+  - name: tmean_definition
+    value: tmean_airroles_v0
+    status: PROPOSED
+    source: as-built mapping frozen 2026-11-02 (evidence/A/W07/probe-identification-v0.md); docs/01 517-530, 2312-2318 (a partial mean must not reuse the full label)
+
+  # Upper bound on the chamber-air mean at the moment a run may be declared reset.
+  # A two-sided band needs a centre, and this tool will not supply one for itself:
+  # that number would be a threshold nobody measured. v0 therefore tests the upper
+  # bound only, and the centre question stays here rather than in the evaluator.
+  - name: tmean_band_c
+    value: UNRESOLVED
+    status: UNRESOLVED
+    source: needs >=3 valid passive warm-up runs (A-W07-02); one 226-sample / 224.99 s passive segment exists inside the H8 capture (device_ms 904 to 225894) and no repeat of it
+
+  - name: gradient_bound_c_per_min
+    value: UNRESOLVED
+    status: UNRESOLVED
+    source: needs the same runs; the one observed passive drift is +0.027185 C/min whole-phase on tmean_airroles_v0, and a bound fitted to a single segment would be noise dressed as a limit
+
+  # These three are state facts, not thresholds, and are already decidable from
+  # recorded fields, so they are frozen now rather than left as placeholders.
+  - name: door_required
+    value: CLOSED
+    status: FROZEN
+    source: docs/01 17.7 (2160-2172) names the OPEN/CLOSED enum; PHY-DOOR-002 (docs/01 1108) is the rule that a missing door reading must not be read as CLOSED
+
+  - name: cooling_state_required_known
+    value: true
+    status: FROZEN
+    source: docs/01 17.8 (2174-2189) fixes the canonical cooling vocabulary at ON/OFF, so any other value is not a known state
+
+  - name: sensor_quality_required
+    value: VALID
+    status: FROZEN
+    source: docs/01 19 (VALID/DEGRADED/INVALID/UNKNOWN; unknown must not silently become normal)

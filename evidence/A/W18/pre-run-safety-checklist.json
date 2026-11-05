@@ -1,0 +1,20 @@
+{
+  "week": "W18",
+  "authority": "docs/05A §27",
+  "physical_bench_items": [
+    "fuse_verified",
+    "fan_operational",
+    "terminals_secured",
+    "sensors_online",
+    "pzem_responsive",
+    "output_stage_default_off"
+  ],
+  "cross_team_prerequisites": [
+    "g4_gate_passed",
+    "controller_b_model_frozen",
+    "controller_d_policy_frozen"
+  ],
+  "verification_mode": "PRE_ENERGIZATION_MANDATORY",
+  "physical_state": "PENDING_BENCH_EXECUTION",
+  "enablement_verdict": "BLOCKED_ON_PREREQUISITES"
+}

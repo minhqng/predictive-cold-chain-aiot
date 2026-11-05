@@ -1,5 +1,5 @@
 /*
- * ColdGuard firmware - W03 power/PZEM + W02 sensor foundation application
+ * ColdGuard firmware - W04 TEC commissioning + W03 power/PZEM + W02 sensors
  * (Member A).
  *
  * What this application does (and only this):
@@ -11,12 +11,14 @@
  *   - samples the MC-38 raw level, timestamps every raw edge and prints a
  *     committed DOOR_STATE line after the debounce window (A-W02-07);
  *   - polls the PZEM-017 over Modbus RTU read-only and prints one PZEM line
- *     per real poll, plus the boot config/range readback (A-W03-03/04).
+ *     per real poll, plus the boot config/range readback (A-W03-03/04);
+ *   - runs the W04 TEC commissioning controller: fail-closed state machine,
+ *     local-token authorization, fault latch, bounded run duration and the
+ *     raw `#CG TELEM` experiment stream. The output stage is compiled out,
+ *     so the delivered build cannot energize the branch (docs/06).
  *
- * Not implemented in W03 on purpose: MQTT/telemetry publishing, cooling
- * control, PWM generation, command handling. Those belong to W04+ and
- * adding them here would create unverified claims. BME280 stays a pending
- * physical test (A-W02-06).
+ * Not implemented on purpose: MQTT/telemetry publishing, cloud commands and
+ * cooling actuation. BME280 stays a pending physical test (A-W02-06).
  */
 #include <stdio.h>
 #include <string.h>
@@ -30,12 +32,15 @@
 #include "nvs_flash.h"
 
 #include "coldguard_config.h"
+#include "cg_commission.h"
 #include "cg_door.h"
 #include "cg_ds18b20.h"
+#include "cg_health.h"
 #include "cg_log.h"
 #include "cg_power.h"
 #include "cg_rom_map.h"
 #include "cg_safety.h"
+#include "cg_snapshot.h"
 
 /* Shared door state: the door task mutates it, the sensor task only reads
  * the debounced raw level for the SAMPLE line. The read is a plain int
@@ -75,12 +80,21 @@ static void door_task(void *arg)
     (void)arg;
 
     cg_door_init(&s_door);
-    cg_log_door_polarity(CG_DOOR_POLARITY_CONFIRMED == 1, CG_DOOR_RAW_OPEN_LEVEL);
+    cg_log_door_polarity(cg_door_polarity_attested(&s_door), CG_DOOR_RAW_OPEN_LEVEL);
 
     while (true) {
         uint64_t now_us = (uint64_t)esp_timer_get_time();
 
         cg_door_poll(&s_door, now_us, &edge, &level, &commit);
+        /* W05: the door publication now carries its own observation time and
+         * its edge counters, so the telemetry can state a door age and prove
+         * the debounce state machine is still advancing. D25: door-known is the
+         * per-boot polarity attestation, not the compile-time constant, so a
+         * reset boot reports the door as unattested until it is attested again. */
+        cg_snapshot_publish_door(cg_door_polarity_attested(&s_door),
+                                 cg_door_state(&s_door) == CG_DOOR_OPEN, s_door.raw_committed,
+                                 now_us / 1000ULL, s_door.transitions, s_door.cycles);
+        cg_health_registry_beat(CG_PRODUCER_DOOR, now_us / 1000ULL);
 
         if (edge) {
             cg_log_line("%s %s uptime_us=%lld raw=%d", CG_LOG_PREFIX, CG_LOG_DOOR_EDGE,
@@ -146,6 +160,11 @@ static void sensor_task(void *arg)
 
         cg_ds18b20_read_all(&snap);
         seq++;
+        {
+            const uint64_t obs_ms = (uint64_t)(esp_timer_get_time() / 1000);
+            cg_snapshot_publish_thermal(&snap, seq, obs_ms);
+            cg_health_registry_beat(CG_PRODUCER_THERMAL, obs_ms);
+        }
 
         for (size_t i = 0; i < cg_rom_map_size(); i++) {
             const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
@@ -204,6 +223,7 @@ void app_main(void)
     esp_err_t nvs_status;
 
     cg_log_init();
+    cg_snapshot_init();
 
     /* Safety first: never leave the cooling branch enabled while the rest
      * of the system initializes. */
@@ -232,6 +252,26 @@ void app_main(void)
         cg_log_error("ds18b20=INIT_DEGRADED continuing=1");
     }
 
+    /* A-W05-01: every producer declares its nominal cadence before any task
+     * that beats starts, so the registry is never read while uninitialized and
+     * a producer that has not beaten yet is reported as NEVER rather than OK.
+     * The boot line records which periods the liveness verdicts were judged
+     * against - without it, a later `health=LATE` is not reproducible. */
+    {
+        const uint64_t periods[CG_PRODUCER_COUNT] = {
+            CG_HEALTH_THERMAL_PERIOD_MS, CG_HEALTH_BME_PERIOD_MS, CG_HEALTH_DOOR_PERIOD_MS,
+            CG_HEALTH_POWER_PERIOD_MS,   CG_HEALTH_TELEMETRY_PERIOD_MS,
+            CG_HEALTH_CONTROL_PERIOD_MS,
+        };
+        cg_health_registry_init(periods);
+        cg_log_line(
+            "%s %s event=REGISTRY_INIT thermal_ms=%d bme_ms=%d door_ms=%d power_ms=%d "
+            "telemetry_ms=%d control_ms=%d door_request_ms=%d",
+            CG_LOG_PREFIX, CG_LOG_TEC, CG_HEALTH_THERMAL_PERIOD_MS, CG_HEALTH_BME_PERIOD_MS,
+            CG_HEALTH_DOOR_PERIOD_MS, CG_HEALTH_POWER_PERIOD_MS, CG_HEALTH_TELEMETRY_PERIOD_MS,
+            CG_HEALTH_CONTROL_PERIOD_MS, CG_DOOR_POLL_MS);
+    }
+
     /* W03: PZEM observation task (read-only Modbus polling). It has no path
      * to the cooling branch; the actuator stays in the safe state forced
      * above. */
@@ -239,4 +279,8 @@ void app_main(void)
 
     (void)xTaskCreate(door_task, "cg_door", 3072, NULL, 6, NULL);
     (void)xTaskCreate(sensor_task, "cg_sensor", 4096, NULL, 5, NULL);
+
+    /* W04: controller + local console + raw telemetry. It starts in OFF and
+     * cannot energize anything in this build (output stage compiled out). */
+    cg_commission_start(boot_id, boot_count);
 }

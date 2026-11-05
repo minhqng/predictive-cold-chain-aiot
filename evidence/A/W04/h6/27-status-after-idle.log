@@ -1,0 +1,8 @@
+# capture start 2026-10-29T15:34:23.433117+00:00 port=COM4 baud=115200
+[   0.000] 15:34:23.433 >>> STATUS
+[   0.110] 15:34:23.536 STATUS
+[   0.110] 15:34:23.536 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   0.422] 15:34:23.848 H6 PZEM_TRACE attempt=1 tx=0104000000067008 rx_len=0 rx=- chunk_count=0 chunks= first_ms=0 last_ms=0 echo=0 frame_off=-1 frame_len=-1 slave=-1 fc=-1 count=-1 crc_ok=0 usable=0 early=0 uart_err=0 class=NO_RESPONSE
+[   0.578] 15:34:24.004 H6 PZEM_TRACE attempt=2 tx=0104000000067008 rx_len=0 rx=- chunk_count=0 chunks= first_ms=0 last_ms=0 echo=0 frame_off=-1 frame_len=-1 slave=-1 fc=-1 count=-1 crc_ok=0 usable=0 early=0 uart_err=0 class=NO_RESPONSE
+[   0.578] 15:34:24.004 H6 STATUS pzem=TIMEOUT
+# capture end 2026-10-29T15:34:29.516157+00:00 reason=timeout

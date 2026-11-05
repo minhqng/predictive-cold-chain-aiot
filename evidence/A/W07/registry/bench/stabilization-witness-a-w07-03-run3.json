@@ -1,0 +1,100 @@
+{
+  "kind": "stabilization-witness",
+  "purpose": "A-W07-03 run 3 pre-START chamber stabilization evidence",
+  "source_capture": "A-W12-01 (read-only 600 s drift recheck)",
+  "source_file": "evidence/A/W07/registry/unpublished-capture-input.json",
+  "source_window": {
+    "start": "2026-11-04T16:39:50.344+00:00",
+    "end": "2026-11-04T16:49:50.364+00:00"
+  },
+  "device_identity": {
+    "boot_count": 90,
+    "boot_id": "82b2d6b6",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "metric": "chamber-air Tmean over roles T1/T3/SPARE (T2 hot side excluded)",
+  "windows": [
+    {
+      "index": 2,
+      "start": "2026-11-04T16:46:29.821805+00:00",
+      "end": "2026-11-04T16:48:09.821805+00:00",
+      "frames": 100,
+      "span_s": 98.97,
+      "slope_c_per_min": -0.00877,
+      "spread_c": 0.0625,
+      "mean_c": 30.0744,
+      "min_c": 30.0417,
+      "max_c": 30.1042,
+      "tec_off_throughout": true,
+      "criteria": {
+        "slope_max_c_per_min": 0.02,
+        "spread_max_c": 0.05,
+        "min_span_s": 90.0,
+        "min_frames": 90
+      },
+      "verdict": "NOT_STABLE"
+    },
+    {
+      "index": 1,
+      "start": "2026-11-04T16:48:09.821805+00:00",
+      "end": "2026-11-04T16:49:49.821805+00:00",
+      "frames": 101,
+      "span_s": 99.99,
+      "slope_c_per_min": -0.00566,
+      "spread_c": 0.0625,
+      "mean_c": 30.0668,
+      "min_c": 30.0417,
+      "max_c": 30.1042,
+      "tec_off_throughout": true,
+      "criteria": {
+        "slope_max_c_per_min": 0.02,
+        "spread_max_c": 0.05,
+        "min_span_s": 90.0,
+        "min_frames": 90
+      },
+      "verdict": "NOT_STABLE"
+    }
+  ],
+  "whole_capture": {
+    "frames": 599,
+    "mean_c": 30.0882,
+    "spread_c": 0.0833,
+    "slope_c_per_min": -0.00473
+  },
+  "conditions": {
+    "tec_off_throughout": true,
+    "pwm_duty_values": [
+      "0"
+    ],
+    "tec_state_values": [
+      "OFF"
+    ],
+    "current_max_a": 0.0,
+    "voltage_min_v": 11.94,
+    "voltage_max_v": 11.95,
+    "fault_codes": [
+      "0x00000000"
+    ],
+    "door_raw_levels": [
+      "0"
+    ],
+    "boot_ids": [
+      "82b2d6b6"
+    ],
+    "states": [
+      "OFF"
+    ]
+  },
+  "verdict": "NOT_REUSABLE",
+  "generated_utc": "2026-11-04T16:52:23.299731+00:00",
+  "note": "Reused under the same criteria as the dedicated monitor (two consecutive windows, |slope| <= 0.02 C/min, Tmean spread <= 0.05 C). No criterion was relaxed. Run 3 must additionally re-verify the live preflight and record the gap between this witness end and START.",
+  "source_file_reference_type": "PROVENANCE_DESCRIPTOR_NOT_RAW_INPUT; original raw input is excluded and remains unpublished"
+}

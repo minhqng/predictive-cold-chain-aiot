@@ -1,0 +1,46 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "7dc7cf8fa24c5828f5a4f9376c13a492b9edc30c",
+  "requirements": {
+    "A-W24-01": {
+      "criterion": "Freeze hardware_config_id, pin map, sensor ROMs, sensor positions, fuse, PZEM range, core allowed action and firmware version.",
+      "record": "evidence/A/W24/registry/A-W24-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W24/registry/A-W24-01.json",
+        "evidence/A/W24/registry/measurements/A-W24-01-20261104T175726009386-4a594a.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W24/registry/A-W24-01.json",
+      "source_sha256": "d62186fea3f85fe7fc5bf37f0dd88975ad05ef5f3606363aa6e92b426ff3999f",
+      "published_sha256": "5e11d982442bd34cea44e4e5083eee35bd02cc72a783eed89302d9b21cc21b1c",
+      "source_capture_path": "results/A-W24-01.json",
+      "source_bytes": 3096,
+      "bytes": 3578,
+      "requirement": "A-W24-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W24/registry/measurements/A-W24-01-20261104T175726009386-4a594a.json",
+      "source_sha256": "90f4248465f6f8e354956387c3e3f014a7d62d1494195ff5b4565c50b9636576",
+      "published_sha256": "90f4248465f6f8e354956387c3e3f014a7d62d1494195ff5b4565c50b9636576",
+      "source_capture_path": "measurements/A-W24-01-20261104T175726009386-4a594a.json",
+      "source_bytes": 841,
+      "bytes": 841,
+      "requirement": "A-W24-01",
+      "transformed_record": false,
+      "transformation_sequence": []
+    }
+  ]
+}

@@ -21,6 +21,14 @@ infra/mosquitto/passwd.tmp
 
 # ESP-IDF build output.
 firmware/build/
+# Configured per-bench IDF trees (~150 MB each) and the sdkconfig files CMake
+# generates from sdkconfig.defaults. Only sdkconfig.defaults is a source file.
+firmware/*-bench/build*/
+firmware/*-bench/sdkconfig
+firmware/*-bench/sdkconfig.old
+# Flash images and region readbacks stay local; their SHA-256 and size are
+# pinned in evidence/A/W04/ARTIFACT-MANIFEST.md.
+evidence/A/W04/**/*.bin
 
 # Future frontend dependency and build output.
 frontend/node_modules/

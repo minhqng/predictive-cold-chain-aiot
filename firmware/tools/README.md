@@ -74,9 +74,38 @@ ghi vào `evidence/`.
 
 ## 5. Điều công cụ này KHÔNG chứng minh
 
-* Không biên dịch firmware (máy hiện tại không có ESP-IDF/Docker — xem README gốc repo
-  cho lệnh build bằng image `espressif/idf`).
+* Bộ kiểm tra này **không** biên dịch firmware; nó chỉ kiểm tra hợp đồng tĩnh.
+  Việc build chạy riêng bằng ESP-IDF v6.1 trên máy bench, log và hash được ghim
+  tại `evidence/A/W04/build-2026-11-01/`.
 * Không thay thế H0 mechanical, không thay thế bài test BME280 thật, không dán nhãn
   vật lý, không tạo dữ liệu cảm biến.
 * Không phát hiện thiết bị 1-Wire lạ trên bus: firmware W02 đọc theo ROM cố định và
   **không** cài ROM search (giới hạn đã khai báo trong hồ sơ).
+
+---
+
+## 6. W04 — TEC commissioning
+
+Bản W04 thêm đường dẫn TEC fail-closed và telemetry thô. Output stage **bị tắt
+khi biên dịch** (`CG_TEC_OUTPUT_STAGE_ENABLED = 0`), mọi giới hạn vận hành ở
+trạng thái `UNRESOLVED`, nên lệnh `START` luôn bị từ chối trên bản giao này.
+
+| Lệnh | Việc |
+|---|---|
+| `py firmware/tools/run_all_checks_w04.py` | Chạy unittest (gồm harness C của state machine), checker W04, checker W02/W03 và validator hồ sơ |
+| `py firmware/tools/cg_check_firmware_w04.py` | Kiểm tra tĩnh: fail-closed, giới hạn chưa RESOLVED, thứ tự enable/PWM, telemetry, GPIO, tài liệu |
+| `py firmware/tools/cg_build_telemetry.py <capture> --jsonl raw.jsonl --csv telemetry.csv --ml-out ml.csv` | Tách capture thô thành JSONL trung thực, CSV acquisition và dataset ML dẫn xuất |
+
+Harness C (`tests/cg_tec_harness.c`) biên dịch nguyên `cg_tec_control.c` +
+`cg_tec_limits.c` và chạy 34 kịch bản offline (boot, timeout, cảm biến lỗi/già,
+interlock, ESTOP, CLEAR, heartbeat, rollback phần cứng). Test Python tự tìm MSVC
+qua `vswhere`, hoặc `cc`/`gcc` nếu có.
+
+Quy tắc dữ liệu W04: `nan` → ô rỗng/`None`, không bao giờ thành 0;
+`timestamp_utc=UNAVAILABLE` vì thiết bị không có đồng hồ thực; `t_ambient_c` và
+`t_cold_side_c` là `NOT_ASSIGNED` và RH là `SENSOR_NOT_PRESENT` cho tới khi có
+phép đo/gán probe thật. `t_inside_c` lấy từ T1 (`CHAMBER_CENTER`), còn
+`t_hot_side_c` lấy từ T2 (`TEC_HOT_SIDE` — ROM `28AEBF2200000006`, mặt tản nhiệt
+TEC, không phải không khí trong buồng); mỗi field tự khai nguồn qua
+`t_inside_src` / `t_hot_side_src`. Kế hoạch cổng G0–G5 nằm trong
+`docs/06-tec-commissioning-safety-and-limits.md`.

@@ -1,0 +1,173 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "9d22e8fceab9cc303f48efa87fba29640c13c860",
+  "requirements": {
+    "A-W03-01": {
+      "criterion": "Set and measure the XL4015 logic output before connecting sensitive modules; record no-load/load values where practical.",
+      "record": "evidence/A/W03/registry/A-W03-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-01.json"
+      ]
+    },
+    "A-W03-03": {
+      "criterion": "Verify PZEM communication power, slave address, Modbus CRC and actual serial framing; if 8N1 fails, review the shipped manual revision before declaring a hardware fault.",
+      "record": "evidence/A/W03/registry/A-W03-03.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-03.json",
+        "evidence/A/W03/registry/measurements/A-W03-03-20261104T144253260271-b14d65.json"
+      ]
+    },
+    "A-W03-04": {
+      "criterion": "Read/set the PZEM current-range register and show 0x0001 or the equivalent 50 A configuration before current is evidence-grade.",
+      "record": "evidence/A/W03/registry/A-W03-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-04.json",
+        "evidence/A/W03/registry/measurements/A-W03-04-20261104T152143109645-0b0db7.json"
+      ]
+    },
+    "A-W03-05": {
+      "criterion": "With the TEC physically OFF, collect at least 10 minutes of PZEM samples and measure voltage, current/power zero and noise, and Modbus error rate.",
+      "record": "evidence/A/W03/registry/A-W03-05.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-05.json",
+        "evidence/A/W03/registry/measurements/A-W03-05-20261104T151353630569-0040d7.json",
+        "evidence/A/W03/registry/measurements/A-W03-05-20261104T151450295213-b8331a.json"
+      ],
+      "identity_provenance": "evidence/A/W03/registry/A-W03-05.json#identity_provenance"
+    },
+    "A-W03-06": {
+      "criterion": "Verify correct current path, secure terminals, no signal wire in the high-current path and the physical 50 A / 75 mV marking.",
+      "record": "evidence/A/W03/registry/A-W03-06.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-06.json"
+      ]
+    },
+    "A-W03-07": {
+      "criterion": "Validate the actual module pin labels, enable, PWM inputs and reset/default state without energizing the TEC; do not infer a continuous rating from the 43 A chip limit.",
+      "record": "evidence/A/W03/registry/A-W03-07.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W03/registry/A-W03-07.json",
+        "evidence/A/W03/attachments/ibt2-module-HW039-20261105.png",
+        "evidence/A/W03/registry/measurements/A-W03-07-20261104T175715975860-972e1d.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W03/registry/A-W03-01.json",
+      "source_sha256": "7da13cdb0adb7cc091f716166a9352fda474ffbf67667080d840245f402e04c9",
+      "published_sha256": "df6cf97764389f61dbbf5b6972650b9346ea5e9e37b9751d6c026ece67d3d81f",
+      "source_capture_path": "results/A-W03-01.json",
+      "bytes": 3054,
+      "requirement": "A-W03-01",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/registry/A-W03-03.json",
+      "source_sha256": "bba13a3d3f5435dcd0bcd9362fa2f2c75fbbbc6a86297ad3979c3c59f1f27b61",
+      "published_sha256": "8c51eb799a52a5370179e514083d3ed4e8f5f0775f2a806d6232ffda8da27f80",
+      "source_capture_path": "results/A-W03-03.json",
+      "bytes": 2452,
+      "requirement": "A-W03-03",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/registry/measurements/A-W03-03-20261104T144253260271-b14d65.json",
+      "source_sha256": "a379218d86b9cd1ca265c4f55a05245ce3acb38ba5d7d6f3779c2c0444aeb884",
+      "published_sha256": "a379218d86b9cd1ca265c4f55a05245ce3acb38ba5d7d6f3779c2c0444aeb884",
+      "source_capture_path": "measurements/A-W03-03-20261104T144253260271-b14d65.json",
+      "bytes": 415,
+      "requirement": "A-W03-03",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W03/registry/A-W03-04.json",
+      "source_sha256": "76d11c6be999aee47d0d0132ff82cd87d0600651409b0f311b8c0d2ec3a4d483",
+      "published_sha256": "05e8476ae03842d27fff0c49b7e09c18eaf9e05ba76ec0000c3127a67f205fb6",
+      "source_capture_path": "results/A-W03-04.json",
+      "bytes": 2511,
+      "requirement": "A-W03-04",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/registry/measurements/A-W03-04-20261104T152143109645-0b0db7.json",
+      "source_sha256": "f48c0c89e3a7f1d2555aae0ffa9b8f96f688d7fd82dedac2ab7345ef4af30dc9",
+      "published_sha256": "f48c0c89e3a7f1d2555aae0ffa9b8f96f688d7fd82dedac2ab7345ef4af30dc9",
+      "source_capture_path": "measurements/A-W03-04-20261104T152143109645-0b0db7.json",
+      "bytes": 391,
+      "requirement": "A-W03-04",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W03/registry/A-W03-05.json",
+      "source_sha256": "e3c28939500fcaf661185d4e0acdeb4406419d071c617f0636f52450964230d7",
+      "published_sha256": "4960d7706dce79e4c97b6513de2cf55766a42f170381a1775a6e7c656acf04cb",
+      "source_capture_path": "results/A-W03-05.json",
+      "bytes": 6180,
+      "requirement": "A-W03-05",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/registry/measurements/A-W03-05-20261104T151353630569-0040d7.json",
+      "source_sha256": "a643b21b5c0799c99312ce03f9adc04f37474d2dac3ac7587861b2c031cb972a",
+      "published_sha256": "a643b21b5c0799c99312ce03f9adc04f37474d2dac3ac7587861b2c031cb972a",
+      "source_capture_path": "measurements/A-W03-05-20261104T151353630569-0040d7.json",
+      "bytes": 729,
+      "requirement": "A-W03-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W03/registry/measurements/A-W03-05-20261104T151450295213-b8331a.json",
+      "source_sha256": "f443b8b4f0ecf9a0221026ee1a81ece7cf498559cbd89cb32184dad736449a65",
+      "published_sha256": "f443b8b4f0ecf9a0221026ee1a81ece7cf498559cbd89cb32184dad736449a65",
+      "source_capture_path": "measurements/A-W03-05-20261104T151450295213-b8331a.json",
+      "bytes": 783,
+      "requirement": "A-W03-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W03/registry/A-W03-06.json",
+      "source_sha256": "22027d9d8a68d4560fbbfc6794d37293e9d485ac127f69ab8f565c8e3a903aa4",
+      "published_sha256": "eb8cc9be8a635dd9096ce54f9542529439a3341c6f36e8c9f73bdea2fad5a1be",
+      "source_capture_path": "results/A-W03-06.json",
+      "bytes": 2993,
+      "requirement": "A-W03-06",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/registry/A-W03-07.json",
+      "source_sha256": "dce00e280a67035b17ed8f6798d6b12b1c0f5c8a0292437e6da7dd54f2f25334",
+      "published_sha256": "8b6919be5cf2da8e3cd2deaf9521f54b05902be81218d27b7ddd194df243b168",
+      "source_capture_path": "results/A-W03-07.json",
+      "bytes": 3445,
+      "requirement": "A-W03-07",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W03/attachments/ibt2-module-HW039-20261105.png",
+      "source_sha256": "66769d6153b3d3815eb936fbb5dd20bf2870f0e6104eecaa6655a377e23142f9",
+      "published_sha256": "66769d6153b3d3815eb936fbb5dd20bf2870f0e6104eecaa6655a377e23142f9",
+      "source_capture_path": "attachments/A-W03-07/ibt2-module-HW039-20261105.png",
+      "bytes": 1155507,
+      "requirement": "A-W03-07",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W03/registry/measurements/A-W03-07-20261104T175715975860-972e1d.json",
+      "source_sha256": "d22c5f8366132535736768da38ea56f91b5a90111bdc2f01d78d408d9a6fa71f",
+      "published_sha256": "d22c5f8366132535736768da38ea56f91b5a90111bdc2f01d78d408d9a6fa71f",
+      "source_capture_path": "measurements/A-W03-07-20261104T175715975860-972e1d.json",
+      "bytes": 213,
+      "requirement": "A-W03-07",
+      "transformed_record": false
+    }
+  ]
+}

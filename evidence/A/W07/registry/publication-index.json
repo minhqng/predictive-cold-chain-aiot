@@ -1,0 +1,357 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "a9cd4380caa05378c6752dcd28113fb7d0af3ab8",
+  "requirements": {
+    "A-W07-01": {
+      "criterion": "Freeze sensor mounts, V1 position, cable paths, door alignment and chamber internal state; create a configuration photo or drawing.",
+      "record": "evidence/A/W07/registry/A-W07-01.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W07/registry/A-W07-01.json"
+      ]
+    },
+    "A-W07-02": {
+      "criterion": "Perform at least three valid pilot warm-up runs under similar start conditions; measure Tmean trajectory, gradient and slope.",
+      "record": "evidence/A/W07/registry/A-W07-02.json",
+      "identity_status": "IDENTITY_RESOLVED_SAME_BOOT",
+      "artifact_paths": [
+        "evidence/A/W07/registry/A-W07-02.json",
+        "evidence/A/W07/registry/bench/a-w07-02-run-1-4b555191.jsonl",
+        "evidence/A/W07/registry/bench/a-w07-02-run-2-4b555191.jsonl",
+        "evidence/A/W07/registry/bench/a-w07-02-run-3-4b555191.jsonl",
+        "evidence/A/W07/A-W07-02-CORRECTION-20261104.md",
+        "evidence/A/W07/registry/measurements/A-W07-02-20261104T153742412533-15f80b.json",
+        "evidence/A/W07/registry/attempt-chronology.md"
+      ],
+      "identity_provenance": "evidence/A/W07/registry/A-W07-02.json#identity_provenance"
+    },
+    "A-W07-03": {
+      "criterion": "Perform at least three valid cooling-step runs with the same core action; measure current/power, command-to-electrical delay, thermal response and recovery.",
+      "record": "evidence/A/W07/registry/A-W07-03.json",
+      "identity_status": "IDENTITY_RESOLVED_CRITERION_MET_WITNESS_AUXILIARY",
+      "artifact_paths": [
+        "evidence/A/W07/registry/A-W07-03.json",
+        "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
+        "evidence/A/W07/registry/trials/a-w07-03-trial-3-f44c9bed.jsonl",
+        "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+        "evidence/A/W07/registry/bench/a-w07-03-trial-1-20261104T161322334177.json",
+        "evidence/A/W07/registry/bench/a-w07-03-trial-2-20261104T162942709761.json",
+        "evidence/A/W07/registry/bench/a-w07-03-trial-3-20261104T171503395704.json",
+        "evidence/A/W07/registry/unpublished-capture-input.json"
+      ],
+      "identity_provenance": "evidence/A/W07/registry/A-W07-03.json#identity_provenance",
+      "criterion_status": "MET_BY_THREE_RECORDED_TRIALS",
+      "criterion_evidence": "evidence/A/W07/A-W07-03-OPERATOR-EVIDENCE-ADDENDUM-20261105.md",
+      "criterion_note": "Three 180 s cooling-step trials passed their same-boot pre-START gates; the auxiliary two-window witness remains NOT_REUSABLE. Operator confirmation recorded 2026-11-05."
+    },
+    "A-W07-04": {
+      "criterion": "Compute per outcome mean, SD, CV where meaningful, min/max and trajectory overlays.",
+      "record": "evidence/A/W07/registry/A-W07-04.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W07/registry/A-W07-04.json",
+        "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json"
+      ],
+      "identity_provenance": "evidence/A/W07/registry/A-W07-04.json#identity_provenance"
+    },
+    "A-W07-05": {
+      "criterion": "Define a state-based criterion: Tmean band, gradient bound, door CLOSED, known cooling state and valid sensors.",
+      "record": "evidence/A/W07/registry/A-W07-05.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W07/registry/A-W07-05.json",
+        "evidence/A/W07/registry/measurements/A-W07-05-20261104T182140571526-c8734d.json",
+        "evidence/A/W07/registry/measurements/A-W07-05-20261104T182716033429-710a58.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W07/registry/A-W07-01.json",
+      "source_sha256": "033138d37fa0340419faacce34e6d3e74029317fa548c7388423a8c34d6d67f7",
+      "published_sha256": "9a4f2002170bb8cb56263c469c91f23c17f22a5cce927a91d84aa15e84f3f14a",
+      "source_capture_path": "results/A-W07-01.json",
+      "source_bytes": 2491,
+      "bytes": 3323,
+      "requirement": "A-W07-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/A-W07-02.json",
+      "source_sha256": "88d229c49e2450395a92922588b58e49ce4215ba2a204c481de13c8a809bf4b1",
+      "published_sha256": "ecbd82d6ec429413d56ed8f7cc1f495c661de5dc1500fc477f8f592735e623cd",
+      "source_capture_path": "results/A-W07-02.json",
+      "source_bytes": 9249,
+      "bytes": 14159,
+      "requirement": "A-W07-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-02-run-1-4b555191.jsonl",
+      "source_sha256": "fcb682c5c1cc1a9aa98c10505299c20567de7688f8d50e673e8e950854c63980",
+      "published_sha256": "ec2bcdebefe282ff7c6553f116c72e3be9d6e5a5321f2ebb6da4ed1061c633a8",
+      "source_capture_path": "bench-results/a-w07-02-run-1-4b555191.jsonl",
+      "source_bytes": 87490,
+      "bytes": 87190,
+      "requirement": "A-W07-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-02-run-2-4b555191.jsonl",
+      "source_sha256": "31948cd1c46c999115d483bd4253d35e8711168f3b02ccc21dda5556c349b199",
+      "published_sha256": "c446469369032e6895d8e2ae0f2befa06fc77f6d3836dff79fa203aae612f514",
+      "source_capture_path": "bench-results/a-w07-02-run-2-4b555191.jsonl",
+      "source_bytes": 88908,
+      "bytes": 88608,
+      "requirement": "A-W07-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-02-run-3-4b555191.jsonl",
+      "source_sha256": "d5aed4a2893dc9fb7c87d197ac30361b623e7eeb0f62f550b16445cb59bfb0c6",
+      "published_sha256": "2800c1642fa31dbb5c99df8e7dfb8444b6fc5aa28c0e6e05ee17ae71e353a356",
+      "source_capture_path": "bench-results/a-w07-02-run-3-4b555191.jsonl",
+      "source_bytes": 89039,
+      "bytes": 88739,
+      "requirement": "A-W07-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/A-W07-02-CORRECTION-20261104.md",
+      "source_sha256": "c3692491f03bce04957bbb9e70908a102d4abaf4c99509b4cb4a86a0fd6e95e8",
+      "published_sha256": "c3692491f03bce04957bbb9e70908a102d4abaf4c99509b4cb4a86a0fd6e95e8",
+      "source_capture_path": "A-W07-02-CORRECTION-20261104.md",
+      "source_bytes": 941,
+      "bytes": 941,
+      "requirement": "A-W07-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W07/registry/measurements/A-W07-02-20261104T153742412533-15f80b.json",
+      "source_sha256": "bbb9a9e41a94a754d51c8a662cfcb40320193d33047914bb319419964ee3da73",
+      "published_sha256": "5c85a80c7862358e82c3010993923e90adf63ac79178322591257c2413ba37d4",
+      "source_capture_path": "measurements/A-W07-02-20261104T153742412533-15f80b.json",
+      "source_bytes": 4752,
+      "bytes": 4601,
+      "requirement": "A-W07-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/A-W07-03.json",
+      "source_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+      "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
+      "source_capture_path": "results/A-W07-03.json",
+      "source_bytes": 9130,
+      "bytes": 21584,
+      "requirement": "A-W07-03",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
+      "source_sha256": "592c5487d337b8035442e8ff12c87763e3750b7123af9ac39118ca6ea687c4f4",
+      "published_sha256": "467763d62f93ed513e53189aaaa73c9207189dc53bce9b3a5094657cb1448902",
+      "source_capture_path": "trials/a-w07-03-trial-2-be89bf4a.jsonl",
+      "source_bytes": 482410,
+      "bytes": 482214,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/trials/a-w07-03-trial-3-f44c9bed.jsonl",
+      "source_sha256": "bb2f3efd7ea0ad0d2f178f88eaf0051e5b31c8ee32058e0979c710024b3d9149",
+      "published_sha256": "aa3a8df91ccb41707b395947acea34745b431faec08e96f0c493f0d41f6029e1",
+      "source_capture_path": "trials/a-w07-03-trial-3-f44c9bed.jsonl",
+      "source_bytes": 482465,
+      "bytes": 482269,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+      "source_sha256": "db314ddc89aaa342e524acba6a326a958c37cae2825f4a3e37dd1b4901ac7a39",
+      "published_sha256": "1ecf50fec68c5a61246e84c3f5852512fe52e8be018293a18d48d546333ceb5c",
+      "source_capture_path": "bench-results/stabilization-witness-a-w07-03-run3.json",
+      "source_bytes": 2661,
+      "bytes": 2836,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF",
+        "SOURCE_FILE_TO_VERIFIED_CAPTURE_PROVENANCE_DESCRIPTOR",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-03-trial-1-20261104T161322334177.json",
+      "source_sha256": "24723a2d5755d96f5495517d186cba0735ee1b71b8f58494991e3ab302e365cb",
+      "published_sha256": "7bee96e6214a81a4817fd0325203416dfda1dbbd1839582e84d357abac192c62",
+      "source_capture_path": "bench-results/a-w07-03-trial-1-20261104T161322334177.json",
+      "source_bytes": 2082,
+      "bytes": 2022,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-03-trial-2-20261104T162942709761.json",
+      "source_sha256": "02f3a89affae1a8447be34d9ab96b06e48bad518b7651855c6b297fa3cf516d8",
+      "published_sha256": "439d0961a4f1e6121e739c0117caace523009033889500681817edf81befe5fa",
+      "source_capture_path": "bench-results/a-w07-03-trial-2-20261104T162942709761.json",
+      "source_bytes": 2611,
+      "bytes": 2535,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/bench/a-w07-03-trial-3-20261104T171503395704.json",
+      "source_sha256": "400bb8e414bfd73a7fb31bd3f1c4a1301d1a9523bb349544cd18279650c9d588",
+      "published_sha256": "42960fd84a56ce89e64328ee2d8457f0c333fc1b94109c26733d655c77912036",
+      "source_capture_path": "bench-results/a-w07-03-trial-3-20261104T171503395704.json",
+      "source_bytes": 2689,
+      "bytes": 2613,
+      "requirement": "A-W07-03",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/A-W07-04.json",
+      "source_sha256": "a50678101f74440b268beed8147d746be53485bb812129c24728e770623cdfc6",
+      "published_sha256": "ba21ee6f1d281e42f8f14a4fb7dcac34a42f1b5c4c571717b5ad680ed1c2caa0",
+      "source_capture_path": "results/A-W07-04.json",
+      "source_bytes": 2640,
+      "bytes": 6637,
+      "requirement": "A-W07-04",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "source_sha256": "a92943b57d107fe005f180f7669f306f01180b52083d72541de7a0bd13ff7558",
+      "published_sha256": "abc1fbefff1c2736745380f2c21a18a00232fe7b9b72b0066a726bd2f25850de",
+      "source_capture_path": "measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "source_bytes": 1513,
+      "bytes": 1454,
+      "requirement": "A-W07-04",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/A-W07-05.json",
+      "source_sha256": "f6ae831962d826f36aa0453a850703c89038362aa061cc7d41505b962da59e5b",
+      "published_sha256": "c9364f2e2f8e643b0f894f807e04a4022d42d8569a8d31f36cce1e2f6adfec13",
+      "source_capture_path": "results/A-W07-05.json",
+      "source_bytes": 2678,
+      "bytes": 3297,
+      "requirement": "A-W07-05",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/measurements/A-W07-05-20261104T182140571526-c8734d.json",
+      "source_sha256": "1ae20ea0f711606cb084e3c21ae697221186a1db91ba87041a428e89c299a9ff",
+      "published_sha256": "a8be99801de244571a4567bc3c54a591a5cf6d162a1a7c32b32fa16bc200df2a",
+      "source_capture_path": "measurements/A-W07-05-20261104T182140571526-c8734d.json",
+      "source_bytes": 387,
+      "bytes": 371,
+      "requirement": "A-W07-05",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/measurements/A-W07-05-20261104T182716033429-710a58.json",
+      "source_sha256": "3694a09e33f5189bfe933ab320230ebf56a1cf9b1d0a656f166818afe23ae1ba",
+      "published_sha256": "af5976e0acb8c6ebe8ad3e07c5d8aa577c0958b281e1674d09ede55f2abee068",
+      "source_capture_path": "measurements/A-W07-05-20261104T182716033429-710a58.json",
+      "source_bytes": 433,
+      "bytes": 416,
+      "requirement": "A-W07-05",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W07/registry/unpublished-capture-input.json",
+      "published_sha256": "a8111d4b2f8fff8f2a9eb8494146dde4667a5d2f004324a60948927f9e495a32",
+      "requirement": "A-W07-03",
+      "bytes": 537,
+      "publication_note": true
+    },
+    {
+      "dest": "evidence/A/W07/registry/attempt-chronology.md",
+      "published_sha256": "89d8d05f2287a24838b264b6310f6f4c5eaeaf0caa97ee85892fdb1fc8b49714",
+      "requirement": "A-W07-02",
+      "bytes": 645,
+      "publication_note": true
+    },
+    {
+      "dest": "evidence/A/W07/A-W07-03-OPERATOR-EVIDENCE-ADDENDUM-20261105.md",
+      "source_capture_path": null,
+      "source_sha256": null,
+      "published_sha256": "5b6fdf807ba38bac8c2bbc1e39bf35ebe04f67e6067beb2c7b38f4277dd8d7e6",
+      "bytes": 2858,
+      "requirement": "A-W07-03",
+      "transformed_record": false
+    }
+  ]
+}

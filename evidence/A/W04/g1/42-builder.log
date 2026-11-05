@@ -1,0 +1,11 @@
+telemetry records     : 62
+boots                 : cb8775eb
+run_ids               : UNSET
+test phases           : UNSET
+ignored lines         : 896
+rejected telemetry    : 0
+timestamp_utc         : UNAVAILABLE on every record (device has no wall clock)
+jsonl written: C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/42-telemetry.jsonl
+csv written  : C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/42-telemetry.csv
+ml written   : C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/42-ml.csv
+TELEMETRY ACQUISITION: CLEAN

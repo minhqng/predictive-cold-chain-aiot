@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-11-04T15:21:43.109+00:00",
+  "measurements": {
+    "crc_ok": "1",
+    "profile": "50A",
+    "raw": "#CG PZEM_RANGE uptime_ms=148 status=OK value=0x0001 profile=50A crc_ok=1 exc=0 tx=010300030001740A rx=010300030001740A01030200017984",
+    "status": "OK",
+    "value": "0x0001"
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W03-04"
+}

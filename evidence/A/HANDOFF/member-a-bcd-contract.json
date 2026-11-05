@@ -1,0 +1,1642 @@
+{
+  "artifact": "member-a-bcd-contract",
+  "generated_at_utc": "2026-11-03T14:10:06.840947+00:00",
+  "generated_by": "evidence/A/HANDOFF/contract_probe.py",
+  "worktree": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts",
+  "claim_class_legend": {
+    "OBSERVED": "produced or read by this run against committed source",
+    "HISTORICAL": "carried from an existing document, not re-verified here"
+  },
+  "schema_numbers": {
+    "device_serial_schema": {
+      "name": "CG_TELEMETRY_SCHEMA_VERSION",
+      "value": "3",
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\coldguard_config.h",
+      "line": 472,
+      "namespace": "serial #CG TELEM line"
+    },
+    "device_parser_schema": {
+      "name": "SCHEMA_VERSION",
+      "value": "3",
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\tools\\cg_telemetry_schema.py",
+      "line": 43,
+      "supported_schemas": [
+        1,
+        2,
+        3
+      ]
+    },
+    "backend_wire_schema": {
+      "name": "WIRE_SCHEMA_VERSION",
+      "value": "1",
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\backend\\src\\coldguard_backend\\contracts.py",
+      "line": 38,
+      "namespace": "MQTT JSON Telemetry envelope",
+      "supported": [
+        1
+      ]
+    }
+  },
+  "probe_frame": {
+    "committed_capture_line": "#CG TELEM schema=2 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=1000000 elapsed_ms=1000000 run_elapsed_ms=0 run_id=CG-S1-A-001 device_id=coldguard-001 boot_id=abcd0123 boot_count=7 seq=1 firmware_version=cg-w05-0.1.0 hardware_config_id=CG-HW-001 calibration_id=UNRECORDED test_phase=IDLE t1_rom=287088CA00000051 t2_rom=28AEBF2200000006 t3_rom=28CBE9CA00000072 spare_rom=283BE5C9000000A9 role_status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING rom_source=FROZEN_CONFIG_MAP t_inside_c=25.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=11.9000 voltage_status=OK current_a=0.0000 current_status=OK power_w=0.0000 power_status=OK energy_wh=12.0000 energy_status=OK pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=OK raw_t1_c=25.0625 raw_t1_status=OK raw_t2_c=25.0625 raw_t2_status=OK raw_t3_c=25.0625 raw_t3_status=OK raw_spare_c=25.0625 raw_spare_status=OK thermal_age_ms=1000 power_age_ms=500 door_age_ms=10 thermal_seq=42 power_seq=999 door_transitions=0 door_cycles=0 probes_valid=3 probes_expected=3 thermal_quality=VALID environment_quality=DEGRADED door_quality=UNKNOWN electrical_quality=VALID quality=UNKNOWN cooling_applied=OFF cooling_applied_source=FIRMWARE_OUTPUT_STATE cooling_evidence=MEASURED_IDLE_AND_ZERO health=NEVER health_thermal=NEVER health_bme=NEVER health_door=NEVER health_power=NEVER health_telemetry=NEVER health_control=NEVER thermal_beats=0 power_beats=0 door_beats=0 thermal_max_gap_ms=0 power_max_gap_ms=0 door_max_gap_ms=0",
+    "committed_capture_schema": 2,
+    "derived_frame_schema": 3,
+    "derived_frame_provenance": "DERIVED, not captured: the committed W06 demo capture carries schema=2 and no command tokens; the five schema-3 tokens were appended exactly as firmware/main/cg_telemetry.c:382-384 emits them for the no-command-received case.",
+    "parsed_field_count": 95,
+    "frame_token_order": [
+      "schema",
+      "timestamp_utc",
+      "timestamp_utc_source",
+      "uptime_ms",
+      "elapsed_ms",
+      "run_elapsed_ms",
+      "run_id",
+      "device_id",
+      "boot_id",
+      "boot_count",
+      "seq",
+      "firmware_version",
+      "hardware_config_id",
+      "calibration_id",
+      "test_phase",
+      "t1_rom",
+      "t2_rom",
+      "t3_rom",
+      "spare_rom",
+      "role_status",
+      "rom_source",
+      "t_inside_c",
+      "t_inside_status",
+      "t_inside_src",
+      "t_cold_side_c",
+      "t_cold_side_status",
+      "t_hot_side_c",
+      "t_hot_side_status",
+      "t_ambient_c",
+      "t_ambient_status",
+      "relative_humidity_pct",
+      "relative_humidity_status",
+      "door_open",
+      "door_status",
+      "door_raw",
+      "voltage_v",
+      "voltage_status",
+      "current_a",
+      "current_status",
+      "power_w",
+      "power_status",
+      "energy_wh",
+      "energy_status",
+      "pwm_duty",
+      "fan_command",
+      "fan_status",
+      "output_stage",
+      "tec_state",
+      "fault_code",
+      "fault_reason",
+      "sensor_validity",
+      "power_validity",
+      "raw_t1_c",
+      "raw_t1_status",
+      "raw_t2_c",
+      "raw_t2_status",
+      "raw_t3_c",
+      "raw_t3_status",
+      "raw_spare_c",
+      "raw_spare_status",
+      "thermal_age_ms",
+      "power_age_ms",
+      "door_age_ms",
+      "thermal_seq",
+      "power_seq",
+      "door_transitions",
+      "door_cycles",
+      "probes_valid",
+      "probes_expected",
+      "thermal_quality",
+      "environment_quality",
+      "door_quality",
+      "electrical_quality",
+      "quality",
+      "cooling_applied",
+      "cooling_applied_source",
+      "cooling_evidence",
+      "health",
+      "health_thermal",
+      "health_bme",
+      "health_door",
+      "health_power",
+      "health_telemetry",
+      "health_control",
+      "thermal_beats",
+      "power_beats",
+      "door_beats",
+      "thermal_max_gap_ms",
+      "power_max_gap_ms",
+      "door_max_gap_ms",
+      "command_id",
+      "desired_cooling",
+      "desired_duty_permille",
+      "last_ack_status",
+      "last_ack_reason"
+    ],
+    "fields": {
+      "schema": "3",
+      "timestamp_utc": "UNAVAILABLE",
+      "timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+      "uptime_ms": "1000000",
+      "elapsed_ms": "1000000",
+      "run_elapsed_ms": "0",
+      "run_id": "CG-S1-A-001",
+      "device_id": "coldguard-001",
+      "boot_id": "abcd0123",
+      "boot_count": "7",
+      "seq": "1",
+      "firmware_version": "cg-w05-0.1.0",
+      "hardware_config_id": "CG-HW-001",
+      "calibration_id": "UNRECORDED",
+      "test_phase": "IDLE",
+      "t1_rom": "287088CA00000051",
+      "t2_rom": "28AEBF2200000006",
+      "t3_rom": "28CBE9CA00000072",
+      "spare_rom": "283BE5C9000000A9",
+      "role_status": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "rom_source": "FROZEN_CONFIG_MAP",
+      "t_inside_c": "25.0625",
+      "t_inside_status": "OK",
+      "t_inside_src": "T2",
+      "t_cold_side_c": "nan",
+      "t_cold_side_status": "NOT_ASSIGNED",
+      "t_hot_side_c": "nan",
+      "t_hot_side_status": "NOT_ASSIGNED",
+      "t_ambient_c": "nan",
+      "t_ambient_status": "NOT_ASSIGNED",
+      "relative_humidity_pct": "nan",
+      "relative_humidity_status": "SENSOR_NOT_PRESENT",
+      "door_open": "nan",
+      "door_status": "UNVERIFIED",
+      "door_raw": "1",
+      "voltage_v": "11.9000",
+      "voltage_status": "OK",
+      "current_a": "0.0000",
+      "current_status": "OK",
+      "power_w": "0.0000",
+      "power_status": "OK",
+      "energy_wh": "12.0000",
+      "energy_status": "OK",
+      "pwm_duty": "0",
+      "fan_command": "OFF",
+      "fan_status": "NOT_COMMANDABLE",
+      "output_stage": "DISABLED",
+      "tec_state": "OFF",
+      "fault_code": "0x00000000",
+      "fault_reason": "BOOT_SAFE_OFF",
+      "sensor_validity": "VALID",
+      "power_validity": "OK",
+      "raw_t1_c": "25.0625",
+      "raw_t1_status": "OK",
+      "raw_t2_c": "25.0625",
+      "raw_t2_status": "OK",
+      "raw_t3_c": "25.0625",
+      "raw_t3_status": "OK",
+      "raw_spare_c": "25.0625",
+      "raw_spare_status": "OK",
+      "thermal_age_ms": "1000",
+      "power_age_ms": "500",
+      "door_age_ms": "10",
+      "thermal_seq": "42",
+      "power_seq": "999",
+      "door_transitions": "0",
+      "door_cycles": "0",
+      "probes_valid": "3",
+      "probes_expected": "3",
+      "thermal_quality": "VALID",
+      "environment_quality": "DEGRADED",
+      "door_quality": "UNKNOWN",
+      "electrical_quality": "VALID",
+      "quality": "UNKNOWN",
+      "cooling_applied": "OFF",
+      "cooling_applied_source": "FIRMWARE_OUTPUT_STATE",
+      "cooling_evidence": "MEASURED_IDLE_AND_ZERO",
+      "health": "NEVER",
+      "health_thermal": "NEVER",
+      "health_bme": "NEVER",
+      "health_door": "NEVER",
+      "health_power": "NEVER",
+      "health_telemetry": "NEVER",
+      "health_control": "NEVER",
+      "thermal_beats": "0",
+      "power_beats": "0",
+      "door_beats": "0",
+      "thermal_max_gap_ms": "0",
+      "power_max_gap_ms": "0",
+      "door_max_gap_ms": "0",
+      "command_id": "NONE",
+      "desired_cooling": "NONE",
+      "desired_duty_permille": "nan",
+      "last_ack_status": "NONE",
+      "last_ack_reason": "NO_COMMAND_RECEIVED"
+    }
+  },
+  "device_parser_type_gaps": {
+    "note": "cg_telemetry_schema._coerce leaves any token not listed in FLOAT_FIELDS/INTEGER_FIELDS as a raw string; these mapped wire numbers are therefore untyped by Member A's own parser and a gateway must cast them itself.",
+    "untyped_numeric_fields": [
+      "raw_spare_c",
+      "raw_t1_c",
+      "raw_t2_c",
+      "raw_t3_c"
+    ]
+  },
+  "compatibility_matrix": [
+    {
+      "device_field": "schema",
+      "device_value_in_probe_frame": "3",
+      "device_declared_type": "int",
+      "backend_field": "schema_version",
+      "backend_declared_type": "int",
+      "backend_verdict": "REJECT at the device's own value",
+      "backend_error": "UNSUPPORTED_SCHEMA@schema_version: unsupported schema_version 3; supported: [1] (raw_store.classify_raw -> validation.py:210)"
+    },
+    {
+      "device_field": "timestamp_utc",
+      "device_value_in_probe_frame": "UNAVAILABLE",
+      "device_declared_type": "literal UNAVAILABLE",
+      "backend_field": "captured_at",
+      "backend_declared_type": "tz-aware datetime",
+      "backend_verdict": "REJECT - unsatisfiable on the device",
+      "backend_error": "SCHEMA_VIOLATION@captured_at: Input should be a valid datetime or date, invalid character in year; the device has no wall clock and emits the literal UNAVAILABLE (cg_telemetry.c:232)"
+    },
+    {
+      "device_field": "device_id",
+      "device_value_in_probe_frame": "coldguard-001",
+      "device_declared_type": "str",
+      "backend_field": "device_id",
+      "backend_declared_type": "str",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "boot_id",
+      "device_value_in_probe_frame": "abcd0123",
+      "device_declared_type": "str",
+      "backend_field": "boot_id",
+      "backend_declared_type": "str",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "seq",
+      "device_value_in_probe_frame": "1",
+      "device_declared_type": "int",
+      "backend_field": "seq",
+      "backend_declared_type": "int",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "uptime_ms",
+      "device_value_in_probe_frame": "1000000",
+      "device_declared_type": "int",
+      "backend_field": "uptime_ms",
+      "backend_declared_type": "int",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "run_id",
+      "device_value_in_probe_frame": "CG-S1-A-001",
+      "device_declared_type": "str",
+      "backend_field": "run_id",
+      "backend_declared_type": "str|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "hardware_config_id",
+      "device_value_in_probe_frame": "CG-HW-001",
+      "device_declared_type": "str",
+      "backend_field": "hardware_config_id",
+      "backend_declared_type": "str",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "firmware_version",
+      "device_value_in_probe_frame": "cg-w05-0.1.0",
+      "device_declared_type": "str",
+      "backend_field": "firmware_version",
+      "backend_declared_type": "str",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "calibration_id",
+      "device_value_in_probe_frame": "UNRECORDED",
+      "device_declared_type": "str",
+      "backend_field": "calibration_id",
+      "backend_declared_type": "str|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t1_c",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "float|nan",
+      "backend_field": "thermal.t1",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t2_c",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "float|nan",
+      "backend_field": "thermal.t2",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t3_c",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "float|nan",
+      "backend_field": "thermal.t3",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_ambient_c",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "float|nan",
+      "backend_field": "environment.t_air",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "relative_humidity_pct",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "float|nan",
+      "backend_field": "environment.rh",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "voltage_v",
+      "device_value_in_probe_frame": "11.9000",
+      "device_declared_type": "float|nan",
+      "backend_field": "electrical.voltage_v",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "current_a",
+      "device_value_in_probe_frame": "0.0000",
+      "device_declared_type": "float|nan",
+      "backend_field": "electrical.current_a",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_w",
+      "device_value_in_probe_frame": "0.0000",
+      "device_declared_type": "float|nan",
+      "backend_field": "electrical.power_w",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "energy_wh",
+      "device_value_in_probe_frame": "12.0000",
+      "device_declared_type": "float|nan",
+      "backend_field": "electrical.energy_wh",
+      "backend_declared_type": "float|null",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "cooling_applied",
+      "device_value_in_probe_frame": "OFF",
+      "device_declared_type": "ON|OFF",
+      "backend_field": "actuation.cooling",
+      "backend_declared_type": "ON|OFF",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "pwm_duty",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "int permille 0..1000",
+      "backend_field": "actuation.duty",
+      "backend_declared_type": "float 0.0..1.0",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "thermal_quality",
+      "device_value_in_probe_frame": "VALID",
+      "device_declared_type": "VALID|DEGRADED|INVALID|UNKNOWN",
+      "backend_field": "quality.thermal",
+      "backend_declared_type": "VALID|DEGRADED|INVALID",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "environment_quality",
+      "device_value_in_probe_frame": "DEGRADED",
+      "device_declared_type": "VALID|DEGRADED|INVALID|UNKNOWN",
+      "backend_field": "quality.environment",
+      "backend_declared_type": "VALID|DEGRADED|INVALID",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "electrical_quality",
+      "device_value_in_probe_frame": "VALID",
+      "device_declared_type": "VALID|DEGRADED|INVALID|UNKNOWN",
+      "backend_field": "quality.electrical",
+      "backend_declared_type": "VALID|DEGRADED|INVALID",
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "quality",
+      "device_value_in_probe_frame": "UNKNOWN",
+      "device_declared_type": "VALID|DEGRADED|INVALID|UNKNOWN",
+      "backend_field": "quality.overall",
+      "backend_declared_type": "VALID|DEGRADED|INVALID",
+      "backend_verdict": "REJECT",
+      "backend_error": "SCHEMA_VIOLATION@quality.overall: Input should be 'VALID', 'DEGRADED' or 'INVALID'"
+    },
+    {
+      "device_field": "boot_count",
+      "device_value_in_probe_frame": "7",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "command_id",
+      "device_value_in_probe_frame": "NONE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "cooling_applied_source",
+      "device_value_in_probe_frame": "FIRMWARE_OUTPUT_STATE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "cooling_evidence",
+      "device_value_in_probe_frame": "MEASURED_IDLE_AND_ZERO",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "current_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "desired_cooling",
+      "device_value_in_probe_frame": "NONE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "desired_duty_permille",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_age_ms",
+      "device_value_in_probe_frame": "10",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_beats",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_cycles",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_max_gap_ms",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_open",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_quality",
+      "device_value_in_probe_frame": "UNKNOWN",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_raw",
+      "device_value_in_probe_frame": "1",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_status",
+      "device_value_in_probe_frame": "UNVERIFIED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "door_transitions",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "elapsed_ms",
+      "device_value_in_probe_frame": "1000000",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "energy_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "fan_command",
+      "device_value_in_probe_frame": "OFF",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "fan_status",
+      "device_value_in_probe_frame": "NOT_COMMANDABLE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "fault_code",
+      "device_value_in_probe_frame": "0x00000000",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "fault_reason",
+      "device_value_in_probe_frame": "BOOT_SAFE_OFF",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_bme",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_control",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_door",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_power",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_telemetry",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "health_thermal",
+      "device_value_in_probe_frame": "NEVER",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "last_ack_reason",
+      "device_value_in_probe_frame": "NO_COMMAND_RECEIVED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "last_ack_status",
+      "device_value_in_probe_frame": "NONE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "output_stage",
+      "device_value_in_probe_frame": "DISABLED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_age_ms",
+      "device_value_in_probe_frame": "500",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_beats",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_max_gap_ms",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_seq",
+      "device_value_in_probe_frame": "999",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "power_validity",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "probes_expected",
+      "device_value_in_probe_frame": "3",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "probes_valid",
+      "device_value_in_probe_frame": "3",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_spare_c",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_spare_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t1_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t2_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "raw_t3_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "relative_humidity_status",
+      "device_value_in_probe_frame": "SENSOR_NOT_PRESENT",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "role_status",
+      "device_value_in_probe_frame": "ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "rom_source",
+      "device_value_in_probe_frame": "FROZEN_CONFIG_MAP",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "run_elapsed_ms",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "sensor_validity",
+      "device_value_in_probe_frame": "VALID",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "spare_rom",
+      "device_value_in_probe_frame": "283BE5C9000000A9",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t1_rom",
+      "device_value_in_probe_frame": "287088CA00000051",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t2_rom",
+      "device_value_in_probe_frame": "28AEBF2200000006",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t3_rom",
+      "device_value_in_probe_frame": "28CBE9CA00000072",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_ambient_status",
+      "device_value_in_probe_frame": "NOT_ASSIGNED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_cold_side_c",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_cold_side_status",
+      "device_value_in_probe_frame": "NOT_ASSIGNED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_hot_side_c",
+      "device_value_in_probe_frame": "nan",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_hot_side_status",
+      "device_value_in_probe_frame": "NOT_ASSIGNED",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_inside_c",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_inside_src",
+      "device_value_in_probe_frame": "T2",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_inside_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "tec_state",
+      "device_value_in_probe_frame": "OFF",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "test_phase",
+      "device_value_in_probe_frame": "IDLE",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "thermal_age_ms",
+      "device_value_in_probe_frame": "1000",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "thermal_beats",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "thermal_max_gap_ms",
+      "device_value_in_probe_frame": "0",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "thermal_seq",
+      "device_value_in_probe_frame": "42",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "timestamp_utc_source",
+      "device_value_in_probe_frame": "DEVICE_HAS_NO_WALL_CLOCK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "voltage_status",
+      "device_value_in_probe_frame": "OK",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    }
+  ],
+  "backend_hard_gaps": [
+    {
+      "backend_field": "captured_at",
+      "backend_requirement": "timezone-aware datetime (contracts.py:161, validation.py:230)",
+      "device_reality": "timestamp_utc=UNAVAILABLE, no wall clock (cg_telemetry.c:232; cg_telemetry_schema.py:17-22)",
+      "verdict": "HARD INCOMPATIBILITY - only a gateway-side clock can fill it"
+    },
+    {
+      "backend_field": "door.state",
+      "backend_requirement": "Literal OPEN|CLOSED|UNKNOWN (contracts.py:44,107)",
+      "device_reality": "door_open=0|1|nan + door_status=OK|UNVERIFIED (cg_telemetry.c:275-281)",
+      "verdict": "TRANSLATION REQUIRED - device never emits OPEN/CLOSED on TELEM"
+    },
+    {
+      "backend_field": "quality.device_mode",
+      "backend_requirement": "BOOT|SELF_TEST|ONLINE_NORMAL|ONLINE_DEGRADED|SAFE_LOCAL|FAULT_LOCKOUT (contracts.py:41-43,147)",
+      "device_reality": "absent from #CG TELEM; #CG CMDACK sends device_mode=OFF (cg_command.c:468, evidence/A/W06/ack-fixture.json)",
+      "verdict": "VOCABULARY CLASH - OFF is not a DeviceMode on either consumer side"
+    },
+    {
+      "backend_field": "quality.* (any section)",
+      "backend_requirement": "Literal VALID|DEGRADED|INVALID (contracts.py:40)",
+      "device_reality": "VALID|DEGRADED|INVALID|UNKNOWN (cg_telemetry_schema.py:216); the probe frame really carries quality=UNKNOWN",
+      "verdict": "HARD VOCABULARY GAP - UNKNOWN is unrepresentable in the backend"
+    },
+    {
+      "backend_field": "actuation.duty",
+      "backend_requirement": "float within [0.0, 1.0] (contracts.py:132-137)",
+      "device_reality": "pwm_duty is integer permille 0..1000 (cg_telemetry.c:303)",
+      "verdict": "UNIT SCALE MISMATCH - raw 250 would fail the range validator"
+    },
+    {
+      "backend_field": "schema_version",
+      "backend_requirement": "Literal[1] + SUPPORTED_SCHEMA_VERSIONS={1} (contracts.py:38,157; validation.py:47,210)",
+      "device_reality": "CG_TELEMETRY_SCHEMA_VERSION=3 (coldguard_config.h) - serial namespace",
+      "verdict": "NAMESPACE CLASH, not a version negotiation: the two numbers count different streams; the device never emits a JSON schema_version at all"
+    }
+  ],
+  "ingest_cases": {
+    "faithful_translation_real_schema3": {
+      "ingest_status": "RECEIVED_INVALID_SCHEMA",
+      "validation_errors": [
+        {
+          "code": "UNSUPPORTED_SCHEMA",
+          "loc": "schema_version",
+          "message": "unsupported schema_version 3; supported: [1]"
+        }
+      ],
+      "payload_sent": {
+        "schema_version": 3,
+        "device_id": "coldguard-001",
+        "boot_id": "abcd0123",
+        "seq": 1,
+        "captured_at": "UNAVAILABLE",
+        "uptime_ms": 1000000,
+        "run_id": "CG-S1-A-001",
+        "hardware_config_id": "CG-HW-001",
+        "firmware_version": "cg-w05-0.1.0",
+        "calibration_id": "UNRECORDED",
+        "thermal": {
+          "t1": 25.0625,
+          "t2": 25.0625,
+          "t3": 25.0625
+        },
+        "environment": {
+          "t_air": null,
+          "rh": null
+        },
+        "door": {
+          "state": "UNKNOWN"
+        },
+        "electrical": {
+          "voltage_v": 11.9,
+          "current_a": 0.0,
+          "power_w": 0.0,
+          "energy_wh": 12.0
+        },
+        "actuation": {
+          "cooling": "OFF",
+          "duty": 0.0
+        },
+        "quality": {
+          "thermal": "VALID",
+          "environment": "DEGRADED",
+          "electrical": "VALID",
+          "overall": "UNKNOWN"
+        }
+      }
+    },
+    "schema_forced_to_1_otherwise_faithful": {
+      "ingest_status": "RECEIVED_INVALID_SCHEMA",
+      "validation_errors": [
+        {
+          "code": "SCHEMA_VIOLATION",
+          "loc": "captured_at",
+          "message": "Input should be a valid datetime or date, invalid character in year"
+        },
+        {
+          "code": "SCHEMA_VIOLATION",
+          "loc": "quality.overall",
+          "message": "Input should be 'VALID', 'DEGRADED' or 'INVALID'"
+        }
+      ],
+      "payload_sent": {
+        "schema_version": 1,
+        "device_id": "coldguard-001",
+        "boot_id": "abcd0123",
+        "seq": 1,
+        "captured_at": "UNAVAILABLE",
+        "uptime_ms": 1000000,
+        "run_id": "CG-S1-A-001",
+        "hardware_config_id": "CG-HW-001",
+        "firmware_version": "cg-w05-0.1.0",
+        "calibration_id": "UNRECORDED",
+        "thermal": {
+          "t1": 25.0625,
+          "t2": 25.0625,
+          "t3": 25.0625
+        },
+        "environment": {
+          "t_air": null,
+          "rh": null
+        },
+        "door": {
+          "state": "UNKNOWN"
+        },
+        "electrical": {
+          "voltage_v": 11.9,
+          "current_a": 0.0,
+          "power_w": 0.0,
+          "energy_wh": 12.0
+        },
+        "actuation": {
+          "cooling": "OFF",
+          "duty": 0.0
+        },
+        "quality": {
+          "thermal": "VALID",
+          "environment": "DEGRADED",
+          "electrical": "VALID",
+          "overall": "UNKNOWN"
+        }
+      }
+    }
+  },
+  "quality_vocabulary_probe": {
+    "accepted": false,
+    "error": "1 validation error for Telemetry\nquality.overall\n  Input should be 'VALID', 'DEGRADED' or 'INVALID' [type=literal_error, input_value='UNKNOWN', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/literal_error"
+  },
+  "duty_unit_probe": {
+    "device_pwm_duty_0": {
+      "wire_duty": 0.0,
+      "raw_text_on_serial": "pwm_duty=0"
+    },
+    "device_pwm_duty_250": {
+      "wire_duty": 0.25,
+      "raw_text_on_serial": "pwm_duty=250"
+    },
+    "device_pwm_duty_1000": {
+      "wire_duty": 1.0,
+      "raw_text_on_serial": "pwm_duty=1000"
+    }
+  },
+  "mqtt_topics": {
+    "device_mqtt_publishers_found": 0,
+    "device_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\app_main.c:20",
+    "backend_subscriptions": [
+      {
+        "topic": "coldguard/+/telemetry",
+        "qos": 1
+      },
+      {
+        "topic": "coldguard/+/event",
+        "qos": 1
+      },
+      {
+        "topic": "coldguard/+/state",
+        "qos": 1
+      },
+      {
+        "topic": "coldguard/+/health",
+        "qos": 1
+      }
+    ],
+    "backend_acl_command_ack_read": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\infra\\mosquitto\\acl.conf:37",
+    "simulator_family_allows_command_ack": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\backend\\src\\coldguard_backend\\simulator.py:57",
+    "simulator_publish_policy_command_ack": {
+      "topic_for": "coldguard/coldguard-001/command_ack",
+      "qos_retain_for": "ERROR ValueError: no publisher policy for family 'command_ack'"
+    },
+    "device_ack_line_kind": "#CG CMDACK (firmware/main/cg_command.c:448), serial only",
+    "topic_strings_verbatim": {
+      "docs_00": [
+        "docs\\00-project-scope-architecture.md:1589: coldguard/{deviceId}/telemetry",
+        "docs\\00-project-scope-architecture.md:1590: coldguard/{deviceId}/event",
+        "docs\\00-project-scope-architecture.md:1591: coldguard/{deviceId}/state",
+        "docs\\00-project-scope-architecture.md:1592: coldguard/{deviceId}/command",
+        "docs\\00-project-scope-architecture.md:1593: coldguard/{deviceId}/ack"
+      ],
+      "docs_02": [
+        "docs\\02-aiot-closed-loop-engineering.md:783: coldguard/{device_id}/telemetry",
+        "docs\\02-aiot-closed-loop-engineering.md:784: coldguard/{device_id}/event",
+        "docs\\02-aiot-closed-loop-engineering.md:785: coldguard/{device_id}/state",
+        "docs\\02-aiot-closed-loop-engineering.md:786: coldguard/{device_id}/command",
+        "docs\\02-aiot-closed-loop-engineering.md:787: coldguard/{device_id}/command_ack",
+        "docs\\02-aiot-closed-loop-engineering.md:788: coldguard/{device_id}/health"
+      ],
+      "docs_05C": [
+        "docs\\05C-member-c-iot-backend-digital-twin.md:421: coldguard/{device_id}/telemetry",
+        "docs\\05C-member-c-iot-backend-digital-twin.md:422: coldguard/{device_id}/event",
+        "docs\\05C-member-c-iot-backend-digital-twin.md:423: coldguard/{device_id}/state",
+        "docs\\05C-member-c-iot-backend-digital-twin.md:424: coldguard/{device_id}/command",
+        "docs\\05C-member-c-iot-backend-digital-twin.md:425: coldguard/{device_id}/command_ack",
+        "docs\\05C-member-c-iot-backend-digital-twin.md:426: coldguard/{device_id}/health"
+      ],
+      "broker_acl": [
+        "infra\\mosquitto\\acl.conf:26: topic write coldguard/coldguard-001/telemetry",
+        "infra\\mosquitto\\acl.conf:27: topic write coldguard/coldguard-001/event",
+        "infra\\mosquitto\\acl.conf:28: topic write coldguard/coldguard-001/state",
+        "infra\\mosquitto\\acl.conf:29: topic write coldguard/coldguard-001/command_ack",
+        "infra\\mosquitto\\acl.conf:30: topic write coldguard/coldguard-001/health",
+        "infra\\mosquitto\\acl.conf:31: topic read coldguard/coldguard-001/command",
+        "infra\\mosquitto\\acl.conf:34: topic read coldguard/+/telemetry",
+        "infra\\mosquitto\\acl.conf:35: topic read coldguard/+/event",
+        "infra\\mosquitto\\acl.conf:36: topic read coldguard/+/state",
+        "infra\\mosquitto\\acl.conf:37: topic read coldguard/+/command_ack",
+        "infra\\mosquitto\\acl.conf:38: topic read coldguard/+/health"
+      ],
+      "firmware_topic_strings": [
+        "firmware\\main\\app_main.c:20: * Not implemented on purpose: MQTT/telemetry publishing, cloud commands and"
+      ]
+    },
+    "ack_grammar_source_line": [
+      "firmware\\main\\cg_command.c:448: \"#CG CMDACK schema=1 event=ACK command_id=%s command_id_form=%s source=%s \""
+    ]
+  },
+  "command_surface": {
+    "device_parser_required_names": [
+      "schema_version",
+      "command_id",
+      "device_id",
+      "created_at_ms",
+      "expires_at_ms",
+      "controller_id",
+      "policy_version",
+      "reason_code",
+      "action_cooling",
+      "action_duty_permille"
+    ],
+    "device_parser_rejects_unknown_field": true,
+    "device_parser_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\cg_command.c:780",
+    "backend_command_field_names": [
+      "action",
+      "command_id",
+      "controller_id",
+      "created_at",
+      "device_id",
+      "expected_twin_version",
+      "expires_at",
+      "policy_version",
+      "prediction_id",
+      "reason_code",
+      "run_id",
+      "schema_version"
+    ],
+    "name_clashes": [
+      {
+        "backend": "created_at (ISO-8601 datetime)",
+        "device": "created_at_ms (int ms)"
+      },
+      {
+        "backend": "expires_at (ISO-8601 datetime)",
+        "device": "expires_at_ms (int ms)"
+      },
+      {
+        "backend": "action.cooling (nested object)",
+        "device": "action_cooling (flat token)"
+      },
+      {
+        "backend": "action.duty (float 0.0..1.0)",
+        "device": "action_duty_permille (int)"
+      }
+    ],
+    "backend_only_fields_the_device_never_sees": [
+      "action",
+      "created_at",
+      "expected_twin_version",
+      "expires_at",
+      "prediction_id",
+      "run_id"
+    ]
+  },
+  "control_validator_probe": {
+    "SUPPORTED_SCHEMA_VERSION": 1,
+    "device_declared_schema": {
+      "status": "REJECTED",
+      "reason_code": "INVALID_JSON",
+      "detail": "schema: unsupported schema_version 3; supported: 1"
+    },
+    "control_own_schema": {
+      "status": "ACCEPTED",
+      "reason_code": "OK",
+      "detail": "all command checks passed at this layer; physical verification and ACK reporting remain outside W03"
+    }
+  },
+  "defect_register": [
+    {
+      "id": "R-01",
+      "severity": "P0",
+      "owner": "Member C gateway (new component)",
+      "claim": "There is no device-side MQTT publisher at all; the backend contract and the device serial line are two different wire formats.",
+      "evidence": "firmware/main/app_main.c:20 (Not implemented on purpose: MQTT/telemetry publishing); backend/src/coldguard_backend/contracts.py:38",
+      "verdict": "Translation layer REQUIRED - not a version bump on either side."
+    },
+    {
+      "id": "R-02",
+      "severity": "P0",
+      "owner": "Member A + Member C jointly",
+      "claim": "The device cannot produce a timezone-aware captured_at.",
+      "evidence": "firmware/main/cg_telemetry.c:232 (timestamp_utc=UNAVAILABLE); backend/src/coldguard_backend/validation.py:230 (NAIVE_TIMESTAMP) and contracts.py:161",
+      "verdict": "Backend event time must be gateway-assigned and labelled as such; Member A must not be asked to invent a clock."
+    },
+    {
+      "id": "R-03",
+      "severity": "P0",
+      "owner": "Member C",
+      "claim": "quality vocabulary is closed at three states on the wire but four in the firmware contract, so a real device frame is unrepresentable.",
+      "evidence": "backend/src/coldguard_backend/contracts.py:40 vs firmware/tools/cg_telemetry_schema.py:216 and docs/01 (VALID/DEGRADED/INVALID/UNKNOWN); control/src/coldguard_control/types.py:25-35 DOES include UNKNOWN",
+      "verdict": "MEMBER C MUST CHANGE: add UNKNOWN to the wire Quality literal. Member D already models it, so the backend is the outlier."
+    },
+    {
+      "id": "R-04",
+      "severity": "P0",
+      "owner": "Member C",
+      "claim": "The backend never subscribes to command_ack, although the broker ACL grants both directions.",
+      "evidence": "backend/src/coldguard_backend/mqtt_consumer.py:60-65 vs infra/mosquitto/acl.conf:29 and :37; backend/src/coldguard_backend/simulator.py:57 admits the family but :63-73 has no publish policy for it",
+      "verdict": "Device ACKs are unobservable in the backend today."
+    },
+    {
+      "id": "R-05",
+      "severity": "P1",
+      "owner": "canonical docs owner",
+      "claim": "Two canonical docs name the ACK topic differently.",
+      "evidence": "docs/00-project-scope-architecture.md:1593 'coldguard/{deviceId}/ack' vs docs/02-aiot-closed-loop-engineering.md:787 'coldguard/{device_id}/command_ack' (and docs/05C:425, acl.conf:29/37)",
+      "verdict": "docs/02 is the command contract; docs/00 line 1593 is stale."
+    },
+    {
+      "id": "R-06",
+      "severity": "P1",
+      "owner": "Member A + Member C jointly",
+      "claim": "The command field sets do not intersect on names or units.",
+      "evidence": "firmware/main/cg_command.c:558-561 (created_at_ms / expires_at_ms / action_cooling / action_duty_permille, all mandatory, unknown field refused at :780) vs backend/src/coldguard_backend/contracts.py:235-249 (created_at / expires_at datetime, nested action.duty in [0.0,1.0])",
+      "verdict": "Gateway must re-encode; Member A's refusal of unknown fields is intentional and must not be relaxed."
+    },
+    {
+      "id": "R-07",
+      "severity": "P1",
+      "owner": "Member A",
+      "claim": "Member A's own W06 evidence does not exercise the schema-3 telemetry branch it claims to deliver.",
+      "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=2 and zero command tokens, while its test's docstring at firmware/tools/tests/test_cg_command_trace.py:28 calls it 'The schema-3 telemetry line the harness emitted into the demo capture'",
+      "verdict": "MEMBER A MUST FIX: regenerate the capture from the shipped schema-3 formatter."
+    },
+    {
+      "id": "R-08",
+      "severity": "P2",
+      "owner": "Member A",
+      "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are not typed by the Member A parser, so they cross the wire as text.",
+      "evidence": "firmware/tools/cg_telemetry_schema.py:309-345 (_coerce falls through to the token); the probe's untyped_numeric_fields list",
+      "verdict": "Add these to FLOAT_FIELDS in Member A's own tool."
+    }
+  ],
+  "ack_reason_vocabulary": {
+    "device_ack_status_tokens": [
+      "ACCEPTED",
+      "DUPLICATE_CANONICAL",
+      "EXPIRED",
+      "INVALID_STATE",
+      "NONE",
+      "OUT_OF_RANGE",
+      "REJECTED",
+      "SAFETY_BLOCKED"
+    ],
+    "control_ack_status_members": [
+      "ACCEPTED",
+      "REJECTED",
+      "DUPLICATE_CANONICAL",
+      "EXPIRED",
+      "SAFETY_BLOCKED",
+      "INVALID_STATE",
+      "OUT_OF_RANGE"
+    ],
+    "telemetry_only_extra_token": "NONE (cg_telemetry_schema.py:263) - no command received this boot; not an ACK status",
+    "device_parse_reason_tokens_absent_from_control_ReasonCode": [
+      "BAD_ACTION_COOLING",
+      "BAD_ACTION_DUTY",
+      "BAD_COMMAND_ID_FORM",
+      "BAD_CREATED_AT",
+      "BAD_EXPIRES_AT",
+      "BAD_FIELD",
+      "BAD_SCHEMA_VERSION",
+      "BAD_TEST_DUTY",
+      "BAD_TEST_ID",
+      "BAD_VALIDITY_WINDOW",
+      "DEVICE_ID_TOO_LONG",
+      "DUPLICATE_FIELD",
+      "EPOCH_UNSYNCHRONIZED",
+      "LIMITS_UNRESOLVED",
+      "MISSING_ACTION_COOLING",
+      "MISSING_ACTION_DUTY",
+      "MISSING_COMMAND_ID",
+      "MISSING_CONTEXT",
+      "MISSING_CREATED_AT",
+      "MISSING_DEVICE_ID",
+      "MISSING_EXPIRES_AT",
+      "MISSING_EXPIRY",
+      "MISSING_POLICY_VERSION",
+      "MISSING_REASON_CODE",
+      "MISSING_SCHEMA_VERSION",
+      "SOURCE_NOT_CANONICAL"
+    ],
+    "shared_reason_tokens": [
+      "DEVICE_ID_MISMATCH",
+      "UNSUPPORTED_SCHEMA"
+    ]
+  },
+  "ack_vs_execution": {
+    "rule": "An MQTT PUBACK is broker receipt, and a device ACK is protocol evidence; neither is device execution.",
+    "stated_by_backend": "backend/src/coldguard_backend/mqtt_consumer.py:12-31 (the PUBACK is not the authority for durably processed) and backend/src/coldguard_backend/simulator.py:22",
+    "stated_by_device": "firmware/main/cg_command.h:48-54 (an ACK is protocol evidence, never physical evidence; in this build the applied state an ACK can ever report is OFF)",
+    "stated_by_control": "control/src/coldguard_control/commands.py:15-17 and 119-131",
+    "conflation_found": false,
+    "residual_defect": "The loop is still not closable: the device has no transport, so no ACK of any kind can be delivered, and the applied state is compiled out. A-W06-05/06 remain open physically."
+  },
+  "grammars": {
+    "telemetry_serial_frame": "prefix '#CG' + kind 'TELEM' (coldguard_config.h:552 and :568), single space separators, one trailing '\\n', no '=' inside values, no duplicate keys, no empty tokens (cg_telemetry_schema.py:432-446); max CG_TELEMETRY_LINE_MAX=3072 bytes (coldguard_config.h:474); the formatter refuses to emit a truncated frame (cg_telemetry.c:33-39,387-390); floats printed %.4f, missing number is the literal 'nan' (CG_INVALID_VALUE_TOKEN, coldguard_config.h:577); fault_code printed 0x%08lX; age fields saturate at 2^64-1 on clock rewind (cg_telemetry.c:67-73)",
+    "telemetry_token_order": [
+      "schema",
+      "timestamp_utc",
+      "timestamp_utc_source",
+      "uptime_ms",
+      "elapsed_ms",
+      "run_elapsed_ms",
+      "run_id",
+      "device_id",
+      "boot_id",
+      "boot_count",
+      "seq",
+      "firmware_version",
+      "hardware_config_id",
+      "calibration_id",
+      "test_phase",
+      "t1_rom",
+      "t2_rom",
+      "t3_rom",
+      "spare_rom",
+      "role_status",
+      "rom_source",
+      "t_inside_c",
+      "t_inside_status",
+      "t_inside_src",
+      "t_cold_side_c",
+      "t_cold_side_status",
+      "t_hot_side_c",
+      "t_hot_side_status",
+      "t_ambient_c",
+      "t_ambient_status",
+      "relative_humidity_pct",
+      "relative_humidity_status",
+      "door_open",
+      "door_status",
+      "door_raw",
+      "voltage_v",
+      "voltage_status",
+      "current_a",
+      "current_status",
+      "power_w",
+      "power_status",
+      "energy_wh",
+      "energy_status",
+      "pwm_duty",
+      "fan_command",
+      "fan_status",
+      "output_stage",
+      "tec_state",
+      "fault_code",
+      "fault_reason",
+      "sensor_validity",
+      "power_validity",
+      "raw_t1_c",
+      "raw_t1_status",
+      "raw_t2_c",
+      "raw_t2_status",
+      "raw_t3_c",
+      "raw_t3_status",
+      "raw_spare_c",
+      "raw_spare_status",
+      "thermal_age_ms",
+      "power_age_ms",
+      "door_age_ms",
+      "thermal_seq",
+      "power_seq",
+      "door_transitions",
+      "door_cycles",
+      "probes_valid",
+      "probes_expected",
+      "thermal_quality",
+      "environment_quality",
+      "door_quality",
+      "electrical_quality",
+      "quality",
+      "cooling_applied",
+      "cooling_applied_source",
+      "cooling_evidence",
+      "health",
+      "health_thermal",
+      "health_bme",
+      "health_door",
+      "health_power",
+      "health_telemetry",
+      "health_control",
+      "thermal_beats",
+      "power_beats",
+      "door_beats",
+      "thermal_max_gap_ms",
+      "power_max_gap_ms",
+      "door_max_gap_ms",
+      "command_id",
+      "desired_cooling",
+      "desired_duty_permille",
+      "last_ack_status",
+      "last_ack_reason"
+    ],
+    "command_ack_frame": "#CG CMDACK schema=1 event=ACK command_id=<id> command_id_form=<UUID|TEST_TOKEN|NONE> source=<NETWORK|LOCAL_CONSOLE|UNKNOWN> device_id=<id> boot_id=<id> boot_count=<n> uptime_ms=<n> ack_seq=<n> status=<7-token ACK set> reason=<stable token> desired_cooling=<ON|OFF> desired_duty_permille=<int> applied_cooling=<ON|OFF> applied_duty_permille=<int> reapplied=<0|1> expiry_evaluable=<0|1> time_sync_state=<SYNCHRONIZED|UNSYNCHRONIZED> device_mode=<token> fault_code=0x<8hex> [canonical_status=<token> when DUPLICATE_CANONICAL] [output_stage=<ENABLED|DISABLED> allowed_duty_max_permille=<int> when context supplied] - cg_command.c:447-480. schema=1 here is the docs/02 command envelope version, NOT the serial telemetry schema (cg_log.h:26-28, cg_command.h:241-243).",
+    "command_device_encoding": "space-separated key=value, exactly the 10 names at cg_command.c:558-561, all mandatory except controller_id (cg_command.c:576-586), record <= CG_COMMAND_RECORD_MAX=512 bytes, unknown key -> UNKNOWN_FIELD, duplicate key -> DUPLICATE_FIELD, at most CG_CMD_FIELDS_MAX=24 key=value tokens per record (cg_command.c:13, :630)"
+  }
+}

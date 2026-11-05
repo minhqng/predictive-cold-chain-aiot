@@ -1,0 +1,11 @@
+# ESP-IDF v6.1 build of the W04 delivery tree (compile only; nothing flashed or energized)
+# rebuilt 2026-11-01 after the final review-cycle wording edit to cg_commission.c
+8dcd18258d94ed9d0e3be18298072bf79430b1ba521fbebe068bbd4df6805abb *bootloader/bootloader.bin
+7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820 *partition_table/partition-table.bin
+0acd230c77698a83de7d124d53fe4f9df9965c68c4dd1a673da0ad20b240769e *coldguard_firmware.bin
+13f1002cc84f82890cdffd08a5f2a6a763922cd665e9e04fa37bb94e2925de20 *coldguard_firmware.elf
+# sizes
+21120 bootloader/bootloader.bin
+3072 partition_table/partition-table.bin
+244496 coldguard_firmware.bin
+4677656 coldguard_firmware.elf

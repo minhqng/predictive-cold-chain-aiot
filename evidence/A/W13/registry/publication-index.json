@@ -1,0 +1,127 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "1502da78ab7fc6c794e2e1f4cc1e465dc2876eaa",
+  "requirements": {
+    "A-W13-01": {
+      "criterion": "From clean runs calculate the command-to-electrical delay distribution: median, P95 and maximum useful observed value.",
+      "record": "evidence/A/W13/registry/A-W13-01.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W13/registry/A-W13-01.json",
+        "evidence/A/W13/registry/measurements/A-W13-01-20261104T171529182324-8e57f2.json"
+      ],
+      "identity_provenance": "evidence/A/W13/registry/A-W13-01.json#identity_provenance"
+    },
+    "A-W13-02": {
+      "criterion": "Define the response-detection method with B/D and measure it across valid step runs.",
+      "record": "evidence/A/W13/registry/A-W13-02.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W13/registry/A-W13-02.json",
+        "evidence/A/W13/registry/measurements/A-W13-02-20261104T171529211883-c33f9b.json"
+      ],
+      "identity_provenance": "evidence/A/W13/registry/A-W13-02.json#identity_provenance"
+    },
+    "A-W13-04": {
+      "criterion": "Fit simple empirical summaries only, such as an exponential approximation or slope-based response time, and document their limitations.",
+      "record": "evidence/A/W13/registry/A-W13-04.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W13/registry/A-W13-04.json",
+        "evidence/A/W13/registry/measurements/A-W13-04-20261104T171529240574-66c727.json"
+      ],
+      "identity_provenance": "evidence/A/W13/registry/A-W13-04.json#identity_provenance"
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W13/registry/A-W13-01.json",
+      "source_sha256": "8e46f843babdb1347e6044fe38273be4c4895a90bdf7e016db10a528991e1a68",
+      "published_sha256": "b6a5e3bb64d1bbae3bddee5112b3e11e6b901080de5447bae798d9d2bba0de9d",
+      "source_capture_path": "results/A-W13-01.json",
+      "source_bytes": 1387,
+      "bytes": 4102,
+      "requirement": "A-W13-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W13/registry/measurements/A-W13-01-20261104T171529182324-8e57f2.json",
+      "source_sha256": "9699a6ef487d7a2c9d6516ea3c631131d409ac0a062e114236a79e0b4814f91d",
+      "published_sha256": "44fe0db6ccdc46839226aae289bcebf98ea6b8ccbf38bcaa4e4816045993a12c",
+      "source_capture_path": "measurements/A-W13-01-20261104T171529182324-8e57f2.json",
+      "source_bytes": 302,
+      "bytes": 285,
+      "requirement": "A-W13-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W13/registry/A-W13-02.json",
+      "source_sha256": "425978d2df2cfd81e813768d917f64786ba44f6c14ffde45c9c38443a2304f2c",
+      "published_sha256": "2dfdd8fadf0b8075dc07a001e497b0f82e86758626e41cccb55460b8793dbacb",
+      "source_capture_path": "results/A-W13-02.json",
+      "source_bytes": 1504,
+      "bytes": 4219,
+      "requirement": "A-W13-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W13/registry/measurements/A-W13-02-20261104T171529211883-c33f9b.json",
+      "source_sha256": "627f1c5e5c7ea8dffa5d32fe0353ab2d90d7b21a30dd61269511e66c2388d6c7",
+      "published_sha256": "bef70854dae3750ab8cdf426fb7806ee643a9911b7f9f084473e1300d0e8e76c",
+      "source_capture_path": "measurements/A-W13-02-20261104T171529211883-c33f9b.json",
+      "source_bytes": 370,
+      "bytes": 352,
+      "requirement": "A-W13-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W13/registry/A-W13-04.json",
+      "source_sha256": "0873a6df3fe4abb7e2157826bbbd46867fa9c61407d855a59665ac339cc1ea29",
+      "published_sha256": "06c81cd1a9691f1255434f3e7549789b7c0d8877223c7fd22ebbeafac1581c80",
+      "source_capture_path": "results/A-W13-04.json",
+      "source_bytes": 1318,
+      "bytes": 4123,
+      "requirement": "A-W13-04",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W13/registry/measurements/A-W13-04-20261104T171529240574-66c727.json",
+      "source_sha256": "5f5b2b47a27d27a8bdcd3251b082cc159a779b6995032bbd52ed6a82b4c61d85",
+      "published_sha256": "912d849d9d3fef8d61e170fa02ed3662cb03147d16d883a4e844ea26a283413e",
+      "source_capture_path": "measurements/A-W13-04-20261104T171529240574-66c727.json",
+      "source_bytes": 348,
+      "bytes": 332,
+      "requirement": "A-W13-04",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    }
+  ]
+}

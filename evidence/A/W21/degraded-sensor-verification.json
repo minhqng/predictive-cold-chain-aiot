@@ -1,0 +1,11 @@
+{
+  "week": "W21",
+  "requirement": "A-W21-02",
+  "fallback_rules": [
+    "Strictly exclude T2 hot-side from all chamber air calculations",
+    "If T1 fails, compute mean of T3 and T4",
+    "Mark chamber air status as DEGRADED_CHAMBER_ARRAY",
+    "If all chamber sensors fail, assert fail-closed actuator shutoff"
+  ],
+  "status": "SOFTWARE_VERIFIED"
+}

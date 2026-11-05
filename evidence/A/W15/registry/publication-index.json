@@ -1,0 +1,47 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "52e1f1f5ef2fe71516ae326e7386cbf45debe5d6",
+  "requirements": {
+    "A-W15-02": {
+      "criterion": "Identify runs containing command, applied state, V/I/P and thermal response for B's electrical ablation.",
+      "record": "evidence/A/W15/registry/A-W15-02.json",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+      "artifact_paths": [
+        "evidence/A/W15/registry/A-W15-02.json",
+        "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json"
+      ],
+      "identity_provenance": "evidence/A/W15/registry/A-W15-02.json#identity_provenance"
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W15/registry/A-W15-02.json",
+      "source_sha256": "079b409521fd5ef1f52acd8fe3d38be3580396d72161a3c7976d1aecba4f97ea",
+      "published_sha256": "5a5fffed7a59d2a21176ff523819b6673ed66d22430885bf456bf80b391d63ca",
+      "source_capture_path": "results/A-W15-02.json",
+      "source_bytes": 1173,
+      "bytes": 4225,
+      "requirement": "A-W15-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json",
+      "source_sha256": "255dd20996e131aeac9881145e3e5385f21138c9dd9736f8584dbc1cd03283ef",
+      "published_sha256": "255dd20996e131aeac9881145e3e5385f21138c9dd9736f8584dbc1cd03283ef",
+      "source_capture_path": "measurements/A-W15-02-20261104T191816572825-a39e17.json",
+      "source_bytes": 421,
+      "bytes": 421,
+      "requirement": "A-W15-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    }
+  ]
+}

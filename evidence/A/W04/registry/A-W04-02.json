@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:TEC power path is 2x2.5 mm2",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Fan/aux path is 2x0.75 mm2",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Signal wiring is jumper class",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:No PCT218 or jumper carries TEC current",
+      "passed": true
+    },
+    {
+      "detail": "4/4 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "2/1 files (imported=2)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T09:30:57.271+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.753+00:00",
+      "sha256": "e6788a01761234c4f6f7e166b7e2a45ee7954d32340dd6b3255bc943494abbda",
+      "size": 9092,
+      "source_path": "evidence/A/W03/hardware-deviation-and-safety.md",
+      "stored": "evidence/A/W03/hardware-deviation-and-safety.md",
+      "test_id": "A-W04-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.760+00:00",
+      "sha256": "de2f24567b4694a7bea94af489183dd7f07ea964a25ad88cb47cd352a722adb5",
+      "size": 34752,
+      "source_path": "evidence/A/W04/g0-electrical-verification.md",
+      "stored": "evidence/A/W04/g0-electrical-verification.md",
+      "test_id": "A-W04-02"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "imported authoritative W01-W04 evidence; no new physical inspection",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T09:30:57.271+00:00",
+  "test_id": "A-W04-02",
+  "publication_provenance": {
+    "source_record_sha256": "94bace9c4fe37134525cdfe79b59b2d137a91e673a4740536aa9031584cc9ce9",
+    "source_capture_relative_path": "results/A-W04-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+    "excluded_supporting_artifacts": []
+  }
+}

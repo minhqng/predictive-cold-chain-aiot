@@ -1,0 +1,23 @@
+{
+  "captured_at": "2026-11-04T19:18:16.572+00:00",
+  "measurements": {
+    "complete_runs": [
+      {
+        "attempt": 1,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-03"
+      }
+    ],
+    "count": 3
+  },
+  "repetitions": [],
+  "source": "DERIVED",
+  "test_id": "A-W15-02"
+}

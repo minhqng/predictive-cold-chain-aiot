@@ -1,0 +1,177 @@
+{
+  "checks": [
+    {
+      "detail": " value=4.288233362394653",
+      "failure_reason": "",
+      "name": "healthy_current_range",
+      "passed": true
+    },
+    {
+      "detail": " value=50.764230359391654",
+      "failure_reason": "",
+      "name": "healthy_power_range",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0",
+      "failure_reason": "",
+      "name": "off_envelope",
+      "passed": true
+    },
+    {
+      "detail": " value=['A-W04-05', 'A-W07-03']",
+      "failure_reason": "",
+      "name": "two_sources",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:15:29.162+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:15:29.162+00:00",
+      "original": "A-W08-01",
+      "path": "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json",
+      "sha256": "b5aa21fc786336f33e8ddbfe9dd20239916c44bf007c113eb1f05d350b138dbf",
+      "size": 429,
+      "stored": "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "healthy_current_max_a": 4.424,
+    "healthy_current_min_a": 4.288233362394653,
+    "healthy_power_max_w": 52.37833333333333,
+    "healthy_power_min_w": 50.764230359391654,
+    "off_current_max_a": 0.0,
+    "sources": [
+      "A-W04-05",
+      "A-W07-03"
+    ]
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:15:29.135+00:00",
+  "test_id": "A-W08-01",
+  "publication_provenance": {
+    "source_record_sha256": "6f2fb4f54ac814b951f3d63adeb172f2c17b8edd70e4d824a592e132d5557a27",
+    "source_capture_relative_path": "results/A-W08-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W08-01",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENTS",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W04-05",
+        "role": "MEASUREMENT_SOURCE",
+        "published_record": "evidence/A/W04/registry/A-W04-05.json",
+        "published_commit": "9841799b3387774eeb46d82b9fa1f0220f4d22be",
+        "published_sha256": "f9f8ab32abbcbfc6120dd87186873e55359a92cf3e71a0aedf4f88843fbdf575",
+        "source_record_sha256": "4c923d41a6dc9a50b9206d1ebcde686efd599ffad2f0187fc03f82f771b57b56",
+        "boot_id": "5562b609",
+        "boot_count": 79,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "MEASUREMENT_SOURCE",
+        "published_record": "evidence/A/W07/registry/A-W07-03.json",
+        "published_commit": "5921a5c4a0cce39fd1598d88ecee090e558f12cc",
+        "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
+        "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      },
+      {
+        "test_id": "A-W03-05",
+        "role": "OFF_ENVELOPE_SOURCE",
+        "published_record": "evidence/A/W03/registry/A-W03-05.json",
+        "published_commit": "9841799b3387774eeb46d82b9fa1f0220f4d22be",
+        "published_sha256": "4960d7706dce79e4c97b6513de2cf55766a42f170381a1775a6e7c656acf04cb",
+        "source_record_sha256": "e3c28939500fcaf661185d4e0acdeb4406419d071c617f0636f52450964230d7",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "healthy_current_max_a==A-W04-05.current_mean_a",
+        "value": 4.424,
+        "match": true,
+        "expected_or_source": 4.424
+      },
+      {
+        "name": "healthy_current_min_a==A-W07-03.current_mean_a",
+        "value": 4.288233362394653,
+        "match": true,
+        "expected_or_source": 4.288233362394653
+      },
+      {
+        "name": "healthy_power_max_w==A-W04-05.power_mean_w",
+        "value": 52.37833333333333,
+        "match": true,
+        "expected_or_source": 52.37833333333333
+      },
+      {
+        "name": "healthy_power_min_w==A-W07-03.power_mean_w",
+        "value": 50.764230359391654,
+        "match": true,
+        "expected_or_source": 50.764230359391654
+      },
+      {
+        "name": "off_current_max_a==A-W03-05.off_current_max_a",
+        "value": 0.0,
+        "match": true,
+        "expected_or_source": 0.0
+      },
+      {
+        "name": "declared_sources",
+        "value": [
+          "A-W04-05",
+          "A-W07-03"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "A-W04-05",
+          "A-W07-03"
+        ]
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "requirement_declared_sources": [
+      "A-W04-05",
+      "A-W07-03"
+    ],
+    "off_source": "A-W03-05"
+  }
+}

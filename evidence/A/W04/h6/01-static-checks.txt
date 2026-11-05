@@ -1,0 +1,64 @@
+H6 static safety checks (isolated bench firmware)
+date: 2026-10-29T14:59:45Z
+app:  C:/Users/dlbac/Downloads/coldguard-repo/_h6-build/coldguard_h6_bench.bin
+
+== 1. h6_sm_start call sites (production code: only cmd_start) ==
+  main/h6_main.c:409:    ok = h6_sm_start(&s_sm, esp_timer_get_time());
+  main/h6_state.c:49:bool h6_sm_start(h6_sm_t *sm, int64_t now_us)
+  main/h6_state.h:12: * One run per boot: h6_sm_start() latches run_consumed and never clears it.
+  main/h6_state.h:55:bool h6_sm_start(h6_sm_t *sm, int64_t now_us);
+  selftest.c uses it only on local test instances:
+    occurrences: 9
+
+== 2. TEC enable helper call sites ==
+  117:static bool outputs_on_10_percent(void)
+  236:            enabled = outputs_on_10_percent();
+
+== 3. app_main first statements ==
+  534: void app_main(void)
+  535: {
+  536:     /* First action: intended OFF state on every control pin. */
+  537:     outputs_early_safe();
+  538: 
+  539:     s_lock = xSemaphoreCreateMutex();
+  540:     if (s_lock == NULL) {
+  541:         H6_LOG("H6 FAULT mutex_create_failed outputs_forced_off_until_reset\n");
+  542:         while (true) {
+  543:             outputs_off();
+  544:             vTaskDelay(pdMS_TO_TICKS(1000));
+
+== 4. direct HIGH writes to enable pins (expect none outside helper) ==
+
+== 5. Modbus request framing: only read function codes (expect 0x03/0x04 only) ==
+  49:    out[1] = 0x04U; /* read input registers; READ ONLY */
+  write function codes (0x06/0x10) anywhere:
+  main/h6_pzem.c:53:    out[5] = 0x06U;
+  note: h6_pzem.c:53 'out[5] = 0x06U' is the read request register COUNT high byte, not a function code.
+
+== 6. references to production firmware modules (expect only a comment) ==
+  main/h6_config.h:10:/* IBT-2 control lines, as-built map v2 (see coldguard_config.h in the
+  main/h6_pzem.h:4: * Protocol logic mirrors the validated production driver (cg_pzem.c): one
+
+== 7. guard timer: one-shot, independent of console ==
+  208:static void guard_cb(void *arg)
+  248:            (void)esp_timer_stop(s_guard_timer);
+  334:        (void)esp_timer_stop(s_guard_timer);
+  418:    if (esp_timer_start_once(s_guard_timer, H6_MAX_ON_US) != ESP_OK) {
+  454:    (void)esp_timer_stop(s_guard_timer);
+
+== 8. effective safety-relevant sdkconfig ==
+  931:CONFIG_ESPTOOLPY_FLASHSIZE="2MB"
+  953:CONFIG_PARTITION_TABLE_SINGLE_APP=y
+  962:CONFIG_PARTITION_TABLE_OFFSET=0x8000
+  1857:CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG=y
+  1860:CONFIG_ESP_CONSOLE_SECONDARY_NONE=y
+  1949:CONFIG_ESP_SYSTEM_PANIC_PRINT_REBOOT=y
+  1991:CONFIG_ESP_TASK_WDT_TIMEOUT_S=10
+
+== 9. state-machine strings present in the linked app image ==
+  H6 SELFTEST result=FAIL
+  H6 SELFTEST result=PASS
+  RUNNING_10_PERCENT
+  SAFE_OFF_FINAL
+  WAIT_FOR_MANUAL_ARM
+  freq_reconstructed

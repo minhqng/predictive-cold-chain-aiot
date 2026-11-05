@@ -1,0 +1,60 @@
+{
+  "authorization": "operator authorized one A-W07-03 run 1 START 180 s 50%",
+  "boot_id": "6d7dd125",
+  "checks": [
+    {
+      "detail": "#CG TEC event=START result=OK reason=COOLING state=COOLING fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=180100 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+      "name": "start_accepted",
+      "passed": true
+    },
+    {
+      "detail": "None",
+      "name": "no_safety_stop",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "name": "run_valid",
+      "passed": true
+    },
+    {
+      "name": "post_off",
+      "passed": true
+    }
+  ],
+  "commands": [],
+  "kind": "a-w07-03-trial-1",
+  "measurements": {
+    "applied_on_frames": 180,
+    "baseline_frames": 10,
+    "baseline_mean_c": 30.06041666666667,
+    "chamber_drop_c": 2.2687500000000007,
+    "cooling_frames": 185,
+    "current_max_a": 4.94,
+    "current_mean_a": 4.2935675675675675,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 27.791666666666668,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 196,
+    "hot_side_max_c": 33.5625,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 27.791666666666668,
+    "post_current_a": 0.0,
+    "post_fault_bits": 0,
+    "post_state": "OFF",
+    "power_mean_w": 50.82540540540541,
+    "safety_stop_reason": null,
+    "stabilization_slope_c_per_min": -0.012434009447067924,
+    "stabilization_spread_c": 0.0416666666666643,
+    "start_event": "#CG TEC event=START result=OK reason=COOLING state=COOLING fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=180100 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 37.04,
+    "trial": 1
+  },
+  "outcome": "PASS",
+  "recorded_at": "2026-11-04T16:13:22.334+00:00",
+  "session_id": "20261104T092140Z",
+  "source": "H8_BENCH",
+  "written_at": "2026-11-04T16:13:22Z"
+}

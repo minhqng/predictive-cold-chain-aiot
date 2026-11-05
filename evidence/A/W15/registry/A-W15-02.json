@@ -1,0 +1,129 @@
+{
+  "checks": [
+    {
+      "detail": "3",
+      "failure_reason": "",
+      "name": "a3_dataset_run_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T19:18:16.580+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T19:18:16.580+00:00",
+      "original": "A-W15-02",
+      "path": "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json",
+      "sha256": "255dd20996e131aeac9881145e3e5385f21138c9dd9736f8584dbc1cd03283ef",
+      "size": 421,
+      "stored": "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "complete_runs": [
+      {
+        "attempt": 1,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-03"
+      }
+    ],
+    "count": 3
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T19:18:16.553+00:00",
+  "test_id": "A-W15-02",
+  "publication_provenance": {
+    "source_record_sha256": "079b409521fd5ef1f52acd8fe3d38be3580396d72161a3c7976d1aecba4f97ea",
+    "source_capture_relative_path": "results/A-W15-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W15-02",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENT",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W07-03",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W07/registry/A-W07-03.json",
+        "published_commit": "5921a5c4a0cce39fd1598d88ecee090e558f12cc",
+        "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
+        "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "complete_runs",
+        "value": [
+          {
+            "attempt": 1,
+            "test_id": "A-W07-03"
+          },
+          {
+            "attempt": 2,
+            "test_id": "A-W07-03"
+          },
+          {
+            "attempt": 3,
+            "test_id": "A-W07-03"
+          }
+        ],
+        "match": true,
+        "expected_or_source": [
+          {
+            "attempt": 1,
+            "test_id": "A-W07-03"
+          },
+          {
+            "attempt": 2,
+            "test_id": "A-W07-03"
+          },
+          {
+            "attempt": 3,
+            "test_id": "A-W07-03"
+          }
+        ]
+      },
+      {
+        "name": "count",
+        "value": 3,
+        "match": true,
+        "expected_or_source": 3
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "requirement_declared_parent": "A-W07-03"
+  }
+}

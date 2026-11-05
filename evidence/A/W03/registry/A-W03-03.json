@@ -1,0 +1,81 @@
+{
+  "checks": [
+    {
+      "detail": "60",
+      "failure_reason": "PZEM_POLLS_MISSING",
+      "name": "pzem_polls_present",
+      "passed": true
+    },
+    {
+      "detail": "1.0",
+      "failure_reason": "",
+      "name": "pzem_ok_rate",
+      "passed": true
+    },
+    {
+      "detail": "1.0",
+      "failure_reason": "",
+      "name": "pzem_crc_ok_rate",
+      "passed": true
+    },
+    {
+      "detail": "11.95",
+      "failure_reason": "",
+      "name": "voltage_mean_v",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 65,
+    "boot_id": "fcaa1289",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:42:53.266+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:42:53.266+00:00",
+      "original": "A-W03-03",
+      "path": "evidence/A/W03/registry/measurements/A-W03-03-20261104T144253260271-b14d65.json",
+      "sha256": "a379218d86b9cd1ca265c4f55a05245ce3acb38ba5d7d6f3779c2c0444aeb884",
+      "size": 415,
+      "stored": "evidence/A/W03/registry/measurements/A-W03-03-20261104T144253260271-b14d65.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "current_max_a": 0.0,
+    "current_mean_a": 0.0,
+    "link_source": "PZEM_LINES",
+    "pzem_crc_ok_rate": 1.0,
+    "pzem_frames": 60,
+    "pzem_ok_frames": 60,
+    "pzem_ok_rate": 1.0,
+    "telemetry_valid_rate": 1.0,
+    "voltage_mean_v": 11.95
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:41:53.259+00:00",
+  "test_id": "A-W03-03",
+  "publication_provenance": {
+    "source_record_sha256": "bba13a3d3f5435dcd0bcd9362fa2f2c75fbbbc6a86297ad3979c3c59f1f27b61",
+    "source_capture_relative_path": "results/A-W03-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

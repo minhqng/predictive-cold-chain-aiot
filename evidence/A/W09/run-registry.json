@@ -1,0 +1,210 @@
+{
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "captures": [
+    {
+      "boot_id": "56044b74",
+      "capture_id": "W04-TEC-COOLING-600S",
+      "eligibility": "S1_BASELINE_CANDIDATE",
+      "encoding": "derived 1 Hz table of the H8 box-cooling stage run",
+      "exists_in_repository": true,
+      "is_physical_measurement": true,
+      "kind": "csv_capture",
+      "notes": [
+        "the only committed capture with a thermal response and an energized stage",
+        "candidate, not certified: one run cannot show between-run repeatability",
+        "electrical columns carry no producer status, so its energy claims are not usable"
+      ],
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "scenario_screen": "S1_NORMAL_BASELINE",
+      "session": "H8 box-cooling 600 s, stage H8-C, 2026-11-01, image 01cedce3...",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d",
+      "size_bytes": 336832,
+      "status_label": "REAL_DATA_ANALYZED"
+    },
+    {
+      "boot_id": "cb8775eb",
+      "capture_id": "W04-G1-BOOT-60S",
+      "eligibility": "NOT_A_THERMAL_RUN",
+      "encoding": "schema-1 #CG TELEM derived table",
+      "exists_in_repository": true,
+      "is_physical_measurement": true,
+      "kind": "telem_schema1",
+      "notes": [
+        "a real capture of a real boot, but no stage ran and the probe roles were NOT_ASSIGNED, so it carries no thermal response to baseline"
+      ],
+      "path": "evidence/A/W04/g1/42-telemetry.csv",
+      "scenario_screen": null,
+      "session": "G1 boot/reset observability check",
+      "sha256": "864d320d8cabaa0845b481b11ef10db9d2ad066f1ba146ac7f8f81c3ee4eafd2",
+      "size_bytes": 17393,
+      "status_label": "REAL_DATA_ANALYZED"
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W05-TIMING-PILOT",
+      "eligibility": "NOT_A_THERMAL_RUN",
+      "encoding": "host timing-pilot jitter table over real schema-2 frames",
+      "exists_in_repository": true,
+      "is_physical_measurement": true,
+      "kind": "derived_timing_table",
+      "notes": [
+        "cadence evidence only; it describes arrival timing, not plant state"
+      ],
+      "path": "evidence/A/W05/timing-pilot-jitter.csv",
+      "scenario_screen": null,
+      "session": "W05 cadence/jitter pilot",
+      "sha256": "494013a74b568ec9482c4acc0f4e3e990657d3a8ef1c85bbf3c4fdcbf08121c0",
+      "size_bytes": 1470,
+      "status_label": "REAL_DATA_ANALYZED"
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W05-SCHEMA-FIXTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "encoding": "schema-2 fixture",
+      "exists_in_repository": true,
+      "is_physical_measurement": false,
+      "kind": "schema_fixture",
+      "notes": [
+        "proves the parser contract; can never populate a dataset"
+      ],
+      "path": "evidence/A/W05/schema-fixture.json",
+      "scenario_screen": null,
+      "session": "W05 schema fixture",
+      "sha256": "056b841e9490f137cc953e1ab27fb83c3595740cd4a8025b81108bcc8c7ecabe",
+      "size_bytes": 8000,
+      "status_label": "HOST_VERIFIED"
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W06-DEMO-COMMAND-CAPTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "encoding": "C-harness command/ACK capture",
+      "exists_in_repository": true,
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "notes": [
+        "host-generated C-harness fixture, not physical data"
+      ],
+      "path": "evidence/A/W06/demo-command-capture.log",
+      "scenario_screen": null,
+      "session": "W06 host harness",
+      "sha256": "6b83c45505702a603bf23af86e49842cf03cfb45d964e445bd66fb5d5c9513e1",
+      "size_bytes": 4536,
+      "status_label": "HOST_VERIFIED"
+    },
+    {
+      "boot_id": null,
+      "capture_id": "W06-ACK-FIXTURE",
+      "eligibility": "HOST_FIXTURE_NOT_A_RUN",
+      "encoding": "labelled #CG CMDACK fixture set",
+      "exists_in_repository": true,
+      "is_physical_measurement": false,
+      "kind": "host_command_fixture",
+      "notes": [
+        "five labelled ACK lines; protocol evidence only (docs/02 \u00a732.2)"
+      ],
+      "path": "evidence/A/W06/ack-fixture.json",
+      "scenario_screen": null,
+      "session": "W06 host harness",
+      "sha256": "1a195a4a7fef0044be6b414152dc5352b065ecd03e6c1e39f4a239932a3c2237",
+      "size_bytes": 7578,
+      "status_label": "HOST_VERIFIED"
+    }
+  ],
+  "external_positions": [
+    {
+      "capture_id": "W07-PROBE-IDENTIFICATION",
+      "eligibility": "PERMANENTLY_EXCLUDED",
+      "enforced_by": "cg_w09_validity.EXCLUDED_SESSION_CLASSES, tested in test_cg_w09_validity.py (the W10 door tests of the stacked slice re-test the same refusal from the consumer side)",
+      "location": "worktree A-W07-plant-repeatability/evidence/A/W07/probe-identification/",
+      "reason": "every frame was taken with a hand on a probe; docs/05A \u00a718 A-W09-03 makes a manual touch a physical invalidation, so these frames may never enter S1/S2/S4 or any thermal-response statistic",
+      "session_class": "PROBE_IDENTIFICATION"
+    },
+    {
+      "action_required": "the W04 owner must commit them; W09 parsing and door tooling are already verified against their format",
+      "capture_id": "H8-PHASE4E-RAW-FRAMES",
+      "eligibility": "NOT_CITABLE_UNTRACKED",
+      "location": "worktree A-W04-tec-commissioning/evidence/A/W04/h8/",
+      "reason": "the H8 monitor frames, including the raw #CG H8S lines behind the committed CSV and the post-mount door window, are present on the bench host but are not git-tracked on any branch; untracked bytes cannot anchor a published claim",
+      "session_class": "H8_BENCH_RAW"
+    },
+    {
+      "action_required": "the H8 bench owner must commit the driver source; until then the mechanism is stated with its citation status, not with a quotation",
+      "capture_id": "H8-DOOR-DRIVER-SOURCE",
+      "claim_kept": "the contact polarity inverts every reading between the two settings, so door state needs a per-boot external attestation",
+      "claim_rests_on": "docs/01 \u00a78.1/\u00a78.2 plus the complementary mapping table that the W10 door slice stacked on this branch publishes as cg_w10_door.MAPPING_BY_POLARITY",
+      "eligibility": "UNCITABLE_UNTRACKED_SOURCE",
+      "location": "worktree A-W04-tec-commissioning/firmware/h8-bench/main/",
+      "reason": "firmware/h8-bench/main/h8_door.c and the bench console driver are quoted by the W10 door analysis as the code-level reason a frame cannot name its own door state, but no git ref in this repository carries those files; the same rule that excludes the untracked H8 frames applies to untracked source",
+      "session_class": "H8_BENCH_DRIVER_SOURCE"
+    }
+  ],
+  "generated_at_utc": "2026-11-02T00:00:00Z",
+  "measured_usability_of_the_candidate": {
+    "frames_thermally_usable_for_statistics": 940,
+    "frames_total": 957,
+    "frames_usable_for_baseline": 0,
+    "quality_counts_by_domain": {
+      "door": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 957,
+        "VALID": 0
+      },
+      "electrical": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 957,
+        "VALID": 0
+      },
+      "environment": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 957,
+        "VALID": 0
+      },
+      "producer": {
+        "DEGRADED": 940,
+        "INVALID": 17,
+        "UNKNOWN": 0,
+        "VALID": 0
+      },
+      "provenance": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 0,
+        "VALID": 957
+      },
+      "sequence": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 0,
+        "VALID": 957
+      },
+      "thermal": {
+        "DEGRADED": 0,
+        "INVALID": 0,
+        "UNKNOWN": 0,
+        "VALID": 957
+      }
+    },
+    "the_two_counts_are_not_the_same_claim": "rows_thermally_usable counts rows clean enough for a mixed-probe thermal statistic; rows_usable_for_baseline counts rows the S1 scenario can use, which additionally needs the door and environment domains qualified",
+    "usable_fraction": 0.0
+  },
+  "policy": [
+    "an invalid attempt is recorded, never deleted (docs/05A \u00a718 A-W09-03)",
+    "a capture is not a run until the registry says it is eligible",
+    "a host fixture can never appear as a run in this registry"
+  ],
+  "registry_version": "w09-run-registry-v1",
+  "s1_baseline_target": "~4 valid S1 runs (docs/05A \u00a718 A-W09-02)",
+  "s1_candidates_available": 1,
+  "s1_runs_certified_valid": 0,
+  "why_not_certified": [
+    "certifying a baseline needs between-run repeatability, and one capture cannot show it",
+    "the capture's electrical columns are unqualified, so its energy baseline is unusable",
+    "the door was never in a machine-readable CLOSED state for the first 17 frames",
+    "the derived table carries no door_status, air_c_status, rh_pct_status or power_w_status column at all, so the door and environment domains cannot be qualified and no row of it is usable for the S1 scenario"
+  ]
+}

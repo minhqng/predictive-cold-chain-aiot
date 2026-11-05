@@ -12,6 +12,17 @@ idf_component_register(
         "cg_rs485.c"
         "cg_power.c"
         "cg_actuator.c"
+        "cg_tec_limits.c"
+        "cg_tec_control.c"
+        "cg_tec_hw.c"
+        "cg_tec_command.c"
+        "cg_snapshot.c"
+        "cg_quality.c"
+        "cg_health.c"
+        "cg_telemetry.c"
+        "cg_command.c"
+        "cg_console.c"
+        "cg_commission.c"
     INCLUDE_DIRS "."
     REQUIRES esp_timer nvs_flash
     # GPIO APIs (driver/gpio.h) live in esp_driver_gpio and UART APIs

@@ -1,0 +1,28 @@
+{
+  "captured_at": "2026-11-04T15:13:53.630+00:00",
+  "measurements": {
+    "captured_frames": 0,
+    "cooling_off_frames": 0,
+    "cooling_on_frames": 0,
+    "current_max_a": null,
+    "current_mean_a": null,
+    "current_min_a": null,
+    "current_sd_a": null,
+    "frames": 0,
+    "off_current_max_a": null,
+    "off_power_max_w": null,
+    "power_consistency_max_rel_error": null,
+    "power_max_w": null,
+    "power_mean_w": null,
+    "shared_capture": "A-W05-03",
+    "shared_window_s": 600,
+    "valid_frames": 0,
+    "valid_rate": 0.0,
+    "voltage_max_v": null,
+    "voltage_mean_v": null,
+    "voltage_min_v": null
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W03-05"
+}
