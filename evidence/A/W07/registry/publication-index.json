@@ -163,10 +163,10 @@
     {
       "dest": "evidence/A/W07/registry/A-W07-03.json",
       "source_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
-      "published_sha256": "6f8e8ca632cbbc336800ce52c31e9d4825550e626e5df9766602916af01b26d1",
+      "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
       "source_capture_path": "results/A-W07-03.json",
       "source_bytes": 9130,
-      "bytes": 20538,
+      "bytes": 21584,
       "requirement": "A-W07-03",
       "transformed_record": true,
       "transformation_sequence": [
@@ -259,7 +259,7 @@
     {
       "dest": "evidence/A/W07/registry/A-W07-04.json",
       "source_sha256": "a50678101f74440b268beed8147d746be53485bb812129c24728e770623cdfc6",
-      "published_sha256": "db164fff1b1db1b454b96f2742a1bd6f5c9069ef2262f485cd10f57999f82775",
+      "published_sha256": "fdf1d55133e0a0a9f7210260851749bdcaa88025c43a792524dd90f6e861b01d",
       "source_capture_path": "results/A-W07-04.json",
       "source_bytes": 2640,
       "bytes": 6637,

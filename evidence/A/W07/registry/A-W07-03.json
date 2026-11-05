@@ -420,7 +420,8 @@
         "t1_rom": "287088CA00000051",
         "t2_rom": "28AEBF2200000006",
         "t3_rom": "28CBE9CA00000072",
-        "spare_rom": "283BE5C9000000A9"
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "EXCLUDED_BY_FROZEN_HANDOFF"
       },
       {
         "test_id": "A-W07-03",
@@ -428,7 +429,7 @@
         "trial": 2,
         "boot_id": "be89bf4a",
         "identity_source": "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
-        "identity_source_sha256": "3d953929fe9df25f02f071a36a3eaf6c8b607ccfe794db7f54a657793d875c13",
+        "identity_source_sha256": "467763d62f93ed513e53189aaaa73c9207189dc53bce9b3a5094657cb1448902",
         "frames": 313,
         "first_host_time": "2026-11-04T16:24:30.369959+00:00",
         "last_host_time": "2026-11-04T16:29:42.383084+00:00",
@@ -439,7 +440,16 @@
         "t1_rom": "287088CA00000051",
         "t2_rom": "28AEBF2200000006",
         "t3_rom": "28CBE9CA00000072",
-        "spare_rom": "283BE5C9000000A9"
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "PUBLISHED_REGISTRY_ARTIFACT",
+        "raw_telemetry_witness": {
+          "source": "raw/telemetry.jsonl (boot-filtered)",
+          "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+          "sha256": "3d953929fe9df25f02f071a36a3eaf6c8b607ccfe794db7f54a657793d875c13",
+          "frames": 313,
+          "first_host_time": "2026-11-04T16:24:30.369959+00:00",
+          "last_host_time": "2026-11-04T16:29:42.383084+00:00"
+        }
       },
       {
         "test_id": "A-W07-03",
@@ -447,7 +457,7 @@
         "trial": 3,
         "boot_id": "f44c9bed",
         "identity_source": "evidence/A/W07/registry/trials/a-w07-03-trial-3-f44c9bed.jsonl",
-        "identity_source_sha256": "c9c09ad5c4faabfdd45baf746664ddc721bf8eadbf364014815177424b6578f8",
+        "identity_source_sha256": "aa3a8df91ccb41707b395947acea34745b431faec08e96f0c493f0d41f6029e1",
         "frames": 313,
         "first_host_time": "2026-11-04T17:09:50.992782+00:00",
         "last_host_time": "2026-11-04T17:15:03.004596+00:00",
@@ -458,7 +468,16 @@
         "t1_rom": "287088CA00000051",
         "t2_rom": "28AEBF2200000006",
         "t3_rom": "28CBE9CA00000072",
-        "spare_rom": "283BE5C9000000A9"
+        "spare_rom": "283BE5C9000000A9",
+        "identity_source_publication_status": "PUBLISHED_REGISTRY_ARTIFACT",
+        "raw_telemetry_witness": {
+          "source": "raw/telemetry.jsonl (boot-filtered)",
+          "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+          "sha256": "c9c09ad5c4faabfdd45baf746664ddc721bf8eadbf364014815177424b6578f8",
+          "frames": 313,
+          "first_host_time": "2026-11-04T17:09:50.992782+00:00",
+          "last_host_time": "2026-11-04T17:15:03.004596+00:00"
+        }
       }
     ],
     "linkage_checks": [
