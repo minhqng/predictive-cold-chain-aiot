@@ -1,0 +1,31 @@
+{
+  "captured_at": "2026-11-04T17:57:26.009+00:00",
+  "measurements": {
+    "allowed_action": "SUPERVISED_ON_WITHIN_MEASURED_ENVELOPE",
+    "boot_id": "d674902a",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_version": "cg-w06-0.1.0",
+    "fuse_a": 15.0,
+    "hardware_config_id": "CG-HW-001",
+    "output_stage": "ENABLED",
+    "pin_map": 2,
+    "positions": {
+      "SPARE": "CHAMBER_NEAR_DOOR",
+      "T1": "CHAMBER_CENTER",
+      "T2": "TEC_HOT_SIDE",
+      "T3": "CHAMBER_BOTTOM"
+    },
+    "pzem_profile": "50A",
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "unique_rom_count": 4
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W24-01"
+}
