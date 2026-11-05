@@ -49,3 +49,6 @@ evidence/A/W07/** -text
 
 # Member A handoff contracts rehomed into W07
 evidence/A/HANDOFF/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W07/A-W07-02-CORRECTION-20261104.md -text

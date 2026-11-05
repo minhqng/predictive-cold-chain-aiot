@@ -1,0 +1,107 @@
+{
+  "checks": [
+    {
+      "detail": " value=6 expected=6",
+      "failure_reason": "",
+      "name": "six_valid_runs",
+      "passed": true
+    },
+    {
+      "detail": " value=0.005750031388797137",
+      "failure_reason": "",
+      "name": "slope_sd_present",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0037655652662971647",
+      "failure_reason": "",
+      "name": "current_cv_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:56:11.193+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:56:11.193+00:00",
+      "original": "A-W07-04",
+      "path": "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "sha256": "abc1fbefff1c2736745380f2c21a18a00232fe7b9b72b0066a726bd2f25850de",
+      "size": 1454,
+      "stored": "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "source_sha256": "a92943b57d107fe005f180f7669f306f01180b52083d72541de7a0bd13ff7558",
+      "source_size": 1513
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "summary": {
+      "chamber_drop_c": {
+        "cv": 0.0005300033070886856,
+        "max": 2.270833333333332,
+        "mean": 2.2694444444444457,
+        "min": 2.2687500000000007,
+        "n": 3,
+        "sd": 0.001202813060809601
+      },
+      "current_mean_a": {
+        "cv": 0.0037655652662971647,
+        "max": 4.302054054054054,
+        "mean": 4.288233362394653,
+        "min": 4.270483870967742,
+        "n": 3,
+        "sd": 0.016147622603210007
+      },
+      "electrical_delay_s": {
+        "cv": 0.0,
+        "max": 1.02,
+        "mean": 1.02,
+        "min": 1.02,
+        "n": 3,
+        "sd": 0.0
+      },
+      "gradient_mean_c": {
+        "cv": 0.01524886814034166,
+        "max": 0.37604166666666666,
+        "mean": 0.36972222222222223,
+        "min": 0.36520833333333336,
+        "n": 3,
+        "sd": 0.005637845415220764
+      },
+      "slope_c_per_min": {
+        "cv": 1.8289132773850365,
+        "max": 0.009781629863624679,
+        "mean": 0.0031439606567996922,
+        "min": -0.00031224788055894735,
+        "n": 3,
+        "sd": 0.005750031388797137
+      },
+      "thermal_delay_s": {
+        "cv": 0.02831760133259299,
+        "max": 37.04,
+        "mean": 36.02,
+        "min": 35.0,
+        "n": 3,
+        "sd": 1.0199999999999996
+      }
+    },
+    "valid_runs": 6
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:56:11.167+00:00",
+  "test_id": "A-W07-04",
+  "publication_provenance": {
+    "source_record_sha256": "a50678101f74440b268beed8147d746be53485bb812129c24728e770623cdfc6",
+    "source_capture_relative_path": "results/A-W07-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}

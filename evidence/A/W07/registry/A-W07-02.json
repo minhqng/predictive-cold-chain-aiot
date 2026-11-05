@@ -1,0 +1,304 @@
+{
+  "checks": [
+    {
+      "detail": "3/3",
+      "failure_reason": "",
+      "name": "valid_run_count",
+      "passed": true
+    },
+    {
+      "detail": "[True, True, True]",
+      "failure_reason": "",
+      "name": "door_closed",
+      "passed": true
+    },
+    {
+      "detail": "[True, True, True]",
+      "failure_reason": "",
+      "name": "cooling_off",
+      "passed": true
+    },
+    {
+      "detail": "[(0.00978, 0.376), (-4e-05, 0.3679), (-0.00031, 0.3652)]",
+      "failure_reason": "",
+      "name": "slope_and_gradient_computed",
+      "passed": true
+    },
+    {
+      "detail": "start Tmean ['29.9792', '30.0208', '30.0417'] spread 0.0625 C",
+      "failure_reason": "",
+      "name": "start_conditions_similar",
+      "passed": true
+    },
+    {
+      "detail": "gaps [339.0, 99.0] s; stabilization verified before every run",
+      "failure_reason": "",
+      "name": "run_independence",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:56:11.127926+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "attempts": 3,
+    "door_attested_boot": "4b555191",
+    "inter_run_gaps_s": [
+      338.988343,
+      99.025335
+    ],
+    "observed_open_raw_level": 1,
+    "rerun_basis": "the 2026-11-04 attempt was INCOMPLETE for missing stabilization/independence proof; the original verdict is preserved under results/history/",
+    "runs": [
+      {
+        "attempt": 1,
+        "boot_id": "4b555191",
+        "ended_at": "2026-11-04T17:38:53.098805+00:00",
+        "gap_from_previous_s": null,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "current_max_a": 0.0,
+          "door_closed_throughout": true,
+          "duration_s": 298.98,
+          "end_temperature_c": 30.020833333333332,
+          "fault_bits_max": 0,
+          "frames": 300,
+          "gradient_mean_c": 0.37604166666666666,
+          "mean_temperature_c": 30.016875,
+          "slope_c_per_min": 0.009781629863624679,
+          "start_temperature_c": 29.979166666666668,
+          "start_tmean_c": 29.979166666666668
+        },
+        "reason": "",
+        "stabilization": {
+          "at": "2026-11-04T17:33:53.098478+00:00",
+          "elapsed_s": 218.8,
+          "frames": 70,
+          "label": "warmup-run-1",
+          "mean_c": 29.9786,
+          "slope_c_per_min": 0.01247,
+          "spread_c": 0.0417,
+          "verdict": "STABLE",
+          "windows": 2
+        },
+        "started_at": "2026-11-04T17:33:53.098552+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "boot_id": "4b555191",
+        "ended_at": "2026-11-04T17:49:32.087358+00:00",
+        "gap_from_previous_s": 338.988343,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "current_max_a": 0.0,
+          "door_closed_throughout": true,
+          "duration_s": 299.08000000000015,
+          "end_temperature_c": 30.020833333333332,
+          "fault_bits_max": 0,
+          "frames": 300,
+          "gradient_mean_c": 0.36791666666666667,
+          "mean_temperature_c": 30.03590277777778,
+          "slope_c_per_min": -3.750001266665558e-05,
+          "start_temperature_c": 30.020833333333332,
+          "start_tmean_c": 30.020833333333332
+        },
+        "reason": "",
+        "stabilization": {
+          "at": "2026-11-04T17:44:32.087017+00:00",
+          "elapsed_s": 339.0,
+          "frames": 70,
+          "label": "warmup-run-2",
+          "mean_c": 30.0387,
+          "slope_c_per_min": -0.00236,
+          "spread_c": 0.0417,
+          "verdict": "STABLE",
+          "windows": 2
+        },
+        "started_at": "2026-11-04T17:44:32.087148+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "boot_id": "4b555191",
+        "ended_at": "2026-11-04T17:56:11.127926+00:00",
+        "gap_from_previous_s": 99.025335,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "current_max_a": 0.0,
+          "door_closed_throughout": true,
+          "duration_s": 298.98,
+          "end_temperature_c": 30.020833333333332,
+          "fault_bits_max": 0,
+          "frames": 300,
+          "gradient_mean_c": 0.36520833333333336,
+          "mean_temperature_c": 30.03402777777778,
+          "slope_c_per_min": -0.00031224788055894735,
+          "start_temperature_c": 30.041666666666668,
+          "start_tmean_c": 30.041666666666668
+        },
+        "reason": "",
+        "stabilization": {
+          "at": "2026-11-04T17:51:11.112627+00:00",
+          "elapsed_s": 99.0,
+          "frames": 70,
+          "label": "warmup-run-3",
+          "mean_c": 30.0342,
+          "slope_c_per_min": -2e-05,
+          "spread_c": 0.0417,
+          "verdict": "STABLE",
+          "windows": 2
+        },
+        "started_at": "2026-11-04T17:51:11.112693+00:00",
+        "valid": true
+      }
+    ],
+    "start_tmean_spread_c": 0.0625,
+    "summary": {
+      "gradient_mean_c": {
+        "cv": 0.01524886814034166,
+        "max": 0.37604166666666666,
+        "mean": 0.36972222222222223,
+        "min": 0.36520833333333336,
+        "n": 3,
+        "sd": 0.005637845415220764
+      },
+      "slope_c_per_min": {
+        "cv": 1.8289132773850365,
+        "max": 0.009781629863624679,
+        "mean": 0.0031439606567996922,
+        "min": -0.00031224788055894735,
+        "n": 3,
+        "sd": 0.005750031388797137
+      }
+    },
+    "valid_runs": 3
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "attempt": 1,
+      "boot_id": "4b555191",
+      "ended_at": "2026-11-04T17:38:53.098805+00:00",
+      "gap_from_previous_s": null,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "current_max_a": 0.0,
+        "door_closed_throughout": true,
+        "duration_s": 298.98,
+        "end_temperature_c": 30.020833333333332,
+        "fault_bits_max": 0,
+        "frames": 300,
+        "gradient_mean_c": 0.37604166666666666,
+        "mean_temperature_c": 30.016875,
+        "slope_c_per_min": 0.009781629863624679,
+        "start_temperature_c": 29.979166666666668,
+        "start_tmean_c": 29.979166666666668
+      },
+      "reason": "",
+      "stabilization": {
+        "at": "2026-11-04T17:33:53.098478+00:00",
+        "elapsed_s": 218.8,
+        "frames": 70,
+        "label": "warmup-run-1",
+        "mean_c": 29.9786,
+        "slope_c_per_min": 0.01247,
+        "spread_c": 0.0417,
+        "verdict": "STABLE",
+        "windows": 2
+      },
+      "started_at": "2026-11-04T17:33:53.098552+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "boot_id": "4b555191",
+      "ended_at": "2026-11-04T17:49:32.087358+00:00",
+      "gap_from_previous_s": 338.988343,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "current_max_a": 0.0,
+        "door_closed_throughout": true,
+        "duration_s": 299.08000000000015,
+        "end_temperature_c": 30.020833333333332,
+        "fault_bits_max": 0,
+        "frames": 300,
+        "gradient_mean_c": 0.36791666666666667,
+        "mean_temperature_c": 30.03590277777778,
+        "slope_c_per_min": -3.750001266665558e-05,
+        "start_temperature_c": 30.020833333333332,
+        "start_tmean_c": 30.020833333333332
+      },
+      "reason": "",
+      "stabilization": {
+        "at": "2026-11-04T17:44:32.087017+00:00",
+        "elapsed_s": 339.0,
+        "frames": 70,
+        "label": "warmup-run-2",
+        "mean_c": 30.0387,
+        "slope_c_per_min": -0.00236,
+        "spread_c": 0.0417,
+        "verdict": "STABLE",
+        "windows": 2
+      },
+      "started_at": "2026-11-04T17:44:32.087148+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "boot_id": "4b555191",
+      "ended_at": "2026-11-04T17:56:11.127926+00:00",
+      "gap_from_previous_s": 99.025335,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "current_max_a": 0.0,
+        "door_closed_throughout": true,
+        "duration_s": 298.98,
+        "end_temperature_c": 30.020833333333332,
+        "fault_bits_max": 0,
+        "frames": 300,
+        "gradient_mean_c": 0.36520833333333336,
+        "mean_temperature_c": 30.03402777777778,
+        "slope_c_per_min": -0.00031224788055894735,
+        "start_temperature_c": 30.041666666666668,
+        "start_tmean_c": 30.041666666666668
+      },
+      "reason": "",
+      "stabilization": {
+        "at": "2026-11-04T17:51:11.112627+00:00",
+        "elapsed_s": 99.0,
+        "frames": 70,
+        "label": "warmup-run-3",
+        "mean_c": 30.0342,
+        "slope_c_per_min": -2e-05,
+        "spread_c": 0.0417,
+        "verdict": "STABLE",
+        "windows": 2
+      },
+      "started_at": "2026-11-04T17:51:11.112693+00:00",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:33:53.098552+00:00",
+  "test_id": "A-W07-02",
+  "publication_provenance": {
+    "source_record_sha256": "88d229c49e2450395a92922588b58e49ce4215ba2a204c481de13c8a809bf4b1",
+    "source_capture_relative_path": "results/A-W07-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "OWN_CAPTURE_FILES_ONLY",
+    "excluded_supporting_artifacts": []
+  }
+}

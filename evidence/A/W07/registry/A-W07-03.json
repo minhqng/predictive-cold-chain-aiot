@@ -1,0 +1,306 @@
+{
+  "checks": [
+    {
+      "detail": "3/3",
+      "failure_reason": "",
+      "name": "valid_run_count",
+      "passed": true
+    },
+    {
+      "detail": "[(500,)]",
+      "failure_reason": "",
+      "name": "same_core_action",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:14:06.992785+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "attempts": 3,
+    "command_mode": "SUPERVISED_BENCH 180s 50% per operator authorization",
+    "current_max_a": 5.03,
+    "current_mean_a": 4.288233362394653,
+    "evaluated_from": "trials/a-w07-03-trial-*.jsonl + session raw",
+    "power_max_w": null,
+    "power_mean_w": 50.764230359391654,
+    "runs": [
+      {
+        "attempt": 1,
+        "ended_at": "2026-11-04T16:12:26.865128+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.0625,
+          "chamber_drop_c": 2.270833333333332,
+          "cooling_frames": 186,
+          "current_max_a": 4.94,
+          "current_mean_a": 4.270483870967742,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.833333333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.5625,
+          "hot_side_start_c": 29.875,
+          "min_chamber_c": 27.791666666666668,
+          "power_mean_w": 50.55215053763441,
+          "start_tmean_c": 30.083333333333332,
+          "thermal_delay_s": 37.04,
+          "time_constant": {
+            "drop_c": 2.229166666666668,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 169,
+            "r2": 0.9068597551607962,
+            "tau_s": 61.686283206272805
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T16:09:12.029967+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "ended_at": "2026-11-04T16:28:46.378190+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.102083333333333,
+          "chamber_drop_c": 2.2687500000000007,
+          "cooling_frames": 185,
+          "current_max_a": 5.03,
+          "current_mean_a": 4.292162162162162,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.833333333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.5625,
+          "hot_side_start_c": 29.875,
+          "min_chamber_c": 27.833333333333332,
+          "power_mean_w": 50.810270270270266,
+          "start_tmean_c": 30.104166666666668,
+          "thermal_delay_s": 35.0,
+          "time_constant": {
+            "drop_c": 2.25,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 171,
+            "r2": 0.9119085729174824,
+            "tau_s": 62.58580612582802
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T16:25:32.406480+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "ended_at": "2026-11-04T17:14:06.992785+00:00",
+        "frames": 196,
+        "metrics": {
+          "applied_duty_samples": [
+            500
+          ],
+          "applied_on_frames": 180,
+          "baseline_mean_c": 30.039583333333336,
+          "chamber_drop_c": 2.2687500000000043,
+          "cooling_frames": 185,
+          "current_max_a": 4.99,
+          "current_mean_a": 4.302054054054054,
+          "electrical_delay_s": 1.02,
+          "end_chamber_c": 27.770833333333332,
+          "fan_on_all": true,
+          "fault_bits_max": 0,
+          "frames": 196,
+          "hot_side_max_c": 33.625,
+          "hot_side_start_c": 29.8125,
+          "min_chamber_c": 27.770833333333332,
+          "power_mean_w": 50.93027027027027,
+          "start_tmean_c": 30.020833333333332,
+          "thermal_delay_s": 36.02,
+          "time_constant": {
+            "drop_c": 2.2708333333333357,
+            "method": "EXPONENTIAL_FIT_LN_REMAINING",
+            "points": 171,
+            "r2": 0.9117315945656634,
+            "tau_s": 63.128306356410256
+          }
+        },
+        "reason": "",
+        "started_at": "2026-11-04T17:10:53.026901+00:00",
+        "valid": true
+      }
+    ],
+    "summary": {
+      "chamber_drop_c": {
+        "cv": 0.0005300033070886856,
+        "max": 2.270833333333332,
+        "mean": 2.2694444444444457,
+        "min": 2.2687500000000007,
+        "n": 3,
+        "sd": 0.001202813060809601
+      },
+      "current_mean_a": {
+        "cv": 0.0037655652662971647,
+        "max": 4.302054054054054,
+        "mean": 4.288233362394653,
+        "min": 4.270483870967742,
+        "n": 3,
+        "sd": 0.016147622603210007
+      },
+      "electrical_delay_s": {
+        "cv": 0.0,
+        "max": 1.02,
+        "mean": 1.02,
+        "min": 1.02,
+        "n": 3,
+        "sd": 0.0
+      },
+      "thermal_delay_s": {
+        "cv": 0.02831760133259299,
+        "max": 37.04,
+        "mean": 36.02,
+        "min": 35.0,
+        "n": 3,
+        "sd": 1.0199999999999996
+      }
+    },
+    "valid_runs": 3
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "attempt": 1,
+      "ended_at": "2026-11-04T16:12:26.865128+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.0625,
+        "chamber_drop_c": 2.270833333333332,
+        "cooling_frames": 186,
+        "current_max_a": 4.94,
+        "current_mean_a": 4.270483870967742,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.833333333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.5625,
+        "hot_side_start_c": 29.875,
+        "min_chamber_c": 27.791666666666668,
+        "power_mean_w": 50.55215053763441,
+        "start_tmean_c": 30.083333333333332,
+        "thermal_delay_s": 37.04,
+        "time_constant": {
+          "drop_c": 2.229166666666668,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 169,
+          "r2": 0.9068597551607962,
+          "tau_s": 61.686283206272805
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T16:09:12.029967+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "ended_at": "2026-11-04T16:28:46.378190+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.102083333333333,
+        "chamber_drop_c": 2.2687500000000007,
+        "cooling_frames": 185,
+        "current_max_a": 5.03,
+        "current_mean_a": 4.292162162162162,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.833333333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.5625,
+        "hot_side_start_c": 29.875,
+        "min_chamber_c": 27.833333333333332,
+        "power_mean_w": 50.810270270270266,
+        "start_tmean_c": 30.104166666666668,
+        "thermal_delay_s": 35.0,
+        "time_constant": {
+          "drop_c": 2.25,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 171,
+          "r2": 0.9119085729174824,
+          "tau_s": 62.58580612582802
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T16:25:32.406480+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "ended_at": "2026-11-04T17:14:06.992785+00:00",
+      "frames": 196,
+      "metrics": {
+        "applied_duty_samples": [
+          500
+        ],
+        "applied_on_frames": 180,
+        "baseline_mean_c": 30.039583333333336,
+        "chamber_drop_c": 2.2687500000000043,
+        "cooling_frames": 185,
+        "current_max_a": 4.99,
+        "current_mean_a": 4.302054054054054,
+        "electrical_delay_s": 1.02,
+        "end_chamber_c": 27.770833333333332,
+        "fan_on_all": true,
+        "fault_bits_max": 0,
+        "frames": 196,
+        "hot_side_max_c": 33.625,
+        "hot_side_start_c": 29.8125,
+        "min_chamber_c": 27.770833333333332,
+        "power_mean_w": 50.93027027027027,
+        "start_tmean_c": 30.020833333333332,
+        "thermal_delay_s": 36.02,
+        "time_constant": {
+          "drop_c": 2.2708333333333357,
+          "method": "EXPONENTIAL_FIT_LN_REMAINING",
+          "points": 171,
+          "r2": 0.9117315945656634,
+          "tau_s": 63.128306356410256
+        }
+      },
+      "reason": "",
+      "started_at": "2026-11-04T17:10:53.026901+00:00",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T16:09:12.029967+00:00",
+  "test_id": "A-W07-03",
+  "publication_provenance": {
+    "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+    "source_capture_relative_path": "results/A-W07-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "OWN_CAPTURE_FILES_ONLY",
+    "excluded_supporting_artifacts": []
+  }
+}
