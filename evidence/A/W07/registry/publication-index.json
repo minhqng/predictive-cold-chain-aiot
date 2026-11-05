@@ -30,7 +30,7 @@
     "A-W07-03": {
       "criterion": "Perform at least three valid cooling-step runs with the same core action; measure current/power, command-to-electrical delay, thermal response and recovery.",
       "record": "evidence/A/W07/registry/A-W07-03.json",
-      "identity_status": "IDENTITY_RESOLVED_STABILIZATION_WITNESS_UNRESOLVED",
+      "identity_status": "IDENTITY_RESOLVED_CRITERION_MET_WITNESS_AUXILIARY",
       "artifact_paths": [
         "evidence/A/W07/registry/A-W07-03.json",
         "evidence/A/W07/registry/trials/a-w07-03-trial-2-be89bf4a.jsonl",
@@ -41,7 +41,10 @@
         "evidence/A/W07/registry/bench/a-w07-03-trial-3-20261104T171503395704.json",
         "evidence/A/W07/registry/unpublished-capture-input.json"
       ],
-      "identity_provenance": "evidence/A/W07/registry/A-W07-03.json#identity_provenance"
+      "identity_provenance": "evidence/A/W07/registry/A-W07-03.json#identity_provenance",
+      "criterion_status": "MET_BY_THREE_RECORDED_TRIALS",
+      "criterion_evidence": "evidence/A/W07/A-W07-03-OPERATOR-EVIDENCE-ADDENDUM-20261105.md",
+      "criterion_note": "Three 180 s cooling-step trials passed their same-boot pre-START gates; the auxiliary two-window witness remains NOT_REUSABLE. Operator confirmation recorded 2026-11-05."
     },
     "A-W07-04": {
       "criterion": "Compute per outcome mean, SD, CV where meaningful, min/max and trajectory overlays.",
@@ -340,6 +343,15 @@
       "requirement": "A-W07-02",
       "bytes": 645,
       "publication_note": true
+    },
+    {
+      "dest": "evidence/A/W07/A-W07-03-OPERATOR-EVIDENCE-ADDENDUM-20261105.md",
+      "source_capture_path": null,
+      "source_sha256": null,
+      "published_sha256": "5b6fdf807ba38bac8c2bbc1e39bf35ebe04f67e6067beb2c7b38f4277dd8d7e6",
+      "bytes": 2858,
+      "requirement": "A-W07-03",
+      "transformed_record": false
     }
   ]
 }
