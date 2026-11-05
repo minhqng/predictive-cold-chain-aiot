@@ -1,12 +1,17 @@
 /*
- * ColdGuard firmware - W02 sensor foundation + W03 power/RS-485 configuration
- * (Member A).
+ * ColdGuard firmware - W02 sensor foundation + W03 power/RS-485 + W04 TEC
+ * commissioning configuration (Member A).
  *
  * Scope of this file: pins, identity, sampling cadence, DS18B20 ROM->role
- * map, MC-38 door configuration, and the W03 RS-485/PZEM/IBT-2 logic
- * configuration. Everything that a bench operator may need to change lives
- * here so that the rest of the firmware stays free of scattered magic
- * numbers.
+ * map, MC-38 door configuration, the W03 RS-485/PZEM/IBT-2 logic
+ * configuration, and the W04 fail-closed TEC control/telemetry parameters.
+ * Everything that a bench operator may need to change lives here so that the
+ * rest of the firmware stays free of scattered magic numbers.
+ *
+ * W04 ships with the TEC output stage compiled out. The control mechanism,
+ * the authorization gate, the fault latch and the raw telemetry path are
+ * complete and tested offline; no code path can energize the branch until
+ * the hardware gates in docs/06 are measured and recorded.
  *
  * Authority:
  *   - evidence/A/as-built-pinmap-2026-10-27.md (as-built map v2, from the
@@ -27,7 +32,7 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w03-0.2.0"
+#define CG_FIRMWARE_VERSION "cg-w04-0.1.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
 #define CG_PIN_MAP_VERSION 2
 /* Grammar v2 = grammar v1 line kinds, unchanged, plus the W03 PZEM/PZEM_CFG/
@@ -376,6 +381,81 @@
 #define CG_ACTUATOR_ENABLE_PIN CG_ACTUATOR_REN_PIN
 
 /* ------------------------------------------------------------------ */
+/* W04 - TEC commissioning control (output stage compiled out)         */
+/* ------------------------------------------------------------------ */
+
+/* The W04 slice implements the fail-closed control mechanism and its
+ * offline tests. It must not energize the TEC branch: the output stage is
+ * compiled out and the hardware gates in docs/06 are not measured. Setting
+ * this to 1 is a deliberate commissioning decision that requires recorded
+ * gate evidence, not a build tweak. */
+#define CG_TEC_OUTPUT_STAGE_ENABLED 0
+#define CG_TEC_HARDWARE_GATES_VERIFIED 0
+
+#if CG_TEC_OUTPUT_STAGE_ENABLED != 0 && CG_TEC_OUTPUT_STAGE_ENABLED != 1
+#error "CG_TEC_OUTPUT_STAGE_ENABLED must be 0 or 1"
+#endif
+#if CG_TEC_OUTPUT_STAGE_ENABLED == 1 && CG_TEC_HARDWARE_GATES_VERIFIED != 1
+#error "output stage requires the hardware gates in docs/06 to be verified and recorded"
+#endif
+#if CG_TEC_OUTPUT_STAGE_ENABLED == 1 && CG_ACTUATOR_ENABLE_ALLOWED != 1
+#error "output stage requires the actuator authorization gate (CG_ACTUATOR_ENABLE_ALLOWED)"
+#endif
+
+/* Control loop cadence. The tick drives the fault checks, the bounded run
+ * duration and the watchdog gap detection. */
+#define CG_TEC_TICK_MS 100
+#define CG_TEC_HEARTBEAT_TIMEOUT_MS 1000
+
+/* Authorization window: ARM authorizes one bounded run. The token is
+ * generated at boot and printed only on the local UART. */
+#define CG_TEC_ARM_TTL_MS 120000
+
+/* Fan hold after a stop or fault. This is a bench cool-down duration, not a
+ * TEC operating limit, and it never authorizes output. */
+#define CG_TEC_COOLDOWN_MS 60000
+
+/* Duty requested by a console START. 0 refuses the command: the as-built
+ * TEC has no established continuous rating, so no duty is claimed safe
+ * (docs/06). It is set only after the commissioning measurements exist. */
+#define CG_TEC_REQUEST_DUTY_PERMILLE 0
+
+#define CG_TEC_TOKEN_LEN 9   /* 8 hex characters + NUL */
+#define CG_TEC_REASON_LEN 40
+#define CG_TEC_RUN_ID_LEN 33 /* 32 characters + NUL */
+#define CG_TEC_PHASE_LEN 16
+
+/* A thermal/power observation older than three periods is stale. A stale
+ * observation is never reused as a current value. */
+#define CG_TEC_STALE_THERMAL_MS (3 * CG_SAMPLE_PERIOD_MS)
+#define CG_TEC_STALE_POWER_MS (3 * CG_PZEM_POLL_PERIOD_MS)
+
+/* Raw telemetry line family. It carries its own schema version because it
+ * is a separate stream: CG_LOG_GRAMMAR_VERSION stays 2 so W02/W03 captures
+ * and their parser keep working unchanged. The limit bounds the whole raw
+ * line that cg_log_raw_line() will transmit; a line above it is refused, never
+ * truncated.
+ *
+ * W02/W03 frames need 1536 bytes. The longest #CG TELEM line actually
+ * observed in the committed W04 captures is 1012 bytes, so 2560 is headroom,
+ * not a number taken from a guess. The value stays at 2560 because Member A's
+ * local H8 bench tree (deliberately outside this repository, fingerprinted in
+ * evidence/A/W04/ARTIFACT-MANIFEST.md) reuses this guard and needs 2342; that
+ * dependency is disclosed there instead of being documented as a W04 result.
+ * W02/W03 output is unchanged and its captures stay parseable. */
+#define CG_TELEMETRY_SCHEMA_VERSION 1
+#define CG_TELEMETRY_PERIOD_MS 1000
+#define CG_TELEMETRY_LINE_MAX 2560
+
+/* Local operator console on UART0 (the log console). Commands share the
+ * terminal with the log stream; the parser rejects every line it does not
+ * understand, and a command that arrives half-typed is simply not parsed. */
+#define CG_CONSOLE_ENABLED 1
+#define CG_CONSOLE_UART_PORT 0
+#define CG_CONSOLE_BAUD 115200
+#define CG_CONSOLE_LINE_MAX 96
+
+/* ------------------------------------------------------------------ */
 /* Boot identity proof - docs/05A A-W02-03                             */
 /* ------------------------------------------------------------------ */
 
@@ -401,6 +481,10 @@
 #define CG_LOG_PZEM_CFG "PZEM_CFG"
 #define CG_LOG_PZEM_RANGE "PZEM_RANGE"
 #define CG_LOG_PZEM "PZEM"
+#define CG_LOG_AUTH "AUTH"
+#define CG_LOG_TEC "TEC"
+#define CG_LOG_TEC_LIMIT "TEC_LIMIT"
+#define CG_LOG_TELEM "TELEM"
 #define CG_LOG_ERROR "ERR"
 
 /* Token printed instead of a number when a probe reading is not valid.

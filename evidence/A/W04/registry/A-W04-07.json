@@ -1,0 +1,156 @@
+{
+  "checks": [
+    {
+      "detail": " value=1.02",
+      "failure_reason": "",
+      "name": "electrical_delay_recorded",
+      "passed": true
+    },
+    {
+      "detail": " value=36.02",
+      "failure_reason": "",
+      "name": "thermal_delay_recorded",
+      "passed": true
+    },
+    {
+      "detail": " value=0.6187499999999986 expected=0.2",
+      "failure_reason": "",
+      "name": "chamber_dropped",
+      "passed": true
+    },
+    {
+      "detail": " value=60 expected=1",
+      "failure_reason": "",
+      "name": "applied_on",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:16:00.460+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:16:00.460+00:00",
+      "original": "A-W04-07",
+      "path": "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json",
+      "sha256": "c04ea7a7c97a2e1665f5dfa4ea54d8a3e1ddf2e5e70582355d89a6af60eac3c7",
+      "size": 1109,
+      "stored": "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "applied_on_frames": 60,
+    "baseline_mean_c": 30.05625,
+    "baseline_off_current_max_a": 0.0,
+    "chamber_drop_c": 0.6187499999999986,
+    "cooling_frames": 60,
+    "current_max_a": 4.99,
+    "current_mean_a": 4.424,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 29.4375,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 70,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 29.4375,
+    "off_current_limit_a": 0.05,
+    "power_mean_w": 52.37833333333333,
+    "safety_stop_reason": null,
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 36.02,
+    "time_constant": {
+      "limitation": "SINGLE_STEP_EMPIRICAL_PROXY_NOT_A_PHYSICAL_MODEL",
+      "method": "SLOPE_63_PERCENT",
+      "tau_s": 47.96
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:16:00.446+00:00",
+  "test_id": "A-W04-07",
+  "publication_provenance": {
+    "source_record_sha256": "224402e15af1529df4b5acfc86e34ecb8f5883340f7e9d22fdde42619b9d3f0a",
+    "source_capture_relative_path": "results/A-W04-07.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W04-07",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENT",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W04-05",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W04/registry/A-W04-05.json",
+        "published_commit": "0e84fe61f3a36f6390fd22c6ebd99089ced6b65d",
+        "published_sha256": "f9f8ab32abbcbfc6120dd87186873e55359a92cf3e71a0aedf4f88843fbdf575",
+        "source_record_sha256": "4c923d41a6dc9a50b9206d1ebcde686efd599ffad2f0187fc03f82f771b57b56",
+        "boot_id": "5562b609",
+        "boot_count": 79,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "metric_equals_parent:chamber_drop_c",
+        "value": 0.6187499999999986,
+        "match": true,
+        "expected_or_source": 0.6187499999999986
+      },
+      {
+        "name": "metric_equals_parent:current_max_a",
+        "value": 4.99,
+        "match": true,
+        "expected_or_source": 4.99
+      },
+      {
+        "name": "metric_equals_parent:current_mean_a",
+        "value": 4.424,
+        "match": true,
+        "expected_or_source": 4.424
+      },
+      {
+        "name": "metric_equals_parent:electrical_delay_s",
+        "value": 1.02,
+        "match": true,
+        "expected_or_source": 1.02
+      },
+      {
+        "name": "metric_equals_parent:thermal_delay_s",
+        "value": 36.02,
+        "match": true,
+        "expected_or_source": 36.02
+      },
+      {
+        "name": "metric_equals_parent:hot_side_max_c",
+        "value": 31.875,
+        "match": true,
+        "expected_or_source": 31.875
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "requirement_declared_parent": "A-W04-05",
+    "derivation": "first_response (compute=first_response)"
+  }
+}

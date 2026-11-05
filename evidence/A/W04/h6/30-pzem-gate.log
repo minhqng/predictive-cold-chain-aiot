@@ -1,0 +1,27 @@
+# capture start 2026-10-29T15:37:49.238116+00:00 port=COM4 baud=115200
+# capture end 2026-10-29T15:38:03.275746+00:00 reason=timeout
+# capture start 2026-10-29T15:38:09.905675+00:00 port=COM4 baud=115200
+[   0.000] 15:38:09.905 >>> STATUS
+[   0.000] 15:38:09.906 >>> STATUS
+[   0.000] 15:38:09.906 >>> STATUS
+[   0.000] 15:38:09.906 >>> STATUS
+[   0.109] 15:38:10.010 STATUS
+[   0.109] 15:38:10.010 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   0.266] 15:38:10.166 H6 PZEM_TRACE attempt=1 tx=0104000000067008 rx_len=25 rx=010400000006700801040C04AB00000000000000000000435E chunk_count=2 chunks=8@10ms,17@90ms first_ms=10 last_ms=90 echo=8 frame_off=8 frame_len=17 slave=1 fc=4 count=12 crc_ok=1 usable=1 early=1 uart_err=0 class=OK
+[   0.266] 15:38:10.166 H6 STATUS pzem=OK vbus_mv=11950 current_ma=0 power_mw=0
+[   0.266] 15:38:10.166 h6> STATUS
+[   0.266] 15:38:10.166 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   0.422] 15:38:10.320 H6 PZEM_TRACE attempt=1 tx=0104000000067008 rx_len=8 rx=0104000000067008 chunk_count=1 chunks=8@13ms first_ms=13 last_ms=13 echo=8 frame_off=-1 frame_len=-1 slave=-1 fc=-1 count=-1 crc_ok=0 usable=0 early=0 uart_err=0 class=ECHO_ONLY
+[   0.578] 15:38:10.474 H6 PZEM_TRACE attempt=2 tx=0104000000067008 rx_len=25 rx=010400000006700801040C04AB00000000000000000000435E chunk_count=2 chunks=8@18ms,17@88ms first_ms=18 last_ms=88 echo=8 frame_off=8 frame_len=17 slave=1 fc=4 count=12 crc_ok=1 usable=1 early=1 uart_err=0 class=OK
+[   0.578] 15:38:10.474 H6 STATUS pzem=OK vbus_mv=11950 current_ma=0 power_mw=0
+[   0.578] 15:38:10.474 h6> STATUS
+[   0.578] 15:38:10.474 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   0.891] 15:38:10.794 H6 PZEM_TRACE attempt=1 tx=0104000000067008 rx_len=8 rx=0104000000067008 chunk_count=1 chunks=8@13ms first_ms=13 last_ms=13 echo=8 frame_off=-1 frame_len=-1 slave=-1 fc=-1 count=-1 crc_ok=0 usable=0 early=0 uart_err=0 class=ECHO_ONLY
+[   0.891] 15:38:10.794 H6 PZEM_TRACE attempt=2 tx=0104000000067008 rx_len=25 rx=010400000006700801040C04AB00000000000000000000435E chunk_count=2 chunks=8@18ms,17@88ms first_ms=18 last_ms=88 echo=8 frame_off=8 frame_len=17 slave=1 fc=4 count=12 crc_ok=1 usable=1 early=1 uart_err=0 class=OK
+[   0.891] 15:38:10.794 H6 STATUS pzem=OK vbus_mv=11950 current_ma=0 power_mw=0
+[   0.891] 15:38:10.794 h6> STATUS
+[   0.891] 15:38:10.794 H6 STATUS state=WAIT_FOR_MANUAL_ARM reason=NONE run_consumed=0 elapsed_ms=0 duty_permille=0 ren=0 len=0 rpwm_level=0 pzem_ready=1
+[   1.203] 15:38:11.109 H6 PZEM_TRACE attempt=1 tx=0104000000067008 rx_len=8 rx=0104000000067008 chunk_count=1 chunks=8@13ms first_ms=13 last_ms=13 echo=8 frame_off=-1 frame_len=-1 slave=-1 fc=-1 count=-1 crc_ok=0 usable=0 early=0 uart_err=0 class=ECHO_ONLY
+[   1.359] 15:38:11.263 H6 PZEM_TRACE attempt=2 tx=0104000000067008 rx_len=25 rx=010400000006700801040C04AB00000000000000000000435E chunk_count=2 chunks=8@18ms,17@108ms first_ms=18 last_ms=108 echo=8 frame_off=8 frame_len=17 slave=1 fc=4 count=12 crc_ok=1 usable=1 early=1 uart_err=0 class=OK
+[   1.359] 15:38:11.263 H6 STATUS pzem=OK vbus_mv=11950 current_ma=0 power_mw=0
+# capture end 2026-10-29T15:38:18.046605+00:00 reason=timeout

@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-11-04T17:57:15.975+00:00",
+  "measurements": {
+    "default_off": true,
+    "output_stage": "ENABLED"
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W03-07"
+}

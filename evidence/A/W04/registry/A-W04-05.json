@@ -1,0 +1,151 @@
+{
+  "checks": [
+    {
+      "detail": "10",
+      "failure_reason": "NO_PRE_START_BASELINE",
+      "name": "baseline_captured",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "BASELINE_NOT_DEFAULT_OFF",
+      "name": "baseline_default_off",
+      "passed": true
+    },
+    {
+      "detail": "0.0",
+      "failure_reason": "",
+      "name": "baseline_off_current_max_a",
+      "passed": true
+    },
+    {
+      "detail": "SUPERVISED_AUTHORIZED",
+      "failure_reason": "",
+      "name": "supervise_authorized",
+      "passed": true
+    },
+    {
+      "detail": "#CG TEC event=START result=OK reason=COOLING state=COOLING fault=0x00000000 duty=500 elapsed_ms=0 remaining_ms=60100 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+      "failure_reason": "",
+      "name": "start_accepted",
+      "passed": true
+    },
+    {
+      "detail": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+      "failure_reason": "",
+      "name": "stop_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "None",
+      "failure_reason": "SAFETY_STOP_TRIGGERED:None",
+      "name": "no_safety_stop",
+      "passed": true
+    },
+    {
+      "detail": "60",
+      "failure_reason": "NO_COOLING_FRAMES",
+      "name": "cooling_frames_present",
+      "passed": true
+    },
+    {
+      "detail": "4.424",
+      "failure_reason": "",
+      "name": "current_mean_a",
+      "passed": true
+    },
+    {
+      "detail": "31.875",
+      "failure_reason": "",
+      "name": "hot_side_max_c",
+      "passed": true
+    },
+    {
+      "detail": "0",
+      "failure_reason": "FAULT_DURING_ACTUATION",
+      "name": "fault_bits_zero",
+      "passed": true
+    },
+    {
+      "detail": "60",
+      "failure_reason": "APPLIED_STATE_NEVER_ON",
+      "name": "applied_on",
+      "passed": true
+    },
+    {
+      "detail": "0.6187499999999986",
+      "failure_reason": "",
+      "name": "chamber_drop_c",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 79,
+    "boot_id": "5562b609",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T15:57:28.004+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T15:57:28.004+00:00",
+      "original": "A-W04-05",
+      "path": "evidence/A/W04/registry/measurements/A-W04-05-20261104T155727995397-9a64b6.json",
+      "sha256": "bfdb62750fdfb98a26fac9611ead4e931603926f38a2574ad0e43fa4b255e294",
+      "size": 1110,
+      "stored": "evidence/A/W04/registry/measurements/A-W04-05-20261104T155727995397-9a64b6.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "applied_on_frames": 60,
+    "baseline_mean_c": 30.05625,
+    "baseline_off_current_max_a": 0.0,
+    "chamber_drop_c": 0.6187499999999986,
+    "cooling_frames": 60,
+    "current_max_a": 4.99,
+    "current_mean_a": 4.424,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 29.4375,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 70,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 29.4375,
+    "off_current_limit_a": 0.05,
+    "power_mean_w": 52.37833333333333,
+    "safety_stop_reason": null,
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 36.02,
+    "time_constant": {
+      "limitation": "SINGLE_STEP_EMPIRICAL_PROXY_NOT_A_PHYSICAL_MODEL",
+      "method": "SLOPE_63_PERCENT",
+      "tau_s": 47.96
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T15:56:17.621+00:00",
+  "test_id": "A-W04-05",
+  "publication_provenance": {
+    "source_record_sha256": "4c923d41a6dc9a50b9206d1ebcde686efd599ffad2f0187fc03f82f771b57b56",
+    "source_capture_relative_path": "results/A-W04-05.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

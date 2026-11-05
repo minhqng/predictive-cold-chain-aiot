@@ -1,0 +1,958 @@
+[host 2026-10-29T11:08:26Z] host tool=cg_auto_reboot.py port=COM4 baud=115200 boots=0 hold_s=10.0 runtime_s=60.0 reset_method=serial_open_dtr_rts_drop
+[host 2026-10-29T11:08:26Z] port opened, dtr/rts dropped -> reset #0 expected (context segment)
+[host 2026-10-29T11:08:26Z] segment=reset_0_context record_s=2.0 note=never-counted-as-a-reboot
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x15 (USB_UART_CHIP_RESET),boot:0x8 (SPI_FAST_FLASH_BOOT)
+Saved PC:0x40378fc6
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2820,len:0x14f0
+load:0x403c8700,len:0xde4
+load:0x403cb700,len:0x2f58
+entry 0x403c8904
+I (24) boot: ESP-IDF v6.1 2nd stage bootloader
+I (24) boot: compile time Oct 29 2026 18:04:23
+I (25) boot: Multicore bootloader
+I (25) boot: chip revision: v0.2
+I (27) boot: efuse block revision: v1.3
+I (31) boot.esp32s3: Boot SPI Speed : 80MHz
+I (35) boot.esp32s3: SPI Mode       : DIO
+I (39) boot.esp32s3: SPI Flash Size : 2MB
+I (42) boot: Enabling RNG early entropy source...
+I (47) boot: Partition Table:
+I (49) boot: ## Label            Usage          Type ST Offset   Length
+I (56) boot:  0 nvs              WiFi data        01 02 00009000 00006000
+I (62) boot:  1 phy_init         RF data          01 01 0000f000 00001000
+I (69) boot:  2 factory          factory app      00 00 00010000 00100000
+I (75) boot: End of partition table
+I (79) esp_image: segment 0: paddr=00010020 vaddr=3c020020 size=0c810h ( 51216) map
+I (95) esp_image: segment 1: paddr=0001c838 vaddr=3fc91700 size=03318h ( 13080) load
+I (99) esp_image: segment 2: paddr=0001fb58 vaddr=40374000 size=004c0h (  1216) load
+I (101) esp_image: segment 3: paddr=00020020 vaddr=42000020 size=1e82ch (124972) map
+I (131) esp_image: segment 4: paddr=0003e854 vaddr=403744c0 size=0d1d0h ( 53712) load
+I (144) esp_image: segment 5: paddr=0004ba2c vaddr=50000000 size=00024h (    36) load
+I (150) boot: Loaded app from partition at offset 0x10000
+I (150) boot: Disabling RNG early entropy source...
+I (161) cpu_start: Multicore app
+I (170) cpu_start: GPIO 44 and 43 are used as console UART I/O pins
+I (171) cpu_start: Pro cpu start user code
+I (171) cpu_start: cpu freq: 160000000 Hz
+I (172) app_init: Application information:
+I (176) app_init: Project name:     coldguard_firmware
+I (181) app_init: App version:      1
+I (184) app_init: Compile time:     Oct 29 2026 18:03:49
+I (189) app_init: ELF file SHA256:  c4c78a29e...
+I (194) app_init: ESP-IDF:          v6.1
+I (197) efuse_init: Min chip rev:     v0.0
+I (201) efuse_init: Max chip rev:     v0.99 
+I (205) efuse_init: Chip rev:         v0.2
+I (209) heap_init: Initializing. RAM available for dynamic allocation:
+I (215) heap_init: At 3FC95630 len 000540E0 (336 KiB): RAM
+I (220) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM
+I (226) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM
+I (231) heap_init: At 600FE000 len 00001FE8 (7 KiB): RTCRAM
+I (237) spi_flash: detected chip: generic
+I (240) spi_flash: flash io: dio
+W (243) spi_flash: Detected size(4096k) larger than the size in the binary image header(2048k). Using the size in the binary image header.
+I (255) sleep_gpio: Configure to isolate all GPIO pins in sleep state
+I (261) sleep_gpio: Enable automatic switching of GPIO sleep configuration
+I (268) main_task: Started on CPU0
+I (268) main_task: Calling app_main()
+#CG SAFETY actuator=OFF pwm=5 en=6 len=10
+#CG LOG v=2 fw=cg-w04-0.1.0 hw=CG-HW-001 device=coldguard-001 pin_map=2 grammar=2
+#CG BOOT boot_id=cb8775eb boot_count=13
+#CG PZEM_CFG slave=1 baud=9600 framing=8N1 dir=AUTO read_only=1
+#CG DOOR_POLARITY state=UNVERIFIED raw_open_level=0
+#CG ROM role=T1 rom=287088CA00000051 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T2 rom=28AEBF2200000006 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=T3 rom=28CBE9CA00000072 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROM role=SPARE rom=283BE5C9000000A9 present=1 status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING
+#CG ROMS required_present=3/3 known=4 known_present=4
+#CG AUTH token=48f02503 ttl_ms=120000 clear_requires_token=1
+#CG TEC_LIMIT name=current_max_a state=UNRESOLVED value=0.0000 unit=A source=TEC_CONTINUOUS_RATING_NOT_ESTABLISHED
+#CG TEC_LIMIT name=voltage_max_v state=UNRESOLVED value=0.0000 unit=V source=TEC_VMAX_NOT_ESTABLISHED
+#CG TEC_LIMIT name=voltage_min_v state=UNRESOLVED value=0.0000 unit=V source=PSU_LOAD_REGULATION_NOT_MEASURED
+#CG TEC_LIMIT name=hot_side_max_c state=UNRESOLVED value=0.0000 unit=C source=HOT_SIDE_LIMIT_NOT_ESTABLISHED
+#CG TEC_LIMIT name=duty_max_permille state=UNRESOLVED value=0.0000 unit=permille source=DUTY_NOT_CHARACTERISED
+#CG TEC_LIMIT name=on_time_max_ms state=UNRESOLVED value=0.0000 unit=ms source=ON_TIME_NOT_CHARACTERISED
+#CG TEC event=BOOT result=LIMITS_UNRESOLVED reason=BOOT_SAFE_OFF state=OFF fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=0 stops=0 estops=0 faults=0 refusals=0 fan=0
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=229 elapsed_ms=229 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=nan t_inside_status=NO_DATA t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=NO_DATA current_a=nan current_status=NO_DATA power_w=nan power_status=NO_DATA pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=NO_DATA power_validity=NO_DATA raw_t1_c=nan raw_t1_status=NO_DATA raw_t2_c=nan raw_t2_status=NO_DATA raw_t3_c=nan raw_t3_status=NO_DATA raw_spare_c=nan raw_spare_status=NO_DATA
+E (548) task_wdt: esp_task_wdt_reset(707): task not found
+I (548) main_task: Returned from app_main()
+E (648) task_wdt: esp_task_wdt_reset(707): task not found
+E (748) task_wdt: esp_task_wdt_reset(707): task not found
+E (848) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM_RANGE uptime_ms=607 status=TIMEOUT value=nan profile=nan crc_ok=0 exc=0 tx=010300030001740A rx=
+E (948) task_wdt: esp_task_wdt_reset(707): task not found
+E (1048) task_wdt: esp_task_wdt_reset(707): task not found
+E (1148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG ERR msg=thermal_quality from=INVALID to=VALID
+#CG SAMPLE uptime_ms=944 seq=1 T1=29.6875 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (1248) task_wdt: esp_task_wdt_reset(707): task not found
+E (1348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=1117 seq=1 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=1 tx=0104000000067008 rx=
+E (1448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=1307 elapsed_ms=1307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.6875 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (1618) task_wdt: esp_task_wdt_reset(707): task not found
+E (1728) task_wdt: esp_task_wdt_reset(707): task not found
+E (1828) task_wdt: esp_task_wdt_reset(707): task not found
+E (1928) task_wdt: esp_task_wdt_reset(707): task not found
+E (2028) task_wdt: esp_task_wdt_reset(707): task not found
+[host 2026-10-29T11:08:28Z] segment=runtime record_s=60.0 note=no-reset-steady-cadence-capture
+E (2128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=1944 seq=2 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (2228) task_wdt: esp_task_wdt_reset(707): task not found
+E (2328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=2107 seq=2 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=2 tx=0104000000067008 rx=
+E (2428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=2287 elapsed_ms=2287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (2598) task_wdt: esp_task_wdt_reset(707): task not found
+E (2708) task_wdt: esp_task_wdt_reset(707): task not found
+E (2808) task_wdt: esp_task_wdt_reset(707): task not found
+E (2908) task_wdt: esp_task_wdt_reset(707): task not found
+E (3008) task_wdt: esp_task_wdt_reset(707): task not found
+E (3108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=2934 seq=3 T1=29.6875 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (3208) task_wdt: esp_task_wdt_reset(707): task not found
+E (3308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=3107 seq=3 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=3 tx=0104000000067008 rx=
+E (3408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=3267 elapsed_ms=3267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.6875 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (3578) task_wdt: esp_task_wdt_reset(707): task not found
+E (3688) task_wdt: esp_task_wdt_reset(707): task not found
+E (3788) task_wdt: esp_task_wdt_reset(707): task not found
+E (3888) task_wdt: esp_task_wdt_reset(707): task not found
+E (3988) task_wdt: esp_task_wdt_reset(707): task not found
+E (4088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=3934 seq=4 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (4188) task_wdt: esp_task_wdt_reset(707): task not found
+E (4288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=4107 seq=4 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=4 tx=0104000000067008 rx=
+E (4388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=4247 elapsed_ms=4247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (4558) task_wdt: esp_task_wdt_reset(707): task not found
+E (4668) task_wdt: esp_task_wdt_reset(707): task not found
+E (4768) task_wdt: esp_task_wdt_reset(707): task not found
+E (4868) task_wdt: esp_task_wdt_reset(707): task not found
+E (4968) task_wdt: esp_task_wdt_reset(707): task not found
+E (5068) task_wdt: esp_task_wdt_reset(707): task not found
+E (5168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=4934 seq=5 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (5268) task_wdt: esp_task_wdt_reset(707): task not found
+E (5288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (5288) task_wdt:  - main (CPU 0)
+E (5288) task_wdt: Tasks currently running:
+E (5288) task_wdt: CPU 0: IDLE0
+E (5288) task_wdt: CPU 1: IDLE1
+E (5288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=5107 seq=5 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=5 tx=0104000000067008 rx=
+E (5368) task_wdt: esp_task_wdt_reset(707): task not found
+E (5468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=5327 elapsed_ms=5327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (5638) task_wdt: esp_task_wdt_reset(707): task not found
+E (5748) task_wdt: esp_task_wdt_reset(707): task not found
+E (5848) task_wdt: esp_task_wdt_reset(707): task not found
+E (5948) task_wdt: esp_task_wdt_reset(707): task not found
+E (6048) task_wdt: esp_task_wdt_reset(707): task not found
+E (6148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=5934 seq=6 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (6248) task_wdt: esp_task_wdt_reset(707): task not found
+E (6348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=6107 seq=6 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=6 tx=0104000000067008 rx=
+E (6448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=6307 elapsed_ms=6307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (6618) task_wdt: esp_task_wdt_reset(707): task not found
+E (6728) task_wdt: esp_task_wdt_reset(707): task not found
+E (6828) task_wdt: esp_task_wdt_reset(707): task not found
+E (6928) task_wdt: esp_task_wdt_reset(707): task not found
+E (7028) task_wdt: esp_task_wdt_reset(707): task not found
+E (7128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=6934 seq=7 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (7228) task_wdt: esp_task_wdt_reset(707): task not found
+E (7328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=7097 seq=7 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=7 tx=0104000000067008 rx=
+E (7428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=7287 elapsed_ms=7287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (7598) task_wdt: esp_task_wdt_reset(707): task not found
+E (7708) task_wdt: esp_task_wdt_reset(707): task not found
+E (7808) task_wdt: esp_task_wdt_reset(707): task not found
+E (7908) task_wdt: esp_task_wdt_reset(707): task not found
+E (8008) task_wdt: esp_task_wdt_reset(707): task not found
+E (8108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=7934 seq=8 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (8208) task_wdt: esp_task_wdt_reset(707): task not found
+E (8308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=8107 seq=8 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=8 tx=0104000000067008 rx=
+E (8408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=8267 elapsed_ms=8267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (8578) task_wdt: esp_task_wdt_reset(707): task not found
+E (8688) task_wdt: esp_task_wdt_reset(707): task not found
+E (8788) task_wdt: esp_task_wdt_reset(707): task not found
+E (8888) task_wdt: esp_task_wdt_reset(707): task not found
+E (8988) task_wdt: esp_task_wdt_reset(707): task not found
+E (9088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=8934 seq=9 T1=29.6875 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (9188) task_wdt: esp_task_wdt_reset(707): task not found
+E (9288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=9107 seq=9 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=9 tx=0104000000067008 rx=
+E (9388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=9247 elapsed_ms=9247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.6875 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (9558) task_wdt: esp_task_wdt_reset(707): task not found
+E (9668) task_wdt: esp_task_wdt_reset(707): task not found
+E (9768) task_wdt: esp_task_wdt_reset(707): task not found
+E (9868) task_wdt: esp_task_wdt_reset(707): task not found
+E (9968) task_wdt: esp_task_wdt_reset(707): task not found
+E (10068) task_wdt: esp_task_wdt_reset(707): task not found
+E (10168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=9934 seq=10 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (10268) task_wdt: esp_task_wdt_reset(707): task not found
+E (10288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (10288) task_wdt:  - main (CPU 0)
+E (10288) task_wdt: Tasks currently running:
+E (10288) task_wdt: CPU 0: IDLE0
+E (10288) task_wdt: CPU 1: IDLE1
+E (10288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=10107 seq=10 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=10 tx=0104000000067008 rx=
+E (10368) task_wdt: esp_task_wdt_reset(707): task not found
+E (10468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=10327 elapsed_ms=10327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (10638) task_wdt: esp_task_wdt_reset(707): task not found
+E (10748) task_wdt: esp_task_wdt_reset(707): task not found
+E (10848) task_wdt: esp_task_wdt_reset(707): task not found
+E (10948) task_wdt: esp_task_wdt_reset(707): task not found
+E (11048) task_wdt: esp_task_wdt_reset(707): task not found
+E (11148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=10934 seq=11 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (11248) task_wdt: esp_task_wdt_reset(707): task not found
+E (11348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=11107 seq=11 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=11 tx=0104000000067008 rx=
+E (11448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=11307 elapsed_ms=11307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (11618) task_wdt: esp_task_wdt_reset(707): task not found
+E (11728) task_wdt: esp_task_wdt_reset(707): task not found
+E (11828) task_wdt: esp_task_wdt_reset(707): task not found
+E (11928) task_wdt: esp_task_wdt_reset(707): task not found
+E (12028) task_wdt: esp_task_wdt_reset(707): task not found
+E (12128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=11934 seq=12 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (12228) task_wdt: esp_task_wdt_reset(707): task not found
+E (12328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=12097 seq=12 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=12 tx=0104000000067008 rx=
+E (12428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=12287 elapsed_ms=12287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (12598) task_wdt: esp_task_wdt_reset(707): task not found
+E (12708) task_wdt: esp_task_wdt_reset(707): task not found
+E (12808) task_wdt: esp_task_wdt_reset(707): task not found
+E (12908) task_wdt: esp_task_wdt_reset(707): task not found
+E (13008) task_wdt: esp_task_wdt_reset(707): task not found
+E (13108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=12934 seq=13 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (13208) task_wdt: esp_task_wdt_reset(707): task not found
+E (13308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=13107 seq=13 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=13 tx=0104000000067008 rx=
+E (13408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=13267 elapsed_ms=13267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (13578) task_wdt: esp_task_wdt_reset(707): task not found
+E (13688) task_wdt: esp_task_wdt_reset(707): task not found
+E (13788) task_wdt: esp_task_wdt_reset(707): task not found
+E (13888) task_wdt: esp_task_wdt_reset(707): task not found
+E (13988) task_wdt: esp_task_wdt_reset(707): task not found
+E (14088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=13934 seq=14 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (14188) task_wdt: esp_task_wdt_reset(707): task not found
+E (14288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=14107 seq=14 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=14 tx=0104000000067008 rx=
+E (14388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=14247 elapsed_ms=14247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (14558) task_wdt: esp_task_wdt_reset(707): task not found
+E (14668) task_wdt: esp_task_wdt_reset(707): task not found
+E (14768) task_wdt: esp_task_wdt_reset(707): task not found
+E (14868) task_wdt: esp_task_wdt_reset(707): task not found
+E (14968) task_wdt: esp_task_wdt_reset(707): task not found
+E (15068) task_wdt: esp_task_wdt_reset(707): task not found
+E (15168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=14934 seq=15 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (15268) task_wdt: esp_task_wdt_reset(707): task not found
+E (15288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (15288) task_wdt:  - main (CPU 0)
+E (15288) task_wdt: Tasks currently running:
+E (15288) task_wdt: CPU 0: IDLE0
+E (15288) task_wdt: CPU 1: IDLE1
+E (15288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=15107 seq=15 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=15 tx=0104000000067008 rx=
+E (15368) task_wdt: esp_task_wdt_reset(707): task not found
+E (15468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=15327 elapsed_ms=15327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (15638) task_wdt: esp_task_wdt_reset(707): task not found
+E (15748) task_wdt: esp_task_wdt_reset(707): task not found
+E (15848) task_wdt: esp_task_wdt_reset(707): task not found
+E (15948) task_wdt: esp_task_wdt_reset(707): task not found
+E (16048) task_wdt: esp_task_wdt_reset(707): task not found
+E (16148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=15934 seq=16 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (16248) task_wdt: esp_task_wdt_reset(707): task not found
+E (16348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=16107 seq=16 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=16 tx=0104000000067008 rx=
+E (16448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=16307 elapsed_ms=16307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (16618) task_wdt: esp_task_wdt_reset(707): task not found
+E (16728) task_wdt: esp_task_wdt_reset(707): task not found
+E (16828) task_wdt: esp_task_wdt_reset(707): task not found
+E (16928) task_wdt: esp_task_wdt_reset(707): task not found
+E (17028) task_wdt: esp_task_wdt_reset(707): task not found
+E (17128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=16934 seq=17 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (17228) task_wdt: esp_task_wdt_reset(707): task not found
+E (17328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=17097 seq=17 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=17 tx=0104000000067008 rx=
+E (17428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=17287 elapsed_ms=17287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (17598) task_wdt: esp_task_wdt_reset(707): task not found
+E (17708) task_wdt: esp_task_wdt_reset(707): task not found
+E (17808) task_wdt: esp_task_wdt_reset(707): task not found
+E (17908) task_wdt: esp_task_wdt_reset(707): task not found
+E (18008) task_wdt: esp_task_wdt_reset(707): task not found
+E (18108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=17934 seq=18 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (18208) task_wdt: esp_task_wdt_reset(707): task not found
+E (18308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=18107 seq=18 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=18 tx=0104000000067008 rx=
+E (18408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=18267 elapsed_ms=18267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (18578) task_wdt: esp_task_wdt_reset(707): task not found
+E (18688) task_wdt: esp_task_wdt_reset(707): task not found
+E (18788) task_wdt: esp_task_wdt_reset(707): task not found
+E (18888) task_wdt: esp_task_wdt_reset(707): task not found
+E (18988) task_wdt: esp_task_wdt_reset(707): task not found
+E (19088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=18934 seq=19 T1=29.7500 T2=30.0625 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (19188) task_wdt: esp_task_wdt_reset(707): task not found
+E (19288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=19107 seq=19 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=19 tx=0104000000067008 rx=
+E (19388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=19247 elapsed_ms=19247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (19558) task_wdt: esp_task_wdt_reset(707): task not found
+E (19668) task_wdt: esp_task_wdt_reset(707): task not found
+E (19768) task_wdt: esp_task_wdt_reset(707): task not found
+E (19868) task_wdt: esp_task_wdt_reset(707): task not found
+E (19968) task_wdt: esp_task_wdt_reset(707): task not found
+E (20068) task_wdt: esp_task_wdt_reset(707): task not found
+E (20168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=19934 seq=20 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (20268) task_wdt: esp_task_wdt_reset(707): task not found
+E (20288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (20288) task_wdt:  - main (CPU 0)
+E (20288) task_wdt: Tasks currently running:
+E (20288) task_wdt: CPU 0: IDLE0
+E (20288) task_wdt: CPU 1: IDLE1
+E (20288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=20107 seq=20 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=20 tx=0104000000067008 rx=
+E (20368) task_wdt: esp_task_wdt_reset(707): task not found
+E (20468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=20327 elapsed_ms=20327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (20638) task_wdt: esp_task_wdt_reset(707): task not found
+E (20748) task_wdt: esp_task_wdt_reset(707): task not found
+E (20848) task_wdt: esp_task_wdt_reset(707): task not found
+E (20948) task_wdt: esp_task_wdt_reset(707): task not found
+E (21048) task_wdt: esp_task_wdt_reset(707): task not found
+E (21148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=20934 seq=21 T1=29.6875 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (21248) task_wdt: esp_task_wdt_reset(707): task not found
+E (21348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=21107 seq=21 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=21 tx=0104000000067008 rx=
+E (21448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=21307 elapsed_ms=21307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.6875 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (21618) task_wdt: esp_task_wdt_reset(707): task not found
+E (21728) task_wdt: esp_task_wdt_reset(707): task not found
+E (21828) task_wdt: esp_task_wdt_reset(707): task not found
+E (21928) task_wdt: esp_task_wdt_reset(707): task not found
+E (22028) task_wdt: esp_task_wdt_reset(707): task not found
+E (22128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=21934 seq=22 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (22228) task_wdt: esp_task_wdt_reset(707): task not found
+E (22328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=22097 seq=22 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=22 tx=0104000000067008 rx=
+E (22428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=22287 elapsed_ms=22287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (22598) task_wdt: esp_task_wdt_reset(707): task not found
+E (22708) task_wdt: esp_task_wdt_reset(707): task not found
+E (22808) task_wdt: esp_task_wdt_reset(707): task not found
+E (22908) task_wdt: esp_task_wdt_reset(707): task not found
+E (23008) task_wdt: esp_task_wdt_reset(707): task not found
+E (23108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=22934 seq=23 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (23208) task_wdt: esp_task_wdt_reset(707): task not found
+E (23308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=23107 seq=23 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=23 tx=0104000000067008 rx=
+E (23408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=23267 elapsed_ms=23267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (23578) task_wdt: esp_task_wdt_reset(707): task not found
+E (23688) task_wdt: esp_task_wdt_reset(707): task not found
+E (23788) task_wdt: esp_task_wdt_reset(707): task not found
+E (23888) task_wdt: esp_task_wdt_reset(707): task not found
+E (23988) task_wdt: esp_task_wdt_reset(707): task not found
+E (24088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=23934 seq=24 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (24188) task_wdt: esp_task_wdt_reset(707): task not found
+E (24288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=24107 seq=24 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=24 tx=0104000000067008 rx=
+E (24388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=24247 elapsed_ms=24247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (24558) task_wdt: esp_task_wdt_reset(707): task not found
+E (24668) task_wdt: esp_task_wdt_reset(707): task not found
+E (24768) task_wdt: esp_task_wdt_reset(707): task not found
+E (24868) task_wdt: esp_task_wdt_reset(707): task not found
+E (24968) task_wdt: esp_task_wdt_reset(707): task not found
+E (25068) task_wdt: esp_task_wdt_reset(707): task not found
+E (25168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=24934 seq=25 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (25268) task_wdt: esp_task_wdt_reset(707): task not found
+E (25288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (25288) task_wdt:  - main (CPU 0)
+E (25288) task_wdt: Tasks currently running:
+E (25288) task_wdt: CPU 0: IDLE0
+E (25288) task_wdt: CPU 1: IDLE1
+E (25288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=25107 seq=25 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=25 tx=0104000000067008 rx=
+E (25368) task_wdt: esp_task_wdt_reset(707): task not found
+E (25468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=25327 elapsed_ms=25327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (25638) task_wdt: esp_task_wdt_reset(707): task not found
+E (25748) task_wdt: esp_task_wdt_reset(707): task not found
+E (25848) task_wdt: esp_task_wdt_reset(707): task not found
+E (25948) task_wdt: esp_task_wdt_reset(707): task not found
+E (26048) task_wdt: esp_task_wdt_reset(707): task not found
+E (26148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=25934 seq=26 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (26248) task_wdt: esp_task_wdt_reset(707): task not found
+E (26348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=26107 seq=26 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=26 tx=0104000000067008 rx=
+E (26448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=26307 elapsed_ms=26307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (26618) task_wdt: esp_task_wdt_reset(707): task not found
+E (26728) task_wdt: esp_task_wdt_reset(707): task not found
+E (26828) task_wdt: esp_task_wdt_reset(707): task not found
+E (26928) task_wdt: esp_task_wdt_reset(707): task not found
+E (27028) task_wdt: esp_task_wdt_reset(707): task not found
+E (27128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=26934 seq=27 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (27228) task_wdt: esp_task_wdt_reset(707): task not found
+E (27328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=27097 seq=27 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=27 tx=0104000000067008 rx=
+E (27428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=27287 elapsed_ms=27287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (27598) task_wdt: esp_task_wdt_reset(707): task not found
+E (27708) task_wdt: esp_task_wdt_reset(707): task not found
+E (27808) task_wdt: esp_task_wdt_reset(707): task not found
+E (27908) task_wdt: esp_task_wdt_reset(707): task not found
+E (28008) task_wdt: esp_task_wdt_reset(707): task not found
+E (28108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=27934 seq=28 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (28208) task_wdt: esp_task_wdt_reset(707): task not found
+E (28308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=28107 seq=28 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=28 tx=0104000000067008 rx=
+E (28408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=28267 elapsed_ms=28267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (28578) task_wdt: esp_task_wdt_reset(707): task not found
+E (28688) task_wdt: esp_task_wdt_reset(707): task not found
+E (28788) task_wdt: esp_task_wdt_reset(707): task not found
+E (28888) task_wdt: esp_task_wdt_reset(707): task not found
+E (28988) task_wdt: esp_task_wdt_reset(707): task not found
+E (29088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=28934 seq=29 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (29188) task_wdt: esp_task_wdt_reset(707): task not found
+E (29288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=29107 seq=29 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=29 tx=0104000000067008 rx=
+E (29388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=29247 elapsed_ms=29247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (29558) task_wdt: esp_task_wdt_reset(707): task not found
+E (29668) task_wdt: esp_task_wdt_reset(707): task not found
+E (29768) task_wdt: esp_task_wdt_reset(707): task not found
+E (29868) task_wdt: esp_task_wdt_reset(707): task not found
+E (29968) task_wdt: esp_task_wdt_reset(707): task not found
+E (30068) task_wdt: esp_task_wdt_reset(707): task not found
+E (30168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=29934 seq=30 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (30268) task_wdt: esp_task_wdt_reset(707): task not found
+E (30288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (30288) task_wdt:  - main (CPU 0)
+E (30288) task_wdt: Tasks currently running:
+E (30288) task_wdt: CPU 0: IDLE0
+E (30288) task_wdt: CPU 1: IDLE1
+E (30288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=30107 seq=30 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=30 tx=0104000000067008 rx=
+E (30368) task_wdt: esp_task_wdt_reset(707): task not found
+E (30468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=30327 elapsed_ms=30327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (30638) task_wdt: esp_task_wdt_reset(707): task not found
+E (30748) task_wdt: esp_task_wdt_reset(707): task not found
+E (30848) task_wdt: esp_task_wdt_reset(707): task not found
+E (30948) task_wdt: esp_task_wdt_reset(707): task not found
+E (31048) task_wdt: esp_task_wdt_reset(707): task not found
+E (31148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=30934 seq=31 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (31248) task_wdt: esp_task_wdt_reset(707): task not found
+E (31348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=31107 seq=31 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=31 tx=0104000000067008 rx=
+E (31448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=31307 elapsed_ms=31307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (31618) task_wdt: esp_task_wdt_reset(707): task not found
+E (31728) task_wdt: esp_task_wdt_reset(707): task not found
+E (31828) task_wdt: esp_task_wdt_reset(707): task not found
+E (31928) task_wdt: esp_task_wdt_reset(707): task not found
+E (32028) task_wdt: esp_task_wdt_reset(707): task not found
+E (32128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=31934 seq=32 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (32228) task_wdt: esp_task_wdt_reset(707): task not found
+E (32328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=32097 seq=32 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=32 tx=0104000000067008 rx=
+E (32428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=32287 elapsed_ms=32287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (32598) task_wdt: esp_task_wdt_reset(707): task not found
+E (32708) task_wdt: esp_task_wdt_reset(707): task not found
+E (32808) task_wdt: esp_task_wdt_reset(707): task not found
+E (32908) task_wdt: esp_task_wdt_reset(707): task not found
+E (33008) task_wdt: esp_task_wdt_reset(707): task not found
+E (33108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=32934 seq=33 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (33208) task_wdt: esp_task_wdt_reset(707): task not found
+E (33308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=33107 seq=33 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=33 tx=0104000000067008 rx=
+E (33408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=33267 elapsed_ms=33267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (33578) task_wdt: esp_task_wdt_reset(707): task not found
+E (33688) task_wdt: esp_task_wdt_reset(707): task not found
+E (33788) task_wdt: esp_task_wdt_reset(707): task not found
+E (33888) task_wdt: esp_task_wdt_reset(707): task not found
+E (33988) task_wdt: esp_task_wdt_reset(707): task not found
+E (34088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=33934 seq=34 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (34188) task_wdt: esp_task_wdt_reset(707): task not found
+E (34288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=34107 seq=34 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=34 tx=0104000000067008 rx=
+E (34388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=34247 elapsed_ms=34247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (34558) task_wdt: esp_task_wdt_reset(707): task not found
+E (34668) task_wdt: esp_task_wdt_reset(707): task not found
+E (34768) task_wdt: esp_task_wdt_reset(707): task not found
+E (34868) task_wdt: esp_task_wdt_reset(707): task not found
+E (34968) task_wdt: esp_task_wdt_reset(707): task not found
+E (35068) task_wdt: esp_task_wdt_reset(707): task not found
+E (35168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=34934 seq=35 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (35268) task_wdt: esp_task_wdt_reset(707): task not found
+E (35288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (35288) task_wdt:  - main (CPU 0)
+E (35288) task_wdt: Tasks currently running:
+E (35288) task_wdt: CPU 0: IDLE0
+E (35288) task_wdt: CPU 1: IDLE1
+E (35288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=35107 seq=35 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=35 tx=0104000000067008 rx=
+E (35368) task_wdt: esp_task_wdt_reset(707): task not found
+E (35468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=35327 elapsed_ms=35327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (35638) task_wdt: esp_task_wdt_reset(707): task not found
+E (35748) task_wdt: esp_task_wdt_reset(707): task not found
+E (35848) task_wdt: esp_task_wdt_reset(707): task not found
+E (35948) task_wdt: esp_task_wdt_reset(707): task not found
+E (36048) task_wdt: esp_task_wdt_reset(707): task not found
+E (36148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=35934 seq=36 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (36248) task_wdt: esp_task_wdt_reset(707): task not found
+E (36348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=36107 seq=36 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=36 tx=0104000000067008 rx=
+E (36448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=36307 elapsed_ms=36307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (36618) task_wdt: esp_task_wdt_reset(707): task not found
+E (36728) task_wdt: esp_task_wdt_reset(707): task not found
+E (36828) task_wdt: esp_task_wdt_reset(707): task not found
+E (36928) task_wdt: esp_task_wdt_reset(707): task not found
+E (37028) task_wdt: esp_task_wdt_reset(707): task not found
+E (37128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=36934 seq=37 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (37228) task_wdt: esp_task_wdt_reset(707): task not found
+E (37328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=37097 seq=37 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=37 tx=0104000000067008 rx=
+E (37428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=37287 elapsed_ms=37287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (37598) task_wdt: esp_task_wdt_reset(707): task not found
+E (37708) task_wdt: esp_task_wdt_reset(707): task not found
+E (37808) task_wdt: esp_task_wdt_reset(707): task not found
+E (37908) task_wdt: esp_task_wdt_reset(707): task not found
+E (38008) task_wdt: esp_task_wdt_reset(707): task not found
+E (38108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=37934 seq=38 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (38208) task_wdt: esp_task_wdt_reset(707): task not found
+E (38308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=38107 seq=38 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=38 tx=0104000000067008 rx=
+E (38408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=38267 elapsed_ms=38267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (38578) task_wdt: esp_task_wdt_reset(707): task not found
+E (38688) task_wdt: esp_task_wdt_reset(707): task not found
+E (38788) task_wdt: esp_task_wdt_reset(707): task not found
+E (38888) task_wdt: esp_task_wdt_reset(707): task not found
+E (38988) task_wdt: esp_task_wdt_reset(707): task not found
+E (39088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=38934 seq=39 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (39188) task_wdt: esp_task_wdt_reset(707): task not found
+E (39288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=39107 seq=39 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=39 tx=0104000000067008 rx=
+E (39388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=39247 elapsed_ms=39247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (39558) task_wdt: esp_task_wdt_reset(707): task not found
+E (39668) task_wdt: esp_task_wdt_reset(707): task not found
+E (39768) task_wdt: esp_task_wdt_reset(707): task not found
+E (39868) task_wdt: esp_task_wdt_reset(707): task not found
+E (39968) task_wdt: esp_task_wdt_reset(707): task not found
+E (40068) task_wdt: esp_task_wdt_reset(707): task not found
+E (40168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=39934 seq=40 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (40268) task_wdt: esp_task_wdt_reset(707): task not found
+E (40288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (40288) task_wdt:  - main (CPU 0)
+E (40288) task_wdt: Tasks currently running:
+E (40288) task_wdt: CPU 0: IDLE0
+E (40288) task_wdt: CPU 1: IDLE1
+E (40288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=40107 seq=40 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=40 tx=0104000000067008 rx=
+E (40368) task_wdt: esp_task_wdt_reset(707): task not found
+E (40468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=40327 elapsed_ms=40327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (40638) task_wdt: esp_task_wdt_reset(707): task not found
+E (40748) task_wdt: esp_task_wdt_reset(707): task not found
+E (40848) task_wdt: esp_task_wdt_reset(707): task not found
+E (40948) task_wdt: esp_task_wdt_reset(707): task not found
+E (41048) task_wdt: esp_task_wdt_reset(707): task not found
+E (41148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=40934 seq=41 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (41248) task_wdt: esp_task_wdt_reset(707): task not found
+E (41348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=41107 seq=41 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=41 tx=0104000000067008 rx=
+E (41448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=41307 elapsed_ms=41307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (41618) task_wdt: esp_task_wdt_reset(707): task not found
+E (41728) task_wdt: esp_task_wdt_reset(707): task not found
+E (41828) task_wdt: esp_task_wdt_reset(707): task not found
+E (41928) task_wdt: esp_task_wdt_reset(707): task not found
+E (42028) task_wdt: esp_task_wdt_reset(707): task not found
+E (42128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=41934 seq=42 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (42228) task_wdt: esp_task_wdt_reset(707): task not found
+E (42328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=42097 seq=42 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=42 tx=0104000000067008 rx=
+E (42428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=42287 elapsed_ms=42287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (42598) task_wdt: esp_task_wdt_reset(707): task not found
+E (42708) task_wdt: esp_task_wdt_reset(707): task not found
+E (42808) task_wdt: esp_task_wdt_reset(707): task not found
+E (42908) task_wdt: esp_task_wdt_reset(707): task not found
+E (43008) task_wdt: esp_task_wdt_reset(707): task not found
+E (43108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=42934 seq=43 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (43208) task_wdt: esp_task_wdt_reset(707): task not found
+E (43308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=43107 seq=43 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=43 tx=0104000000067008 rx=
+E (43408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=43267 elapsed_ms=43267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (43578) task_wdt: esp_task_wdt_reset(707): task not found
+E (43688) task_wdt: esp_task_wdt_reset(707): task not found
+E (43788) task_wdt: esp_task_wdt_reset(707): task not found
+E (43888) task_wdt: esp_task_wdt_reset(707): task not found
+E (43988) task_wdt: esp_task_wdt_reset(707): task not found
+E (44088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=43934 seq=44 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (44188) task_wdt: esp_task_wdt_reset(707): task not found
+E (44288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=44107 seq=44 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=44 tx=0104000000067008 rx=
+E (44388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=44247 elapsed_ms=44247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (44558) task_wdt: esp_task_wdt_reset(707): task not found
+E (44668) task_wdt: esp_task_wdt_reset(707): task not found
+E (44768) task_wdt: esp_task_wdt_reset(707): task not found
+E (44868) task_wdt: esp_task_wdt_reset(707): task not found
+E (44968) task_wdt: esp_task_wdt_reset(707): task not found
+E (45068) task_wdt: esp_task_wdt_reset(707): task not found
+E (45168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=44934 seq=45 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.7500 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (45268) task_wdt: esp_task_wdt_reset(707): task not found
+E (45288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (45288) task_wdt:  - main (CPU 0)
+E (45288) task_wdt: Tasks currently running:
+E (45288) task_wdt: CPU 0: IDLE0
+E (45288) task_wdt: CPU 1: IDLE1
+E (45288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=45107 seq=45 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=45 tx=0104000000067008 rx=
+E (45368) task_wdt: esp_task_wdt_reset(707): task not found
+E (45468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=45327 elapsed_ms=45327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.7500 raw_spare_status=OK
+E (45638) task_wdt: esp_task_wdt_reset(707): task not found
+E (45748) task_wdt: esp_task_wdt_reset(707): task not found
+E (45848) task_wdt: esp_task_wdt_reset(707): task not found
+E (45948) task_wdt: esp_task_wdt_reset(707): task not found
+E (46048) task_wdt: esp_task_wdt_reset(707): task not found
+E (46148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=45934 seq=46 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (46248) task_wdt: esp_task_wdt_reset(707): task not found
+E (46348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=46107 seq=46 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=46 tx=0104000000067008 rx=
+E (46448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=46307 elapsed_ms=46307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (46618) task_wdt: esp_task_wdt_reset(707): task not found
+E (46728) task_wdt: esp_task_wdt_reset(707): task not found
+E (46828) task_wdt: esp_task_wdt_reset(707): task not found
+E (46928) task_wdt: esp_task_wdt_reset(707): task not found
+E (47028) task_wdt: esp_task_wdt_reset(707): task not found
+E (47128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=46934 seq=47 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (47228) task_wdt: esp_task_wdt_reset(707): task not found
+E (47328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=47097 seq=47 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=47 tx=0104000000067008 rx=
+E (47428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=47287 elapsed_ms=47287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (47598) task_wdt: esp_task_wdt_reset(707): task not found
+E (47708) task_wdt: esp_task_wdt_reset(707): task not found
+E (47808) task_wdt: esp_task_wdt_reset(707): task not found
+E (47908) task_wdt: esp_task_wdt_reset(707): task not found
+E (48008) task_wdt: esp_task_wdt_reset(707): task not found
+E (48108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=47934 seq=48 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (48208) task_wdt: esp_task_wdt_reset(707): task not found
+E (48308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=48107 seq=48 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=48 tx=0104000000067008 rx=
+E (48408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=48267 elapsed_ms=48267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (48578) task_wdt: esp_task_wdt_reset(707): task not found
+E (48688) task_wdt: esp_task_wdt_reset(707): task not found
+E (48788) task_wdt: esp_task_wdt_reset(707): task not found
+E (48888) task_wdt: esp_task_wdt_reset(707): task not found
+E (48988) task_wdt: esp_task_wdt_reset(707): task not found
+E (49088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=48934 seq=49 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (49188) task_wdt: esp_task_wdt_reset(707): task not found
+E (49288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=49107 seq=49 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=49 tx=0104000000067008 rx=
+E (49388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=49247 elapsed_ms=49247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (49558) task_wdt: esp_task_wdt_reset(707): task not found
+E (49668) task_wdt: esp_task_wdt_reset(707): task not found
+E (49768) task_wdt: esp_task_wdt_reset(707): task not found
+E (49868) task_wdt: esp_task_wdt_reset(707): task not found
+E (49968) task_wdt: esp_task_wdt_reset(707): task not found
+E (50068) task_wdt: esp_task_wdt_reset(707): task not found
+E (50168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=49934 seq=50 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (50268) task_wdt: esp_task_wdt_reset(707): task not found
+E (50288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (50288) task_wdt:  - main (CPU 0)
+E (50288) task_wdt: Tasks currently running:
+E (50288) task_wdt: CPU 0: IDLE0
+E (50288) task_wdt: CPU 1: IDLE1
+E (50288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=50107 seq=50 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=50 tx=0104000000067008 rx=
+E (50368) task_wdt: esp_task_wdt_reset(707): task not found
+E (50468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=50327 elapsed_ms=50327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (50638) task_wdt: esp_task_wdt_reset(707): task not found
+E (50748) task_wdt: esp_task_wdt_reset(707): task not found
+E (50848) task_wdt: esp_task_wdt_reset(707): task not found
+E (50948) task_wdt: esp_task_wdt_reset(707): task not found
+E (51048) task_wdt: esp_task_wdt_reset(707): task not found
+E (51148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=50934 seq=51 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (51248) task_wdt: esp_task_wdt_reset(707): task not found
+E (51348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=51107 seq=51 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=51 tx=0104000000067008 rx=
+E (51448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=51307 elapsed_ms=51307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (51618) task_wdt: esp_task_wdt_reset(707): task not found
+E (51728) task_wdt: esp_task_wdt_reset(707): task not found
+E (51828) task_wdt: esp_task_wdt_reset(707): task not found
+E (51928) task_wdt: esp_task_wdt_reset(707): task not found
+E (52028) task_wdt: esp_task_wdt_reset(707): task not found
+E (52128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=51934 seq=52 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (52228) task_wdt: esp_task_wdt_reset(707): task not found
+E (52328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=52097 seq=52 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=52 tx=0104000000067008 rx=
+E (52428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=52287 elapsed_ms=52287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (52598) task_wdt: esp_task_wdt_reset(707): task not found
+E (52708) task_wdt: esp_task_wdt_reset(707): task not found
+E (52808) task_wdt: esp_task_wdt_reset(707): task not found
+E (52908) task_wdt: esp_task_wdt_reset(707): task not found
+E (53008) task_wdt: esp_task_wdt_reset(707): task not found
+E (53108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=52934 seq=53 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (53208) task_wdt: esp_task_wdt_reset(707): task not found
+E (53308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=53107 seq=53 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=53 tx=0104000000067008 rx=
+E (53408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=53267 elapsed_ms=53267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (53578) task_wdt: esp_task_wdt_reset(707): task not found
+E (53688) task_wdt: esp_task_wdt_reset(707): task not found
+E (53788) task_wdt: esp_task_wdt_reset(707): task not found
+E (53888) task_wdt: esp_task_wdt_reset(707): task not found
+E (53988) task_wdt: esp_task_wdt_reset(707): task not found
+E (54088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=53934 seq=54 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (54188) task_wdt: esp_task_wdt_reset(707): task not found
+E (54288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=54107 seq=54 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=54 tx=0104000000067008 rx=
+E (54388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=54247 elapsed_ms=54247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (54558) task_wdt: esp_task_wdt_reset(707): task not found
+E (54668) task_wdt: esp_task_wdt_reset(707): task not found
+E (54768) task_wdt: esp_task_wdt_reset(707): task not found
+E (54868) task_wdt: esp_task_wdt_reset(707): task not found
+E (54968) task_wdt: esp_task_wdt_reset(707): task not found
+E (55068) task_wdt: esp_task_wdt_reset(707): task not found
+E (55168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=54934 seq=55 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (55268) task_wdt: esp_task_wdt_reset(707): task not found
+E (55288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (55288) task_wdt:  - main (CPU 0)
+E (55288) task_wdt: Tasks currently running:
+E (55288) task_wdt: CPU 0: IDLE0
+E (55288) task_wdt: CPU 1: IDLE1
+E (55288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=55107 seq=55 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=55 tx=0104000000067008 rx=
+E (55368) task_wdt: esp_task_wdt_reset(707): task not found
+E (55468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=55327 elapsed_ms=55327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (55638) task_wdt: esp_task_wdt_reset(707): task not found
+E (55748) task_wdt: esp_task_wdt_reset(707): task not found
+E (55848) task_wdt: esp_task_wdt_reset(707): task not found
+E (55948) task_wdt: esp_task_wdt_reset(707): task not found
+E (56048) task_wdt: esp_task_wdt_reset(707): task not found
+E (56148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=55934 seq=56 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (56248) task_wdt: esp_task_wdt_reset(707): task not found
+E (56348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=56107 seq=56 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=56 tx=0104000000067008 rx=
+E (56448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=56307 elapsed_ms=56307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (56618) task_wdt: esp_task_wdt_reset(707): task not found
+E (56728) task_wdt: esp_task_wdt_reset(707): task not found
+E (56828) task_wdt: esp_task_wdt_reset(707): task not found
+E (56928) task_wdt: esp_task_wdt_reset(707): task not found
+E (57028) task_wdt: esp_task_wdt_reset(707): task not found
+E (57128) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=56934 seq=57 T1=29.7500 T2=30.1250 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (57228) task_wdt: esp_task_wdt_reset(707): task not found
+E (57328) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=57097 seq=57 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=57 tx=0104000000067008 rx=
+E (57428) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=57287 elapsed_ms=57287 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (57598) task_wdt: esp_task_wdt_reset(707): task not found
+E (57708) task_wdt: esp_task_wdt_reset(707): task not found
+E (57808) task_wdt: esp_task_wdt_reset(707): task not found
+E (57908) task_wdt: esp_task_wdt_reset(707): task not found
+E (58008) task_wdt: esp_task_wdt_reset(707): task not found
+E (58108) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=57934 seq=58 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (58208) task_wdt: esp_task_wdt_reset(707): task not found
+E (58308) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=58107 seq=58 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=58 tx=0104000000067008 rx=
+E (58408) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=58267 elapsed_ms=58267 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (58578) task_wdt: esp_task_wdt_reset(707): task not found
+E (58688) task_wdt: esp_task_wdt_reset(707): task not found
+E (58788) task_wdt: esp_task_wdt_reset(707): task not found
+E (58888) task_wdt: esp_task_wdt_reset(707): task not found
+E (58988) task_wdt: esp_task_wdt_reset(707): task not found
+E (59088) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=58934 seq=59 T1=29.7500 T2=30.0625 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (59188) task_wdt: esp_task_wdt_reset(707): task not found
+E (59288) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=59107 seq=59 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=59 tx=0104000000067008 rx=
+E (59388) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=59247 elapsed_ms=59247 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (59558) task_wdt: esp_task_wdt_reset(707): task not found
+E (59668) task_wdt: esp_task_wdt_reset(707): task not found
+E (59768) task_wdt: esp_task_wdt_reset(707): task not found
+E (59868) task_wdt: esp_task_wdt_reset(707): task not found
+E (59968) task_wdt: esp_task_wdt_reset(707): task not found
+E (60068) task_wdt: esp_task_wdt_reset(707): task not found
+E (60168) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=59934 seq=60 T1=29.7500 T2=30.1250 T3=29.4375 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (60268) task_wdt: esp_task_wdt_reset(707): task not found
+E (60288) task_wdt: Task watchdog got triggered. The following tasks/users did not reset the watchdog in time:
+E (60288) task_wdt:  - main (CPU 0)
+E (60288) task_wdt: Tasks currently running:
+E (60288) task_wdt: CPU 0: IDLE0
+E (60288) task_wdt: CPU 1: IDLE1
+E (60288) task_wdt: Print CPU 0 (current core) backtrace
+
+
+Backtrace: 0x420168D6:0x3FC92B70 0x42016CE8:0x3FC92B90 0x40376F41:0x3FC92BC0 0x40378FC3:0x3FC98700 0x4201BD36:0x3FC98720 0x4201CF2E:0x3FC98740 0x4201C3DA:0x3FC98760
+
+#CG PZEM uptime_ms=60107 seq=60 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=60 tx=0104000000067008 rx=
+E (60368) task_wdt: esp_task_wdt_reset(707): task not found
+E (60468) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=60327 elapsed_ms=60327 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.1250 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.1250 raw_t2_status=OK raw_t3_c=29.4375 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (60638) task_wdt: esp_task_wdt_reset(707): task not found
+E (60748) task_wdt: esp_task_wdt_reset(707): task not found
+E (60848) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM_RANGE uptime_ms=60617 status=TIMEOUT value=nan profile=nan crc_ok=0 exc=0 tx=010300030001740A rx=
+E (60948) task_wdt: esp_task_wdt_reset(707): task not found
+E (61048) task_wdt: esp_task_wdt_reset(707): task not found
+E (61148) task_wdt: esp_task_wdt_reset(707): task not found
+#CG SAMPLE uptime_ms=60934 seq=61 T1=29.7500 T2=30.0625 T3=29.5000 SPARE=29.8125 t1=1 t2=1 t3=1 thermal=VALID door_raw=1 door=UNVERIFIED
+E (61248) task_wdt: esp_task_wdt_reset(707): task not found
+E (61348) task_wdt: esp_task_wdt_reset(707): task not found
+#CG PZEM uptime_ms=61117 seq=61 status=TIMEOUT slave=1 v=nan i=nan p=nan e=nan crc_ok=0 attempts=2 exc=0 ok=0 fail=61 tx=0104000000067008 rx=
+E (61448) task_wdt: esp_task_wdt_reset(707): task not found
+#CG TELEM schema=1 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=61307 elapsed_ms=61307 run_elapsed_ms=0 run_id=UNSET boot_id=cb8775eb boot_count=13 firmware_version=cg-w04-0.1.0 hardware_config_id=CG-HW-001 test_phase=UNSET t_inside_c=30.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=nan voltage_status=INVALID current_a=nan current_status=INVALID power_w=nan power_status=INVALID pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=INVALID raw_t1_c=29.7500 raw_t1_status=OK raw_t2_c=30.0625 raw_t2_status=OK raw_t3_c=29.5000 raw_t3_status=OK raw_spare_c=29.8125 raw_spare_status=OK
+E (61618) task_wdt: esp_task_wdt_reset(707): task not found
+E (61728) task_wdt: esp_task_wdt_reset(707): task not found
+E (61828) task_wdt: esp_task_wdt_reset(707): task not found
+E (61928) task_wdt: esp_task_wdt_reset(707): task not found
+E (62028) task_wdt: esp_task_wdt_reset(707): task not found
+E (62128) task_wdt: esp_task_wdt_reset(707): task not found
+[host 2026-10-29T11:09:28Z] segment=runtime device_lines=854 io_errors=0
+[host 2026-10-29T11:09:28Z] port closed

@@ -1,0 +1,12 @@
+H6 pre-flash partition table read-back
+source: flash offset 0x8000, length 0x1000
+
+sha256(first 0xC00 bytes) = 7f00b6c042a89b15b0cac534f82ed988caf29278ff5700b0c511eb1b5bb7c820
+sha256(full 0x1000 bytes) = b9118aa3840f7c042a4dea8dae339d07a6e69f3716102174cc87b18046276295
+
+entry 0: type=data(0x01) subtype=nvs(0x02) offset=0x009000 size=0x006000 (24 KiB) label='nvs' flags=0x00000000
+entry 1: type=data(0x01) subtype=phy(0x01) offset=0x00F000 size=0x001000 (4 KiB) label='phy_init' flags=0x00000000
+entry 2: type=app(0x00) subtype=factory(0x00) offset=0x010000 size=0x100000 (1024 KiB) label='factory' flags=0x00000000
+entry 3: MD5 checksum entry, value=f4ad4f4538564b5d7435b62c75b69524
+
+md5_entry_present=True

@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Current path passes through the shunt in the intended direction",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Both shunt terminals are mechanically secure",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:No signal wire or jumper carries TEC current",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Shunt marking reads 50 A / 75 mV (FL-2 0.5 or equivalent)",
+      "passed": true
+    },
+    {
+      "detail": "4/4 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "2/1 files (imported=2)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T09:30:57.256+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.711+00:00",
+      "sha256": "fa0e25f36b65ca6768765306246eae8138e21b421a1067fa9750f76859cd7de3",
+      "size": 5753,
+      "source_path": "evidence/A/W03/hardware-2026-10-27/shunt-continuity.md",
+      "stored": "evidence/A/W03/hardware-2026-10-27/shunt-continuity.md",
+      "test_id": "A-W03-06"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.720+00:00",
+      "sha256": "9991e27915e0851965c5ec0d00238b2cb279547d6408ceb0fc57b51468abbab5",
+      "size": 142870,
+      "source_path": "evidence/A/W01/photos/18-shunt-marking-actual.jpg",
+      "stored": "evidence/A/W01/photos/18-shunt-marking-actual.jpg",
+      "test_id": "A-W03-06"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "imported authoritative W01-W04 evidence; no new physical inspection",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T09:30:57.256+00:00",
+  "test_id": "A-W03-06",
+  "publication_provenance": {
+    "source_record_sha256": "22027d9d8a68d4560fbbfc6794d37293e9d485ac127f69ab8f565c8e3a903aa4",
+    "source_capture_relative_path": "results/A-W03-06.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+    "excluded_supporting_artifacts": []
+  }
+}

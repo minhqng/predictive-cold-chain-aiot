@@ -1,0 +1,29 @@
+IDF PowerShell Environment
+-------------------------
+Environment variables set:
+IDF_PATH: C:\Espressif\v6.1\esp-idf
+IDF_TOOLS_PATH: C:\Espressif\tools
+IDF_PYTHON_ENV_PATH: C:\Espressif\tools\python\v6.1\venv
+
+Custom commands available:
+idf.py - Use this to run IDF commands (e.g., idf.py build)
+esptool.py
+espefuse.py
+espsecure.py
+otatool.py
+parttool.py
+
+Python environment activated.
+You can now use IDF commands and Python tools.
+eim select v6.1
+Your environment is not configured to handle Unicode characters.
+
+Recommended fix (persistent):
+ - Enable "Beta: Use Unicode UTF-8 for worldwide language support" in Windows language/region settings.
+
+If you still see issues or this warning persists, you can also try one of these workarounds:
+ - Run "chcp 65001" in the current console before running idf.py.
+ - Set PYTHONUTF8=1 before running idf.py (or set it globally).
+
+Note: "chcp 65001" must be run in each new console session unless your console/profile is configured to apply it automatically.
+ESP-IDF v6.1

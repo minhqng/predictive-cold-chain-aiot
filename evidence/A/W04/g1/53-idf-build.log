@@ -1,0 +1,80 @@
+IDF PowerShell Environment
+-------------------------
+Environment variables set:
+IDF_PATH: C:\Espressif\v6.1\esp-idf
+IDF_TOOLS_PATH: C:\Espressif\tools
+IDF_PYTHON_ENV_PATH: C:\Espressif\tools\python\v6.1\venv
+
+Custom commands available:
+idf.py - Use this to run IDF commands (e.g., idf.py build)
+esptool.py
+espefuse.py
+espsecure.py
+otatool.py
+parttool.py
+
+Python environment activated.
+You can now use IDF commands and Python tools.
+eim select v6.1
+[1/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/app_main.c.obj
+[2/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_rom_map.c.obj
+[3/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_onewire.c.obj
+[4/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_ds18b20.c.obj
+[5/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_door.c.obj
+[6/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_safety.c.obj
+[7/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_log.c.obj
+[8/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_crc16.c.obj
+[9/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_pzem.c.obj
+[10/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_rs485.c.obj
+[11/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_power.c.obj
+[12/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_actuator.c.obj
+[13/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_tec_limits.c.obj
+[14/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_tec_control.c.obj
+[15/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_tec_hw.c.obj
+[16/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_tec_command.c.obj
+[17/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_snapshot.c.obj
+[18/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_telemetry.c.obj
+[19/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_console.c.obj
+[20/28] Performing build step for 'bootloader'
+[1/1] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\dlbac\Downloads\coldguard-repo\_w04-g1-evidence\fw-build\firmware\build\bootloader && C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe C:/Espressif/v6.1/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/fw-build/firmware/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5280 bytes. 0x2d80 bytes (36%) free.
+[21/28] No install step for 'bootloader'
+[22/28] Completed 'bootloader'
+[23/28] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/cg_commission.c.obj
+[24/28] Linking C static library esp-idf\main\libmain.a
+[25/28] Generating esp-idf/esp_system/ld/sections.ld
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/host/nimble/Kconfig.in:1428: BT_NIMBLE_MESH_PROVISIONER: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/fatfs/Kconfig:240: FATFS_PRINT_LLI: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/fatfs/Kconfig:245: FATFS_PRINT_FLOAT: 'default 0' is not a valid bool value (only 'y' and 'n' are allowed). Value is treated as 'n'.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bootloader/Kconfig.projbuild:383: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bootloader/Kconfig.projbuild:423: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/common/Kconfig.in:136: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/host/nimble/Kconfig.in:1023: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/bt/controller/esp32c3/Kconfig.in:652: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_hw_support\./lowpower/port/esp32p4/Kconfig.p4_rev3_mspi_workaround:6: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_mm/Kconfig:20: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/esp_system\./port/soc/esp32s3/Kconfig.memory:21: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+NOTE: C:/Espressif/v6.1/esp-idf/components/openthread/Kconfig:106: Deprecation notice: hex literal '0' without '0x' prefix detected. In the next major version, hex literals will be required to have a '0x' prefix.
+Skipping linker fragment parsing, fragment files unchanged
+[26/28] Linking CXX executable coldguard_firmware.elf
+[27/28] Generating binary image from built executable
+esptool v5.6.0
+Creating ESP32-S3 image...
+Merged 3 ELF sections.
+Successfully created ESP32-S3 image.
+Generated C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/fw-build/firmware/build/coldguard_firmware.bin
+[28/28] C:\WINDOWS\system32\cmd.exe /C "cd /D C:\Users\dlbac\Downloads\coldguard-repo\_w04-g1-evidence\fw-build\firmware\build && C:\Espressif\tools\python\v6.1\venv\Scripts\python.exe C:/Espressif/v6.1/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/fw-build/firmware/build/partition_table/partition-table.bin C:/Users/dlbac/Downloads/coldguard-repo/_w04-g1-evidence/fw-build/firmware/build/coldguard_firmware.bin"
+coldguard_firmware.bin binary size 0x3bae0 bytes. Smallest app partition is 0x100000 bytes. 0xc4520 bytes (77%) free.
+Executing action: all (aliases: build)
+Running ninja in directory C:\Users\dlbac\Downloads\coldguard-repo\_w04-g1-evidence\fw-build\firmware\build
+Executing "ninja all"...
+
+Project build complete. To flash, run:
+ idf.py flash
+or
+ idf.py -p PORT flash
+or
+ python -m esptool --chip esp32s3 -b 460800 --before default-reset --after hard-reset write-flash --flash-mode dio --flash-size 2MB --flash-freq 80m 0x0 build\bootloader\bootloader.bin 0x8000 build\partition_table\partition-table.bin 0x10000 build\coldguard_firmware.bin
+or from the "C:\Users\dlbac\Downloads\coldguard-repo\_w04-g1-evidence\fw-build\firmware\build" directory
+ python -m esptool --chip esp32s3 -b 460800 --before default-reset --after hard-reset write-flash "@flash_args"
+BUILD_EXIT=0

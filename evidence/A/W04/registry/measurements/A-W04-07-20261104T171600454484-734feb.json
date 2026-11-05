@@ -1,0 +1,33 @@
+{
+  "captured_at": "2026-11-04T17:16:00.454+00:00",
+  "measurements": {
+    "applied_on_frames": 60,
+    "baseline_mean_c": 30.05625,
+    "baseline_off_current_max_a": 0.0,
+    "chamber_drop_c": 0.6187499999999986,
+    "cooling_frames": 60,
+    "current_max_a": 4.99,
+    "current_mean_a": 4.424,
+    "electrical_delay_s": 1.02,
+    "end_chamber_c": 29.4375,
+    "fan_on_all": true,
+    "fault_bits_max": 0,
+    "frames": 70,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "min_chamber_c": 29.4375,
+    "off_current_limit_a": 0.05,
+    "power_mean_w": 52.37833333333333,
+    "safety_stop_reason": null,
+    "stop_event": "#CG TEC event=STOP result=STOPPED reason=STOP_NOOP state=COOLDOWN fault=0x00000000 duty=0 elapsed_ms=0 remaining_ms=0 starts=1 stops=0 estops=0 faults=0 refusals=0 fan=1",
+    "thermal_delay_s": 36.02,
+    "time_constant": {
+      "limitation": "SINGLE_STEP_EMPIRICAL_PROXY_NOT_A_PHYSICAL_MODEL",
+      "method": "SLOPE_63_PERCENT",
+      "tau_s": 47.96
+    }
+  },
+  "repetitions": [],
+  "source": "DERIVED",
+  "test_id": "A-W04-07"
+}

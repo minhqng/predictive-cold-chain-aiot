@@ -1,0 +1,10 @@
+{
+  "captured_at": "2026-11-04T15:53:31.969+00:00",
+  "measurements": {
+    "baseline_off_current_max_a": 0.0,
+    "off_current_limit_a": 0.05
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W04-05"
+}
