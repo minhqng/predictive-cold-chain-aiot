@@ -259,7 +259,7 @@
     {
       "dest": "evidence/A/W07/registry/A-W07-04.json",
       "source_sha256": "a50678101f74440b268beed8147d746be53485bb812129c24728e770623cdfc6",
-      "published_sha256": "fdf1d55133e0a0a9f7210260851749bdcaa88025c43a792524dd90f6e861b01d",
+      "published_sha256": "ba21ee6f1d281e42f8f14a4fb7dcac34a42f1b5c4c571717b5ad680ed1c2caa0",
       "source_capture_path": "results/A-W07-04.json",
       "source_bytes": 2640,
       "bytes": 6637,
