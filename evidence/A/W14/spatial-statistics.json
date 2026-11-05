@@ -1,0 +1,686 @@
+{
+  "air_roles": [
+    "CHAMBER_CENTER",
+    "CHAMBER_BOTTOM",
+    "CHAMBER_NEAR_DOOR"
+  ],
+  "air_terms": [
+    "t1_c",
+    "t3_c",
+    "t4_c"
+  ],
+  "captures": [
+    {
+      "boot_ids": [
+        "56044b74"
+      ],
+      "capture": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "class": "THERMAL_RESPONSE",
+      "disturbance_response": {
+        "boot_ids": [
+          "56044b74"
+        ],
+        "evidence": {
+          "confirmed_closed_rows": 940,
+          "door_open_token_tally": {
+            "0": 940,
+            "UNKNOWN": 17
+          },
+          "open_rows": 0,
+          "rows": 957,
+          "unknowable_rows": 17
+        },
+        "independent_sessions": 1,
+        "min_sessions_required": 3,
+        "reason": "no door-open transition exists in the capture: the field is never OPEN, so there is no applied disturbance whose spatial response could be measured. Estimating one would be inventing a physical event.",
+        "status": "NOT_COMPUTABLE",
+        "what_would_make_it_computable": "a supervised session that opens the door to a recorded extent and holds it for a bounded window, with door_polarity CONFIRMED on the open rows, repeated at least the required number of times"
+      },
+      "electrical_status_note": "current/voltage status cells are empty and power/energy have no status column in this capture, so no electrical figure here is status-checked (W07 counts the same rows unqualified)",
+      "independent_sessions": 1,
+      "phases": {
+        "baseline": {
+          "air_gradient": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": false,
+            "max_pairwise_difference_c": 0.438,
+            "pairs": {
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.375,
+                "max_abs_device_ms": "127894",
+                "max_c": 0.375,
+                "mean_c": 0.3285,
+                "min_c": 0.25,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0348,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.063,
+                "max_abs_device_ms": "49894",
+                "max_c": 0.0,
+                "mean_c": -0.0338,
+                "min_c": -0.063,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0313,
+                "sign_consistency_fraction": 0.5398,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.438,
+                "max_abs_device_ms": "200894",
+                "max_c": -0.312,
+                "mean_c": -0.3623,
+                "min_c": -0.438,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0289,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "baseline",
+            "roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 226,
+              "usable_pairs_all_terms_ok": 226
+            },
+            "terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": true,
+            "max_pairwise_difference_c": 0.438,
+            "pairs": {
+              "t1_c-vs-t2_c (CHAMBER_CENTER vs TEC_HOT_SIDE)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 0.25,
+                "max_abs_device_ms": "132894",
+                "max_c": 0.25,
+                "mean_c": 0.1813,
+                "min_c": 0.124,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 0.0456,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.375,
+                "max_abs_device_ms": "127894",
+                "max_c": 0.375,
+                "mean_c": 0.3285,
+                "min_c": 0.25,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0348,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.063,
+                "max_abs_device_ms": "49894",
+                "max_c": 0.0,
+                "mean_c": -0.0338,
+                "min_c": -0.063,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0313,
+                "sign_consistency_fraction": 0.5398,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t3_c (TEC_HOT_SIDE vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 0.25,
+                "max_abs_device_ms": "23894",
+                "max_c": 0.25,
+                "mean_c": 0.1472,
+                "min_c": 0.063,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 0.0389,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t4_c (TEC_HOT_SIDE vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 0.313,
+                "max_abs_device_ms": "171894",
+                "max_c": -0.124,
+                "mean_c": -0.2152,
+                "min_c": -0.313,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 0.0375,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.438,
+                "max_abs_device_ms": "200894",
+                "max_c": -0.312,
+                "mean_c": -0.3623,
+                "min_c": -0.438,
+                "n": 226,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.0289,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "baseline",
+            "roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 226,
+              "usable_pairs_all_terms_ok": 226
+            },
+            "terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "phase_max_pairwise_difference_c": 0.438
+        },
+        "cooling": {
+          "air_gradient": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": false,
+            "max_pairwise_difference_c": 1.126,
+            "pairs": {
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 1.126,
+                "max_abs_device_ms": "518894",
+                "max_c": 0.375,
+                "mean_c": -0.731,
+                "min_c": -1.126,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.3909,
+                "sign_consistency_fraction": 0.8933,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "632894",
+                "max_c": 0.063,
+                "mean_c": -0.3815,
+                "min_c": -0.626,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2316,
+                "sign_consistency_fraction": 0.845,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.687,
+                "max_abs_device_ms": "408894",
+                "max_c": 0.687,
+                "mean_c": 0.3495,
+                "min_c": -0.438,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2462,
+                "sign_consistency_fraction": 0.9067,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "cooling",
+            "roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 600,
+              "usable_pairs_all_terms_ok": 600
+            },
+            "terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": true,
+            "max_pairwise_difference_c": 18.938,
+            "pairs": {
+              "t1_c-vs-t2_c (CHAMBER_CENTER vs TEC_HOT_SIDE)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 18.938,
+                "max_abs_device_ms": "679894",
+                "max_c": 0.25,
+                "mean_c": -14.2271,
+                "min_c": -18.938,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 5.2425,
+                "sign_consistency_fraction": 0.975,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 1.126,
+                "max_abs_device_ms": "518894",
+                "max_c": 0.375,
+                "mean_c": -0.731,
+                "min_c": -1.126,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.3909,
+                "sign_consistency_fraction": 0.8933,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "632894",
+                "max_c": 0.063,
+                "mean_c": -0.3815,
+                "min_c": -0.626,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2316,
+                "sign_consistency_fraction": 0.845,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t3_c (TEC_HOT_SIDE vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 18.063,
+                "max_abs_device_ms": "682894",
+                "max_c": 18.063,
+                "mean_c": 13.4961,
+                "min_c": 0.063,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 4.8933,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t4_c (TEC_HOT_SIDE vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 18.376,
+                "max_abs_device_ms": "680894",
+                "max_c": 18.376,
+                "mean_c": 13.8456,
+                "min_c": -0.313,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 5.0296,
+                "sign_consistency_fraction": 0.9767,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.687,
+                "max_abs_device_ms": "408894",
+                "max_c": 0.687,
+                "mean_c": 0.3495,
+                "min_c": -0.438,
+                "n": 600,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2462,
+                "sign_consistency_fraction": 0.9067,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "cooling",
+            "roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 600,
+              "usable_pairs_all_terms_ok": 600
+            },
+            "terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "phase_max_pairwise_difference_c": 18.938
+        },
+        "recovery": {
+          "air_gradient": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": false,
+            "max_pairwise_difference_c": 0.813,
+            "pairs": {
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.813,
+                "max_abs_device_ms": "833894",
+                "max_c": 0.5,
+                "mean_c": -0.1136,
+                "min_c": -0.813,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.4771,
+                "sign_consistency_fraction": 0.4962,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "851894",
+                "max_c": -0.062,
+                "mean_c": -0.3913,
+                "min_c": -0.626,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.1901,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "925894",
+                "max_c": 0.25,
+                "mean_c": -0.2777,
+                "min_c": -0.626,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2988,
+                "sign_consistency_fraction": 0.6947,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "recovery",
+            "roles": [
+              "CHAMBER_CENTER",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 131,
+              "usable_pairs_all_terms_ok": 131
+            },
+            "terms": [
+              "t1_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "air_vs_hot_surface": {
+            "gradients_are_all_status_qualified": true,
+            "includes_hot_side": true,
+            "max_pairwise_difference_c": 18.687,
+            "pairs": {
+              "t1_c-vs-t2_c (CHAMBER_CENTER vs TEC_HOT_SIDE)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 18.687,
+                "max_abs_device_ms": "826894",
+                "max_c": -4.875,
+                "mean_c": -12.0072,
+                "min_c": -18.687,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 4.7447,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t3_c (CHAMBER_CENTER vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.813,
+                "max_abs_device_ms": "833894",
+                "max_c": 0.5,
+                "mean_c": -0.1136,
+                "min_c": -0.813,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.4771,
+                "sign_consistency_fraction": 0.4962,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t1_c-vs-t4_c (CHAMBER_CENTER vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "851894",
+                "max_c": -0.062,
+                "mean_c": -0.3913,
+                "min_c": -0.626,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.1901,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t3_c (TEC_HOT_SIDE vs CHAMBER_BOTTOM)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 17.937,
+                "max_abs_device_ms": "826894",
+                "max_c": 17.937,
+                "mean_c": 11.8936,
+                "min_c": 5.313,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 4.2722,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t2_c-vs-t4_c (TEC_HOT_SIDE vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": true,
+                "independent_sessions": 1,
+                "max_abs_c": 18.124,
+                "max_abs_device_ms": "826894",
+                "max_c": 18.124,
+                "mean_c": 11.6159,
+                "min_c": 4.75,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "surface-to-air separation, not an air gradient",
+                "sd_within_session_sample_c": 4.5609,
+                "sign_consistency_fraction": 1.0,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              },
+              "t3_c-vs-t4_c (CHAMBER_BOTTOM vs CHAMBER_NEAR_DOOR)": {
+                "hot_side_pair": false,
+                "independent_sessions": 1,
+                "max_abs_c": 0.626,
+                "max_abs_device_ms": "925894",
+                "max_c": 0.25,
+                "mean_c": -0.2777,
+                "min_c": -0.626,
+                "n": 131,
+                "not_a_distribution": true,
+                "read_as": "air-to-air gradient inside the chamber volume",
+                "sd_within_session_sample_c": 0.2988,
+                "sign_consistency_fraction": 0.6947,
+                "status": "SINGLE_SESSION_OBSERVATION"
+              }
+            },
+            "phase": "recovery",
+            "roles": [
+              "CHAMBER_CENTER",
+              "TEC_HOT_SIDE",
+              "CHAMBER_BOTTOM",
+              "CHAMBER_NEAR_DOOR"
+            ],
+            "tallies": {
+              "invalid_rows": 0,
+              "partial_rows": 0,
+              "unqualified_rows": 0,
+              "usable_pairs": 131,
+              "usable_pairs_all_terms_ok": 131
+            },
+            "terms": [
+              "t1_c",
+              "t2_c",
+              "t3_c",
+              "t4_c"
+            ],
+            "unqualified_rows_note": "every gradient sample in this block sits on rows whose t*_status was recorded OK"
+          },
+          "phase_max_pairwise_difference_c": 18.687
+        }
+      },
+      "provenance": {
+        "device_ms_first": "904",
+        "device_ms_last": "956894",
+        "session": "H8 box-cooling 600 s, stage H8-C, 2026-11-01, image 01cedce3..."
+      },
+      "rows": 957
+    }
+  ],
+  "deliverable": "A-W14-03 spatial statistics",
+  "disturbance_specific_response": {
+    "per_capture": [
+      {
+        "boot_ids": [
+          "56044b74"
+        ],
+        "evidence": {
+          "confirmed_closed_rows": 940,
+          "door_open_token_tally": {
+            "0": 940,
+            "UNKNOWN": 17
+          },
+          "open_rows": 0,
+          "rows": 957,
+          "unknowable_rows": 17
+        },
+        "independent_sessions": 1,
+        "min_sessions_required": 3,
+        "reason": "no door-open transition exists in the capture: the field is never OPEN, so there is no applied disturbance whose spatial response could be measured. Estimating one would be inventing a physical event.",
+        "status": "NOT_COMPUTABLE",
+        "what_would_make_it_computable": "a supervised session that opens the door to a recorded extent and holds it for a bounded window, with door_polarity CONFIRMED on the open rows, repeated at least the required number of times"
+      }
+    ],
+    "status": "NOT_COMPUTABLE"
+  },
+  "gradient_distribution": {
+    "independent_sessions": 1,
+    "min_sessions_required": 3,
+    "reason": "a distribution needs independent sessions and the captures hold 1; the per-sample series below is a single-session observation and is labelled so everywhere it appears",
+    "status": "NOT_COMPUTABLE_AS_DISTRIBUTION",
+    "within_session_gradient_series_provided": true
+  },
+  "hot_side_role": "TEC_HOT_SIDE",
+  "hot_side_term": "t2_c",
+  "max_pairwise_difference": {
+    "baseline": [
+      0.438
+    ],
+    "cooling": [
+      18.938
+    ],
+    "recovery": [
+      18.687
+    ]
+  },
+  "notes": [
+    "Air gradients are computed between the three chamber-air positions only; T2 is reported as a surface, in its own pair block, and never as air.",
+    "Row counts are stated per phase so a reader can see what n=1 session means.",
+    "Nothing here was measured for this report; the captures predate it."
+  ],
+  "schema": "w14-spatial-v0",
+  "verdict": {
+    "distribution_computed": false,
+    "disturbance_response_computed": false,
+    "independent_sessions": 1,
+    "n_never_becomes_a_distribution": true,
+    "single_session_observation": true
+  }
+}

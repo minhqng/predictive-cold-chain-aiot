@@ -1,0 +1,73 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "FEATURE_SET_UNAVAILABLE",
+      "name": "same_run_both_feature_sets",
+      "passed": true
+    },
+    {
+      "detail": "logical selection only",
+      "failure_reason": "",
+      "name": "no_physical_disconnect",
+      "passed": true
+    },
+    {
+      "detail": "0.08229166666666643",
+      "failure_reason": "",
+      "name": "mean_difference_c",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 62,
+    "boot_id": "0b8ad797",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:30:19.526+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:30:19.526+00:00",
+      "original": "A-W14-02",
+      "path": "evidence/A/W14/registry/measurements/A-W14-02-20261104T143019519371-82179c.json",
+      "sha256": "8c67dc1d0dfdb8f0e98e913b85535aaf54452e4e7b30c6eae7b94a90fd361737",
+      "size": 327,
+      "stored": "evidence/A/W14/registry/measurements/A-W14-02-20261104T143019519371-82179c.json",
+      "source_sha256": "4437a21c92db94fadf65b81b3e4187090a3ae3ab57f6b3e7175edc907f142633",
+      "source_size": 340
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "mean_difference_c": 0.08229166666666643,
+    "single_mean_c": 29.436458333333334,
+    "single_sensor_n": 60,
+    "three_mean_c": 29.354166666666668,
+    "three_sensor_n": 60
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:29:19.518+00:00",
+  "test_id": "A-W14-02",
+  "publication_provenance": {
+    "source_record_sha256": "1ee5381e592a27d4193b0e5174f713addfa01a1f87727e4fe0ce9d9ea01726d3",
+    "source_capture_relative_path": "results/A-W14-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

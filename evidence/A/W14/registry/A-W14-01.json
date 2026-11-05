@@ -1,0 +1,197 @@
+{
+  "checks": [
+    {
+      "detail": "{'T1': '287088CA00000051', 'T2': '28AEBF2200000006', 'T3': '28CBE9CA00000072', 'SPARE': '283BE5C9000000A9'}",
+      "failure_reason": "SENSOR_ROM_MAP_CHANGED",
+      "name": "frozen_rom_map_matches",
+      "passed": true
+    },
+    {
+      "detail": "4",
+      "failure_reason": "ROM_MAP_INCOMPLETE",
+      "name": "four_unique_roms",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 62,
+    "boot_id": "0b8ad797",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:29:19.497+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:29:19.487+00:00",
+      "original": "geometry-v1-20261104.zip",
+      "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+      "size": 4887637,
+      "publication_status": "EXCLUDED_ARCHIVE"
+    },
+    {
+      "captured_at": "2026-11-04T14:29:19.497+00:00",
+      "original": "A-W14-01",
+      "path": "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "sha256": "cddc5cbaa965d0c8097dc7bc63300566124706a1672a47d53a1bd28c8abaec5b",
+      "size": 471,
+      "stored": "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "source_sha256": "88108e066fa2789ae64442ef5296f74a50c87276a0bb20d67204bf61ac01a71c",
+      "source_size": 492
+    },
+    {
+      "captured_at": "2026-11-05T07:20:00+00:00",
+      "original": "A-W14-01-PLACEMENT-ADDENDUM-20261105.md",
+      "path": "evidence/A/W14-placement-evidence-20261105/A-W14-01-PLACEMENT-ADDENDUM-20261105.md",
+      "sha256": "219c63aec2ac14f467d997420f0ccfffb41c0c6ecf6053a31d237c1bfa761d99",
+      "size": 3207,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T10:32:00+00:00",
+      "original": "geometry-v1-frozen-20261104.md",
+      "path": "evidence/A/W14-placement-evidence-20261105/geometry-v1-frozen-20261104.md",
+      "sha256": "e5a3a2fb298456dbd02697557715af80d9cee69a8c39675df3e408b8661e3717",
+      "size": 4736,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T10:32:00+00:00",
+      "original": "geometry-v1-20261104-SHA256SUMS.txt",
+      "path": "evidence/A/W14-placement-evidence-20261105/geometry-v1-20261104-SHA256SUMS.txt",
+      "sha256": "92233ce4864e3d1d57d2b4012a0c81b8a80a97861fd061a2277c9b040a3ce1ca",
+      "size": 451,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "original": "geometry-v1-interior-20261104.png",
+      "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+      "size": 1081314,
+      "publication_status": "EXCLUDED_ARCHIVE",
+      "exclusion_reason": "original operator photograph kept outside Git under the repository size policy"
+    },
+    {
+      "original": "geometry-v1-exterior-20261104.png",
+      "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+      "size": 3808646,
+      "publication_status": "EXCLUDED_ARCHIVE",
+      "exclusion_reason": "original operator photograph kept outside Git under the repository size policy"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "expected": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "frames": 15,
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:29:04.476+00:00",
+  "test_id": "A-W14-01",
+  "publication_provenance": {
+    "source_record_sha256": "8f43ec83cf1861d9a8d9ebe26990c089e4b14503b1c1b4dad815e88b10c96938",
+    "source_capture_relative_path": "results/A-W14-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": [
+      {
+        "capture_relative_path": "attachments\\A-W14-01\\14ef981d4476-geometry-v1-20261104.zip",
+        "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+        "size": 4887637,
+        "reason": "Geometry archives excluded by frozen handoff; ROM measurement remains published."
+      }
+    ],
+    "unresolved_acceptance_element": "ROM identity matching does not establish unchanged physical sensor placement; authentic placement evidence remains required.",
+    "placement_resolution": "AS_BUILT_VERIFIED_CONTINUITY_LIMITED",
+    "placement_evidence": "evidence/A/W14-placement-evidence-20261105/A-W14-01-PLACEMENT-ADDENDUM-20261105.md",
+    "retained_limitation": "As-built placement is verified by the dated operator photographs and mapping; continuous unchanged placement at the exact QA instant is not independently dated."
+  },
+  "placement_provenance": {
+    "schema": "coldguard.placement-provenance/1",
+    "record": "A-W14-01",
+    "criterion": "Verify no sensor has moved since the geometry freeze.",
+    "as_built_placement": "VERIFIED",
+    "continuity_since_freeze": "LIMITED",
+    "continuity_reason": "The original photographs were supplied and assembled on 2026-11-04 before the A-W14-01 run, but no photograph is timestamped at the exact QA instant; continuity across that interval rests on the operator confirmation, not a contemporaneous dated inspection.",
+    "rom_map": {
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072",
+      "SPARE": "283BE5C9000000A9"
+    },
+    "slot_positions": {
+      "T1": "CHAMBER_CENTER",
+      "T2": "TEC_HOT_SIDE",
+      "T3": "CHAMBER_BOTTOM",
+      "SPARE": "CHAMBER_NEAR_DOOR"
+    },
+    "operator_confirmation": {
+      "date": "2026-11-05",
+      "source": "operator delivery-session instruction",
+      "statement": "T1=CHAMBER_CENTER, T2=TEC_HOT_SIDE, T3=CHAMBER_BOTTOM, T4/SPARE=CHAMBER_NEAR_DOOR; no sensor has been moved."
+    },
+    "evidence": [
+      {
+        "path": "evidence/A/W14-placement-evidence-20261105/geometry-v1-frozen-20261104.md",
+        "sha256": "e5a3a2fb298456dbd02697557715af80d9cee69a8c39675df3e408b8661e3717",
+        "kind": "FROZEN_GEOMETRY_RECORD"
+      },
+      {
+        "path": "evidence/A/W14-placement-evidence-20261105/geometry-v1-20261104-SHA256SUMS.txt",
+        "sha256": "92233ce4864e3d1d57d2b4012a0c81b8a80a97861fd061a2277c9b040a3ce1ca",
+        "kind": "PHOTO_HASH_MANIFEST"
+      },
+      {
+        "path": "evidence/A/W14-placement-evidence-20261105/A-W14-01-PLACEMENT-ADDENDUM-20261105.md",
+        "sha256": "219c63aec2ac14f467d997420f0ccfffb41c0c6ecf6053a31d237c1bfa761d99",
+        "kind": "PLACEMENT_ADDENDUM"
+      }
+    ],
+    "photographs": [
+      {
+        "original": "geometry-v1-interior-20261104.png",
+        "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+        "size": 1081314,
+        "publication_status": "EXCLUDED_LARGE_ARTIFACT",
+        "reason": "original operator photograph kept outside Git under the repository size policy"
+      },
+      {
+        "original": "geometry-v1-exterior-20261104.png",
+        "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+        "size": 3808646,
+        "publication_status": "EXCLUDED_LARGE_ARTIFACT",
+        "reason": "original operator photograph kept outside Git under the repository size policy"
+      }
+    ],
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T07:20:00+00:00"
+  }
+}
