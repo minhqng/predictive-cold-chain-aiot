@@ -56,7 +56,46 @@
     "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
     "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
     "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
-    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
-    "excluded_supporting_artifacts": []
+    "device_identity_status": "IDENTITY_NOT_APPLICABLE_SESSION_META_RECORD",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W09-03",
+    "resolution": "SESSION_META_RECORD_NO_DEVICE_CLAIM",
+    "device_verified": false,
+    "identity_basis": "NOT_APPLICABLE",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [],
+    "linkage_checks": [
+      {
+        "name": "record_source",
+        "value": "OPERATOR_MEASUREMENT",
+        "match": true,
+        "expected_or_source": "OPERATOR_MEASUREMENT"
+      },
+      {
+        "name": "result_set_sha256",
+        "value": "a9271a6ddbd11d2123bb08e1bd5f19a7d1732a0c5b4ff154d75f62f062530a7e",
+        "match": true,
+        "expected_or_source": "a9271a6ddbd11d2123bb08e1bd5f19a7d1732a0c5b4ff154d75f62f062530a7e"
+      },
+      {
+        "name": "capture_session_digest",
+        "value": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+        "match": true,
+        "expected_or_source": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2"
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "identity_scope": "SESSION_META_RECORD",
+    "result_set_source": "acceptance-report.json pinned by the frozen handoff",
+    "note": "This record summarizes result-level metadata; it makes no device-level measurement, so a per-item device identity is not applicable. The binding is the session digest and the pinned result set."
   }
 }

@@ -16,12 +16,13 @@
     "A-W09-03": {
       "criterion": "Log sensor movement, manual touch, fan anomaly, missing key telemetry and unexpected power events; never delete an invalid attempt.",
       "record": "evidence/A/W09/registry/A-W09-03.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_NOT_APPLICABLE_SESSION_META_RECORD",
       "artifact_paths": [
         "evidence/A/W09/registry/A-W09-03.json",
         "evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md",
         "evidence/A/W09/registry/measurements/A-W09-03-20261104T171658230108-b351d7.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W09/registry/A-W09-03.json#identity_provenance"
     }
   },
   "artifacts": [
@@ -57,10 +58,10 @@
     {
       "dest": "evidence/A/W09/registry/A-W09-03.json",
       "source_sha256": "d17c0655c3d5a488182b1dad629461bc240e2e4ac7c5f2296d80c9a73d06f432",
-      "published_sha256": "617c2595d0d7ad43bb52bda37f8c9f8d343d7c15eb81bedbd0054f83d520f4e6",
+      "published_sha256": "0654be6c7f6a5b5e5b8dc86af605910b1d264cc4d7acd247760bc444edb85478",
       "source_capture_path": "results/A-W09-03.json",
       "source_bytes": 1698,
-      "bytes": 2445,
+      "bytes": 4480,
       "requirement": "A-W09-03",
       "transformed_record": true,
       "transformation_sequence": [
