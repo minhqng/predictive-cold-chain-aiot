@@ -39,7 +39,7 @@
     {
       "dest": "evidence/A/W13/registry/A-W13-01.json",
       "source_sha256": "8e46f843babdb1347e6044fe38273be4c4895a90bdf7e016db10a528991e1a68",
-      "published_sha256": "a38644451ae8b74eeed3d7084858c270ad57cbcf9b253532c8df3b00c4e659dc",
+      "published_sha256": "b6a5e3bb64d1bbae3bddee5112b3e11e6b901080de5447bae798d9d2bba0de9d",
       "source_capture_path": "results/A-W13-01.json",
       "source_bytes": 1387,
       "bytes": 4102,
@@ -68,7 +68,7 @@
     {
       "dest": "evidence/A/W13/registry/A-W13-02.json",
       "source_sha256": "425978d2df2cfd81e813768d917f64786ba44f6c14ffde45c9c38443a2304f2c",
-      "published_sha256": "3c59c5b608ebd83b1a9bef0a155a400aaff3d9ae4d2f0da70a549bff521bff66",
+      "published_sha256": "2dfdd8fadf0b8075dc07a001e497b0f82e86758626e41cccb55460b8793dbacb",
       "source_capture_path": "results/A-W13-02.json",
       "source_bytes": 1504,
       "bytes": 4219,
@@ -97,7 +97,7 @@
     {
       "dest": "evidence/A/W13/registry/A-W13-04.json",
       "source_sha256": "0873a6df3fe4abb7e2157826bbbd46867fa9c61407d855a59665ac339cc1ea29",
-      "published_sha256": "b74299d54b667276b43609a75163d4ce5b24c80c029021a3d1cee508165da103",
+      "published_sha256": "06c81cd1a9691f1255434f3e7549789b7c0d8877223c7fd22ebbeafac1581c80",
       "source_capture_path": "results/A-W13-04.json",
       "source_bytes": 1318,
       "bytes": 4123,
