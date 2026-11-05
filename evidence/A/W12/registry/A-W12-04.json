@@ -1,0 +1,143 @@
+{
+  "checks": [
+    {
+      "detail": "CG-HW-001",
+      "failure_reason": "HARDWARE_CONFIG_MISMATCH",
+      "name": "hardware_config_is_cg_hw_001",
+      "passed": true
+    },
+    {
+      "detail": "11",
+      "failure_reason": "NO_RUNS_RECORDED",
+      "name": "run_records_present",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NON_POOLABLE_RUNS_NOT_DISPOSITIONED",
+      "name": "non_poolable_disposition",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 97,
+    "boot_id": "6758eebc",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T18:13:51.098+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T18:13:51.089+00:00",
+      "original": "evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+      "sha256": "8fff0b5514896791a37e7f25e8a18226618f527b88048a522743f5a7764ec3d6",
+      "size": 2025,
+      "stored": "evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+      "path": "evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+      "source_sha256": "46ef33cbb50baf2a8b131df4f02089dde2340477457fb6d445e5c80d656bb431",
+      "source_size": 2059
+    },
+    {
+      "captured_at": "2026-11-04T18:13:51.098+00:00",
+      "original": "A-W12-04",
+      "path": "evidence/A/W12/registry/measurements/A-W12-04-20261104T181351089050-7b3992.json",
+      "sha256": "191f4da7156ee3237135eeafe737bbeec67206097fa0f43dec74c6ccb9c98ced",
+      "size": 1254,
+      "stored": "evidence/A/W12/registry/measurements/A-W12-04-20261104T181351089050-7b3992.json",
+      "source_sha256": "39e50db5e789a7b69eba25eaf79022b262048bb90e1a694d89d96a14f6248416",
+      "source_size": 1321
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "hardware_config_id": "CG-HW-001",
+    "run_count": 11,
+    "runs": [
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": null,
+        "test_id": "A-W02-03",
+        "valid": null
+      },
+      {
+        "attempt": 1,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-02",
+        "valid": true
+      },
+      {
+        "attempt": 1,
+        "test_id": "A-W07-03",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-03",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-03",
+        "valid": true
+      }
+    ]
+  },
+  "notes": "run list and disposition derived from the store and attached signoff record; hardware_config_id read live from the frame; no physical inspection claimed",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T18:13:51.073+00:00",
+  "test_id": "A-W12-04",
+  "publication_provenance": {
+    "source_record_sha256": "616e47fb5f1c6ce82106acc8635b9be0bafab60821f1bc6300bff78351939d24",
+    "source_capture_relative_path": "results/A-W12-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

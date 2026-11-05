@@ -1,0 +1,166 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "409ddd9fbd30e76a7bf360b069c03fe570bfec19",
+  "requirements": {
+    "A-W12-01": {
+      "criterion": "Repeat the W02 consistency method and compare offsets/drift to the baseline.",
+      "record": "evidence/A/W12/registry/A-W12-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W12/registry/A-W12-01.json",
+        "evidence/A/W12/A-W12-01-CONDITIONS-20261104.md",
+        "evidence/A/W12/registry/measurements/A-W12-01-20261104T144019553321-548ebe.json",
+        "evidence/A/W12/registry/measurements/A-W12-01-20261104T164950353032-c4eea8.json"
+      ]
+    },
+    "A-W12-02": {
+      "criterion": "Compare PZEM zero/active behaviour to the W03/W08 envelope.",
+      "record": "evidence/A/W12/registry/A-W12-02.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W12/registry/A-W12-02.json",
+        "evidence/A/W12/registry/measurements/A-W12-02-20261104T163149661155-36d519.json"
+      ]
+    },
+    "A-W12-04": {
+      "criterion": "List all runs under CG-HW-001 and identify any run that should not be pooled.",
+      "record": "evidence/A/W12/registry/A-W12-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W12/registry/A-W12-04.json",
+        "evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+        "evidence/A/W12/registry/measurements/A-W12-04-20261104T181351089050-7b3992.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W12/registry/A-W12-01.json",
+      "source_sha256": "0c462f8aabfea06095bee8d82dcce2177d674d4ee585a57588bac663b2589eb1",
+      "published_sha256": "07a2c61e11424d8c011e8f98115e8a1202aeecb913222794d174e80c0c6f7df1",
+      "source_capture_path": "results/A-W12-01.json",
+      "source_bytes": 3686,
+      "bytes": 4713,
+      "requirement": "A-W12-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/A-W12-01-CONDITIONS-20261104.md",
+      "source_sha256": "27972b73ee5da08833e72d5d5a46870c4dbd99123ad2c4d17413d9351e748b39",
+      "published_sha256": "6c95342b59ac05e17772ed35072828df6bd0f9c30a88dde852c1fbc9bf7c19b1",
+      "source_capture_path": "A-W12-01-CONDITIONS-20261104.md",
+      "source_bytes": 2433,
+      "bytes": 2397,
+      "requirement": "A-W12-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/measurements/A-W12-01-20261104T144019553321-548ebe.json",
+      "source_sha256": "e5294908e84780bf9572dc8d97f6cae06c251fde017fed15669721657e980ff8",
+      "published_sha256": "ddd12a98e8615bffaee3d6f4bc9aeb72f09be72b92a2d4fe274fa5e00e358ec4",
+      "source_capture_path": "measurements/A-W12-01-20261104T144019553321-548ebe.json",
+      "source_bytes": 1623,
+      "bytes": 1563,
+      "requirement": "A-W12-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/measurements/A-W12-01-20261104T164950353032-c4eea8.json",
+      "source_sha256": "f95a969b0bd92a22a630c3bf1c4927b5b2e1240ef9150f1bbf5da13ee9ac38fd",
+      "published_sha256": "115be411f3fd78dc9010301716364f85732ee019b1a8d45ff6852e33d06ce9bd",
+      "source_capture_path": "measurements/A-W12-01-20261104T164950353032-c4eea8.json",
+      "source_bytes": 1637,
+      "bytes": 1580,
+      "requirement": "A-W12-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/A-W12-02.json",
+      "source_sha256": "4459b6654c4047882284fd9336cca3c8d81f18539860d9ad12b5f8617b7f39a8",
+      "published_sha256": "33be8855badb3f02a27712ca07245a1741c8224329e52db69050aec1a23623ab",
+      "source_capture_path": "results/A-W12-02.json",
+      "source_bytes": 2143,
+      "bytes": 2777,
+      "requirement": "A-W12-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/measurements/A-W12-02-20261104T163149661155-36d519.json",
+      "source_sha256": "76d8b637b4bdb64cead5aa4ac5e5b01cd93d0e93be75e9e46794d61e18682a18",
+      "published_sha256": "8079346b76584ee68032c74fb9e1fec5fbe2ccab57a78da509042d7bb6ec7660",
+      "source_capture_path": "measurements/A-W12-02-20261104T163149661155-36d519.json",
+      "source_bytes": 706,
+      "bytes": 680,
+      "requirement": "A-W12-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/A-W12-04.json",
+      "source_sha256": "616e47fb5f1c6ce82106acc8635b9be0bafab60821f1bc6300bff78351939d24",
+      "published_sha256": "b3cd3531315ec969c66f4f08effda096e75b6be9470c0ddf8964893152731ea8",
+      "source_capture_path": "results/A-W12-04.json",
+      "source_bytes": 3567,
+      "bytes": 4216,
+      "requirement": "A-W12-04",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+      "source_sha256": "46ef33cbb50baf2a8b131df4f02089dde2340477457fb6d445e5c80d656bb431",
+      "published_sha256": "8fff0b5514896791a37e7f25e8a18226618f527b88048a522743f5a7764ec3d6",
+      "source_capture_path": "A-W12-04-HW-CONFIG-SIGNOFF-20261105.md",
+      "source_bytes": 2059,
+      "bytes": 2025,
+      "requirement": "A-W12-04",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W12/registry/measurements/A-W12-04-20261104T181351089050-7b3992.json",
+      "source_sha256": "39e50db5e789a7b69eba25eaf79022b262048bb90e1a694d89d96a14f6248416",
+      "published_sha256": "191f4da7156ee3237135eeafe737bbeec67206097fa0f43dec74c6ccb9c98ced",
+      "source_capture_path": "measurements/A-W12-04-20261104T181351089050-7b3992.json",
+      "source_bytes": 1321,
+      "bytes": 1254,
+      "requirement": "A-W12-04",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "detail": "0.0 vs 0.0",
+      "failure_reason": "OFF_ENVELOPE_DRIFTED",
+      "name": "off_current_within_baseline",
+      "passed": true
+    },
+    {
+      "detail": "11.942203389830507",
+      "failure_reason": "",
+      "name": "voltage_mean_v",
+      "passed": true
+    },
+    {
+      "detail": "0.9833333333333333",
+      "failure_reason": "",
+      "name": "valid_rate",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 88,
+    "boot_id": "b1949c92",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T16:31:49.669+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T16:31:49.669+00:00",
+      "original": "A-W12-02",
+      "path": "evidence/A/W12/registry/measurements/A-W12-02-20261104T163149661155-36d519.json",
+      "sha256": "8079346b76584ee68032c74fb9e1fec5fbe2ccab57a78da509042d7bb6ec7660",
+      "size": 680,
+      "stored": "evidence/A/W12/registry/measurements/A-W12-02-20261104T163149661155-36d519.json",
+      "source_sha256": "76d8b637b4bdb64cead5aa4ac5e5b01cd93d0e93be75e9e46794d61e18682a18",
+      "source_size": 706
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "baseline_off_current_max_a": 0.0,
+    "cooling_off_frames": 120,
+    "cooling_on_frames": 0,
+    "current_max_a": 0.0,
+    "current_mean_a": 0.0,
+    "current_min_a": 0.0,
+    "current_sd_a": 0.0,
+    "frames": 120,
+    "off_current_max_a": 0.0,
+    "off_power_max_w": 0.0,
+    "power_consistency_max_rel_error": 0.0,
+    "power_max_w": 0.0,
+    "power_mean_w": 0.0,
+    "valid_frames": 118,
+    "valid_rate": 0.9833333333333333,
+    "voltage_max_v": 11.95,
+    "voltage_mean_v": 11.942203389830507,
+    "voltage_min_v": 11.94
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T16:29:49.655+00:00",
+  "test_id": "A-W12-02",
+  "publication_provenance": {
+    "source_record_sha256": "4459b6654c4047882284fd9336cca3c8d81f18539860d9ad12b5f8617b7f39a8",
+    "source_capture_relative_path": "results/A-W12-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}
