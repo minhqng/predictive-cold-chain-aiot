@@ -40,7 +40,7 @@
     {
       "dest": "evidence/A/W08/registry/A-W08-01.json",
       "source_sha256": "6f2fb4f54ac814b951f3d63adeb172f2c17b8edd70e4d824a592e132d5557a27",
-      "published_sha256": "e820913aec78c22b437def4bd3b5f4c6b71b92434969bb18151c7c542c2863c3",
+      "published_sha256": "ec458b493a70106069f6733f65fd4d47b63c2ebd0d757444e3ea9804b2ffca82",
       "source_capture_path": "results/A-W08-01.json",
       "source_bytes": 1692,
       "bytes": 6338,
@@ -67,7 +67,7 @@
     {
       "dest": "evidence/A/W08/registry/A-W08-02.json",
       "source_sha256": "0aa18393d1a07347dee5b47268e7c955d1a03e9e17ff919c8b1dd3b0c4f43d8a",
-      "published_sha256": "9b401ee931bb9d56dd8506c2109310207ddbcd88a595ed822d45ccfae6005b90",
+      "published_sha256": "6671e46cc8cb978c0e5d695c169fc52f6d621e60e96085d1a4104c199d04628d",
       "source_capture_path": "results/A-W08-02.json",
       "source_bytes": 4064,
       "bytes": 7425,
