@@ -19,7 +19,7 @@
     {
       "dest": "evidence/A/W15/registry/A-W15-02.json",
       "source_sha256": "079b409521fd5ef1f52acd8fe3d38be3580396d72161a3c7976d1aecba4f97ea",
-      "published_sha256": "4eef736b56527a736c093a928d275811b7a601b91e082f13bdcd091a13e1d546",
+      "published_sha256": "5a5fffed7a59d2a21176ff523819b6673ed66d22430885bf456bf80b391d63ca",
       "source_capture_path": "results/A-W15-02.json",
       "source_bytes": 1173,
       "bytes": 4225,
