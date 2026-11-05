@@ -1,0 +1,165 @@
+{
+  "commands": [
+    {
+      "ack_reasons": [
+        "EPOCH_UNSYNCHRONIZED"
+      ],
+      "ack_statuses": [
+        "SAFETY_BLOCKED"
+      ],
+      "applied_cooling_at_ack": "OFF",
+      "blocked_at": "DEVICE_ACK",
+      "boot_id": "abcd0123",
+      "command_id": "00000000-0000-4000-8000-00000000000a",
+      "command_id_form": "UUID",
+      "desired_cooling": "ON",
+      "desired_duty_permille": "250",
+      "expiry_evaluable": "0",
+      "notes": [
+        "first ACK was SAFETY_BLOCKED/EPOCH_UNSYNCHRONIZED; nothing beyond the acknowledgement is claimed"
+      ],
+      "reapplied_flags": [
+        "0"
+      ],
+      "source": "NETWORK",
+      "stages": [
+        "COMMAND_SEEN",
+        "DEVICE_ACK"
+      ]
+    },
+    {
+      "ack_reasons": [
+        "NONE"
+      ],
+      "ack_statuses": [
+        "ACCEPTED"
+      ],
+      "applied_cooling_at_ack": "OFF",
+      "blocked_at": "APPLIED_STATE",
+      "boot_id": "abcd0123",
+      "command_id": "00000000-0000-4000-8000-00000000000b",
+      "command_id_form": "UUID",
+      "desired_cooling": "ON",
+      "desired_duty_permille": "250",
+      "expiry_evaluable": "1",
+      "notes": [
+        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 \u00a732.2, lines 2188-2197)"
+      ],
+      "reapplied_flags": [
+        "0"
+      ],
+      "source": "NETWORK",
+      "stages": [
+        "COMMAND_SEEN",
+        "DEVICE_ACK"
+      ]
+    },
+    {
+      "ack_reasons": [
+        "EXPIRED"
+      ],
+      "ack_statuses": [
+        "EXPIRED"
+      ],
+      "applied_cooling_at_ack": "OFF",
+      "blocked_at": "DEVICE_ACK",
+      "boot_id": "abcd0123",
+      "command_id": "00000000-0000-4000-8000-00000000000c",
+      "command_id_form": "UUID",
+      "desired_cooling": "ON",
+      "desired_duty_permille": "250",
+      "expiry_evaluable": "1",
+      "notes": [
+        "first ACK was EXPIRED/EXPIRED; nothing beyond the acknowledgement is claimed"
+      ],
+      "reapplied_flags": [
+        "0"
+      ],
+      "source": "NETWORK",
+      "stages": [
+        "COMMAND_SEEN",
+        "DEVICE_ACK"
+      ]
+    },
+    {
+      "ack_reasons": [
+        "DEVICE_ID_MISMATCH"
+      ],
+      "ack_statuses": [
+        "REJECTED"
+      ],
+      "applied_cooling_at_ack": "OFF",
+      "blocked_at": "DEVICE_ACK",
+      "boot_id": "abcd0123",
+      "command_id": "00000000-0000-4000-8000-00000000000d",
+      "command_id_form": "UUID",
+      "desired_cooling": "ON",
+      "desired_duty_permille": "250",
+      "expiry_evaluable": "0",
+      "notes": [
+        "first ACK was REJECTED/DEVICE_ID_MISMATCH; nothing beyond the acknowledgement is claimed"
+      ],
+      "reapplied_flags": [
+        "0"
+      ],
+      "source": "NETWORK",
+      "stages": [
+        "COMMAND_SEEN",
+        "DEVICE_ACK"
+      ]
+    },
+    {
+      "ack_reasons": [
+        "NONE"
+      ],
+      "ack_statuses": [
+        "DUPLICATE_CANONICAL"
+      ],
+      "applied_cooling_at_ack": "OFF",
+      "blocked_at": "APPLIED_STATE",
+      "boot_id": "abcd0123",
+      "command_id": "00000000-0000-4000-8000-00000000000e",
+      "command_id_form": "UUID",
+      "desired_cooling": "ON",
+      "desired_duty_permille": "250",
+      "expiry_evaluable": "0",
+      "notes": [
+        "no telemetry frame from boot_id=abcd0123 after the ACK reported cooling_applied=ON; an ACCEPTED ACK is protocol evidence, not applied evidence (docs/02 \u00a732.2, lines 2188-2197)"
+      ],
+      "reapplied_flags": [
+        "0"
+      ],
+      "source": "NETWORK",
+      "stages": [
+        "COMMAND_SEEN",
+        "DEVICE_ACK"
+      ]
+    }
+  ],
+  "provenance": {
+    "capture": "evidence/A/W06/demo-command-capture.log",
+    "is_physical_measurement": false,
+    "kind": "host-generated",
+    "note": "Exercises the promotion rules on emitted bytes. It shows what the trace tool refuses to claim, not what a device did."
+  },
+  "summary": {
+    "ack_lines": 5,
+    "blocked_at": {
+      "APPLIED_STATE": 2,
+      "COMMAND_SEEN": 0,
+      "DEVICE_ACK": 3,
+      "ELECTRICAL_VERIFIED": 0,
+      "THERMAL_VERIFIED": 0
+    },
+    "commands_observed": 5,
+    "not_applied": 2,
+    "reached": {
+      "APPLIED_STATE": 0,
+      "COMMAND_SEEN": 5,
+      "DEVICE_ACK": 5,
+      "ELECTRICAL_VERIFIED": 0,
+      "THERMAL_VERIFIED": 0
+    },
+    "verdict": "PARTIAL"
+  }
+}

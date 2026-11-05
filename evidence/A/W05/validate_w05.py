@@ -11,7 +11,7 @@ Checks, in order:
    the physical capture unauthorized, not a PASS/GREEN week;
 4. ``schema-fixture.json`` still declares itself a rendered frame and **not** a
    physical measurement, and carries the schema the current emitter produces
-   (2: the W05 emitter is still schema 2; schema 3 arrives with W06);
+   (2 in the W05 dossier as delivered, 3 after the 2026-11-03 re-derivation);
 5. the timing pilot names the committed capture it was derived from, that capture
    exists, and the pilot is labelled as a 60-second W04 window rather than the
    30-minute W05 study;
@@ -99,13 +99,13 @@ def main() -> int:
         failures.append("schema-fixture.json is missing")
     else:
         fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
-        if fixture.get("schema_version") != 2:
-            failures.append("schema-fixture.json is not a schema-2 frame")
+        if fixture.get("schema_version") != 3:
+            failures.append("schema-fixture.json is not a schema-3 frame")
         if fixture.get("is_physical_measurement") is not False:
             failures.append("schema-fixture.json no longer declares itself a non-measurement")
         if fixture.get("is_synthetic_frame") is not True:
             failures.append("schema-fixture.json no longer declares the frame synthetic")
-        if "raw_line" not in fixture or not fixture["raw_line"].startswith("#CG TELEM schema=2 "):
+        if "raw_line" not in fixture or not fixture["raw_line"].startswith("#CG TELEM schema=3 "):
             failures.append("schema-fixture.json lost its raw firmware-rendered line")
         raw = fixture.get("raw_line", "")
         if " t_inside_src=T1" not in raw:

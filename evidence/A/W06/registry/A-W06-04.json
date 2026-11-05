@@ -1,0 +1,72 @@
+{
+  "checks": [
+    {
+      "detail": "30/30",
+      "failure_reason": "APPLIED_STATE_MISSING",
+      "name": "applied_state_present",
+      "passed": true
+    },
+    {
+      "detail": "30/30",
+      "failure_reason": "DEFAULT_OFF_NOT_OBSERVED",
+      "name": "default_off_observed",
+      "passed": true
+    },
+    {
+      "detail": "['FIRMWARE_OUTPUT_STATE']",
+      "failure_reason": "APPLIED_STATE_SOURCE_UNKNOWN",
+      "name": "applied_source_is_firmware",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 46,
+    "boot_id": "e87bde61",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T13:51:21.855+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T13:51:21.855+00:00",
+      "original": "A-W06-04",
+      "path": "evidence/A/W06/registry/measurements/A-W06-04-20261104T135121848637-33aa1d.json",
+      "sha256": "d91e9cf526b84ac2572b4945e21fef7b017c6082c95e2ec8fa326d668947d59d",
+      "size": 300,
+      "stored": "evidence/A/W06/registry/measurements/A-W06-04-20261104T135121848637-33aa1d.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "applied_source": [
+      "FIRMWARE_OUTPUT_STATE"
+    ],
+    "default_off_frames": 30,
+    "frames": 30,
+    "with_applied_field": 30
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T13:50:51.847+00:00",
+  "test_id": "A-W06-04",
+  "publication_provenance": {
+    "source_record_sha256": "9767a6a587d608529795fcbf9792a14762d9313b808ad477cc13128ac9954bf1",
+    "source_capture_relative_path": "results/A-W06-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

@@ -39,6 +39,7 @@ SOURCES = [
     MAIN / "cg_health.c",
     MAIN / "cg_snapshot.c",
     MAIN / "cg_telemetry.c",
+    MAIN / "cg_command.c",
     MAIN / "cg_tec_control.c",
     MAIN / "cg_tec_limits.c",
 ]
@@ -50,8 +51,10 @@ def _define_value(text: str, name: str) -> int | None:
     return int(match.group(1)) if match else None
 
 
-def build_with_msvc(vcvars: pathlib.Path, workdir: pathlib.Path) -> pathlib.Path:
-    exe = workdir / "cg_w05_harness.exe"
+def build_with_msvc(vcvars: pathlib.Path, workdir: pathlib.Path,
+                    harness: pathlib.Path = HARNESS, sources: list[pathlib.Path] = SOURCES,
+                    exe_name: str = "cg_w05_harness.exe") -> pathlib.Path:
+    exe = workdir / exe_name
     bat = workdir / "build_w05.bat"
     log = workdir / "cl.log"
     lines = [
@@ -59,7 +62,7 @@ def build_with_msvc(vcvars: pathlib.Path, workdir: pathlib.Path) -> pathlib.Path
         f'call "{vcvars}" >nul',
         f'cd /d "{workdir}"',
         "cl /nologo /std:c11 /W4 /WX "
-        f'/I"{MAIN}" "{HARNESS}" ' + " ".join(f'"{source}"' for source in SOURCES) + " "
+        f'/I"{MAIN}" "{harness}" ' + " ".join(f'"{source}"' for source in sources) + " "
         f'/Fe:"{exe}" > "{log}" 2>&1',
         "exit /b %ERRORLEVEL%",
     ]
@@ -72,11 +75,13 @@ def build_with_msvc(vcvars: pathlib.Path, workdir: pathlib.Path) -> pathlib.Path
     return exe
 
 
-def build_with_gcc(cc: str, workdir: pathlib.Path) -> pathlib.Path:
-    exe = workdir / "cg_w05_harness"
+def build_with_gcc(cc: str, workdir: pathlib.Path, harness: pathlib.Path = HARNESS,
+                   sources: list[pathlib.Path] = SOURCES,
+                   exe_name: str = "cg_w05_harness") -> pathlib.Path:
+    exe = workdir / exe_name
     command = [
-        cc, "-std=c11", "-Wall", "-Wextra", "-Werror", "-I", str(MAIN), str(HARNESS),
-        *[str(source) for source in SOURCES], "-o", str(exe),
+        cc, "-std=c11", "-Wall", "-Wextra", "-Werror", "-I", str(MAIN), str(harness),
+        *[str(source) for source in sources], "-o", str(exe),
     ]
     result = subprocess.run(command, capture_output=True, text=True, timeout=300)
     if result.returncode != 0:
@@ -124,9 +129,14 @@ class W05HarnessTests(unittest.TestCase):
         self.assertLess(measured * 10, budget * 9,
                         f"worst case {measured} leaves less than 10 % headroom in {budget}")
 
-    def test_schema_version_is_two(self) -> None:
+    def test_firmware_and_host_agree_on_the_serial_schema(self) -> None:
+        """Pinned to the parser, not to a literal: a later slice raises the serial
+        schema and this test must follow it rather than rot."""
+        import cg_telemetry_schema as schema
         text = CONFIG.read_text(encoding="utf-8")
-        self.assertEqual(_define_value(text, "CG_TELEMETRY_SCHEMA_VERSION"), 2)
+        self.assertEqual(_define_value(text, "CG_TELEMETRY_SCHEMA_VERSION"),
+                         schema.SCHEMA_VERSION)
+        self.assertGreaterEqual(schema.SCHEMA_VERSION, 2)
 
 
 if __name__ == "__main__":

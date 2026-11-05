@@ -1,0 +1,37 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "a6cc885dd7432c95258f733e4c1afa4363507529",
+  "requirements": {
+    "A-W06-04": {
+      "criterion": "Distinguish desired command from applied output; the ACK and telemetry include applied state.",
+      "record": "evidence/A/W06/registry/A-W06-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W06/registry/A-W06-04.json",
+        "evidence/A/W06/registry/measurements/A-W06-04-20261104T135121848637-33aa1d.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W06/registry/A-W06-04.json",
+      "source_sha256": "9767a6a587d608529795fcbf9792a14762d9313b808ad477cc13128ac9954bf1",
+      "published_sha256": "fdb9c62b7b0827e182c3c840e1ad9e2371accabc8315ce24cc3ee8ead8fcee84",
+      "source_capture_path": "results/A-W06-04.json",
+      "bytes": 2324,
+      "requirement": "A-W06-04",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W06/registry/measurements/A-W06-04-20261104T135121848637-33aa1d.json",
+      "source_sha256": "d91e9cf526b84ac2572b4945e21fef7b017c6082c95e2ec8fa326d668947d59d",
+      "published_sha256": "d91e9cf526b84ac2572b4945e21fef7b017c6082c95e2ec8fa326d668947d59d",
+      "source_capture_path": "measurements/A-W06-04-20261104T135121848637-33aa1d.json",
+      "bytes": 300,
+      "requirement": "A-W06-04",
+      "transformed_record": false
+    }
+  ]
+}
