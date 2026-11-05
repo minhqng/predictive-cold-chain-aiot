@@ -101,7 +101,95 @@
     "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
     "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
     "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
-    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
-    "excluded_supporting_artifacts": []
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W07-04",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENTS",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W07-02",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W07/registry/A-W07-02.json",
+        "published_commit": "8ecede5bad8537507134a8131063a50645890f9b",
+        "published_sha256": "43f04e7268a6ba56db407d7f8c0115624d2839728863401b8c86315604b65a5e",
+        "source_record_sha256": "88d229c49e2450395a92922588b58e49ce4215ba2a204c481de13c8a809bf4b1",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W07/registry/A-W07-03.json",
+        "published_commit": "8ecede5bad8537507134a8131063a50645890f9b",
+        "published_sha256": "65b12159406477f6c46c64c0ad81b7cf4d50c45c6dfad38b6d00703fb1a7bd2e",
+        "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "valid_runs",
+        "value": 6,
+        "match": true,
+        "expected_or_source": 6
+      },
+      {
+        "name": "parent_valid_runs_sum",
+        "value": 6,
+        "match": true,
+        "expected_or_source": 6
+      },
+      {
+        "name": "summary_matches_A-W07-03:chamber_drop_c",
+        "value": 2.2694444444444457,
+        "match": true,
+        "expected_or_source": 2.2694444444444457
+      },
+      {
+        "name": "summary_matches_A-W07-03:current_mean_a",
+        "value": 4.288233362394653,
+        "match": true,
+        "expected_or_source": 4.288233362394653
+      },
+      {
+        "name": "summary_matches_A-W07-03:electrical_delay_s",
+        "value": 1.02,
+        "match": true,
+        "expected_or_source": 1.02
+      },
+      {
+        "name": "summary_matches_A-W07-03:thermal_delay_s",
+        "value": 36.02,
+        "match": true,
+        "expected_or_source": 36.02
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "requirement_declared_parents": [
+      "A-W07-02",
+      "A-W07-03"
+    ],
+    "inherited_limitation": "A-W07-03 stabilization witness remains NOT_REUSABLE; repeatability metrics do not depend on it."
   }
 }

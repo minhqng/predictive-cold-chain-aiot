@@ -39,7 +39,32 @@
   ],
   "device_identity": {},
   "ended_at": "2026-11-04T17:56:11.127926+00:00",
-  "evidence": [],
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:24:12.953238+00:00",
+      "original": "a-w07-02-run-1-4b555191.jsonl",
+      "path": "evidence/A/W07/registry/bench/a-w07-02-run-1-4b555191.jsonl",
+      "sha256": "ec2bcdebefe282ff7c6553f116c72e3be9d6e5a5321f2ebb6da4ed1061c633a8",
+      "size": 87190,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T17:38:53.098805+00:00",
+      "original": "a-w07-02-run-2-4b555191.jsonl",
+      "path": "evidence/A/W07/registry/bench/a-w07-02-run-2-4b555191.jsonl",
+      "sha256": "c446469369032e6895d8e2ae0f2befa06fc77f6d3836dff79fa203aae612f514",
+      "size": 88608,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    },
+    {
+      "captured_at": "2026-11-04T17:44:32.000000+00:00",
+      "original": "a-w07-02-run-3-4b555191.jsonl",
+      "path": "evidence/A/W07/registry/bench/a-w07-02-run-3-4b555191.jsonl",
+      "sha256": "2800c1642fa31dbb5c99df8e7dfb8444b6fc5aa28c0e6e05ee17ae71e353a356",
+      "size": 88739,
+      "publication_status": "PUBLISHED_REGISTRY_ARTIFACT"
+    }
+  ],
   "failure_reason": "",
   "measurements": {
     "attempts": 3,
@@ -298,7 +323,111 @@
     "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
     "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
     "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
-    "device_identity_status": "OWN_CAPTURE_FILES_ONLY",
-    "excluded_supporting_artifacts": []
+    "device_identity_status": "IDENTITY_RESOLVED_SAME_BOOT",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W07-02",
+    "resolution": "SAME_BOOT_IDENTITY_WITNESS",
+    "device_verified": false,
+    "identity_basis": "SAME_BOOT",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W02-07",
+        "role": "SAME_BOOT_WITNESS",
+        "published_record": "evidence/A/W02/registry/A-W02-07.json",
+        "published_commit": "49f4d04e719a7a5184b69032900c4907007beb4e",
+        "published_sha256": "d04942b37b79d8a57a7d5d509a083d11f6309a1288341dd4a900e5a0ca7e3a8d",
+        "source_record_sha256": "2b2b7cb716ae061dc2c052535dd9cf956dae7465d7e4532eff82a3eb50aaf902",
+        "boot_id": "4b555191",
+        "boot_count": 94,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      },
+      {
+        "test_id": "A-W08-04",
+        "role": "SAME_BOOT_WITNESS",
+        "published_record": "evidence/A/W08/registry/A-W08-04.json",
+        "published_commit": "aa688d3f458fc911440a8619e54d7fb9e43d7a68",
+        "published_sha256": "214f61345e0b3e876b79125e35f6586e4e2d8bf779c35a2ee54ac6c54e604371",
+        "source_record_sha256": "79daa69d89c907ac48e5dd3b3c2ee58cc0d49f2f3883e690a9bccaf7b4140c40",
+        "boot_id": "4b555191",
+        "boot_count": 94,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "witness_boot_ids",
+        "value": [
+          "4b555191",
+          "4b555191"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "4b555191",
+          "4b555191"
+        ]
+      },
+      {
+        "name": "record_boot_id",
+        "value": "4b555191",
+        "match": true,
+        "expected_or_source": "4b555191"
+      },
+      {
+        "name": "all_runs_same_boot",
+        "value": [
+          "4b555191"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "4b555191"
+        ]
+      },
+      {
+        "name": "device_tuple_consistent",
+        "value": [
+          "CG-HW-001",
+          "cg-w06-0.1.0",
+          "coldguard-001"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "CG-HW-001",
+          "cg-w06-0.1.0",
+          "coldguard-001"
+        ]
+      },
+      {
+        "name": "stabilization_verdicts",
+        "value": [
+          "STABLE",
+          "STABLE",
+          "STABLE"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "STABLE",
+          "STABLE",
+          "STABLE"
+        ]
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "boot_count": 94
   }
 }
