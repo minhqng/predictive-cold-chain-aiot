@@ -1,0 +1,31 @@
+{
+  "captured_at": "2026-11-04T18:12:36.033+00:00",
+  "measurements": {
+    "gap_count": 4,
+    "gaps": [
+      {
+        "outcome": "FAIL",
+        "reason": "UNAPPROVED_SUBSTITUTION",
+        "test_id": "A-W01-01"
+      },
+      {
+        "outcome": "FAIL",
+        "reason": "vcc_3v3_ABOVE_MAXIMUM",
+        "test_id": "A-W03-02"
+      },
+      {
+        "outcome": "INCOMPLETE",
+        "reason": "NETWORK_TRANSPORT_UNAVAILABLE: the local source gate precedes field-level validation, so canonical duty/device/expiry checks are unreachable",
+        "test_id": "A-W06-01"
+      },
+      {
+        "outcome": "INCOMPLETE",
+        "reason": "NETWORK_COMMAND_TRANSPORT_UNAVAILABLE: duplicate-canonical requires the docs/02 NETWORK source; the local console source is rejected before the idempotency store, so this cannot be physically executed in this build",
+        "test_id": "A-W06-02"
+      }
+    ]
+  },
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "test_id": "A-W22-01"
+}

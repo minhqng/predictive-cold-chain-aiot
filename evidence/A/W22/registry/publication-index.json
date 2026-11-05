@@ -1,0 +1,94 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "97ebdf00841d7c241ba6e4e924675b091ede9e6d",
+  "requirements": {
+    "A-W22-01": {
+      "criterion": "With leader/B identify physical evidence gaps.",
+      "record": "evidence/A/W22/registry/A-W22-01.json",
+      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "artifact_paths": [
+        "evidence/A/W22/registry/A-W22-01.json",
+        "evidence/A/W22/A-W22-01-EVIDENCE-GAP-LIST-20261105.md",
+        "evidence/A/W22/registry/measurements/A-W22-01-20261104T181236033131-d8384d.json"
+      ]
+    },
+    "A-W22-03": {
+      "criterion": "Write the scale, single-unit, TEC/V1 uncertainty, sensor limitations, ambient effects and PZEM limits.",
+      "record": "evidence/A/W22/registry/A-W22-03.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W22/registry/A-W22-03.json",
+        "evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W22/registry/A-W22-01.json",
+      "source_sha256": "9f906ec7e6f4d74c0d8050cf9635d98390f3a53487341247c2fd92aa2769997b",
+      "published_sha256": "3026ee7887281780e05b53c8efbd9832f0e04330b3ed024c9850e52c1fd43ade",
+      "source_capture_path": "results/A-W22-01.json",
+      "source_bytes": 1966,
+      "bytes": 2521,
+      "requirement": "A-W22-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W22/A-W22-01-EVIDENCE-GAP-LIST-20261105.md",
+      "source_sha256": "36889206307e1e7cb4f59891841305e2834d92cc86311998bda0ce0e69bd995a",
+      "published_sha256": "36889206307e1e7cb4f59891841305e2834d92cc86311998bda0ce0e69bd995a",
+      "source_capture_path": "A-W22-01-EVIDENCE-GAP-LIST-20261105.md",
+      "source_bytes": 6581,
+      "bytes": 6581,
+      "requirement": "A-W22-01",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W22/registry/measurements/A-W22-01-20261104T181236033131-d8384d.json",
+      "source_sha256": "f67ce34ca8f53a8ec3b0f418cefdb78f9ae5e45ccbe82bb0ab7146511404bef0",
+      "published_sha256": "f67ce34ca8f53a8ec3b0f418cefdb78f9ae5e45ccbe82bb0ab7146511404bef0",
+      "source_capture_path": "measurements/A-W22-01-20261104T181236033131-d8384d.json",
+      "source_bytes": 1024,
+      "bytes": 1024,
+      "requirement": "A-W22-01",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W22/registry/A-W22-03.json",
+      "source_sha256": "d1fa985cc66679cf6a4fbe8455871d2c0b88f5dfa19dbfba311501d00033bf46",
+      "published_sha256": "049608b57c666f63df0e63b757cfcb8866660bc3b0879ab4ec147d205b7d0f43",
+      "source_capture_path": "results/A-W22-03.json",
+      "source_bytes": 2331,
+      "bytes": 2900,
+      "requirement": "A-W22-03",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W22/A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md",
+      "source_sha256": "66880118f4ab527551afd6b2e03e9480cf854c8e56f547bfa63628999cfdd03b",
+      "published_sha256": "66880118f4ab527551afd6b2e03e9480cf854c8e56f547bfa63628999cfdd03b",
+      "source_capture_path": "A-W22-03-PHYSICAL-LIMITATION-SUMMARY-20261105.md",
+      "source_bytes": 9529,
+      "bytes": 9529,
+      "requirement": "A-W22-03",
+      "transformed_record": false,
+      "transformation_sequence": []
+    }
+  ]
+}
