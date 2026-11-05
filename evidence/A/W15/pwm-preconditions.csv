@@ -1,0 +1,10 @@
+id,precondition,current_state,owner
+PWM-P1,"the six (or seven, see the open review item) operating limits resolved and operator-approved in the build under test",FAIL - all UNRESOLVED in cg_tec_limits.h; START returns START_LIMITS_UNRESOLVED,D
+PWM-P2,output stage actually compiled in and the board flashed with that image,FAIL by design on the delivered branch: coldguard_config.h compiles the stage out and requested duty is 0; the bench images that did drive are not this build,A
+PWM-P3,"attended bench, operator at the PSU, explicit per-stage authorization, stop on zero or abnormal current",requires the operator; was honoured in every recorded session,operator
+PWM-P4,conductor and fuse basis decided (W08 A-W08-02),"FAIL - NO_FREEZE; no ampacity basis for the installed conductor (1.75 mm core diameter, ~2.405 mm2 if round solid - a ~4 % area gap to canonical, not a compliance claim), the canonical 2 x 2.5 mm2 deviation is open and the 15 A fuse value is operator-reported with nothing legible on the body",operator / A
+PWM-P5,independent over-temperature path (hardware interlock) installed,FAIL - interlock_state=NOT_INSTALLED in 957/957 recorded frames,operator / A
+PWM-P6,off-current gate and duty-readback match enforced before and after every dwell,"available: the bench image publishes off_current_limit_a=0.200 and off_verify=PASS, and readback matched applied in every recorded frame",A
+PWM-P7,PSU continuous rating confirmed for the longest planned dwell,"OPEN - the endurance report flags the PSU continuous-rating check as a precondition; 12 V / 400 W label is SOURCE VERIFIED, not a derating statement",operator
+PWM-P8,"hot-side ceiling replaced by a rated value, not the provisional working number",FAIL - 55 C is provisional and no continuous rating exists,D / A
+PWM-P9,"fan running observable, or hot-side heat rejection verified another way",FAIL - fan_readback=NOT_ELECTRONICALLY_VERIFIED in 957/957 frames; the only fan evidence is operator confirmation,A

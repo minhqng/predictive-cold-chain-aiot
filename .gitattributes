@@ -72,3 +72,7 @@ evidence/A/W13/** -text
 # those bytes on a core.autocrlf checkout and break every pin.
 evidence/A/W08/** -text
 evidence/A/W08/attachments/fuse-selection.md -text
+
+# W15 PZEM-integrity dossier: hash-pinned in evidence/A/W15/SHA256SUMS.txt and
+# re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
+evidence/A/W15/** -text
