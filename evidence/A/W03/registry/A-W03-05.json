@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "detail": " value=1.0 expected=0.95",
+      "failure_reason": "",
+      "name": "valid_rate",
+      "passed": true
+    },
+    {
+      "detail": " value=0 expected=0",
+      "failure_reason": "",
+      "name": "no_active_frames",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0 expected=0.05",
+      "failure_reason": "",
+      "name": "off_current_zero",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0 expected=1.0",
+      "failure_reason": "",
+      "name": "off_power_zero",
+      "passed": true
+    },
+    {
+      "detail": " value=11.95 expected=[11.5, 12.5]",
+      "failure_reason": "",
+      "name": "voltage_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T15:13:53.328+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T15:14:50.304+00:00",
+      "original": "A-W03-05",
+      "path": "evidence/A/W03/registry/measurements/A-W03-05-20261104T151450295213-b8331a.json",
+      "sha256": "f443b8b4f0ecf9a0221026ee1a81ece7cf498559cbd89cb32184dad736449a65",
+      "size": 783,
+      "stored": "evidence/A/W03/registry/measurements/A-W03-05-20261104T151450295213-b8331a.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "captured_frames": 600,
+    "cooling_off_frames": 600,
+    "cooling_on_frames": 0,
+    "current_max_a": 0.0,
+    "current_mean_a": 0.0,
+    "current_min_a": 0.0,
+    "current_sd_a": 0.0,
+    "frames": 600,
+    "off_current_max_a": 0.0,
+    "off_power_max_w": 0.0,
+    "power_consistency_max_rel_error": 0.0,
+    "power_max_w": 0.0,
+    "power_mean_w": 0.0,
+    "shared_capture": "A-W05-03",
+    "shared_window_s": 600,
+    "timestamp_source": "RAW_HOST_TIME_PRESERVED",
+    "valid_frames": 600,
+    "valid_rate": 1.0,
+    "voltage_max_v": 11.95,
+    "voltage_mean_v": 11.95,
+    "voltage_min_v": 11.95
+  },
+  "notes": "Corrected evaluation: first 600 s of the uninterrupted A-W05-03 1800 s raw capture, original host timestamps preserved. The live batch's false empty-slice result is superseded in history.",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:43:53.317+00:00",
+  "test_id": "A-W03-05",
+  "publication_provenance": {
+    "source_record_sha256": "e3c28939500fcaf661185d4e0acdeb4406419d071c617f0636f52450964230d7",
+    "source_capture_relative_path": "results/A-W03-05.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}

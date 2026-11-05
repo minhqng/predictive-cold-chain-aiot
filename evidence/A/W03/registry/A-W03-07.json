@@ -1,0 +1,86 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "IBT2_NOT_DEFAULT_OFF",
+      "name": "default_off_observed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "no_43a_claim",
+      "passed": true
+    },
+    {
+      "detail": "2/1 files (imported=2)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 95,
+    "boot_id": "d674902a",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T17:57:15.983+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.730+00:00",
+      "sha256": "4901c0328534c19daae8e16c94b657e25b4cd0ece824e2be1430a06a8cddea91",
+      "size": 8624,
+      "source_path": "evidence/A/W03/ibt2-pin-map.md",
+      "stored": "evidence/A/W03/ibt2-pin-map.md",
+      "test_id": "A-W03-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.738+00:00",
+      "sha256": "e6788a01761234c4f6f7e166b7e2a45ee7954d32340dd6b3255bc943494abbda",
+      "size": 9092,
+      "source_path": "evidence/A/W03/hardware-deviation-and-safety.md",
+      "stored": "evidence/A/W03/hardware-deviation-and-safety.md",
+      "test_id": "A-W03-07"
+    },
+    {
+      "captured_at": "2026-11-04T17:57:15.983+00:00",
+      "original": "A-W03-07",
+      "path": "evidence/A/W03/registry/measurements/A-W03-07-20261104T175715975860-972e1d.json",
+      "sha256": "d22c5f8366132535736768da38ea56f91b5a90111bdc2f01d78d408d9a6fa71f",
+      "size": 213,
+      "stored": "evidence/A/W03/registry/measurements/A-W03-07-20261104T175715975860-972e1d.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "default_off": true,
+    "output_stage": "ENABLED"
+  },
+  "notes": "confirmations from recorded evidence: pin map v2 frozen 2026-10-28 (imports/A-W03-07/4901c0328534-ibt2-pin-map.md); G0 continuity GPIO5-RPWM 0.2 ohm, GPIO6-R_EN 0.2 ohm, GPIO10-L_EN 0.2 ohm (leads 0.1 ohm, cross 59.1 k ohm, de2f24567b46 lines 102/195); functional actuation at 500 permille in A-W04-05 and A-W07-03; default OFF in every boot and post-STOP frame of this session; photos imports/A-W01-02/f5b93192fc4b-14-ibt2-actual.jpg and attachments/A-W03-07/ibt2-module-HW039-20261105.png; NOT_VERIFIED: per-pin logic levels vs ESP32-S3 VIH (HARDWARE-LIMITED)",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:57:00.973+00:00",
+  "test_id": "A-W03-07",
+  "publication_provenance": {
+    "source_record_sha256": "dce00e280a67035b17ed8f6798d6b12b1c0f5c8a0292437e6da7dd54f2f25334",
+    "source_capture_relative_path": "results/A-W03-07.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

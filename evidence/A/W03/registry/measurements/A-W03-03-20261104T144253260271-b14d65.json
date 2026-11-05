@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-11-04T14:42:53.260+00:00",
+  "measurements": {
+    "current_max_a": 0.0,
+    "current_mean_a": 0.0,
+    "link_source": "PZEM_LINES",
+    "pzem_crc_ok_rate": 1.0,
+    "pzem_frames": 60,
+    "pzem_ok_frames": 60,
+    "pzem_ok_rate": 1.0,
+    "telemetry_valid_rate": 1.0,
+    "voltage_mean_v": 11.95
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W03-03"
+}
