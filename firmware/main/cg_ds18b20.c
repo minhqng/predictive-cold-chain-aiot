@@ -28,8 +28,13 @@ const char *cg_quality_name(cg_thermal_quality_t quality)
         case CG_QUALITY_DEGRADED:
             return "DEGRADED";
         case CG_QUALITY_INVALID:
-        default:
             return "INVALID";
+        case CG_QUALITY_UNKNOWN:
+        default:
+            /* An out-of-range value is not a detected sensor failure; it is a
+             * state the firmware cannot name. docs/01 2302-2306 requires that
+             * this stay UNKNOWN rather than defaulting to a definite verdict. */
+            return "UNKNOWN";
     }
 }
 
@@ -182,6 +187,22 @@ void cg_ds18b20_read_all(cg_thermal_snapshot_t *snap)
         const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
         if (entry->is_measurement_role && !snap->probe[entry->role].valid) {
             invalid_roles++;
+        }
+    }
+
+    /* Same loop, reported as counts so the telemetry can state how many
+     * chamber-air probes backed this frame instead of leaving the reader to
+     * infer it from the quality word. */
+    snap->measurement_expected = 0;
+    snap->measurement_ok = 0;
+    for (size_t i = 0; i < cg_rom_map_size(); i++) {
+        const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
+        if (!entry->is_measurement_role) {
+            continue;
+        }
+        snap->measurement_expected++;
+        if (snap->probe[entry->role].valid) {
+            snap->measurement_ok++;
         }
     }
 

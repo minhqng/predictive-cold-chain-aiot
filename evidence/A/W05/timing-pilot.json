@@ -1,0 +1,81 @@
+{
+  "provenance": {
+    "artifact": "A-W05-03 telemetry cadence pilot",
+    "capture_firmware_version": "cg-w04-0.1.0",
+    "capture_note": "A W04 bench capture already committed and hash-pinned in evidence/A/W04/SHA256SUMS.txt. It is NOT the W05 30-minute study, it is NOT a closed-loop H8 run, and it carries no seq, producer sequence or quality vocabulary because schema 1 did not define them.",
+    "capture_schema": 1,
+    "generated_by": "evidence/A/W05/build_timing_pilot.py",
+    "source_capture": "evidence/A/W04/g1/40-g1-boot-60s.log",
+    "target_period_ms": 1000,
+    "tolerance_ms": 150
+  },
+  "report": {
+    "cadence": {
+      "accepted_frames": 62,
+      "duration_ms": 61078,
+      "early_frames": 0,
+      "frames_per_second": 0.9987,
+      "gap_histogram": {
+        "1078": 1,
+        "1080": 12,
+        "980": 48
+      },
+      "gaps": {
+        "count": 61,
+        "max_ms": 1080,
+        "mean_ms": 1001.279,
+        "median_ms": 980,
+        "min_ms": 980,
+        "p95_ms": 1080.0,
+        "p99_ms": 1080.0,
+        "stdev_ms": 40.889
+      },
+      "late_frames": 0,
+      "nonpositive_gaps": 0
+    },
+    "capture": {
+      "ignored_lines": 896,
+      "lines_total": 958,
+      "reject_reasons": [],
+      "rejected_lines": 0,
+      "telemetry_records": 62
+    },
+    "clock_skew_frames": 0,
+    "identity": {
+      "seq_duplicate_count": null,
+      "seq_duplicates": null,
+      "seq_frames": 0,
+      "seq_missing": null
+    },
+    "producers": {
+      "power_longest_repeat_run": null,
+      "power_repeat_frames": null,
+      "thermal_longest_repeat_run": null,
+      "thermal_repeat_frames": null
+    },
+    "target_period_ms": 1000,
+    "token_tally": {
+      "current_status": {
+        "INVALID": 61,
+        "NO_DATA": 1
+      },
+      "door_status": {
+        "UNVERIFIED": 62
+      },
+      "power_status": {
+        "INVALID": 61,
+        "NO_DATA": 1
+      },
+      "t_inside_status": {
+        "NO_DATA": 1,
+        "OK": 61
+      },
+      "voltage_status": {
+        "INVALID": 61,
+        "NO_DATA": 1
+      }
+    },
+    "tolerance_ms": 150,
+    "verdict": "MEASURED"
+  }
+}

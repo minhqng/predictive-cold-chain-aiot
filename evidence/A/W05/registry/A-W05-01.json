@@ -1,0 +1,85 @@
+{
+  "checks": [
+    {
+      "detail": " value=0 expected=0",
+      "failure_reason": "",
+      "name": "producers_named",
+      "passed": true
+    },
+    {
+      "detail": " value=True",
+      "failure_reason": "",
+      "name": "power_timeout_bounded",
+      "passed": true
+    },
+    {
+      "detail": " value=True",
+      "failure_reason": "",
+      "name": "telemetry_continues",
+      "passed": true
+    },
+    {
+      "detail": " value=True",
+      "failure_reason": "",
+      "name": "quality_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 65,
+    "boot_id": "fcaa1289",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:43:53.297+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:43:53.297+00:00",
+      "original": "A-W05-01",
+      "path": "evidence/A/W05/registry/measurements/A-W05-01-20261104T144353286299-427ca0.json",
+      "sha256": "1b93a291e0035b21f5d9cab6aa3470eda41c73ea5204da9c46b94a43b89db3cc",
+      "size": 518,
+      "stored": "evidence/A/W05/registry/measurements/A-W05-01-20261104T144353286299-427ca0.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "frames": 60,
+    "has_quality": true,
+    "health_unknown": 0,
+    "power_timeout_bounded": true,
+    "producer_health_fields": {
+      "health_bme": "NEVER",
+      "health_control": "OK",
+      "health_door": "OK",
+      "health_power": "OK",
+      "health_telemetry": "OK",
+      "health_thermal": "OK"
+    },
+    "telemetry_continues": true
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:42:53.276+00:00",
+  "test_id": "A-W05-01",
+  "publication_provenance": {
+    "source_record_sha256": "c968f0138f64e33b66e85ca3157643c88eff43a91f2945ff5a65caad5994401c",
+    "source_capture_relative_path": "results/A-W05-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

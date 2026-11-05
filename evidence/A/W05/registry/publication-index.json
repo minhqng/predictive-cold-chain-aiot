@@ -1,0 +1,128 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "5d0f5d75d8c8cb74ac391d9b33916e45ac389907",
+  "requirements": {
+    "A-W05-01": {
+      "criterion": "Thermal, BME, door, PZEM, command state, quality, telemetry and health are separated; a PZEM timeout must not block local safety forever.",
+      "record": "evidence/A/W05/registry/A-W05-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W05/registry/A-W05-01.json",
+        "evidence/A/W05/registry/measurements/A-W05-01-20261104T141338992010-ece0f5.json",
+        "evidence/A/W05/registry/measurements/A-W05-01-20261104T144353286299-427ca0.json"
+      ]
+    },
+    "A-W05-02": {
+      "criterion": "Freeze device_id, boot_id, seq, uptime, firmware_version, hardware_config_id and calibration_id in the telemetry contract.",
+      "record": "evidence/A/W05/registry/A-W05-02.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W05/registry/A-W05-02.json",
+        "evidence/A/W05/registry/measurements/A-W05-02-20261104T141238963257-aa24c7.json"
+      ]
+    },
+    "A-W05-03": {
+      "criterion": "Collect at least 30 minutes; measure sample intervals, mean, P95, max gap, DS18B20 failures and PZEM failures.",
+      "record": "evidence/A/W05/registry/A-W05-03.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W05/registry/A-W05-03.json",
+        "evidence/A/W05/registry/measurements/A-W05-03-20261104T151353320269-9549e3.json"
+      ]
+    },
+    "A-W05-04": {
+      "criterion": "Each published row carries T1/T2/T3, BME T/RH, door, PZEM V/I/P/Wh, applied cooling and quality with explicit missing-state semantics.",
+      "record": "evidence/A/W05/registry/A-W05-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W05/registry/A-W05-04.json",
+        "evidence/A/W05/registry/measurements/A-W05-04-20261104T170906538032-9f7d63.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W05/registry/A-W05-01.json",
+      "source_sha256": "c968f0138f64e33b66e85ca3157643c88eff43a91f2945ff5a65caad5994401c",
+      "published_sha256": "8f6cc7128b8655c0386442518722d75449c820feebbb46ab8a05ca068d58f2f4",
+      "source_capture_path": "results/A-W05-01.json",
+      "bytes": 2582,
+      "requirement": "A-W05-01",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W05/registry/measurements/A-W05-01-20261104T141338992010-ece0f5.json",
+      "source_sha256": "ad8bda6bc2daceb7751d7c35bc85cd015c9cba862a548361c31102bd05aa9978",
+      "published_sha256": "ad8bda6bc2daceb7751d7c35bc85cd015c9cba862a548361c31102bd05aa9978",
+      "source_capture_path": "measurements/A-W05-01-20261104T141338992010-ece0f5.json",
+      "bytes": 519,
+      "requirement": "A-W05-01",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W05/registry/measurements/A-W05-01-20261104T144353286299-427ca0.json",
+      "source_sha256": "1b93a291e0035b21f5d9cab6aa3470eda41c73ea5204da9c46b94a43b89db3cc",
+      "published_sha256": "1b93a291e0035b21f5d9cab6aa3470eda41c73ea5204da9c46b94a43b89db3cc",
+      "source_capture_path": "measurements/A-W05-01-20261104T144353286299-427ca0.json",
+      "bytes": 518,
+      "requirement": "A-W05-01",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W05/registry/A-W05-02.json",
+      "source_sha256": "ff50de2513bd085103cbeee5219598db700907f561b6b495d64cd5278e203655",
+      "published_sha256": "f9025856de6706c9f98012acc025326f909346b83b2d2e71f8553656b4cc1c27",
+      "source_capture_path": "results/A-W05-02.json",
+      "bytes": 3445,
+      "requirement": "A-W05-02",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W05/registry/measurements/A-W05-02-20261104T141238963257-aa24c7.json",
+      "source_sha256": "9e4206ed3001789321f727a96fb3e3999791020edb05ada9423d71d72dcdca1b",
+      "published_sha256": "9e4206ed3001789321f727a96fb3e3999791020edb05ada9423d71d72dcdca1b",
+      "source_capture_path": "measurements/A-W05-02-20261104T141238963257-aa24c7.json",
+      "bytes": 1089,
+      "requirement": "A-W05-02",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W05/registry/A-W05-03.json",
+      "source_sha256": "a4cdc6bfa2b75cf2b28045e6b9677f2eea445018b90be97402564541d7e02179",
+      "published_sha256": "0776b6dde6f5bf3853a843bc043424d7afb16a2118430015c43f918062d18706",
+      "source_capture_path": "results/A-W05-03.json",
+      "bytes": 2736,
+      "requirement": "A-W05-03",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W05/registry/measurements/A-W05-03-20261104T151353320269-9549e3.json",
+      "source_sha256": "bfc1bc99463fda667d96a5f45495a733ba34e1cc3e65102ec1486379e592deca",
+      "published_sha256": "bfc1bc99463fda667d96a5f45495a733ba34e1cc3e65102ec1486379e592deca",
+      "source_capture_path": "measurements/A-W05-03-20261104T151353320269-9549e3.json",
+      "bytes": 474,
+      "requirement": "A-W05-03",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W05/registry/A-W05-04.json",
+      "source_sha256": "7516d1012b31763263a59d6bbe23080eb36c2b10615009821b10a46da7bbec0b",
+      "published_sha256": "37efb815d9c1cee6638b8a3890757cfaba84aa9dd8f07831e005861c251a1789",
+      "source_capture_path": "results/A-W05-04.json",
+      "bytes": 2317,
+      "requirement": "A-W05-04",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W05/registry/measurements/A-W05-04-20261104T170906538032-9f7d63.json",
+      "source_sha256": "adeca42d0bb8c08a790e80d023079c82204ae82799ebbc50894adfa2e8a8f9d4",
+      "published_sha256": "adeca42d0bb8c08a790e80d023079c82204ae82799ebbc50894adfa2e8a8f9d4",
+      "source_capture_path": "measurements/A-W05-04-20261104T170906538032-9f7d63.json",
+      "bytes": 362,
+      "requirement": "A-W05-04",
+      "transformed_record": false
+    }
+  ]
+}

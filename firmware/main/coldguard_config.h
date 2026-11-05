@@ -18,7 +18,10 @@
  *     2026-10-25..27 bench sessions; it supersedes the docs/01 §11.7
  *     "Proposed GPIO mapping v1" table, which stays as history).
  *   - docs/01 section 6.4/6.5 (T1 near door, T2 center, T3 far/opposite;
- *     identity is the ROM code, never a library enumeration index).
+ *     identity is the ROM code, never a library enumeration index). The
+ *     placement half of that section is a superseded plan: the ROM->position
+ *     labels below follow the operator-frozen as-built record instead. The
+ *     identity rule it states is unchanged and still binding.
  *   - docs/01 section 8.2 (raw MC-38 level -> OPEN/CLOSED MUST be
  *     physically commissioned; firmware must not assume a polarity).
  *   - docs/01 section 11.8 (actuator must be OFF at reset/boot).
@@ -32,8 +35,19 @@
 /* Identity                                                            */
 /* ------------------------------------------------------------------ */
 
-#define CG_FIRMWARE_VERSION "cg-w04-0.1.0"
+#define CG_FIRMWARE_VERSION "cg-w05-0.1.0"
 #define CG_HARDWARE_CONFIG_ID "CG-HW-001"
+/* docs/01 2855-2876 makes calibration_id the identity of a calibration bundle
+ * (DS18B20 cross-check, BME check, PZEM reference check, date, environment,
+ * procedure). Member A has recorded none of those as an evidence-grade bundle:
+ * evidence/A/W02/sensor-rom-map.yaml carries `calibration_id: null`, and the
+ * PZEM reference check is W15 work. So the field is emitted as UNRECORDED - a
+ * status token in the same family as NOT_ASSIGNED - rather than inventing a
+ * `CG-CAL-...` value. The host converter must map UNRECORDED to null: the
+ * backend contract already declares calibration_id nullable
+ * (backend/src/coldguard_backend/contracts.py:166), so a fabricated identifier
+ * would be the only value that could be silently trusted downstream. */
+#define CG_CALIBRATION_ID "UNRECORDED"
 #define CG_PIN_MAP_VERSION 2
 /* Grammar v2 = grammar v1 line kinds, unchanged, plus the W03 PZEM/PZEM_CFG/
  * PZEM_RANGE lines. A v1 parser ignores the new kinds as unknown; a v2 parser
@@ -64,6 +78,10 @@
 #define CG_PIN_BME280_SCL 34
 /* MC-38 moved from GPIO34 to GPIO35; GPIO34 now carries BME280 SCL. */
 #define CG_PIN_MC38 35
+/* Naming debt: the as-built RS-485 part is a TTL485-V2.0 auto-direction module
+ * (no DE/RE), NOT a MAX3485. These identifiers name the UART signal role only;
+ * they are kept because firmware/tools/cg_gpio_map.py pins the exact macro
+ * names, so a rename would break a host guard that lives outside this tree. */
 #define CG_PIN_UART_TX_TO_MAX3485_DI 36
 #define CG_PIN_UART_RX_FROM_MAX3485_RO 37
 #define CG_PIN_IBT2_COOLING_PWM 5
@@ -214,14 +232,44 @@
 /* Every entry is the 8-byte ROM in wire order: family, 6 serial, CRC8. */
 /* ------------------------------------------------------------------ */
 
-/* T1 - assigned role: near-door region. Physical label: PENDING. */
+/* Positions below are the operator-frozen AS-BUILT map from
+ * evidence/A/W07/probe-identification-v0.md, which supersedes the plan-era
+ * docs/01 6.4/6.5 placement (T1 near door / T2 center / T3 far). The ROM bytes
+ * themselves are unchanged - only which physical spot each logical slot occupies.
+ * Position vocabulary matches the host role authority
+ * (cg_probe_roles.py: ROM_POSITION_BY_ROM) so the two layers cannot name one
+ * probe differently.
+ * Honesty limit: this is an operator-frozen as-built record, not independently
+ * verified hardware fact. IHA-01 level 4 (independent no-movement proof after
+ * the freeze) is NOT_AVAILABLE, so nothing here may be phrased as a remeasured
+ * placement, and CG_ROM_STATUS stays as unsoftened as the evidence allows.
+ * The one role the measurements themselves do settle is T2: every row of
+ * evidence/A/W04/tec-cooling-response-600s.csv carries t2_role=HOT_SIDE, and
+ * that channel rose to 39.938 C while chamber air fell, so it is a heatsink
+ * surface and must never feed a chamber-air value. */
+
+/* T1 - as-built position: CHAMBER_CENTER. Physical label: PENDING. */
 #define CG_ROM_T1_BYTES {0x28, 0x70, 0x88, 0xCA, 0x00, 0x00, 0x00, 0x51}
-/* T2 - assigned role: central region. Physical label: PENDING. */
+/* T2 - as-built position: TEC_HOT_SIDE (not chamber air; see the note above). */
 #define CG_ROM_T2_BYTES {0x28, 0xAE, 0xBF, 0x22, 0x00, 0x00, 0x00, 0x06}
-/* T3 - assigned role: far/opposite region. Physical label: PENDING. */
+/* T3 - as-built position: CHAMBER_BOTTOM. Physical label: PENDING. */
 #define CG_ROM_T3_BYTES {0x28, 0xCB, 0xE9, 0xCA, 0x00, 0x00, 0x00, 0x72}
-/* SPARE - not a measurement role; must stay outside T1/T2/T3. */
+/* SPARE - not a measurement role; must stay outside T1/T2/T3.
+ * As-built position: CHAMBER_NEAR_DOOR. */
 #define CG_ROM_SPARE_BYTES {0x28, 0x3B, 0xE5, 0xC9, 0x00, 0x00, 0x00, 0xA9}
+
+/* Which logical slot each telemetry field is allowed to read. Named here, next
+ * to the map, so the emitter contains no role literal to move by accident.
+ * T1 is the only chamber-air probe the acquisition path samples today
+ * (cg_rom_map.c marks it a measurement role and the sensor task converts all
+ * four every pass); T4/SPARE is a measurement-excluded spare. */
+#define CG_TELEM_CHAMBER_AIR_ROLE CG_ROLE_T1
+#define CG_TELEM_HOT_SIDE_ROLE CG_ROLE_T2
+
+/* The slot names these fields report as their source, so a downstream consumer
+ * can resolve a value back to a ROM through the t1_rom../spare_rom fields. */
+#define CG_TELEM_CHAMBER_AIR_SRC "T1"
+#define CG_TELEM_HOT_SIDE_SRC "T2"
 
 /* Status string carried in every ROM line so the log itself states that
  * the physical label was not yet applied. */
@@ -246,7 +294,13 @@
  * 0 the firmware reports the door semantic state as UNVERIFIED and only
  * logs the raw electrical level. Set to 1 only after a physical
  * open/close observation, and then record CG_DOOR_RAW_OPEN_LEVEL and the
- * observation in the evidence dossier. */
+ * observation in the evidence dossier.
+ *
+ * D25: this is a compile-time capability gate, not a per-boot attestation. A
+ * build constant cannot prove the wiring still matches on the current boot, so
+ * a door OPEN/CLOSED reading is additionally held unattested until
+ * cg_door_attest_polarity() runs for this boot; cg_door_init() clears it, so
+ * every reset returns the door to UNVERIFIED regardless of this value. */
 #define CG_DOOR_POLARITY_CONFIRMED 0
 #define CG_DOOR_RAW_OPEN_LEVEL 0
 
@@ -442,10 +496,55 @@
  * local H8 bench tree (deliberately outside this repository, fingerprinted in
  * evidence/A/W04/ARTIFACT-MANIFEST.md) reuses this guard and needs 2342; that
  * dependency is disclosed there instead of being documented as a W04 result.
- * W02/W03 output is unchanged and its captures stay parseable. */
-#define CG_TELEMETRY_SCHEMA_VERSION 1
+ * W02/W03 output is unchanged and its captures stay parseable.
+ *
+ * SCHEMA 2 (W05). The raw serial line gains the A-W05-02 identity fields
+ * (device_id, seq, calibration_id), the A-W05-05 per-source quality names, the
+ * A-W05-04 per-field ages and producer sequences, and the A-W05-01 producer
+ * liveness counters. This is the *serial* stream only: the canonical JSON
+ * envelope in docs/02 604-620 keeps its own `schema_version: 1`, and bumping
+ * the serial schema does not amend that contract. Every W04 field name keeps
+ * its meaning and position-independent key, so firmware/tools/cg_telemetry_schema.py
+ * parses schema 1 and schema 2 lines; the W04 captures committed in
+ * evidence/A/W04/ must remain parseable, and the tests pin that. */
+#define CG_TELEMETRY_SCHEMA_VERSION 2
 #define CG_TELEMETRY_PERIOD_MS 1000
 #define CG_TELEMETRY_LINE_MAX 2560
+
+/* ------------------------------------------------------------------ */
+/* W05 - producer liveness (A-W05-01 task boundaries)                   */
+/* ------------------------------------------------------------------ */
+
+/* Nominal period of each producer task, used only to classify its beats as
+ * OK/LATE/MISSED. These are NOT the control freshness bounds (those are
+ * CG_TEC_STALE_*_MS above and are what the controller acts on).
+ *
+ * The door value is the *measurable* period, not the requested one:
+ * CG_DOOR_POLL_MS asks for 5 ms, but pdMS_TO_TICKS(5) rounds to 0 at the
+ * default 100 Hz FreeRTOS tick and app_main clamps it to one tick, so the door
+ * task actually publishes every ~10 ms. Naming 5 ms here would report a
+ * permanently LATE producer, which is a false alarm about a task that is
+ * running exactly as the code intends. The 20 ms figure is the A-W05-03 finding
+ * and the timing study must re-measure it against a real capture. */
+#define CG_HEALTH_THERMAL_PERIOD_MS CG_SAMPLE_PERIOD_MS
+#define CG_HEALTH_BME_PERIOD_MS CG_SAMPLE_PERIOD_MS
+#define CG_HEALTH_DOOR_PERIOD_MS 20
+#define CG_HEALTH_POWER_PERIOD_MS CG_PZEM_POLL_PERIOD_MS
+#define CG_HEALTH_TELEMETRY_PERIOD_MS CG_TELEMETRY_PERIOD_MS
+#define CG_HEALTH_CONTROL_PERIOD_MS CG_TEC_TICK_MS
+
+/* BME280 is not implemented in this tree (docs/01 A-W02-06 is pending, and the
+ * telemetry reports humidity as SENSOR_NOT_PRESENT). Its producer therefore
+ * never beats and is reported NEVER, which the quality layer turns into
+ * UNKNOWN for the environment group rather than a pass. */
+
+/* A door level older than this cannot be presented as the current door state
+ * (docs/01 2237-2249: historical validity is not control freshness). W04 had no
+ * door age at all - the door publication carried no timestamp - so this bound
+ * could not be evaluated; it exists now that cg_snapshot_publish_door() takes
+ * an observation time. Four door periods is 80 ms, far inside any deliberate
+ * open interval used for a disturbance test, so it cannot erase a treatment. */
+#define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
 
 /* Local operator console on UART0 (the log console). Commands share the
  * terminal with the log stream; the parser rejects every line it does not

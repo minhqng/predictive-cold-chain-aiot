@@ -23,6 +23,10 @@ import cg_build_telemetry  # noqa: E402
 import cg_telemetry_schema as schema  # noqa: E402
 
 
+# The W04-era (schema 1) grammar, kept as the parser wrote it: that line reported
+# the heatsink probe as chamber air (t_inside_src=T2) and had no hot-side reading.
+# It is history, not the current contract - see test_cg_telemetry_w05.py for the
+# live role checks.
 def telem_line(
     uptime_ms: int = 12345,
     run_id: str = "UNSET",
@@ -85,6 +89,11 @@ class ParseLineTests(unittest.TestCase):
         self.assertIn("t_inside_status", str(ctx.exception))
 
     def test_unsupported_schema_is_rejected(self) -> None:
+        """Schema 2 is now the current line format, so an unknown future schema
+        is what has to be refused. A schema-1 body relabelled as 2 is also
+        refused, because it cannot carry the W05 identity fields."""
+        with self.assertRaises(schema.TelemetryError):
+            schema.parse_line(telem_line().replace("schema=1", "schema=9"))
         with self.assertRaises(schema.TelemetryError):
             schema.parse_line(telem_line().replace("schema=1", "schema=2"))
 

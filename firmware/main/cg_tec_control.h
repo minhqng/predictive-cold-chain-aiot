@@ -107,6 +107,12 @@ typedef struct {
     cg_tec_state_t state;
     uint32_t fault_bits;
     uint32_t duty_permille;
+    /* W05: what the output layer was actually left driving, as distinct from
+     * what was requested. A refused START leaves duty_permille at 0 and this
+     * false; a fault path that disengaged the outputs clears it even while the
+     * state has not yet settled. Telemetry reports it as `cooling_applied` so
+     * a command can never be read as a verified physical action. */
+    bool outputs_energized;
     uint64_t elapsed_ms;     /* since a successful START, 0 when not cooling */
     uint64_t remaining_ms;   /* bounded-run time left, 0 when not cooling */
     uint32_t start_count;

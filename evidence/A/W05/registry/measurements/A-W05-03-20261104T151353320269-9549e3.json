@@ -1,0 +1,18 @@
+{
+  "captured_at": "2026-11-04T15:13:53.320+00:00",
+  "measurements": {
+    "boot_changes": 0,
+    "boot_ids_complete": true,
+    "captured_frames": 1800,
+    "duration_s": 1798.98,
+    "frames": 1800,
+    "interval_max_s": 1.0200000000000955,
+    "interval_mean_s": 0.9999888827126181,
+    "interval_p95_s": 1.0200000000000955,
+    "seq_complete": true,
+    "seq_regressions": 0
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W05-03"
+}

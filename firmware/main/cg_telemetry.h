@@ -1,5 +1,5 @@
 /*
- * ColdGuard firmware - raw telemetry line (W04).
+ * ColdGuard firmware - raw telemetry line (W04 foundation, W05 identity/quality).
  *
  * One `#CG TELEM` line per second carries the measurements the experiment
  * needs. The line is an *observation*: a missing value is printed as `nan`
@@ -7,18 +7,55 @@
  * previous value. That is what lets the host build a dataset without
  * inventing samples.
  *
- * Field contract (schema 1; see docs/06 and firmware/tools/
+ * Field contract (schema 2; see docs/06 and firmware/tools/
  * cg_telemetry_schema.py):
  *   timestamp_utc is UNAVAILABLE: the ESP32 has no wall clock and no network
  *   time. The host adds a capture timestamp when it converts the capture;
  *   the device time axis is elapsed_ms/run_elapsed_ms.
  *
- * Channel assignment is explicit and does not exceed the evidence:
- *   T1/T2/T3 are chamber probes; T2 is reported as t_inside_c (src=T2).
- *   No probe is assigned to the cold side, the hot side or the ambient, so
- *   those fields are nan with status NOT_ASSIGNED.
+ * Channel assignment is explicit and does not exceed the evidence. Positions
+ * are the operator-frozen as-built map (coldguard_config.h, ROM -> position),
+ * not independently verified hardware fact:
+ *   T1 CHAMBER_CENTER  -> t_inside_c (src=T1), the only chamber-air probe the
+ *                         acquisition path samples today.
+ *   T2 TEC_HOT_SIDE    -> t_hot_side_c (src=T2). It is a heatsink surface and
+ *                         never feeds a chamber-air value; in the 2026-11-01
+ *                         600 s run it peaked at 39.938 C while chamber air fell
+ *                         about 8.7 C, and all 957 rows of that capture label it
+ *                         t2_role=HOT_SIDE.
+ *   T3 CHAMBER_BOTTOM and T4/SPARE CHAMBER_NEAR_DOOR are reported per-role in
+ *                         raw_t3_c / raw_spare_c and are not aggregated here.
+ *   No probe is assigned to the cold side or the ambient, so those fields are
+ *   nan with status NOT_ASSIGNED.
  *   The BME280 is not implemented (A-W02-06 pending), so relative humidity
  *   is nan with status SENSOR_NOT_PRESENT.
+ *
+ * The serial schema stays at 3 for this correction: t_hot_side_c and
+ * t_hot_side_status were already in the line, and the new t_hot_side_src is an
+ * additive token the host parser retains without requiring, so no committed
+ * capture is orphaned. Bumping the version would have invalidated the W04 and
+ * W05 dossier pins for no gain in meaning.
+ *
+ * What W05 adds, and why each group is here:
+ *   A-W05-02 identity  device_id + boot_id + seq is the dedup key the backend
+ *                      enforces (docs/02 633-646, 845); calibration_id is
+ *                      emitted as UNRECORDED because no calibration bundle has
+ *                      been measured (docs/01 2855-2876). Each probe's frozen
+ *                      ROM travels in the line because docs/01 6.5 makes the
+ *                      ROM - not an enumeration index - the sensor identity.
+ *   A-W05-04 coherence *_age_ms and *_seq per producer state, in the frame,
+ *                      whether this line carried a new observation or a repeat.
+ *                      Without them "coherent snapshot" is an assertion.
+ *   A-W05-05 quality   the four canonical per-source names plus the collapsed
+ *                      overall name, derived by cg_quality.c from the same
+ *                      snapshot the values come from.
+ *   A-W05-01 liveness  producer health names, beat counts and worst observed
+ *                      gap, so a stopped task shows up as a named producer
+ *                      rather than as a sensor that keeps reporting.
+ *   applied state      cooling_applied reports what the output layer was left
+ *                      driving, and cooling_evidence reports whether the PZEM
+ *                      corroboration agrees, was zero, or could not be observed
+ *                      at all. A command is never presented as a physical fact.
  */
 #pragma once
 
@@ -26,10 +63,17 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include "cg_health.h"
 #include "cg_snapshot.h"
 #include "cg_tec_control.h"
 
+#define CG_TELEM_ROM_HEX_LEN 17 /* 16 hex characters + NUL */
+
 typedef struct {
+    /* A-W05-02: monotonic per-boot frame counter. The backend dedup key is
+     * (device_id, boot_id, seq), so seq must never repeat inside a boot and
+     * must never be reset by a command. */
+    uint32_t seq;
     const char *boot_id;
     uint32_t boot_count;
     uint64_t uptime_ms;
@@ -37,6 +81,13 @@ typedef struct {
     const char *test_phase;
     const cg_snapshot_t *snap;
     const cg_tec_control_t *ctl;
+    /* A-W05-01. NULL means liveness was not evaluated for this frame, which is
+     * reported as health=UNKNOWN rather than as a healthy device. */
+    const cg_health_report_t *health;
+    /* Pre-rendered identity so this module keeps no driver dependency and stays
+     * host-testable. NULL element prints as UNREAD. */
+    const char *probe_rom[CG_ROLE_COUNT];
+    const char *role_status;
     bool output_stage_enabled;
     bool fan_available;
 } cg_telemetry_frame_t;
@@ -55,3 +106,24 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
 #define CG_TELEM_STATUS_NOT_ASSIGNED "NOT_ASSIGNED"
 #define CG_TELEM_STATUS_NOT_PRESENT "SENSOR_NOT_PRESENT"
 #define CG_TELEM_STATUS_UNVERIFIED "UNVERIFIED"
+
+/* W05 tokens. `cooling_evidence` is deliberately five-valued: the PZEM can
+ * corroborate an applied output, corroborate an idle branch, contradict either
+ * one, be too old to say anything, or have never answered at all. Only the
+ * first two are evidence about the branch, and a contradiction is never
+ * smoothed into "OFF looks fine". */
+#define CG_TELEM_APPLIED_ON "ON"
+#define CG_TELEM_APPLIED_OFF "OFF"
+#define CG_TELEM_EVIDENCE_APPLIED "MEASURED_APPLIED_AND_DRAWING"
+#define CG_TELEM_EVIDENCE_IDLE "MEASURED_IDLE_AND_ZERO"
+#define CG_TELEM_EVIDENCE_CONTRADICTS "MEASURED_CONTRADICTS_APPLIED"
+#define CG_TELEM_EVIDENCE_STALE "UNOBSERVED_STALE"
+#define CG_TELEM_EVIDENCE_NONE "UNOBSERVED_NO_DATA"
+#define CG_TELEM_APPLIED_SOURCE "FIRMWARE_OUTPUT_STATE"
+/* The ROM values on the line come from the frozen configuration table
+ * (cg_rom_map.c), not from a per-frame 1-Wire match. Per-boot detection
+ * evidence is the `#CG ROM ... present=` line family. Naming the source keeps
+ * downstream from reading a configured identity as a freshly detected one. */
+#define CG_TELEM_ROM_SOURCE "FROZEN_CONFIG_MAP"
+#define CG_TELEM_HEALTH_UNKNOWN "UNKNOWN"
+#define CG_TELEM_ROM_UNREAD "UNREAD"
