@@ -1,0 +1,34 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "e6b2353bb9be3dc2df4dde68266041d338d4cf40",
+  "requirements": {
+    "A-W18-01": {
+      "criterion": "Check fuse, fan, terminals, sensors, PZEM, chamber and applied-output default before Controller B enablement.",
+      "record": "evidence/A/W18/registry/A-W18-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W18/registry/A-W18-01.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W18/registry/A-W18-01.json",
+      "source_sha256": "2a4c8f5c4c076b38aea35f4ea81e239dbf71c6b241ed5991c9c0e7ffa655ebbe",
+      "published_sha256": "fadf11ee54a668e1dd096f43a98c6be3701fac14238ef615376d791203a217e0",
+      "source_capture_path": "results/A-W18-01.json",
+      "source_bytes": 2630,
+      "bytes": 3999,
+      "requirement": "A-W18-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    }
+  ]
+}

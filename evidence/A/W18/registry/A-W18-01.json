@@ -1,0 +1,96 @@
+{
+  "checks": [
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:hardware_config_present",
+      "name": "hardware_config_present",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:sensor_identity_present",
+      "name": "sensor_identity_present",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:pzem_range_verified",
+      "name": "pzem_range_verified",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:door_closed",
+      "name": "door_closed",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:default_off",
+      "name": "default_off",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:storage_writable",
+      "name": "storage_writable",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 95,
+    "boot_id": "d674902a",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T17:57:26.049+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "checklist confirmations from recorded evidence: {\"Fuse and holder inspected\": \"holder photo attachments/A-W08-02/fuse-block-holder-20261105.png and A-W08-02 record (conductor/terminal ratings UNVERIFIED, documented)\", \"Fan inspected and unobstructed\": \"operator observed both fans rotating (H8 session 2026-10-31); fan_status=OK and fan=1 in every powered capture of this session\", \"Terminals inspected\": \"G0 continuity set (0.2 ohm control lines, 0.2 ohm shunt path) and the documented terminal/crimp risk entries (CR-A-W01-02, R12)\", \"Sensors inspected\": \"A-W14-01 ROM verification 4/4 and A-W12-01 offset drift 0.0233 C PASS\", \"PZEM inspected\": \"A-W03-04 PASS and A-W12-02 OFF/active recheck PASS (0.000 A floor, 11.94 V)\", \"Chamber inspected\": \"A-W07-01 geometry freeze PASS\", \"Applied output is default OFF\": \"live frame default_off check in this handler plus every capture of this session reading 0.000 A with cooling_applied=OFF\"}",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:57:26.041+00:00",
+  "test_id": "A-W18-01",
+  "publication_provenance": {
+    "source_record_sha256": "2a4c8f5c4c076b38aea35f4ea81e239dbf71c6b241ed5991c9c0e7ffa655ebbe",
+    "source_capture_relative_path": "results/A-W18-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": [],
+    "published_dependencies": {
+      "A-W03-04": {
+        "commit": "71c3b1b6362ac57e4816a06290f48126d9bcf66b",
+        "path": "evidence/A/W03/registry/A-W03-04.json"
+      },
+      "A-W07-01": {
+        "commit": "8ecede5bad8537507134a8131063a50645890f9b",
+        "path": "evidence/A/W07/registry/A-W07-01.json"
+      },
+      "A-W14-01": {
+        "commit": "ba449b4df47f4f5fcc73e8fa8c42fd53b62a657c",
+        "path": "evidence/A/W14/registry/A-W14-01.json"
+      },
+      "A-W08-02": {
+        "commit": "aa688d3f458fc911440a8619e54d7fb9e43d7a68",
+        "path": "evidence/A/W08/registry/A-W08-02.json"
+      },
+      "A-W12-01": {
+        "commit": "6325c19c89c794633179843b9ea053292d6baa7d",
+        "path": "evidence/A/W12/registry/A-W12-01.json"
+      }
+    }
+  }
+}
