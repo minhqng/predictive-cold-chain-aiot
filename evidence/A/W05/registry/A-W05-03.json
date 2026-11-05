@@ -1,0 +1,88 @@
+{
+  "checks": [
+    {
+      "detail": " value=1798.98 expected=1740",
+      "failure_reason": "",
+      "name": "duration",
+      "passed": true
+    },
+    {
+      "detail": " value=0.9999888827126181 expected=[0.8, 1.2]",
+      "failure_reason": "",
+      "name": "mean_interval",
+      "passed": true
+    },
+    {
+      "detail": " value=1.0200000000000955 expected=1.5",
+      "failure_reason": "",
+      "name": "p95_interval",
+      "passed": true
+    },
+    {
+      "detail": " value=1.0200000000000955 expected=5.0",
+      "failure_reason": "",
+      "name": "max_gap",
+      "passed": true
+    },
+    {
+      "detail": " value=0 expected=0",
+      "failure_reason": "",
+      "name": "no_reboot",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 65,
+    "boot_id": "fcaa1289",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T15:13:53.328+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T15:13:53.328+00:00",
+      "original": "A-W05-03",
+      "path": "evidence/A/W05/registry/measurements/A-W05-03-20261104T151353320269-9549e3.json",
+      "sha256": "bfc1bc99463fda667d96a5f45495a733ba34e1cc3e65102ec1486379e592deca",
+      "size": 474,
+      "stored": "evidence/A/W05/registry/measurements/A-W05-03-20261104T151353320269-9549e3.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "boot_changes": 0,
+    "boot_ids_complete": true,
+    "captured_frames": 1800,
+    "duration_s": 1798.98,
+    "frames": 1800,
+    "interval_max_s": 1.0200000000000955,
+    "interval_mean_s": 0.9999888827126181,
+    "interval_p95_s": 1.0200000000000955,
+    "seq_complete": true,
+    "seq_regressions": 0
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:43:53.317+00:00",
+  "test_id": "A-W05-03",
+  "publication_provenance": {
+    "source_record_sha256": "a4cdc6bfa2b75cf2b28045e6b9677f2eea445018b90be97402564541d7e02179",
+    "source_capture_relative_path": "results/A-W05-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

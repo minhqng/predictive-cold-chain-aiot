@@ -1,0 +1,124 @@
+{
+  "checks": [
+    {
+      "detail": " value=['coldguard-001']",
+      "failure_reason": "",
+      "name": "device_id_present",
+      "passed": true
+    },
+    {
+      "detail": " value=['94843058']",
+      "failure_reason": "",
+      "name": "boot_id_present",
+      "passed": true
+    },
+    {
+      "detail": " value=0 expected=0",
+      "failure_reason": "",
+      "name": "seq_monotonic",
+      "passed": true
+    },
+    {
+      "detail": " value=['cg-w06-0.1.0']",
+      "failure_reason": "",
+      "name": "firmware_version_present",
+      "passed": true
+    },
+    {
+      "detail": " value=['CG-HW-001']",
+      "failure_reason": "",
+      "name": "hardware_config_present",
+      "passed": true
+    },
+    {
+      "detail": " value=['UNRECORDED']",
+      "failure_reason": "",
+      "name": "calibration_id_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 52,
+    "boot_id": "94843058",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:12:38.973+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:12:38.973+00:00",
+      "original": "A-W05-02",
+      "path": "evidence/A/W05/registry/measurements/A-W05-02-20261104T141238963257-aa24c7.json",
+      "sha256": "9e4206ed3001789321f727a96fb3e3999791020edb05ada9423d71d72dcdca1b",
+      "size": 1089,
+      "stored": "evidence/A/W05/registry/measurements/A-W05-02-20261104T141238963257-aa24c7.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "boot_count": 52,
+    "boot_id": "94843058",
+    "boot_ids": [
+      "94843058"
+    ],
+    "calibration_ids": [
+      "UNRECORDED"
+    ],
+    "captured_frames": 15,
+    "device_ids": [
+      "coldguard-001"
+    ],
+    "firmware_kind": "CANONICAL",
+    "firmware_versions": [
+      "cg-w06-0.1.0"
+    ],
+    "frames": 15,
+    "grammar": 2,
+    "hardware_config_ids": [
+      "CG-HW-001"
+    ],
+    "pin_map": 2,
+    "rom_roles": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "seq_regressions": 0,
+    "spare_rom": "283BE5C9000000A9",
+    "t1_rom": "287088CA00000051",
+    "t2_rom": "28AEBF2200000006",
+    "t3_rom": "28CBE9CA00000072",
+    "unique_rom_count": 4,
+    "unique_roms": [
+      "283BE5C9000000A9",
+      "287088CA00000051",
+      "28AEBF2200000006",
+      "28CBE9CA00000072"
+    ]
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:12:23.960+00:00",
+  "test_id": "A-W05-02",
+  "publication_provenance": {
+    "source_record_sha256": "ff50de2513bd085103cbeee5219598db700907f561b6b495d64cd5278e203655",
+    "source_capture_relative_path": "results/A-W05-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

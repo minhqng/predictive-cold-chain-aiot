@@ -1,0 +1,48 @@
+{
+  "captured_at": "2026-11-04T14:12:38.963+00:00",
+  "measurements": {
+    "boot_count": 52,
+    "boot_id": "94843058",
+    "boot_ids": [
+      "94843058"
+    ],
+    "calibration_ids": [
+      "UNRECORDED"
+    ],
+    "captured_frames": 15,
+    "device_ids": [
+      "coldguard-001"
+    ],
+    "firmware_kind": "CANONICAL",
+    "firmware_versions": [
+      "cg-w06-0.1.0"
+    ],
+    "frames": 15,
+    "grammar": 2,
+    "hardware_config_ids": [
+      "CG-HW-001"
+    ],
+    "pin_map": 2,
+    "rom_roles": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "seq_regressions": 0,
+    "spare_rom": "283BE5C9000000A9",
+    "t1_rom": "287088CA00000051",
+    "t2_rom": "28AEBF2200000006",
+    "t3_rom": "28CBE9CA00000072",
+    "unique_rom_count": 4,
+    "unique_roms": [
+      "283BE5C9000000A9",
+      "287088CA00000051",
+      "28AEBF2200000006",
+      "28CBE9CA00000072"
+    ]
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W05-02"
+}

@@ -1,0 +1,15 @@
+{
+  "captured_at": "2026-11-04T17:09:06.538+00:00",
+  "measurements": {
+    "captured_frames": 60,
+    "frames": 60,
+    "frames_with_identity": 60,
+    "missing_field_frames": 0,
+    "negative_or_zero_current_ok": 60,
+    "warning_count": 0,
+    "warnings_by_field": {}
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W05-04"
+}
