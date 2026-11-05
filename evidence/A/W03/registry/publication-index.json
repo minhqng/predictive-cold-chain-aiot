@@ -33,12 +33,13 @@
     "A-W03-05": {
       "criterion": "With the TEC physically OFF, collect at least 10 minutes of PZEM samples and measure voltage, current/power zero and noise, and Modbus error rate.",
       "record": "evidence/A/W03/registry/A-W03-05.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
       "artifact_paths": [
         "evidence/A/W03/registry/A-W03-05.json",
         "evidence/A/W03/registry/measurements/A-W03-05-20261104T151353630569-0040d7.json",
         "evidence/A/W03/registry/measurements/A-W03-05-20261104T151450295213-b8331a.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W03/registry/A-W03-05.json#identity_provenance"
     },
     "A-W03-06": {
       "criterion": "Verify correct current path, secure terminals, no signal wire in the high-current path and the physical 50 A / 75 mV marking.",
@@ -108,9 +109,9 @@
     {
       "dest": "evidence/A/W03/registry/A-W03-05.json",
       "source_sha256": "e3c28939500fcaf661185d4e0acdeb4406419d071c617f0636f52450964230d7",
-      "published_sha256": "fa37e81e612dac5ddd323b5e5611c4d2b645ac526beb7aa9ef0c8fb4df0eb7c3",
+      "published_sha256": "4960d7706dce79e4c97b6513de2cf55766a42f170381a1775a6e7c656acf04cb",
       "source_capture_path": "results/A-W03-05.json",
-      "bytes": 2914,
+      "bytes": 6180,
       "requirement": "A-W03-05",
       "transformed_record": true
     },

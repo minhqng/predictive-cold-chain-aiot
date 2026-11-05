@@ -44,11 +44,12 @@
     "A-W04-07": {
       "criterion": "Capture command/applied state, V/I/P, T1/T2/T3 and time; plot electrical response and thermal direction.",
       "record": "evidence/A/W04/registry/A-W04-07.json",
-      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
       "artifact_paths": [
         "evidence/A/W04/registry/A-W04-07.json",
         "evidence/A/W04/registry/measurements/A-W04-07-20261104T171600454484-734feb.json"
-      ]
+      ],
+      "identity_provenance": "evidence/A/W04/registry/A-W04-07.json#identity_provenance"
     }
   },
   "artifacts": [
@@ -136,9 +137,9 @@
     {
       "dest": "evidence/A/W04/registry/A-W04-07.json",
       "source_sha256": "224402e15af1529df4b5acfc86e34ecb8f5883340f7e9d22fdde42619b9d3f0a",
-      "published_sha256": "1986b6ebd0fcff7e68867feced42e102d71bf288191d71d9481e6ebae3b77dbb",
+      "published_sha256": "e6ed50986ab10ed1e363ce9bb0a1e76034f78a948b3590f1325a16fa2f5a6f87",
       "source_capture_path": "results/A-W04-07.json",
-      "bytes": 2908,
+      "bytes": 5623,
       "requirement": "A-W04-07",
       "transformed_record": true
     },

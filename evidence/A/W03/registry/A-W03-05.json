@@ -81,7 +81,85 @@
     "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
     "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
     "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
-    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
-    "excluded_supporting_artifacts": []
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W03-05",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENT",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W05-03",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W05/registry/A-W05-03.json",
+        "published_commit": "a753cdd570c234c1a0bdea0c7546dfa9662a5581",
+        "published_sha256": "0776b6dde6f5bf3853a843bc043424d7afb16a2118430015c43f918062d18706",
+        "source_record_sha256": "a4cdc6bfa2b75cf2b28045e6b9677f2eea445018b90be97402564541d7e02179",
+        "boot_id": "fcaa1289",
+        "boot_count": 65,
+        "device_id": "coldguard-001",
+        "firmware_version": "cg-w06-0.1.0",
+        "hardware_config_id": "CG-HW-001",
+        "calibration_id": "UNRECORDED"
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "shared_capture",
+        "value": "A-W05-03",
+        "match": true,
+        "expected_or_source": "A-W05-03"
+      },
+      {
+        "name": "shared_window_s",
+        "value": 600,
+        "match": true,
+        "expected_or_source": 600
+      },
+      {
+        "name": "record_timestamps_equal_source_window",
+        "value": [
+          "2026-11-04T14:43:53.317+00:00",
+          "2026-11-04T15:13:53.328+00:00"
+        ],
+        "match": true,
+        "expected_or_source": [
+          "2026-11-04T14:43:53.317+00:00",
+          "2026-11-04T15:13:53.328+00:00"
+        ]
+      },
+      {
+        "name": "evaluated_raw_slice_sha256",
+        "value": "96b4eee04ef535bd567936f3b41cabe7813f7ed365f34294ba97d69af758aa18",
+        "match": true,
+        "expected_or_source": "96b4eee04ef535bd567936f3b41cabe7813f7ed365f34294ba97d69af758aa18"
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "raw_witness": {
+      "source": "raw/telemetry.jsonl",
+      "selector": "TELEM host_time in first 600 s of A-W05-03",
+      "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+      "sha256": "96b4eee04ef535bd567936f3b41cabe7813f7ed365f34294ba97d69af758aa18",
+      "frames": 600,
+      "first_host_time": "2026-11-04T14:43:54.057051+00:00",
+      "last_host_time": "2026-11-04T14:53:52.983271+00:00"
+    },
+    "evaluated_window": {
+      "start": "2026-11-04T14:43:54.057051+00:00",
+      "end": "2026-11-04T14:53:52.983271+00:00",
+      "actual_s": 598.92622,
+      "note": "The record's started_at/ended_at are the source A-W05-03 capture window; only this 600 s slice was evaluated. Source timestamps are preserved."
+    }
   }
 }
