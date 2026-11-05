@@ -1,0 +1,140 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "dfe5f7d8d3bfe896d3a6b3a36cddf302caef4714",
+  "requirements": {
+    "A-W01-02": {
+      "criterion": "Photograph both sides of the dual ESP32 board, three DS18B20 probes, BME280, MC-38, PZEM, shunt, MAX3485/TTL485, IBT-2, TEC SKU mark, V1, PSU and fuse/distribution hardware.",
+      "record": "evidence/A/W01/registry/A-W01-02.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W01/registry/A-W01-02.json",
+        "evidence/A/W01/registry/measurements/A-W01-02-20261104T092332165820-e33303.json"
+      ]
+    },
+    "A-W01-03": {
+      "criterion": "Compare board silkscreen, seller schematic/manual and ESP32-S3R2 restrictions; create pin-candidates-v0.md marking known/likely/unknown/must-test. Do not freeze GPIO yet.",
+      "record": "evidence/A/W01/registry/A-W01-03.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W01/registry/A-W01-03.json",
+        "evidence/A/W01/registry/citations/pin-candidates-v0.md"
+      ]
+    },
+    "A-W01-04": {
+      "criterion": "List at minimum polarity, high current, fuse, PSU terminals, shunt placement, IBT-2 boot state, fan dependency, condensation, USB/back-power and RS-485 power-domain risks.",
+      "record": "evidence/A/W01/registry/A-W01-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W01/registry/A-W01-04.json"
+      ]
+    },
+    "A-W01-05": {
+      "criterion": "Search old physical notes for INA226, IRLB3813, two TEC, 20 L and 40 A PSU; flag them obsolete without deleting historical evidence.",
+      "record": "evidence/A/W01/registry/A-W01-05.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W01/registry/A-W01-05.json",
+        "evidence/A/W01/registry/measurements/A-W01-05-20261104T092332199811-39675f.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W01/registry/A-W01-02.json",
+      "source_sha256": "61cfbc611ea6738a9cc81600a95aaaea6514e5a0671053b65b8ee594387c78b1",
+      "published_sha256": "a70d986603c3017a55006dc317863016583cd42d9208d1652ad0d2dfd7dd33d7",
+      "source_capture_path": "results/A-W01-02.json",
+      "source_bytes": 10670,
+      "bytes": 9997,
+      "requirement": "A-W01-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W01/registry/measurements/A-W01-02-20261104T092332165820-e33303.json",
+      "source_sha256": "7e95de7cf01c9aff9cbe77821ab081960869fab9a07cbcdab77b152c4546c7d9",
+      "published_sha256": "7e95de7cf01c9aff9cbe77821ab081960869fab9a07cbcdab77b152c4546c7d9",
+      "source_capture_path": "measurements/A-W01-02-20261104T092332165820-e33303.json",
+      "source_bytes": 187,
+      "bytes": 187,
+      "requirement": "A-W01-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W01/registry/A-W01-03.json",
+      "source_sha256": "5c3ee33bc20ad97cc92d864d9475a39be400b513876381076dd64a27110deff3",
+      "published_sha256": "5c7849f6698e45cf7aa671b340fd4ffceb75565bfe886bb1973faf84136ca7b4",
+      "source_capture_path": "results/A-W01-03.json",
+      "source_bytes": 3430,
+      "bytes": 3927,
+      "requirement": "A-W01-03",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W01/registry/A-W01-04.json",
+      "source_sha256": "a627b72d77a8b4a18a2de0f5da2fe94edeff65969fcd3306a632383da6b60a8b",
+      "published_sha256": "a3257b518e220aa432daf95f7fcb8f0cff9e0371239ab2bbcb3df06900bba5be",
+      "source_capture_path": "results/A-W01-04.json",
+      "source_bytes": 4089,
+      "bytes": 4518,
+      "requirement": "A-W01-04",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W01/registry/A-W01-05.json",
+      "source_sha256": "25acea9e5281cc9b8c3b982cbc12582cfe5f728118cf6667e9b4b6ace7038dd6",
+      "published_sha256": "0a5bc208d30f0fc552ace59a8d4ad09a67ee8ab9fc14d915c6bd1305d78af464",
+      "source_capture_path": "results/A-W01-05.json",
+      "source_bytes": 3056,
+      "bytes": 3521,
+      "requirement": "A-W01-05",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W01/registry/measurements/A-W01-05-20261104T092332199811-39675f.json",
+      "source_sha256": "61eb9c6eb955b8fbd34cfeeb2db156d97419039e844192bed7a381411f338eb1",
+      "published_sha256": "61eb9c6eb955b8fbd34cfeeb2db156d97419039e844192bed7a381411f338eb1",
+      "source_capture_path": "measurements/A-W01-05-20261104T092332199811-39675f.json",
+      "source_bytes": 408,
+      "bytes": 408,
+      "requirement": "A-W01-05",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W01/registry/citations/pin-candidates-v0.md",
+      "source_sha256": "aacc53b080cdc601bf1f2aec555946ce7ec0b5a0f5f41a287c1dda958e327d78",
+      "published_sha256": "aacc53b080cdc601bf1f2aec555946ce7ec0b5a0f5f41a287c1dda958e327d78",
+      "requirement": "A-W01-03",
+      "bytes": 5798,
+      "source_capture_path": "imports/A-W01-03/aacc53b080cd-pin-candidates-v0.md",
+      "transformed_record": false
+    }
+  ]
+}

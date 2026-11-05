@@ -1,0 +1,278 @@
+{
+  "checks": [
+    {
+      "detail": "imported imports\\A-W01-02\\df1dd61fd5a8-21-dual-esp32-actual-component-side.jpg",
+      "failure_reason": "",
+      "name": "photo:dual ESP32 board — component side",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\77b3b1f44994-20-dual-esp32-actual-back.jpg",
+      "failure_reason": "",
+      "name": "photo:dual ESP32 board — solder side",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\5f6d4dff9e01-12-ds18b20-probe-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:DS18B20 labels/probes",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\6a654beefb25-25-bme280-actual-component-side.jpg",
+      "failure_reason": "",
+      "name": "photo:BME280 module",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\2c7345366ded-13-mc38-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:MC-38 reed switch",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\66655403237b-04-pzem-shunt.jpg",
+      "failure_reason": "",
+      "name": "photo:PZEM-017",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\9991e27915e0-18-shunt-marking-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:50 A / 75 mV shunt",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\b469428a361a-02-rs485-front.jpg",
+      "failure_reason": "",
+      "name": "photo:RS-485 transceiver module",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\f5b93192fc4b-14-ibt2-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:IBT-2 module",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\806db5336f7b-15-tec-marking-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:TEC1-12715 SKU marking",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\a2e2344ae09c-17-v1-kit-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:V1 thermal assembly",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\a518702fb2d1-16-psu-label-actual.jpg",
+      "failure_reason": "",
+      "name": "photo:12 V PSU nameplate",
+      "passed": true
+    },
+    {
+      "detail": "imported imports\\A-W01-02\\eea0937ecdf1-07-fusebox.jpg",
+      "failure_reason": "",
+      "name": "photo:fuse box and fuse set",
+      "passed": true
+    },
+    {
+      "detail": "13/13",
+      "failure_reason": "PHOTO_INVENTORY_INCOMPLETE",
+      "name": "all_photos_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": null,
+    "boot_id": "1d9e0d7f",
+    "calibration_id": null,
+    "device_id": "coldguard-001",
+    "firmware_kind": "H8_BENCH",
+    "firmware_version": "cg-w04-0.1.0",
+    "grammar": 2,
+    "h8": {
+      "actuator": "REAL",
+      "check_pwm": "20",
+      "door_polarity": "UNCONFIRMED",
+      "fan": "UNCONFIRMED",
+      "host_ack_timeout_ms": "3000",
+      "interlock": "ABSENT",
+      "interlock_state": "NOT_INSTALLED",
+      "limits": "SHIPPED",
+      "limits_enforced": "1",
+      "limits_operator_approved": "1",
+      "mandatory_probes": "T1|T2|T3|SPARE",
+      "mandatory_roles": "HOT_SIDE",
+      "off_current_approved": "1",
+      "off_current_limit_a": "0.200",
+      "off_current_test_enforce": "0",
+      "physical_output": "ENABLED",
+      "pwm": "100",
+      "reset_cause": "USB",
+      "reset_marker": "0",
+      "sim_cooling": "0",
+      "snapshot_ms": "1000",
+      "stage": "NONE",
+      "stages": "A:180,B:420,C:600,D:900,E:1800,F:30",
+      "supervised": "1",
+      "supervised_authorized": "0",
+      "supervised_bench": "1",
+      "test_mode": "BENCH_ENDURANCE"
+    },
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T09:23:32.171+00:00",
+  "evidence": [
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.476+00:00",
+      "sha256": "df1dd61fd5a8af5fa2a116a2a8e4b8bd96deada8242e5198002b559324bd845a",
+      "size": 534319,
+      "source_path": "evidence/A/W01/photos/21-dual-esp32-actual-component-side.jpg",
+      "stored": "evidence/A/W01/photos/21-dual-esp32-actual-component-side.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.465+00:00",
+      "sha256": "77b3b1f449945f2856606c360db7b28e3c0606703ec24254a01ffc74b4d1e4e7",
+      "size": 198830,
+      "source_path": "evidence/A/W01/photos/20-dual-esp32-actual-back.jpg",
+      "stored": "evidence/A/W01/photos/20-dual-esp32-actual-back.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.400+00:00",
+      "sha256": "5f6d4dff9e01f013754a7471602e3a540d7ddd2e3997f09de1dabe6746088a15",
+      "size": 229622,
+      "source_path": "evidence/A/W01/photos/12-ds18b20-probe-actual.jpg",
+      "stored": "evidence/A/W01/photos/12-ds18b20-probe-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.510+00:00",
+      "sha256": "6a654beefb258cfeea1aca72e48e1e4b5172c4444f8f7c28874cb93597cff6f8",
+      "size": 144479,
+      "source_path": "evidence/A/W01/photos/25-bme280-actual-component-side.jpg",
+      "stored": "evidence/A/W01/photos/25-bme280-actual-component-side.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.408+00:00",
+      "sha256": "2c7345366ded1f31f2c306a577976c1b8806447341ebee478f6373439b84146a",
+      "size": 270330,
+      "source_path": "evidence/A/W01/photos/13-mc38-actual.jpg",
+      "stored": "evidence/A/W01/photos/13-mc38-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.346+00:00",
+      "sha256": "66655403237b04dd949d4308a5f30c592de0fee03ad895ea54afb913e43040a4",
+      "size": 240286,
+      "source_path": "evidence/A/W01/photos/04-pzem-shunt.jpg",
+      "stored": "evidence/A/W01/photos/04-pzem-shunt.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.455+00:00",
+      "sha256": "9991e27915e0851965c5ec0d00238b2cb279547d6408ceb0fc57b51468abbab5",
+      "size": 142870,
+      "source_path": "evidence/A/W01/photos/18-shunt-marking-actual.jpg",
+      "stored": "evidence/A/W01/photos/18-shunt-marking-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.329+00:00",
+      "sha256": "b469428a361a3f7d711c669abb231adc2ab7cad1fb62a2e6fbbf194ace6a09b0",
+      "size": 42598,
+      "source_path": "evidence/A/W01/photos/02-rs485-front.jpg",
+      "stored": "evidence/A/W01/photos/02-rs485-front.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.415+00:00",
+      "sha256": "f5b93192fc4bc90de35c03869dd0d41fed3ed583a4c41b380db185e3cabc27d8",
+      "size": 110036,
+      "source_path": "evidence/A/W01/photos/14-ibt2-actual.jpg",
+      "stored": "evidence/A/W01/photos/14-ibt2-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.423+00:00",
+      "sha256": "806db5336f7b22afbc9e97d60807d0bcacb69e0dba3bdd1c6c11e8b4833f22c5",
+      "size": 188408,
+      "source_path": "evidence/A/W01/photos/15-tec-marking-actual.jpg",
+      "stored": "evidence/A/W01/photos/15-tec-marking-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.445+00:00",
+      "sha256": "a2e2344ae09c8e66a8dca2052890b455174fce0cfe2c591f7c2c6082562b5a0c",
+      "size": 160758,
+      "source_path": "evidence/A/W01/photos/17-v1-kit-actual.jpg",
+      "stored": "evidence/A/W01/photos/17-v1-kit-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.436+00:00",
+      "sha256": "a518702fb2d15b149d0ab216d1136b33585ab7dd0d3ab718c7b3530d38b41134",
+      "size": 209100,
+      "source_path": "evidence/A/W01/photos/16-psu-label-actual.jpg",
+      "stored": "evidence/A/W01/photos/16-psu-label-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.369+00:00",
+      "sha256": "eea0937ecdf19b5fc9c814c565d014d28b65777146ba852400d4e3faae5f5b0b",
+      "size": 110023,
+      "source_path": "evidence/A/W01/photos/07-fusebox.jpg",
+      "stored": "evidence/A/W01/photos/07-fusebox.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "captured_at": "2026-11-04T09:23:32.171+00:00",
+      "original": "A-W01-02",
+      "path": "evidence/A/W01/registry/measurements/A-W01-02-20261104T092332165820-e33303.json",
+      "sha256": "7e95de7cf01c9aff9cbe77821ab081960869fab9a07cbcdab77b152c4546c7d9",
+      "size": 187,
+      "stored": "evidence/A/W01/registry/measurements/A-W01-02-20261104T092332165820-e33303.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "missing_subjects": []
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T09:23:32.165+00:00",
+  "test_id": "A-W01-02",
+  "publication_provenance": {
+    "source_record_sha256": "61cfbc611ea6738a9cc81600a95aaaea6514e5a0671053b65b8ee594387c78b1",
+    "source_capture_relative_path": "results/A-W01-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}
