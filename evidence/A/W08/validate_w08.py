@@ -230,7 +230,7 @@ def check_no_physical_claim(failures: list[str]) -> None:
 
 
 def check_no_absolute_paths(failures: list[str]) -> None:
-    """No pinned artifact may carry a developer absolute locator.
+    """No pinned text artifact may carry a developer absolute locator.
 
     An artifact that names a drive-qualified or home-directory path only reproduces
     and only reads on the machine that wrote it, so every locator here is
@@ -241,6 +241,8 @@ def check_no_absolute_paths(failures: list[str]) -> None:
         if not path.is_file() or "__pycache__" in path.parts:
             continue
         if path.name == "SHA256SUMS.txt" or path.suffix == ".pyc":
+            continue
+        if path.suffix.lower() == ".png" and path.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"):
             continue
         rel = path.relative_to(DOSSIER).as_posix()
         for number, line in enumerate(read(path).splitlines(), start=1):

@@ -46,3 +46,6 @@ evidence/A/W06/** -text
 # re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
 # those bytes on a core.autocrlf checkout and break every pin.
 evidence/A/W08/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W08/attachments/fuse-selection.md -text

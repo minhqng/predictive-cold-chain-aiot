@@ -1,0 +1,142 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "847e86fd27a9ddfb8514aee08a483d25737f4394",
+  "requirements": {
+    "A-W08-01": {
+      "criterion": "Derive allowed action state, healthy current range, healthy power range, OFF current envelope, thermal response window and stop conditions from W04-W07; do not extrapolate outside the measured region.",
+      "record": "evidence/A/W08/registry/A-W08-01.json",
+      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "artifact_paths": [
+        "evidence/A/W08/registry/A-W08-01.json",
+        "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json"
+      ]
+    },
+    "A-W08-02": {
+      "criterion": "Choose 10 A, 15 A or 20 A from measured current, transients, wiring and terminal behaviour; if none is defensible the gate fails rather than improvising.",
+      "record": "evidence/A/W08/registry/A-W08-02.json",
+      "identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+      "artifact_paths": [
+        "evidence/A/W08/registry/A-W08-02.json",
+        "evidence/A/W08/attachments/fuse-selection.md",
+        "evidence/A/W08/attachments/fuse-block-holder-20261105.png",
+        "evidence/A/W08/registry/measurements/A-W08-02-20261104T174919045341-ed1cf1.json"
+      ]
+    },
+    "A-W08-04": {
+      "criterion": "With D: remove the broker/backend, verify local Controller A inputs remain available and local output behaviour is safe.",
+      "record": "evidence/A/W08/registry/A-W08-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W08/registry/A-W08-04.json",
+        "evidence/A/W08/registry/measurements/A-W08-04-20261104T173014308456-9031a3.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W08/registry/A-W08-01.json",
+      "source_sha256": "6f2fb4f54ac814b951f3d63adeb172f2c17b8edd70e4d824a592e132d5557a27",
+      "published_sha256": "51ac0d8d6e2786e14a1aa481f5e843dc33c4b69e4340c77937b764e0a5b3e673",
+      "source_capture_path": "results/A-W08-01.json",
+      "source_bytes": 1692,
+      "bytes": 2243,
+      "requirement": "A-W08-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json",
+      "source_sha256": "b5aa21fc786336f33e8ddbfe9dd20239916c44bf007c113eb1f05d350b138dbf",
+      "published_sha256": "b5aa21fc786336f33e8ddbfe9dd20239916c44bf007c113eb1f05d350b138dbf",
+      "source_capture_path": "measurements/A-W08-01-20261104T171529150961-981863.json",
+      "source_bytes": 429,
+      "bytes": 429,
+      "requirement": "A-W08-01",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W08/registry/A-W08-02.json",
+      "source_sha256": "0aa18393d1a07347dee5b47268e7c955d1a03e9e17ff919c8b1dd3b0c4f43d8a",
+      "published_sha256": "ef3bee8bebe39ca60ad503c7b6be099f6e92b4ee55484cb0286414460448df9f",
+      "source_capture_path": "results/A-W08-02.json",
+      "source_bytes": 4064,
+      "bytes": 4555,
+      "requirement": "A-W08-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W08/attachments/fuse-selection.md",
+      "source_sha256": "1103bc60574fcbb8717f368810302bd4a26c4b634e703c93e361b8249f821572",
+      "published_sha256": "1103bc60574fcbb8717f368810302bd4a26c4b634e703c93e361b8249f821572",
+      "source_capture_path": "attachments/A-W08-02/fuse-selection.md",
+      "source_bytes": 5603,
+      "bytes": 5603,
+      "requirement": "A-W08-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W08/attachments/fuse-block-holder-20261105.png",
+      "source_sha256": "15c6c9a33e353f91debf65fd382e9020611400a650cb60e5fdda3ffcd0d62dda",
+      "published_sha256": "15c6c9a33e353f91debf65fd382e9020611400a650cb60e5fdda3ffcd0d62dda",
+      "source_capture_path": "attachments/A-W08-02/fuse-block-holder-20261105.png",
+      "source_bytes": 825789,
+      "bytes": 825789,
+      "requirement": "A-W08-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W08/registry/measurements/A-W08-02-20261104T174919045341-ed1cf1.json",
+      "source_sha256": "0e85fec7c064267012d8b9e2617472baa526e762dd34158431cf405758088f61",
+      "published_sha256": "0e85fec7c064267012d8b9e2617472baa526e762dd34158431cf405758088f61",
+      "source_capture_path": "measurements/A-W08-02-20261104T174919045341-ed1cf1.json",
+      "source_bytes": 1604,
+      "bytes": 1604,
+      "requirement": "A-W08-02",
+      "transformed_record": false,
+      "transformation_sequence": []
+    },
+    {
+      "dest": "evidence/A/W08/registry/A-W08-04.json",
+      "source_sha256": "79daa69d89c907ac48e5dd3b3c2ee58cc0d49f2f3883e690a9bccaf7b4140c40",
+      "published_sha256": "214f61345e0b3e876b79125e35f6586e4e2d8bf779c35a2ee54ac6c54e604371",
+      "source_capture_path": "results/A-W08-04.json",
+      "source_bytes": 2975,
+      "bytes": 3451,
+      "requirement": "A-W08-04",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W08/registry/measurements/A-W08-04-20261104T173014308456-9031a3.json",
+      "source_sha256": "9d515d77d51107f6b3a328c468387b7730c4b8ef2a72c94b68ce4bc668af01cb",
+      "published_sha256": "9d515d77d51107f6b3a328c468387b7730c4b8ef2a72c94b68ce4bc668af01cb",
+      "source_capture_path": "measurements/A-W08-04-20261104T173014308456-9031a3.json",
+      "source_bytes": 819,
+      "bytes": 819,
+      "requirement": "A-W08-04",
+      "transformed_record": false,
+      "transformation_sequence": []
+    }
+  ]
+}

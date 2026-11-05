@@ -381,6 +381,14 @@ class UnqualifiedStatus(unittest.TestCase):
 
 
 class ArtifactHonesty(unittest.TestCase):
+    def test_binary_photograph_does_not_create_text_path_failures(self) -> None:
+        photograph = DOSSIER / "attachments" / "fuse-block-holder-20261105.png"
+        self.assertTrue(photograph.read_bytes().startswith(b"\x89PNG\r\n\x1a\n"))
+        module = self._load_validator()
+        failures: list[str] = []
+        module.check_no_absolute_paths(failures)
+        self.assertEqual(failures, [])
+
     """No generated artifact may claim PHYSICALLY_VERIFIED - proved, not asserted."""
 
     def test_dossier_on_disk_is_clean_and_validates(self) -> None:

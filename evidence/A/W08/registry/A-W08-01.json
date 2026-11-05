@@ -1,0 +1,69 @@
+{
+  "checks": [
+    {
+      "detail": " value=4.288233362394653",
+      "failure_reason": "",
+      "name": "healthy_current_range",
+      "passed": true
+    },
+    {
+      "detail": " value=50.764230359391654",
+      "failure_reason": "",
+      "name": "healthy_power_range",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0",
+      "failure_reason": "",
+      "name": "off_envelope",
+      "passed": true
+    },
+    {
+      "detail": " value=['A-W04-05', 'A-W07-03']",
+      "failure_reason": "",
+      "name": "two_sources",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:15:29.162+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:15:29.162+00:00",
+      "original": "A-W08-01",
+      "path": "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json",
+      "sha256": "b5aa21fc786336f33e8ddbfe9dd20239916c44bf007c113eb1f05d350b138dbf",
+      "size": 429,
+      "stored": "evidence/A/W08/registry/measurements/A-W08-01-20261104T171529150961-981863.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "healthy_current_max_a": 4.424,
+    "healthy_current_min_a": 4.288233362394653,
+    "healthy_power_max_w": 52.37833333333333,
+    "healthy_power_min_w": 50.764230359391654,
+    "off_current_max_a": 0.0,
+    "sources": [
+      "A-W04-05",
+      "A-W07-03"
+    ]
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:15:29.135+00:00",
+  "test_id": "A-W08-01",
+  "publication_provenance": {
+    "source_record_sha256": "6f2fb4f54ac814b951f3d63adeb172f2c17b8edd70e4d824a592e132d5557a27",
+    "source_capture_relative_path": "results/A-W08-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}
