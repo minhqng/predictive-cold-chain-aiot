@@ -1,0 +1,25 @@
+{
+  "a_side_status": "NEED_USER_ACTION",
+  "blockers": [
+    {
+      "blocker": "no qualified electrical channel in the committed capture (current_status/voltage_status empty) - A-W12-02 figures are UNQUALIFIED",
+      "derivation": "COMPUTED_FROM_AUDIT",
+      "open": true
+    },
+    {
+      "blocker": "sensor fixtures, V1 mounting, terminals and cable routing have no post-freeze inspection record - A-W12-03 NEED_USER_ACTION",
+      "derivation": "AUTHORED_FROM_COMMITTED_EVIDENCE",
+      "open": true
+    },
+    {
+      "blocker": "fuse/conductor deviation remains open and uncertified - A-W12-03 BLOCKED_HARDWARE",
+      "derivation": "AUTHORED_FROM_COMMITTED_EVIDENCE",
+      "open": true
+    }
+  ],
+  "does_not_declare": "G3 GREEN (a whole-team gate this slice must not set)",
+  "provided_by": "Member A (host drift audit only)",
+  "requirement": "A-W12-05",
+  "statement": "plant stable enough for predictive development: CANNOT BE SIGNED OFF FROM HOST EVIDENCE ALONE",
+  "what_a_would_sign": "the committed datasets are internally consistent within each configuration, but the mechanical and electrical-qualification items above must close before A contributes a signoff"
+}

@@ -1,0 +1,132 @@
+{
+  "checks": [
+    {
+      "detail": "0.9983333333333333",
+      "failure_reason": "",
+      "name": "valid_rate",
+      "passed": true
+    },
+    {
+      "detail": "0.023289742162862836",
+      "failure_reason": "",
+      "name": "max_abs_delta_c",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 90,
+    "boot_id": "82b2d6b6",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T16:49:50.364+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T16:49:50.364+00:00",
+      "original": "A-W12-01",
+      "path": "evidence/A/W12/registry/measurements/A-W12-01-20261104T164950353032-c4eea8.json",
+      "sha256": "115be411f3fd78dc9010301716364f85732ee019b1a8d45ff6852e33d06ce9bd",
+      "size": 1580,
+      "stored": "evidence/A/W12/registry/measurements/A-W12-01-20261104T164950353032-c4eea8.json",
+      "source_sha256": "f95a969b0bd92a22a630c3bf1c4927b5b2e1240ef9150f1bbf5da13ee9ac38fd",
+      "source_size": 1637
+    },
+    {
+      "captured_at": "2026-11-04T16:53:46.315+00:00",
+      "original": "evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\stabilization-witness-a-w07-03-run3.json",
+      "sha256": "1ecf50fec68c5a61246e84c3f5852512fe52e8be018293a18d48d546333ceb5c",
+      "size": 2836,
+      "stored": "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+      "path": "evidence/A/W07/registry/bench/stabilization-witness-a-w07-03-run3.json",
+      "source_sha256": "db314ddc89aaa342e524acba6a326a958c37cae2825f4a3e37dd1b4901ac7a39",
+      "source_size": 2661,
+      "reference_commit": "8ecede5bad8537507134a8131063a50645890f9b"
+    },
+    {
+      "captured_at": "2026-11-04T16:53:46.316+00:00",
+      "original": "evidence\\A\\h8-captures\\capture-20261104T092140Z\\A-W12-01-CONDITIONS-20261104.md",
+      "sha256": "6c95342b59ac05e17772ed35072828df6bd0f9c30a88dde852c1fbc9bf7c19b1",
+      "size": 2397,
+      "stored": "evidence/A/W12/A-W12-01-CONDITIONS-20261104.md",
+      "path": "evidence/A/W12/A-W12-01-CONDITIONS-20261104.md",
+      "source_sha256": "27972b73ee5da08833e72d5d5a46870c4dbd99123ad2c4d17413d9351e748b39",
+      "source_size": 2433
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "common_mode_delta_c": 0.8585845622333537,
+    "criterion": "CHAMBER_AIR_OFFSET_DRIFT",
+    "current": {
+      "frames": 600,
+      "max_instantaneous_spread_c": 0.4375,
+      "max_pairwise_mean_difference_c": 0.37750417362270383,
+      "pairwise_mean_difference_c": {
+        "T1-SPARE": 0.03735392320534103,
+        "T1-T2": 0.3401502504173628,
+        "T1-T3": 0.33388981636059967,
+        "T2-SPARE": 0.37750417362270383,
+        "T2-T3": 0.006260434056763131,
+        "T3-SPARE": 0.3712437395659407
+      },
+      "per_role": {
+        "SPARE": {
+          "max_c": 30.25,
+          "mean_c": 30.22443656093489,
+          "min_c": 30.1875,
+          "n": 599,
+          "sd_c": 0.03075393466181447
+        },
+        "T1": {
+          "max_c": 30.25,
+          "mean_c": 30.18708263772955,
+          "min_c": 30.125,
+          "n": 599,
+          "sd_c": 0.014451837868586538
+        },
+        "T2": {
+          "max_c": 29.875,
+          "mean_c": 29.846932387312187,
+          "min_c": 29.8125,
+          "n": 599,
+          "sd_c": 0.03111351833024558
+        },
+        "T3": {
+          "max_c": 29.875,
+          "mean_c": 29.85319282136895,
+          "min_c": 29.8125,
+          "n": 599,
+          "sd_c": 0.02981408331251686
+        }
+      },
+      "valid_frames": 599,
+      "valid_rate": 0.9983333333333333
+    },
+    "max_abs_delta_c": 0.023289742162862836,
+    "max_abs_offset_delta_c": 0.023289742162862836
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T16:39:50.344+00:00",
+  "test_id": "A-W12-01",
+  "publication_provenance": {
+    "source_record_sha256": "0c462f8aabfea06095bee8d82dcce2177d674d4ee585a57588bac663b2589eb1",
+    "source_capture_relative_path": "results/A-W12-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

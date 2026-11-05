@@ -49,7 +49,6 @@ evidence/A/W07/** -text
 
 # Member A handoff contracts rehomed into W07
 evidence/A/HANDOFF/** -text
-
 # Preserve the exact published capture-document bytes.
 evidence/A/W07/A-W07-02-CORRECTION-20261104.md -text
 # W14 spatial/position QA dossier: every file is hash-pinned in
@@ -57,3 +56,10 @@ evidence/A/W07/A-W07-02-CORRECTION-20261104.md -text
 # JSON/CSV must keep their exact bytes. `text=auto eol=lf` would rewrite them on a
 # checkout with core.autocrlf and break every pin.
 evidence/A/W14/** -text
+# W12 configuration/data-QA dossier: every file is hash-pinned in
+# evidence/A/W12/SHA256SUMS.txt and re-checked by validate_w12.py, so the generated
+# JSON/CSV must keep their exact bytes. The repo default `* text=auto eol=lf` would
+# rewrite them on a checkout with core.autocrlf and break every pin.
+evidence/A/W12/** -text
+evidence/A/W12/A-W12-01-CONDITIONS-20261104.md -text
+evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md -text
