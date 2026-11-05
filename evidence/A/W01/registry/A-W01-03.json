@@ -1,0 +1,124 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Board silkscreen recorded and photographed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Seller schematic or manual reviewed where available",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:ESP32-S3R2 flash/PSRAM pin restrictions recorded",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Every pin classified as known / likely / unknown / must-test",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:GPIO is explicitly NOT frozen at W01",
+      "passed": true
+    },
+    {
+      "detail": "5/5 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=1)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": null,
+    "boot_id": "1d9e0d7f",
+    "calibration_id": null,
+    "device_id": "coldguard-001",
+    "firmware_kind": "H8_BENCH",
+    "firmware_version": "cg-w04-0.1.0",
+    "grammar": 2,
+    "h8": {
+      "actuator": "REAL",
+      "check_pwm": "20",
+      "door_polarity": "UNCONFIRMED",
+      "fan": "UNCONFIRMED",
+      "host_ack_timeout_ms": "3000",
+      "interlock": "ABSENT",
+      "interlock_state": "NOT_INSTALLED",
+      "limits": "SHIPPED",
+      "limits_enforced": "1",
+      "limits_operator_approved": "1",
+      "mandatory_probes": "T1|T2|T3|SPARE",
+      "mandatory_roles": "HOT_SIDE",
+      "off_current_approved": "1",
+      "off_current_limit_a": "0.200",
+      "off_current_test_enforce": "0",
+      "physical_output": "ENABLED",
+      "pwm": "100",
+      "reset_cause": "USB",
+      "reset_marker": "0",
+      "sim_cooling": "0",
+      "snapshot_ms": "1000",
+      "stage": "NONE",
+      "stages": "A:180,B:420,C:600,D:900,E:1800,F:30",
+      "supervised": "1",
+      "supervised_authorized": "0",
+      "supervised_bench": "1",
+      "test_mode": "BENCH_ENDURANCE"
+    },
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T09:23:32.178+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.533+00:00",
+      "sha256": "aacc53b080cdc601bf1f2aec555946ce7ec0b5a0f5f41a287c1dda958e327d78",
+      "size": 5798,
+      "source_path": "evidence/A/W01/registry/citations/pin-candidates-v0.md",
+      "stored": "evidence/A/W01/registry/citations/pin-candidates-v0.md",
+      "test_id": "A-W01-03"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "imported authoritative W01-W04 evidence; no new physical inspection",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T09:23:32.178+00:00",
+  "test_id": "A-W01-03",
+  "publication_provenance": {
+    "source_record_sha256": "5c3ee33bc20ad97cc92d864d9475a39be400b513876381076dd64a27110deff3",
+    "source_capture_relative_path": "results/A-W01-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}
