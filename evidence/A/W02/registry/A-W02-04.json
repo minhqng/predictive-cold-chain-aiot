@@ -1,0 +1,99 @@
+{
+  "checks": [
+    {
+      "detail": " value=0 expected=0",
+      "failure_reason": "",
+      "name": "seq_monotonic",
+      "passed": true
+    },
+    {
+      "detail": " value=True",
+      "failure_reason": "",
+      "name": "seq_present",
+      "passed": true
+    },
+    {
+      "detail": " value=59.0 expected=50",
+      "failure_reason": "",
+      "name": "duration",
+      "passed": true
+    },
+    {
+      "detail": " value=1.0 expected=[0.8, 1.2]",
+      "failure_reason": "",
+      "name": "near_1hz",
+      "passed": true
+    },
+    {
+      "detail": " value=4 expected=3",
+      "failure_reason": "",
+      "name": "probes_valid",
+      "passed": true
+    },
+    {
+      "detail": " value=60 expected=30",
+      "failure_reason": "",
+      "name": "shared_conversion",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 46,
+    "boot_id": "e87bde61",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T13:50:51.839+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T13:50:51.839+00:00",
+      "original": "A-W02-04",
+      "path": "evidence/A/W02/registry/measurements/A-W02-04-20261104T135051831024-60224c.json",
+      "sha256": "3d3ed37fcf320ef4ca494a2c2cbd32c48c508a9121cc5164e78a42e74b12b30b",
+      "size": 602,
+      "stored": "evidence/A/W02/registry/measurements/A-W02-04-20261104T135051831024-60224c.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "boot_changes": 0,
+    "boot_ids_complete": true,
+    "captured_frames": 60,
+    "duration_s": 59.0,
+    "frames": 60,
+    "interval_max_s": 1.0000000000000009,
+    "interval_mean_s": 1.0,
+    "interval_p95_s": 1.0,
+    "probes_valid_mean": 4.0,
+    "probes_valid_min": 4,
+    "raw_probe_fields": 60,
+    "seq_complete": true,
+    "seq_regressions": 0,
+    "shared_conversion_evidence_frames": 60,
+    "thermal_seq_frames": 60
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T13:49:51.830+00:00",
+  "test_id": "A-W02-04",
+  "publication_provenance": {
+    "source_record_sha256": "aff91d6e6386f78c58ea46fa8b48cf6b22823884fb5d3af3182436b4fdf826a8",
+    "source_capture_relative_path": "results/A-W02-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

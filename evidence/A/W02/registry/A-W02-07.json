@@ -1,0 +1,305 @@
+{
+  "checks": [
+    {
+      "detail": "21",
+      "failure_reason": "",
+      "name": "cycles",
+      "passed": true
+    },
+    {
+      "detail": "42",
+      "failure_reason": "",
+      "name": "transitions",
+      "passed": true
+    },
+    {
+      "detail": "0",
+      "failure_reason": "DOOR_STATE_UNVERIFIED",
+      "name": "door_semantics_verified",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 94,
+    "boot_id": "4b555191",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T17:29:14.128+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:29:14.128+00:00",
+      "original": "A-W02-07",
+      "path": "evidence/A/W02/registry/measurements/A-W02-07-20261104T172914119958-99d075.json",
+      "sha256": "6d78e6fe4a6c0209a87038ce48741a7fbd1a52acd4cafef047094be2065b6e1d",
+      "size": 6185,
+      "stored": "evidence/A/W02/registry/measurements/A-W02-07-20261104T172914119958-99d075.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "cycles": 21,
+    "cycles_expected": 20,
+    "events": [
+      {
+        "host_time": "2026-11-04T17:24:38.979698+00:00",
+        "open": true,
+        "time_s": 26.138
+      },
+      {
+        "host_time": "2026-11-04T17:24:40.864818+00:00",
+        "open": false,
+        "time_s": 28.178
+      },
+      {
+        "host_time": "2026-11-04T17:24:43.981373+00:00",
+        "open": true,
+        "time_s": 31.138
+      },
+      {
+        "host_time": "2026-11-04T17:24:47.038800+00:00",
+        "open": false,
+        "time_s": 34.198
+      },
+      {
+        "host_time": "2026-11-04T17:24:50.853464+00:00",
+        "open": true,
+        "time_s": 38.178
+      },
+      {
+        "host_time": "2026-11-04T17:24:53.978825+00:00",
+        "open": false,
+        "time_s": 41.138
+      },
+      {
+        "host_time": "2026-11-04T17:24:57.040392+00:00",
+        "open": true,
+        "time_s": 44.198
+      },
+      {
+        "host_time": "2026-11-04T17:25:01.021092+00:00",
+        "open": false,
+        "time_s": 48.178
+      },
+      {
+        "host_time": "2026-11-04T17:25:06.019747+00:00",
+        "open": true,
+        "time_s": 53.178
+      },
+      {
+        "host_time": "2026-11-04T17:25:11.017505+00:00",
+        "open": false,
+        "time_s": 58.178
+      },
+      {
+        "host_time": "2026-11-04T17:25:14.996579+00:00",
+        "open": true,
+        "time_s": 62.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:17.029582+00:00",
+        "open": false,
+        "time_s": 64.198
+      },
+      {
+        "host_time": "2026-11-04T17:25:20.000759+00:00",
+        "open": true,
+        "time_s": 67.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:22.029537+00:00",
+        "open": false,
+        "time_s": 69.198
+      },
+      {
+        "host_time": "2026-11-04T17:25:25.001539+00:00",
+        "open": true,
+        "time_s": 72.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:27.954542+00:00",
+        "open": false,
+        "time_s": 75.118
+      },
+      {
+        "host_time": "2026-11-04T17:25:31.010929+00:00",
+        "open": true,
+        "time_s": 78.178
+      },
+      {
+        "host_time": "2026-11-04T17:25:32.860922+00:00",
+        "open": false,
+        "time_s": 80.118
+      },
+      {
+        "host_time": "2026-11-04T17:25:36.012768+00:00",
+        "open": true,
+        "time_s": 83.178
+      },
+      {
+        "host_time": "2026-11-04T17:25:39.996794+00:00",
+        "open": false,
+        "time_s": 87.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:42.043475+00:00",
+        "open": true,
+        "time_s": 89.198
+      },
+      {
+        "host_time": "2026-11-04T17:25:44.987583+00:00",
+        "open": false,
+        "time_s": 92.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:47.963361+00:00",
+        "open": true,
+        "time_s": 95.118
+      },
+      {
+        "host_time": "2026-11-04T17:25:50.002629+00:00",
+        "open": false,
+        "time_s": 97.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:52.959523+00:00",
+        "open": true,
+        "time_s": 100.118
+      },
+      {
+        "host_time": "2026-11-04T17:25:54.998784+00:00",
+        "open": false,
+        "time_s": 102.158
+      },
+      {
+        "host_time": "2026-11-04T17:25:59.996541+00:00",
+        "open": true,
+        "time_s": 107.158
+      },
+      {
+        "host_time": "2026-11-04T17:26:02.041830+00:00",
+        "open": false,
+        "time_s": 109.198
+      },
+      {
+        "host_time": "2026-11-04T17:27:34.985856+00:00",
+        "open": true,
+        "time_s": 202.158
+      },
+      {
+        "host_time": "2026-11-04T17:27:38.870753+00:00",
+        "open": false,
+        "time_s": 206.138
+      },
+      {
+        "host_time": "2026-11-04T17:27:42.030677+00:00",
+        "open": true,
+        "time_s": 209.198
+      },
+      {
+        "host_time": "2026-11-04T17:27:43.965805+00:00",
+        "open": false,
+        "time_s": 211.138
+      },
+      {
+        "host_time": "2026-11-04T17:27:45.840745+00:00",
+        "open": true,
+        "time_s": 213.178
+      },
+      {
+        "host_time": "2026-11-04T17:27:47.938477+00:00",
+        "open": false,
+        "time_s": 215.118
+      },
+      {
+        "host_time": "2026-11-04T17:27:50.996901+00:00",
+        "open": true,
+        "time_s": 218.178
+      },
+      {
+        "host_time": "2026-11-04T17:27:52.939790+00:00",
+        "open": false,
+        "time_s": 220.118
+      },
+      {
+        "host_time": "2026-11-04T17:27:54.984603+00:00",
+        "open": true,
+        "time_s": 222.158
+      },
+      {
+        "host_time": "2026-11-04T17:27:57.024604+00:00",
+        "open": false,
+        "time_s": 224.198
+      },
+      {
+        "host_time": "2026-11-04T17:27:58.958674+00:00",
+        "open": true,
+        "time_s": 226.138
+      },
+      {
+        "host_time": "2026-11-04T17:28:01.004019+00:00",
+        "open": false,
+        "time_s": 228.178
+      },
+      {
+        "host_time": "2026-11-04T17:28:07.936134+00:00",
+        "open": true,
+        "time_s": 235.118
+      },
+      {
+        "host_time": "2026-11-04T17:28:14.976604+00:00",
+        "open": false,
+        "time_s": 242.158
+      }
+    ],
+    "open_durations_s": [
+      2.039999999999999,
+      3.0599999999999987,
+      2.960000000000001,
+      3.979999999999997,
+      5.0,
+      2.039999999999992,
+      2.039999999999992,
+      2.9599999999999937,
+      1.9399999999999977,
+      3.980000000000004,
+      2.960000000000008,
+      2.0400000000000063,
+      2.0400000000000063,
+      2.039999999999992,
+      3.980000000000018,
+      1.9399999999999977,
+      1.9399999999999977,
+      1.9399999999999977,
+      2.0400000000000205,
+      2.039999999999992,
+      7.039999999999992
+    ],
+    "transitions": 42,
+    "unverified_frames": 0
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T17:24:14.119+00:00",
+  "test_id": "A-W02-07",
+  "publication_provenance": {
+    "source_record_sha256": "2b2b7cb716ae061dc2c052535dd9cf956dae7465d7e4532eff82a3eb50aaf902",
+    "source_capture_relative_path": "results/A-W02-07.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

@@ -47,3 +47,6 @@ evidence/A/W06/** -text
 # bytes, because `text=auto eol=lf` would rewrite them on a checkout with
 # core.autocrlf and break every pin.
 evidence/A/W07/** -text
+
+# Preserve the exact published capture-document bytes.
+evidence/A/W02/attachments/5d58af7a0145-door-polarity-observation.json -text

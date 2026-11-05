@@ -1,0 +1,20 @@
+{
+  "captured_at": "2026-11-04T13:49:51.799+00:00",
+  "measurements": {
+    "roles": [
+      "SPARE",
+      "T1",
+      "T2",
+      "T3"
+    ],
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    }
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W02-02"
+}

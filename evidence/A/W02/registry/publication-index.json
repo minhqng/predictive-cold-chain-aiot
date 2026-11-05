@@ -1,0 +1,172 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "5274b3c0d640448e0c37fe043475fa8a22aa1bca",
+  "requirements": {
+    "A-W02-01": {
+      "criterion": "Install and freeze V1 location, TEC mechanical stack, chamber penetration, hot side outside, sensor fixture and MC-38 alignment; no energized TEC.",
+      "record": "evidence/A/W02/registry/A-W02-01.json",
+      "identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-01.json"
+      ]
+    },
+    "A-W02-02": {
+      "criterion": "Discover exactly three expected ROM codes and record the ROM-to-role mapping; identity is the ROM, never the enumeration index.",
+      "record": "evidence/A/W02/registry/A-W02-02.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-02.json",
+        "evidence/A/W02/registry/measurements/A-W02-02-20261104T134951799940-643e36.json"
+      ]
+    },
+    "A-W02-03": {
+      "criterion": "Perform at least five reboot/discovery cycles and assert the same ROM-to-role mapping across boots.",
+      "record": "evidence/A/W02/registry/A-W02-03.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-03.json",
+        "evidence/A/W02/registry/measurements/A-W02-03-20261104T151425961213-989df2.json"
+      ]
+    },
+    "A-W02-04": {
+      "criterion": "Use one shared conversion phase and read all known ROMs, producing a coherent ~1 Hz thermal snapshot rather than three sequential conversions.",
+      "record": "evidence/A/W02/registry/A-W02-04.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-04.json",
+        "evidence/A/W02/registry/measurements/A-W02-04-20261104T135051831024-60224c.json"
+      ]
+    },
+    "A-W02-05": {
+      "criterion": "Place probes under a common stable condition, collect at least 10 minutes at ~1 Hz, and compute per-probe mean/SD, pairwise mean differences and maximum disagreement; not a certified calibration.",
+      "record": "evidence/A/W02/registry/A-W02-05.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-05.json",
+        "evidence/A/W02/registry/measurements/A-W02-05-20261104T141108932594-021265.json"
+      ]
+    },
+    "A-W02-07": {
+      "criterion": "Freeze raw-input to OPEN/CLOSED semantics and test at least 20 open/close cycles for debounce and reliability.",
+      "record": "evidence/A/W02/registry/A-W02-07.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W02/registry/A-W02-07.json",
+        "evidence/A/W02/registry/measurements/A-W02-07-20261104T172914119958-99d075.json",
+        "evidence/A/W02/attachments/5d58af7a0145-door-polarity-observation.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W02/registry/A-W02-01.json",
+      "source_sha256": "9fd1a8326c109676392d46301630e0f87fa9cecbd42b12866d12c29b770f026f",
+      "published_sha256": "fa824dc4e29a22e2e3863a2c5dd22d2904e7ff14dbabbc732cdec1209dfedfb2",
+      "source_capture_path": "results/A-W02-01.json",
+      "bytes": 3682,
+      "requirement": "A-W02-01",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/A-W02-02.json",
+      "source_sha256": "0d42767634a75bb17f9c018b80614c83c2480483fbaff241637068a279a72745",
+      "published_sha256": "ab029a248ce5cd85be7610a8d14612fd453b0f4b840526bc66819baa751011a6",
+      "source_capture_path": "results/A-W02-02.json",
+      "bytes": 3015,
+      "requirement": "A-W02-02",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/measurements/A-W02-02-20261104T134951799940-643e36.json",
+      "source_sha256": "ee9b555b2639261385a7f801af18582a02ca6f98d260c7aa0099b5845be58949",
+      "published_sha256": "ee9b555b2639261385a7f801af18582a02ca6f98d260c7aa0099b5845be58949",
+      "source_capture_path": "measurements/A-W02-02-20261104T134951799940-643e36.json",
+      "bytes": 390,
+      "requirement": "A-W02-02",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W02/registry/A-W02-03.json",
+      "source_sha256": "4728db7551a21859f9ac3b5f87502b8c46ae60376f55d84b3e789076a9aa6836",
+      "published_sha256": "91d010ba020acb7362018d261a74a6822c8bd9687402e1e66a98e0d70e2f6eb4",
+      "source_capture_path": "results/A-W02-03.json",
+      "bytes": 8117,
+      "requirement": "A-W02-03",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/measurements/A-W02-03-20261104T151425961213-989df2.json",
+      "source_sha256": "a472ad67ceb4ddfe37679ae0c2a47ee444c03a832a3f9314ac9cdaedc660e375",
+      "published_sha256": "a472ad67ceb4ddfe37679ae0c2a47ee444c03a832a3f9314ac9cdaedc660e375",
+      "source_capture_path": "measurements/A-W02-03-20261104T151425961213-989df2.json",
+      "bytes": 5565,
+      "requirement": "A-W02-03",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W02/registry/A-W02-04.json",
+      "source_sha256": "aff91d6e6386f78c58ea46fa8b48cf6b22823884fb5d3af3182436b4fdf826a8",
+      "published_sha256": "87404f23c7b507c03b5002b26b963e915ad529be752a270675a135f86e4dab70",
+      "source_capture_path": "results/A-W02-04.json",
+      "bytes": 2934,
+      "requirement": "A-W02-04",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/measurements/A-W02-04-20261104T135051831024-60224c.json",
+      "source_sha256": "3d3ed37fcf320ef4ca494a2c2cbd32c48c508a9121cc5164e78a42e74b12b30b",
+      "published_sha256": "3d3ed37fcf320ef4ca494a2c2cbd32c48c508a9121cc5164e78a42e74b12b30b",
+      "source_capture_path": "measurements/A-W02-04-20261104T135051831024-60224c.json",
+      "bytes": 602,
+      "requirement": "A-W02-04",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W02/registry/A-W02-05.json",
+      "source_sha256": "0a7ff34dc4cbd9f32098a714c455c8eca0e804e374b638c9dcae29b6ee677945",
+      "published_sha256": "6eebc2d2d8bbbf6a59a88aa7ff69c4357beb1876ba4461f22de4a92512344e6c",
+      "source_capture_path": "results/A-W02-05.json",
+      "bytes": 3311,
+      "requirement": "A-W02-05",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/measurements/A-W02-05-20261104T141108932594-021265.json",
+      "source_sha256": "f00ae5877f0fa403c6fe2d9f88fa77cfb821bd9827f37508cc03050356cbd958",
+      "published_sha256": "f00ae5877f0fa403c6fe2d9f88fa77cfb821bd9827f37508cc03050356cbd958",
+      "source_capture_path": "measurements/A-W02-05-20261104T141108932594-021265.json",
+      "bytes": 1350,
+      "requirement": "A-W02-05",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W02/registry/A-W02-07.json",
+      "source_sha256": "2b2b7cb716ae061dc2c052535dd9cf956dae7465d7e4532eff82a3eb50aaf902",
+      "published_sha256": "d04942b37b79d8a57a7d5d509a083d11f6309a1288341dd4a900e5a0ca7e3a8d",
+      "source_capture_path": "results/A-W02-07.json",
+      "bytes": 7868,
+      "requirement": "A-W02-07",
+      "transformed_record": true
+    },
+    {
+      "dest": "evidence/A/W02/registry/measurements/A-W02-07-20261104T172914119958-99d075.json",
+      "source_sha256": "6d78e6fe4a6c0209a87038ce48741a7fbd1a52acd4cafef047094be2065b6e1d",
+      "published_sha256": "6d78e6fe4a6c0209a87038ce48741a7fbd1a52acd4cafef047094be2065b6e1d",
+      "source_capture_path": "measurements/A-W02-07-20261104T172914119958-99d075.json",
+      "bytes": 6185,
+      "requirement": "A-W02-07",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W02/attachments/5d58af7a0145-door-polarity-observation.json",
+      "source_sha256": "5d58af7a01459b5b6023fa7c81f8fd372de49d73a18a98490b63407aeae479d6",
+      "published_sha256": "5d58af7a01459b5b6023fa7c81f8fd372de49d73a18a98490b63407aeae479d6",
+      "source_capture_path": "attachments/A-W02-07/5d58af7a0145-door-polarity-observation.json",
+      "bytes": 1019,
+      "requirement": "A-W02-07",
+      "transformed_record": false
+    }
+  ]
+}
