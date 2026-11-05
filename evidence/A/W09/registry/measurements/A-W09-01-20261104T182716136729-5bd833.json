@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-11-04T18:27:16.136+00:00",
+  "measurements": {
+    "anomaly": "auto",
+    "end_reason": "none",
+    "manual_intervention": "none",
+    "validity": "VALID"
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W09-01"
+}

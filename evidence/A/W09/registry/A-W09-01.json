@@ -1,0 +1,108 @@
+{
+  "checks": [
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:hardware_config_present",
+      "name": "hardware_config_present",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:sensor_identity_present",
+      "name": "sensor_identity_present",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:pzem_range_verified",
+      "name": "pzem_range_verified",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:door_closed",
+      "name": "door_closed",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:default_off",
+      "name": "default_off",
+      "passed": true
+    },
+    {
+      "detail": "True",
+      "failure_reason": "RUN_PRECHECK_FAILED:storage_writable",
+      "name": "storage_writable",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "END_REASON_EMPTY",
+      "name": "end_reason_recorded",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "INTERVENTION_NOT_RECORDED",
+      "name": "intervention_recorded",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "ANOMALY_NOT_RECORDED",
+      "name": "anomaly_recorded",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 99,
+    "boot_id": "74e8a0da",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T18:27:16.148+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T18:27:16.148+00:00",
+      "original": "A-W09-01",
+      "path": "evidence/A/W09/registry/measurements/A-W09-01-20261104T182716136729-5bd833.json",
+      "sha256": "879e1e0ee5fe9f59820297369ea8b4a55a0dcdd46efea97fc13255f6cbf3f67e",
+      "size": 256,
+      "stored": "evidence/A/W09/registry/measurements/A-W09-01-20261104T182716136729-5bd833.json",
+      "source_sha256": "a53ba14f16ea05c3e8364167ea39c2946233c9d2a3e5a6cc4a896eadea3973ea",
+      "source_size": 268
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "anomaly": "auto",
+    "end_reason": "none",
+    "manual_intervention": "none",
+    "validity": "VALID"
+  },
+  "notes": "before-run items verified from live identity and recorded evidence (CG-HW-001 in every frame, A-W14-01 ROM map, storage online, operator present); post-run fields describe this session's authorized runs",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T18:27:16.113+00:00",
+  "test_id": "A-W09-01",
+  "publication_provenance": {
+    "source_record_sha256": "8ae357529b4d357e0100985dc5021d70a3f9011b8376e1a65e2ad6327c8863d6",
+    "source_capture_relative_path": "results/A-W09-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

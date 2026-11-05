@@ -76,3 +76,4 @@ evidence/A/W08/attachments/fuse-selection.md -text
 # W15 PZEM-integrity dossier: hash-pinned in evidence/A/W15/SHA256SUMS.txt and
 # re-checked by validate_w15.py, which also requires the 22.4 anomaly token.
 evidence/A/W15/** -text
+evidence/A/W09/A-W09-03-INVALIDATION-LOG-20261105.md -text
