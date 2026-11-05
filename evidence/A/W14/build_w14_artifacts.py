@@ -54,7 +54,7 @@ def pinned_names() -> tuple[str, ...]:
     the pin file could be made to certify an artifact nobody delivered. validate_w14.py
     imports this same list, so the two cannot drift apart.
     """
-    return GENERATED_NAMES + DOSSIER_DOCS + DOSSIER_TOOLS
+    return GENERATED_NAMES + DOSSIER_DOCS + DOSSIER_TOOLS + ('registry/A-W14-01.json', 'registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json', 'registry/A-W14-02.json', 'registry/measurements/A-W14-02-20261104T143019519371-82179c.json', 'registry/publication-index.json', 'registry/.gitattributes')
 
 
 def guard_text(name: str, text: str) -> None:

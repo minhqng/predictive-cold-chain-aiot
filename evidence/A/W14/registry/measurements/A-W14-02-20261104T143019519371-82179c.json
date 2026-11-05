@@ -1,0 +1,13 @@
+{
+  "captured_at": "2026-11-04T14:30:19.519+00:00",
+  "measurements": {
+    "mean_difference_c": 0.08229166666666643,
+    "single_mean_c": 29.436458333333334,
+    "single_sensor_n": 60,
+    "three_mean_c": 29.354166666666668,
+    "three_sensor_n": 60
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W14-02"
+}

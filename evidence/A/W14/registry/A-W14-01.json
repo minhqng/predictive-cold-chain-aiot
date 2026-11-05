@@ -1,0 +1,96 @@
+{
+  "checks": [
+    {
+      "detail": "{'T1': '287088CA00000051', 'T2': '28AEBF2200000006', 'T3': '28CBE9CA00000072', 'SPARE': '283BE5C9000000A9'}",
+      "failure_reason": "SENSOR_ROM_MAP_CHANGED",
+      "name": "frozen_rom_map_matches",
+      "passed": true
+    },
+    {
+      "detail": "4",
+      "failure_reason": "ROM_MAP_INCOMPLETE",
+      "name": "four_unique_roms",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 62,
+    "boot_id": "0b8ad797",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:29:19.497+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:29:19.487+00:00",
+      "original": "geometry-v1-20261104.zip",
+      "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+      "size": 4887637,
+      "publication_status": "EXCLUDED_ARCHIVE"
+    },
+    {
+      "captured_at": "2026-11-04T14:29:19.497+00:00",
+      "original": "A-W14-01",
+      "path": "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "sha256": "cddc5cbaa965d0c8097dc7bc63300566124706a1672a47d53a1bd28c8abaec5b",
+      "size": 471,
+      "stored": "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "source_sha256": "88108e066fa2789ae64442ef5296f74a50c87276a0bb20d67204bf61ac01a71c",
+      "source_size": 492
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "expected": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "frames": 15,
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:29:04.476+00:00",
+  "test_id": "A-W14-01",
+  "publication_provenance": {
+    "source_record_sha256": "8f43ec83cf1861d9a8d9ebe26990c089e4b14503b1c1b4dad815e88b10c96938",
+    "source_capture_relative_path": "results/A-W14-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": [
+      {
+        "capture_relative_path": "attachments\\A-W14-01\\14ef981d4476-geometry-v1-20261104.zip",
+        "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+        "size": 4887637,
+        "reason": "Geometry archives excluded by frozen handoff; ROM measurement remains published."
+      }
+    ],
+    "unresolved_acceptance_element": "ROM identity matching does not establish unchanged physical sensor placement; authentic placement evidence remains required."
+  }
+}

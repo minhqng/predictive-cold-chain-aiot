@@ -47,9 +47,11 @@ def build_copy(root: pathlib.Path) -> pathlib.Path:
     for name in TOOL_FILES:
         shutil.copy2(TOOLS / name, root / "firmware" / "tools" / name)
     shutil.copy2(H8, root / "evidence" / "A" / "W04" / H8.name)
-    for path in DOSSIER.iterdir():
-        if path.is_file() and path.suffix != ".pyc":
-            shutil.copy2(path, root / "evidence" / "A" / "W14" / path.name)
+    for path in DOSSIER.rglob("*"):
+        if path.is_file() and path.suffix != ".pyc" and "__pycache__" not in path.parts:
+            target = root / "evidence" / "A" / "W14" / path.relative_to(DOSSIER)
+            target.parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy2(path, target)
     return root / "evidence" / "A" / "W14"
 
 

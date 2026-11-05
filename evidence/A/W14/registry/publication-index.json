@@ -1,0 +1,86 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+  "source_branch_baseline": "4c34ebcd4ddc2d9eabf3b0548dc498fd05aa322a",
+  "requirements": {
+    "A-W14-01": {
+      "criterion": "Verify no sensor has moved since the geometry freeze.",
+      "record": "evidence/A/W14/registry/A-W14-01.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W14/registry/A-W14-01.json",
+        "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json"
+      ]
+    },
+    "A-W14-02": {
+      "criterion": "Do not unplug T2/T3 for the core A1 ablation; the same physical runs must support one-sensor and three-sensor feature sets selected logically by B.",
+      "record": "evidence/A/W14/registry/A-W14-02.json",
+      "identity_status": "IN_RECORD",
+      "artifact_paths": [
+        "evidence/A/W14/registry/A-W14-02.json",
+        "evidence/A/W14/registry/measurements/A-W14-02-20261104T143019519371-82179c.json"
+      ]
+    }
+  },
+  "artifacts": [
+    {
+      "dest": "evidence/A/W14/registry/A-W14-01.json",
+      "source_sha256": "8f43ec83cf1861d9a8d9ebe26990c089e4b14503b1c1b4dad815e88b10c96938",
+      "published_sha256": "1352d4c06bf4650dbaea755b826fd879340f1c1fe9302abbe3ae26aaf8c7e94a",
+      "source_capture_path": "results/A-W14-01.json",
+      "source_bytes": 2449,
+      "bytes": 3463,
+      "requirement": "A-W14-01",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "source_sha256": "88108e066fa2789ae64442ef5296f74a50c87276a0bb20d67204bf61ac01a71c",
+      "published_sha256": "cddc5cbaa965d0c8097dc7bc63300566124706a1672a47d53a1bd28c8abaec5b",
+      "source_capture_path": "measurements/A-W14-01-20261104T142919488017-2ff73d.json",
+      "source_bytes": 492,
+      "bytes": 471,
+      "requirement": "A-W14-01",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W14/registry/A-W14-02.json",
+      "source_sha256": "1ee5381e592a27d4193b0e5174f713addfa01a1f87727e4fe0ce9d9ea01726d3",
+      "published_sha256": "e476394dbddcdc9c404d663a060925fdb7a40f6d6d53306cf5b392d7a89271e3",
+      "source_capture_path": "results/A-W14-02.json",
+      "source_bytes": 1789,
+      "bytes": 2436,
+      "requirement": "A-W14-02",
+      "transformed_record": true,
+      "transformation_sequence": [
+        "EVIDENCE_REFERENCES_REWRITTEN",
+        "SOURCE_AND_PUBLISHED_HASHES_DISTINGUISHED",
+        "PUBLICATION_PROVENANCE_APPENDED",
+        "JSON_SERIALIZATION_UTF8_LF"
+      ]
+    },
+    {
+      "dest": "evidence/A/W14/registry/measurements/A-W14-02-20261104T143019519371-82179c.json",
+      "source_sha256": "4437a21c92db94fadf65b81b3e4187090a3ae3ab57f6b3e7175edc907f142633",
+      "published_sha256": "8c67dc1d0dfdb8f0e98e913b85535aaf54452e4e7b30c6eae7b94a90fd361737",
+      "source_capture_path": "measurements/A-W14-02-20261104T143019519371-82179c.json",
+      "source_bytes": 340,
+      "bytes": 327,
+      "requirement": "A-W14-02",
+      "transformed_record": false,
+      "transformation_sequence": [
+        "CRLF_TO_LF"
+      ]
+    }
+  ]
+}
