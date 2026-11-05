@@ -80,3 +80,7 @@ evidence/A/W02/attachments/5d58af7a0145-door-polarity-observation.json -text
 # Member A release-candidate dossier: every file is hash-pinned in
 evidence/A/RC/SHA256SUMS.txt, so a checkout must not rewrite any of them.
 evidence/A/RC/** -text
+# W11 S4/refusal dossier: hash-pinned in evidence/A/W11/SHA256SUMS.txt and
+# re-checked by validate_w11.py; `* text=auto eol=lf` would rewrite those bytes on a
+# core.autocrlf checkout and break every pin.
+evidence/A/W11/** -text

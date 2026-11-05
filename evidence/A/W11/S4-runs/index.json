@@ -1,0 +1,70 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "capture_recipe": {
+    "cadence": "1 Hz device telemetry, command lines interleaved in the same capture",
+    "downstream_unlocks": [
+      "Member B's S4 label for diagnosis training",
+      "Member D's evidence that a blocked verdict does not energise the output"
+    ],
+    "estimated_capture_duration_s": 240,
+    "per_repetition": [
+      "boot, open capture before ARM, record boot_id",
+      "enter the safe refusal mode (test-mode block, not a physical fault)",
+      "issue the ON request with the planned duty and record the ACK verdict",
+      "hold 60 s and capture applied duty + current + chamber air",
+      "exit refusal, re-issue, capture the responding leg as the contrast",
+      "record the operator timer and any intervention"
+    ],
+    "prerequisites": [
+      "a transport and an issuer exist (Member C), or a bench harness path that is explicitly labelled as not-a-transport",
+      "operator at the bench, TEC current path and fuse posture confirmed",
+      "the qualified electrical lane must exist before the run: current_status must be emitted and recorded OK, not empty"
+    ],
+    "repetitions": 4,
+    "status_label": "NEED_USER_ACTION"
+  },
+  "deliverable": "S4-runs/",
+  "honesty": [
+    "a protocol verdict of SAFETY_BLOCKED is not evidence that the output stayed cold",
+    "no lane of a published run may be filled by reading the request",
+    "zero observations prove zero legs, not clean legs"
+  ],
+  "publishable_run_count": 0,
+  "publishable_runs": [],
+  "repetitions_planned": 4,
+  "requirement": "docs/05A \u00a720 A-W11-02 (S4 evidence)",
+  "runs_available": 0,
+  "sources": [
+    {
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    {
+      "path": "evidence/A/W04/g1/40-g1-boot-60s.log",
+      "sha256": "3c84c1001b780acb64736bbb1c322d97a8355937b3051a333b74bdee2503ed9e"
+    }
+  ],
+  "sources_audited": [
+    {
+      "commands_observed": 0,
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "verdict": "no command lines in this encoding; device-lane audit only"
+    },
+    {
+      "cmdack_lines": 0,
+      "path": "evidence/A/W04/g1/40-g1-boot-60s.log",
+      "s4_run_publishable": false,
+      "score_verdict": "NO_COMMAND_OBSERVATIONS",
+      "telem_frames": 62,
+      "thermal_non_response_proven": false
+    }
+  ],
+  "status_label": "NEED_USER_ACTION",
+  "why_no_run_exists": [
+    "no device-received command exists: the firmware has no transport",
+    "canonical-source admission rejects every non-canonical issuer",
+    "the clock is unsynchronised, so expiry fails closed",
+    "the committed capture's electrical columns are unqualified (empty status in all 957 rows)"
+  ]
+}

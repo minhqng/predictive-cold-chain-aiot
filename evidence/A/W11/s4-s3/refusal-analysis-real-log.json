@@ -1,0 +1,54 @@
+{
+  "attempts": [],
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "provenance": {
+    "is_physical_measurement": true,
+    "label": "40-g1-boot-60s.log",
+    "path": "evidence/A/W04/g1/40-g1-boot-60s.log",
+    "sha256": "3c84c1001b780acb64736bbb1c322d97a8355937b3051a333b74bdee2503ed9e"
+  },
+  "real_data_availability": {
+    "note": "The S4 refusal / actuation-block experiment series has not been run. The only #CG CMDACK material committed is the W06 host fixture, which this tool labels non-physical and refuses to certify. A-W11-02's four legs therefore have no physical instance anywhere in this repository.",
+    "s4_refusal_runs_in_repository": 0,
+    "status": "REAL DATA NOT AVAILABLE"
+  },
+  "scenario_id": "S4_ACTUATION_RESPONSE_FAULT",
+  "score": {
+    "attempts": 0,
+    "command_not_equal_to_effect_proven": false,
+    "leg_state_counts": {
+      "NOT_REACHED": 0,
+      "REACHED": 0,
+      "UNDETERMINED": 0
+    },
+    "legs_never_observed": [
+      "COMMAND_INTENT",
+      "DEVICE_VERDICT",
+      "APPLIED_STATE",
+      "ELECTRICAL_NO_RESPONSE",
+      "THERMAL_NON_RESPONSE"
+    ],
+    "refusal_attempts": 0,
+    "s4_run_publishable": false,
+    "thermal_non_response_proven": false,
+    "verdict": "NO_COMMAND_OBSERVATIONS"
+  },
+  "sources": [
+    {
+      "path": "evidence/A/W04/g1/40-g1-boot-60s.log",
+      "sha256": "3c84c1001b780acb64736bbb1c322d97a8355937b3051a333b74bdee2503ed9e"
+    }
+  ],
+  "summary": {
+    "attempts": 0,
+    "boot_ids_in_frames": [
+      "cb8775eb"
+    ],
+    "cmdack_lines": 0,
+    "command_ids_observed": [],
+    "telem_frames": 62,
+    "telem_rejected": 0
+  },
+  "tool_version": "s4-refusal-v1"
+}
