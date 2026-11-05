@@ -1,0 +1,162 @@
+{
+  "criteria_file": "reset-criterion-v0",
+  "criterion_status": "CANDIDATE_NOT_FROZEN",
+  "hot_side_representation_refused": {
+    "criterion_status": "CANDIDATE_NOT_FROZEN",
+    "failing": [
+      "state was measured on 'tmean_chamber3_v0', but the criterion names 'tmean_airroles_v0'"
+    ],
+    "missing_evidence": [],
+    "unresolved_parameters": [
+      "tmean_band_c (UNRESOLVED)",
+      "gradient_bound_c_per_min (UNRESOLVED)"
+    ],
+    "verdict": "NOT_READY",
+    "why": "recorded evidence contradicts a resolved criterion: state was measured on 'tmean_chamber3_v0', but the criterion names 'tmean_airroles_v0'"
+  },
+  "observed_state": {
+    "cooling_state": "ON",
+    "door_state": "CLOSED",
+    "quality": "VALID",
+    "representation": "tmean_airroles_v0",
+    "slope_c_per_min": null,
+    "source": "capture_row",
+    "tmean_c": 30.021,
+    "tmean_term_count": 3,
+    "tmean_usable_terms": 3
+  },
+  "shipped_candidate": {
+    "criterion_status": "CANDIDATE_NOT_FROZEN",
+    "failing": [],
+    "missing_evidence": [],
+    "unresolved_parameters": [
+      "tmean_band_c (UNRESOLVED)",
+      "gradient_bound_c_per_min (UNRESOLVED)"
+    ],
+    "verdict": "UNKNOWN",
+    "why": "criterion not yet measurable: tmean_band_c (UNRESOLVED), gradient_bound_c_per_min (UNRESOLVED). UNKNOWN is not READY."
+  },
+  "suspect_frame": {
+    "canonical_candidate": "docs/01 22.4 'Commanded OFF + unexpected current' names CONTROL_ELECTRICAL_ANOMALY, high severity, and 23.4 lists 'current while state should be OFF' as its example",
+    "command_and_state_fields": {
+      "pwm_applied_permille": {
+        "preceding": [
+          "999",
+          "999"
+        ],
+        "suspect": "0"
+      },
+      "pwm_req_permille": {
+        "preceding": [
+          "1000",
+          "1000"
+        ],
+        "suspect": "0"
+      },
+      "state": {
+        "preceding": [
+          "COOLING",
+          "COOLING"
+        ],
+        "suspect": "COOLDOWN"
+      }
+    },
+    "competing_explanation": "register/transition lag on the PZEM side. Two committed observations support it: evidence/A/W04/README.md records the first PZEM sample after START still returning pre-run registers, and after this frame the applied duty stays 0 while the reading falls 7.15 -> 0.56 -> 0.02 -> 0.0 -> 0.0 -> 0.02 A, reaching 0 at device_ms 829894. That is a decaying tail, not sustained energization - but it is a meter trace, not a verified zero-current measurement, so it weakens the anomaly reading without closing it",
+    "current_returns_to_zero_at_device_ms": 829894,
+    "device_ms": 826894,
+    "differing_measured_fields": [],
+    "fields": {
+      "current_a": "7.15",
+      "current_status": "",
+      "energy_wh": "122.0",
+      "power_w": "84.2",
+      "pwm_applied_permille": "0",
+      "pwm_req_permille": "0",
+      "state": "COOLDOWN",
+      "t1_c": "20.875",
+      "t1_status": "OK",
+      "t2_c": "39.562",
+      "t2_status": "OK",
+      "t3_c": "21.625",
+      "t3_status": "OK",
+      "t4_c": "21.438",
+      "t4_status": "OK",
+      "voltage_status": "",
+      "voltage_v": "11.79"
+    },
+    "frames_after_suspect": [
+      {
+        "current_a": "0.56",
+        "device_ms": 827894,
+        "power_w": "6.6",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.02",
+        "device_ms": 828894,
+        "power_w": "0.2",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.0",
+        "device_ms": 829894,
+        "power_w": "0.0",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.0",
+        "device_ms": 830894,
+        "power_w": "0.0",
+        "voltage_v": "11.93"
+      },
+      {
+        "current_a": "0.02",
+        "device_ms": 831894,
+        "power_w": "0.2",
+        "voltage_v": "11.93"
+      }
+    ],
+    "measured_fields_compared": [
+      "voltage_v",
+      "voltage_status",
+      "current_a",
+      "current_status",
+      "power_w",
+      "energy_wh",
+      "t1_c",
+      "t1_status",
+      "t2_c",
+      "t2_status",
+      "t3_c",
+      "t3_status",
+      "t4_c",
+      "t4_status"
+    ],
+    "measurement_vs_verification": "PZEM-reported values only. No independent instrument read this branch, so the decay describes what the meter showed, not proof that the branch carried no current - the two must not be conflated",
+    "operator_confirmed_zero_duty_current_sequence_a": [
+      "7.15",
+      "0.56",
+      "0.02",
+      "0.0",
+      "0.0",
+      "0.02"
+    ],
+    "preceding_frames_identical_on_all_measured_fields": 2,
+    "reading": "applied duty `0` and requested duty `0` in state `COOLDOWN`, yet the row carries `7.15 A` and `84.2 W`; `current_status` is an **empty cell, not OK** and all 14 measured fields match 2 of the 2 preceding frames, so the readings did not move when the duty did. Naming this CONTROL_ELECTRICAL_ANOMALY is a safety classification and not a host tool's call, so it is recorded as the canonical candidate for the next supervised session; the frame stays inside the recovery segment's published peak, where the report names it instead of averaging it away"
+  },
+  "with_test_injected_numbers": {
+    "injection": {
+      "gradient_bound_c_per_min": "0.50",
+      "tmean_band_c": "31.5"
+    },
+    "note": "31.5 C and 0.50 C/min were injected to prove the evaluator can reach READY; they are not project thresholds, no document may quote them as such, and the shipped file keeps both gates UNRESOLVED",
+    "result": {
+      "criterion_status": "CANDIDATE_NOT_FROZEN",
+      "failing": [],
+      "missing_evidence": [],
+      "unresolved_parameters": [],
+      "verdict": "READY",
+      "why": "every resolved criterion is satisfied by recorded evidence"
+    }
+  }
+}

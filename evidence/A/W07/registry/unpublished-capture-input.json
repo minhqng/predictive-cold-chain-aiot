@@ -1,0 +1,11 @@
+{
+  "capture_session_id": "20261104T092140Z",
+  "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+  "source_input": {
+    "capture_relative_path": "raw/telemetry.jsonl",
+    "publication_status": "EXCLUDED_BY_FROZEN_HANDOFF",
+    "sha256": null,
+    "limitation": "Raw input is not among the 113 frozen publication artifacts. No raw-input byte identity or published availability is claimed."
+  },
+  "witness_source_sha256": "db314ddc89aaa342e524acba6a326a958c37cae2825f4a3e37dd1b4901ac7a39"
+}

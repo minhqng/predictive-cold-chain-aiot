@@ -1,0 +1,151 @@
+{
+  "captured_at": "2026-11-04T15:37:42.421+00:00",
+  "measurements": {
+    "attempts": 3,
+    "runs": [
+      {
+        "attempt": 1,
+        "ended_at": "2026-11-04T15:27:42.226636+00:00",
+        "frames": 300,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "door_closed_throughout": true,
+          "duration_s": 298.98,
+          "end_temperature_c": 29.916666666666668,
+          "frames": 300,
+          "gradient_mean_c": 0.36333333333333334,
+          "mean_temperature_c": 29.884166666666665,
+          "slope_c_per_min": 0.01079415413026935,
+          "start_temperature_c": 29.875
+        },
+        "reason": "",
+        "started_at": "2026-11-04T15:22:43.261425+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 2,
+        "ended_at": "2026-11-04T15:32:42.198222+00:00",
+        "frames": 300,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "door_closed_throughout": true,
+          "duration_s": 298.97999999999996,
+          "end_temperature_c": 29.979166666666668,
+          "frames": 300,
+          "gradient_mean_c": 0.36895833333333333,
+          "mean_temperature_c": 29.961944444444445,
+          "slope_c_per_min": 0.013700157163456784,
+          "start_temperature_c": 29.916666666666668
+        },
+        "reason": "",
+        "started_at": "2026-11-04T15:27:43.246228+00:00",
+        "valid": true
+      },
+      {
+        "attempt": 3,
+        "ended_at": "2026-11-04T15:37:42.173144+00:00",
+        "frames": 300,
+        "metrics": {
+          "cooling_off_throughout": true,
+          "coverage": 1.0,
+          "door_closed_throughout": true,
+          "duration_s": 298.9799999999999,
+          "end_temperature_c": 30.041666666666668,
+          "frames": 300,
+          "gradient_mean_c": 0.365625,
+          "mean_temperature_c": 30.00486111111111,
+          "slope_c_per_min": 0.005422933043119189,
+          "start_temperature_c": 30.0
+        },
+        "reason": "",
+        "started_at": "2026-11-04T15:32:43.215709+00:00",
+        "valid": true
+      }
+    ],
+    "summary": {
+      "gradient_mean_c": {
+        "cv": 0.007728809052909405,
+        "max": 0.36895833333333333,
+        "mean": 0.3659722222222222,
+        "min": 0.36333333333333334,
+        "n": 3,
+        "sd": 0.0028285294242244834
+      },
+      "slope_c_per_min": {
+        "cv": 0.4210967360227355,
+        "max": 0.013700157163456784,
+        "mean": 0.009972414778948441,
+        "min": 0.005422933043119189,
+        "n": 3,
+        "sd": 0.004199351313680078
+      }
+    },
+    "valid_runs": 3
+  },
+  "repetitions": [
+    {
+      "attempt": 1,
+      "ended_at": "2026-11-04T15:27:42.226636+00:00",
+      "frames": 300,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "door_closed_throughout": true,
+        "duration_s": 298.98,
+        "end_temperature_c": 29.916666666666668,
+        "frames": 300,
+        "gradient_mean_c": 0.36333333333333334,
+        "mean_temperature_c": 29.884166666666665,
+        "slope_c_per_min": 0.01079415413026935,
+        "start_temperature_c": 29.875
+      },
+      "reason": "",
+      "started_at": "2026-11-04T15:22:43.261425+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 2,
+      "ended_at": "2026-11-04T15:32:42.198222+00:00",
+      "frames": 300,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "door_closed_throughout": true,
+        "duration_s": 298.97999999999996,
+        "end_temperature_c": 29.979166666666668,
+        "frames": 300,
+        "gradient_mean_c": 0.36895833333333333,
+        "mean_temperature_c": 29.961944444444445,
+        "slope_c_per_min": 0.013700157163456784,
+        "start_temperature_c": 29.916666666666668
+      },
+      "reason": "",
+      "started_at": "2026-11-04T15:27:43.246228+00:00",
+      "valid": true
+    },
+    {
+      "attempt": 3,
+      "ended_at": "2026-11-04T15:37:42.173144+00:00",
+      "frames": 300,
+      "metrics": {
+        "cooling_off_throughout": true,
+        "coverage": 1.0,
+        "door_closed_throughout": true,
+        "duration_s": 298.9799999999999,
+        "end_temperature_c": 30.041666666666668,
+        "frames": 300,
+        "gradient_mean_c": 0.365625,
+        "mean_temperature_c": 30.00486111111111,
+        "slope_c_per_min": 0.005422933043119189,
+        "start_temperature_c": 30.0
+      },
+      "reason": "",
+      "started_at": "2026-11-04T15:32:43.215709+00:00",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "test_id": "A-W07-02"
+}

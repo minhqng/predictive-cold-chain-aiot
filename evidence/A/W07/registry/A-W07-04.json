@@ -1,0 +1,195 @@
+{
+  "checks": [
+    {
+      "detail": " value=6 expected=6",
+      "failure_reason": "",
+      "name": "six_valid_runs",
+      "passed": true
+    },
+    {
+      "detail": " value=0.005750031388797137",
+      "failure_reason": "",
+      "name": "slope_sd_present",
+      "passed": true
+    },
+    {
+      "detail": " value=0.0037655652662971647",
+      "failure_reason": "",
+      "name": "current_cv_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T17:56:11.193+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T17:56:11.193+00:00",
+      "original": "A-W07-04",
+      "path": "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "sha256": "abc1fbefff1c2736745380f2c21a18a00232fe7b9b72b0066a726bd2f25850de",
+      "size": 1454,
+      "stored": "evidence/A/W07/registry/measurements/A-W07-04-20261104T175611182537-02f4f3.json",
+      "source_sha256": "a92943b57d107fe005f180f7669f306f01180b52083d72541de7a0bd13ff7558",
+      "source_size": 1513
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "summary": {
+      "chamber_drop_c": {
+        "cv": 0.0005300033070886856,
+        "max": 2.270833333333332,
+        "mean": 2.2694444444444457,
+        "min": 2.2687500000000007,
+        "n": 3,
+        "sd": 0.001202813060809601
+      },
+      "current_mean_a": {
+        "cv": 0.0037655652662971647,
+        "max": 4.302054054054054,
+        "mean": 4.288233362394653,
+        "min": 4.270483870967742,
+        "n": 3,
+        "sd": 0.016147622603210007
+      },
+      "electrical_delay_s": {
+        "cv": 0.0,
+        "max": 1.02,
+        "mean": 1.02,
+        "min": 1.02,
+        "n": 3,
+        "sd": 0.0
+      },
+      "gradient_mean_c": {
+        "cv": 0.01524886814034166,
+        "max": 0.37604166666666666,
+        "mean": 0.36972222222222223,
+        "min": 0.36520833333333336,
+        "n": 3,
+        "sd": 0.005637845415220764
+      },
+      "slope_c_per_min": {
+        "cv": 1.8289132773850365,
+        "max": 0.009781629863624679,
+        "mean": 0.0031439606567996922,
+        "min": -0.00031224788055894735,
+        "n": 3,
+        "sd": 0.005750031388797137
+      },
+      "thermal_delay_s": {
+        "cv": 0.02831760133259299,
+        "max": 37.04,
+        "mean": 36.02,
+        "min": 35.0,
+        "n": 3,
+        "sd": 1.0199999999999996
+      }
+    },
+    "valid_runs": 6
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T17:56:11.167+00:00",
+  "test_id": "A-W07-04",
+  "publication_provenance": {
+    "source_record_sha256": "a50678101f74440b268beed8147d746be53485bb812129c24728e770623cdfc6",
+    "source_capture_relative_path": "results/A-W07-04.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IDENTITY_RESOLVED_BY_DERIVATION",
+    "excluded_supporting_artifacts": [],
+    "resolved_limitation": "Per-item identity is bound to authenticated same-session evidence; the acceptance verdict is unchanged and device identity is inherited, not re-measured."
+  },
+  "identity_provenance": {
+    "schema": "coldguard.identity-provenance/1",
+    "record": "A-W07-04",
+    "resolution": "DERIVED_FROM_IDENTIFIED_PARENTS",
+    "device_verified": false,
+    "identity_basis": "INHERITED_SAME_SESSION",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "parents": [
+      {
+        "test_id": "A-W07-02",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W07/registry/A-W07-02.json",
+        "published_commit": "5921a5c4a0cce39fd1598d88ecee090e558f12cc",
+        "published_sha256": "ecbd82d6ec429413d56ed8f7cc1f495c661de5dc1500fc477f8f592735e623cd",
+        "source_record_sha256": "88d229c49e2450395a92922588b58e49ce4215ba2a204c481de13c8a809bf4b1",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      },
+      {
+        "test_id": "A-W07-03",
+        "role": "DERIVATION_PARENT",
+        "published_record": "evidence/A/W07/registry/A-W07-03.json",
+        "published_commit": "5921a5c4a0cce39fd1598d88ecee090e558f12cc",
+        "published_sha256": "b94700822236f60de114dd185f1f9699836fcefd63aa02ca4455db4c060ffe80",
+        "source_record_sha256": "1f53dfe312717149a45fa33593d983bd32e089fcf97b9c110fcab72d86321490",
+        "boot_id": null,
+        "boot_count": null,
+        "device_id": null,
+        "firmware_version": null,
+        "hardware_config_id": null,
+        "calibration_id": null
+      }
+    ],
+    "linkage_checks": [
+      {
+        "name": "valid_runs",
+        "value": 6,
+        "match": true,
+        "expected_or_source": 6
+      },
+      {
+        "name": "parent_valid_runs_sum",
+        "value": 6,
+        "match": true,
+        "expected_or_source": 6
+      },
+      {
+        "name": "summary_matches_A-W07-03:chamber_drop_c",
+        "value": 2.2694444444444457,
+        "match": true,
+        "expected_or_source": 2.2694444444444457
+      },
+      {
+        "name": "summary_matches_A-W07-03:current_mean_a",
+        "value": 4.288233362394653,
+        "match": true,
+        "expected_or_source": 4.288233362394653
+      },
+      {
+        "name": "summary_matches_A-W07-03:electrical_delay_s",
+        "value": 1.02,
+        "match": true,
+        "expected_or_source": 1.02
+      },
+      {
+        "name": "summary_matches_A-W07-03:thermal_delay_s",
+        "value": 36.02,
+        "match": true,
+        "expected_or_source": 36.02
+      }
+    ],
+    "limitation": "",
+    "method": "Derived identity is inherited from the declared derivation parents whose capture records carry a device_identity. It is not presented as a per-item measurement.",
+    "verified_by": "p1-evidence-repair",
+    "verified_at": "2026-11-05T06:45:38+00:00",
+    "requirement_declared_parents": [
+      "A-W07-02",
+      "A-W07-03"
+    ],
+    "inherited_limitation": "A-W07-03 stabilization witness remains NOT_REUSABLE; repeatability metrics do not depend on it."
+  }
+}

@@ -1,0 +1,17 @@
+{
+  "captured_at": "2026-11-04T18:27:16.033+00:00",
+  "measurements": {
+    "cooling_off": true,
+    "door_closed": true,
+    "gradient_max_c": 0.05,
+    "gradient_now_c": 0.020833333333335702,
+    "sensors_valid": true,
+    "spatial_spread_c": 0.375,
+    "tmean_max_c": 30.6,
+    "tmean_min_c": 29.5,
+    "tmean_now_c": 30.041666666666668
+  },
+  "repetitions": [],
+  "source": "HARDWARE",
+  "test_id": "A-W07-05"
+}

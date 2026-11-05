@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Sensor mounts fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:V1 position fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Cable paths fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Door alignment fixed",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Chamber internal state fixed",
+      "passed": true
+    },
+    {
+      "detail": "5/5 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=0)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T10:32:32.645+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T10:32:32.645+00:00",
+      "original": "geometry-v1-20261104.zip",
+      "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+      "size": 4887637,
+      "publication_status": "EXCLUDED_ARCHIVE"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "geometry-v1 frozen 2026-11-04 from operator-supplied current interior and exterior photos. Slot mapping retained from probe-identification-v0 (T1 center 287088CA..., T2 HOT_SIDE 28AEBF22..., T3 bottom 28CBE9CA..., T4/SPARE near door 283BE5C9...). V1 position, cable routing and internal state are documented by the photos; door alignment functionally verified 2026-11-04 (raw 0->1->0). No dimensions recorded; no H0 dimension baseline; 6 L is a verbal claim only. No claim of unchanged since H0. See evidence/A/W07/geometry-v1-frozen-20261104.md.",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-04T10:32:32.636+00:00",
+  "test_id": "A-W07-01",
+  "publication_provenance": {
+    "source_record_sha256": "033138d37fa0340419faacce34e6d3e74029317fa548c7388423a8c34d6d67f7",
+    "source_capture_relative_path": "results/A-W07-01.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "DOCUMENTARY_NO_DEVICE_IDENTITY_CLAIM",
+    "excluded_supporting_artifacts": [
+      {
+        "capture_relative_path": "attachments\\A-W07-01\\14ef981d4476-geometry-v1-20261104.zip",
+        "sha256": "14ef981d44768aade346d0ecb8bf50819e130114954f984e52d54f07d2357f16",
+        "size": 4887637,
+        "reason": "Geometry archives excluded by frozen handoff; ROM measurement remains published."
+      }
+    ]
+  }
+}
