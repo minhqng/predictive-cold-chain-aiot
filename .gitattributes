@@ -63,8 +63,12 @@ evidence/A/W14/** -text
 evidence/A/W12/** -text
 evidence/A/W12/A-W12-01-CONDITIONS-20261104.md -text
 evidence/A/W12/A-W12-04-HW-CONFIG-SIGNOFF-20261105.md -text
-
 # W13 dossier: every file is hash-pinned in evidence/A/W13/SHA256SUMS.txt
 # and re-checked by validate_w13.py; `text=auto eol=lf` would rewrite those bytes
 # on a checkout with core.autocrlf and break every pin.
 evidence/A/W13/** -text
+# W08 envelope/Gate-A dossier: hash-pinned in evidence/A/W08/SHA256SUMS.txt and
+# re-checked by validate_w08.py. The repo default `* text=auto eol=lf` would rewrite
+# those bytes on a core.autocrlf checkout and break every pin.
+evidence/A/W08/** -text
+evidence/A/W08/attachments/fuse-selection.md -text

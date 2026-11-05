@@ -1,0 +1,26 @@
+gate,required,artifact,declared_state,exists_in_this_checkout,kind,sha256_12,bytes,status_label
+H0 mechanical assembly,"V1 installed, TEC integrated, paste, fan mounted, penetration sealed, sensor positions fixed, panel outside chamber",evidence/A/W01/hardware-audit-w01.md,committed,true,file,9962ee5ee97c,6279,REAL_DATA_ANALYZED
+H0 as-built positions,the frozen as-built pin/position record,evidence/A/as-built-pinmap-2026-10-27.md,committed,true,file,39acc702d0d7,9321,REAL_DATA_ANALYZED
+H0/H1 photos,photographic inventory of the assembly,evidence/A/W01/photo-inventory.csv,committed,true,file,a644db8cd956,8767,REAL_DATA_ANALYZED
+H1 sensor subsystem,"three expected DS18B20 ROM ids, BME read, MC-38 open/close",evidence/A/W02/ds18b20/ds18b20-verification.md,committed,true,file,ecace2203db4,6149,REAL_DATA_ANALYZED
+H1 ROM map,the by-source ROM identity table,evidence/A/W02/sensor-rom-map.yaml,committed,true,file,50709135f7f0,7812,REAL_DATA_ANALYZED
+H1 door subsystem,MC-38 open/close verified,evidence/A/W02/mc38/mc38-bench-report.md,committed,true,file,48d33f5294e8,5769,REAL_DATA_ANALYZED
+H2 logic power,"5 V rail verified, no TEC actuation",evidence/A/W03/logic-power-measurement.md,committed,true,file,485cfaffeda6,4080,REAL_DATA_ANALYZED
+H3 PZEM / RS-485,"Modbus response, 50 A profile, V/I/P/Wh readable",evidence/A/W03/pzem-register-readback.txt,committed,true,file,ca6b58183c1e,9435,REAL_DATA_ANALYZED
+H3 current profile readback,50 A profile verified on the wire,evidence/A/W03/hardware-2026-10-27/test-131-profile-readback.md,committed,true,file,b7301e80b9e0,3604,REAL_DATA_ANALYZED
+H3 OFF-state envelope,zero-current envelope with per-sample validity,evidence/A/W03/hardware-2026-10-27/raw/test-132b-off-envelope.csv,committed,true,file,7eac5f80c2d9,19157,REAL_DATA_ANALYZED
+H4 IBT-2 logic,"default OFF, enable, direction, reset, 3.3 V logic",evidence/A/W03/hardware-2026-10-27/test-133b-reset-default-off.md,committed,true,file,bb1d334b79f3,5821,REAL_DATA_ANALYZED
+H4 default-OFF on the delivered build,boot with outputs off,evidence/A/W04/boot-default-off-note.md,committed,true,file,c67ed70cc300,4849,REAL_DATA_ANALYZED
+H4 IBT-2 pin map,the pin contract actually used,evidence/A/W03/ibt2-pin-map.md,committed,true,file,4901c0328534,8624,REAL_DATA_ANALYZED
+H5 power branch,"fuse installed, high-current wiring, shunt, terminal check, fan",evidence/A/W04/fuse-commissioning-note.md,committed (choice NOT frozen),true,file,2342bbbf3b38,4895,REAL_DATA_ANALYZED
+H5 shunt continuity,series return path proven,evidence/A/W03/hardware-2026-10-27/shunt-continuity.md,committed,true,file,fa0e25f36b65,5753,REAL_DATA_ANALYZED
+H5 G0 electrical verification,branch voltage/presence evidence before any drive,evidence/A/W04/g0-electrical-verification.md,committed,true,file,de2f24567b46,34752,REAL_DATA_ANALYZED
+H6 conservative TEC test,"current present, correct cooling face, hot side rejects, no abnormal connector behaviour",evidence/A/W04/h6/41-h6-run-analysis.md,committed,true,file,d5553d313c22,4815,REAL_DATA_ANALYZED
+H6 trace artifact,the 1 Hz electrical samples,evidence/A/W04/h6/first-tec-trace.csv,committed,true,file,f5cd1fb7d741,7992,REAL_DATA_ANALYZED
+H6 polarity,correct cooling face proven,evidence/A/W04/polarity-photo.md,"committed (direction recorded, no photograph)",true,file,f1729ecadf6a,5033,REAL_DATA_ANALYZED
+H7 full characterization,"V/I/P, actuation state, T1/T2/T3, BME, door, timing, thermal response over the duty ladder",evidence/A/W04/tec-cooling-response-600s.csv,committed (one duty level: 999 per mille),true,file,f8716b5136f3,336832,REAL_DATA_ANALYZED
+H7 duty ladder,the 20-100 % staircase,h7/50-stage-20pct.md .. h7/60-h7-100pct-duty-audit.md,"local-bench only, NOT committed in this repository",false,absent,,,TEAM_DEPENDENCY
+H7 endurance / hot side,long runs at 100 % duty,h8/phase4e/H8_FULL_SENSOR_ENDURANCE_REPORT.md,"local-bench only, NOT committed in this repository",false,absent,,,TEAM_DEPENDENCY
+W05 timing / freshness,cadence and age statistics,evidence/A/W05/timing-pilot.json,"committed (synthetic pilot capture, not a bench run)",true,file,6621f7a9c12b,2120,REAL_DATA_ANALYZED
+W06 command/ACK contract,"desired vs applied state, idempotency, expiry",evidence/A/W06/ack-fixture.json,"committed (host scenarios, never a device round trip)",true,file,1a195a4a7fef,7578,REAL_DATA_ANALYZED
+W07 plant repeatability,repeated baseline runs and their spread,evidence/A/W07,"NOT IN THIS CHECKOUT (stacked branch, integration dependency)",false,absent,,,TEAM_DEPENDENCY
