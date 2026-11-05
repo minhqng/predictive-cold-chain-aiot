@@ -1,0 +1,57 @@
+{
+  "checks": [
+    {
+      "detail": "3",
+      "failure_reason": "",
+      "name": "a3_dataset_run_present",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-04T19:18:16.580+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T19:18:16.580+00:00",
+      "original": "A-W15-02",
+      "path": "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json",
+      "sha256": "255dd20996e131aeac9881145e3e5385f21138c9dd9736f8584dbc1cd03283ef",
+      "size": 421,
+      "stored": "evidence/A/W15/registry/measurements/A-W15-02-20261104T191816572825-a39e17.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "complete_runs": [
+      {
+        "attempt": 1,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 2,
+        "test_id": "A-W07-03"
+      },
+      {
+        "attempt": 3,
+        "test_id": "A-W07-03"
+      }
+    ],
+    "count": 3
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-04T19:18:16.553+00:00",
+  "test_id": "A-W15-02",
+  "publication_provenance": {
+    "source_record_sha256": "079b409521fd5ef1f52acd8fe3d38be3580396d72161a3c7976d1aecba4f97ea",
+    "source_capture_relative_path": "results/A-W15-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "UNRESOLVED_PER_ITEM_IDENTITY",
+    "excluded_supporting_artifacts": []
+  }
+}
