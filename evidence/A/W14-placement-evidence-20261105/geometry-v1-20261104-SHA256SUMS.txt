@@ -1,0 +1,4 @@
+e5a3a2fb298456dbd02697557715af80d9cee69a8c39675df3e408b8661e3717 *geometry-v1-frozen-20261104.md
+3374f9c6ccd862dfd3577bbb83c915aea657b47595d6d6bd403c59816a47ed1f *geometry-v1-prefill-20261104.md
+ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2 *geometry-v1-photos-20261104/geometry-v1-exterior-20261104.png
+f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d *geometry-v1-photos-20261104/geometry-v1-interior-20261104.png

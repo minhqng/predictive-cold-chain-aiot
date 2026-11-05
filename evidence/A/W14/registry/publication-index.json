@@ -11,7 +11,9 @@
       "artifact_paths": [
         "evidence/A/W14/registry/A-W14-01.json",
         "evidence/A/W14/registry/measurements/A-W14-01-20261104T142919488017-2ff73d.json"
-      ]
+      ],
+      "placement_status": "AS_BUILT_VERIFIED_CONTINUITY_LIMITED",
+      "placement_evidence": "evidence/A/W14-placement-evidence-20261105/A-W14-01-PLACEMENT-ADDENDUM-20261105.md"
     },
     "A-W14-02": {
       "criterion": "Do not unplug T2/T3 for the core A1 ablation; the same physical runs must support one-sensor and three-sensor feature sets selected logically by B.",
@@ -27,10 +29,10 @@
     {
       "dest": "evidence/A/W14/registry/A-W14-01.json",
       "source_sha256": "8f43ec83cf1861d9a8d9ebe26990c089e4b14503b1c1b4dad815e88b10c96938",
-      "published_sha256": "1352d4c06bf4650dbaea755b826fd879340f1c1fe9302abbe3ae26aaf8c7e94a",
+      "published_sha256": "1ab4f8a1760131d4f5600be898eb9b0da09efcf7e4f07053d4ea9b02115ba1f2",
       "source_capture_path": "results/A-W14-01.json",
       "source_bytes": 2449,
-      "bytes": 3463,
+      "bytes": 8274,
       "requirement": "A-W14-01",
       "transformed_record": true,
       "transformation_sequence": [
@@ -81,6 +83,33 @@
       "transformation_sequence": [
         "CRLF_TO_LF"
       ]
+    },
+    {
+      "dest": "evidence/A/W14-placement-evidence-20261105/A-W14-01-PLACEMENT-ADDENDUM-20261105.md",
+      "source_capture_path": null,
+      "source_sha256": null,
+      "published_sha256": "219c63aec2ac14f467d997420f0ccfffb41c0c6ecf6053a31d237c1bfa761d99",
+      "bytes": 3207,
+      "requirement": "A-W14-01",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W14-placement-evidence-20261105/geometry-v1-frozen-20261104.md",
+      "source_capture_path": null,
+      "source_sha256": null,
+      "published_sha256": "e5a3a2fb298456dbd02697557715af80d9cee69a8c39675df3e408b8661e3717",
+      "bytes": 4736,
+      "requirement": "A-W14-01",
+      "transformed_record": false
+    },
+    {
+      "dest": "evidence/A/W14-placement-evidence-20261105/geometry-v1-20261104-SHA256SUMS.txt",
+      "source_capture_path": null,
+      "source_sha256": null,
+      "published_sha256": "92233ce4864e3d1d57d2b4012a0c81b8a80a97861fd061a2277c9b040a3ce1ca",
+      "bytes": 451,
+      "requirement": "A-W14-01",
+      "transformed_record": false
     }
   ]
 }
