@@ -1,0 +1,412 @@
+{
+  "detection_floor": {
+    "assumption": "floor(H) = z * sigma_second_diff / sqrt(H), where sigma_second_diff is the trend-immune second-difference sigma (std of second differences / sqrt(6)) reported by probe_noise_profile(), and z is the stated detection z-score (default 2.58). The 1/sqrt(H) factor assumes white-noise residuals over the horizon; autocorrelated drift would make the floor larger, not smaller, so this is an optimistic bound",
+    "binding_position": "CHAMBER_BOTTOM",
+    "binding_probe": "t3",
+    "build_stamp": "2026-11-02T00:00:00Z",
+    "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+    "chamber_air_slots": [
+      "t1",
+      "t3",
+      "t4"
+    ],
+    "detection_floor_formula": "floor(H) = 2.58 * sigma_second_diff / sqrt(H)   [z = the detection z-score; sigma_second_diff = std(second differences)/sqrt(6), the trend-immune estimator of probe_noise_profile(); H in seconds at 1 Hz cadence]",
+    "estimator_version": "w10-pairing-v2",
+    "horizons": {
+      "120s": {
+        "chamber_air_mean_c": 0.00267,
+        "per_probe_c": {
+          "t1": 0.00448,
+          "t3": 0.00491,
+          "t4": 0.00447
+        }
+      },
+      "300s": {
+        "chamber_air_mean_c": 0.00169,
+        "per_probe_c": {
+          "t1": 0.00283,
+          "t3": 0.00311,
+          "t4": 0.00282
+        }
+      },
+      "30s": {
+        "chamber_air_mean_c": 0.00534,
+        "per_probe_c": {
+          "t1": 0.00896,
+          "t3": 0.00983,
+          "t4": 0.00893
+        }
+      },
+      "600s": {
+        "chamber_air_mean_c": 0.00119,
+        "per_probe_c": {
+          "t1": 0.002,
+          "t3": 0.0022,
+          "t4": 0.002
+        }
+      },
+      "60s": {
+        "chamber_air_mean_c": 0.00378,
+        "per_probe_c": {
+          "t1": 0.00634,
+          "t3": 0.00695,
+          "t4": 0.00632
+        }
+      }
+    },
+    "is_physical_measurement": true,
+    "note": "the sigma is measured from real thermal frames; the detectable-magnitude statement is a property of the instrument chain, not of any disturbance that has been captured",
+    "practical_floor_c": 0.00695,
+    "practical_floor_horizon_s": 60,
+    "profile": {
+      "assumption": "floor(H) = z * sigma_second_diff / sqrt(H), where sigma_second_diff is the trend-immune second-difference sigma (std of second differences / sqrt(6)) reported by probe_noise_profile(), and z is the stated detection z-score (default 2.58). The 1/sqrt(H) factor assumes white-noise residuals over the horizon; autocorrelated drift would make the floor larger, not smaller, so this is an optimistic bound",
+      "estimator": "second-difference sigma (trend immune), pooled across accepted runs",
+      "probes": {
+        "t1": {
+          "excluded_from_chamber_mean": "",
+          "measurement_resolution_c": 0.0625,
+          "n_frames_pooled": 209,
+          "noise_exceeds_quantisation_only": true,
+          "per_run_sigma_c": [
+            0.019032
+          ],
+          "physical_position": "CHAMBER_CENTER",
+          "quantisation_noise_floor_c": 0.018042,
+          "quiescent_runs_accepted": 1,
+          "sigma_c": 0.019032
+        },
+        "t2": {
+          "excluded_from_chamber_mean": "TEC_HOT_SIDE is a heatsink, not chamber air",
+          "measurement_resolution_c": 0.0625,
+          "n_frames_pooled": 209,
+          "noise_exceeds_quantisation_only": true,
+          "per_run_sigma_c": [
+            0.02457
+          ],
+          "physical_position": "TEC_HOT_SIDE",
+          "quantisation_noise_floor_c": 0.018042,
+          "quiescent_runs_accepted": 1,
+          "sigma_c": 0.02457
+        },
+        "t3": {
+          "excluded_from_chamber_mean": "",
+          "measurement_resolution_c": 0.0625,
+          "n_frames_pooled": 209,
+          "noise_exceeds_quantisation_only": true,
+          "per_run_sigma_c": [
+            0.020866
+          ],
+          "physical_position": "CHAMBER_BOTTOM",
+          "quantisation_noise_floor_c": 0.018042,
+          "quiescent_runs_accepted": 1,
+          "sigma_c": 0.020866
+        },
+        "t4": {
+          "excluded_from_chamber_mean": "",
+          "measurement_resolution_c": 0.0625,
+          "n_frames_pooled": 209,
+          "noise_exceeds_quantisation_only": true,
+          "per_run_sigma_c": [
+            0.018964
+          ],
+          "physical_position": "CHAMBER_NEAR_DOOR",
+          "quantisation_noise_floor_c": 0.018042,
+          "quiescent_runs_accepted": 1,
+          "sigma_c": 0.018964
+        }
+      },
+      "quiescent_runs": [
+        {
+          "accepted_for_noise_estimation": true,
+          "duration_s": 208.0,
+          "end_device_ms": 225894,
+          "first_seq": 18,
+          "last_seq": 226,
+          "n_frames": 209,
+          "probes": {
+            "t1": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.018979,
+              "max_abs_diff_c": 0.063,
+              "n": 209,
+              "sigma_c_second_diff_trend_immune": 0.019032,
+              "slope_c_per_s": 0.0005774,
+              "stationary": true
+            },
+            "t2": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.02477,
+              "max_abs_diff_c": 0.063,
+              "n": 209,
+              "sigma_c_second_diff_trend_immune": 0.02457,
+              "slope_c_per_s": 6.85e-05,
+              "stationary": true
+            },
+            "t3": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.020889,
+              "max_abs_diff_c": 0.062,
+              "n": 209,
+              "sigma_c_second_diff_trend_immune": 0.020866,
+              "slope_c_per_s": 0.0003292,
+              "stationary": true
+            },
+            "t4": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.018317,
+              "max_abs_diff_c": 0.063,
+              "n": 209,
+              "sigma_c_second_diff_trend_immune": 0.018964,
+              "slope_c_per_s": 0.0004223,
+              "stationary": true
+            }
+          },
+          "start_device_ms": 17894
+        },
+        {
+          "accepted_for_noise_estimation": false,
+          "duration_s": 125.0,
+          "end_device_ms": 956894,
+          "first_seq": 832,
+          "last_seq": 957,
+          "n_frames": 126,
+          "probes": {
+            "t1": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.02844,
+              "max_abs_diff_c": 0.126,
+              "n": 126,
+              "sigma_c_second_diff_trend_immune": 0.024377,
+              "slope_c_per_s": 0.0556625,
+              "stationary": false
+            },
+            "t2": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.027754,
+              "max_abs_diff_c": 0.126,
+              "n": 126,
+              "sigma_c_second_diff_trend_immune": 0.02216,
+              "slope_c_per_s": -0.0708765,
+              "stationary": false
+            },
+            "t3": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.025769,
+              "max_abs_diff_c": 0.126,
+              "n": 126,
+              "sigma_c_second_diff_trend_immune": 0.022713,
+              "slope_c_per_s": 0.0431316,
+              "stationary": false
+            },
+            "t4": {
+              "first_diff_sigma_c_contaminated_by_slope": 0.025241,
+              "max_abs_diff_c": 0.126,
+              "n": 126,
+              "sigma_c_second_diff_trend_immune": 0.021201,
+              "slope_c_per_s": 0.0506694,
+              "stationary": false
+            }
+          },
+          "start_device_ms": 831894
+        }
+      ],
+      "quiescent_runs_found": 2,
+      "selection_rule": "contiguous runs of snapshot=VALID AND state=OFF AND duty=0, then rejected if the fitted slope exceeds the threshold",
+      "stationarity_threshold_c_per_s": 0.002
+    },
+    "reading": "any door disturbance whose chamber-air rise within 60 s is below 0.0069 degC is indistinguishable from nothing on this rig, no matter how well the pair is matched",
+    "sigma_by_probe_c": {
+      "t1": 0.019032,
+      "t3": 0.020866,
+      "t4": 0.018964
+    },
+    "sigma_chamber_air_mean_c": 0.011339,
+    "sigma_estimator": "second-difference sigma (trend immune), pooled across accepted runs",
+    "single_frame_floor_binding_c": 0.05383,
+    "single_frame_floor_c": {
+      "t1": 0.0491,
+      "t3": 0.05383,
+      "t4": 0.04893
+    },
+    "single_frame_floor_reading": "a rise on one probe in one frame is separable from nothing above 0.0538 degC; this bound needs no averaging assumption and is the conservative one",
+    "source": {
+      "frames_total": 957,
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    "z_score": 2.58,
+    "z_score_meaning": "the detection z-score is a multiplier on the sigma, not a property of the rig: the floor below is z * sigma / sqrt(H), so a reader who recomputes it without the z factor gets a number 1/z of the published one"
+  },
+  "noise_profile": {
+    "assumption": "floor(H) = z * sigma_second_diff / sqrt(H), where sigma_second_diff is the trend-immune second-difference sigma (std of second differences / sqrt(6)) reported by probe_noise_profile(), and z is the stated detection z-score (default 2.58). The 1/sqrt(H) factor assumes white-noise residuals over the horizon; autocorrelated drift would make the floor larger, not smaller, so this is an optimistic bound",
+    "build_stamp": "2026-11-02T00:00:00Z",
+    "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+    "estimator": "second-difference sigma (trend immune), pooled across accepted runs",
+    "probes": {
+      "t1": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.019032
+        ],
+        "physical_position": "CHAMBER_CENTER",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.019032
+      },
+      "t2": {
+        "excluded_from_chamber_mean": "TEC_HOT_SIDE is a heatsink, not chamber air",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.02457
+        ],
+        "physical_position": "TEC_HOT_SIDE",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.02457
+      },
+      "t3": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.020866
+        ],
+        "physical_position": "CHAMBER_BOTTOM",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.020866
+      },
+      "t4": {
+        "excluded_from_chamber_mean": "",
+        "measurement_resolution_c": 0.0625,
+        "n_frames_pooled": 209,
+        "noise_exceeds_quantisation_only": true,
+        "per_run_sigma_c": [
+          0.018964
+        ],
+        "physical_position": "CHAMBER_NEAR_DOOR",
+        "quantisation_noise_floor_c": 0.018042,
+        "quiescent_runs_accepted": 1,
+        "sigma_c": 0.018964
+      }
+    },
+    "quiescent_runs": [
+      {
+        "accepted_for_noise_estimation": true,
+        "duration_s": 208.0,
+        "end_device_ms": 225894,
+        "first_seq": 18,
+        "last_seq": 226,
+        "n_frames": 209,
+        "probes": {
+          "t1": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.018979,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.019032,
+            "slope_c_per_s": 0.0005774,
+            "stationary": true
+          },
+          "t2": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.02477,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.02457,
+            "slope_c_per_s": 6.85e-05,
+            "stationary": true
+          },
+          "t3": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.020889,
+            "max_abs_diff_c": 0.062,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.020866,
+            "slope_c_per_s": 0.0003292,
+            "stationary": true
+          },
+          "t4": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.018317,
+            "max_abs_diff_c": 0.063,
+            "n": 209,
+            "sigma_c_second_diff_trend_immune": 0.018964,
+            "slope_c_per_s": 0.0004223,
+            "stationary": true
+          }
+        },
+        "start_device_ms": 17894
+      },
+      {
+        "accepted_for_noise_estimation": false,
+        "duration_s": 125.0,
+        "end_device_ms": 956894,
+        "first_seq": 832,
+        "last_seq": 957,
+        "n_frames": 126,
+        "probes": {
+          "t1": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.02844,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.024377,
+            "slope_c_per_s": 0.0556625,
+            "stationary": false
+          },
+          "t2": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.027754,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.02216,
+            "slope_c_per_s": -0.0708765,
+            "stationary": false
+          },
+          "t3": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.025769,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.022713,
+            "slope_c_per_s": 0.0431316,
+            "stationary": false
+          },
+          "t4": {
+            "first_diff_sigma_c_contaminated_by_slope": 0.025241,
+            "max_abs_diff_c": 0.126,
+            "n": 126,
+            "sigma_c_second_diff_trend_immune": 0.021201,
+            "slope_c_per_s": 0.0506694,
+            "stationary": false
+          }
+        },
+        "start_device_ms": 831894
+      }
+    ],
+    "quiescent_runs_found": 2,
+    "selection_rule": "contiguous runs of snapshot=VALID AND state=OFF AND duty=0, then rejected if the fitted slope exceeds the threshold",
+    "source": {
+      "frames_total": 957,
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    "stationarity_threshold_c_per_s": 0.002
+  },
+  "tolerance": {
+    "build_stamp": "2026-11-02T00:00:00Z",
+    "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+    "initial_gradient_spread_c_per_s": null,
+    "initial_tmean_spread_c": null,
+    "pairing_tolerance_c": null,
+    "per_run": {
+      "H8C_BOX_COOLING_600S": {
+        "frames": 957,
+        "usable_frames": 0
+      }
+    },
+    "response_spread": null,
+    "runs_available": 1,
+    "source": {
+      "frames_total": 957,
+      "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    "status_label": "NEED_USER_ACTION",
+    "what_can_be_frozen_now": "only the noise floor from minimum_detectable_disturbance(): it bounds any tolerance B chooses, and it is measured rather than assumed",
+    "why": "1 physical capture(s) are available; a tolerance is a between-run spread and cannot be estimated from one run. Reporting a number here would be inventing a variance that was never observed."
+  }
+}

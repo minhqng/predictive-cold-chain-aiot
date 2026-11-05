@@ -1,0 +1,67 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "gap": "no protocolised door disturbance has ever been captured",
+  "is_physical_measurement": false,
+  "note": "this record describes what must be captured; it is not, and must never be quoted as, a disturbance measurement",
+  "recipe": {
+    "capture_recipe": {
+      "cadence": "1 Hz, unchanged from the shipped telemetry",
+      "estimated_wall_time": "6 disturbances x (120 s baseline + duration + <=900 s recovery) ~= 2.2 h of capture, plus 6 paired S1 baselines; split across at most two supervised sessions",
+      "horizon_per_run_s": 900,
+      "pairing_requirement": "each S2 run needs a same-configuration S1 baseline pair within the frozen tolerance; collect the S1 pairs first or concurrently",
+      "per_repetition": [
+        "confirm supervised attendance: the operator is at the bench for the whole repetition, with the stop-on-abnormal-current rule restated before ARM",
+        "boot the board, open the capture BEFORE ARM, record boot_id",
+        "operator attests the MC-38 mapping for THIS boot with `DOOR NEAR_LOW <token>`, then confirms the lid is seated and reads door_open=0 (CLOSED)",
+        "hold a >=120 s CLOSED baseline at the target controller state",
+        "open the door fully for the planned duration, starting the operator timer at the same instant the lid breaks the seal",
+        "close the lid at the planned duration, keeping the timer reading",
+        "record recovery until all chamber-air probes return within the pairing band or the stage deadline",
+        "stop the capture, then write: planned duration, measured timer duration, operator, initial state, anomalies"
+      ],
+      "planned_durations_s": [
+        15,
+        30,
+        60
+      ],
+      "repetitions": 6,
+      "run_id_prefix": "CG-S2-A-",
+      "safety_prerequisites": [
+        "supervised bench, operator at the board for the whole run",
+        "TEC current path and fuse posture confirmed before any energized stage",
+        "no door manipulation while a stage guard is uncertain",
+        "stop on zero or abnormal current, exactly as in the H8 stage rules"
+      ]
+    },
+    "status_label": "NEED_USER_ACTION",
+    "verified_data_position": {
+      "committed_csv_capture": {
+        "door_open_values": {
+          "0": 940,
+          "UNKNOWN": 17
+        },
+        "open_events": 0,
+        "reading": "no OPEN event exists in the only committed thermal capture",
+        "source": "evidence/A/W04/tec-cooling-response-600s.csv"
+      },
+      "local_untracked_h8_frames": {
+        "mc38_direct_magnet_test": {
+          "reading": "the only physically attested door-state evidence: operator-placed magnet, NEAR_LOW confirmed at 2026-11-01T10:00:51Z, raw 1->0->1 with the sensor-only posture (no ARM, no START, no TEC). Proves the switch works; contains no thermal disturbance to measure."
+        },
+        "note": "H8 monitor frames exist on the bench host but are NOT git-tracked, so they are not citable evidence; they must be committed before any analysis uses them",
+        "post_mount_300s_boot_eec9f67f": {
+          "door_open_1_frames": 465,
+          "polarity_command_sent": "DOOR NEAR_HIGH at 2026-11-01T09:10:24Z",
+          "reading": "real MC-38 frames with a state change, but the polarity was set by a console command on a different boot than the operator's later touch test, and the same day's alignment record documents that NEAR_HIGH made the firmware echo a stuck-high input as CLOSED. Classified UNATTESTED_DOOR_TRANSITION, not S2."
+        }
+      }
+    },
+    "why": "no committed capture contains a protocolised, operator-timed door disturbance. The door-open events required by docs/05A \u00a719 A-W10-03 have never been collected."
+  },
+  "s2_pilot_events_detected": 0,
+  "status_label": "NEED_USER_ACTION",
+  "tool_version": "w10-door-v1",
+  "valid_pilot_disturbances_available": 0,
+  "valid_pilot_disturbances_target": ">=4-6 (docs/05A \u00a719 A-W10-03)"
+}

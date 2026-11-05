@@ -1,0 +1,51 @@
+{
+ "frames_this_boot": 302,
+ "raw_levels_observed": [
+  "0",
+  "1"
+ ],
+ "raw_transitions": 42,
+ "first_transitions": [
+  {
+   "at": "2026-11-04T17:24:38.979698+00:00",
+   "from": "0",
+   "to": "1",
+   "door_open": true
+  },
+  {
+   "at": "2026-11-04T17:24:40.864818+00:00",
+   "from": "1",
+   "to": "0",
+   "door_open": false
+  },
+  {
+   "at": "2026-11-04T17:24:43.981373+00:00",
+   "from": "0",
+   "to": "1",
+   "door_open": true
+  },
+  {
+   "at": "2026-11-04T17:24:47.038800+00:00",
+   "from": "1",
+   "to": "0",
+   "door_open": false
+  },
+  {
+   "at": "2026-11-04T17:24:50.853464+00:00",
+   "from": "0",
+   "to": "1",
+   "door_open": true
+  },
+  {
+   "at": "2026-11-04T17:24:53.978825+00:00",
+   "from": "1",
+   "to": "0",
+   "door_open": false
+  }
+ ],
+ "image_asserted_open_level": 1,
+ "observed_open_level": 1,
+ "operator_sequence": "started CLOSED, first physical action was OPEN, ended CLOSED",
+ "consistent": true,
+ "verdict": "POLARITY_CONFIRMED_OPEN_LEVEL_1"
+}

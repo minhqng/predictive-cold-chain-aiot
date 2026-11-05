@@ -1,0 +1,290 @@
+{
+  "checks": [
+    {
+      "detail": "5/5",
+      "failure_reason": "RESET_EVENT_MISSING",
+      "name": "all_events_observed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "BOOT_IDENTITY_DID_NOT_CHANGE",
+      "name": "every_event_new_boot",
+      "passed": true
+    },
+    {
+      "detail": "5",
+      "failure_reason": "BOOT_IDS_REPEATED",
+      "name": "unique_boot_ids",
+      "passed": true
+    },
+    {
+      "detail": "[4, 4, 4, 4, 4]",
+      "failure_reason": "NO_PZEM_EVIDENCE_DURING_RESET",
+      "name": "electrical_evidence_present",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "DEFAULT_OFF_NOT_OBSERVED",
+      "name": "default_off_all",
+      "passed": true
+    },
+    {
+      "detail": "max=0.0 A",
+      "failure_reason": "ACTIVE_CURRENT_DURING_RESET",
+      "name": "no_unintended_current",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "ACTIVE_POWER_DURING_RESET",
+      "name": "no_unintended_power",
+      "passed": true
+    },
+    {
+      "detail": "1 distinct maps",
+      "failure_reason": "ROM_MAP_CHANGED_ACROSS_RESET",
+      "name": "rom_map_stable",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 70,
+    "boot_id": "cb5d5b06",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T15:14:25.969+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T15:14:25.969+00:00",
+      "original": "A-W02-03",
+      "path": "evidence/A/W02/registry/measurements/A-W02-03-20261104T151425961213-989df2.json",
+      "sha256": "a472ad67ceb4ddfe37679ae0c2a47ee444c03a832a3f9314ac9cdaedc660e375",
+      "size": 5565,
+      "stored": "evidence/A/W02/registry/measurements/A-W02-03-20261104T151425961213-989df2.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "event_count": 5,
+    "events": [
+      {
+        "boot_after": "ed14ef8a",
+        "boot_before": "fcaa1289",
+        "current_max_a": 0.0,
+        "default_off_all": true,
+        "event": "WARM_RESET",
+        "frames": 6,
+        "new_boot": true,
+        "off_envelope_a": 0.05,
+        "off_power_envelope_w": 1.0,
+        "power_max_w": 0.0,
+        "roms": {
+          "SPARE": "283BE5C9000000A9",
+          "T1": "287088CA00000051",
+          "T2": "28AEBF2200000006",
+          "T3": "28CBE9CA00000072"
+        },
+        "valid_electrical_frames": 4
+      },
+      {
+        "boot_after": "084486c6",
+        "boot_before": "ed14ef8a",
+        "current_max_a": 0.0,
+        "default_off_all": true,
+        "event": "WARM_RESET",
+        "frames": 6,
+        "new_boot": true,
+        "off_envelope_a": 0.05,
+        "off_power_envelope_w": 1.0,
+        "power_max_w": 0.0,
+        "roms": {
+          "SPARE": "283BE5C9000000A9",
+          "T1": "287088CA00000051",
+          "T2": "28AEBF2200000006",
+          "T3": "28CBE9CA00000072"
+        },
+        "valid_electrical_frames": 4
+      },
+      {
+        "boot_after": "f25f9039",
+        "boot_before": "084486c6",
+        "current_max_a": 0.0,
+        "default_off_all": true,
+        "event": "WARM_RESET",
+        "frames": 6,
+        "new_boot": true,
+        "off_envelope_a": 0.05,
+        "off_power_envelope_w": 1.0,
+        "power_max_w": 0.0,
+        "roms": {
+          "SPARE": "283BE5C9000000A9",
+          "T1": "287088CA00000051",
+          "T2": "28AEBF2200000006",
+          "T3": "28CBE9CA00000072"
+        },
+        "valid_electrical_frames": 4
+      },
+      {
+        "boot_after": "ed0ce21d",
+        "boot_before": "f25f9039",
+        "current_max_a": 0.0,
+        "default_off_all": true,
+        "event": "WARM_RESET",
+        "frames": 6,
+        "new_boot": true,
+        "off_envelope_a": 0.05,
+        "off_power_envelope_w": 1.0,
+        "power_max_w": 0.0,
+        "roms": {
+          "SPARE": "283BE5C9000000A9",
+          "T1": "287088CA00000051",
+          "T2": "28AEBF2200000006",
+          "T3": "28CBE9CA00000072"
+        },
+        "valid_electrical_frames": 4
+      },
+      {
+        "boot_after": "cb5d5b06",
+        "boot_before": "ed0ce21d",
+        "current_max_a": 0.0,
+        "default_off_all": true,
+        "event": "WARM_RESET",
+        "frames": 6,
+        "new_boot": true,
+        "off_envelope_a": 0.05,
+        "off_power_envelope_w": 1.0,
+        "power_max_w": 0.0,
+        "roms": {
+          "SPARE": "283BE5C9000000A9",
+          "T1": "287088CA00000051",
+          "T2": "28AEBF2200000006",
+          "T3": "28CBE9CA00000072"
+        },
+        "valid_electrical_frames": 4
+      }
+    ]
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "boot_after": "ed14ef8a",
+      "boot_before": "fcaa1289",
+      "current_max_a": 0.0,
+      "default_off_all": true,
+      "event": "WARM_RESET",
+      "frames": 6,
+      "new_boot": true,
+      "off_envelope_a": 0.05,
+      "off_power_envelope_w": 1.0,
+      "power_max_w": 0.0,
+      "roms": {
+        "SPARE": "283BE5C9000000A9",
+        "T1": "287088CA00000051",
+        "T2": "28AEBF2200000006",
+        "T3": "28CBE9CA00000072"
+      },
+      "valid_electrical_frames": 4
+    },
+    {
+      "boot_after": "084486c6",
+      "boot_before": "ed14ef8a",
+      "current_max_a": 0.0,
+      "default_off_all": true,
+      "event": "WARM_RESET",
+      "frames": 6,
+      "new_boot": true,
+      "off_envelope_a": 0.05,
+      "off_power_envelope_w": 1.0,
+      "power_max_w": 0.0,
+      "roms": {
+        "SPARE": "283BE5C9000000A9",
+        "T1": "287088CA00000051",
+        "T2": "28AEBF2200000006",
+        "T3": "28CBE9CA00000072"
+      },
+      "valid_electrical_frames": 4
+    },
+    {
+      "boot_after": "f25f9039",
+      "boot_before": "084486c6",
+      "current_max_a": 0.0,
+      "default_off_all": true,
+      "event": "WARM_RESET",
+      "frames": 6,
+      "new_boot": true,
+      "off_envelope_a": 0.05,
+      "off_power_envelope_w": 1.0,
+      "power_max_w": 0.0,
+      "roms": {
+        "SPARE": "283BE5C9000000A9",
+        "T1": "287088CA00000051",
+        "T2": "28AEBF2200000006",
+        "T3": "28CBE9CA00000072"
+      },
+      "valid_electrical_frames": 4
+    },
+    {
+      "boot_after": "ed0ce21d",
+      "boot_before": "f25f9039",
+      "current_max_a": 0.0,
+      "default_off_all": true,
+      "event": "WARM_RESET",
+      "frames": 6,
+      "new_boot": true,
+      "off_envelope_a": 0.05,
+      "off_power_envelope_w": 1.0,
+      "power_max_w": 0.0,
+      "roms": {
+        "SPARE": "283BE5C9000000A9",
+        "T1": "287088CA00000051",
+        "T2": "28AEBF2200000006",
+        "T3": "28CBE9CA00000072"
+      },
+      "valid_electrical_frames": 4
+    },
+    {
+      "boot_after": "cb5d5b06",
+      "boot_before": "ed0ce21d",
+      "current_max_a": 0.0,
+      "default_off_all": true,
+      "event": "WARM_RESET",
+      "frames": 6,
+      "new_boot": true,
+      "off_envelope_a": 0.05,
+      "off_power_envelope_w": 1.0,
+      "power_max_w": 0.0,
+      "roms": {
+        "SPARE": "283BE5C9000000A9",
+        "T1": "287088CA00000051",
+        "T2": "28AEBF2200000006",
+        "T3": "28CBE9CA00000072"
+      },
+      "valid_electrical_frames": 4
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T15:13:53.675+00:00",
+  "test_id": "A-W02-03",
+  "publication_provenance": {
+    "source_record_sha256": "4728db7551a21859f9ac3b5f87502b8c46ae60376f55d84b3e789076a9aa6836",
+    "source_capture_relative_path": "results/A-W02-03.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

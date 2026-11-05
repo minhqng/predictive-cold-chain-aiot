@@ -1,0 +1,110 @@
+{
+  "checks": [
+    {
+      "detail": " value=1.0 expected=0.9",
+      "failure_reason": "",
+      "name": "valid_rate",
+      "passed": true
+    },
+    {
+      "detail": " value=0.6272916666666646 expected=1.0",
+      "failure_reason": "",
+      "name": "max_pairwise_mean_difference",
+      "passed": true
+    },
+    {
+      "detail": " value=0.6875 expected=1.5",
+      "failure_reason": "",
+      "name": "max_instantaneous_spread",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 49,
+    "boot_id": "16dd60a0",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T14:11:08.942+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T14:11:08.942+00:00",
+      "original": "A-W02-05",
+      "path": "evidence/A/W02/registry/measurements/A-W02-05-20261104T141108932594-021265.json",
+      "sha256": "f00ae5877f0fa403c6fe2d9f88fa77cfb821bd9827f37508cc03050356cbd958",
+      "size": 1350,
+      "stored": "evidence/A/W02/registry/measurements/A-W02-05-20261104T141108932594-021265.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "captured_frames": 600,
+    "frames": 600,
+    "max_instantaneous_spread_c": 0.6875,
+    "max_pairwise_mean_difference_c": 0.6272916666666646,
+    "pairwise_mean_difference_c": {
+      "T1-SPARE": 0.07937499999999886,
+      "T1-T2": 0.32124999999999915,
+      "T1-T3": 0.30604166666666544,
+      "T2-SPARE": 0.24187500000000028,
+      "T2-T3": 0.6272916666666646,
+      "T3-SPARE": 0.3854166666666643
+    },
+    "per_role": {
+      "SPARE": {
+        "max_c": 29.4375,
+        "mean_c": 29.38458333333333,
+        "min_c": 29.3125,
+        "n": 600,
+        "sd_c": 0.036285039097761755
+      },
+      "T1": {
+        "max_c": 29.375,
+        "mean_c": 29.305208333333333,
+        "min_c": 29.25,
+        "n": 600,
+        "sd_c": 0.0375168066585984
+      },
+      "T2": {
+        "max_c": 29.6875,
+        "mean_c": 29.626458333333332,
+        "min_c": 29.5625,
+        "n": 600,
+        "sd_c": 0.03442010560712394
+      },
+      "T3": {
+        "max_c": 29.0625,
+        "mean_c": 28.999166666666667,
+        "min_c": 28.9375,
+        "n": 600,
+        "sd_c": 0.03682026310580706
+      }
+    },
+    "valid_frames": 600,
+    "valid_rate": 1.0
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T14:01:08.926+00:00",
+  "test_id": "A-W02-05",
+  "publication_provenance": {
+    "source_record_sha256": "0a7ff34dc4cbd9f32098a714c455c8eca0e804e374b638c9dcae29b6ee677945",
+    "source_capture_relative_path": "results/A-W02-05.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}

@@ -1,0 +1,55 @@
+{
+  "build_stamp": "2026-11-02T00:00:00Z",
+  "build_stamp_meaning": "HOST_BUILD_CONSTANT_NOT_A_DEVICE_TIME",
+  "distributions_requested": {
+    "controller_response_s": {
+      "blocking_reason": "no controller in the loop and no S2 capture",
+      "computable_now": false,
+      "requires": [
+        "a running controller, which is Member D's; the shipped firmware runs no policy state (docs/05A \u00a717 notes device_mode is the controller state only)",
+        "the same S2 disturbances replayed under that controller"
+      ]
+    },
+    "door_to_critical_s": {
+      "blocking_reason": "no S2 pilot capture exists",
+      "computable_now": false,
+      "requires": [
+        "an operator-timed OPEN edge per run",
+        "a frozen critical candidate threshold (that is Member D's safety contract, not a Member A number)",
+        "chamber-air series that crosses it after the edge"
+      ]
+    }
+  },
+  "honesty": [
+    "no distribution here was fabricated from a single run",
+    "the floor is an optimistic bound under the stated white-noise assumption"
+  ],
+  "is_physical_measurement": false,
+  "member_b_decision_inputs_not_supplied_by_member_a": [
+    "ML horizon choice",
+    "pair-matching tolerance value",
+    "critical-threshold definition"
+  ],
+  "requirement": "docs/05A \u00a719 A-W10-05",
+  "s2_pilot_disturbances_available": 0,
+  "source": {
+    "frames_total": 957,
+    "path": "evidence/A/W04/tec-cooling-response-600s.csv",
+    "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+  },
+  "status_label": "NEED_USER_ACTION",
+  "target": ">=4-6 valid pilot disturbances (docs/05A \u00a719 A-W10-03)",
+  "what_is_supported_today": {
+    "horizon_curve_c": {
+      "120s": 0.00267,
+      "300s": 0.00169,
+      "30s": 0.00534,
+      "600s": 0.00119,
+      "60s": 0.00378
+    },
+    "noise_floor_c": 0.00695,
+    "noise_floor_horizon_s": 60,
+    "reading": "the shortest horizon at which a disturbance is separable from nothing can be stated today; the door->critical *distribution* cannot",
+    "single_frame_floor_c": 0.05383
+  }
+}

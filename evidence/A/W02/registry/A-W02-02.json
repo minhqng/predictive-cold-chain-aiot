@@ -1,0 +1,102 @@
+{
+  "checks": [
+    {
+      "detail": "['SPARE', 'T1', 'T2', 'T3']",
+      "failure_reason": "NO_ROM_LINES",
+      "name": "rom_lines_present",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "REQUIRED_ROM_MISSING:T1",
+      "name": "role_T1_present",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "REQUIRED_ROM_MISSING:T2",
+      "name": "role_T2_present",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "REQUIRED_ROM_MISSING:T3",
+      "name": "role_T3_present",
+      "passed": true
+    },
+    {
+      "detail": "4",
+      "failure_reason": "ROM_IDENTITIES_NOT_UNIQUE",
+      "name": "three_unique_roms",
+      "passed": true
+    },
+    {
+      "detail": "['287088CA00000051', '28AEBF2200000006', '28CBE9CA00000072']",
+      "failure_reason": "T1_T2_T3_NOT_UNIQUE",
+      "name": "required_roles_unique",
+      "passed": true
+    },
+    {
+      "detail": "['SPARE', 'T1', 'T2', 'T3']",
+      "failure_reason": "SPARE_ROLE_NOT_REPORTED",
+      "name": "spare_role_reported",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": 46,
+    "boot_id": "e87bde61",
+    "calibration_id": "UNRECORDED",
+    "device_id": "coldguard-001",
+    "firmware_kind": "CANONICAL",
+    "firmware_version": "cg-w06-0.1.0",
+    "grammar": 2,
+    "h8": {},
+    "hardware_config_id": "CG-HW-001",
+    "pin_map": 2,
+    "port": "COM4"
+  },
+  "ended_at": "2026-11-04T13:49:51.809+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-04T13:49:51.809+00:00",
+      "original": "A-W02-02",
+      "path": "evidence/A/W02/registry/measurements/A-W02-02-20261104T134951799940-643e36.json",
+      "sha256": "ee9b555b2639261385a7f801af18582a02ca6f98d260c7aa0099b5845be58949",
+      "size": 390,
+      "stored": "evidence/A/W02/registry/measurements/A-W02-02-20261104T134951799940-643e36.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "roles": [
+      "SPARE",
+      "T1",
+      "T2",
+      "T3"
+    ],
+    "roms": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    }
+  },
+  "notes": "",
+  "operator": "Member A Operator",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-04T13:49:41.587+00:00",
+  "test_id": "A-W02-02",
+  "publication_provenance": {
+    "source_record_sha256": "0d42767634a75bb17f9c018b80614c83c2480483fbaff241637068a279a72745",
+    "source_capture_relative_path": "results/A-W02-02.json",
+    "capture_session_id": "20261104T092140Z",
+    "capture_session_digest": "e55dcfd4a4ba54993a3e332137e324556c3942eb5ef69ff35c7fc12be10fa4f2",
+    "frozen_handoff_sha256": "fbf11f2cfa37cfbdcf1e7a34ef9670ec34e1a007dbc75680de72df939141b61a",
+    "transformation": "Publication references rewritten; original checks, verdict, measurements, identities and capture timestamps unchanged.",
+    "device_identity_status": "IN_RECORD",
+    "excluded_supporting_artifacts": []
+  }
+}
