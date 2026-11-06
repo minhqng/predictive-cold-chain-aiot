@@ -98,6 +98,31 @@ overrides a run's primary split identity or relaxes its P1–P3 restrictions.
 P5 physical A/B arms remain role-disjoint from P1–P4; P6 excluded runs appear
 in no other population.
 
+**Worked population-assignment proof** (illustrative identifiers only; no
+measured data):
+
+```text
+primary split (each run in exactly one partition):
+  P1/train      = {CG-S1-A-001, CG-S3-A-001}
+  P2/validation = {CG-S2-A-001}
+  P3/test       = {CG-S4-A-001}
+  P6/excluded   = {CG-S5-A-001}   (invalid-run ledger)
+
+development workflow = P1 ∪ P2 = {CG-S1-A-001, CG-S2-A-001, CG-S3-A-001}
+```
+
+- The three primary partition sets do not overlap: no run is counted in more
+  than one of P1/P2/P3.
+- A scaler/imputer is fitted on P1 only; P2 is held back from fitting and
+  supplies development evaluation and model/horizon selection. Threshold/policy
+  selection follows its predeclared development procedure; P3 is never read.
+- P4 replay: a reactive P1 run (e.g. `CG-S3-A-001`) may be replayed past-only
+  for offline EWT. The P4 evidence role does not move that run into P2/P3 and
+  does not relax its primary-partition restrictions. Replaying a P3 run under
+  P4 does not license tuning on it.
+- P5 matched A/B arms stay role-disjoint from P1–P4; P6 `CG-S5-A-001` appears in
+  no other population.
+
 Contamination rules (CANONICAL):
 
 - **Never** combine offline EWT (P4) with closed-loop A/B outcomes (P5) as
