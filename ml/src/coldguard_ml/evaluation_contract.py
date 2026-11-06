@@ -10,8 +10,10 @@ These helpers freeze *shapes*, not physical constants:
 * :func:`compute_aiw` validates the timing interface
   ``AIW = t_critical - t_warning - T_system - T_physical``. It refuses to
   estimate anything when a measured component is missing or untrusted, and it
-  refuses overlapping components that would be counted twice. Real
-  time-alignment computation belongs to W06; this is an interface guard.
+  refuses components that overlap within one chain or across the
+  T_system/T_physical decomposition, since those spans would be counted
+  twice. Real time-alignment computation belongs to W06; this is an
+  interface guard.
 * :class:`MetricHierarchy` refuses to let a secondary/diagnostic metric become
   primary without a recorded amendment, and it refuses to open a locked
   holdout for selection or fitting.
@@ -342,6 +344,29 @@ def _validate_chain(
     return materialized
 
 
+def _validate_disjoint_across_chains(
+    system: tuple[LatencyComponent, ...],
+    physical: tuple[LatencyComponent, ...],
+) -> None:
+    """Refuse T_system/T_physical spans that overlap on one shared timeline.
+
+    Non-overlap is necessary but not sufficient for subtraction: W06
+    alignment evidence still decides whether two spans describe the same
+    event trajectory, which this W04 interface cannot prove.
+    """
+    combined = sorted(
+        (*system, *physical),
+        key=lambda component: (component.start_s, component.end_s, component.name),
+    )
+    for previous, current in zip(combined, combined[1:]):
+        if current.start_s < previous.end_s:
+            raise EvaluationContractError(
+                f"T_system/T_physical components {previous.name!r} and "
+                f"{current.name!r} overlap across chains; a shared-timeline "
+                "decomposition must not count the same span twice"
+            )
+
+
 def compute_aiw(
     *,
     t_critical_s: float,
@@ -401,6 +426,7 @@ def compute_aiw(
                 "W06 alignment evidence is required before subtracting them"
             ),
         )
+    _validate_disjoint_across_chains(system, physical)
     t_system = sum(component.duration_s for component in system)
     t_physical = sum(component.duration_s for component in physical)
     return AIWResult(
@@ -409,9 +435,12 @@ def compute_aiw(
         t_system_s=t_system,
         t_physical_s=t_physical,
         reason=(
-            "AIW = t_critical - t_warning - T_system - T_physical over measured, "
-            "non-overlapping components; a positive value is actionable only "
-            "under the component provenance recorded by A/C/D"
+            "AIW = t_critical - t_warning - T_system - T_physical over measured "
+            "components that do not overlap on the shared clock domain; "
+            "non-overlap alone does not prove event-level alignment, so "
+            "cross-chain subtraction still requires W06 evidence. A positive "
+            "value is actionable only under the component provenance recorded "
+            "by A/C/D"
         ),
     )
 

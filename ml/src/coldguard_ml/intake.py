@@ -2280,6 +2280,85 @@ def _reject_legacy_keys(payload: Mapping[str, Any], path: Path) -> None:
             stack.extend(node)
 
 
+_C_WIRE_EXACT_INT_PATHS = (("seq",), ("uptime_ms",))
+_C_WIRE_STRING_PATHS = (
+    ("device_id",),
+    ("boot_id",),
+    ("captured_at",),
+    ("hardware_config_id",),
+    ("firmware_version",),
+    ("run_id",),
+    ("calibration_id",),
+    ("door", "state"),
+    ("actuation", "cooling"),
+    ("quality", "thermal"),
+    ("quality", "environment"),
+    ("quality", "electrical"),
+    ("quality", "overall"),
+    ("quality", "device_mode"),
+)
+_C_WIRE_NUMERIC_PATHS = (
+    ("thermal", "t1"),
+    ("thermal", "t2"),
+    ("thermal", "t3"),
+    ("environment", "t_air"),
+    ("environment", "rh"),
+    ("electrical", "voltage_v"),
+    ("electrical", "current_a"),
+    ("electrical", "power_w"),
+    ("electrical", "energy_wh"),
+    ("actuation", "duty"),
+)
+
+
+def _validate_c_wire_types(payload: Mapping[str, Any]) -> None:
+    """Reject wire values that only become valid after source coercion.
+
+    Mirrors C's strict wire gate (``strict_type_errors``) without importing
+    backend runtime dependencies: exact JSON integers for counters, JSON
+    strings for identity/enum fields, and finite JSON numbers (never booleans
+    or numeric strings) for measurements. ``None`` stays legal where the C
+    contract permits a missing channel.
+    """
+
+    def lookup(path: tuple[str, ...]) -> tuple[bool, Any]:
+        node: Any = payload
+        for key in path:
+            if not isinstance(node, Mapping) or key not in node:
+                return False, None
+            node = node[key]
+        return True, node
+
+    def wire_type_error(
+        path: tuple[str, ...], expected: str, value: Any
+    ) -> SourceRefusal:
+        return SourceRefusal(
+            "C_TELEMETRY_WIRE_TYPE",
+            f"C wire field {'.'.join(path)} must be {expected}, "
+            f"got {type(value).__name__}",
+        )
+
+    for path in _C_WIRE_EXACT_INT_PATHS:
+        present, value = lookup(path)
+        if present and type(value) is not int:
+            raise wire_type_error(path, "an exact JSON integer", value)
+    for path in _C_WIRE_STRING_PATHS:
+        present, value = lookup(path)
+        if present and value is not None and type(value) is not str:
+            raise wire_type_error(path, "a JSON string or null", value)
+    for path in _C_WIRE_NUMERIC_PATHS:
+        present, value = lookup(path)
+        if not present or value is None:
+            continue
+        if isinstance(value, bool) or not isinstance(value, (int, float)):
+            raise wire_type_error(path, "a finite JSON number or null", value)
+        if not math.isfinite(value):
+            raise SourceRefusal(
+                "FIELD_NOT_FINITE",
+                f"C wire field {'.'.join(path)} must be a finite JSON number",
+            )
+
+
 def _observation_from_c_payload(payload: Mapping[str, Any]) -> Observation:
     version = payload.get("schema_version")
     if type(version) is not int or version != 1:
@@ -2288,6 +2367,8 @@ def _observation_from_c_payload(payload: Mapping[str, Any]) -> Observation:
             f"C telemetry schema_version {version!r} is not the supported "
             "coldguard.telemetry/v1 integer 1",
         )
+    _validate_c_wire_types(payload)
+
     def section(name: str) -> Mapping[str, Any]:
         value = payload.get(name)
         if not isinstance(value, dict):
@@ -2857,9 +2938,17 @@ def chamber_air_mean(
 
 
 def _physical_source_key(capture: Capture) -> tuple[Any, ...]:
-    """One boot session is one physical source, not one export file."""
+    """One boot session on one device is one physical source, not one export.
+
+    A boot identifier can be reused across unrelated devices, so the carried
+    device identity is part of the session key. When no device identity is
+    carried, the boot session remains the conservative dedup key; run labels
+    alone never create independent sources within a session.
+    """
     run = capture.run
     if run.boot_id is not None:
+        if run.device_id is not None:
+            return ("session", run.device_id, run.boot_id)
         return ("session", run.boot_id)
     if run.run_id is not None:
         return ("run", run.run_id)
@@ -2908,31 +2997,138 @@ _STAGE_ORDER = {
 }
 
 
+def _admission_signature(result: AdmissionResult) -> tuple[Any, ...]:
+    """Comparable verdict signature for one view of a physical source."""
+    return (
+        result.eligible,
+        result.eligible_s1_runs,
+        result.eligible_s2_runs,
+        tuple(sorted((blocker.code, blocker.stage) for blocker in result.blockers)),
+        tuple(
+            sorted(
+                (scenario.scenario_id, scenario.eligible, scenario.eligible_rows)
+                for scenario in result.scenarios
+            )
+        ),
+    )
+
+
+def _view_sort_key(result: AdmissionResult) -> tuple[Any, ...]:
+    return (
+        result.capture.source.path,
+        result.capture.source.sha256,
+        result.status.value,
+        _STAGE_ORDER.get(result.highest_stage, -1),
+        _admission_signature(result),
+    )
+
+
+def _summarize_physical_source(
+    items: list[AdmissionResult],
+) -> tuple[int, int, dict[str, Any] | None]:
+    """One verdict per physical source; contradictory views fail closed."""
+    ordered = sorted(items, key=_view_sort_key)
+    representative = ordered[0]
+    if len({_admission_signature(item) for item in ordered}) == 1:
+        if representative.eligible:
+            return (
+                representative.eligible_s1_runs,
+                representative.eligible_s2_runs,
+                None,
+            )
+        return (
+            0,
+            0,
+            {
+                "source_path": representative.capture.source.path,
+                "status": representative.status.value,
+                "highest_stage": representative.highest_stage.value,
+                "blockers": [
+                    blocker.to_dict() for blocker in representative.blockers
+                ],
+                "eligible_s1_runs": 0,
+                "eligible_s2_runs": 0,
+                "views": len(ordered),
+            },
+        )
+
+    conflict = Blocker(
+        code="DUPLICATE_VIEW_ADMISSION_CONFLICT",
+        stage=AdmissionStage.ELIGIBLE_FOR_PREDICTIVE_DATASET.value,
+        detail=(
+            "repeated views of one physical source disagree on admission or "
+            "validity evidence; the source is excluded instead of keeping the "
+            "most advanced view (views: "
+            + "; ".join(
+                f"{item.capture.source.path} status={item.status.value} "
+                f"stage={item.highest_stage.value}"
+                for item in ordered
+            )
+            + ")"
+        ),
+    )
+    merged: dict[tuple[str, str, str], Blocker] = {}
+    for item in ordered:
+        for blocker in item.blockers:
+            merged[(blocker.code, blocker.stage, blocker.detail)] = blocker
+    conservative = min(
+        ordered, key=lambda item: _STAGE_ORDER.get(item.highest_stage, -1)
+    )
+    return (
+        0,
+        0,
+        {
+            "source_path": representative.capture.source.path,
+            "source_paths": sorted(
+                {item.capture.source.path for item in ordered}
+            ),
+            "status": AdmissionStage.EXCLUDED_OR_BLOCKED.value,
+            "highest_stage": conservative.highest_stage.value,
+            "blockers": [conflict.to_dict()]
+            + [merged[key].to_dict() for key in sorted(merged)],
+            "eligible_s1_runs": 0,
+            "eligible_s2_runs": 0,
+            "views": len(ordered),
+            "view_verdicts": [
+                {
+                    "source_path": item.capture.source.path,
+                    "source_sha256": item.capture.source.sha256,
+                    "status": item.status.value,
+                    "highest_stage": item.highest_stage.value,
+                    "eligible": item.eligible,
+                    "eligible_s1_runs": item.eligible_s1_runs,
+                    "eligible_s2_runs": item.eligible_s2_runs,
+                    "blocker_codes": [
+                        blocker.code for blocker in item.blockers
+                    ],
+                }
+                for item in ordered
+            ],
+        },
+    )
+
+
 def summarize_readiness(results: Iterable[AdmissionResult]) -> DatasetReadiness:
-    """Aggregate admission without counting repeated views as new runs."""
+    """Aggregate admission without counting repeated views as new runs.
+
+    Identical views of one physical source collapse to one verdict.
+    Contradictory eligibility/validity evidence fails closed with
+    ``DUPLICATE_VIEW_ADMISSION_CONFLICT`` rather than keeping the most
+    advanced or most favorable view. Output is independent of input order.
+    """
     result_list = list(results)
     groups: dict[tuple[Any, ...], list[AdmissionResult]] = {}
     for result in result_list:
         groups.setdefault(_physical_source_key(result.capture), []).append(result)
-    best_results = [
-        max(items, key=lambda item: _STAGE_ORDER[item.highest_stage])
-        for items in groups.values()
-    ]
-    eligible_s1 = sum(result.eligible_s1_runs for result in best_results)
-    eligible_s2 = sum(result.eligible_s2_runs for result in best_results)
-    exclusions = [
-        {
-            "source_path": result.capture.source.path,
-            "status": result.status.value,
-            "highest_stage": result.highest_stage.value,
-            "blockers": [blocker.to_dict() for blocker in result.blockers],
-            "eligible_s1_runs": result.eligible_s1_runs,
-            "eligible_s2_runs": result.eligible_s2_runs,
-            "views": len(groups[_physical_source_key(result.capture)]),
-        }
-        for result in best_results
-        if not result.eligible
-    ]
+    eligible_s1 = 0
+    eligible_s2 = 0
+    exclusions: list[dict[str, Any]] = []
+    for _key, items in sorted(groups.items(), key=lambda item: str(item[0])):
+        group_s1, group_s2, exclusion = _summarize_physical_source(items)
+        eligible_s1 += group_s1
+        eligible_s2 += group_s2
+        if exclusion is not None:
+            exclusions.append(exclusion)
     return DatasetReadiness(
         eligible_s1_runs=eligible_s1,
         eligible_s2_runs=eligible_s2,

@@ -285,6 +285,52 @@ def test_overlapping_components_are_refused_not_double_counted() -> None:
         )
 
 
+def _span(name: str, owner: str, start_s: float, end_s: float) -> LatencyComponent:
+    return LatencyComponent(
+        name=name,
+        owner=owner,
+        start_s=start_s,
+        end_s=end_s,
+        clock_domain="backend",
+        measurement_method="span",
+        measured=True,
+        uncertainty_s=0.0,
+    )
+
+
+def test_aiw_accepts_contiguous_cross_chain_spans() -> None:
+    result = compute_aiw(
+        t_critical_s=110.0,
+        t_warning_s=100.0,
+        system_components=(
+            _span("policy_transport", "C", 100.0, 102.0),
+        ),
+        physical_components=(
+            _span("electrical_response", "A", 102.0, 105.0),
+        ),
+        reference_clock_domain="backend",
+    )
+    assert result.status is AIWStatus.ESTIMABLE
+    assert result.t_system_s == pytest.approx(2.0)
+    assert result.t_physical_s == pytest.approx(3.0)
+    assert result.aiw_s == pytest.approx(5.0)
+
+
+def test_aiw_refuses_cross_chain_overlap_not_double_counted() -> None:
+    with pytest.raises(EvaluationContractError, match="across chains"):
+        compute_aiw(
+            t_critical_s=110.0,
+            t_warning_s=100.0,
+            system_components=(
+                _span("policy_transport", "C", 100.0, 102.0),
+            ),
+            physical_components=(
+                _span("electrical_response", "A", 101.5, 105.0),
+            ),
+            reference_clock_domain="backend",
+        )
+
+
 def test_empty_component_chain_is_not_zero() -> None:
     result = compute_aiw(
         t_critical_s=300.0,

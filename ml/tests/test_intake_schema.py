@@ -22,6 +22,7 @@ from pathlib import Path
 import pytest
 
 from coldguard_ml import (
+    AdmissionResult,
     AdmissionStage,
     RunInfo,
     SourceRefusal,
@@ -523,6 +524,58 @@ def test_unsupported_source_versions_are_rejected(tmp_path: Path) -> None:
     assert excinfo.value.code == "SOURCE_FORMAT_MISMATCH"
 
 
+@pytest.mark.parametrize(
+    ("path", "value"),
+    [
+        (("thermal", "t1"), "8.5"),
+        (("thermal", "t1"), True),
+        (("electrical", "power_w"), "12.5"),
+        (("actuation", "duty"), False),
+        (("seq",), "1"),
+        (("uptime_ms",), "1234567"),
+        (("device_id",), 123),
+        (("door", "state"), 1),
+        (("quality", "thermal"), 1),
+    ],
+)
+def test_c_json_wire_types_are_not_coerced(
+    tmp_path: Path, path: tuple[str, ...], value: object
+) -> None:
+    payload = json.loads(C_FIXTURE.read_text(encoding="utf-8"))
+    node = payload
+    for key in path[:-1]:
+        node = node[key]
+    node[path[-1]] = value
+    source = tmp_path / "wire-type.json"
+    source.write_text(json.dumps(payload), encoding="utf-8")
+    with pytest.raises(SourceRefusal) as excinfo:
+        load_capture(source)
+    assert excinfo.value.code == "C_TELEMETRY_WIRE_TYPE"
+    assert ".".join(path) in excinfo.value.detail
+
+
+def test_c_json_nullable_measurement_stays_nullable(tmp_path: Path) -> None:
+    payload = json.loads(C_FIXTURE.read_text(encoding="utf-8"))
+    payload["thermal"]["t1"] = None
+    payload["quality"]["thermal"] = "DEGRADED"
+    source = tmp_path / "nullable.json"
+    source.write_text(json.dumps(payload), encoding="utf-8")
+    capture = load_capture(source)
+    assert capture.rows[0].t1_c is None
+    assert capture.rows[0].probe("t1").value_c is None
+
+
+def test_a_csv_numeric_text_keeps_its_source_encoding(tmp_path: Path) -> None:
+    export = write_a_export(
+        tmp_path,
+        rows=[{"t1": "7.1", "power_w": "12.5", "electrical_quality": "DEGRADED"}],
+    )
+    capture = load_capture(export)
+    row = capture.rows[0]
+    assert row.t1_c == pytest.approx(7.1)
+    assert row.cooling_power_w == pytest.approx(12.5)
+
+
 def test_serial_and_backend_wire_namespaces_are_not_conflated(
     tmp_path: Path,
 ) -> None:
@@ -756,6 +809,157 @@ def test_repeated_views_are_not_independent_physical_runs() -> None:
     assert readiness.eligible_s1_runs == 0
     assert readiness.eligible_s2_runs == 0
     assert readiness.predictive_dataset_readiness == "NOT_READY"
+
+
+def _admission_view(
+    tmp_path: Path, name: str, *, valid: bool
+) -> AdmissionResult:
+    directory = tmp_path / name
+    directory.mkdir()
+    export = _positive_export(directory).rename(directory / f"{name}.json")
+    index = _positive_index(directory, valid=valid)
+    return evaluate_admission(load_capture(export, a_run_index=index))
+
+
+def _retarget_device(export: Path, device_id: str) -> None:
+    payload = json.loads(export.read_text(encoding="utf-8"))
+    payload["device_id"] = device_id
+    export.write_text(
+        json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    rows = export.parent / "rows.csv"
+    rows.write_text(
+        rows.read_text(encoding="utf-8").replace("cg-test-001", device_id),
+        encoding="utf-8",
+    )
+
+
+def test_duplicate_views_with_conflicting_admission_fail_closed(
+    tmp_path: Path,
+) -> None:
+    eligible = _admission_view(tmp_path, "eligible", valid=True)
+    excluded = _admission_view(tmp_path, "excluded", valid=False)
+    assert eligible.eligible
+    assert not excluded.eligible
+
+    forward = summarize_readiness([eligible, excluded])
+    reverse = summarize_readiness([excluded, eligible])
+    assert forward.to_dict() == reverse.to_dict()
+    assert forward.predictive_dataset_readiness == "NOT_READY"
+    assert forward.eligible_s1_runs == 0
+    assert forward.eligible_s2_runs == 0
+    assert forward.unique_physical_sources == 1
+    assert forward.duplicate_views == 1
+
+    assert len(forward.exclusions) == 1
+    exclusion = forward.exclusions[0]
+    codes = [blocker["code"] for blocker in exclusion["blockers"]]
+    assert codes[0] == "DUPLICATE_VIEW_ADMISSION_CONFLICT"
+    assert "A_LEDGER_INVALID" in codes
+    assert exclusion["views"] == 2
+    assert (
+        exclusion["highest_stage"]
+        == AdmissionStage.USABLE_FOR_DIAGNOSTIC_QA.value
+    )
+    assert exclusion["source_paths"] == ["eligible.json", "excluded.json"]
+    verdicts = {
+        verdict["source_path"]: verdict["status"]
+        for verdict in exclusion["view_verdicts"]
+    }
+    assert verdicts == {
+        "eligible.json": "ELIGIBLE_FOR_PREDICTIVE_DATASET",
+        "excluded.json": "EXCLUDED_OR_BLOCKED",
+    }
+
+
+def test_duplicate_identical_eligible_views_count_once(tmp_path: Path) -> None:
+    eligible = _admission_view(tmp_path, "eligible", valid=True)
+    readiness = summarize_readiness([eligible, eligible])
+    assert readiness.predictive_dataset_readiness == "READY"
+    assert readiness.eligible_s1_runs == 1
+    assert readiness.eligible_s2_runs == 0
+    assert readiness.unique_physical_sources == 1
+    assert readiness.duplicate_views == 1
+    assert readiness.exclusions == ()
+
+
+def test_duplicate_identical_invalid_views_remain_invalid(tmp_path: Path) -> None:
+    excluded = _admission_view(tmp_path, "excluded", valid=False)
+    readiness = summarize_readiness([excluded, excluded])
+    assert readiness.predictive_dataset_readiness == "NOT_READY"
+    assert readiness.eligible_s1_runs == 0
+    assert readiness.eligible_s2_runs == 0
+    assert readiness.unique_physical_sources == 1
+    assert readiness.duplicate_views == 1
+    assert len(readiness.exclusions) == 1
+    assert readiness.exclusions[0]["views"] == 2
+    assert "DUPLICATE_VIEW_ADMISSION_CONFLICT" not in {
+        blocker["code"] for blocker in readiness.exclusions[0]["blockers"]
+    }
+
+
+def test_distinct_devices_sharing_a_boot_id_are_not_merged(
+    tmp_path: Path,
+) -> None:
+    first_dir = tmp_path / "device-a"
+    second_dir = tmp_path / "device-b"
+    first_dir.mkdir()
+    second_dir.mkdir()
+    first_export = _positive_export(first_dir)
+    second_export = _positive_export(second_dir)
+    _retarget_device(first_export, "cg-device-a")
+    _retarget_device(second_export, "cg-device-b")
+    first = evaluate_admission(
+        load_capture(
+            first_export,
+            a_run_index=_positive_index(first_dir, valid=True),
+        )
+    )
+    second = evaluate_admission(
+        load_capture(
+            second_export,
+            a_run_index=_positive_index(second_dir, valid=True),
+        )
+    )
+    assert first.capture.run.boot_id == second.capture.run.boot_id
+    assert first.capture.run.device_id != second.capture.run.device_id
+
+    counts = count_independent_runs(
+        [first.capture, second.capture]
+    )
+    assert counts.unique_physical_sources == 2
+    readiness = summarize_readiness([first, second])
+    assert readiness.unique_physical_sources == 2
+    assert readiness.duplicate_views == 0
+    assert readiness.eligible_s1_runs == 2
+    assert readiness.predictive_dataset_readiness == "READY"
+
+
+def test_same_boot_run_labels_do_not_create_independent_sources(
+    tmp_path: Path,
+) -> None:
+    captures = []
+    for label in ("first", "second"):
+        directory = tmp_path / label
+        directory.mkdir()
+        export = _positive_export(directory)
+        payload = json.loads(export.read_text(encoding="utf-8"))
+        run_id = f"CG-S1-A-{label.upper()}"
+        payload["run_id"] = run_id
+        payload["run_ids"] = [run_id]
+        payload["device_run_label"] = label.upper()
+        export.write_text(json.dumps(payload), encoding="utf-8")
+        rows = directory / "rows.csv"
+        rows.write_text(
+            rows.read_text(encoding="utf-8").replace("CG-S1-A-001", run_id),
+            encoding="utf-8",
+        )
+        captures.append(load_capture(export))
+    assert captures[0].run.run_id != captures[1].run.run_id
+    assert captures[0].run.boot_id == captures[1].run.boot_id
+    counts = count_independent_runs(captures)
+    assert counts.unique_physical_sources == 1
+    assert counts.duplicate_views == 1
 
 
 # ---------------------------------------------------------------------------
