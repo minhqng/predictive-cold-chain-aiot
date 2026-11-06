@@ -15,6 +15,7 @@ Focus (Doc `03` §§41–45; register LRK-10):
 from __future__ import annotations
 
 import datetime as _dt
+import math
 
 import pytest
 
@@ -242,6 +243,24 @@ def test_label_spec_validation():
         LabelSpec(horizon_s=-5.0, spec_version="v")
     with pytest.raises(LabelError, match="spec_version"):
         LabelSpec(horizon_s=60.0, spec_version="   ")
+
+
+@pytest.mark.parametrize(
+    "value", [True, 0, -1.0, math.nan, math.inf, -math.inf, 1e308, 10**400]
+)
+def test_label_horizon_rejects_nonphysical_numbers(value):
+    with pytest.raises(LabelError, match="horizon_s"):
+        LabelSpec(horizon_s=value, spec_version="v")
+
+
+def test_valid_label_horizon_keeps_timedelta_semantics():
+    spec = LabelSpec(horizon_s=60, spec_version="v")
+    assert spec.horizon_s == 60
+    records = generate_label_records(
+        RUN_ID, [(_moment(0.0), "a")], _series((40.0,)), spec,
+        coverage_end=_moment(90.0),
+    )
+    assert records[0].label_interval == (_moment(0.0), _moment(60.0))
 
 
 def test_series_rejects_duplicates_and_sorts_canonically():

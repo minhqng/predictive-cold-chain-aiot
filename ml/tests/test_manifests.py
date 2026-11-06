@@ -136,6 +136,20 @@ def _synthetic_run_records():
     )
 
 
+def _paired_run_records(pair_ids: dict[str, str | None]):
+    scenarios = {
+        "CG-S1-A-001": "S1",
+        "CG-S2-A-001": "S2",
+        "CG-S4-A-001": "S4",
+    }
+    return parse_run_manifests(
+        [
+            _run_payload(run_id=run_id, scenario_id=scenarios[run_id], pair_id=pair_id)
+            for run_id, pair_id in pair_ids.items()
+        ]
+    )
+
+
 def _yaml_text(payload) -> str:
     return yaml.safe_dump(payload, sort_keys=True)
 
@@ -451,6 +465,198 @@ def test_split_to_run_record_bindings():
                 ],
             )
         )
+
+
+def test_derived_pair_membership_rejects_cross_partition_leak():
+    # The audit's adverse probe: same pair_id in train/validation with an
+    # empty pair_lineage must fail on the derived relationship, not syntax.
+    split = parse_split_manifest(_split_payload(pair_lineage=[]))
+    records = _paired_run_records(
+        {
+            "CG-S1-A-001": "PAIR-001",
+            "CG-S2-A-001": "PAIR-001",
+            "CG-S4-A-001": None,
+        }
+    )
+    with pytest.raises(ManifestError, match="LRK-08"):
+        bind_split_to_run_records(split, records)
+
+
+def test_same_partition_pair_is_valid_with_or_without_declaration():
+    records = _paired_run_records(
+        {
+            "CG-S1-A-001": "PAIR-001",
+            "CG-S2-A-001": "PAIR-001",
+            "CG-S4-A-001": None,
+        }
+    )
+    co_located = parse_split_manifest(
+        _split_payload(
+            train_runs=["CG-S1-A-001", "CG-S2-A-001"],
+            validation_runs=[],
+            test_runs=["CG-S4-A-001"],
+            pair_lineage=[],
+        )
+    )
+    bind_split_to_run_records(co_located, records)
+
+    declared = parse_split_manifest(
+        _split_payload(
+            train_runs=["CG-S1-A-001", "CG-S2-A-001"],
+            validation_runs=[],
+            test_runs=["CG-S4-A-001"],
+            pair_lineage=[
+                {
+                    "pair_id": "PAIR-001",
+                    "run_ids": ["CG-S1-A-001", "CG-S2-A-001"],
+                    "partition": "train",
+                }
+            ],
+        )
+    )
+    bind_split_to_run_records(declared, records)
+
+
+def test_incomplete_or_contradictory_pair_declarations_are_rejected():
+    split_kwargs = dict(
+        train_runs=["CG-S1-A-001", "CG-S2-A-001"],
+        validation_runs=[],
+        test_runs=["CG-S4-A-001"],
+    )
+
+    incomplete = parse_split_manifest(
+        _split_payload(
+            **split_kwargs,
+            pair_lineage=[
+                {
+                    "pair_id": "PAIR-001",
+                    "run_ids": ["CG-S1-A-001"],
+                    "partition": "train",
+                }
+            ],
+        )
+    )
+    with pytest.raises(ManifestError, match="must match derived"):
+        bind_split_to_run_records(
+            incomplete,
+            _paired_run_records(
+                {
+                    "CG-S1-A-001": "PAIR-001",
+                    "CG-S2-A-001": "PAIR-001",
+                    "CG-S4-A-001": None,
+                }
+            ),
+        )
+
+    contradictory = parse_split_manifest(
+        _split_payload(
+            **split_kwargs,
+            pair_lineage=[
+                {
+                    "pair_id": "PAIR-001",
+                    "run_ids": ["CG-S1-A-001", "CG-S2-A-001"],
+                    "partition": "train",
+                }
+            ],
+        )
+    )
+    with pytest.raises(ManifestError, match="must match derived"):
+        bind_split_to_run_records(
+            contradictory,
+            _paired_run_records(
+                {
+                    "CG-S1-A-001": "PAIR-001",
+                    "CG-S2-A-001": "PAIR-002",
+                    "CG-S4-A-001": None,
+                }
+            ),
+        )
+
+    ghost = parse_split_manifest(
+        _split_payload(
+            **split_kwargs,
+            pair_lineage=[
+                {
+                    "pair_id": "GHOST-PAIR",
+                    "run_ids": ["CG-S1-A-001", "CG-S2-A-001"],
+                    "partition": "train",
+                }
+            ],
+        )
+    )
+    with pytest.raises(ManifestError, match="no partitioned run record"):
+        bind_split_to_run_records(ghost, _paired_run_records(
+            {
+                "CG-S1-A-001": "PAIR-001",
+                "CG-S2-A-001": None,
+                "CG-S4-A-001": None,
+            }
+        ))
+
+
+def test_duplicated_pair_identity_is_rejected_at_parse():
+    with pytest.raises(ManifestError, match="appears more than once"):
+        parse_split_manifest(
+            _split_payload(
+                train_runs=["CG-S1-A-001", "CG-S2-A-001"],
+                validation_runs=[],
+                test_runs=[],
+                pair_lineage=[
+                    {
+                        "pair_id": "PAIR-001",
+                        "run_ids": ["CG-S1-A-001"],
+                        "partition": "train",
+                    },
+                    {
+                        "pair_id": "PAIR-001",
+                        "run_ids": ["CG-S2-A-001"],
+                        "partition": "train",
+                    },
+                ],
+            )
+        )
+
+
+def test_schema_provenance_must_match_dataset_and_be_supported():
+    dataset = parse_dataset_manifest(
+        _dataset_payload(source_runs=["CG-S1-A-001"], synthetic=True)
+    )
+    # Positive control: matching, supported schema lineage binds.
+    bind_dataset_to_run_records(
+        dataset, parse_run_manifests([_run_payload(run_id="CG-S1-A-001")])
+    )
+    with pytest.raises(ManifestError, match="schema ancestry"):
+        bind_dataset_to_run_records(
+            dataset,
+            parse_run_manifests(
+                [_run_payload(run_id="CG-S1-A-001", schema_version=99)]
+            ),
+        )
+
+    unsupported = parse_dataset_manifest(
+        _dataset_payload(
+            source_runs=["CG-S1-A-001"], synthetic=True, schema_version=99
+        )
+    )
+    with pytest.raises(ManifestError, match="not supported"):
+        bind_dataset_to_run_records(
+            unsupported,
+            parse_run_manifests(
+                [_run_payload(run_id="CG-S1-A-001", schema_version=99)]
+            ),
+        )
+
+
+def test_manifest_timestamps_reject_naive_strings_and_normalize_offsets():
+    with pytest.raises(ManifestError, match="timezone-naive"):
+        parse_run_manifest(_run_payload(start_time="2026-01-01T00:00:00"))
+    with pytest.raises(ManifestError, match="timezone-naive"):
+        parse_dataset_manifest(_dataset_payload(created_at="2026-01-02T12:00:00"))
+
+    record = parse_run_manifest(
+        _run_payload(start_time="2026-01-01T07:00:00+07:00")
+    )
+    assert record.start_time == _dt.datetime(2026, 1, 1, tzinfo=UTC)
 
 
 # -- canonical serialization --------------------------------------------------

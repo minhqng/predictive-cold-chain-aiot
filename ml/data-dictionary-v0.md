@@ -97,9 +97,9 @@ Authority: Doc `01` §6 (sensor contract) and §17.1 (unit); Doc `02` §4.1 snap
 
 | Field | Unit | Value domain | Semantics | Tier | Authority refs |
 |---|---|---|---|---|---|
-| `t1_c` / wire `thermal.t1` | °C | real (nullable) + quality | Probe role T1 (CANONICAL role set: three probes with distinct, never-remapped physical roles) | name TEAM_DEPENDENCY / semantics CANONICAL | `01` §6.4, §6.5; normalized col `0003_normalized.py` |
-| `t2_c` / wire `thermal.t2` | °C | real (nullable) | Probe role T2 | same | `01` §6.4 |
-| `t3_c` / wire `thermal.t3` | °C | real (nullable) | Probe role T3 | same | `01` §6.4 |
+| `t1_c` / wire `thermal.t1` | °C | real (nullable) + quality | Firmware slot T1 signal. Canonical intended role: near-door chamber air. As-built position differs — §4.1–§4.4. | name TEAM_DEPENDENCY / role intent CANONICAL | `01` §6.4, §6.5; normalized col `0003_normalized.py` |
+| `t2_c` / wire `thermal.t2` | °C | real (nullable) | Firmware slot T2 signal. Canonical intended role: central chamber air. **On the current as-built rig this slot carries TEC hot-side, not chamber air** — §4.2. | name TEAM_DEPENDENCY / role intent CANONICAL | `01` §6.4 |
+| `t3_c` / wire `thermal.t3` | °C | real (nullable) | Firmware slot T3 signal. Canonical intended role: far/opposite chamber air. As-built position is chamber bottom — §4.2. | name TEAM_DEPENDENCY / role intent CANONICAL | `01` §6.4 |
 
 - **Role assignment permanently binds 64-bit ROM ID → physical position/role** (`01` §6.5 identity contract; §2.4). A consumer must not remix roles from payload positions; unknown ROM ⇒ degraded/invalid path, never silent remap (`01` §6.6 PHY-DS-001/002).
 - Position stability is configuration evidence: probe displacement events invalidate affected comparisons (`01` §6.6 PHY-DS-003; run invalidation list `01` §33).
@@ -107,6 +107,69 @@ Authority: Doc `01` §6 (sensor contract) and §17.1 (unit); Doc `02` §4.1 snap
 - Air-sample positions measure air, not contact surfaces (`01` §6.6 PHY-DS-005) — relevant to RQ1 spatial semantics.
 - VALID-quality thermal sections must carry all three values (C contract validator; TEAM_DEPENDENCY `contracts.py` `_missing_values_need_quality`); DEGRADED/INVALID sections may carry partial values with reduced trust (value absence: `None`).
 - Canonical derived thermal-state vocabulary (Tmean/Tmin/Tmax/gradient/std/slope/recovery-slope) is fixed at concept level (`01` §20 formulas) but the **analysis roster** using them is a versioned DERIVED choice (`05B` §10.1) — §12.
+
+### 4.1 Canonical intended measurement roles (CANONICAL)
+
+Doc `01` §6.4 defines the intended position semantics: `T1` = near-door
+region, `T2` = central region, `T3` = far/opposite region. These are
+**intended** roles, not evidence of the installed geometry.
+
+### 4.2 As-built observed mapping (TEAM_DEPENDENCY, A-owned; not verified by B)
+
+The operator-frozen as-built identification (`evidence/A/W07/geometry-v1.md`
+§1 and §4; `evidence/A/W07/probe-identification-v0.md`, accepted 2026-11-02)
+and the A→B handoff (`evidence/A/HANDOFF/a-to-bcd-fields.md` §6.1) report:
+
+| Firmware slot | ROM ID | As-built physical position |
+|---|---|---|
+| T1 | `287088CA00000051` | chamber center |
+| T2 | `28AEBF2200000006` | **TEC hot side (hot-side metal; not air)** |
+| T3 | `28CBE9CA00000072` | chamber bottom |
+| T4 / SPARE | `283BE5C9000000A9` | near the chamber door |
+
+Configuration/ROM context: the mapping was established by the probe
+identification captures under the installed bench image `build-t2-hot-side`
+(SHA-256 `01cedce3b794638f25ae4c7f1e2dfdcb4b00555fdc81a0bcf4d35ed4187f6c9f`,
+recorded in `evidence/A/W04/ARTIFACT-MANIFEST.md`); the ROM ids come from the
+firmware's frozen ROM map, not an independent on-wire ROM readback. A's host
+tool `firmware/tools/cg_probe_roles.py` exposes the mapping and gates
+chamber-air membership on ROM role (`in_chamber_air_aggregate`), not on the
+slot literal.
+
+Consequences that must not be hidden:
+
+- `t2_c` currently carries the **hot-side** signal. The literal canonical
+  expression `mean(T1,T2,T3)` is therefore not a chamber-air mean on this
+  rig, and the literal `G_T = Tmax − Tmin` over all three slots is a
+  probe-disagreement statistic, not a chamber-air spatial gradient.
+- `T3` is at the chamber bottom, not the canonical far/opposite region, until
+  measured geometry establishes an equivalence; do not describe it as
+  far/opposite merely because Doc `01` names the slot that way.
+
+### 4.3 Synthetic-fixture assumption (SYNTHETIC — never physical evidence)
+
+The W02 synthetic generator (`ml/src/coldguard_ml/synthetic.py`) builds
+`t1_c`/`t2_c`/`t3_c` as nearby chamber-like values around a shared mean for
+pipeline-correctness testing. Those values are **synthetic fixtures**, not
+measurements: they do not reproduce the as-built hot-side signal, and they
+must never be presented as physical T2 or chamber-air evidence. The generator
+is changed only if a correctness requirement demands it; this dictionary does
+not silently relabel the real hot-side channel.
+
+### 4.4 Physical-use limits and ownership
+
+- **Do not silently relabel the real T2 hot-side signal as chamber air**, and
+  do not average incompatible sensor roles into a "chamber" aggregate. The
+  original channel identity (`thermal.t2` → `t2_c`) is preserved; no raw
+  evidence is rewritten.
+- Until A/team reconcile Doc `01` §6.4/§20.1 (and any firmware ROM-role map)
+  with the as-built geometry, real rig data must not claim that the current
+  hardware satisfies the canonical air-position requirements. T2 remains the
+  only hot-side observation, and no hot-side limit is established for it
+  (`firmware/main/cg_tec_limits.c` records `HOT_SIDE_LIMIT_NOT_ESTABLISHED`).
+- Physical geometry/authority reconciliation and any firmware change belong
+  to A/team; B records the dependency and does not edit Doc `01` or firmware.
+  This is an open TEAM_DEPENDENCY, not a B-owned licence to remap channels.
 
 ---
 

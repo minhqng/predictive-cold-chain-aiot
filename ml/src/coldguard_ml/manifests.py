@@ -38,7 +38,7 @@ from typing import Any
 import yaml
 
 from .errors import ManifestError
-from .observations import parse_event_time
+from .observations import SUPPORTED_SCHEMA_VERSIONS, parse_event_time
 
 __all__ = [
     "DatasetManifest",
@@ -792,7 +792,7 @@ def _parse_pair_lineage(
             f"split.pair_lineage must be a YAML list (received: {pair_lineage_raw!r})"
         )
     parsed: list[dict[str, Any]] = []
-    seen_pairs: dict[str, set[str]] = {}
+    seen_pairs: set[str] = set()
     for i, entry in enumerate(pair_lineage_raw):
         path = f"split.pair_lineage[{i}]"
         if not isinstance(entry, dict):
@@ -814,6 +814,11 @@ def _parse_pair_lineage(
                 _require_str_list(members_raw, f"{path}.run_ids", anchor="convention §3.2")
             )
         )
+        if not members:
+            raise ManifestError(
+                f"{path}.run_ids must not be empty — a pair-lineage record with no "
+                "members cannot describe pair membership"
+            )
         if len(set(members)) != len(members):
             raise ManifestError(f"{path}.run_ids carries duplicates: {members}")
         partition_ref = _require_present(entry, "partition", kind=path, anchor="convention §3.2")
@@ -830,14 +835,12 @@ def _parse_pair_lineage(
                 "in one partition (Doc `03` §123)"
             )
         if pair_id in seen_pairs:
-            if seen_pairs[pair_id] & declared:
-                raise ManifestError(
-                    f"split.pair_lineage: pair_id {pair_id!r} appears twice with "
-                    f"overlapping run memberships {sorted(seen_pairs[pair_id] & declared)}"
-                )
-            seen_pairs[pair_id] |= declared
-        else:
-            seen_pairs[pair_id] = declared
+            raise ManifestError(
+                f"split.pair_lineage: pair_id {pair_id!r} appears more than once — "
+                "each pair identity has exactly one lineage record; duplicated or "
+                "contradictory identities are rejected"
+            )
+        seen_pairs.add(pair_id)
         parsed.append(
             {"pair_id": pair_id, "run_ids": members, "partition": partition_ref}
         )
@@ -1166,8 +1169,29 @@ def bind_dataset_to_run_records(
             "run-record manifest (convention §9 audit-chain foundation)"
         )
 
+    if dataset.schema_version not in SUPPORTED_SCHEMA_VERSIONS:
+        raise ManifestError(
+            f"dataset {dataset.dataset_id!r} schema_version {dataset.schema_version!r} "
+            f"is not supported; supported schema versions: "
+            f"{sorted(SUPPORTED_SCHEMA_VERSIONS)} — an unsupported schema ancestry "
+            "cannot be bound into a research dataset"
+        )
+
     for run_id in dataset.source_runs:
         record = by_run[run_id]
+        if record.schema_version != dataset.schema_version:
+            raise ManifestError(
+                f"schema ancestry violated: run {run_id!r} schema_version "
+                f"{record.schema_version!r} differs from dataset "
+                f"{dataset.dataset_id!r} schema_version {dataset.schema_version!r} — "
+                "the supported contract is homogeneous dataset/run schema provenance"
+            )
+        if record.schema_version not in SUPPORTED_SCHEMA_VERSIONS:
+            raise ManifestError(
+                f"run {run_id!r} schema_version {record.schema_version!r} is not "
+                f"supported; supported schema versions: "
+                f"{sorted(SUPPORTED_SCHEMA_VERSIONS)} (schema ancestry gate)"
+            )
         if record.hardware_config_id not in dataset.hardware_configs:
             raise ManifestError(
                 f"LRK-15 violated: run {run_id!r} hardware_config_id "
@@ -1227,6 +1251,61 @@ def bind_split_to_run_records(
             f"split {split.split_id!r} references runs without manifests: {missing} "
             "(all referenced runs need run records)"
         )
+
+    partition_by_run = split.partition_of
+
+    # Derived pair membership is the leakage gate: pair_lineage is audit
+    # metadata, never the source of truth. Runs sharing a pair_id must share a
+    # partition even when the declaration is empty (LRK-08, Doc `03` §123).
+    derived_pairs: dict[str, list[str]] = {}
+    for run_id in split.partitioned_runs:
+        pair_id = by_run[run_id].pair_id
+        if pair_id is not None:
+            derived_pairs.setdefault(pair_id, []).append(run_id)
+
+    for pair_id, members in sorted(derived_pairs.items()):
+        partitions = {partition_by_run[member] for member in members}
+        if len(partitions) != 1:
+            raise ManifestError(
+                f"LRK-08 violated in split {split.split_id!r}: runs {sorted(members)} "
+                f"share pair_id {pair_id!r} but straddle partitions "
+                f"{sorted(partitions)} — paired runs must share one partition; an "
+                "omitted pair_lineage cannot bypass the derived relationship "
+                "(Doc `03` §123)"
+            )
+
+    declared_pairs: dict[str, set[str]] = {}
+    for entry in split.pair_lineage:
+        pair_id = entry["pair_id"]
+        if pair_id in declared_pairs:
+            raise ManifestError(
+                f"split {split.split_id!r}: pair_id {pair_id!r} is declared more than "
+                "once in pair_lineage"
+            )
+        declared_pairs[pair_id] = set(entry["run_ids"])
+
+    for pair_id, members in sorted(derived_pairs.items()):
+        if pair_id not in declared_pairs:
+            # A co-located pair without a declaration is audit-incomplete but
+            # cannot leak (the derived gate above protects the partition); the
+            # normal producer declares pairs, and any present declaration is
+            # still checked exactly below.
+            continue
+        if declared_pairs[pair_id] != set(members):
+            raise ManifestError(
+                f"split {split.split_id!r}: pair {pair_id!r} declares runs "
+                f"{sorted(declared_pairs[pair_id])} but the run records derive "
+                f"{sorted(set(members))} — declared membership must match derived "
+                "membership exactly"
+            )
+
+    for pair_id in sorted(declared_pairs):
+        if pair_id not in derived_pairs:
+            raise ManifestError(
+                f"split {split.split_id!r}: pair_lineage declares pair {pair_id!r} "
+                "but no partitioned run record carries that pair_id — declared pair "
+                "identity contradicts the run records"
+            )
 
     for run_id in split.partitioned_runs:
         record = by_run[run_id]

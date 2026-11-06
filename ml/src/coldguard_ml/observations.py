@@ -61,10 +61,13 @@ TrajectoryKey = tuple[str, str]
 
 
 def parse_event_time(value: Any, *, context: str) -> _dt.datetime:
-    """Parse an RFC 3339 UTC instant (``...Z``) or accept a tz-aware datetime.
+    """Parse an RFC 3339 instant or accept a tz-aware datetime.
 
-    Naive datetimes are rejected: Doc ``01`` §18 requires explicitly
-    interpretable event time and forbids manufactured timestamp precision.
+    Both explicit UTC (``...Z``) and numeric-offset strings are accepted and
+    normalized to UTC. Naive datetimes AND naive datetime strings are
+    rejected: Doc ``01`` §18 requires explicitly interpretable event time and
+    forbids manufacturing timestamp precision; the host timezone is never a
+    legitimate source of event-time meaning (data-dictionary-v0 §3).
     """
     if isinstance(value, _dt.datetime):
         if value.tzinfo is None or value.tzinfo.utcoffset(value) is None:
@@ -80,6 +83,12 @@ def parse_event_time(value: Any, *, context: str) -> _dt.datetime:
             raise DataContractError(
                 f"{context}: event time {value!r} is not an RFC 3339 instance"
             ) from exc
+        if parsed.tzinfo is None or parsed.tzinfo.utcoffset(parsed) is None:
+            raise DataContractError(
+                f"{context}: event time {value!r} is timezone-naive; supply an "
+                "explicit UTC 'Z' suffix or numeric offset (RFC 3339, "
+                "data-dictionary-v0 §3 / Doc `01` §18) — never infer the host timezone"
+            )
         return parsed.astimezone(TIMEZONE_UTC)
     raise DataContractError(
         f"{context}: event time must be an RFC 3339 string or tz-aware datetime, "

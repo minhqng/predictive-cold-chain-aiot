@@ -30,6 +30,7 @@ Contract rules implemented here:
 from __future__ import annotations
 
 import datetime as _dt
+import math
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any
@@ -74,9 +75,28 @@ class WindowConfig:
     anchor_stride: int = 1
 
     def __post_init__(self) -> None:
-        if not (isinstance(self.window_length_s, (int, float)) and self.window_length_s > 0):
-            raise WindowError(f"window_length_s must be > 0, got {self.window_length_s!r}")
-        if not isinstance(self.anchor_stride, int) or self.anchor_stride < 1:
+        length = self.window_length_s
+        if isinstance(length, bool) or not isinstance(length, (int, float)):
+            raise WindowError(
+                f"window_length_s must be a finite number > 0, got {length!r}"
+            )
+        try:
+            numeric = float(length)
+        except (OverflowError, ValueError) as exc:
+            raise WindowError(
+                f"window_length_s {length!r} is outside the representable time domain"
+            ) from exc
+        if not math.isfinite(numeric) or length <= 0:
+            raise WindowError(
+                f"window_length_s must be a finite number > 0, got {length!r}"
+            )
+        try:
+            _dt.timedelta(seconds=length)
+        except (OverflowError, ValueError) as exc:
+            raise WindowError(
+                f"window_length_s {length!r} is outside the representable time domain"
+            ) from exc
+        if type(self.anchor_stride) is not int or self.anchor_stride < 1:
             raise WindowError(f"anchor_stride must be an integer >= 1, got {self.anchor_stride!r}")
 
 
@@ -161,7 +181,10 @@ def generate_windows(
     partition_runs = split.runs_in(partition)
     partition_run_ids = set(partition_runs)
     all_split_runs = set(split.group_of)
-    for row in rows:
+    # Materialize once: validation and canonicalization must see the same rows
+    # whether the caller supplies a list, tuple, or one-shot iterator.
+    materialized_rows = tuple(rows)
+    for row in materialized_rows:
         run_id = row.run_id
         if run_id not in all_split_runs:
             raise WindowError(
@@ -174,7 +197,7 @@ def generate_windows(
                 f"refusing to generate {partition!r} windows from foreign-partition rows"
             )
 
-    canonical = canonical_order(rows)
+    canonical = canonical_order(materialized_rows)
     return _build_windows(canonical, partition, config)
 
 

@@ -77,12 +77,6 @@ def test_invalid_inputs_rejected():
         ssp.plan_pairs(d_z=0.0)
     with pytest.raises(ssp.PlanningError):
         ssp.plan_pairs(d_z=-0.5)
-
-def test_invalid_inputs_rejected():
-    with pytest.raises(ssp.PlanningError):
-        ssp.plan_pairs(d_z=0.0)
-    with pytest.raises(ssp.PlanningError):
-        ssp.plan_pairs(d_z=-0.5)
     with pytest.raises(ssp.PlanningError):
         ssp.plan_pairs(delta=1.0, sigma_d=0.0)
     with pytest.raises(ssp.PlanningError):

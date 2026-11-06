@@ -128,6 +128,67 @@ def test_grouped_split_and_manifest_bindings_accept_conforming_harness():
     assert dataset.synthetic is True  # B7 keeps the synthetic chain intact
 
 
+def test_generated_pair_lineage_binds_and_keeps_arms_together():
+    specs = _specs()
+    specs[0] = SyntheticRunSpec(
+        run_id="CG-S1-A-001",
+        scenario_id="S1",
+        seed=101,
+        critical_event_offset_s=40.0,
+        pair_id="PAIR-001",
+    )
+    specs[1] = SyntheticRunSpec(
+        run_id="CG-S2-A-001",
+        scenario_id="S2",
+        seed=102,
+        critical_event_offset_s=50.0,
+        untrusted_event_offset_s=25.0,
+        boot_sessions=2,
+        boot_gap_s=BOOT_GAP,
+        pair_id="PAIR-001",
+    )
+    runs = build_synthetic_runs(specs)
+    dataset_raw, runs = build_synthetic_dataset(
+        runs, "CG-DATA-001", git_commit=GIT, created_at=WHEN
+    )
+    records = parse_run_manifests([r.run_manifest for r in runs])
+    split = split_runs(
+        [
+            RunInfo(
+                run_id=r.run_id,
+                scenario_id=r.spec.scenario_id,
+                controller_id=r.spec.controller_id,
+                pair_id=r.spec.pair_id,
+                hardware_config_id=r.spec.hardware_config_id,
+            )
+            for r in runs
+        ],
+        SplitConfig(
+            proportions=SplitProportions(0.4, 0.3, 0.3),
+            seed=42,
+            controller_context="all-reactive-or-observational",
+        ),
+    )
+    split_raw = split.to_manifest_dict(
+        "CG-SPLIT-001", dataset_id="CG-DATA-001", created_at=WHEN, git_commit=GIT
+    )
+    dataset = parse_dataset_manifest(dataset_raw)
+    split_manifest = parse_split_manifest(split_raw)
+    bind_split_to_dataset(split_manifest, dataset)
+    bind_dataset_to_run_records(dataset, records)
+    bind_split_to_run_records(split_manifest, records)
+
+    pair_entries = [
+        entry for entry in split_manifest.pair_lineage if entry["pair_id"] == "PAIR-001"
+    ]
+    assert len(pair_entries) == 1
+    entry = pair_entries[0]
+    assert set(entry["run_ids"]) == {"CG-S1-A-001", "CG-S2-A-001"}
+    partition = split_manifest.partition_of["CG-S1-A-001"]
+    assert split_manifest.partition_of["CG-S2-A-001"] == partition
+    assert entry["partition"] == partition
+
+
 def test_windows_cannot_be_generated_outside_the_partition_order():
     r = _harness()
     # LRK-02: feeding rows before the split manifest does NOT exist here —

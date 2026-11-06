@@ -28,6 +28,7 @@ from coldguard_ml import (
     Observation,
     canonical_order,
     deduplicate_by_identity,
+    parse_event_time,
     rows_by_run,
     validate_observation,
 )
@@ -173,3 +174,38 @@ def test_missing_uptime_is_accepted_but_invalid_counters_are_not() -> None:
 def test_valid_thermal_section_still_requires_every_value() -> None:
     with pytest.raises(DataContractError, match="VALID thermal"):
         validate_observation(make_observation(t3_c=None))
+
+
+# ---------------------------------------------------------------------------
+# Event time: explicit UTC/offset only, never host-local inference
+# ---------------------------------------------------------------------------
+@pytest.mark.parametrize(
+    "value",
+    ["2026-01-01T00:00:00", "2026-01-01 00:00:00", "2026-01-01"],
+)
+def test_timezone_naive_iso_strings_are_rejected(value: str) -> None:
+    with pytest.raises(DataContractError, match="timezone-naive"):
+        parse_event_time(value, context="regression")
+
+
+def test_explicit_utc_and_offset_strings_normalize_to_the_same_instant() -> None:
+    utc = parse_event_time("2026-01-01T00:00:00Z", context="regression")
+    offset = parse_event_time("2026-01-01T07:00:00+07:00", context="regression")
+    assert utc == offset == _dt.datetime(2026, 1, 1, tzinfo=UTC)
+    assert utc.utcoffset() == _dt.timedelta(0)
+
+
+def test_aware_datetime_is_accepted_and_naive_datetime_is_rejected() -> None:
+    aware = _dt.datetime(
+        2026, 1, 1, 7, 0, tzinfo=_dt.timezone(_dt.timedelta(hours=7))
+    )
+    assert parse_event_time(aware, context="regression") == _dt.datetime(
+        2026, 1, 1, tzinfo=UTC
+    )
+    with pytest.raises(DataContractError, match="timezone-aware"):
+        parse_event_time(_dt.datetime(2026, 1, 1), context="regression")
+
+
+def test_observation_naive_time_string_is_rejected() -> None:
+    with pytest.raises(DataContractError, match="timezone-naive"):
+        validate_observation(make_observation(time="2026-01-01T00:00:00"))  # type: ignore[arg-type]

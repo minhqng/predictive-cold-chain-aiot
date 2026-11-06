@@ -36,7 +36,13 @@ import numpy as np
 
 from .errors import DataContractError
 from .labels import CriticalEvent, CriticalEventSeries
-from .observations import Observation, TIMEZONE_UTC, event_time_to_rfc3339, validate_observation
+from .observations import (
+    Observation,
+    TIMEZONE_UTC,
+    event_time_to_rfc3339,
+    parse_event_time,
+    validate_observation,
+)
 
 __all__ = [
     "TrajectoryShape",
@@ -225,15 +231,7 @@ class SyntheticRun:
 def _resolve_start(spec: SyntheticRunSpec) -> _dt.datetime:
     if spec.start_time is None:
         return _START_EPOCH
-    if isinstance(spec.start_time, _dt.datetime):
-        if spec.start_time.tzinfo is None:
-            raise DataContractError(
-                f"spec {spec.run_id!r}: start_time must be timezone-aware"
-            )
-        return spec.start_time.astimezone(TIMEZONE_UTC)
-    return _dt.datetime.fromisoformat(spec.start_time.replace("Z", "+00:00")).astimezone(
-        TIMEZONE_UTC
-    )
+    return parse_event_time(spec.start_time, context=f"spec {spec.run_id!r}: start_time")
 
 
 def _effective_plan(spec: SyntheticRunSpec) -> dict[str, Any]:
