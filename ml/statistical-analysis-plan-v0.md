@@ -12,7 +12,7 @@
 | Owner | Member B |
 | Parent docs | `00` §§5.3–5.4 · `01` §§1, 18, 33, 38–39, 45 · `03` §§1.4–1.6, 8, 12, 31–49, 57–60, 74–83, 133, 204 · `04` §§3.3, 10 · `05B` §§2–3, 7–8, 12–13, 24, 26–27, 29, 31–32 |
 | Tasks | B-W03-01, B-W03-03 |
-| Status | v0 methodology draft; analysis freeze gate is W04 (`05B` §32) |
+| Status | v0 methodology draft; W04 freezes the analysis contract and metric-hierarchy definitions/interfaces; measurement-dependent values stay provisional until their named gates (§10, W13–W16 where scheduled) |
 
 Tier legend: **CANONICAL** (Docs `00`–`03` fix it) · **DERIVED** (follows
 from CANONICAL + a stated assumption) · **IMPLEMENTATION_CHOICE** (B's
@@ -22,9 +22,16 @@ executable-documentation choice, no statistical meaning change) ·
 measured fact) · **SCHEDULED_DEBT** (deferred mechanics, owner + week).
 
 > **W03/W04 boundary** (CANONICAL, `05B` §31 vs §32). W03 freezes the
-> mathematical contract. Every threshold, horizon, constant, and campaign
-> parameter not yet measured stays PROVISIONAL_UNTIL_FREEZE (§10). W04
-> performs the evaluation/measurement freeze.
+> mathematical contract. W04 freezes the **analysis contract v0 and the
+> primary/secondary metric hierarchy** — conceptual definitions and supported
+> interfaces, not unmeasured physical constants. Every threshold, horizon,
+> constant, and campaign parameter not yet measured stays
+> PROVISIONAL_UNTIL_FREEZE (§10): measurement-dependent values (critical
+> temperatures, recovery bands, response delays, tolerances, horizons,
+> thresholds, calibration and model choices) freeze only at the gate named
+> for them, including the W13 horizon, W14 calibration, W15 threshold/policy
+> and model, and W16 locked-test/model-release gates. W04 does not invent a
+> physical constant merely to fill a field.
 
 ---
 
@@ -71,12 +78,50 @@ Six populations (CANONICAL structure, `03` §§45–49, 87–93; `05B` §§12–
 
 | # | Population | Contents | May a run also appear elsewhere? |
 |---|---|---|---|
-| P1 | Training / development | `train`/`validation` runs; all windows, scalers, thresholds, calibration derive here | Exactly one of P1/P2/P3 per run (split disjointness). P1 artifacts are *applied* downstream, never refit there |
-| P2 | Grouped predictive validation | Held-back runs for model/horizon selection | Disjoint from P1/P3 at run level; development use only |
+| P1 | Training / fitting partition | `train` runs only. Fitted preprocessing parameters and model fitting use P1 only. | Exactly one of P1/P2/P3 per run (split disjointness). P1 artifacts are *applied* downstream, never refit there |
+| P2 | Held-back development validation | `validation` runs, held out from fitting. Model/horizon selection and development evaluation use P2. | Disjoint from P1/P3 at run level; development use only |
 | P3 | Locked predictive holdout | Runs under `locked_test` discipline (`03` §49; convention §3.2): opened once, analyzed under the frozen plan | Disjoint from P1/P2. Re-viewing or re-selecting after opening converts the analysis to exploratory (LRK-11) |
 | P4 | Non-predictively-intervened trajectories (offline EWT) | Reactive/observational runs replayed offline for EWT | A P1–P3 run may supply a P4 trajectory only with non-predictive controller context (LRK-09) and past-only replay. P4 is offline-warning evidence, never a closed-loop outcome |
 | P5 | Matched physical Controller A/B runs | Valid pairs per §8; primary closed-loop population | Role-disjoint from P1–P4: a final A/B arm must not train/validate the model under test (`03` §45). Pair arms stay together in any split |
 | P6 | Excluded / invalid runs | Runs failing §3 admission | In no other population; listed with reasons in every report (§7) |
+
+Population semantics (CANONICAL interpretation). P1–P3 are **primary
+partition roles**, not overlapping views: every admitted run belongs to
+exactly one primary train/validation/test partition. The **development
+workflow is P1 ∪ P2** — P1 fits, P2 supplies held-back development
+evaluation and model/horizon selection — and is not itself an additional
+exclusive partition. Fitted preprocessing parameters come only from allowed
+training data (P1); threshold/policy selection follows its predeclared
+development procedure without P3; P3 is never used for tuning, selection,
+calibration, or peeking. P4 is an **evidence role** on trajectories: it never
+overrides a run's primary split identity or relaxes its P1–P3 restrictions.
+P5 physical A/B arms remain role-disjoint from P1–P4; P6 excluded runs appear
+in no other population.
+
+**Worked population-assignment proof** (illustrative identifiers only; no
+measured data):
+
+```text
+primary split (each run in exactly one partition):
+  P1/train      = {CG-S1-A-001, CG-S3-A-001}
+  P2/validation = {CG-S2-A-001}
+  P3/test       = {CG-S4-A-001}
+  P6/excluded   = {CG-S5-A-001}   (invalid-run ledger)
+
+development workflow = P1 ∪ P2 = {CG-S1-A-001, CG-S2-A-001, CG-S3-A-001}
+```
+
+- The three primary partition sets do not overlap: no run is counted in more
+  than one of P1/P2/P3.
+- A scaler/imputer is fitted on P1 only; P2 is held back from fitting and
+  supplies development evaluation and model/horizon selection. Threshold/policy
+  selection follows its predeclared development procedure; P3 is never read.
+- P4 replay: a reactive P1 run (e.g. `CG-S3-A-001`) may be replayed past-only
+  for offline EWT. The P4 evidence role does not move that run into P2/P3 and
+  does not relax its primary-partition restrictions. Replaying a P3 run under
+  P4 does not license tuning on it.
+- P5 matched A/B arms stay role-disjoint from P1–P4; P6 `CG-S5-A-001` appears in
+  no other population.
 
 Contamination rules (CANONICAL):
 
@@ -239,8 +284,9 @@ N = fully valid pairs; any sensitivity N reported separately with its rule.
 
 **Primary outcome(s)** frozen pre-campaign from {thermal exposure,
 recovery time} with the representative/reference choices of metric-spec
-§§6–7 (PROVISIONAL_UNTIL_FREEZE, §10; gate: W04 evaluation freeze, `05B`
-§32). **Secondary outcomes** (peak, time-above, branch energy, warning
+§§6–7 (PROVISIONAL_UNTIL_FREEZE, §10; the W04 metric-hierarchy freeze fixes
+the primary-outcome definition, while measurement-dependent
+representative/reference values keep their later §10 gates; `05B` §32). **Secondary outcomes** (peak, time-above, branch energy, warning
 burden) use the same paired machinery but stay secondary — no post-result
 promotion. **Exploratory** work is labeled exploratory with post-hoc status
 disclosed (`03` change policy: post-lock changes need an explicit
@@ -330,17 +376,24 @@ TEAM_DEPENDENCY, never silently available.
 
 ## 10. Provisional-until-freeze ledger
 
+Freeze classes: conceptual definitions and supported interfaces are frozen by
+the W04 analysis contract and metric hierarchy; the values below are
+measurement-dependent. Each numeric value freezes only at the gate named for
+it and is never fabricated at W04. Scheduled value gates include W13
+(horizon), W14 (calibration/score semantics), W15 (threshold/policy and model)
+and W16 (locked test/model release).
+
 | # | Item | Gate / owner |
 |---|---|---|
-| F1 | Representative temperature (Tmax/Tmean/named probe) | B evaluation freeze W04 (`03` §§42–43, 69) |
-| F2 | `T_critical`/`T_limit` values | B evaluation freeze W04 (`03` §42) |
-| F3 | `T_reactive` semantics for offline EWT | B evaluation freeze W04 (`03` §§44, 84) |
+| F1 | Representative temperature (Tmax/Tmean/named probe) | Definition/interface at W04; numeric choice frozen before final-split labels and locked evaluation (`03` §§42–43, 69) |
+| F2 | `T_critical`/`T_limit` values | Numeric value frozen before locked evaluation (`03` §42); not set by the W04 analysis-contract freeze |
+| F3 | `T_reactive` semantics for offline EWT | Semantics frozen at W04 (`03` §§44, 84); numeric policy threshold remains D-owned/PROVISIONAL |
 | F4 | Primary horizon (candidates 30/60/120/300 s) | B horizon freeze W13 (`05B` §41) |
 | F5 | Operating threshold + persistence/episode gap | B/D policy freeze W15 (`05B` §43) |
 | F6 | Initial-condition tolerances (final numerics) | A/B pilot → pre-A/B freeze (`03` §§34–35) |
 | F7 | AIW timing inputs (measured components) | A/C/D measurement freeze (`03` §57) |
-| F8 | Recovery reference / target band / persistence | B evaluation freeze W04 (`03` §70) |
-| F9 | Primary outcome selection | B evaluation freeze W04 (`05B` §32) |
+| F8 | Recovery reference / target band / persistence | Definition at W04; numeric reference/band/persistence frozen before locked evaluation (`03` §70) |
+| F9 | Primary outcome selection | Metric-hierarchy freeze at W04 (`05B` §32); measurement-dependent values stay provisional |
 | F10 | Minimum engineering-relevant improvement | Pre-A/B, B with A/D (`03` §82) |
 | F11 | Energy-counter vs integrated-power semantics | A characterization + B W04 (`03` §72) |
 | F12 | Full events/command-timeline schema | C W07 semantics (TEAM_DEPENDENCY) |

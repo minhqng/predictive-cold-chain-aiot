@@ -15,6 +15,7 @@ Focus (Doc `03` §46; Doc `02` §19.4; register LRK-02/03/13/14):
 from __future__ import annotations
 
 import datetime as _dt
+import math
 import random
 from dataclasses import replace
 
@@ -226,6 +227,75 @@ def test_window_config_validation():
         WindowConfig(window_length_s=0)
     with pytest.raises(WindowError, match="anchor_stride"):
         WindowConfig(anchor_stride=0)
+
+
+@pytest.mark.parametrize(
+    "value", [True, 0, -1.0, math.nan, math.inf, -math.inf, 1e308, 10**400]
+)
+def test_window_length_rejects_nonphysical_numbers(value):
+    with pytest.raises(WindowError, match="window_length_s"):
+        WindowConfig(window_length_s=value)
+
+
+@pytest.mark.parametrize("value", [True, 0, -1, 1.0, "1"])
+def test_anchor_stride_rejects_non_integers(value):
+    with pytest.raises(WindowError, match="anchor_stride"):
+        WindowConfig(anchor_stride=value)
+
+
+def test_valid_window_numeric_parameters_keep_semantics():
+    config = WindowConfig(window_length_s=30, anchor_stride=2)
+    assert config.window_length_s == 30
+    assert config.anchor_stride == 2
+    run = _run("CG-S1-A-001")
+    partition = _partition_of("CG-S1-A-001")
+    windows = generate_windows(run.observations, _SPLIT, partition, config)
+    assert windows == generate_windows(tuple(run.observations), _SPLIT, partition, config)
+
+
+def test_sequence_and_one_shot_iterator_inputs_produce_identical_windows():
+    run = _run("CG-S1-A-001")
+    partition = _partition_of("CG-S1-A-001")
+    rows = list(run.observations)
+
+    from_list = generate_windows(rows, _SPLIT, partition)
+    from_tuple = generate_windows(tuple(rows), _SPLIT, partition)
+    from_iterator = generate_windows(iter(rows), _SPLIT, partition)
+    from_generator = generate_windows((row for row in rows), _SPLIT, partition)
+
+    assert from_list == from_tuple == from_iterator == from_generator
+    assert len(from_tuple) == len(rows) == 90
+
+
+def test_empty_one_shot_iterator_follows_empty_input_policy():
+    partition = _partition_of("CG-S1-A-001")
+    assert generate_windows(iter(()), _SPLIT, partition) == ()
+    assert generate_windows((), _SPLIT, partition) == ()
+    assert generate_windows((row for row in ()), _SPLIT, partition) == ()
+
+
+def test_one_shot_iterator_still_rejects_foreign_partition_rows():
+    partition = _partition_of("CG-S1-A-001")
+    other_run_id = next(
+        rid
+        for rid in ("CG-S2-A-001", "CG-S4-A-001")
+        if _SPLIT.partition_of(rid) != partition
+    )
+    other_rows = _run(other_run_id).observations
+    with pytest.raises(WindowError, match="foreign-partition"):
+        generate_windows((row for row in other_rows), _SPLIT, partition)
+
+
+def test_shuffled_one_shot_iterator_preserves_canonical_order():
+    run = _run("CG-S1-A-001")
+    partition = _partition_of("CG-S1-A-001")
+    rows = list(run.observations)
+    shuffled = list(rows)
+    random.Random(17).shuffle(shuffled)
+
+    assert generate_windows((row for row in shuffled), _SPLIT, partition) == (
+        generate_windows(rows, _SPLIT, partition)
+    )
 
 
 def _split_info(run_id: str) -> RunInfo:

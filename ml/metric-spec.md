@@ -12,7 +12,7 @@
 | Owner | Member B |
 | Parent docs | `03` §§41–45, 57–60, 68–74, 83–88, 204 [R6][R7] · `05B` §§12–13, 27, 31 · W01 dictionary/register/convention · W02 `labels.py` statuses |
 | Task | B-W03-02 |
-| Status | v0; value freezes (thresholds, horizons, bands) deferred to gates in §10 |
+| Status | v0; W04 freezes the analysis contract and metric hierarchy (definitions, interfaces); measurement-dependent values remain provisional until their named §10 gates (W13–W16 where scheduled) |
 
 Conventions used for every metric below: **Definition · Formula ·
 Inputs/source · Unit · Evaluation population · Aggregation level ·
@@ -30,10 +30,12 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
 
 ## 1. Average Precision — primary grouped predictive metric
 
-- **Definition.** Canonical scikit-learn non-interpolated AP ([R6]): the
+- **Definition.** Canonical scikit-learn non-interpolated AP ([R7]): the
   `average_precision_score` summary of the precision–recall curve,
   `AP = Σₙ (Rₙ − Rₙ₋₁)·Pₙ` over thresholds. AP is **not** trapezoidal
-  PR-AUC; the two coincide only on degenerate curves.
+  PR-AUC; the two are distinct summaries of the precision–recall curve and
+  must not be treated as interchangeable (neither a universal equality nor
+  a universal ordering between them is asserted).
 - **Inputs/source.** Per-window risk **scores** (`risk_score`) on grouped
   runs; `EVALUABLE` labels `y ∈ {0,1}` only (`y_t(H)=1` iff a qualifying
   critical event falls in `(t, t+H]`, `03` §41). Positive class = event
@@ -46,19 +48,27 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
   run-grouped resampling only for uncertainty**; the point estimate's
   inferential N remains the run count. Class prevalence and run count
   accompany every AP value.
-- **Undefined policy.** Single-class EVALUABLE set (all 0 / all 1) →
-  AP **undefined** (sklearn returns −0.0/NaN convention); report
-  "AP undefined (single class; N₁=…/N₀=…)", never 0/1. Censored/untrusted
-  samples excluded before counting; exclusion counts reported.
+- **Undefined policy.** Single-class EVALUABLE set (all 0 / all 1) → AP is
+  **undefined for scientific reporting**; report "AP undefined (single
+  class; N₁=…/N₀=…)", never 0/1. This is a project reporting rule, not a
+  claim about scikit-learn: `average_precision_score` does not always return
+  NaN — it can return 0.0 (no positives) or 1.0 (all positives) for a
+  single-class input — so undefined status must be assigned by the analysis
+  contract, never inferred from the library. Censored/untrusted samples
+  excluded before counting; exclusion counts reported.
 - **Interpretation + limit.** AP measures ranking quality of early-warning
   scores on grouped runs. It **cannot** prove physical intervention
   effectiveness — that claim needs P5 paired outcomes (plan §2).
-- **Freeze dependency.** PROVISIONAL_UNTIL_FREEZE: horizon H (W13), event
-  boundary/representative temperature (W04), label-spec identity (W04).
+- **Freeze dependency.** Conceptual label/metric definitions and the
+  label-spec interface freeze at W04; horizon H remains
+  PROVISIONAL_UNTIL_FREEZE until W13; numeric event-boundary and
+  representative-temperature choices remain provisional until frozen before
+  locked evaluation / final-split label generation (`03` §§42–43), never
+  invented at W04.
 
 ## 2. Precision / recall at a frozen operating point
 
-- **Formulas.** `Precision = TP/(TP+FP)`; `Recall = TP/(TP+FN)` ([R7]).
+- **Formulas.** `Precision = TP/(TP+FP)`; `Recall = TP/(TP+FN)` ([R6]).
 - **Inputs.** Binarized warnings at the **frozen** operating threshold +
   persistence (TEAM_DEPENDENCY D policy version; B recommendation W15),
   EVALUABLE labels only.
@@ -69,8 +79,9 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
   as "undefined (no predicted positives)" / "undefined (no actual
   positives)" with support counts. Undefined precision is **never** evidence
   of zero model quality. Missing/uncertain labels excluded, counts shown.
-- **Threshold discipline.** Selection uses development data only (P1/P2);
-  locked holdout (P3) never sets the threshold (LRK-07).
+- **Threshold discipline.** Selection uses development data only (P1 ∪ P2;
+  P1 for fitting, P2 for held-back development selection); locked holdout
+  (P3) never sets the threshold (LRK-07).
 
 ## 3. False warnings and missed events (episode-level)
 
@@ -137,9 +148,10 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
   `E_T ≈ Σᵢ max(0, Tᵢ − T_limit)·Δtᵢ`.
 - **Inputs.** Representative-temperature series (Tmax/Tmean choice
   PROVISIONAL_UNTIL_FREEZE — never the nicer-result variant, `03` §69),
-  threshold `T_limit` provenance (PROVISIONAL_UNTIL_FREEZE W04), uniform or
-  measured `Δtᵢ` time base with irregular-interval handling, per-sample
-  quality flags.
+  threshold `T_limit` provenance (numeric value PROVISIONAL_UNTIL_FREEZE
+  until frozen before locked evaluation, `03` §42), uniform or measured
+  `Δtᵢ` time base with irregular-interval handling, per-sample quality
+  flags.
 - **Unit/population.** °C·s (or °C·min — one frozen at W04); P5 pairs
   (P4 characterization where defined). Per-run value → paired `I_i`.
 - **Undefined policy.** Missing/corrupted samples → excluded span with
@@ -153,7 +165,9 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
 - **Inputs.** Reference event (e.g. disturbance end / reactive onset —
   frozen choice), target band + recovery persistence `τ_stable`
   ("re-enters band and stays ≥ τ_stable"), representative series.
-  All value choices PROVISIONAL_UNTIL_FREEZE (W04).
+  Interfaces are defined at W04; numeric value choices are
+  PROVISIONAL_UNTIL_FREEZE and freeze only before locked evaluation
+  (`03` §70).
 - **Unit/population.** Seconds (or minutes — one frozen); P5 pairs.
 - **Undefined policy.** Non-recovered before termination →
   **censored/non-recovered**, never a finite time. Report censoring time
@@ -187,10 +201,12 @@ trajectories (`03` §45). AP never proves closed-loop benefit (§1.7).
 Each example checks signs, units, denominators, and undefined cases.
 
 - **AP (sklearn non-interpolated).** Scores/labels (EVALUABLE):
-  y=[0,0,1,1], s=[0.1,0.4,0.35,0.8] → thresholds yield
-  AP = (1/2)·(1/2) + (2/2)·(2/3)·… = **0.8333** (sklearn reference value
-  for this ordering). Single-class set y=[0,0,0] → **undefined**
-  (support N₁=0 reported), never 0.
+  y=[0,0,1,1], s=[0.1,0.4,0.35,0.8] →
+  AP = 0.5 × 1 + 0.5 × (2/3) = 5/6 ≈ **0.8333** (verified against
+  `sklearn.metrics.average_precision_score` for this ordering). Single-class
+  set y=[0,0,0] → **undefined by the reporting policy** (support N₁=0
+  reported), never 0; scikit-learn itself returns 0.0 here (and 1.0 for an
+  all-positive single class) with a warning, not NaN.
 - **Precision/recall.** TP=4, FP=2, FN=1 → P=4/6=**0.667**,
   R=4/5=**0.800**. Zero predicted positives (TP+FP=0) → precision
   **undefined** ("no predicted positives"), not zero quality.
@@ -217,17 +233,24 @@ Each example checks signs, units, denominators, and undefined cases.
 
 ## 10. Provisional-until-freeze ledger (gates)
 
+Freeze classes: conceptual definitions and supported interfaces are frozen by
+the W04 analysis contract and metric hierarchy; the numeric values below are
+measurement-dependent and freeze only at their named gates (including W13
+horizon, W14 calibration, W15 threshold/policy and model, W16 locked test).
+W04 does not invent critical temperatures, recovery bands, response delays,
+or outcome tolerances.
+
 | # | Item | Gate / owner |
 |---|---|---|
-| F1 | Representative temperature (Tmax/Tmean/named probe) | B evaluation freeze W04 (`03` §§42–43, 69) |
-| F2 | `T_critical`/`T_limit` values | B evaluation freeze W04 (`03` §42) |
-| F3 | `T_reactive` semantics for offline EWT | B evaluation freeze W04 (`03` §§44, 84) |
+| F1 | Representative temperature (Tmax/Tmean/named probe) | Definition/interface at W04; numeric choice frozen before final-split labels and locked evaluation (`03` §§42–43, 69) |
+| F2 | `T_critical`/`T_limit` values | Numeric value frozen before locked evaluation (`03` §42); not set by the W04 analysis-contract freeze |
+| F3 | `T_reactive` semantics for offline EWT | Semantics frozen at W04 (`03` §§44, 84); numeric policy threshold remains D-owned/PROVISIONAL |
 | F4 | Primary horizon (candidates 30/60/120/300 s) | B horizon freeze W13 (`05B` §41) |
 | F5 | Operating threshold + persistence/episode gap | B/D policy freeze W15 (`05B` §43; `03` §§87–88) |
 | F6 | Initial-condition tolerances (final numerics; pilots `03` §35) | A/B pilot → pre-A/B freeze |
 | F7 | AIW timing inputs (all components, measured) | A/C/D measurement freeze (`03` §57) |
-| F8 | Recovery reference / target band / persistence | B evaluation freeze W04 (`03` §70) |
-| F9 | Primary outcome selection | B evaluation freeze W04 (`05B` §32) |
+| F8 | Recovery reference / target band / persistence | Definition at W04; numeric reference/band/persistence frozen before locked evaluation (`03` §70) |
+| F9 | Primary outcome selection | Metric-hierarchy freeze at W04 (`05B` §32); measurement-dependent values stay provisional |
 | F10 | Minimum engineering-relevant improvement | Pre-A/B, B with A/D (`03` §82) |
 | F11 | Energy-counter vs integrated-power semantics | A characterization + B W04 (`03` §72) |
 | F12 | Full events/command-timeline schema | C W07 semantics (`02` §14.4), TEAM_DEPENDENCY |

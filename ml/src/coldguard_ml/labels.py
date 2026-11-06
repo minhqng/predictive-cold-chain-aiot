@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import datetime as _dt
 import enum
+import math
 from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
@@ -106,8 +107,23 @@ class LabelSpec:
     frozen_at: _dt.datetime | None = None
 
     def __post_init__(self) -> None:
-        if not (isinstance(self.horizon_s, (int, float)) and self.horizon_s > 0):
-            raise LabelError(f"horizon_s must be > 0, got {self.horizon_s!r}")
+        horizon = self.horizon_s
+        if isinstance(horizon, bool) or not isinstance(horizon, (int, float)):
+            raise LabelError(f"horizon_s must be a finite number > 0, got {horizon!r}")
+        try:
+            numeric = float(horizon)
+        except (OverflowError, ValueError) as exc:
+            raise LabelError(
+                f"horizon_s {horizon!r} is outside the representable time domain"
+            ) from exc
+        if not math.isfinite(numeric) or horizon <= 0:
+            raise LabelError(f"horizon_s must be a finite number > 0, got {horizon!r}")
+        try:
+            _dt.timedelta(seconds=horizon)
+        except (OverflowError, ValueError) as exc:
+            raise LabelError(
+                f"horizon_s {horizon!r} is outside the representable time domain"
+            ) from exc
         if not self.spec_version or not self.spec_version.strip():
             raise LabelError("label spec requires a non-empty spec_version")
 

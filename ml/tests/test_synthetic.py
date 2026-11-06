@@ -237,3 +237,23 @@ def test_dataset_manifest_propagates_synthetic_flag():
     assert payload["git_commit"] == FIXTURE_COMMIT
     with pytest.raises(DataContractError, match="git_commit"):
         build_synthetic_dataset([run], "CG-DATA-001", git_commit="", created_at=FIXTURE_CREATED)
+
+
+def test_start_time_rejects_host_local_interpretation():
+    with pytest.raises(DataContractError, match="timezone-naive"):
+        build_synthetic_run(_spec(start_time="2026-01-01T00:00:00"))
+    with pytest.raises(DataContractError, match="timezone-aware"):
+        build_synthetic_run(_spec(start_time=_dt.datetime(2026, 1, 1)))
+
+    explicit_utc = build_synthetic_run(_spec(start_time="2026-01-01T00:00:00Z"))
+    explicit_offset = build_synthetic_run(_spec(start_time="2026-01-01T07:00:00+07:00"))
+    aware = build_synthetic_run(
+        _spec(
+            start_time=_dt.datetime(
+                2026, 1, 1, 7, 0, tzinfo=_dt.timezone(_dt.timedelta(hours=7))
+            )
+        )
+    )
+    assert explicit_utc.observations[0].time == START
+    assert explicit_offset.observations == explicit_utc.observations
+    assert aware.observations == explicit_utc.observations
