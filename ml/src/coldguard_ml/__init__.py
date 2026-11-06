@@ -10,11 +10,35 @@ legal; W02 makes the data-side rules executable:
 * ``splitting`` — grouped run-level splitting (B-W02-02);
 * ``windows`` — causal run-bounded windows (B-W02-03);
 * ``labels`` — horizon labels ``y_t(H)`` with explicit statuses (B-W02-04);
-* ``manifests`` — manifest parsing and cross-bindings (B-W02-05).
+* ``manifests`` — manifest parsing and cross-bindings (B-W02-05);
+* ``intake`` — source-aware real-schema intake and fail-closed admission
+  (B-W04-01 / B-W04-05);
+* ``evaluation_contract`` — EWT/AIW interfaces and the frozen metric
+  hierarchy (B-W04-02 / B-W04-03 / B-W04-04).
 
-No model fitting, feature registry, or evaluation logic exists yet.
+No model fitting, feature registry, or score computation exists yet.
 """
 
+from .evaluation_contract import (
+    AIWResult,
+    AIWStatus,
+    Amendment,
+    EWTProvenance,
+    EWTResult,
+    EWTStatus,
+    EvaluationContractError,
+    InterventionEvidence,
+    LatencyComponent,
+    MetricHierarchy,
+    MetricHierarchyError,
+    PRIMARY_PHYSICAL_OUTCOME,
+    PRIMARY_PREDICTIVE_METRIC,
+    SECONDARY_PHYSICAL_OUTCOMES,
+    assert_allowed_for_selection,
+    compute_aiw,
+    compute_ewt,
+    paired_improvement,
+)
 from .errors import (
     ColdguardError,
     DataContractError,
@@ -24,6 +48,33 @@ from .errors import (
     OrderContradictionError,
     SplitError,
     WindowError,
+)
+from .intake import (
+    AValidityEvidence,
+    AdmissionResult,
+    AdmissionStage,
+    AdmissionStatus,
+    Blocker,
+    Capture,
+    DatasetReadiness,
+    IndependentRunCount,
+    NormalizedRow,
+    ProbeReading,
+    RoleError,
+    RunIdentity,
+    ScenarioAdmission,
+    SensorRole,
+    SourceIdentity,
+    SourceRefusal,
+    TimeSemantics,
+    chamber_air_mean,
+    classify_source,
+    count_independent_runs,
+    detect_source_format,
+    evaluate_admission,
+    load_a_run_index,
+    load_capture,
+    summarize_readiness,
 )
 from .labels import (
     CriticalEvent,
@@ -164,4 +215,49 @@ __all__ = [
     "bind_split_to_run_records",
     "canonical_manifest_yaml",
     "manifest_content_sha256",
+    # intake (B-W04-01 / B-W04-05)
+    "Capture",
+    "NormalizedRow",
+    "ProbeReading",
+    "SensorRole",
+    "RunIdentity",
+    "SourceIdentity",
+    "SourceRefusal",
+    "RoleError",
+    "TimeSemantics",
+    "AValidityEvidence",
+    "Blocker",
+    "ScenarioAdmission",
+    "AdmissionStage",
+    "AdmissionStatus",
+    "AdmissionResult",
+    "IndependentRunCount",
+    "DatasetReadiness",
+    "detect_source_format",
+    "classify_source",
+    "load_capture",
+    "load_a_run_index",
+    "evaluate_admission",
+    "chamber_air_mean",
+    "count_independent_runs",
+    "summarize_readiness",
+    # evaluation contract (B-W04-02 / B-W04-03 / B-W04-04)
+    "EWTStatus",
+    "EWTProvenance",
+    "EWTResult",
+    "AIWStatus",
+    "AIWResult",
+    "LatencyComponent",
+    "InterventionEvidence",
+    "MetricHierarchy",
+    "MetricHierarchyError",
+    "EvaluationContractError",
+    "Amendment",
+    "PRIMARY_PREDICTIVE_METRIC",
+    "PRIMARY_PHYSICAL_OUTCOME",
+    "SECONDARY_PHYSICAL_OUTCOMES",
+    "compute_ewt",
+    "compute_aiw",
+    "paired_improvement",
+    "assert_allowed_for_selection",
 ]
