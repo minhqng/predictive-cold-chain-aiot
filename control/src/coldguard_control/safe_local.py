@@ -84,10 +84,23 @@ class SafeLocalSession:
         every exit requirement is met.
         """
         effective = policy_input
-        if self._active:
+        if self._active and policy_input.device_mode is not DeviceMode.FAULT_LOCKOUT:
             effective = replace(policy_input, device_mode=DeviceMode.SAFE_LOCAL)
 
         decision = evaluate_policy(effective, self._config)
+        if decision.state is PolicyState.FAULT_LOCKOUT:
+            self._active = False
+            self._entry_reason = None
+            return SafeLocalStep(
+                decision=decision,
+                active=False,
+                entered=False,
+                exited=False,
+                entry_reason=None,
+                exit_ready=False,
+                exit_missing=("fault_lockout",),
+                local_control_only=False,
+            )
         exit_ready, missing = safe_local_exit_status(effective, self._config)
 
         # The W03 policy may report CRITICAL_PROTECTION while the remote path

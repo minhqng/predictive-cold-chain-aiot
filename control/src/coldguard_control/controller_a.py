@@ -113,10 +113,9 @@ class ControllerADecision:
 class ControllerA:
     """Stateful, deterministic Controller A used for replay and future runtime.
 
-    The controller starts ``OFF`` (default-off invariant). It treats the
-    ``applied`` state as the actuator state achieved by the previous accepted
-    intent; a real command/ACK layer must supply the actual applied state in a
-    production integration instead of assuming immediate application.
+    The controller starts ``OFF`` (default-off invariant). Each sample supplies
+    the observed applied state. A policy intent never changes that state;
+    the command/ACK/device layer must report actual application separately.
     """
 
     def __init__(self, config: ControllerAConfig) -> None:
@@ -135,6 +134,10 @@ class ControllerA:
         now = _finite_now(sample.now_s)
         policy = evaluate_policy(sample.policy_input, self._config.policy)
         applied_before = self._applied
+        observed_applied = sample.policy_input.applied_cooling
+        self._applied = observed_applied
+        if observed_applied is not applied_before:
+            self._last_transition_s = now
         base = policy.actuation_intent
 
         # A hardware/safety hold is never converted into an actuation by this
@@ -153,6 +156,17 @@ class ControllerA:
                 persistence_blocked=False,
                 dwell_blocked=False,
                 detail="policy hold/fault; Controller A does not change state",
+            )
+
+        # Critical thermal protection is never delayed by anti-chatter rules.
+        if policy.state is PolicyState.CRITICAL_PROTECTION and base is ActuationIntent.ON:
+            self._reset_pending()
+            return self._decision(
+                now, policy, base, applied_before,
+                persistence_elapsed=None,
+                persistence_blocked=False,
+                dwell_blocked=False,
+                detail="critical protection bypasses persistence and dwell",
             )
 
         target = CoolingState.ON if base is ActuationIntent.ON else CoolingState.OFF
@@ -215,8 +229,6 @@ class ControllerA:
                     ),
                 )
 
-        self._applied = target
-        self._last_transition_s = now
         self._reset_pending()
         return self._decision(
             now,
@@ -233,8 +245,8 @@ class ControllerA:
         self._pending_intent = None
         self._pending_since_s = None
 
-    @staticmethod
     def _decision(
+        self,
         now: float,
         policy: PolicyDecision,
         intent: ActuationIntent,
@@ -245,17 +257,12 @@ class ControllerA:
         dwell_blocked: bool,
         detail: str,
     ) -> ControllerADecision:
-        applied_after = applied_before
-        if intent is ActuationIntent.ON:
-            applied_after = CoolingState.ON
-        elif intent is ActuationIntent.OFF:
-            applied_after = CoolingState.OFF
         return ControllerADecision(
             now_s=now,
             policy=policy,
             intent=intent,
             applied_before=applied_before,
-            applied_after=applied_after,
+            applied_after=self._applied,
             persistence_elapsed_s=persistence_elapsed,
             persistence_blocked=persistence_blocked,
             dwell_blocked=dwell_blocked,

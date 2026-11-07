@@ -81,8 +81,8 @@ class VerificationPolicy:
     """Versioned characterization envelope and response windows.
 
     Every value is mandatory. The candidate JSON under ``evidence/D/W09`` is
-    the only place where Member A's observed numbers are imported; this package
-    ships no physical default and does not freeze an envelope.
+    synthetic test input; this package ships no physical default and does not
+    freeze an envelope.
     """
 
     policy_version: str
@@ -302,7 +302,8 @@ class VerificationTracker:
         if self._closed:
             return self.snapshot()
         self._now_s = now
-        self._advance(self._last_observation)
+        # A timer advance is not a new physical sample.
+        self._advance(None)
         return self.snapshot()
 
     def snapshot(self) -> VerificationSnapshot:
@@ -345,6 +346,12 @@ class VerificationTracker:
             assert observation is not None and observation.current_a is not None
             self._valid_electrical_seen = True
             if observation.current_a > self._policy.off_current_max_a:
+                if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
+                    self._state = VerificationState.UNKNOWN
+                    self._health = CoolingHealthState.UNKNOWN
+                    self._detail = "OFF envelope is unqualified; anomaly cannot be classified"
+                    self._closed = True
+                    return
                 self._electrical_response_observed = True
                 self._state = VerificationState.FAILED_ELECTRICAL
                 self._health = CoolingHealthState.CONTROL_ELECTRICAL_ANOMALY
@@ -358,7 +365,7 @@ class VerificationTracker:
 
         if self._now_s >= self._electrical_deadline_s:
             self._closed = True
-            if self._valid_electrical_seen:
+            if self._valid_electrical_seen and self._policy.qualification is EnvelopeQualification.QUALIFIED:
                 self._state = VerificationState.NOT_REQUIRED
                 self._health = CoolingHealthState.UNKNOWN
                 self._reason = None
@@ -416,6 +423,12 @@ class VerificationTracker:
 
         if in_active_envelope:
             self._electrical_response_observed = True
+            if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
+                self._state = VerificationState.UNKNOWN
+                self._health = CoolingHealthState.UNKNOWN
+                self._detail = "active envelope is unqualified; electrical verification withheld"
+                self._closed = True
+                return
             self._state = VerificationState.ELECTRICAL_VERIFIED
             self._electrical_verified_s = self._now_s
             self._thermal_deadline_s = (
@@ -452,6 +465,13 @@ class VerificationTracker:
                 "insufficient evidence to classify response"
             )
         else:
+            if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
+                self._state = VerificationState.UNKNOWN
+                self._health = CoolingHealthState.UNKNOWN
+                self._reason = None
+                self._detail = "active envelope is unqualified; electrical failure cannot be classified"
+                self._closed = True
+                return
             self._state = VerificationState.FAILED_ELECTRICAL
             if self._below_active_seen and not self._above_active_seen:
                 self._health = CoolingHealthState.ELECTRICAL_RESPONSE_MISSING
@@ -521,6 +541,12 @@ class VerificationTracker:
 
         self._closed = True
         if self._valid_thermal_seen:
+            if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
+                self._state = VerificationState.UNKNOWN
+                self._health = CoolingHealthState.UNKNOWN
+                self._reason = None
+                self._detail = "thermal envelope is unqualified; failure cannot be classified"
+                return
             self._state = VerificationState.FAILED_THERMAL
             self._health = CoolingHealthState.THERMAL_EFFECTIVENESS_DEGRADED
             self._reason = ReasonCode.THERMAL_EFFECTIVENESS_DEGRADED

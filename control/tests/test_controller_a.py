@@ -1,3 +1,4 @@
+from dataclasses import replace
 import pytest
 from coldguard_control import (
     ControllerAConfig,
@@ -86,9 +87,9 @@ def test_controller_a_basic_transition():
     sample = ControllerASample(now_s=0.0, policy_input=pi)
     decision = replay_controller_a([sample], cfg)[0]
     assert decision.intent is ActuationIntent.ON
-    assert decision.transitioned
+    assert not decision.transitioned
     assert decision.applied_before == CoolingState.OFF
-    assert decision.applied_after == CoolingState.ON
+    assert decision.applied_after == CoolingState.OFF
 
 def test_controller_a_persistence_blocks():
     cfg = ControllerAConfig(
@@ -101,6 +102,27 @@ def test_controller_a_persistence_blocks():
     pi = make_input_with_remote()
     sample = ControllerASample(now_s=0.0, policy_input=pi)
     decision = replay_controller_a([sample], cfg)[0]
-    assert decision.intent is ActuationIntent.HOLD
-    assert decision.persistence_blocked
+    assert decision.intent is ActuationIntent.ON
+    assert not decision.persistence_blocked
     assert not decision.transitioned
+
+
+def test_applied_state_changes_only_after_feedback():
+    cfg = ControllerAConfig(make_basic_config(), 0.0, 0.0, 0.0, "test")
+    initial = make_input_with_remote()
+    feedback = replace(initial, applied_cooling=CoolingState.ON)
+    first, second = replay_controller_a(
+        [ControllerASample(0.0, initial), ControllerASample(1.0, feedback)], cfg
+    )
+    assert first.intent is ActuationIntent.ON
+    assert first.applied_after is CoolingState.OFF
+    assert second.transitioned
+    assert second.applied_after is CoolingState.ON
+
+
+def test_critical_protection_bypasses_persistence_and_dwell():
+    cfg = ControllerAConfig(make_basic_config(), 30.0, 30.0, 30.0, "test")
+    result = replay_controller_a([ControllerASample(0.0, make_input_with_remote())], cfg)[0]
+    assert result.intent is ActuationIntent.ON
+    assert not result.persistence_blocked
+    assert not result.dwell_blocked

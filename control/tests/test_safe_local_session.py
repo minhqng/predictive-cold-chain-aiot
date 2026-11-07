@@ -1,3 +1,4 @@
+from dataclasses import replace
 import pytest
 from coldguard_control import (
     SafeLocalSession,
@@ -81,3 +82,13 @@ def test_safe_local_entry_and_exit():
     assert not step2.active
     assert step2.exited
     assert step2.exit_ready
+
+
+def test_lockout_is_not_rewritten_as_safe_local():
+    session = SafeLocalSession(make_config(), initial_active=True)
+    locked = replace(make_input(make_remote_untrusted()), device_mode=DeviceMode.FAULT_LOCKOUT)
+    step = session.step(locked)
+    assert step.decision.state.value == "FAULT_LOCKOUT"
+    assert not step.active
+    assert not step.exited
+    assert not step.exit_ready

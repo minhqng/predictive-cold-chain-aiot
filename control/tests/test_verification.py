@@ -44,7 +44,7 @@ def test_verification_unqualified_stops_at_unknown():
         thermal_quality=QualityState.UNKNOWN,
     )
     snap1 = tracker.observe(obs1)
-    assert snap1.state == VerificationState.ELECTRICAL_VERIFIED
+    assert snap1.state == VerificationState.UNKNOWN
     # Provide thermal observation achieving drop
     obs2 = VerificationObservation(
         now_s=3.0,
@@ -59,3 +59,29 @@ def test_verification_unqualified_stops_at_unknown():
     # Since envelope is unqualified, state should be UNKNOWN, not VERIFIED
     assert snap2.state == VerificationState.UNKNOWN
     assert snap2.health == CoolingHealthState.UNKNOWN
+
+
+def test_tick_does_not_replay_old_electrical_sample():
+    tracker = VerificationTracker(
+        make_policy(EnvelopeQualification.QUALIFIED),
+        command_id="cmd-tick", action=CoolingState.ON, started_s=0.0,
+    )
+    tracker.observe(VerificationObservation(
+        now_s=0.5, current_a=1.0, current_quality=QualityState.VALID,
+    ))
+    snap = tracker.tick(3.0)
+    assert snap.state is VerificationState.FAILED_ELECTRICAL
+    assert not snap.electrical_response_observed
+
+
+def test_unqualified_failure_stays_unknown():
+    tracker = VerificationTracker(
+        make_policy(), command_id="cmd-candidate", action=CoolingState.ON,
+        started_s=0.0,
+    )
+    tracker.observe(VerificationObservation(
+        now_s=0.5, current_a=1.0, current_quality=QualityState.VALID,
+    ))
+    snap = tracker.tick(3.0)
+    assert snap.state is VerificationState.UNKNOWN
+    assert snap.health is CoolingHealthState.UNKNOWN
