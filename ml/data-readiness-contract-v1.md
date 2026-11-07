@@ -108,7 +108,20 @@ Rules:
 - missing, INVALID and untrusted critical samples are counted distinctly;
 - missing event anchors are `NOT_ESTIMABLE` or blocked;
 - an `UNRESOLVED` threshold is not replaced by zero;
-- numeric defaults in the draft policy are `PROPOSED`, not frozen.
+- numeric defaults in the draft policy are `PROPOSED`, not frozen;
+- `FROZEN` requires recorded `freeze_evidence`; a status string alone is not
+  an approval.
+
+A `PROPOSED` blocking cutoff never silently becomes an approved scientific
+cutoff. A measured dataset evaluated under an unfrozen policy is at most
+`YELLOW`: diagnostic analysis remains allowed, while a frozen-dataset,
+predictive-campaign or benchmark claim is prohibited and the unresolved owner
+and review authority are named. A frozen, evidenced policy may reach `GREEN`.
+
+A synthetic fixture passed with `synthetic_control=True` may exercise the
+GREEN software branch as a contract positive control. It is reported as
+`DATA_ORIGIN = SYNTHETIC_CONTROL_ONLY`, its predictive dataset stays
+`NOT_READY`, and it never certifies measured physical data.
 
 The draft policy lives in `coldguard-w08-completeness-policy-draft-v1` and is
 rendered as `completeness-policy-W08.md`.
@@ -136,6 +149,14 @@ ledger.
 - group by `run_id`; a `pair_id` keeps both arms in one group;
 - repeated views of one physical source are one group;
 - contradictory run identities on one physical source cannot create groups;
+- conflicting eligibility, reason, scenario, controller, pair or hardware
+  values on one physical source exclude the whole group from every partition;
+  every disputed value is retained in the exclusion report and pair lineage is
+  never silently overwritten;
+- source filenames and input ordering never decide scientific eligibility;
+- direct `SplitCandidate` inputs are a trust boundary: `eligible=True` is
+  honoured only with an A-Ledger `VALID` verdict and the deterministic W08
+  eligibility receipt; bare booleans and missing provenance fail closed;
 - P1 = training/fitting, P2 = held-back development validation,
   P3 = future locked test; development = P1 ∪ P2;
 - P3 is **not frozen** and no locked-test manifest is created or inspected;

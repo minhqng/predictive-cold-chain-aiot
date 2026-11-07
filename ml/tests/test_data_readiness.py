@@ -41,7 +41,9 @@ from coldguard_ml.data_readiness import (
     REASON_THRESHOLD_UNRESOLVED,
     SPLIT_NOT_FEASIBLE,
     SPLIT_PROVISIONAL,
+    THRESHOLD_FROZEN,
     THRESHOLD_PROPOSED,
+    THRESHOLD_UNRESOLVED,
     RunManifestLinkage,
     SplitCandidate,
     assess_gate_b,
@@ -54,6 +56,7 @@ from coldguard_ml.data_readiness import (
     render_readiness_report,
     render_split_plan,
     run_validation_csv,
+    split_eligibility_receipt,
     validate_run,
 )
 from coldguard_ml.intake import AdmissionStage
@@ -263,7 +266,14 @@ def _load_and_validate(
     )
 
 
-def _green_suite(tmp_path: Path, *, count: int = 3, rows: int = 12):
+def _green_suite(
+    tmp_path: Path,
+    *,
+    count: int = 3,
+    rows: int = 12,
+    policy=None,
+    synthetic_control: bool = True,
+):
     exports, entries, linkages = [], [], []
     for index in range(1, count + 1):
         run_id = f"CG-S1-A-{index:03d}"
@@ -295,7 +305,13 @@ def _green_suite(tmp_path: Path, *, count: int = 3, rows: int = 12):
             )
         )
         admissions.append(admission)
-    report = build_gate_b_report(validations, admissions, requirement)
+    report = build_gate_b_report(
+        validations,
+        admissions,
+        requirement,
+        policy=policy,
+        synthetic_control=synthetic_control,
+    )
     return report, validations, admissions
 
 
@@ -991,14 +1007,111 @@ def test_non_monotonic_sequence_is_detected(tmp_path):
 # ---------------------------------------------------------------------------
 
 
-def test_true_green_synthetic_contract_fixture_passes(tmp_path):
+def test_synthetic_positive_control_exercises_green_but_never_readiness(tmp_path):
     report, validations, _ = _green_suite(tmp_path)
     assert all(item.eligibility == ELIGIBILITY_ELIGIBLE for item in validations)
     assert report.software_gate.observed_status == "GREEN"
     assert report.physical_gate.observed_status == "GREEN"
-    assert report.predictive_gate.observed_status == "READY"
+    assert "SYNTHETIC_CONTROL_ONLY" in report.physical_gate.reason_codes
+    assert report.physical_gate.allowed_uses == (
+        "software contract positive control only",
+    )
+    assert report.predictive_gate.observed_status == "NOT_READY"
+    assert report.separation["DATA_ORIGIN"] == "SYNTHETIC_CONTROL_ONLY"
+    assert report.data_origin == "SYNTHETIC_CONTROL_ONLY"
     assert report.split_plan.feasibility == SPLIT_PROVISIONAL
     assert report.split_gate.observed_status in ("YELLOW", "GREEN")
+
+
+def test_measured_data_under_proposed_policy_cannot_be_green(tmp_path):
+    report, _, _ = _green_suite(tmp_path, synthetic_control=False)
+    assert report.separation["DATA_ORIGIN"] == "MEASURED_PHYSICAL_DATA"
+    assert report.physical_gate.observed_status == "YELLOW"
+    assert "COMPLETENESS_POLICY_NOT_FROZEN" in report.physical_gate.reason_codes
+    assert report.predictive_gate.observed_status == "NOT_READY"
+    assert "diagnostic QA of structurally valid captures" in report.physical_gate.allowed_uses
+    assert any(
+        "frozen dataset" in use for use in report.physical_gate.prohibited_uses
+    )
+    assert "Member B" in report.physical_gate.next_evidence_required
+    assert any(
+        result.threshold_status == THRESHOLD_PROPOSED
+        for item in report.validations
+        for result in item.completeness
+    )
+
+
+def test_frozen_policy_with_evidence_reaches_green_and_ready(tmp_path):
+    report, _, _ = _green_suite(
+        tmp_path,
+        policy=_frozen_policy(evidence=True),
+        synthetic_control=False,
+    )
+    assert report.physical_gate.observed_status == "GREEN"
+    assert report.predictive_gate.observed_status == "READY"
+    assert report.separation["DATA_ORIGIN"] == "MEASURED_PHYSICAL_DATA"
+
+
+def test_frozen_status_without_evidence_is_yellow(tmp_path):
+    report, _, _ = _green_suite(
+        tmp_path,
+        policy=_frozen_policy(evidence=False),
+        synthetic_control=False,
+    )
+    assert report.physical_gate.observed_status == "YELLOW"
+    assert (
+        "THRESHOLD_FREEZE_EVIDENCE_MISSING"
+        in report.physical_gate.reason_codes
+    )
+    assert report.predictive_gate.observed_status == "NOT_READY"
+
+
+def test_required_timing_alignment_blocks_unresolved_tolerance(tmp_path):
+    export = _write_export(
+        tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
+    )
+    index = _write_index(
+        tmp_path / "index.json",
+        [_entry("CG-S1-A-001", "boot-1")],
+        valid_s1=["CG-S1-A-001"],
+    )
+    capture = load_capture(export, a_run_index=index)
+    admission = evaluate_admission(capture)
+    qa = analyze_capture(capture, admission=admission, config=QAConfig())
+    policy = default_completeness_policy()
+    thresholds = tuple(
+        dataclasses.replace(
+            threshold,
+            status=THRESHOLD_FROZEN,
+            freeze_evidence="owner decision DR-W08-001",
+        )
+        if threshold.dimension in (DIMENSION_WHOLE, DIMENSION_CRITICAL)
+        else threshold
+        for threshold in policy.thresholds
+    )
+    policy = dataclasses.replace(policy, thresholds=thresholds)
+    requirement = default_scenario_requirement(
+        "S1", requires_timing_alignment=True
+    )
+    validation = validate_run(
+        capture,
+        admission=admission,
+        qa=qa,
+        requirement=requirement,
+        policy=policy,
+        manifest_linkage=_linkage(capture),
+    )
+    report = build_gate_b_report(
+        [validation],
+        [admission],
+        requirement,
+        policy=policy,
+        min_independent_runs=1,
+        synthetic_control=False,
+    )
+    assert report.physical_gate.observed_status == "YELLOW"
+    assert "TIMING_TOLERANCE_UNRESOLVED" in report.physical_gate.reason_codes
+    assert report.predictive_gate.observed_status == "NOT_READY"
 
 
 def test_hard_red_cannot_be_overridden_by_green_support(tmp_path):
@@ -1083,6 +1196,8 @@ def test_report_csv_and_manifest_agree(tmp_path):
     assert manifest["physical_gate"]["observed_status"] == "GREEN"
     assert manifest["split_plan"]["feasibility"] == SPLIT_PROVISIONAL
     assert manifest["runs"][0]["eligibility"] == ELIGIBILITY_ELIGIBLE
+    assert manifest["data_origin"] == "SYNTHETIC_CONTROL_ONLY"
+    assert manifest["synthetic_control"] is True
     assert "GATE_B_PHYSICAL_DATA" in report_text
     assert "P1 training ∪ P2 held-back validation" in render_split_plan(
         report.split_plan
@@ -1110,7 +1225,16 @@ def test_real_a_w09_result_remains_scientifically_blocked():
     assert report.split_plan.p1_training == ()
 
 
-def _real_report():
+def test_real_a_invalid_remains_red_even_under_frozen_policy():
+    report, _, _ = _real_report(policy=_frozen_policy(evidence=True))
+    assert report.physical_gate.observed_status == "RED"
+    assert REASON_AUTHORITY_INVALID in report.physical_gate.reason_codes
+    assert report.predictive_gate.observed_status == "NOT_READY"
+    assert report.eligible_runs == ()
+    assert report.split_plan.feasibility == SPLIT_NOT_FEASIBLE
+
+
+def _real_report(*, policy=None):
     capture = load_capture(REAL_A_EXPORT, a_run_index=REAL_A_INDEX)
     admission = evaluate_admission(capture)
     qa = analyze_capture(capture, admission=admission, config=QAConfig())
@@ -1119,12 +1243,14 @@ def _real_report():
         admission=admission,
         qa=qa,
         requirement=default_scenario_requirement("S1"),
+        policy=policy,
         manifest_linkage=None,
     )
     report = build_gate_b_report(
         [validation],
         [admission],
         default_scenario_requirement("S1"),
+        policy=policy,
         w07_evidence={"verdict": "NOT_ESTABLISHED", "qualified_independent_runs": 0},
     )
     return report, [validation], [admission]
@@ -1142,19 +1268,63 @@ def _candidate(
     pair_id: str | None = None,
     eligible: bool = True,
     scenario: str = "S1",
+    controller: str = "OBSERVATIONAL",
+    hardware: str = "CG-HW-001",
+    path: str | None = None,
+    sha: str | None = None,
+    ledger: str | None = None,
+    receipt: str | None | bool = True,
+    reason: str | None = None,
 ):
+    source_path = path or f"{run_id}.json"
+    source_sha = sha or hashlib.sha256(run_id.encode()).hexdigest()
+    ledger_verdict = ledger if ledger is not None else (
+        "VALID" if eligible else "INVALID"
+    )
+    if receipt is True:
+        receipt = split_eligibility_receipt(
+            run_id=run_id,
+            source_sha256=source_sha,
+            a_ledger_verdict=ledger_verdict,
+            eligible=eligible,
+        )
+    elif receipt is False:
+        receipt = None
     return SplitCandidate(
         run_id=run_id,
         scenario_id=scenario,
-        controller_id="OBSERVATIONAL",
+        controller_id=controller,
         physical_source_key=("session", "dev-A", source or run_id),
         pair_id=pair_id,
-        hardware_config_id="CG-HW-001",
+        hardware_config_id=hardware,
         eligible=eligible,
-        reason="ELIGIBLE" if eligible else "INVALID",
-        source_path=f"{run_id}.json",
-        source_sha256=hashlib.sha256(run_id.encode()).hexdigest(),
+        reason=reason or ("ELIGIBLE" if eligible else "INVALID"),
+        source_path=source_path,
+        source_sha256=source_sha,
+        a_ledger_verdict=ledger_verdict,
+        validation_receipt=receipt,
     )
+
+
+def _frozen_policy(*, evidence: bool = True):
+    policy = default_completeness_policy()
+    thresholds = []
+    for threshold in policy.thresholds:
+        status = threshold.status
+        freeze_evidence = threshold.freeze_evidence
+        if threshold.status == THRESHOLD_PROPOSED:
+            status = THRESHOLD_FROZEN
+            freeze_evidence = (
+                "owner decision DR-W08-001" if evidence else None
+            )
+        thresholds.append(
+            dataclasses.replace(
+                threshold,
+                status=status,
+                freeze_evidence=freeze_evidence,
+            )
+        )
+    return dataclasses.replace(policy, thresholds=tuple(thresholds))
 
 
 def test_split_partitions_are_disjoint_and_development_is_union():
@@ -1246,6 +1416,182 @@ def test_synthetic_control_is_flagged_and_never_physical_readiness():
     assert plan.synthetic_control is True
     assert plan.feasibility == SPLIT_PROVISIONAL
     assert plan.p3_status.endswith("NOT_A_LOCKED_TEST")
+
+
+def _assigned(plan):
+    return (
+        set(plan.p1_training)
+        | set(plan.p2_held_back_development_validation)
+        | set(plan.p3_future_locked_planning_candidates)
+    )
+
+
+def test_conflicting_eligibility_never_enters_a_partition():
+    conflict_run = "CG-S1-A-004"
+    views = [
+        _candidate(
+            conflict_run,
+            source="source-4",
+            eligible=True,
+            path="a-eligible.json",
+            sha=hashlib.sha256(b"a").hexdigest(),
+        ),
+        _candidate(
+            conflict_run,
+            source="source-4",
+            eligible=False,
+            reason="A_LEDGER_INVALID",
+            ledger="INVALID",
+            path="z-invalid.json",
+            sha=hashlib.sha256(b"z").hexdigest(),
+        ),
+    ]
+    swapped_paths = [
+        dataclasses.replace(views[0], source_path="z-eligible.json"),
+        dataclasses.replace(views[1], source_path="a-invalid.json"),
+    ]
+    for ordered in (views, list(reversed(views)), swapped_paths):
+        for base in (
+            [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)],
+            [
+                _candidate(f"CG-S1-A-{index:03d}")
+                for index in reversed(range(1, 4))
+            ],
+        ):
+            plan = plan_development_split(base + ordered)
+            assert conflict_run not in _assigned(plan)
+            assert plan.eligible_count == 3
+            excluded = [
+                item
+                for item in plan.excluded
+                if item.get("run_id") == conflict_run
+            ]
+            assert len(excluded) == 2
+            assert all(
+                "CONFLICTING_ELIGIBILITY" in item["reason"]
+                for item in excluded
+            )
+            assert excluded[0]["conflicts"]["eligible"] == [False, True]
+            assert {
+                item["eligible"] for item in excluded
+            } == {False, True}
+
+
+def test_conflicting_pair_lineage_is_retained_and_not_assigned():
+    conflict_run = "CG-S1-A-004"
+    views = [
+        _candidate(
+            conflict_run,
+            source="source-4",
+            pair_id="PAIR-1",
+            path="a.json",
+            sha=hashlib.sha256(b"pair-a").hexdigest(),
+        ),
+        _candidate(
+            conflict_run,
+            source="source-4",
+            pair_id="PAIR-2",
+            path="z.json",
+            sha=hashlib.sha256(b"pair-z").hexdigest(),
+        ),
+    ]
+    plan = plan_development_split(
+        [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)] + views
+    )
+    assert conflict_run not in _assigned(plan)
+    assert plan.pair_lineage == ()
+    excluded = [
+        item for item in plan.excluded if item.get("run_id") == conflict_run
+    ]
+    assert len(excluded) == 2
+    assert excluded[0]["conflicts"]["pair_id"] == ["PAIR-1", "PAIR-2"]
+    assert "CONTRADICTORY_GROUPING_METADATA" in excluded[0]["reason"]
+
+
+def test_conflicting_scenario_and_hardware_metadata_fail_closed():
+    conflict_run = "CG-S1-A-004"
+    fields = {
+        "scenario_id": ("S1", "S2"),
+        "hardware_config_id": ("CG-HW-001", "CG-HW-002"),
+    }
+    for field, values in fields.items():
+        if field == "hardware_config_id":
+            views = [
+                _candidate(conflict_run, source="source-4", hardware=values[0]),
+                _candidate(conflict_run, source="source-4", hardware=values[1]),
+            ]
+        else:
+            views = [
+                _candidate(conflict_run, source="source-4", scenario=values[0]),
+                _candidate(conflict_run, source="source-4", scenario=values[1]),
+            ]
+        plan = plan_development_split(
+            [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)]
+            + views
+        )
+        assert conflict_run not in _assigned(plan)
+        excluded = [
+            item
+            for item in plan.excluded
+            if item.get("run_id") == conflict_run
+        ]
+        assert all(
+            "CONTRADICTORY_GROUPING_METADATA" in item["reason"]
+            for item in excluded
+        )
+        assert set(excluded[0]["conflicts"][field]) == set(values)
+
+
+def test_explicit_a_invalidation_cannot_be_outvoted_by_ledger_claim():
+    conflict_run = "CG-S1-A-004"
+    views = [
+        _candidate(conflict_run, source="source-4", eligible=True, ledger="VALID"),
+        _candidate(conflict_run, source="source-4", eligible=True, ledger="INVALID"),
+    ]
+    plan = plan_development_split(
+        [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)] + views
+    )
+    assert conflict_run not in _assigned(plan)
+    excluded = [
+        item for item in plan.excluded if item.get("run_id") == conflict_run
+    ]
+    assert all(
+        "EXPLICIT_A_INVALIDATION_CANNOT_BE_OUTVOTED" in item["reason"]
+        for item in excluded
+    )
+    assert excluded[0]["a_ledger_verdicts"] == ["INVALID", "VALID"]
+
+
+def test_bare_eligible_boolean_cannot_bypass_validation_gate():
+    candidates = [
+        _candidate(
+            f"CG-S1-A-{index:03d}",
+            receipt=False,
+        )
+        for index in range(1, 4)
+    ]
+    plan = plan_development_split(candidates)
+    assert plan.feasibility == SPLIT_NOT_FEASIBLE
+    assert _assigned(plan) == set()
+    assert all(
+        "SPLIT_ELIGIBILITY_PROVENANCE_MISSING" in item["reason"]
+        for item in plan.excluded
+    )
+
+
+def test_split_is_order_and_filename_independent_for_compatible_sources():
+    candidates = [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 7)]
+    left = plan_development_split(candidates)
+    right = plan_development_split(list(reversed(candidates)))
+    assert left.p1_training == right.p1_training
+    assert (
+        left.p2_held_back_development_validation
+        == right.p2_held_back_development_validation
+    )
+    assert (
+        left.p3_future_locked_planning_candidates
+        == right.p3_future_locked_planning_candidates
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -1389,6 +1735,8 @@ def test_cli_artifact_verifier_detects_tampering(tmp_path):
         validations=validations,
         physical_gate=types.SimpleNamespace(observed_status="RED"),
         split_plan=types.SimpleNamespace(feasibility="NOT_FEASIBLE"),
+        data_origin="MEASURED_PHYSICAL_DATA",
+        synthetic_control=False,
     )
     module = _cli_module()
     assert module._verify_written_artifacts(output, report) == []

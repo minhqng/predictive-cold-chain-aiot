@@ -182,10 +182,12 @@ from .data_readiness import (
     default_completeness_policy,
     default_scenario_requirement,
     plan_development_split,
+    policy_freeze_gaps,
     render_completeness_policy,
     render_readiness_report,
     render_split_plan,
     run_validation_csv,
+    split_eligibility_receipt,
     validate_run,
 )
 from .plant_eda import (
@@ -466,9 +468,11 @@ __all__ = [
     "default_completeness_policy",
     "default_scenario_requirement",
     "plan_development_split",
+    "policy_freeze_gaps",
     "render_completeness_policy",
     "render_readiness_report",
     "render_split_plan",
     "run_validation_csv",
+    "split_eligibility_receipt",
     "validate_run",
 ]

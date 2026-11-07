@@ -25,6 +25,7 @@ Scientific boundaries enforced here:
 from __future__ import annotations
 
 import csv
+import hashlib
 import io
 import json
 import math
@@ -162,9 +163,19 @@ REASON_DUPLICATE_CONFLICT = "DUPLICATE_VIEW_ADMISSION_CONFLICT"
 REASON_SPLIT_INFEASIBLE = "SPLIT_POPULATION_INSUFFICIENT"
 REASON_SPLIT_PAIR_STRADDLE = "PAIR_LINEAGE_CANNOT_BE_SPLIT"
 REASON_SPLIT_PLANNING = "SPLIT_PLAN_IS_PROVISIONAL"
+REASON_SPLIT_GROUP_CONFLICT = "SPLIT_GROUP_CONFLICT_REPORTED"
+REASON_ELIGIBILITY_PROVENANCE_MISSING = "SPLIT_ELIGIBILITY_PROVENANCE_MISSING"
+REASON_COMPLETENESS_NOT_FROZEN = "COMPLETENESS_POLICY_NOT_FROZEN"
+REASON_FREEZE_EVIDENCE_MISSING = "THRESHOLD_FREEZE_EVIDENCE_MISSING"
+REASON_TIMING_TOLERANCE_UNRESOLVED = "TIMING_TOLERANCE_UNRESOLVED"
+REASON_SYNTHETIC_CONTROL = "SYNTHETIC_CONTROL_ONLY"
 REASON_W07_NOT_ESTABLISHED = "W07_PHYSICAL_REPEATABILITY_NOT_ESTABLISHED"
 REASON_SOFTWARE_COMPLETE = "SOFTWARE_VALIDATION_COMPLETED"
 REASON_PERMUTATION = "INPUT_PERMUTATION_INVARIANT"
+
+SPLIT_ELIGIBILITY_RECEIPT_VERSION = "coldguard-w08-split-eligibility-receipt-v1"
+DATA_ORIGIN_MEASURED = "MEASURED_PHYSICAL_DATA"
+DATA_ORIGIN_SYNTHETIC = "SYNTHETIC_CONTROL_ONLY"
 
 
 @dataclass(frozen=True)
@@ -184,6 +195,7 @@ class CompletenessThreshold:
     owner: str
     review_authority: str
     value: float | None
+    freeze_evidence: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -202,6 +214,7 @@ class CompletenessThreshold:
             "owner": self.owner,
             "review_authority": self.review_authority,
             "threshold_value": self.value,
+            "freeze_evidence": self.freeze_evidence,
         }
 
 
@@ -517,6 +530,7 @@ class ScenarioRequirement:
     event_window_s: float
     recovery_horizon_s: float
     require_absolute_time: bool
+    requires_timing_alignment: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -529,6 +543,7 @@ class ScenarioRequirement:
             "event_window_s": self.event_window_s,
             "recovery_horizon_s": self.recovery_horizon_s,
             "require_absolute_time": self.require_absolute_time,
+            "requires_timing_alignment": self.requires_timing_alignment,
         }
 
 
@@ -541,6 +556,7 @@ def default_scenario_requirement(
     baseline_window_s: float = 120.0,
     event_window_s: float = 60.0,
     recovery_horizon_s: float = 900.0,
+    requires_timing_alignment: bool = False,
 ) -> ScenarioRequirement:
     normalized = (scenario_id or "").upper()
     requires_door = normalized.startswith("S2")
@@ -559,6 +575,7 @@ def default_scenario_requirement(
         event_window_s=event_window_s,
         recovery_horizon_s=recovery_horizon_s,
         require_absolute_time=True,
+        requires_timing_alignment=requires_timing_alignment,
     )
 
 
@@ -730,6 +747,8 @@ class SplitCandidate:
     reason: str
     source_path: str
     source_sha256: str
+    a_ledger_verdict: str | None = None
+    validation_receipt: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -743,6 +762,8 @@ class SplitCandidate:
             "reason": self.reason,
             "source_path": self.source_path,
             "source_sha256": self.source_sha256,
+            "a_ledger_verdict": self.a_ledger_verdict,
+            "validation_receipt": self.validation_receipt,
         }
 
 
@@ -805,6 +826,7 @@ class GateBReport:
     separation: dict[str, str]
     w07_evidence: dict[str, Any] | None
     limitations: tuple[str, ...]
+    synthetic_control: bool = False
 
     @property
     def eligible_runs(self) -> tuple[RunValidation, ...]:
@@ -812,6 +834,14 @@ class GateBReport:
             item
             for item in self.validations
             if item.eligibility == ELIGIBILITY_ELIGIBLE
+        )
+
+    @property
+    def data_origin(self) -> str:
+        return (
+            DATA_ORIGIN_SYNTHETIC
+            if self.synthetic_control
+            else DATA_ORIGIN_MEASURED
         )
 
     def to_dict(self) -> dict[str, Any]:
@@ -827,6 +857,8 @@ class GateBReport:
             "split_plan": self.split_plan.to_dict(),
             "runs": [item.to_dict() for item in self.validations],
             "separation": dict(self.separation),
+            "data_origin": self.data_origin,
+            "synthetic_control": self.synthetic_control,
             "w07_evidence": self.w07_evidence,
             "limitations": list(self.limitations),
         }
@@ -2433,15 +2465,77 @@ def _gate(
     )
 
 
+def policy_freeze_gaps(
+    policy: CompletenessPolicy,
+    validations: Sequence[RunValidation],
+    *,
+    require_timing_alignment: bool = False,
+) -> list[dict[str, Any]]:
+    """Named unfrozen policy values that prevent a status from being GREEN.
+
+    A PROPOSED numeric cutoff is a planning candidate, never an approved
+    scientific cutoff. FROZEN status alone is insufficient: the freeze decision
+    must carry evidence. Diagnostic analysis remains possible; a predictive
+    campaign or a frozen dataset claim does not.
+    """
+    dimensions: set[str] = set()
+    for item in validations:
+        for result in item.completeness:
+            if result.status != CHECK_NOT_APPLICABLE:
+                dimensions.add(result.dimension)
+    if require_timing_alignment:
+        dimensions.add(DIMENSION_TIMING)
+    gaps: list[dict[str, Any]] = []
+    for dimension in sorted(dimensions):
+        try:
+            threshold = policy.threshold(dimension)
+        except KeyError:
+            continue
+        if dimension == DIMENSION_TIMING:
+            if not require_timing_alignment:
+                continue
+        elif threshold.blocking_severity != SEVERITY_BLOCKING:
+            continue
+        gap: dict[str, Any] = {
+            "dimension": dimension,
+            "threshold_name": threshold.name,
+            "threshold_value": threshold.value,
+            "threshold_status": threshold.status,
+            "owner": threshold.owner,
+            "review_authority": threshold.review_authority,
+            "freeze_evidence": threshold.freeze_evidence,
+        }
+        if threshold.status == THRESHOLD_PROPOSED:
+            gap["reason"] = REASON_COMPLETENESS_NOT_FROZEN
+            gaps.append(gap)
+        elif threshold.status == THRESHOLD_UNRESOLVED:
+            gap["reason"] = REASON_TIMING_TOLERANCE_UNRESOLVED
+            gaps.append(gap)
+        elif threshold.status == THRESHOLD_FROZEN and not (
+            threshold.freeze_evidence or ""
+        ).strip():
+            gap["reason"] = REASON_FREEZE_EVIDENCE_MISSING
+            gaps.append(gap)
+    return gaps
+
+
 def assess_gate_b(
     validations: Sequence[RunValidation],
     admissions: Sequence[AdmissionResult],
     requirement: ScenarioRequirement,
     *,
+    policy: CompletenessPolicy | None = None,
     min_independent_runs: int = 3,
     w07_evidence: dict[str, Any] | None = None,
+    synthetic_control: bool = False,
 ) -> tuple[GateDecision, GateDecision, GateDecision]:
-    """Aggregate the separately reported W08, Gate B and predictive gates."""
+    """Aggregate the separately reported W08, Gate B and predictive gates.
+
+    ``synthetic_control`` marks a software contract positive control. It may
+    exercise the GREEN physical branch but never certifies a measured physical
+    dataset or a predictive campaign.
+    """
+    policy = policy or default_completeness_policy()
     scenario_runs = [
         item
         for item in validations
@@ -2551,14 +2645,17 @@ def assess_gate_b(
             for item in eligible
             for result in item.completeness
             if result.threshold_status == THRESHOLD_UNRESOLVED
-            and default_completeness_policy()
-            .threshold(result.dimension)
-            .blocking_severity
+            and policy.threshold(result.dimension).blocking_severity
             != SEVERITY_INFO
         ]
         w07_not_established = (
             w07_evidence is not None
             and w07_evidence.get("verdict") == "NOT_ESTABLISHED"
+        )
+        freeze_gaps = policy_freeze_gaps(
+            policy,
+            eligible,
+            require_timing_alignment=requirement.requires_timing_alignment,
         )
         if warnings or unresolved_thresholds or w07_not_established:
             physical_status = VERDICT_YELLOW
@@ -2577,6 +2674,42 @@ def assess_gate_b(
             )
             if w07_not_established:
                 reasons.append(REASON_W07_NOT_ESTABLISHED)
+        elif synthetic_control:
+            physical_status = VERDICT_GREEN
+            severity = SEVERITY_INFO
+            reasons.append(REASON_SYNTHETIC_CONTROL)
+            allowed = ("software contract positive control only",)
+            prohibited = (
+                "any measured physical dataset readiness claim",
+                "predictive campaign or benchmark claim",
+                "locked test outcomes before the W12 freeze",
+            )
+            next_evidence = (
+                "none; a synthetic fixture exercises the software branch and "
+                "never certifies measured physical data"
+            )
+        elif freeze_gaps:
+            physical_status = VERDICT_YELLOW
+            severity = SEVERITY_WARNING
+            reasons.append(REASON_COMPLETENESS_NOT_FROZEN)
+            reasons.extend(gap["reason"] for gap in freeze_gaps)
+            allowed = (
+                "diagnostic QA of structurally valid captures",
+                "limited provisional analysis under the named unfrozen policy",
+            )
+            prohibited = (
+                "a frozen dataset or predictive campaign claim",
+                "serious XGBoost campaign or predictive benchmark claims",
+                "locked test or Gate C evidence",
+            )
+            next_evidence = (
+                "project-lead and review-authority freeze decision recorded as "
+                "threshold freeze evidence for: "
+                + ", ".join(
+                    f"{gap['dimension']} (owner: {gap['owner']})"
+                    for gap in freeze_gaps
+                )
+            )
         else:
             physical_status = VERDICT_GREEN
             severity = SEVERITY_INFO
@@ -2611,14 +2744,18 @@ def assess_gate_b(
 
     predictive_status = (
         VERDICT_READY
-        if physical_status == VERDICT_GREEN
+        if physical_status == VERDICT_GREEN and not synthetic_control
         else VERDICT_NOT_READY
     )
     predictive_reasons = (
         [REASON_PASS]
         if predictive_status == VERDICT_READY
         else [
-            "GATE_B_NOT_GREEN",
+            *(
+                [REASON_SYNTHETIC_CONTROL]
+                if synthetic_control
+                else ["GATE_B_NOT_GREEN"]
+            ),
             *reasons,
         ]
     )
@@ -2635,10 +2772,19 @@ def assess_gate_b(
         next_evidence_required=(
             "none"
             if predictive_status == VERDICT_READY
-            else "a GREEN Gate B physical-data decision for the declared population"
+            else (
+                "no synthetic fixture can certify a predictive dataset; wait "
+                "for a GREEN measured-data Gate B decision"
+                if synthetic_control
+                else "a GREEN Gate B physical-data decision for the declared population"
+            )
         ),
         allowed_uses=("dataset readiness reporting",),
-        prohibited_uses=("model training while NOT_READY",),
+        prohibited_uses=(
+            "any physical dataset readiness claim from a synthetic control"
+            if synthetic_control
+            else "model training while NOT_READY",
+        ),
     )
     return software_gate, physical_gate, predictive_gate
 
@@ -2653,6 +2799,7 @@ def build_gate_b_report(
     min_independent_runs: int = 3,
     w07_evidence: dict[str, Any] | None = None,
     limitations: Sequence[str] = (),
+    synthetic_control: bool = False,
 ) -> GateBReport:
     """Assemble the four separately reported gates and the split plan."""
     policy = policy or default_completeness_policy()
@@ -2660,12 +2807,15 @@ def build_gate_b_report(
         validations,
         admissions,
         requirement,
+        policy=policy,
         min_independent_runs=min_independent_runs,
         w07_evidence=w07_evidence,
+        synthetic_control=synthetic_control,
     )
     if split_plan is None:
         split_plan = plan_development_split(
-            _split_candidates_from_validations(validations)
+            _split_candidates_from_validations(validations),
+            synthetic_control=synthetic_control,
         )
     if split_plan.feasibility == SPLIT_FEASIBLE:
         split_status = VERDICT_GREEN
@@ -2763,11 +2913,18 @@ def build_gate_b_report(
         ),
         "DATASET_READINESS": predictive_gate.observed_status,
         "SPLIT_FEASIBILITY": split_plan.feasibility,
+        "DATA_ORIGIN": (
+            DATA_ORIGIN_SYNTHETIC if synthetic_control else DATA_ORIGIN_MEASURED
+        ),
     }
     default_limitations = [
         "A scientific RED is a successful software result, not a CLI failure.",
         "No locked test manifest is created, inspected or frozen by W08.",
-        "Synthetic controls never enter the physical dataset or the real split.",
+        "Synthetic controls never enter the physical dataset or the real split; "
+        "a synthetic control can exercise the GREEN software branch but never "
+        "certifies a measured physical dataset.",
+        "A PROPOSED completeness cutoff is never treated as a frozen scientific "
+        "cutoff; a measured dataset under unfrozen thresholds is at most YELLOW.",
         "A GREEN W08 software gate does not make the physical data GREEN.",
         "Completeness uses the observed modal cadence; the project has not "
         "frozen a cadence tolerance, so timing adequacy remains a separate "
@@ -2791,7 +2948,34 @@ def build_gate_b_report(
         separation=separation,
         w07_evidence=w07_evidence,
         limitations=tuple(default_limitations) + tuple(limitations),
+        synthetic_control=synthetic_control,
     )
+
+
+def split_eligibility_receipt(
+    *,
+    run_id: str,
+    source_sha256: str,
+    a_ledger_verdict: str | None,
+    eligible: bool,
+) -> str:
+    """Deterministic W08 receipt bound to one validated split observation.
+
+    Direct ``SplitCandidate`` inputs are a trust boundary: the split planner only
+    honours ``eligible=True`` when the A ledger is VALID and this receipt matches
+    the candidate's own identity. Callers must not fabricate receipts; the
+    authoritative producer is the W08 run-validation path.
+    """
+    payload = "\0".join(
+        (
+            SPLIT_ELIGIBILITY_RECEIPT_VERSION,
+            run_id,
+            source_sha256,
+            str(a_ledger_verdict),
+            "ELIGIBLE" if eligible else "INELIGIBLE",
+        )
+    )
+    return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
 
 def _split_candidates_from_validations(
@@ -2799,22 +2983,31 @@ def _split_candidates_from_validations(
 ) -> tuple[SplitCandidate, ...]:
     candidates: list[SplitCandidate] = []
     for item in validations:
+        run_id = item.run_id or "UNRESOLVED_RUN_ID"
+        eligible = item.eligibility == ELIGIBILITY_ELIGIBLE
         candidates.append(
             SplitCandidate(
-                run_id=item.run_id or "UNRESOLVED_RUN_ID",
+                run_id=run_id,
                 scenario_id=item.scenario_id or "UNKNOWN_SCENARIO",
                 controller_id=item.controller_id or "OBSERVATIONAL",
                 physical_source_key=tuple(item.physical_source_key),
                 pair_id=item.pair_id,
                 hardware_config_id=item.hardware_config_id,
-                eligible=item.eligibility == ELIGIBILITY_ELIGIBLE,
+                eligible=eligible,
                 reason=(
                     "ELIGIBLE"
-                    if item.eligibility == ELIGIBILITY_ELIGIBLE
+                    if eligible
                     else ";".join(item.reason_codes)
                 ),
                 source_path=item.source_path,
                 source_sha256=item.source_sha256,
+                a_ledger_verdict=item.a_ledger_verdict,
+                validation_receipt=split_eligibility_receipt(
+                    run_id=run_id,
+                    source_sha256=item.source_sha256,
+                    a_ledger_verdict=item.a_ledger_verdict,
+                    eligible=eligible,
+                ),
             )
         )
     return tuple(candidates)
@@ -2825,10 +3018,63 @@ def _split_candidates_from_validations(
 # ---------------------------------------------------------------------------
 
 
+_SPLIT_VIEW_FIELDS = (
+    "eligible",
+    "reason",
+    "scenario_id",
+    "controller_id",
+    "pair_id",
+    "hardware_config_id",
+)
+
+
+def _eligibility_provenance_ok(candidate: SplitCandidate) -> tuple[bool, str]:
+    """Fail closed unless eligibility is bound to an A-VALID W08 receipt."""
+    if not candidate.eligible:
+        return False, "CANDIDATE_MARKED_INELIGIBLE"
+    if (candidate.a_ledger_verdict or "").upper() != "VALID":
+        return False, "A_LEDGER_NOT_VALID_OR_MISSING"
+    expected = split_eligibility_receipt(
+        run_id=candidate.run_id,
+        source_sha256=candidate.source_sha256,
+        a_ledger_verdict=candidate.a_ledger_verdict,
+        eligible=candidate.eligible,
+    )
+    if candidate.validation_receipt != expected:
+        return False, "VALIDATION_RECEIPT_MISSING_OR_INCONSISTENT"
+    return True, "VALIDATED"
+
+
+def _candidate_exclusion(
+    candidate: SplitCandidate,
+    reason: str,
+    **extra: Any,
+) -> dict[str, Any]:
+    entry: dict[str, Any] = {
+        "source_path": candidate.source_path,
+        "source_sha256": candidate.source_sha256,
+        "run_id": candidate.run_id,
+        "eligible": candidate.eligible,
+        "reason": reason,
+        "scenario_id": candidate.scenario_id,
+        "controller_id": candidate.controller_id,
+        "pair_id": candidate.pair_id,
+        "hardware_config_id": candidate.hardware_config_id,
+        "a_ledger_verdict": candidate.a_ledger_verdict,
+    }
+    entry.update(extra)
+    return entry
+
+
 def _dedupe_candidates(
     candidates: Sequence[SplitCandidate],
-) -> tuple[list[SplitCandidate], list[dict[str, Any]]]:
-    """One group per physical source; contradictory run identities fail closed."""
+) -> tuple[list[SplitCandidate], list[dict[str, Any]], int]:
+    """One group per physical source; every conflicting view fails closed.
+
+    Source filenames and input ordering never decide scientific eligibility.
+    A conflict excludes the whole physical-source group from every partition
+    while retaining each view's disputed values in the exclusion report.
+    """
     grouped: dict[tuple[Any, ...], list[SplitCandidate]] = {}
     for candidate in candidates:
         grouped.setdefault(tuple(candidate.physical_source_key), []).append(
@@ -2836,40 +3082,103 @@ def _dedupe_candidates(
         )
     accepted: list[SplitCandidate] = []
     excluded: list[dict[str, Any]] = []
+    conflict_groups = 0
     for key, items in sorted(grouped.items(), key=lambda item: str(item[0])):
         items = sorted(items, key=lambda item: (item.source_path, item.source_sha256))
         run_ids = sorted({item.run_id for item in items})
         if len(run_ids) > 1:
+            conflict_groups += 1
             excluded.extend(
-                {
-                    "source_path": item.source_path,
-                    "source_sha256": item.source_sha256,
-                    "run_id": item.run_id,
-                    "reason": (
-                        "CONTRADICTORY_RUN_IDENTITIES_ON_ONE_PHYSICAL_SOURCE; "
-                        "one boot session cannot be split into independent "
-                        "groups without reset/certification evidence"
-                    ),
-                }
+                _candidate_exclusion(
+                    item,
+                    "CONTRADICTORY_RUN_IDENTITIES_ON_ONE_PHYSICAL_SOURCE; "
+                    "one boot session cannot be split into independent "
+                    "groups without reset/certification evidence",
+                    run_ids=run_ids,
+                )
                 for item in items
             )
             continue
-        representative = items[0]
-        if len(items) > 1:
+        conflicts: dict[str, list[Any]] = {}
+        for field in _SPLIT_VIEW_FIELDS:
+            values = {getattr(item, field) for item in items}
+            if len(values) > 1:
+                conflicts[field] = sorted(values, key=str)
+        if conflicts:
+            conflict_groups += 1
+            reason = (
+                "CONFLICTING_ELIGIBILITY_ON_ONE_PHYSICAL_SOURCE; explicit "
+                "invalidation cannot be outvoted"
+                if "eligible" in conflicts
+                else "CONTRADICTORY_GROUPING_METADATA_ON_ONE_PHYSICAL_SOURCE; "
+                "pair lineage and grouping identity are retained, not "
+                "overwritten"
+            )
             excluded.extend(
-                {
-                    "source_path": item.source_path,
-                    "source_sha256": item.source_sha256,
-                    "run_id": item.run_id,
-                    "reason": (
-                        "REPEATED_VIEW_OF_ONE_PHYSICAL_SOURCE; one run group "
-                        "only, never an extra independent group"
-                    ),
-                }
-                for item in items[1:]
+                _candidate_exclusion(item, reason, conflicts=conflicts)
+                for item in items
+            )
+            continue
+        ledger_values = sorted(
+            {
+                item.a_ledger_verdict
+                for item in items
+                if item.a_ledger_verdict is not None
+            }
+        )
+        explicit_invalidation = any(
+            str(value).upper() != "VALID" for value in ledger_values
+        )
+        if len(ledger_values) > 1 or (
+            explicit_invalidation and any(item.eligible for item in items)
+        ):
+            conflict_groups += 1
+            excluded.extend(
+                _candidate_exclusion(
+                    item,
+                    "EXPLICIT_A_INVALIDATION_CANNOT_BE_OUTVOTED; contradictory "
+                    "or invalid A ledger evidence on one physical source",
+                    a_ledger_verdicts=ledger_values,
+                )
+                for item in items
+            )
+            continue
+        if not any(item.eligible for item in items):
+            accepted.append(items[0])
+            continue
+        validated = [
+            item for item in items if _eligibility_provenance_ok(item)[0]
+        ]
+        if not validated:
+            conflict_groups += 1
+            provenance_reasons = sorted(
+                {_eligibility_provenance_ok(item)[1] for item in items}
+            )
+            excluded.extend(
+                _candidate_exclusion(
+                    item,
+                    f"{REASON_ELIGIBILITY_PROVENANCE_MISSING}; "
+                    f"{', '.join(provenance_reasons)}",
+                )
+                for item in items
+            )
+            continue
+        representative = sorted(
+            validated, key=lambda item: (item.source_path, item.source_sha256)
+        )[0]
+        repeated = [item for item in items if item is not representative]
+        if repeated:
+            excluded.extend(
+                _candidate_exclusion(
+                    item,
+                    "REPEATED_VIEW_OF_ONE_PHYSICAL_SOURCE; one run group "
+                    "only, never an extra independent group",
+                    used_view=representative.source_path,
+                )
+                for item in repeated
             )
         accepted.append(representative)
-    return accepted, excluded
+    return accepted, excluded, conflict_groups
 
 
 def plan_development_split(
@@ -2881,7 +3190,10 @@ def plan_development_split(
     synthetic_control: bool = False,
 ) -> SplitPlan:
     """Plan a grouped split; never freezes P3 and never emits real IDs when infeasible."""
-    accepted, excluded = _dedupe_candidates(candidates)
+    accepted, excluded, conflict_groups = _dedupe_candidates(candidates)
+    conflict_reason = (
+        (REASON_SPLIT_GROUP_CONFLICT,) if conflict_groups else ()
+    )
     eligible = [item for item in accepted if item.eligible]
     if not eligible:
         return SplitPlan(
@@ -2901,7 +3213,7 @@ def plan_development_split(
             grouping_key="run_id; pair_id groups both arms",
             split_seed=None,
             p3_status=P3_NOT_FROZEN,
-            reasons=(REASON_SPLIT_INFEASIBLE, REASON_POPULATION),
+            reasons=(REASON_SPLIT_INFEASIBLE, REASON_POPULATION) + conflict_reason,
             minimum_evidence=(
                 "at least one A-valid, physically qualified run with a resolved "
                 "run identity, verified hardware/calibration and complete event "
@@ -2936,7 +3248,8 @@ def plan_development_split(
             grouping_key="run_id; pair_id groups both arms",
             split_seed=None,
             p3_status=P3_NOT_FROZEN,
-            reasons=(REASON_SPLIT_INFEASIBLE, REASON_INDEPENDENT_POPULATION),
+            reasons=(REASON_SPLIT_INFEASIBLE, REASON_INDEPENDENT_POPULATION)
+            + conflict_reason,
             minimum_evidence=(
                 f"at least {min_groups_per_partition * 3} independent run/pair "
                 "groups so every partition receives a group",
@@ -2988,7 +3301,7 @@ def plan_development_split(
             grouping_key="run_id; pair_id groups both arms",
             split_seed=seed,
             p3_status=P3_NOT_FROZEN,
-            reasons=(reason, str(exc)),
+            reasons=(reason, str(exc)) + conflict_reason,
             minimum_evidence=(
                 "enough independent run/pair groups for three non-empty "
                 "partitions with intact pair lineage",
@@ -3001,6 +3314,7 @@ def plan_development_split(
         else SPLIT_PROVISIONAL
     )
     reasons = [REASON_SPLIT_PLANNING] if feasibility == SPLIT_PROVISIONAL else []
+    reasons.extend(conflict_reason)
     return SplitPlan(
         feasibility=feasibility,
         planning_shape=(
@@ -3146,16 +3460,18 @@ def render_completeness_policy(policy: CompletenessPolicy) -> str:
         "The policy is derived from physical and event requirements. It does "
         "not assert a universal 99.9% threshold. `PROPOSED` values are planning "
         "candidates and remain provisional until the owner and reviewer freeze "
-        "them. `UNRESOLVED` means the validator cannot evaluate the dimension; "
-        "it is never replaced by zero.",
+        "them. `FROZEN` additionally requires recorded freeze evidence; a "
+        "status string alone is not an approval. `UNRESOLVED` means the "
+        "validator cannot evaluate the dimension; it is never replaced by zero.",
         "",
-        "| Dimension | Threshold | Status | Applicability | Denominator | Equality | Blocking | Owner |",
-        "|---|---|---|---|---|---|---|---|",
+        "| Dimension | Threshold | Status | Freeze evidence | Applicability | Denominator | Equality | Blocking | Owner |",
+        "|---|---|---|---|---|---|---|---|---|",
     ]
     for threshold in policy.thresholds:
         lines.append(
             f"| `{threshold.dimension}` | {_fmt(threshold.value)} | "
-            f"{threshold.status} | {threshold.applicable_scenario} | "
+            f"{threshold.status} | {threshold.freeze_evidence or 'NOT_RECORDED'} | "
+            f"{threshold.applicable_scenario} | "
             f"{threshold.denominator} | {threshold.equality_behavior} | "
             f"{threshold.blocking_severity} | {threshold.owner} |"
         )
@@ -3171,6 +3487,7 @@ def render_completeness_policy(policy: CompletenessPolicy) -> str:
                 f"- Missing/quality semantics: {threshold.missing_semantics}",
                 f"- Source/justification: {threshold.source_justification}",
                 f"- Review authority: {threshold.review_authority}",
+                f"- Freeze evidence: {threshold.freeze_evidence or 'NOT_RECORDED'}",
                 "",
             ]
         )
@@ -3215,9 +3532,21 @@ def render_split_plan(plan: SplitPlan) -> str:
         lines.append("| Run/source | Reason |")
         lines.append("|---|---|")
         for item in plan.excluded:
+            conflict_text = ""
+            if item.get("conflicts"):
+                conflict_text = "; conflicts: " + ", ".join(
+                    f"{field}={values!r}"
+                    for field, values in sorted(item["conflicts"].items())
+                )
+            elif item.get("run_ids"):
+                conflict_text = f"; run_ids={item['run_ids']!r}"
+            elif item.get("a_ledger_verdicts"):
+                conflict_text = (
+                    f"; a_ledger_verdicts={item['a_ledger_verdicts']!r}"
+                )
             lines.append(
                 f"| {item.get('run_id') or item.get('source_path') or 'unknown'} | "
-                f"{item.get('reason')} |"
+                f"{item.get('reason')}{conflict_text} |"
             )
     else:
         lines.append("None recorded.")
@@ -3279,6 +3608,7 @@ def render_readiness_report(
         f"| Generation command | `{generation_command}` |",
         f"| A run index SHA-256 | `{source_index_sha256 or 'NOT_PROVIDED'}` |",
         f"| Completeness policy | `{report.policy.policy_version}` |",
+        f"| Data origin | **`{report.data_origin}`** |",
         "",
         "## 1. Declared purpose",
         "",
@@ -3287,6 +3617,9 @@ def render_readiness_report(
         f"- Event required: {_bool(report.scenario_requirement.requires_door_event)}",
         f"- Absolute event-time claim: "
         f"{_bool(report.scenario_requirement.require_absolute_time)}",
+        f"- Timing-alignment claim required: "
+        f"{_bool(report.scenario_requirement.requires_timing_alignment)}",
+        f"- Synthetic control: {_bool(report.synthetic_control)}",
         "",
         "## 2. Gate decisions",
         "",

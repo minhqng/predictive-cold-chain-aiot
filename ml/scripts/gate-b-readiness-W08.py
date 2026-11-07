@@ -9,6 +9,7 @@ Usage::
         [--a-w07-manifest PATH] [--out DIR] [--min-runs N]
         [--baseline-window-s F] [--event-window-s F] [--recovery-horizon-s F]
         [--require-command-chain] [--require-electrical]
+        [--require-timing-alignment] [--synthetic-control]
         [--split-seed N] [--repository-revision REV]
 
 The CLI consumes the W04 normalized capture model and the W05/W06/W07
@@ -237,6 +238,23 @@ def _build_parser() -> argparse.ArgumentParser:
         help="require qualified PZEM electrical evidence for the declared analysis",
     )
     parser.add_argument(
+        "--require-timing-alignment",
+        action="store_true",
+        help=(
+            "require a frozen cadence tolerance for the declared analysis; an "
+            "UNRESOLVED timing threshold then prevents GREEN"
+        ),
+    )
+    parser.add_argument(
+        "--synthetic-control",
+        action="store_true",
+        help=(
+            "label the inputs as a software-only synthetic positive control; "
+            "GREEN may exercise the software branch but never certifies a "
+            "measured physical dataset"
+        ),
+    )
+    parser.add_argument(
         "--split-seed",
         type=int,
         default=0,
@@ -292,6 +310,11 @@ def _load_policy(path: Path) -> CompletenessPolicy:
                         if "value" in item
                         else base.value
                     ),
+                    freeze_evidence=(
+                        None
+                        if item.get("freeze_evidence") is None
+                        else str(item["freeze_evidence"])
+                    ),
                 )
             )
         covered = {threshold.dimension for threshold in thresholds}
@@ -338,6 +361,11 @@ def _load_policy(path: Path) -> CompletenessPolicy:
                     override["value"]
                     if "value" in override
                     else threshold.value
+                ),
+                freeze_evidence=(
+                    None
+                    if override.get("freeze_evidence") is None
+                    else str(override["freeze_evidence"])
                 ),
             )
         )
@@ -472,6 +500,10 @@ def _verify_written_artifacts(output_dir: Path, report: Any) -> list[str]:
         != report.split_plan.feasibility
     ):
         problems.append("manifest split feasibility differs from the report")
+    if manifest.get("data_origin") != report.data_origin:
+        problems.append("manifest data origin differs from the report")
+    if bool(manifest.get("synthetic_control")) != report.synthetic_control:
+        problems.append("manifest synthetic-control provenance differs")
     return problems
 
 
@@ -511,6 +543,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         baseline_window_s=arguments.baseline_window_s,
         event_window_s=arguments.event_window_s,
         recovery_horizon_s=arguments.recovery_horizon_s,
+        requires_timing_alignment=arguments.require_timing_alignment,
     )
     validations = []
     admissions = []
@@ -554,7 +587,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             limitations=(
                 "The A W09 export and validity index were consumed read-only.",
                 "No run manifest is fabricated; missing linkage is reported.",
+                (
+                    "Inputs are declared synthetic software controls, not "
+                    "measured physical data."
+                    if arguments.synthetic_control
+                    else "Inputs are treated as measured physical data."
+                ),
             ),
+            synthetic_control=arguments.synthetic_control,
         )
     except Exception as exc:  # pragma: no cover - defensive software boundary
         print(f"ANALYSIS FAILED: {exc}", file=sys.stderr)
@@ -607,6 +647,10 @@ def main(argv: Sequence[str] | None = None) -> int:
         command_parts.append("--require-command-chain")
     if arguments.require_electrical:
         command_parts.append("--require-electrical")
+    if arguments.require_timing_alignment:
+        command_parts.append("--require-timing-alignment")
+    if arguments.synthetic_control:
+        command_parts.append("--synthetic-control")
     generation_command = " ".join(command_parts)
 
     report_path = output_dir / "gate-b-readiness-W08.md"
