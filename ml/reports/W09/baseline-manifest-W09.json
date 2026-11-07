@@ -5,7 +5,7 @@
     "status": "NOT_ESTIMABLE",
     "synthetic_latency_allowed": false
   },
-  "analysis_code_sha256": "8948732f50c6c74b2dc9f3b988204183626668b405c7dfb411baf610b22478cf",
+  "analysis_code_sha256": "172c9e18f39eebe545478907ab85d0c2c194880298e25e11147fd24a304ab353",
   "artifact_rows": {
     "baseline-events-W09.csv": 14,
     "false-warning-summary-W09.csv": 4
@@ -13,7 +13,7 @@
   "artifact_sha256": {
     "baseline-comparison-W09.svg": "63071abc1454cbca99286e11e77276275244c9f278cddccd7f15c0ace4ab2c10",
     "baseline-events-W09.csv": "8791a1893e87d4d576b32910c5181cd48889f7cd53aea2c60082d113eff96534",
-    "baseline-report.md": "81c3c444a58767506b496ccd8d80a895edf150c56f7ac11a7bacc647b5967670",
+    "baseline-report.md": "947b0fe5b2b97a98010eedd3e111af6effdff5f78df1f7dd01c9f445cf65df6c",
     "false-warning-summary-W09.csv": "fd375469a8b9a8cd9178eea02aef4ffb062aac95a59be3bfe46506420348532f"
   },
   "authoritative_result": "PARAMETERS_NOT_FROZEN",
@@ -172,6 +172,8 @@
           "false_warning_episodes_per_eligible_run": null,
           "intervened_event_count": 0,
           "missed_critical_events": 0,
+          "provenance_mismatch_episode_count": 0,
+          "provenance_mismatch_event_count": 0,
           "run_support": 0,
           "true_matched_warning_episodes": 2,
           "undefined_reasons": [
@@ -455,6 +457,8 @@
           "false_warning_episodes_per_eligible_run": null,
           "intervened_event_count": 0,
           "missed_critical_events": 0,
+          "provenance_mismatch_episode_count": 0,
+          "provenance_mismatch_event_count": 0,
           "run_support": 0,
           "true_matched_warning_episodes": 2,
           "undefined_reasons": [
@@ -665,7 +669,7 @@
     }
   ],
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision c380bfece1edbabc629069cf80cd6205d602a38e",
+  "generation_command": "python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 22f09009a00a68d35fc8e070913223de248d2a6c",
   "layer_version": "coldguard-w09-deterministic-baselines-v1",
   "limitations": [
     "A baseline criterion detection is not an actuator command.",
@@ -677,7 +681,7 @@
   ],
   "locked_test_access": "NONE",
   "parameters": null,
-  "repository_revision": "c380bfece1edbabc629069cf80cd6205d602a38e",
+  "repository_revision": "22f09009a00a68d35fc8e070913223de248d2a6c",
   "schema": "coldguard-w09-baseline-manifest-v1",
   "sensitivity": {
     "association": {
