@@ -1,0 +1,60 @@
+{
+  "schema": "coldguard-w09-baseline-parameters-v1",
+  "parameter_status": "SYNTHETIC_ILLUSTRATIVE",
+  "parameter_source": "software-only illustrative values for the W09 diagnostic sensitivity replay; no physical authority",
+  "run_id": null,
+  "scenario_id": "S1",
+  "time_domain": "BOOT_SCOPED_UPTIME",
+  "representation": {
+    "name": "MEAN_T1_T3_T4",
+    "mode": "CHAMBER_AIR_MEAN",
+    "slots": ["t1", "t3", "t4"],
+    "unit": "degC",
+    "source": "observed rig role map; T2 hot side excluded",
+    "freeze_status": "SYNTHETIC_ILLUSTRATIVE"
+  },
+  "quality": {
+    "accepted_row_quality": ["VALID"],
+    "accepted_probe_status": ["OK", "NONE"],
+    "max_probe_age_s": 5.0
+  },
+  "max_continuity_gap_s": 10.0,
+  "b0": {
+    "threshold_c": 25.0,
+    "operator": "GE",
+    "threshold_source": "software-only illustrative sensitivity value",
+    "threshold_status": "SYNTHETIC_ILLUSTRATIVE"
+  },
+  "b1": {
+    "upper_on_c": 26.0,
+    "lower_off_c": 23.0,
+    "initial_state": "OFF",
+    "initial_state_source": "illustrative sensitivity initial state; not a device observation",
+    "upper_lower_source": "software-only illustrative sensitivity values",
+    "freeze_status": "SYNTHETIC_ILLUSTRATIVE",
+    "policy_version": "synthetic-w09-sensitivity-v1"
+  },
+  "episode": {
+    "policy_version": "synthetic-w09-episode-v1",
+    "min_persistence_s": 0.0,
+    "bridge_gap_s": 2.0,
+    "bridge_unknown_gaps": false,
+    "status": "SYNTHETIC_ILLUSTRATIVE",
+    "source": "illustrative sensitivity policy"
+  },
+  "association": {
+    "policy_version": "synthetic-w09-association-v1",
+    "pre_window_s": 30.0,
+    "post_window_s": 30.0,
+    "require_trusted_events": true,
+    "allow_censored_events": false,
+    "status": "SYNTHETIC_ILLUSTRATIVE",
+    "source": "illustrative sensitivity policy"
+  },
+  "chatter": {
+    "max_toggles": 4,
+    "window_s": 30.0,
+    "status": "SYNTHETIC_ILLUSTRATIVE",
+    "source": "illustrative sensitivity diagnostic rule"
+  }
+}
