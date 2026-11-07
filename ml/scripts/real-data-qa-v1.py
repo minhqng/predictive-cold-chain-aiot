@@ -1707,7 +1707,7 @@ def _render_markdown(
                 "",
             ]
         )
-    return "\n".join(lines) + "\n"
+    return "\n".join(lines).rstrip("\n") + "\n"
 
 
 def _render_html(
