@@ -16,7 +16,10 @@ legal; W02 makes the data-side rules executable:
 * ``evaluation_contract`` — EWT/AIW interfaces and the frozen metric
   hierarchy (B-W04-02 / B-W04-03 / B-W04-04);
 * ``real_data_qa`` — diagnostic sampling/channel QA and deterministic
-  physical-state plots over W04 captures (B-W05-01 … B-W05-04).
+  physical-state plots over W04 captures (B-W05-01 … B-W05-04);
+* ``timing_alignment`` — provenance-aware event alignment, clock/sequence
+  diagnostics, bounded response helpers and duplicate-event handling
+  (B-W06-01 … B-W06-04).
 
 No model fitting, feature registry, or score computation exists yet.
 """
@@ -121,6 +124,34 @@ from .real_data_qa import (
     qa_manifest,
     render_physical_state_svg,
     summarize_qa_suite,
+)
+from .timing_alignment import (
+    DEFAULT_ELECTRICAL_POLICY,
+    DEFAULT_THERMAL_POLICY,
+    DedupResult,
+    DomainAudit,
+    OrderedTimeline,
+    ProtocolRelation,
+    ResponsePolicy,
+    ResponseResult,
+    TimelineEvent,
+    TimingAudit,
+    ack_to_applied,
+    analyze_response,
+    audit_timeline,
+    command_to_ack,
+    command_to_response,
+    deduplicate_events,
+    event_counts,
+    event_manifest,
+    event_timeline_csv,
+    events_from_capture,
+    load_a_command_events,
+    load_event_fixture,
+    order_timeline,
+    partial_order,
+    response_summary_csv,
+    source_contract_ledger,
 )
 from .observations import (
     Observation,
@@ -301,4 +332,31 @@ __all__ = [
     "channel_summary_csv",
     "qa_manifest",
     "render_physical_state_svg",
+    # timing alignment (B-W06-01 … B-W06-04)
+    "TimelineEvent",
+    "OrderedTimeline",
+    "ProtocolRelation",
+    "DomainAudit",
+    "TimingAudit",
+    "DedupResult",
+    "ResponsePolicy",
+    "ResponseResult",
+    "DEFAULT_ELECTRICAL_POLICY",
+    "DEFAULT_THERMAL_POLICY",
+    "events_from_capture",
+    "load_a_command_events",
+    "load_event_fixture",
+    "order_timeline",
+    "partial_order",
+    "audit_timeline",
+    "deduplicate_events",
+    "analyze_response",
+    "command_to_ack",
+    "ack_to_applied",
+    "command_to_response",
+    "event_counts",
+    "event_timeline_csv",
+    "response_summary_csv",
+    "source_contract_ledger",
+    "event_manifest",
 ]
