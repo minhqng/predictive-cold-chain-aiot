@@ -129,12 +129,9 @@ class AckStatus(str, Enum):
 
 
 class PhysicalVerificationState(str, Enum):
-    """Independent physical-response verification (05D section 13).
+    """Independent physical-response verification state, separate from ACK.
 
-    This vocabulary is deliberately separate from :class:`AckStatus`: an ACK
-    only proves that the device handled a command according to protocol/local
-    validation. It never proves current flowed or the chamber cooled
-    (Doc 02 section 32.2; 05D sections 12 and 60.7).
+    VERIFIED requires qualified physical evidence; an ACK alone is insufficient.
     """
 
     NOT_REQUIRED = "NOT_REQUIRED"
@@ -145,6 +142,39 @@ class PhysicalVerificationState(str, Enum):
     FAILED_ELECTRICAL = "FAILED_ELECTRICAL"
     FAILED_THERMAL = "FAILED_THERMAL"
     UNKNOWN = "UNKNOWN"
+
+
+VerificationState = PhysicalVerificationState
+
+
+class CoolingHealthState(str, Enum):
+    """Cooling-health derived states (Doc 01, Doc 02 section 36).
+
+    The state classifies the observable response only. It never asserts a
+    component-level root cause (05D section 15).
+    """
+
+    HEALTHY_RESPONSE = "HEALTHY_RESPONSE"
+    ELECTRICAL_RESPONSE_MISSING = "ELECTRICAL_RESPONSE_MISSING"
+    THERMAL_EFFECTIVENESS_DEGRADED = "THERMAL_EFFECTIVENESS_DEGRADED"
+    CONTROL_ELECTRICAL_ANOMALY = "CONTROL_ELECTRICAL_ANOMALY"
+    UNKNOWN = "UNKNOWN"
+
+
+class EnvelopeQualification(str, Enum):
+    """Provenance status of a verification envelope.
+
+    ``QUALIFIED`` means the envelope is frozen from an approved characterization
+    source. ``CANDIDATE_UNQUALIFIED`` means the numbers are observations that
+    have not been accepted as evidence (for example Member A's W08/W09
+    electrical status tokens are empty). ``UNRESOLVED`` means no envelope is
+    available yet.
+    """
+
+    QUALIFIED = "QUALIFIED"
+    CANDIDATE_UNQUALIFIED = "CANDIDATE_UNQUALIFIED"
+    UNRESOLVED = "UNRESOLVED"
+
 
 
 class FailureDisposition(str, Enum):

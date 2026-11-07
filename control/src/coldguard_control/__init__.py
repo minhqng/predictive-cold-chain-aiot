@@ -70,7 +70,25 @@ from .types import (
     PhysicalVerificationState,
     PolicyState,
     QualityState,
+    CoolingHealthState,
     ReasonCode,
+    EnvelopeQualification,
+)
+# New modules
+from .controller_a import (
+    ControllerAConfig,
+    ControllerASample,
+    ControllerADecision,
+    ControllerA,
+    replay_controller_a,
+)
+from .safe_local import SafeLocalSession, SafeLocalStep
+from .verification import (
+    VerificationPolicy,
+    VerificationObservation,
+    VerificationSnapshot,
+    VerificationTracker,
+    start_verification,
 )
 
 __version__ = "0.1.0"
@@ -108,6 +126,8 @@ __all__ = [
     "QualityInputError",
     "QualityState",
     "ReasonCode",
+    "EnvelopeQualification",
+    "CoolingHealthState",
     "RemotePathView",
     "ThermalView",
     "UnknownFailureError",
@@ -119,4 +139,16 @@ __all__ = [
     "failures_with_disposition",
     "safe_local_exit_status",
     "validate_command",
+    "ControllerAConfig",
+    "ControllerASample",
+    "ControllerADecision",
+    "ControllerA",
+    "replay_controller_a",
+    "SafeLocalSession",
+    "SafeLocalStep",
+    "VerificationPolicy",
+    "VerificationObservation",
+    "VerificationSnapshot",
+    "VerificationTracker",
+    "start_verification",
 ]
