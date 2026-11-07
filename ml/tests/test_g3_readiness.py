@@ -112,6 +112,56 @@ def test_every_row_carries_required_evidence_fields(report):
         }
 
 
+def test_approval_is_a_hard_blocker(report):
+    assert "G3-TEAM-APPROVAL" in report.decision.hard_blockers
+
+
+def test_missing_w11_binding_is_refused(tmp_path):
+    w11 = _json(W11)
+    w11.pop("w08_binding")
+    with pytest.raises(GateReadinessError, match="missing provenance"):
+        build_gate_g3_readiness(
+            repo_root=REPO,
+            w11_manifest=w11,
+            w08_manifest=_json(W08),
+            w09_manifest=_json(W09),
+            w10_manifest=_json(W10),
+            w11_manifest_path=W11,
+            w08_manifest_path=W08,
+            w09_manifest_path=W09,
+            w10_manifest_path=W10,
+        )
+
+
+def test_failing_leakage_probe_changes_leakage_status():
+    w11 = _json(W11)
+    w11["leakage_audit"]["probes"][0]["status"] = "FAIL"
+    report = build_gate_g3_readiness(
+        repo_root=REPO,
+        w11_manifest=w11,
+        w08_manifest=_json(W08),
+        w09_manifest=_json(W09),
+        w10_manifest=_json(W10),
+        w11_manifest_path=W11,
+        w08_manifest_path=W08,
+        w09_manifest_path=W09,
+        w10_manifest_path=W10,
+    )
+    row = next(
+        item for item in report.rows if item.requirement_id == "G3-B-LEAKAGE"
+    )
+    assert row.readiness_status == FAIL_VERIFIED
+    assert "leakage audit failures" in row.blocking_reason
+
+
+def test_gate_ap_values_come_from_w11_rows(report):
+    row = next(
+        item for item in report.rows if item.requirement_id == "G3-B-XGB-BENCHMARK"
+    )
+    assert "B0_THRESHOLD=" in row.observed_result
+    assert "XGBOOST_V1_UNWEIGHTED=" in row.observed_result
+
+
 def test_source_bundle_mismatch_is_refused(tmp_path):
     w11 = _json(W11)
     w11["w08_binding"]["sha256"] = "0" * 64

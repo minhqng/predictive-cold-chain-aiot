@@ -201,7 +201,12 @@ def _first_episode_onset() -> tuple[float, str]:
     ).episodes
     if len(episodes) < 2:
         raise ValueError("synthetic first-onset case must yield two episodes")
-    return episodes[0].start_s, policy.policy_version
+    definition = (
+        f"sustained warning episode with min_persistence_s="
+        f"{policy.min_persistence_s:g}, bridge_gap_s={policy.bridge_gap_s:g} "
+        f"({policy.policy_version})"
+    )
+    return episodes[0].start_s, definition
 
 
 def _case(**kwargs: Any) -> TimingCaseResult:

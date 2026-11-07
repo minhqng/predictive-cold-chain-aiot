@@ -452,6 +452,24 @@ def _validate_fold_structure(
     )
     for fold_id, fold in folds.items():
         _require(
+            test_runs.isdisjoint(set(fold.get("train_run_ids", ()))),
+            f"fold {fold_id!r} uses a locked-test run in training",
+        )
+    for row in comparison_rows:
+        fold = folds.get(row["fold_id"])
+        _require(fold is not None, f"comparison row references unknown fold {row['fold_id']!r}")
+        _require(
+            _split_list(row["validation_run_ids"])
+            == tuple(fold.get("validation_run_ids", ())),
+            f"{row['method']}/{row['fold_id']}: validation runs disagree with the manifest",
+        )
+        _require(
+            _split_list(row["run_groups"])
+            == tuple(fold.get("validation_group_ids", ())),
+            f"{row['method']}/{row['fold_id']}: run groups disagree with the manifest",
+        )
+    for fold_id, fold in folds.items():
+        _require(
             set(fold.get("train_run_ids", ())).isdisjoint(
                 set(fold.get("validation_run_ids", ()))
             ),
@@ -544,6 +562,39 @@ def _validate_event_reconciliation(
     fold_by_pair = {
         (row["fold_id"], row["strategy"]): row for row in fold_rows
     }
+    exposure_by_fold: dict[str, tuple[float | None, float | None, bool | None]] = {}
+    for row in comparison_rows:
+        episodes = _finite_or_none(row["warning_episode_count"])
+        matched = _finite_or_none(row["matched_warning_episodes"])
+        unmatched = _finite_or_none(row["unmatched_warnings"])
+        eligible = _finite_or_none(row["eligible_critical_event_count"])
+        missed = _finite_or_none(row["missed_critical_events"])
+        if episodes is not None and matched is not None and unmatched is not None:
+            _require(
+                episodes == matched + unmatched,
+                f"{row['method']}/{row['fold_id']}: episode count != matched + unmatched",
+            )
+        if eligible is not None and matched is not None and missed is not None:
+            _require(
+                matched + missed == eligible,
+                f"{row['method']}/{row['fold_id']}: matched + missed != eligible events",
+            )
+            _require(
+                matched <= eligible,
+                f"{row['method']}/{row['fold_id']}: matched exceeds eligible events",
+            )
+        exposure = (
+            _finite_or_none(row["trusted_exposure_s"]),
+            _finite_or_none(row["untrusted_exposure_s"]),
+            _as_bool(row["coverage_trustworthy"]),
+        )
+        if row["fold_id"] in exposure_by_fold:
+            _require(
+                exposure == exposure_by_fold[row["fold_id"]],
+                f"{row['method']}/{row['fold_id']}: trusted exposure differs across methods",
+            )
+        else:
+            exposure_by_fold[row["fold_id"]] = exposure
     for row in comparison_rows:
         method = row["method"]
         if not method.startswith("XGBOOST_V1_"):
@@ -959,7 +1010,7 @@ def synthesize_grouped_metrics(bundle: W11Bundle) -> GroupedSynthesis:
         "Controller A or any baseline.",
     )
     source_identities = {
-        "w11_reports_dir": str(bundle.reports_dir),
+        "w11_reports_dir": bundle.reports_dir.name,
         "w11_manifest_sha256": bundle.manifest_file_sha256,
         "w11_analysis_code_sha256": bundle.manifest.get("analysis_code_sha256"),
         "w11_repository_revision": bundle.manifest.get("repository_revision"),

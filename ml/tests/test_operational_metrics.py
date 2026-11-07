@@ -95,6 +95,54 @@ def test_zero_trusted_exposure_keeps_hour_rate_undefined():
     assert "FALSE_WARNING_EPISODES_PER_HOUR_UNDEFINED" in row.undefined_reasons
 
 
+def test_nonzero_unmatched_and_missed_paths_are_exercised():
+    bundle = load_w11_bundle(
+        W11, registry_path=REGISTRY, config_path=CONFIG
+    )
+    rows = [copy.deepcopy(dict(row)) for row in bundle.comparison_rows]
+    target = next(
+        row
+        for row in rows
+        if row["method"] == "B0_THRESHOLD" and row["fold_id"] == "F1"
+    )
+    target["warning_episode_count"] = "5"
+    target["matched_warning_episodes"] = "0"
+    target["unmatched_warnings"] = "5"
+    target["eligible_critical_event_count"] = "2"
+    target["missed_critical_events"] = "2"
+    target["event_precision"] = "0"
+    target["event_recall"] = "0"
+    target["false_warning_episodes_per_run"] = "2.5"
+    target["false_warning_episodes_per_hour"] = "37.5"
+    fake = dataclasses.replace(bundle, comparison_rows=tuple(rows))
+    report = build_operational_report(fake)
+    row = next(
+        item
+        for item in report.synthetic_rows
+        if item.method == "B0_THRESHOLD" and item.fold_id == "F1"
+    )
+    assert row.warning_episodes == 5
+    assert row.unmatched_warning_episodes == 5
+    assert row.missed_critical_events == 2
+    assert row.event_precision == 0.0
+    assert row.event_recall == 0.0
+    assert row.false_warning_episodes_per_run == 2.5
+    assert row.false_warning_episodes_per_hour == 37.5
+
+
+def test_eligible_real_runs_force_reassessment():
+    from coldguard_ml.operational_metrics import OperationalMetricsError
+
+    bundle = load_w11_bundle(
+        W11, registry_path=REGISTRY, config_path=CONFIG
+    )
+    manifest = copy.deepcopy(dict(bundle.manifest))
+    manifest["real_development"]["ELIGIBLE_RUNS"] = 1
+    fake = dataclasses.replace(bundle, manifest=manifest)
+    with pytest.raises(OperationalMetricsError, match="reassess operational metrics"):
+        build_operational_report(fake)
+
+
 def test_real_operational_metrics_stay_not_estimable(report):
     assert report.real_status["eligible_runs"] == 0
     assert report.real_status["REAL_FALSE_WARNING_BURDEN"] == REAL_NOT_ESTIMABLE

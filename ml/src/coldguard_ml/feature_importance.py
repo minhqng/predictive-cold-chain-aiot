@@ -225,6 +225,26 @@ def compute_feature_importance(
         min_train_groups=config.cv.min_train_groups,
         min_validation_groups=config.cv.min_validation_groups,
     )
+    recorded_folds = {
+        str(fold["fold_id"]): fold
+        for fold in bundle.fold_manifest.get("folds", ())
+    }
+    if set(recorded_folds) != {fold.fold_id for fold in cv.folds}:
+        raise FeatureImportanceError(
+            "recomputed folds do not match the W11 fold manifest"
+        )
+    for fold in cv.folds:
+        record = recorded_folds[fold.fold_id]
+        if (
+            tuple(fold.validation_runs) != tuple(record.get("validation_run_ids", ()))
+            or tuple(fold.train_runs) != tuple(record.get("train_run_ids", ()))
+            or tuple(fold.validation_groups)
+            != tuple(record.get("validation_group_ids", ()))
+            or tuple(fold.train_groups) != tuple(record.get("train_group_ids", ()))
+        ):
+            raise FeatureImportanceError(
+                f"fold {fold.fold_id!r} membership does not match the W11 manifest"
+            )
     test_runs = set(fixture.split.test_runs)
     fold_run_ids = {run_id for fold in cv.folds for run_id in fold.validation_runs}
     if test_runs & fold_run_ids:
