@@ -4,9 +4,9 @@ Report schema: `coldguard-w09-baseline-report-v1` · layer `coldguard-w09-determ
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `172c9e18f39eebe545478907ab85d0c2c194880298e25e11147fd24a304ab353` |
-| Repository revision | `22f09009a00a68d35fc8e070913223de248d2a6c` |
-| Generation command | `python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 22f09009a00a68d35fc8e070913223de248d2a6c` |
+| Analysis code SHA-256 | `e13b07f6f45defdc242af9b2716421b7756ac56e495e6ad63073cae82b3c2685` |
+| Repository revision | `01b004696d301c41ff4b09dd341a25343054c2f7` |
+| Generation command | `python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 01b004696d301c41ff4b09dd341a25343054c2f7` |
 | Source | `evidence/A/W09/exports/CG-S1-H8C-600S.json` |
 | Source SHA-256 | `f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
@@ -104,7 +104,7 @@ The 957 measured rows are not 957 independent exposure units. A zero event count
 | `SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY` | B0_THRESHOLD | 0 | 2 | 2 | 0 | 0 | 1.000000 | 1.000000 |
 | `SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY` | B1_HYSTERESIS | 0 | 2 | 2 | 0 | 0 | 1.000000 | 1.000000 |
 
-Zero denominators stay undefined. Unmatched episodes are false warning burden only when the run is eligible and fully observed. Matching is a retrospective offline annotation; it is not an online causal warning stream. W09 contains no predictive action stream, so non-intervention is an explicit assumption rather than a measured closed-loop result. Sensitivity precision/recall rows are software-only demonstrations and are not scientific metrics.
+Zero denominators stay undefined. Unmatched episodes are false warning burden only when the run is eligible and fully observed. Every evaluation also records `provenance_mismatch_event_count`/`provenance_mismatch_episode_count`; a nonzero value means foreign run/source evidence was retained but excluded, and the affected S1 outcome is undefined rather than a clean zero. Matching is a retrospective offline annotation; it is not an online causal warning stream. W09 contains no predictive action stream, so non-intervention is an explicit assumption rather than a measured closed-loop result. Sensitivity precision/recall rows are software-only demonstrations and are not scientific metrics.
 
 ## 9. Frozen versus provisional parameters
 
