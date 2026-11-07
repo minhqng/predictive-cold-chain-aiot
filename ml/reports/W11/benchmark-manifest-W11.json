@@ -20,7 +20,7 @@
       "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
     },
     "xgb-v1-report.md": {
-      "sha256": "3f4e6086e3ed692f86bdd2a85ef845855b43465907f853f4150c2cc4c6b3348f"
+      "sha256": "7a020fca5c40eae02ce6c7e7a55c00cff599980b41a86d3a7af46c452a513702"
     }
   },
   "baseline_comparison": [
@@ -2408,7 +2408,7 @@
     }
   ],
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/xgb-benchmark-W11.py --mode synthetic-grouped-cv --out reports/W11 --repository-revision be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+  "generation_command": "python scripts/xgb-benchmark-W11.py --mode synthetic-grouped-cv --out reports/W11 --repository-revision c6b28678430ab575902a09be4b32bc327c72afcb",
   "label": {
     "frozen_at": null,
     "horizon_s": 60.0,
@@ -3045,7 +3045,7 @@
     "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
   ],
   "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
-  "repository_revision": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+  "repository_revision": "c6b28678430ab575902a09be4b32bc327c72afcb",
   "schema": "coldguard-w11-benchmark-manifest-v1",
   "scientific_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
   "scientific_verdicts": {
