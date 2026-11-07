@@ -296,6 +296,19 @@ class EvidenceTests(unittest.TestCase):
         self.assertNotIn("\\", cleaned)
         self.assertNotIn(":", cleaned)
 
+    def test_update_measurements_confined_to_measurements(self):
+        # Legitimate update of a saved measurement works.
+        rec = self.store.save_measurements("A-W02-06", {"x": 1})
+        self.store.update_measurements(rec, {"x": 2})
+        # A crafted record must not clobber canonical results or the session.
+        result_path = self.store.results_dir / "A-W02-06.json"
+        result_path.write_text('{"outcome": "PASS"}', encoding="utf-8")
+        before = result_path.read_bytes()
+        for bad in ("results/A-W02-06.json", "session.json", "."):
+            with self.assertRaises(evidence.EvidenceError, msg=f"stored={bad!r}"):
+                self.store.update_measurements({"stored": bad}, {"x": 3})
+        self.assertEqual(result_path.read_bytes(), before)
+
 
 if __name__ == "__main__":
     unittest.main()
