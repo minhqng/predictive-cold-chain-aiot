@@ -170,6 +170,21 @@ class Trajectory:
             raise FeaturePipelineError("trajectory boot identity is required")
         if not self.source_sha256.strip():
             raise FeaturePipelineError("trajectory source hash is required")
+        if self.clock_domain not in (
+            TIME_DOMAIN_ABSOLUTE_UTC,
+            TIME_DOMAIN_BOOT_SCOPED,
+        ):
+            raise FeaturePipelineError(
+                f"unknown clock domain {self.clock_domain!r}"
+            )
+        if self.clock_domain == TIME_DOMAIN_ABSOLUTE_UTC and not self.origin_utc:
+            raise FeaturePipelineError(
+                "an absolute-time trajectory requires an origin"
+            )
+        if self.clock_domain == TIME_DOMAIN_BOOT_SCOPED and self.origin_utc is not None:
+            raise FeaturePipelineError(
+                "a boot-scoped trajectory must not carry an absolute origin"
+            )
         if self.physical_eligibility == ELIGIBILITY_ELIGIBLE and self.run_id is None:
             raise FeaturePipelineError(
                 "an eligible physical trajectory requires a resolved run identity"

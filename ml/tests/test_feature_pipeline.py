@@ -242,6 +242,17 @@ def test_real_pilot_is_not_evaluable_under_red_gate():
     assert status["REAL_HORIZON_SELECTION"] == "NOT_FROZEN"
 
 
+def test_unfrozen_label_pilot_configuration_is_refused():
+    with pytest.raises(LabelPilotError, match="representative"):
+        PilotConfig(representative_temperature="TMAX_FINAL")
+    with pytest.raises(LabelPilotError, match="critical boundary"):
+        PilotConfig(boundary_c=5.0)
+    spec = PilotConfig().spec_for(60.0)
+    assert spec.frozen_at is None
+    assert spec.boundary_c is None
+    assert spec.representative_temperature == "DEVELOPMENT_CANDIDATE_NOT_SELECTED"
+
+
 def test_red_gate_cannot_be_upgraded_by_a_real_pilot():
     with pytest.raises(LabelPilotError, match="RED Gate B"):
         assess_real_pilot(

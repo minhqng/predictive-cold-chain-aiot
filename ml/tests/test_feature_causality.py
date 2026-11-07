@@ -572,3 +572,23 @@ def test_unsupported_synthetic_scenario_is_refused():
 
     with pytest.raises(FixtureError, match="S1/S2"):
         build_trajectory("CG-S3-X-001", scenario="S3", seed=506)
+
+
+def test_inconsistent_clock_domain_is_refused():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    trajectory, _ = build_trajectory(
+        "CG-S2-CLOCK-001", scenario="S2", seed=507, door_start_s=40.0
+    )
+    with pytest.raises(FeaturePipelineError, match="boot-scoped"):
+        dataclasses.replace(
+            trajectory,
+            clock_domain="BOOT_SCOPED_UPTIME",
+            origin_utc="2026-01-01T00:00:00Z",
+        )
+    with pytest.raises(FeaturePipelineError, match="absolute-time"):
+        dataclasses.replace(
+            trajectory, clock_domain="UTC_ABSOLUTE", origin_utc=None
+        )
+    with pytest.raises(FeaturePipelineError, match="unknown clock domain"):
+        dataclasses.replace(trajectory, clock_domain="LOCAL_WALL_CLOCK")

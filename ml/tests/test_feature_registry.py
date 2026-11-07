@@ -191,3 +191,13 @@ def test_features_by_family_cover_all_required_families():
     }
     assert len(families["door_context"]) == 4
     assert len(families["actuation_context"]) == 5
+
+
+def test_electrical_features_are_branch_scoped_and_fit_policy_is_explicit():
+    registry = load_registry()
+    for feature in registry.features:
+        if feature.family != "electrical_context":
+            continue
+        meaning = feature.physical_meaning.lower()
+        assert "cooling-branch" in meaning or "branch-side" in meaning
+    assert "no_cross_partition" in registry.policy["fit_policy"]

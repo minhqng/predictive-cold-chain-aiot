@@ -744,7 +744,7 @@ features:
     dtype: float
     unit: Wh
     family: electrical_context
-    physical_meaning: "Monotonic PZEM register value; reset/rollover is reported as missing, never silently integrated."
+    physical_meaning: "Cooling-branch PZEM energy register value; reset/rollover is reported as missing, never silently integrated."
     source_fields: [cooling_energy_counter_wh]
     source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
     sensor_roles: [PZEM_COOLING_BRANCH]
