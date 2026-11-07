@@ -1374,6 +1374,15 @@ def order_timeline(
             event.event_id,
         ),
     )
+    unindexed = sorted(
+        (
+            event
+            for event in materialized
+            if event.source_record_index is None
+        ),
+        key=lambda event: (time_of(event), event.event_id),
+    )
+    ambiguous_events = [*by_source, *unindexed]
     reasons: list[str] = []
     if reversal:
         reasons.extend([REASON_TIME_REVERSAL, REASON_AMBIGUOUS_ORDER])
@@ -1384,7 +1393,7 @@ def order_timeline(
         reasons.append("CLOCK_SYNC_UNVERIFIED_FOR_ABSOLUTE_LATENCY")
     return OrderedTimeline(
         status=ORDER_AMBIGUOUS if reversal else ORDERED_IN_DOMAIN,
-        events=tuple(ordered if not reversal else by_source),
+        events=tuple(ordered if not reversal else ambiguous_events),
         reason_codes=tuple(sorted(set(reasons))),
         clock_domain=domain,
         device_id=next(iter(devices), None),
@@ -1882,11 +1891,19 @@ def analyze_response(
 
     compatible: list[tuple[float, TimelineEvent]] = []
     quality_excluded = 0
+    clock_excluded = 0
     for sample in samples:
         if not _same_stream(anchor, sample):
             continue
         sample_time, _ = _event_time(sample)
         if sample_time is None:
+            continue
+        if (
+            sample.clock_domain == CLOCK_DEVICE_EVENT_UTC
+            and sample.clock_sync
+            not in (CLOCK_SYNC_EVIDENCED, CLOCK_SYNC_SYNTHETIC_EXACT)
+        ):
+            clock_excluded += 1
             continue
         value = _response_value(sample, policy.channel)
         quality = _response_quality(sample, policy.quality_key)
@@ -1895,6 +1912,20 @@ def analyze_response(
             continue
         compatible.append((sample_time, sample))
     compatible.sort(key=lambda item: (item[0], item[1].event_id))
+    if not compatible and clock_excluded:
+        return _response(
+            relationship,
+            RESPONSE_NOT_ESTIMABLE_CLOCK,
+            anchor.command_id,
+            anchor.event_id,
+            None,
+            None,
+            "NOT_ESTIMABLE",
+            0,
+            None,
+            policy,
+            ["SAMPLE_CLOCK_SYNC_UNVERIFIED"],
+        )
 
     baseline = [
         value
@@ -2634,6 +2665,28 @@ def ack_to_applied(
                     None,
                     DEFAULT_ELECTRICAL_POLICY,
                     ["MIXED_CLOCK_DOMAIN_OR_STREAM"],
+                )
+            )
+            continue
+        if ack.clock_domain == CLOCK_DEVICE_EVENT_UTC and (
+            ack.clock_sync
+            not in (CLOCK_SYNC_EVIDENCED, CLOCK_SYNC_SYNTHETIC_EXACT)
+            or applied.clock_sync
+            not in (CLOCK_SYNC_EVIDENCED, CLOCK_SYNC_SYNTHETIC_EXACT)
+        ):
+            results.append(
+                _response(
+                    "ACK_TO_APPLIED_STATE",
+                    RESPONSE_NOT_ESTIMABLE_CLOCK,
+                    command_id,
+                    ack.event_id,
+                    None,
+                    None,
+                    _evidence_class(ack, applied),
+                    2,
+                    None,
+                    DEFAULT_ELECTRICAL_POLICY,
+                    ["UNVERIFIED_CLOCK_SYNC"],
                 )
             )
             continue

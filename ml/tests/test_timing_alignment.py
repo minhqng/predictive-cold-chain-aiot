@@ -27,6 +27,7 @@ from coldguard_ml.real_data_qa import channel_summary_csv
 from coldguard_ml.timing_alignment import (
     CLOCK_DEVICE_BOOT_UPTIME,
     CLOCK_DEVICE_EVENT_UTC,
+    CLOCK_SYNC_EVIDENCED,
     CLOCK_SYNC_SYNTHETIC_EXACT,
     CLOCK_SYNC_UNVERIFIED,
     DEFAULT_ELECTRICAL_POLICY,
@@ -276,6 +277,24 @@ def test_time_reversal_is_ambiguous_and_not_silently_reordered():
     assert ordered.status == ORDER_AMBIGUOUS
     assert "TIME_REVERSAL" in ordered.reason_codes
     assert [event.event_id for event in ordered.events] == ["first", "second"]
+
+
+def test_time_reversal_retains_unindexed_events():
+    first = _event(
+        "first", EVENT_TELEMETRY_SAMPLE, 2000, seq=1, source_record_index=1
+    )
+    second = _event(
+        "second", EVENT_TELEMETRY_SAMPLE, 1000, seq=2, source_record_index=2
+    )
+    unindexed = _event("third", EVENT_TELEMETRY_SAMPLE, 1500, seq=3)
+    ordered = order_timeline([first, second, unindexed])
+    assert ordered.status == ORDER_AMBIGUOUS
+    assert {event.event_id for event in ordered.events} == {
+        "first",
+        "second",
+        "third",
+    }
+    assert len(ordered.events) == 3
 
 
 def test_missing_identity_event_is_retained_without_invented_keys():
@@ -727,6 +746,66 @@ def test_command_to_ack_requires_a_publication_anchor():
         in result.reason_codes
         for result in results
     )
+
+
+def test_ack_to_applied_requires_synchronized_utc_clock():
+    ack = _event(
+        "ack",
+        EVENT_DEVICE_ACK,
+        clock=CLOCK_DEVICE_EVENT_UTC,
+        sync=CLOCK_SYNC_UNVERIFIED,
+        event_time_utc="2026-01-01T00:00:00Z",
+        command_id="CMD-UTC",
+        ack_seq=1,
+        fields={"status": "ACCEPTED"},
+    )
+    applied = _event(
+        "applied",
+        EVENT_APPLIED_STATE,
+        clock=CLOCK_DEVICE_EVENT_UTC,
+        sync=CLOCK_SYNC_UNVERIFIED,
+        event_time_utc="2026-01-01T00:00:01Z",
+        command_id="CMD-UTC",
+        fields={"applied_to": "ON"},
+    )
+    result = ack_to_applied([ack], [applied])[0]
+    assert result.state == RESPONSE_NOT_ESTIMABLE_CLOCK
+    assert result.latency_s is None
+    assert "UNVERIFIED_CLOCK_SYNC" in result.reason_codes
+
+
+def test_response_samples_with_unverified_utc_clock_are_not_estimable():
+    anchor = _event(
+        "anchor",
+        EVENT_APPLIED_STATE,
+        clock=CLOCK_DEVICE_EVENT_UTC,
+        sync=CLOCK_SYNC_EVIDENCED,
+        event_time_utc="2026-01-01T00:00:00Z",
+        fields={
+            "applied_to": "ON",
+            "quality.electrical": "VALID",
+            "quality.thermal": "VALID",
+        },
+    )
+    samples = [
+        _event(
+            f"sample-{index}",
+            EVENT_TELEMETRY_SAMPLE,
+            clock=CLOCK_DEVICE_EVENT_UTC,
+            sync=CLOCK_SYNC_UNVERIFIED,
+            event_time_utc=f"2026-01-01T00:00:0{index}Z",
+            seq=index,
+            fields={"cooling_current_a": "0.0",
+                    "quality.electrical": "VALID"},
+        )
+        for index in range(1, 4)
+    ]
+    result = analyze_response(
+        "APPLIED_TO_ELECTRICAL", anchor, samples, DEFAULT_ELECTRICAL_POLICY
+    )
+    assert result.state == RESPONSE_NOT_ESTIMABLE_CLOCK
+    assert result.latency_s is None
+    assert "SAMPLE_CLOCK_SYNC_UNVERIFIED" in result.reason_codes
 
 
 def test_w04_aiw_overlap_remains_rejected():
