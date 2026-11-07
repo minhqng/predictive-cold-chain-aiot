@@ -1,0 +1,233 @@
+"""ACK consumer proofs against a real disposable Mosquitto (C-W06-03).
+
+Requires COLDGUARD_TEST_DATABASE_URL and COLDGUARD_TEST_MQTT_HOST. A real
+backend AckConsumer subscribes to command_ack; a contract-compatible mock
+device publishes synthetic ACKs. Verifies correlation, durable evidence,
+quarantine of malformed/invalid/topic-mismatched/unmatched ACKs, idempotent
+duplicates and late-ACK expiry arbitration. No physical hardware is used.
+"""
+
+import json
+import os
+import threading
+from datetime import timedelta
+
+import paho.mqtt.client as mqtt
+import pytest
+from sqlalchemy import create_engine
+
+from coldguard_backend import command_store as cs
+from coldguard_backend.ack_consumer import AckConsumer, classify_ack
+from tests.command_testkit import (
+    ack_bytes,
+    ack_topic,
+    cleanup_commands,
+    make_ack,
+    make_command,
+    utcnow,
+)
+from tests.mqtt_testkit import (
+    has_test_db,
+    has_test_mqtt,
+    make_test_config,
+    mqtt_params,
+    wait_for,
+)
+
+needs_providers = pytest.mark.skipif(
+    not (has_test_db() and has_test_mqtt()),
+    reason="requires COLDGUARD_TEST_DATABASE_URL and COLDGUARD_TEST_MQTT_HOST",
+)
+
+
+def _backend_consumer() -> AckConsumer:
+    params = mqtt_params()
+    return AckConsumer.from_config(
+        make_test_config(mqtt_user=params["backend_user"], mqtt_password=params["backend_password"])
+    )
+
+
+@pytest.fixture
+def device_publisher():
+    params = mqtt_params()
+    client = mqtt.Client(
+        mqtt.CallbackAPIVersion.VERSION2, client_id="w06-ack-device", protocol=mqtt.MQTTv5
+    )
+    client.username_pw_set(params["device_user"], params["device_password"])
+    connected = threading.Event()
+    client.on_connect = lambda *a, **k: connected.set()
+    client.connect(params["host"], params["port"], keepalive=30)
+    client.loop_start()
+    connected.wait(timeout=10)
+    yield client
+    client.loop_stop()
+    client.disconnect()
+
+
+def _publish_ack(client, payload: bytes, topic: str | None = None):
+    info = client.publish(topic or ack_topic(), payload, qos=1)
+    info.wait_for_publish(timeout=10)
+
+
+def _prepare_published_command(engine, command_id: str, **kw):
+    with engine.begin() as conn:
+        cs.create_command(conn, make_command(command_id, **kw))
+        cs.transition_command(conn, command_id, cs.PUBLISHED)
+
+
+def _command_status(engine, command_id: str) -> str:
+    with engine.begin() as conn:
+        return cs.get_command(conn, command_id)["status"]
+
+
+def _evidence(engine, command_id: str):
+    with engine.begin() as conn:
+        return conn.execute(
+            cs.command_acks.select().where(cs.command_acks.c.command_id == command_id)
+        ).mappings().all()
+
+
+def test_classify_ack_pure_variants():
+    valid = ack_bytes(make_ack("cmd-1"))
+    assert classify_ack(ack_topic(), valid)["validity"] == "VALID"
+    assert classify_ack(ack_topic(), b"{bad")["validity"] == "MALFORMED_JSON"
+    bad_schema = json.dumps({**make_ack("cmd-1").model_dump(mode="json"), "uptime_ms": "x"}).encode()
+    assert classify_ack(ack_topic(), bad_schema)["validity"] == "INVALID_SCHEMA"
+    forged = ack_bytes(make_ack("cmd-1", device_id="other-device"))
+    assert classify_ack(ack_topic(), forged)["validity"] == "TOPIC_MISMATCH"
+
+
+@needs_providers
+def test_valid_ack_correlates_and_transitions(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        _prepare_published_command(db_engine, "cmd-ack-ok")
+        _publish_ack(device_publisher, ack_bytes(make_ack("cmd-ack-ok", "ACCEPTED")))
+        assert wait_for(lambda: _command_status(db_engine, "cmd-ack-ok") == cs.ACK_ACCEPTED, timeout_s=10)
+        evidence = _evidence(db_engine, "cmd-ack-ok")
+        assert any(e["validity"] == "VALID" for e in evidence)
+        with db_engine.begin() as conn:
+            row = cs.get_command(conn, "cmd-ack-ok")
+        assert row["verification_status"] == "NONE"  # ACK is not physical proof
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_malformed_ack_retained_without_transition(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        _prepare_published_command(db_engine, "cmd-bad-json")
+        _publish_ack(device_publisher, b"{not json")
+        assert wait_for(lambda: consumer.metrics.snapshot()["malformed_json"] >= 1, timeout_s=10)
+        assert _command_status(db_engine, "cmd-bad-json") == cs.PUBLISHED
+        with db_engine.begin() as conn:
+            rows = conn.execute(
+                cs.command_acks.select().where(cs.command_acks.c.validity == "MALFORMED_JSON")
+            ).mappings().all()
+        assert len(rows) >= 1
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_topic_mismatch_ack_quarantined(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        _prepare_published_command(db_engine, "cmd-forged")
+        # Device publishes on its own topic but forges a different payload device.
+        forged = ack_bytes(make_ack("cmd-forged", device_id="other-device"))
+        _publish_ack(device_publisher, forged)
+        assert wait_for(lambda: consumer.metrics.snapshot()["topic_mismatch"] >= 1, timeout_s=10)
+        assert _command_status(db_engine, "cmd-forged") == cs.PUBLISHED
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_unmatched_ack_quarantined(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        _publish_ack(device_publisher, ack_bytes(make_ack("ghost-ack", "ACCEPTED")))
+        assert wait_for(lambda: consumer.metrics.snapshot()["unmatched"] >= 1, timeout_s=10)
+        with db_engine.begin() as conn:
+            row = conn.execute(
+                cs.command_acks.select().where(cs.command_acks.c.command_id == "ghost-ack")
+            ).mappings().one()
+        assert row["validity"] == "UNMATCHED"
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_duplicate_ack_idempotent(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        _prepare_published_command(db_engine, "cmd-dup-ack")
+        payload = ack_bytes(make_ack("cmd-dup-ack", "ACCEPTED"))
+        _publish_ack(device_publisher, payload)
+        assert wait_for(lambda: _command_status(db_engine, "cmd-dup-ack") == cs.ACK_ACCEPTED, timeout_s=10)
+        _publish_ack(device_publisher, payload)
+        assert wait_for(lambda: consumer.metrics.snapshot()["duplicate"] >= 1, timeout_s=10)
+        with db_engine.begin() as conn:
+            transitions = conn.execute(
+                cs.command_transitions.select().where(
+                    cs.command_transitions.c.command_id == "cmd-dup-ack",
+                    cs.command_transitions.c.to_status == cs.ACK_ACCEPTED,
+                )
+            ).all()
+        assert len(transitions) == 1
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_late_ack_after_expiry_no_resurrection(db_engine, device_publisher):
+    cleanup_commands(db_engine)
+    consumer = _backend_consumer()
+    consumer.start()
+    assert consumer.wait_subscribed(10)
+    try:
+        now = utcnow()
+        _prepare_published_command(
+            db_engine, "cmd-late-ack", created_at=now - timedelta(minutes=10), ttl_s=60
+        )
+        with db_engine.begin() as conn:
+            cs.expire_due_commands(conn, now=now)
+        _publish_ack(device_publisher, ack_bytes(make_ack("cmd-late-ack", "ACCEPTED")))
+        assert wait_for(lambda: consumer.metrics.snapshot()["late"] >= 1, timeout_s=10)
+        assert _command_status(db_engine, "cmd-late-ack") == cs.EXPIRED
+    finally:
+        consumer.stop()
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+def test_refused_credentials_raise_connection_error():
+    params = mqtt_params()
+    consumer = AckConsumer.from_config(
+        make_test_config(mqtt_user=params["backend_user"], mqtt_password="wrong-password")
+    )
+    with pytest.raises(ConnectionError):
+        consumer.start()
+    consumer.stop()
