@@ -61,10 +61,10 @@ from .timing_alignment import (
     events_from_capture,
 )
 
-W08_LAYER_VERSION = "coldguard-w08-gate-b-readiness-v1"
-W08_REPORT_SCHEMA = "coldguard-w08-gate-b-readiness-report-v1"
-W08_MANIFEST_SCHEMA = "coldguard-w08-gate-b-readiness-manifest-v1"
-COMPLETENESS_POLICY_VERSION = "coldguard-w08-completeness-policy-draft-v1"
+W08_LAYER_VERSION = "coldguard-w08-gate-b-readiness-v2"
+W08_REPORT_SCHEMA = "coldguard-w08-gate-b-readiness-report-v2"
+W08_MANIFEST_SCHEMA = "coldguard-w08-gate-b-readiness-manifest-v2"
+COMPLETENESS_POLICY_VERSION = "coldguard-w08-completeness-policy-draft-v2"
 
 GATE_SOFTWARE = "W08_SOFTWARE_VERIFICATION"
 GATE_B_PHYSICAL = "GATE_B_PHYSICAL_DATA"
@@ -92,6 +92,11 @@ SEVERITY_INFO = "INFO"
 THRESHOLD_FROZEN = "FROZEN"
 THRESHOLD_PROPOSED = "PROPOSED"
 THRESHOLD_UNRESOLVED = "UNRESOLVED"
+THRESHOLD_STATUSES = (
+    THRESHOLD_FROZEN,
+    THRESHOLD_PROPOSED,
+    THRESHOLD_UNRESOLVED,
+)
 
 STAGE_IDENTITY = "IDENTITY_AND_LINEAGE"
 STAGE_CONFIGURATION = "PHYSICAL_CONFIGURATION"
@@ -167,6 +172,8 @@ REASON_SPLIT_GROUP_CONFLICT = "SPLIT_GROUP_CONFLICT_REPORTED"
 REASON_ELIGIBILITY_PROVENANCE_MISSING = "SPLIT_ELIGIBILITY_PROVENANCE_MISSING"
 REASON_COMPLETENESS_NOT_FROZEN = "COMPLETENESS_POLICY_NOT_FROZEN"
 REASON_FREEZE_EVIDENCE_MISSING = "THRESHOLD_FREEZE_EVIDENCE_MISSING"
+REASON_THRESHOLD_VALUE_MISSING = "THRESHOLD_VALUE_MISSING"
+REASON_COMPLETENESS_NOT_EVALUABLE = "BLOCKING_COMPLETENESS_NOT_EVALUABLE"
 REASON_TIMING_TOLERANCE_UNRESOLVED = "TIMING_TOLERANCE_UNRESOLVED"
 REASON_SYNTHETIC_CONTROL = "SYNTHETIC_CONTROL_ONLY"
 REASON_W07_NOT_ESTABLISHED = "W07_PHYSICAL_REPEATABILITY_NOT_ESTABLISHED"
@@ -196,6 +203,20 @@ class CompletenessThreshold:
     review_authority: str
     value: float | None
     freeze_evidence: str | None = None
+
+    def __post_init__(self) -> None:
+        if self.status not in THRESHOLD_STATUSES:
+            raise ValueError(
+                f"threshold status {self.status!r} is not canonical; only "
+                f"{THRESHOLD_STATUSES} are accepted"
+            )
+        if self.value is not None:
+            if isinstance(self.value, bool) or not isinstance(
+                self.value, (int, float)
+            ):
+                raise ValueError("threshold value must be a finite number or None")
+            if not math.isfinite(float(self.value)):
+                raise ValueError("threshold value must be finite")
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -2485,6 +2506,12 @@ def policy_freeze_gaps(
                 dimensions.add(result.dimension)
     if require_timing_alignment:
         dimensions.add(DIMENSION_TIMING)
+    not_evaluable = {
+        result.dimension
+        for item in validations
+        for result in item.completeness
+        if result.status == CHECK_NOT_EVALUABLE
+    }
     gaps: list[dict[str, Any]] = []
     for dimension in sorted(dimensions):
         try:
@@ -2505,15 +2532,26 @@ def policy_freeze_gaps(
             "review_authority": threshold.review_authority,
             "freeze_evidence": threshold.freeze_evidence,
         }
-        if threshold.status == THRESHOLD_PROPOSED:
-            gap["reason"] = REASON_COMPLETENESS_NOT_FROZEN
+        # Any non-FROZEN status is provisional. The canonical status is
+        # validated at construction so an unknown label cannot slip through.
+        if threshold.status != THRESHOLD_FROZEN:
+            gap["reason"] = (
+                REASON_TIMING_TOLERANCE_UNRESOLVED
+                if dimension == DIMENSION_TIMING
+                else (
+                    REASON_THRESHOLD_VALUE_MISSING
+                    if threshold.value is None
+                    else REASON_COMPLETENESS_NOT_FROZEN
+                )
+            )
             gaps.append(gap)
-        elif threshold.status == THRESHOLD_UNRESOLVED:
-            gap["reason"] = REASON_TIMING_TOLERANCE_UNRESOLVED
+        elif threshold.value is None:
+            gap["reason"] = REASON_THRESHOLD_VALUE_MISSING
             gaps.append(gap)
-        elif threshold.status == THRESHOLD_FROZEN and not (
-            threshold.freeze_evidence or ""
-        ).strip():
+        elif dimension in not_evaluable:
+            gap["reason"] = REASON_COMPLETENESS_NOT_EVALUABLE
+            gaps.append(gap)
+        elif not (threshold.freeze_evidence or "").strip():
             gap["reason"] = REASON_FREEZE_EVIDENCE_MISSING
             gaps.append(gap)
     return gaps
@@ -2829,6 +2867,8 @@ def build_gate_b_report(
         split_status = VERDICT_RED
         split_severity = SEVERITY_BLOCKING
         split_reasons = (REASON_SPLIT_INFEASIBLE,)
+    if REASON_SPLIT_GROUP_CONFLICT in split_plan.reasons:
+        split_reasons = split_reasons + (REASON_SPLIT_GROUP_CONFLICT,)
     split_gate = _gate(
         GATE_SPLIT,
         requirement,
@@ -2958,13 +2998,21 @@ def split_eligibility_receipt(
     source_sha256: str,
     a_ledger_verdict: str | None,
     eligible: bool,
+    scenario_id: str,
+    controller_id: str,
+    pair_id: str | None,
+    hardware_config_id: str | None,
+    reason: str,
+    physical_source_key: tuple[Any, ...],
 ) -> str:
     """Deterministic W08 receipt bound to one validated split observation.
 
     Direct ``SplitCandidate`` inputs are a trust boundary: the split planner only
     honours ``eligible=True`` when the A ledger is VALID and this receipt matches
-    the candidate's own identity. Callers must not fabricate receipts; the
-    authoritative producer is the W08 run-validation path.
+    the candidate's identity and grouping metadata. Mutating scenario, pair,
+    hardware or reason after validation invalidates the receipt. Callers must
+    not fabricate receipts; the authoritative producer is the W08
+    run-validation path.
     """
     payload = "\0".join(
         (
@@ -2973,6 +3021,12 @@ def split_eligibility_receipt(
             source_sha256,
             str(a_ledger_verdict),
             "ELIGIBLE" if eligible else "INELIGIBLE",
+            scenario_id,
+            controller_id,
+            str(pair_id),
+            str(hardware_config_id),
+            reason,
+            "|".join(str(part) for part in physical_source_key),
         )
     )
     return hashlib.sha256(payload.encode("utf-8")).hexdigest()
@@ -2984,21 +3038,21 @@ def _split_candidates_from_validations(
     candidates: list[SplitCandidate] = []
     for item in validations:
         run_id = item.run_id or "UNRESOLVED_RUN_ID"
+        scenario_id = item.scenario_id or "UNKNOWN_SCENARIO"
+        controller_id = item.controller_id or "OBSERVATIONAL"
         eligible = item.eligibility == ELIGIBILITY_ELIGIBLE
+        reason = "ELIGIBLE" if eligible else ";".join(item.reason_codes)
+        physical_source_key = tuple(item.physical_source_key)
         candidates.append(
             SplitCandidate(
                 run_id=run_id,
-                scenario_id=item.scenario_id or "UNKNOWN_SCENARIO",
-                controller_id=item.controller_id or "OBSERVATIONAL",
-                physical_source_key=tuple(item.physical_source_key),
+                scenario_id=scenario_id,
+                controller_id=controller_id,
+                physical_source_key=physical_source_key,
                 pair_id=item.pair_id,
                 hardware_config_id=item.hardware_config_id,
                 eligible=eligible,
-                reason=(
-                    "ELIGIBLE"
-                    if eligible
-                    else ";".join(item.reason_codes)
-                ),
+                reason=reason,
                 source_path=item.source_path,
                 source_sha256=item.source_sha256,
                 a_ledger_verdict=item.a_ledger_verdict,
@@ -3007,6 +3061,12 @@ def _split_candidates_from_validations(
                     source_sha256=item.source_sha256,
                     a_ledger_verdict=item.a_ledger_verdict,
                     eligible=eligible,
+                    scenario_id=scenario_id,
+                    controller_id=controller_id,
+                    pair_id=item.pair_id,
+                    hardware_config_id=item.hardware_config_id,
+                    reason=reason,
+                    physical_source_key=physical_source_key,
                 ),
             )
         )
@@ -3039,6 +3099,12 @@ def _eligibility_provenance_ok(candidate: SplitCandidate) -> tuple[bool, str]:
         source_sha256=candidate.source_sha256,
         a_ledger_verdict=candidate.a_ledger_verdict,
         eligible=candidate.eligible,
+        scenario_id=candidate.scenario_id,
+        controller_id=candidate.controller_id,
+        pair_id=candidate.pair_id,
+        hardware_config_id=candidate.hardware_config_id,
+        reason=candidate.reason,
+        physical_source_key=tuple(candidate.physical_source_key),
     )
     if candidate.validation_receipt != expected:
         return False, "VALIDATION_RECEIPT_MISSING_OR_INCONSISTENT"
@@ -3146,10 +3212,12 @@ def _dedupe_candidates(
         if not any(item.eligible for item in items):
             accepted.append(items[0])
             continue
-        validated = [
-            item for item in items if _eligibility_provenance_ok(item)[0]
+        validated_indices = [
+            index
+            for index, item in enumerate(items)
+            if _eligibility_provenance_ok(item)[0]
         ]
-        if not validated:
+        if not validated_indices:
             conflict_groups += 1
             provenance_reasons = sorted(
                 {_eligibility_provenance_ok(item)[1] for item in items}
@@ -3163,20 +3231,40 @@ def _dedupe_candidates(
                 for item in items
             )
             continue
-        representative = sorted(
-            validated, key=lambda item: (item.source_path, item.source_sha256)
-        )[0]
-        repeated = [item for item in items if item is not representative]
-        if repeated:
-            excluded.extend(
-                _candidate_exclusion(
-                    item,
-                    "REPEATED_VIEW_OF_ONE_PHYSICAL_SOURCE; one run group "
-                    "only, never an extra independent group",
-                    used_view=representative.source_path,
+        representative_index = min(
+            validated_indices,
+            key=lambda index: (
+                items[index].source_path,
+                items[index].source_sha256,
+            ),
+        )
+        representative = items[representative_index]
+        repeated_entries = [
+            (index, item)
+            for index, item in enumerate(items)
+            if index != representative_index
+        ]
+        if repeated_entries:
+            for _index, item in repeated_entries:
+                provenance_ok, provenance_reason = _eligibility_provenance_ok(
+                    item
                 )
-                for item in repeated
-            )
+                reason = (
+                    "REPEATED_VIEW_OF_ONE_PHYSICAL_SOURCE; one run group "
+                    "only, never an extra independent group"
+                )
+                if not provenance_ok:
+                    reason += (
+                        "; UNVALIDATED_VIEW_NOT_USED_FOR_ELIGIBILITY"
+                        f" ({provenance_reason})"
+                    )
+                excluded.append(
+                    _candidate_exclusion(
+                        item,
+                        reason,
+                        used_view=representative.source_path,
+                    )
+                )
         accepted.append(representative)
     return accepted, excluded, conflict_groups
 

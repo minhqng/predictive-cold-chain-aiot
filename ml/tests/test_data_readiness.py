@@ -44,6 +44,7 @@ from coldguard_ml.data_readiness import (
     THRESHOLD_FROZEN,
     THRESHOLD_PROPOSED,
     THRESHOLD_UNRESOLVED,
+    CompletenessThreshold,
     RunManifestLinkage,
     SplitCandidate,
     assess_gate_b,
@@ -1052,6 +1053,133 @@ def test_frozen_policy_with_evidence_reaches_green_and_ready(tmp_path):
     assert report.separation["DATA_ORIGIN"] == "MEASURED_PHYSICAL_DATA"
 
 
+def test_unknown_threshold_status_is_rejected(tmp_path):
+    threshold = default_completeness_policy().threshold(DIMENSION_WHOLE)
+    with pytest.raises(ValueError):
+        dataclasses.replace(threshold, status="approved")
+    bad_policy = tmp_path / "bad-policy.json"
+    bad_policy.write_text(
+        json.dumps(
+            {
+                "thresholds": [
+                    {
+                        "dimension": DIMENSION_WHOLE,
+                        "status": "proposed",
+                    }
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    result = _run_cli(
+        [
+            "--source",
+            str(REAL_A_EXPORT),
+            "--a-run-index",
+            str(REAL_A_INDEX),
+            "--completeness-policy",
+            str(bad_policy),
+            "--out",
+            str(tmp_path / "out"),
+        ]
+    )
+    assert result.returncode == 1
+    assert "INVALID CONFIGURATION" in result.stderr
+
+
+def test_frozen_threshold_without_value_cannot_be_green(tmp_path):
+    policy = default_completeness_policy()
+    thresholds = tuple(
+        dataclasses.replace(
+            threshold,
+            status=THRESHOLD_FROZEN,
+            freeze_evidence="owner decision DR-W08-001",
+            value=None,
+        )
+        if threshold.dimension in (DIMENSION_WHOLE, DIMENSION_CRITICAL)
+        else threshold
+        for threshold in policy.thresholds
+    )
+    policy = dataclasses.replace(policy, thresholds=thresholds)
+    report, _, _ = _green_suite(
+        tmp_path, policy=policy, synthetic_control=False
+    )
+    assert report.physical_gate.observed_status == "YELLOW"
+    assert "THRESHOLD_VALUE_MISSING" in report.physical_gate.reason_codes
+    assert report.predictive_gate.observed_status == "NOT_READY"
+
+
+def test_blocking_completeness_not_evaluable_cannot_be_green(tmp_path):
+    report, validations, admissions = _green_suite(
+        tmp_path,
+        policy=_frozen_policy(evidence=True),
+        synthetic_control=False,
+    )
+    assert report.physical_gate.observed_status == "GREEN"
+    modified = []
+    for validation in validations:
+        completeness = tuple(
+            dataclasses.replace(
+                result,
+                status=CHECK_NOT_EVALUABLE,
+                fraction=None,
+                passes=None,
+            )
+            if result.dimension == DIMENSION_WHOLE
+            else result
+            for result in validation.completeness
+        )
+        modified.append(
+            dataclasses.replace(validation, completeness=completeness)
+        )
+    bad_report = build_gate_b_report(
+        modified,
+        admissions,
+        default_scenario_requirement("S1"),
+        policy=_frozen_policy(evidence=True),
+        synthetic_control=False,
+    )
+    assert bad_report.physical_gate.observed_status == "YELLOW"
+    assert (
+        "BLOCKING_COMPLETENESS_NOT_EVALUABLE"
+        in bad_report.physical_gate.reason_codes
+    )
+    assert bad_report.predictive_gate.observed_status == "NOT_READY"
+
+
+def test_receipt_binds_grouping_metadata_against_mutation():
+    candidates = [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)]
+    mutated = dataclasses.replace(
+        _candidate("CG-S1-A-004", pair_id="PAIR-ORIGINAL"),
+        pair_id="PAIR-MUTATED",
+    )
+    plan = plan_development_split(candidates + [mutated])
+    assert "CG-S1-A-004" not in _assigned(plan)
+    excluded = [
+        item for item in plan.excluded if item.get("run_id") == "CG-S1-A-004"
+    ]
+    assert excluded
+    assert "SPLIT_ELIGIBILITY_PROVENANCE_MISSING" in excluded[0]["reason"]
+
+
+def test_unvalidated_repeated_view_is_reported_not_silently_dropped():
+    conflict_run = "CG-S1-A-004"
+    views = [
+        _candidate(conflict_run, source="source-4", ledger="VALID"),
+        _candidate(conflict_run, source="source-4", ledger=None, receipt=True),
+    ]
+    plan = plan_development_split(
+        [_candidate(f"CG-S1-A-{index:03d}") for index in range(1, 4)]
+        + views
+    )
+    assert conflict_run in _assigned(plan)
+    excluded = [
+        item for item in plan.excluded if item.get("run_id") == conflict_run
+    ]
+    assert len(excluded) == 1
+    assert "UNVALIDATED_VIEW_NOT_USED_FOR_ELIGIBILITY" in excluded[0]["reason"]
+
+
 def test_frozen_status_without_evidence_is_yellow(tmp_path):
     report, _, _ = _green_suite(
         tmp_path,
@@ -1261,6 +1389,9 @@ def _real_report(*, policy=None):
 # ---------------------------------------------------------------------------
 
 
+_LEDGER_UNSET = object()
+
+
 def _candidate(
     run_id: str,
     *,
@@ -1272,21 +1403,30 @@ def _candidate(
     hardware: str = "CG-HW-001",
     path: str | None = None,
     sha: str | None = None,
-    ledger: str | None = None,
+    ledger: str | None | object = _LEDGER_UNSET,
     receipt: str | None | bool = True,
     reason: str | None = None,
 ):
     source_path = path or f"{run_id}.json"
     source_sha = sha or hashlib.sha256(run_id.encode()).hexdigest()
-    ledger_verdict = ledger if ledger is not None else (
-        "VALID" if eligible else "INVALID"
-    )
+    if ledger is _LEDGER_UNSET:
+        ledger_verdict = "VALID" if eligible else "INVALID"
+    else:
+        ledger_verdict = ledger  # type: ignore[assignment]
+    physical_source_key = ("session", "dev-A", source or run_id)
+    split_reason = reason or ("ELIGIBLE" if eligible else "INVALID")
     if receipt is True:
         receipt = split_eligibility_receipt(
             run_id=run_id,
             source_sha256=source_sha,
             a_ledger_verdict=ledger_verdict,
             eligible=eligible,
+            scenario_id=scenario,
+            controller_id=controller,
+            pair_id=pair_id,
+            hardware_config_id=hardware,
+            reason=split_reason,
+            physical_source_key=physical_source_key,
         )
     elif receipt is False:
         receipt = None
@@ -1294,11 +1434,11 @@ def _candidate(
         run_id=run_id,
         scenario_id=scenario,
         controller_id=controller,
-        physical_source_key=("session", "dev-A", source or run_id),
+        physical_source_key=physical_source_key,
         pair_id=pair_id,
         hardware_config_id=hardware,
         eligible=eligible,
-        reason=reason or ("ELIGIBLE" if eligible else "INVALID"),
+        reason=split_reason,
         source_path=source_path,
         source_sha256=source_sha,
         a_ledger_verdict=ledger_verdict,
