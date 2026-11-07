@@ -20,10 +20,10 @@ A software-green W06 with absent real command evidence is an acceptable engineer
 | Report schema | coldguard-w06-timing-report-v1 |
 | Package version | 0.1.0 |
 | W06 layer version | coldguard-w06-timing-v1 |
-| Analysis code SHA-256 | `90bc2e448c15b551f2a9409cd7f2aaa4eebef97e186947e302b8c7603a76afb0` |
-| Repository revision | 84dd39fbd8e500ab14ff1d4a38a746e7fad674ed |
+| Analysis code SHA-256 | `5a14923890fdb8c7ef9c7c55547ed85768ff1e7d9c0a198f341fab7eed9b3ac4` |
+| Repository revision | ea669a4cfdd2c10ffe30f295dcdd7a96ff7b8d1e |
 | A run index | evidence/A/W09/s1-run-index.json |
-| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 84dd39fbd8e500ab14ff1d4a38a746e7fad674ed` |
+| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision ea669a4cfdd2c10ffe30f295dcdd7a96ff7b8d1e` |
 
 ## 2. Source inventory
 
@@ -65,7 +65,7 @@ Command-log inputs: 1 embedded `#CG TELEM` line(s) were ignored; serial telemetr
 | Electrical response events | 0 |
 | Thermal response events | 0 |
 | Electrical responses (numeric) | 2 |
-| Thermal responses (numeric) | 4 |
+| Thermal responses (numeric) | 2 |
 | Verified electrical responses | 0 |
 | Verified thermal responses | 0 |
 | Duplicate deliveries | 0 |
@@ -149,8 +149,8 @@ Identical repeated delivery collapses to one logical event while retaining `deli
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | ACK_TO_APPLIED_STATE | NOT_APPLICABLE | NOT_ESTIMABLE_MISSING_ANCHOR | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | NO_ANCHOR_EVENT |
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_ELECTRICAL | NOT_APPLICABLE | NOT_ESTIMABLE_QUALITY | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | BASELINE_QUALITY_NOT_VALID |
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_ELECTRICAL | NOT_APPLICABLE | NOT_ESTIMABLE_QUALITY | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | BASELINE_QUALITY_NOT_VALID |
-| evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_THERMAL | NOT_APPLICABLE | OBSERVED_DIAGNOSTIC_ONLY | 28.000000 | 1.000000 | PHYSICAL_MEASURED | 3 | 30.020667 | chamber-air-temperature-step-v1 | ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY |
-| evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_THERMAL | NOT_APPLICABLE | OBSERVED_DIAGNOSTIC_ONLY | 25.000000 | 6.000000 | PHYSICAL_MEASURED | 3 | 21.312667 | chamber-air-temperature-step-v1 | ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY |
+| evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_THERMAL | NOT_APPLICABLE | OBSERVED_DIAGNOSTIC_ONLY | NOT_ESTIMABLE | 1.000000 | PHYSICAL_MEASURED | 3 | 30.020667 | chamber-air-temperature-step-v1 | ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY |
+| evidence/A/W09/exports/CG-S1-H8C-600S.json | APPLIED_TO_THERMAL | NOT_APPLICABLE | OBSERVED_DIAGNOSTIC_ONLY | NOT_ESTIMABLE | 6.000000 | PHYSICAL_MEASURED | 3 | 21.312667 | chamber-air-temperature-step-v1 | ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY |
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | COMMAND_TO_ACK | NOT_APPLICABLE | NOT_ESTIMABLE_MISSING_ANCHOR | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | NO_ANCHOR_EVENT |
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | COMMAND_TO_ELECTRICAL | NOT_APPLICABLE | NOT_ESTIMABLE_MISSING_ANCHOR | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | NO_ANCHOR_EVENT |
 | evidence/A/W09/exports/CG-S1-H8C-600S.json | COMMAND_TO_THERMAL | NOT_APPLICABLE | NOT_ESTIMABLE_MISSING_ANCHOR | NOT_ESTIMABLE | NOT_ESTIMABLE | NOT_ESTIMABLE | 0 | NOT_ESTIMABLE | electrical-current-step-v1 | NO_ANCHOR_EVENT |
@@ -177,7 +177,7 @@ A numeric latency is emitted only for synthetic unit-test controls or for physic
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 84dd39fbd8e500ab14ff1d4a38a746e7fad674ed
+uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision ea669a4cfdd2c10ffe30f295dcdd7a96ff7b8d1e
 ```
 
 Repeated execution on the same inputs and configuration produces identical artifacts. The report contains no runtime timestamp and no local absolute path.

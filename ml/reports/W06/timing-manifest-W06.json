@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "90bc2e448c15b551f2a9409cd7f2aaa4eebef97e186947e302b8c7603a76afb0",
+  "analysis_code_sha256": "5a14923890fdb8c7ef9c7c55547ed85768ff1e7d9c0a198f341fab7eed9b3ac4",
   "audit": {
     "domains": [
       {
@@ -132,7 +132,7 @@
     "synthetic_example_delays": 6,
     "telemetry_events": 979,
     "thermal_response_events": 0,
-    "thermal_responses": 4,
+    "thermal_responses": 2,
     "thermal_verified_responses": 0,
     "unalignable_domain_reasons": 3,
     "unalignable_events": 0
@@ -1143,7 +1143,7 @@
     ],
     "reboot_identity_resets": 0
   },
-  "generation_command": "event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 84dd39fbd8e500ab14ff1d4a38a746e7fad674ed",
+  "generation_command": "event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision ea669a4cfdd2c10ffe30f295dcdd7a96ff7b8d1e",
   "manifest_schema": "coldguard-w06-timing-manifest-v1",
   "ordering": [
     {
@@ -2206,7 +2206,7 @@
       "threshold_status": "CONFIGURABLE_ANALYSIS_FLOOR_NOT_A_CONTRACT_THRESHOLD"
     }
   ],
-  "repository_revision": "84dd39fbd8e500ab14ff1d4a38a746e7fad674ed",
+  "repository_revision": "ea669a4cfdd2c10ffe30f295dcdd7a96ff7b8d1e",
   "responses": [
     {
       "anchor_event_id": null,
@@ -2610,7 +2610,7 @@
       "command_id": null,
       "evidence_class": "PHYSICAL_MEASURED",
       "independent_application": null,
-      "latency_s": 28.0,
+      "latency_s": null,
       "policy_name": "chamber-air-temperature-step-v1",
       "reason_codes": [
         "ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY"
@@ -2627,7 +2627,7 @@
       "command_id": null,
       "evidence_class": "PHYSICAL_MEASURED",
       "independent_application": null,
-      "latency_s": 25.0,
+      "latency_s": null,
       "policy_name": "chamber-air-temperature-step-v1",
       "reason_codes": [
         "ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY"
