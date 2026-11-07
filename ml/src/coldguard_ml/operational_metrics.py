@@ -62,7 +62,7 @@ class OperationalRow:
     fold_id: str
     population: str
     provenance: str
-    independent_run_count: int
+    validation_run_count: int
     group_count: int
     eligible_windows: int
     warning_episodes: int
@@ -93,7 +93,7 @@ class OperationalRow:
             "fold_id": self.fold_id,
             "population": self.population,
             "provenance": self.provenance,
-            "independent_run_count": self.independent_run_count,
+            "validation_run_count": self.validation_run_count,
             "group_count": self.group_count,
             "eligible_windows": self.eligible_windows,
             "warning_episodes": self.warning_episodes,
@@ -169,7 +169,7 @@ def build_operational_report(bundle: W11Bundle) -> OperationalReport:
                 fold_id=comparison["fold_id"],
                 population="synthetic development runs (not physical evidence)",
                 provenance=SYNTHETIC_OPERATIONAL,
-                independent_run_count=len(run_ids),
+                validation_run_count=len(run_ids),
                 group_count=len(group_ids),
                 eligible_windows=_int(comparison["eligible_sample_count"]) or 0,
                 warning_episodes=_int(comparison["warning_episode_count"]) or 0,
@@ -230,7 +230,7 @@ def build_operational_report(bundle: W11Bundle) -> OperationalReport:
         "warning_episodes": "one contiguous warning interval counted once",
         "critical_events": "eligible observed critical events only",
         "exposure": "trusted all-channel-VALID hours, not elapsed span",
-        "runs": "independent run groups, never windows",
+        "runs": "validation runs inside paired groups; independence is at group level, not run or window level",
     }
     limitations = (
         "Synthetic operational values are software-control observations only.",

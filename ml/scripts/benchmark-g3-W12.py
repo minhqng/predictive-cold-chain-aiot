@@ -525,7 +525,7 @@ def _operational_csv(report: OperationalReport) -> str:
         "fold_id",
         "population",
         "provenance",
-        "independent_run_count",
+        "validation_run_count",
         "group_count",
         "eligible_windows",
         "warning_episodes",
@@ -558,7 +558,7 @@ def _operational_csv(report: OperationalReport) -> str:
             "fold_id": "ALL",
             "population": real["population"],
             "provenance": "AUTHORITATIVE_REAL_REFUSAL",
-            "independent_run_count": real["eligible_runs"],
+            "validation_run_count": real["eligible_runs"],
             "group_count": 0,
             "eligible_windows": 0,
             "warning_episodes": "",
@@ -590,6 +590,7 @@ def _operational_csv(report: OperationalReport) -> str:
 def _ewt_csv(report: Any) -> str:
     columns = (
         "case_id",
+        "event_id",
         "population",
         "label",
         "status",
@@ -610,6 +611,7 @@ def _ewt_csv(report: Any) -> str:
         [
             {
                 "case_id": "REAL_EWT",
+                "event_id": "",
                 "population": real["population"],
                 "label": "REAL_SOURCE_AUTHORIZED_REFUSAL",
                 "status": real["REAL_EWT"],
@@ -626,6 +628,7 @@ def _ewt_csv(report: Any) -> str:
             },
             {
                 "case_id": "REAL_AIW",
+                "event_id": "",
                 "population": real["population"],
                 "label": "REAL_SOURCE_AUTHORIZED_REFUSAL",
                 "status": real["REAL_AIW"],
@@ -909,6 +912,14 @@ def main(argv: Sequence[str] | None = None) -> int:
             registry_path=registry_path,
             config_path=config_path,
         )
+        real_gate = bundle.manifest.get("real_development", {}).get(
+            "PHYSICAL_GATE_B"
+        )
+        if real_gate != "RED":
+            raise RuntimeError(
+                "W12 artifact generation requires a RED physical Gate B; "
+                "new authoritative evidence must reopen the review"
+            )
         synthesis = synthesize_grouped_metrics(bundle)
         operational = build_operational_report(bundle)
         ewt = assess_real_ewt_aiw(

@@ -445,7 +445,19 @@ def _validate_fold_structure(
         declared_groups == len(validation_groups),
         "declared independent group count does not reconcile with validation folds",
     )
-    test_runs = set(fold_manifest.get("test_runs", ()))
+    manifest_split = manifest.get("split", {})
+    manifest_test_runs = {
+        run_id
+        for pair in manifest_split.get("pair_lineage", ())
+        if pair.get("partition") == "test"
+        for run_id in pair.get("run_ids", ())
+    }
+    fold_test_runs = set(fold_manifest.get("test_runs", ()))
+    _require(
+        manifest_test_runs and fold_test_runs == manifest_test_runs,
+        "fold manifest test runs do not match the W11 split test partition",
+    )
+    test_runs = fold_test_runs
     _require(
         test_runs.isdisjoint(validation_runs),
         "a locked-test run appears in validation folds",

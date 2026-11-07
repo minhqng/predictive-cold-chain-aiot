@@ -39,6 +39,7 @@ REAL_REASON_NO_POPULATION = (
 @dataclass(frozen=True)
 class TimingCaseResult:
     case_id: str
+    event_id: str
     population: str
     label: str
     status: str
@@ -56,6 +57,7 @@ class TimingCaseResult:
     def to_row(self) -> dict[str, Any]:
         return {
             "case_id": self.case_id,
+            "event_id": self.event_id,
             "population": self.population,
             "label": self.label,
             "status": self.status,
@@ -109,6 +111,7 @@ def assess_timing_pair(
     persistence_definition: str,
 ) -> TimingCaseResult:
     common = dict(
+        event_id=event_id,
         population="synthetic timing contract",
         label=SYNTHETIC_TIMING_LABEL,
         predictive_run_id=predictive_run_id,

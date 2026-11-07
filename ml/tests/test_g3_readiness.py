@@ -152,6 +152,8 @@ def test_failing_leakage_probe_changes_leakage_status():
     )
     assert row.readiness_status == FAIL_VERIFIED
     assert "leakage audit failures" in row.blocking_reason
+    assert report.decision.decision == NO_GO_FIX_DATA
+    assert "G3-B-LEAKAGE" in report.decision.hard_blockers
 
 
 def test_gate_ap_values_come_from_w11_rows(report):

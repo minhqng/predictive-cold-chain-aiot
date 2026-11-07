@@ -294,6 +294,38 @@ def test_event_count_mismatch_is_rejected(tmp_path):
         _load(root)
 
 
+def test_matched_plus_missed_must_equal_eligible(tmp_path):
+    root = _copy_bundle(tmp_path)
+    csv_path = root / "baseline-comparison-W11.csv"
+    import csv
+
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    for row in rows:
+        if row["method"] == "B0_THRESHOLD" and row["fold_id"] == "F1":
+            row["missed_critical_events"] = "1"
+    buffer = __import__("io").StringIO()
+    writer = csv.DictWriter(
+        buffer, fieldnames=list(rows[0].keys()), lineterminator="\n"
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    csv_path.write_text(buffer.getvalue(), encoding="utf-8")
+    _rewrite_artifact_hash(root, "baseline-comparison-W11.csv")
+    with pytest.raises(SynthesisError, match=r"matched \+ missed"):
+        _load(root)
+
+
+def test_missing_fold_test_run_declaration_is_rejected(tmp_path):
+    root = _copy_bundle(tmp_path)
+    fold_path = root / "cv-fold-manifest.yaml"
+    fold = yaml.safe_load(fold_path.read_text(encoding="utf-8"))
+    fold.pop("test_runs")
+    fold_path.write_text(yaml.safe_dump(fold), encoding="utf-8")
+    _rewrite_artifact_hash(root, "cv-fold-manifest.yaml")
+    with pytest.raises(SynthesisError, match="test runs"):
+        _load(root)
+
+
 def test_sample_population_mismatch_is_rejected(tmp_path):
     root = _copy_bundle(tmp_path)
     csv_path = root / "baseline-comparison-W11.csv"
