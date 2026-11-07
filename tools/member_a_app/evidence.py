@@ -25,6 +25,10 @@ APP_VERSION = "1.0.0"
 SESSION_SCHEMA = 1
 _SAFE_ID_RE = re.compile(r"^A-W[0-9]{2}-[0-9]{2}$")
 _SAFE_NAME_RE = re.compile(r"[^A-Za-z0-9._-]+")
+# Bench kinds are caller-supplied identifiers joined into a filename. Confine
+# them to a single safe path component: no separators, no leading dot (so ".."
+# and hidden/absolute forms are refused), no empty string.
+_SAFE_KIND_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9._-]{0,119}$")
 _ALLOWED_PASS_SOURCES = {
     "HARDWARE",
     "DOCUMENTARY",
@@ -44,6 +48,16 @@ def sha256_file(path: pathlib.Path) -> str:
         for chunk in iter(lambda: handle.read(1024 * 1024), b""):
             digest.update(chunk)
     return digest.hexdigest()
+
+
+def _safe_attachment_name(name: str) -> str:
+    """Confine a source filename to one safe stored component.
+
+    Trailing dots/spaces are stripped because Windows silently removes them at
+    create time, which would otherwise desync the recorded ``stored`` path from
+    the on-disk name. The result is never empty and never a traversal component.
+    """
+    return (_SAFE_NAME_RE.sub("_", name)[:120].rstrip(". ")) or "evidence"
 
 
 def resolve_within(root: pathlib.Path, stored: str) -> pathlib.Path:
@@ -258,6 +272,8 @@ class SessionStore:
             self._save_session()
 
     def attempt_count(self, test_id: str) -> int:
+        if not _SAFE_ID_RE.match(test_id):
+            raise EvidenceError(f"refusing attempt count for non-canonical id {test_id!r}")
         current = 1 if (self.results_dir / f"{test_id}.json").is_file() else 0
         history = self.results_dir / "history"
         archived = len(list(history.glob(f"{test_id}-*.json"))) if history.is_dir() else 0
@@ -293,7 +309,7 @@ class SessionStore:
         if src.stat().st_size == 0:
             raise EvidenceError(f"evidence file is empty: {src}")
         digest = sha256_file(src)
-        safe_name = _SAFE_NAME_RE.sub("_", src.name)[:120] or "evidence"
+        safe_name = _safe_attachment_name(src.name)
         folder = self.attach_dir / test_id
         folder.mkdir(parents=True, exist_ok=True)
         stored = folder / f"{digest[:12]}-{safe_name}"
@@ -317,7 +333,7 @@ class SessionStore:
         if src.stat().st_size == 0:
             raise EvidenceError(f"evidence file is empty: {src}")
         digest = sha256_file(src)
-        safe_name = _SAFE_NAME_RE.sub("_", src.name)[:120] or "evidence"
+        safe_name = _safe_attachment_name(src.name)
         folder = self.imports_dir / test_id
         folder.mkdir(parents=True, exist_ok=True)
         stored = folder / f"{digest[:12]}-{safe_name}"
@@ -363,6 +379,8 @@ class SessionStore:
         return list(manifest.get("sources", []))
 
     def record_bench_result(self, kind: str, payload: dict[str, Any]) -> dict[str, Any]:
+        if not _SAFE_KIND_RE.match(kind):
+            raise EvidenceError(f"refusing bench result for unsafe kind {kind!r}")
         stamp = _dt.datetime.now(_dt.timezone.utc).strftime("%Y%m%dT%H%M%S%f")
         path = self.bench_dir / f"{kind}-{stamp}.json"
         payload = dict(payload)
