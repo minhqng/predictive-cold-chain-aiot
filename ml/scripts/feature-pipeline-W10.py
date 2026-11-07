@@ -360,6 +360,7 @@ def _label_pilot_csv(result: Any, real_status: dict[str, Any]) -> str:
             0,
             0,
             0,
+            0,
             "",
             0,
             0,

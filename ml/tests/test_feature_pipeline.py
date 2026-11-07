@@ -343,9 +343,15 @@ def test_cli_generates_consistent_artifacts(tmp_path: Path):
     assert "spec_identity" in label_csv[0]
     assert label_csv[0]["spec_version"] == "coldguard-w10-label-pilot-v1"
     assert '"frozen_at": null' in label_csv[0]["spec_identity"]
+    with (tmp_path / "label-pilot-W10.csv").open(encoding="utf-8", newline="") as handle:
+        raw_label_rows = list(csv.reader(handle))
+    assert all(len(row) == len(raw_label_rows[0]) for row in raw_label_rows)
     real_row = next(row for row in label_csv if row["population"] == "REAL_S2")
     assert real_row["eligible_s2_runs"] == "0"
     assert real_row["status"] == "NOT_EVALUABLE"
+    assert real_row["untrusted_labels"] == "0"
+    assert real_row["freeze_status"] == "NOT_FROZEN"
+    assert real_row["coverage_limitations"].startswith("Gate B is RED")
     summary_csv = (tmp_path / "feature-summary-W10.csv").read_text(encoding="utf-8").splitlines()
     assert summary_csv[0].startswith("population,feature_id")
     assert len(summary_csv) == 1 + 2 * len(REGISTRY.features)
