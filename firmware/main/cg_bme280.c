@@ -7,6 +7,13 @@
 #include <stdio.h>
 #include <string.h>
 
+/* The trim gate's default lives in the firmware configuration so a supervised
+ * build can override it in one place. This header is pure macros and adds no
+ * ESP-IDF dependency, which keeps the host harness able to compile this file
+ * unchanged. Without this include the `#if` below would silently read an
+ * undefined macro as 0 and an edited configuration default would do nothing. */
+#include "coldguard_config.h"
+
 #define CG_BME_TEMP_MIN_DC (-4000)
 #define CG_BME_TEMP_MAX_DC (8500)
 /* Humidity compensation is Q22.10 per the datasheet: 1024 units per %RH, so the
@@ -281,7 +288,7 @@ static cg_bme_read_result_t classify_port(cg_bme_port_result_t p)
         case CG_BME_PORT_NACK:    return CG_BME_READ_NACK;
         case CG_BME_PORT_TIMEOUT: return CG_BME_READ_TIMEOUT;
         case CG_BME_PORT_ERROR:   return CG_BME_READ_SHORT;
-        default:                  return CG_BME_READ_OK;
+        default:                  return CG_BME_READ_SHORT;
     }
 }
 
@@ -375,6 +382,14 @@ cg_bme_read_result_t cg_bme280_probe(const cg_bme280_port_t *port, cg_bme280_t *
         s->state = CG_BME_STATE_FAULT;
         return classify_port(r);
     }
+    /* A module that was asleep or freshly reset still holds the power-on
+     * defaults (0x80000/0x8000) in its data registers, and those compensate to a
+     * plausible-looking 26 C / 100 %RH that no range check rejects. Give the
+     * first conversion time to land before the caller reads the burst, exactly
+     * as the one-shot diagnostic does. */
+    if (port->settle_ms != NULL) {
+        port->settle_ms(port->ctx, 50u);
+    }
 
     s->state = CG_BME_STATE_READY;
     /* consecutive_failures is deliberately NOT cleared here: a module that answers
@@ -450,7 +465,7 @@ cg_bme_read_result_t cg_bme280_sample(const cg_bme280_port_t *port, cg_bme280_t 
      * code - what a stuck or half-coupled bus returns - would otherwise come out
      * as a plausible extreme reading and be published. Check the code, not the
      * clamped result. */
-    if (adc_t == 0u || adc_t == 0xFFFFFu || adc_h == 0xFFFFu) {
+    if (adc_t == 0u || adc_t == 0xFFFFFu || adc_h == 0u || adc_h == 0xFFFFu) {
         s->state = CG_BME_STATE_FAULT;
         s->consecutive_failures++;
         if (s->consecutive_failures >= CG_BME280_MAX_CONSECUTIVE_FAILURES) {

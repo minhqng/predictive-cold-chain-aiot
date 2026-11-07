@@ -35,8 +35,7 @@
  * at 0: the decode agrees with Bosch's own driver and the golden vectors derived
  * from it, but no fitted module on THIS board has been compared against a
  * reference instrument, and the strap address on the current SCL=GPIO34 wiring has
- * never been read. See evidence/A/W02/acceptance.md section 9 and
- * evidence/A/HANDOFF/ambient-channel-bme280.md section 5.
+ * never been read. See evidence/A/W02/acceptance.md section 9.
  */
 #pragma once
 
@@ -75,7 +74,7 @@
 #define CG_BME280_MODE_FORCED      0x01u
 #define CG_BME280_STANDBY_500MS    (0x02u << 2)
 
-#define CG_BME280_CALIB_T_BYTES    24u   /* 0x88..0xA0: T and P trim            */
+#define CG_BME280_CALIB_T_BYTES    24u   /* 0x88..0x9F: T and P trim            */
 #define CG_BME280_CALIB_H1_BYTES    1u   /* 0xA1: dig_H1                        */
 #define CG_BME280_CALIB_H_BLOCK    7u   /* 0xE1..0xE7: dig_H2..H6, sub, ctrl    */
 
@@ -106,8 +105,8 @@ typedef struct {
     uint8_t dig_h1;
     int16_t dig_h2;
     uint8_t dig_h3;
-    int16_t dig_h4;   /* signed, packed across 0xE3[7:4]/0xE4[3:0] */
-    int16_t dig_h5;   /* signed, packed across 0xE4[7:0]/0xE5[3:0] */
+    int16_t dig_h4;   /* signed 0xE4 * 16 | low nibble of 0xE5                 */
+    int16_t dig_h5;   /* signed 0xE6 * 16 | high nibble of 0xE5                */
     int8_t dig_h6;
     int32_t t_fine;
 } cg_bme280_calib_t;
@@ -198,7 +197,7 @@ uint32_t cg_bme280_unpack_temperature_raw(const uint8_t data[CG_BME280_DATA_LEN]
 uint32_t cg_bme280_unpack_humidity_raw(const uint8_t data[CG_BME280_DATA_LEN]);
 
 /* Physical plausibility, applied before a value is allowed to be published. */
-bool cg_bme280_reading_in_range(int32_t temp_dc, uint32_t hum_mg);
+bool cg_bme280_reading_in_range(int32_t temp_dc, uint32_t hum_q2210);
 
 /* Probe identity + NVM calibration load. Classifies absence from a real NACK so
  * "wired but silent" and "not fitted" stay distinguishable. */
