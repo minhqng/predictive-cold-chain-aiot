@@ -151,7 +151,7 @@
     ],
     "status": "EXCLUDED_OR_BLOCKED"
   },
-  "analysis_code_sha256": "9d130d89e4fd991c17389a87fe112743ffc787a456be5bdac0818056f335036c",
+  "analysis_code_sha256": "29d74012516f89019be89bac935e6010ee012b6b7a61426a9b07b3154939b795",
   "anomalies": [
     {
       "applied_duty_permille": 0,
@@ -228,7 +228,7 @@
   "artifact_sha256": {
     "pairing-candidate-variables.md": "ce30fa2476e4564255b72453e21e775c70410269e8b9829662ef2025f1939429",
     "phase-trajectories-W07.svg": "f7a09a4d597c1703ed3ef4866a4f4194999d594b223dcd4f5a5b72cfe83628ad",
-    "plant-eda-report.md": "00818eedaf835c5531d896d2fb0e5b793f2ec9c13dbedcbae8a71009110f9c4e",
+    "plant-eda-report.md": "ac9b7ade3637b9971f001214d5ba793080b99af8059d6f69e95ad0daabf05e11",
     "repeatability-summary.csv": "ca796726d1ab3f11d780453914e9ba5ae4f08627df89d1c9acd57a098994dc27"
   },
   "config": {
@@ -730,7 +730,7 @@
       "unit": "rows"
     }
   ],
-  "generation_command": "python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision bfd0a288a36730f7461ca3b21e678ff692e54915",
+  "generation_command": "python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision 3f1829ab52d431262047707040f61f6f276dea51",
   "layer_version": "coldguard-w07-plant-eda-v1",
   "phase_metrics": [
     {
@@ -2070,6 +2070,8 @@
     }
   },
   "repeatability": {
+    "conflict_diagnostics": [],
+    "conflicting_physical_sources": 0,
     "diagnostic_phase_records": 3,
     "duplicate_views": 0,
     "excluded_records": 3,
@@ -4048,7 +4050,7 @@
     ],
     "verdict": "NOT_ESTABLISHED"
   },
-  "repository_revision": "bfd0a288a36730f7461ca3b21e678ff692e54915",
+  "repository_revision": "3f1829ab52d431262047707040f61f6f276dea51",
   "representations": [
     {
       "available": true,

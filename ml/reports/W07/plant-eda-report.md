@@ -20,8 +20,8 @@ result. It is not a repeatability or performance claim.
 |---|---|
 | Report schema | `coldguard-w07-plant-eda-report-v1` |
 | W07 layer version | `coldguard-w07-plant-eda-v1` |
-| Analysis code SHA-256 | `9d130d89e4fd991c17389a87fe112743ffc787a456be5bdac0818056f335036c` |
-| Repository revision | `bfd0a288a36730f7461ca3b21e678ff692e54915` |
+| Analysis code SHA-256 | `29d74012516f89019be89bac935e6010ee012b6b7a61426a9b07b3154939b795` |
+| Repository revision | `3f1829ab52d431262047707040f61f6f276dea51` |
 | Source path | `evidence/A/W09/exports/CG-S1-H8C-600S.json` |
 | Source SHA-256 | `f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb` |
 | Source namespace/format | `w09-run-export/v2` / `a-w09-run-export-v2` |
@@ -36,7 +36,7 @@ result. It is not a repeatability or performance claim.
 | Hardware configuration | `'CG-HW-001'` (`DECLARED_NOT_VERIFIED`) |
 | Calibration identity | `None` (`NOT_AVAILABLE`) |
 | Scenario identity | `'S1'` (`CANDIDATE_NOT_CERTIFIED`) |
-| Generation command | `python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision bfd0a288a36730f7461ca3b21e678ff692e54915` |
+| Generation command | `python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision 3f1829ab52d431262047707040f61f6f276dea51` |
 
 W06 timing/identity diagnostics consumed read-only:
 
@@ -75,6 +75,7 @@ W04 admission blockers:
 | Qualified independent runs | 0 |
 | Diagnostic phase records | 3 |
 | Duplicate source views | 0 |
+| Conflicting physical sources | 0 |
 
 The 2 raw `run_id` label(s) are segments inside one boot. They do not establish independent runs, and the phase segments inside that boot do not establish experimental repetitions.
 
@@ -236,6 +237,7 @@ Source anomaly retained (not averaged away):
 | Qualified independent runs | 0 |
 | Excluded records | 3 |
 | Duplicate source views | 0 |
+| Conflicting physical sources | 0 |
 | Reason codes | ADMISSION_NOT_PHYSICALLY_QUALIFIED, A_LEDGER_NOT_VALID, CALIBRATION_IDENTITY_MISSING, DEVICE_IDENTITY_MISSING, HARDWARE_CONFIG_NOT_VERIFIED, MINIMUM_INDEPENDENT_RUNS_NOT_MET, NO_QUALIFIED_INDEPENDENT_RUNS, RUN_IDENTITY_UNRESOLVED, SCENARIO_NOT_CERTIFIED |
 
 No SD, IQR or CV is reported as between-run repeatability from the 957 telemetry rows or from the 3 diagnostic phase record(s). A single session's within-run variation is **not** a run-to-run variance estimate.
@@ -296,7 +298,7 @@ constraints and unavailable variables. No numeric tolerance is claimed.
 ## 12. Reproduce
 
 ```bash
-python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision bfd0a288a36730f7461ca3b21e678ff692e54915
+python scripts/plant-eda-W07.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-w07-dir ../evidence/A/W07 --out reports/W07 --representation tmean_airroles_v0 --trailing-samples 120 --temperature-change-thresholds 1.0,2.0 --min-runs 3 --percentile-method linear --repository-revision 3f1829ab52d431262047707040f61f6f276dea51
 ```
 
 Repeated execution against the same source and configuration produces
