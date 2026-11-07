@@ -52,3 +52,26 @@ The disposable TLS tests exercise certificate trust, hostname verification,
 failed authentication, both backend subscribers, scoped ACL denial, and
 authorized software-only delivery. Member D signoff and hardware acceptance
 remain separate.
+
+## Predictive dispatch and physical assessment authority
+
+W18 uses `ControllerBDispatch` for predictive commands. It requires the private
+backend token/device scope, an explicitly provisioned `DPolicyAuthority`, a
+trusted frozen model specification, and an exact-envelope approval signature.
+Approval is checked again against current durable context immediately before
+the broker handoff. An immutable receipt records key and evidence digests
+before transport; it does not export approval keys or reusable signatures.
+Generic publication is not a predictive-authority bypass. An uncertain
+predictive command is not automatically replayed on reconnect.
+
+Physical certification has a different authority, `PhysicalAuthority`. It is
+not configured by default or exposed as an MQTT/HTTP verdict route. The
+authority must be provisioned out of band for a commissioned operating envelope
+and must sign scoped measurement evidence. Neither broker PUBACK, accepted ACK,
+desired state, raw device verification claims nor a test PHYSICAL label grants
+that authority. Provisioned software test keys exercise the boundary only.
+
+See [the command path](COMMAND_PATH.md#controller-b-integration-w18-revision-0012)
+for the stage sequence, database fences, migration safeguards, acquisition-time
+freshness and deterministic trace contract. These controls do not replace
+device-side expiry/idempotency or Member A/D physical safety approval.
