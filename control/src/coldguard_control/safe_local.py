@@ -64,6 +64,9 @@ class SafeLocalSession:
     ) -> None:
         self._config = config
         self._active = bool(initial_active)
+        self._mode = (
+            DeviceMode.SAFE_LOCAL if self._active else DeviceMode.ONLINE_NORMAL
+        )
         self._entry_reason: ReasonCode | None = None
 
     @property
@@ -72,7 +75,7 @@ class SafeLocalSession:
 
     @property
     def mode(self) -> DeviceMode:
-        return DeviceMode.SAFE_LOCAL if self._active else DeviceMode.ONLINE_NORMAL
+        return self._mode
 
     def step(self, policy_input: PolicyInput) -> SafeLocalStep:
         """Evaluate one input while preserving SAFE_LOCAL across a decision.
@@ -90,6 +93,7 @@ class SafeLocalSession:
         decision = evaluate_policy(effective, self._config)
         if decision.state is PolicyState.FAULT_LOCKOUT:
             self._active = False
+            self._mode = DeviceMode.FAULT_LOCKOUT
             self._entry_reason = None
             return SafeLocalStep(
                 decision=decision,
@@ -118,6 +122,17 @@ class SafeLocalSession:
             self._entry_reason = None
 
         self._active = active
+        self._mode = (
+            DeviceMode.SAFE_LOCAL
+            if active
+            else (
+                policy_input.device_mode
+                if policy_input.device_mode in (
+                    DeviceMode.ONLINE_NORMAL, DeviceMode.ONLINE_DEGRADED
+                )
+                else DeviceMode.ONLINE_NORMAL
+            )
+        )
         local_only = active and decision.controller_id is ControllerId.REACTIVE
 
         return SafeLocalStep(

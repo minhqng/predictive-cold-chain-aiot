@@ -77,11 +77,13 @@ def test_safe_local_entry_and_exit():
     assert step.entered
     assert step.entry_reason == ReasonCode.NETWORK_UNAVAILABLE
     assert step.local_control_only
+    assert session.mode is DeviceMode.SAFE_LOCAL
     # Now provide trusted remote, should exit immediately (exit_ready True)
     step2 = session.step(make_input(make_remote_trusted()))
     assert not step2.active
     assert step2.exited
     assert step2.exit_ready
+    assert session.mode is DeviceMode.ONLINE_NORMAL
 
 
 def test_lockout_is_not_rewritten_as_safe_local():
@@ -92,3 +94,14 @@ def test_lockout_is_not_rewritten_as_safe_local():
     assert not step.active
     assert not step.exited
     assert not step.exit_ready
+    assert session.mode is DeviceMode.FAULT_LOCKOUT
+
+
+def test_exit_reports_degraded_online_mode():
+    session = SafeLocalSession(make_config(), initial_active=True)
+    degraded = replace(
+        make_input(make_remote_trusted()), device_mode=DeviceMode.ONLINE_DEGRADED,
+    )
+    step = session.step(degraded)
+    assert step.exited
+    assert session.mode is DeviceMode.ONLINE_DEGRADED
