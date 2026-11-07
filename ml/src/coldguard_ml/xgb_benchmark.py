@@ -19,7 +19,7 @@ from __future__ import annotations
 import hashlib
 import json
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from pathlib import Path
 from typing import Any, Mapping, Sequence
 
@@ -123,6 +123,24 @@ WARNING_DEFINITION_XGB = "XGB_RISK_SCORE_THRESHOLD"
 
 EVENT_DEFINITION_SYNTHETIC = "coldguard-w11-prescribed-critical-event-v1"
 EVENT_SOURCE_SYNTHETIC = "W11_SYNTHETIC_FIXTURE"
+
+EWT_REASON_NO_COMMON_TRAJECTORY = (
+    "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY"
+)
+AIW_REASON_MISSING_LATENCY_CHAIN = (
+    "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING"
+)
+EWT_TEXT = (
+    "no authoritative physical, non-intervened trajectory with frozen warning "
+    "and reactive definitions supplies both anchors in one trusted event-time "
+    "domain; synthetic benchmark rows are not physical EWT evidence"
+)
+AIW_TEXT = (
+    "no complete measured command, ACK and thermal response latency chain is "
+    "available; EWT availability would not establish AIW"
+)
+TRUSTED_EXPOSURE_POLICY = "ALL_CHANNEL_VALID_V1"
+EPISODE_CUTOFF_POLICY = "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1"
 
 HARDWARE_W10 = "CG-HW-SYNTHETIC"
 HARDWARE_W11 = "CG-HW-SYNTHETIC-W11"
@@ -1193,8 +1211,6 @@ def _critical_event_inputs(
     origin = _anchor_datetime(trajectory, 0.0)
     inputs = []
     for index, event in enumerate(series.events):
-        if not event.trusted:
-            continue
         time_s = (event.time - origin).total_seconds()
         inputs.append(
             CriticalEventInput(
@@ -1205,7 +1221,7 @@ def _critical_event_inputs(
                 definition_version=EVENT_DEFINITION_SYNTHETIC,
                 source=EVENT_SOURCE_SYNTHETIC,
                 observed=True,
-                trusted=True,
+                trusted=event.trusted,
                 intervention=False,
                 time_certainty=CERTAINTY_EXACT,
                 interval_start_s=time_s,
@@ -1213,6 +1229,112 @@ def _critical_event_inputs(
             )
         )
     return tuple(inputs)
+
+
+@dataclass(frozen=True)
+class TrustedExposure:
+    policy_version: str
+    evaluation_end_s: float
+    first_trusted_observation_s: float | None
+    trusted_duration_s: float
+    untrusted_duration_s: float
+    fully_observed: bool
+
+
+def _fully_valid(sample: Any) -> bool:
+    return all(
+        getattr(sample, name) == "VALID"
+        for name in (
+            "thermal_quality",
+            "electrical_quality",
+            "environment_quality",
+            "door_quality",
+        )
+    )
+
+
+def trusted_exposure(
+    trajectory: Trajectory,
+    *,
+    evaluation_end_s: float,
+    max_continuity_gap_s: float,
+) -> TrustedExposure:
+    """Trusted, evaluable exposure through the evaluation cutoff.
+
+    Only intervals between two consecutive all-channel VALID samples no wider
+    than the declared continuity bound count as observed time. Time before the
+    first trusted sample and any missing/invalid interval are unobservable,
+    never silently folded into a rate denominator.
+    """
+    if not math.isfinite(evaluation_end_s) or evaluation_end_s <= 0:
+        raise BenchmarkError("evaluation_end_s must be positive and finite")
+    samples = tuple(
+        sample for sample in trajectory.samples if sample.time_s <= evaluation_end_s
+    )
+    if len(samples) < 2:
+        return TrustedExposure(
+            policy_version=TRUSTED_EXPOSURE_POLICY,
+            evaluation_end_s=evaluation_end_s,
+            first_trusted_observation_s=None,
+            trusted_duration_s=0.0,
+            untrusted_duration_s=evaluation_end_s,
+            fully_observed=False,
+        )
+    trusted = 0.0
+    untrusted = 0.0
+    first_trusted = next(
+        (
+            sample.time_s
+            for sample in samples
+            if _fully_valid(sample)
+        ),
+        None,
+    )
+    if samples[0].time_s > 0:
+        untrusted += samples[0].time_s
+    for left, right in zip(samples, samples[1:]):
+        delta = right.time_s - left.time_s
+        if (
+            delta > 0
+            and _fully_valid(left)
+            and _fully_valid(right)
+            and delta <= max_continuity_gap_s
+        ):
+            trusted += delta
+        else:
+            untrusted += delta
+    if evaluation_end_s > samples[-1].time_s:
+        untrusted += evaluation_end_s - samples[-1].time_s
+    trusted = round(trusted, 9)
+    untrusted = round(untrusted, 9)
+    fully_observed = untrusted == 0 and trusted > 0
+    return TrustedExposure(
+        policy_version=TRUSTED_EXPOSURE_POLICY,
+        evaluation_end_s=evaluation_end_s,
+        first_trusted_observation_s=first_trusted,
+        trusted_duration_s=trusted,
+        untrusted_duration_s=untrusted,
+        fully_observed=fully_observed,
+    )
+
+
+def _censor_after_cutoff(
+    events: Sequence[CriticalEventInput], evaluation_end_s: float
+) -> tuple[CriticalEventInput, ...]:
+    """Events beyond the anchor cutoff are right-censored, never dropped."""
+    return tuple(
+        event
+        if event.time_s is None or event.time_s <= evaluation_end_s
+        else replace(event, observed=False, censored=True)
+        for event in events
+    )
+
+
+def _truncate_samples(
+    samples: Sequence[WarningSample], evaluation_end_s: float
+) -> tuple[WarningSample, ...]:
+    """An online warning onset may use only samples at or before the cutoff."""
+    return tuple(sample for sample in samples if sample.time_s <= evaluation_end_s)
 
 
 def _event_result(
@@ -1224,48 +1346,54 @@ def _event_result(
     association_policy: AssociationPolicy,
     warning_definition: str,
     evaluation_end_s: float,
+    trusted_exposure_s: float,
+    coverage_trustworthy: bool,
 ) -> Any:
-    episodes = tuple(
-        episode
-        for episode in build_warning_episodes(
-            samples,
-            episode_policy,
-            run_id=trajectory.run_id,
-            source_sha256=trajectory.source_sha256,
-            synthetic_control=True,
-        ).episodes
-        if episode.start_s <= evaluation_end_s
-    )
+    episodes = build_warning_episodes(
+        _truncate_samples(samples, evaluation_end_s),
+        episode_policy,
+        run_id=trajectory.run_id,
+        source_sha256=trajectory.source_sha256,
+        synthetic_control=True,
+    ).episodes
     return evaluate_events(
         run_id=trajectory.run_id,
         source_sha256=trajectory.source_sha256,
         episodes=episodes,
-        critical_events=critical_events,
+        critical_events=_censor_after_cutoff(
+            critical_events, evaluation_end_s
+        ),
         episode_policy=episode_policy,
         association_policy=association_policy,
         warning_definition=warning_definition,
-        coverage_trustworthy=True,
+        coverage_trustworthy=coverage_trustworthy,
         eligible_run_count=1,
-        evaluable_duration_s=evaluation_end_s,
+        evaluable_duration_s=trusted_exposure_s,
         synthetic_control=True,
     )
 
 
 def aggregate_event_results(
-    results: Sequence[Any], *, duration_s: float
+    results: Sequence[Any], *, duration_s: float, untrusted_duration_s: float = 0.0
 ) -> dict[str, Any]:
     if not results:
         return {
-            "warning_episode_count": 0,
-            "matched_warning_episodes": 0,
-            "unmatched_warnings": 0,
+            "warning_episode_count": None,
+            "matched_warning_episodes": None,
+            "unmatched_warnings": None,
             "missed_critical_events": None,
-            "eligible_critical_event_count": 0,
+            "eligible_critical_event_count": None,
+            "censored_event_count": None,
+            "untrusted_event_count": None,
             "false_warning_episodes_per_run": None,
             "false_warning_episodes_per_hour": None,
             "event_precision": None,
             "event_recall": None,
+            "trusted_exposure_s": duration_s,
+            "untrusted_exposure_s": untrusted_duration_s,
+            "coverage_trustworthy": None,
             "undefined_reasons": ["NO_EVALUATION_RESULTS"],
+            "per_run_undefined_reasons": [],
         }
     matched = sum(item.metrics.true_matched_warning_episodes for item in results)
     unmatched = sum(item.metrics.unmatched_warning_episodes for item in results)
@@ -1274,7 +1402,10 @@ def aggregate_event_results(
     event_count = sum(
         item.metrics.eligible_critical_event_denominator for item in results
     )
+    censored_events = sum(item.metrics.censored_event_count for item in results)
+    untrusted_events = sum(item.metrics.untrusted_event_count for item in results)
     run_support = sum(item.metrics.run_support for item in results)
+    coverage_trustworthy = all(item.coverage_trustworthy for item in results)
     per_run_undefined: list[str] = []
     for item in results:
         per_run_undefined.extend(item.metrics.undefined_reasons)
@@ -1287,13 +1418,29 @@ def aggregate_event_results(
     if event_count == 0:
         recall = None
         undefined.append("NO_ELIGIBLE_CRITICAL_EVENTS")
-    else:
+    elif coverage_trustworthy:
         recall = matched / event_count
-    per_run = unmatched / run_support if run_support > 0 else None
-    per_hour = unmatched / (duration_s / 3600.0) if duration_s > 0 else None
-    if per_run is None:
+    else:
+        recall = None
+        undefined.append(
+            "EVENT_RECALL_UNDEFINED_INCOMPLETE_COVERAGE"
+        )
+    false_warning_defined = coverage_trustworthy
+    per_run = (
+        unmatched / run_support
+        if false_warning_defined and run_support > 0
+        else None
+    )
+    per_hour = (
+        unmatched / (duration_s / 3600.0)
+        if false_warning_defined and duration_s > 0
+        else None
+    )
+    if not false_warning_defined:
+        undefined.append("FALSE_WARNING_BURDEN_UNDEFINED_INCOMPLETE_COVERAGE")
+    if run_support <= 0:
         undefined.append("NO_RUN_SUPPORT")
-    if per_hour is None:
+    if duration_s <= 0:
         undefined.append("NO_EVALUABLE_DURATION")
     return {
         "warning_episode_count": episode_count,
@@ -1301,10 +1448,15 @@ def aggregate_event_results(
         "unmatched_warnings": unmatched,
         "missed_critical_events": missed,
         "eligible_critical_event_count": event_count,
+        "censored_event_count": censored_events,
+        "untrusted_event_count": untrusted_events,
         "false_warning_episodes_per_run": per_run,
         "false_warning_episodes_per_hour": per_hour,
         "event_precision": precision,
         "event_recall": recall,
+        "trusted_exposure_s": round(duration_s, 9),
+        "untrusted_exposure_s": round(untrusted_duration_s, 9),
+        "coverage_trustworthy": coverage_trustworthy,
         "undefined_reasons": list(dict.fromkeys(undefined)),
         "per_run_undefined_reasons": list(dict.fromkeys(per_run_undefined)),
     }
@@ -1325,6 +1477,9 @@ class _BaselineRun:
     b0_evaluability: str
     b1_evaluability: str
     duration_s: float
+    untrusted_duration_s: float
+    coverage_trustworthy: bool
+    first_trusted_observation_s: float | None
 
 
 def _prepare_baseline_run(
@@ -1338,52 +1493,53 @@ def _prepare_baseline_run(
     scenario = trajectory.scenario_id or "UNKNOWN"
     capture = capture_from_trajectory(trajectory, hardware_config_id=hardware_config_id)
     run_id = trajectory.run_id or ""
+    exposure = trusted_exposure(
+        trajectory,
+        evaluation_end_s=evaluation_end_s,
+        max_continuity_gap_s=config.baseline.raw["max_continuity_gap_s"],
+    )
     b0 = evaluate_b0(capture, config.baseline.b0(run_id=run_id, scenario_id=scenario))
     b1 = evaluate_b1(capture, config.baseline.b1(run_id=run_id, scenario_id=scenario))
     episode_policy = config.baseline.episode_policy()
     association_policy = config.baseline.association_policy()
     b0_samples = (
-        warning_samples_from_replay(
-            b0, warning_definition=WARNING_DEFINITION_B0
-        )[0]
+        _truncate_samples(
+            warning_samples_from_replay(
+                b0, warning_definition=WARNING_DEFINITION_B0
+            )[0],
+            evaluation_end_s,
+        )
         if b0.evaluability == EVALUABILITY_DIAGNOSTIC
         else ()
     )
     b1_samples = (
-        warning_samples_from_replay(
-            b1, warning_definition=WARNING_DEFINITION_B1
-        )[0]
+        _truncate_samples(
+            warning_samples_from_replay(
+                b1, warning_definition=WARNING_DEFINITION_B1
+            )[0],
+            evaluation_end_s,
+        )
         if b1.evaluability == EVALUABILITY_DIAGNOSTIC
         else ()
     )
-    b0_episodes = tuple(
-        episode
-        for episode in build_warning_episodes(
-            b0_samples,
-            episode_policy,
-            run_id=run_id,
-            source_sha256=trajectory.source_sha256,
-            synthetic_control=True,
-        ).episodes
-        if episode.start_s <= evaluation_end_s
+    b0_episodes = build_warning_episodes(
+        b0_samples,
+        episode_policy,
+        run_id=run_id,
+        source_sha256=trajectory.source_sha256,
+        synthetic_control=True,
+    ).episodes
+    b1_episodes = build_warning_episodes(
+        b1_samples,
+        episode_policy,
+        run_id=run_id,
+        source_sha256=trajectory.source_sha256,
+        synthetic_control=True,
+    ).episodes
+    event_inputs = _censor_after_cutoff(
+        _critical_event_inputs(trajectory, series), evaluation_end_s
     )
-    b1_episodes = tuple(
-        episode
-        for episode in build_warning_episodes(
-            b1_samples,
-            episode_policy,
-            run_id=run_id,
-            source_sha256=trajectory.source_sha256,
-            synthetic_control=True,
-        ).episodes
-        if episode.start_s <= evaluation_end_s
-    )
-    event_inputs = tuple(
-        event
-        for event in _critical_event_inputs(trajectory, series)
-        if event.time_s is None or event.time_s <= evaluation_end_s
-    )
-    duration_s = evaluation_end_s
+    duration_s = exposure.trusted_duration_s
     b0_events = (
         evaluate_events(
             run_id=run_id,
@@ -1393,7 +1549,7 @@ def _prepare_baseline_run(
             episode_policy=episode_policy,
             association_policy=association_policy,
             warning_definition=WARNING_DEFINITION_B0,
-            coverage_trustworthy=True,
+            coverage_trustworthy=exposure.fully_observed,
             eligible_run_count=1,
             evaluable_duration_s=duration_s,
             synthetic_control=True,
@@ -1410,7 +1566,7 @@ def _prepare_baseline_run(
             episode_policy=episode_policy,
             association_policy=association_policy,
             warning_definition=WARNING_DEFINITION_B1,
-            coverage_trustworthy=True,
+            coverage_trustworthy=exposure.fully_observed,
             eligible_run_count=1,
             evaluable_duration_s=duration_s,
             synthetic_control=True,
@@ -1446,6 +1602,9 @@ def _prepare_baseline_run(
         b0_evaluability=b0.evaluability,
         b1_evaluability=b1.evaluability,
         duration_s=duration_s,
+        untrusted_duration_s=exposure.untrusted_duration_s,
+        coverage_trustworthy=exposure.fully_observed,
+        first_trusted_observation_s=exposure.first_trusted_observation_s,
     )
 
 
@@ -1614,13 +1773,23 @@ def run_grouped_benchmark(
                             association_policy=config.baseline.association_policy(),
                             warning_definition=WARNING_DEFINITION_XGB,
                             evaluation_end_s=evaluation_end_by_run[run_id],
+                            trusted_exposure_s=baselines[run_id].duration_s,
+                            coverage_trustworthy=(
+                                baselines[run_id].coverage_trustworthy
+                            ),
                         )
                     )
                 duration = sum(
                     baselines[run_id].duration_s for run_id in fold.validation_runs
                 )
+                untrusted_duration = sum(
+                    baselines[run_id].untrusted_duration_s
+                    for run_id in fold.validation_runs
+                )
                 event_summary = aggregate_event_results(
-                    per_run_events, duration_s=duration
+                    per_run_events,
+                    duration_s=duration,
+                    untrusted_duration_s=untrusted_duration,
                 )
                 result = FoldRunResult(
                     **{**result.__dict__, "event_metrics": event_summary}
@@ -1638,6 +1807,7 @@ def run_grouped_benchmark(
                 fold=fold,
                 validation_samples=validation_samples,
                 xgb_result=result,
+                baselines=baselines,
             )
         oof_payload[strategy] = _oof_payload(
             oof_labels,
@@ -1804,6 +1974,11 @@ def _add_baseline_method_rows(
                 for run_id in fold.validation_runs
                 if getattr(baselines[run_id], event_result) is not None
             ),
+            untrusted_duration_s=sum(
+                baselines[run_id].untrusted_duration_s
+                for run_id in fold.validation_runs
+                if getattr(baselines[run_id], event_result) is not None
+            ),
         )
         evaluability_reasons = list(event_summary["undefined_reasons"])
         if not_evaluable:
@@ -1832,6 +2007,17 @@ def _add_baseline_method_rows(
                 "eligible_critical_event_count": event_summary[
                     "eligible_critical_event_count"
                 ],
+                "censored_event_count": event_summary["censored_event_count"],
+                "untrusted_event_count": event_summary["untrusted_event_count"],
+                "trusted_exposure_s": event_summary["trusted_exposure_s"],
+                "untrusted_exposure_s": event_summary["untrusted_exposure_s"],
+                "coverage_trustworthy": event_summary["coverage_trustworthy"],
+                "first_trusted_observation_by_run": [
+                    baselines[run_id].first_trusted_observation_s
+                    for run_id in fold.validation_runs
+                ],
+                "exposure_policy": TRUSTED_EXPOSURE_POLICY,
+                "episode_cutoff_policy": EPISODE_CUTOFF_POLICY,
                 "warning_episode_count": event_summary["warning_episode_count"],
                 "matched_warning_episodes": event_summary[
                     "matched_warning_episodes"
@@ -1873,7 +2059,11 @@ def _add_baseline_method_rows(
                     or pooled_metrics.sample_count != len(validation_samples)
                 ),
                 "ewt": "NOT_ESTIMABLE",
-                "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+                "ewt_reason_code": EWT_REASON_NO_COMMON_TRAJECTORY,
+                "ewt_reason": EWT_TEXT,
+                "aiw": "NOT_ESTIMABLE",
+                "aiw_reason_code": AIW_REASON_MISSING_LATENCY_CHAIN,
+                "aiw_reason": AIW_TEXT,
                 "undefined_reasons": evaluability_reasons,
                 "censored_exclusions": censored_exclusions,
                 "untrusted_exclusions": untrusted_exclusions,
@@ -1900,6 +2090,7 @@ def _add_xgb_comparison_row(
     fold: Fold,
     validation_samples: Sequence[LabeledSample],
     xgb_result: FoldRunResult,
+    baselines: Mapping[str, _BaselineRun],
 ) -> None:
     rows.append(
         {
@@ -1918,6 +2109,27 @@ def _add_xgb_comparison_row(
             "eligible_critical_event_count": (
                 xgb_result.event_metrics or {}
             ).get("eligible_critical_event_count"),
+            "censored_event_count": (xgb_result.event_metrics or {}).get(
+                "censored_event_count"
+            ),
+            "untrusted_event_count": (xgb_result.event_metrics or {}).get(
+                "untrusted_event_count"
+            ),
+            "trusted_exposure_s": (xgb_result.event_metrics or {}).get(
+                "trusted_exposure_s"
+            ),
+            "untrusted_exposure_s": (xgb_result.event_metrics or {}).get(
+                "untrusted_exposure_s"
+            ),
+            "coverage_trustworthy": (xgb_result.event_metrics or {}).get(
+                "coverage_trustworthy"
+            ),
+            "first_trusted_observation_by_run": [
+                baselines[run_id].first_trusted_observation_s
+                for run_id in fold.validation_runs
+            ],
+            "exposure_policy": TRUSTED_EXPOSURE_POLICY,
+            "episode_cutoff_policy": EPISODE_CUTOFF_POLICY,
             "warning_episode_count": (xgb_result.event_metrics or {}).get(
                 "warning_episode_count"
             ),
@@ -1961,7 +2173,11 @@ def _add_xgb_comparison_row(
                 else None
             ),
             "ewt": "NOT_ESTIMABLE",
-            "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+            "ewt_reason_code": EWT_REASON_NO_COMMON_TRAJECTORY,
+            "ewt_reason": EWT_TEXT,
+            "aiw": "NOT_ESTIMABLE",
+            "aiw_reason_code": AIW_REASON_MISSING_LATENCY_CHAIN,
+            "aiw_reason": AIW_TEXT,
             "undefined_reasons": (xgb_result.event_metrics or {}).get(
                 "undefined_reasons", []
             ),
@@ -2226,6 +2442,8 @@ def real_development_status(
         "REAL_BASELINE_COMPARISON": "NOT_ESTABLISHED",
         "REAL_EWT": "NOT_ESTIMABLE",
         "REAL_AIW": "NOT_ESTIMABLE",
+        "REAL_EWT_REASON_CODE": EWT_REASON_NO_COMMON_TRAJECTORY,
+        "REAL_AIW_REASON_CODE": AIW_REASON_MISSING_LATENCY_CHAIN,
         "REASONS": reasons,
         "ADMISSION": decision.to_dict(),
     }

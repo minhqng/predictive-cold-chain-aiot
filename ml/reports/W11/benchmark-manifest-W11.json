@@ -1,8 +1,8 @@
 {
-  "analysis_code_sha256": "3fc518c9dba68c96e83b21c91e067031a452826b425fd693db8bd9ad9026f37a",
+  "analysis_code_sha256": "6ee60412d4e660de6c42bb7813bf7a6c5f545845f4fa371dc0fa02283cd67e6d",
   "artifacts": {
     "baseline-comparison-W11.csv": {
-      "sha256": "90a7736f40034557f275562d17d807f60ad73bccde385acda8abacbc9e7771dc"
+      "sha256": "e6dcd3bbafe8ac8868fe4fe613b9261409f352b5b70071d2b45b7b11a4a10918"
     },
     "cv-fold-manifest.yaml": {
       "sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6"
@@ -20,29 +20,43 @@
       "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
     },
     "xgb-v1-report.md": {
-      "sha256": "62f325c56c4a7d52452dde6fea82ef062a76cff5e9c08c7e3e4712eb0805e792"
+      "sha256": "3f4e6086e3ed692f86bdd2a85ef845855b43465907f853f4150c2cc4c6b3348f"
     }
   },
   "baseline_comparison": [
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F1",
       "matched_warning_episodes": 2,
       "method": "B0_THRESHOLD",
@@ -61,9 +75,12 @@
       "sample_threshold": 5.5,
       "sample_undefined_reasons": [],
       "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-005",
         "CG-W11-S1-006",
@@ -75,24 +92,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F1",
       "matched_warning_episodes": 2,
       "method": "B1_HYSTERESIS",
@@ -111,9 +142,12 @@
       "sample_threshold": 1.0,
       "sample_undefined_reasons": [],
       "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-005",
         "CG-W11-S1-006",
@@ -125,24 +159,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F2",
       "matched_warning_episodes": 2,
       "method": "B0_THRESHOLD",
@@ -161,9 +209,12 @@
       "sample_threshold": 5.5,
       "sample_undefined_reasons": [],
       "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-007",
         "CG-W11-S1-008",
@@ -175,24 +226,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F2",
       "matched_warning_episodes": 2,
       "method": "B1_HYSTERESIS",
@@ -211,9 +276,12 @@
       "sample_threshold": 1.0,
       "sample_undefined_reasons": [],
       "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-007",
         "CG-W11-S1-008",
@@ -225,24 +293,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F3",
       "matched_warning_episodes": 2,
       "method": "B0_THRESHOLD",
@@ -261,9 +343,12 @@
       "sample_threshold": 5.5,
       "sample_undefined_reasons": [],
       "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-003",
         "CG-W11-S1-009",
@@ -275,24 +360,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F3",
       "matched_warning_episodes": 2,
       "method": "B1_HYSTERESIS",
@@ -311,9 +410,12 @@
       "sample_threshold": 1.0,
       "sample_undefined_reasons": [],
       "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-003",
         "CG-W11-S1-009",
@@ -325,24 +427,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F4",
       "matched_warning_episodes": 2,
       "method": "B0_THRESHOLD",
@@ -361,9 +477,12 @@
       "sample_threshold": 5.5,
       "sample_undefined_reasons": [],
       "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-004",
         "CG-W11-S1-010",
@@ -375,24 +494,38 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
       "baseline_evaluability": [
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC",
         "EVALUABLE_DIAGNOSTIC"
       ],
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F4",
       "matched_warning_episodes": 2,
       "method": "B1_HYSTERESIS",
@@ -411,9 +544,12 @@
       "sample_threshold": 1.0,
       "sample_undefined_reasons": [],
       "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-004",
         "CG-W11-S1-010",
@@ -425,18 +561,32 @@
       "xgb_sample_count": 484
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F1",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_UNWEIGHTED",
@@ -450,9 +600,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-005",
         "CG-W11-S1-006",
@@ -463,18 +616,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F2",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_UNWEIGHTED",
@@ -488,9 +655,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-007",
         "CG-W11-S1-008",
@@ -501,18 +671,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F3",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_UNWEIGHTED",
@@ -526,9 +710,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-003",
         "CG-W11-S1-009",
@@ -539,18 +726,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F4",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_UNWEIGHTED",
@@ -564,9 +765,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-004",
         "CG-W11-S1-010",
@@ -577,18 +781,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F1",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
@@ -602,9 +820,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-005",
         "CG-W11-S1-006",
@@ -615,18 +836,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F2",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
@@ -640,9 +875,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-007",
         "CG-W11-S1-008",
@@ -653,18 +891,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F3",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
@@ -678,9 +930,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-003",
         "CG-W11-S1-009",
@@ -691,18 +946,32 @@
       "warning_episode_count": 2
     },
     {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
       "censored_exclusions": 240,
+      "coverage_trustworthy": true,
       "eligible_critical_event_count": 2,
       "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
       "event_precision": 1.0,
       "event_recall": 1.0,
       "ewt": "NOT_ESTIMABLE",
-      "ewt_reason": "W11 has no measured command/ACK/thermal latency chain",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
       "exclusion_reason_codes": [
         "CENSORED_LABELS_EXCLUDED"
       ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
       "false_warning_episodes_per_hour": 0.0,
       "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
       "fold_id": "F4",
       "matched_warning_episodes": 2,
       "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
@@ -716,9 +985,12 @@
       "sample_precision": 1.0,
       "sample_recall": 1.0,
       "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
       "undefined_reasons": [],
       "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
       "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
       "validation_run_ids": [
         "CG-W11-S1-004",
         "CG-W11-S1-010",
@@ -1258,6 +1530,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1269,8 +1543,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F1",
@@ -1363,6 +1640,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1374,8 +1653,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F2",
@@ -1468,6 +1750,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1479,8 +1763,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F3",
@@ -1573,6 +1860,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1584,8 +1873,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F4",
@@ -1678,6 +1970,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1689,8 +1983,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F1",
@@ -1783,6 +2080,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1794,8 +2093,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F2",
@@ -1888,6 +2190,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -1899,8 +2203,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F3",
@@ -1993,6 +2300,8 @@
       "censored_exclusions": 240,
       "detail": null,
       "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
         "eligible_critical_event_count": 2,
         "event_precision": 1.0,
         "event_recall": 1.0,
@@ -2004,8 +2313,11 @@
           "NO_WARNING_EPISODE_DENOMINATOR",
           "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
         ],
+        "trusted_exposure_s": 480.0,
         "undefined_reasons": [],
         "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
         "warning_episode_count": 2
       },
       "fold_id": "F4",
@@ -2096,7 +2408,7 @@
     }
   ],
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/xgb-benchmark-W11.py --mode synthetic-grouped-cv --out reports/W11 --repository-revision 884f2908895646948b114ae5f3ef8937c20e6b83",
+  "generation_command": "python scripts/xgb-benchmark-W11.py --mode synthetic-grouped-cv --out reports/W11 --repository-revision be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
   "label": {
     "frozen_at": null,
     "horizon_s": 60.0,
@@ -2702,9 +3014,11 @@
     "MODE": "real-development",
     "PHYSICAL_GATE_B": "RED",
     "REAL_AIW": "NOT_ESTIMABLE",
+    "REAL_AIW_REASON_CODE": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
     "REAL_BASELINE_COMPARISON": "NOT_ESTABLISHED",
     "REAL_DEVELOPMENT_SPLIT": "NOT_FEASIBLE",
     "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_EWT_REASON_CODE": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
     "REAL_XGBOOST_BENCHMARK": "NOT_ESTABLISHED",
     "REASONS": [
       "PHYSICAL_GATE_RED",
@@ -2731,7 +3045,7 @@
     "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
   ],
   "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
-  "repository_revision": "884f2908895646948b114ae5f3ef8937c20e6b83",
+  "repository_revision": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
   "schema": "coldguard-w11-benchmark-manifest-v1",
   "scientific_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
   "scientific_verdicts": {

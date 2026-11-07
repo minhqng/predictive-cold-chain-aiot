@@ -341,6 +341,15 @@ def test_real_status_is_explicitly_not_feasible(registry, config):
     assert status["REAL_BASELINE_COMPARISON"] == "NOT_ESTABLISHED"
     assert status["REAL_EWT"] == "NOT_ESTIMABLE"
     assert status["REAL_AIW"] == "NOT_ESTIMABLE"
+    assert (
+        status["REAL_EWT_REASON_CODE"]
+        == "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY"
+    )
+    assert (
+        status["REAL_AIW_REASON_CODE"]
+        == "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING"
+    )
+    assert status["REAL_EWT_REASON_CODE"] != status["REAL_AIW_REASON_CODE"]
 
 
 def _run_cli(out_dir: Path, *args: str) -> subprocess.CompletedProcess:

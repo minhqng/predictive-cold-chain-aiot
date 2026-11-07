@@ -44,6 +44,8 @@ try:  # installed package
     from coldguard_ml.feature_registry import load_registry
     from coldguard_ml.leakage_audit import LeakageAuditResult, run_leakage_audit
     from coldguard_ml.xgb_benchmark import (
+        AIW_REASON_MISSING_LATENCY_CHAIN,
+        EWT_REASON_NO_COMMON_TRAJECTORY,
         SYNTHETIC_PROVENANCE,
         BenchmarkConfig,
         BenchmarkFixture,
@@ -62,6 +64,8 @@ except ModuleNotFoundError:  # direct checkout invocation
     from coldguard_ml.feature_registry import load_registry
     from coldguard_ml.leakage_audit import LeakageAuditResult, run_leakage_audit
     from coldguard_ml.xgb_benchmark import (
+        AIW_REASON_MISSING_LATENCY_CHAIN,
+        EWT_REASON_NO_COMMON_TRAJECTORY,
         SYNTHETIC_PROVENANCE,
         BenchmarkConfig,
         BenchmarkFixture,
@@ -303,6 +307,14 @@ def _baseline_comparison_csv(result: BenchmarkResult) -> str:
         "xgb_sample_count",
         "sample_population_differs",
         "eligible_critical_event_count",
+        "censored_event_count",
+        "untrusted_event_count",
+        "trusted_exposure_s",
+        "untrusted_exposure_s",
+        "coverage_trustworthy",
+        "first_trusted_observation_by_run",
+        "exposure_policy",
+        "episode_cutoff_policy",
         "warning_episode_count",
         "matched_warning_episodes",
         "unmatched_warnings",
@@ -319,7 +331,11 @@ def _baseline_comparison_csv(result: BenchmarkResult) -> str:
         "sample_f1",
         "sample_undefined_reasons",
         "ewt",
+        "ewt_reason_code",
         "ewt_reason",
+        "aiw",
+        "aiw_reason_code",
+        "aiw_reason",
         "undefined_reasons",
         "censored_exclusions",
         "untrusted_exclusions",
@@ -624,8 +640,23 @@ def _report_markdown(
             "- Sample unit: feature anchor window.",
             "- Event unit: warning episode versus prescribed critical event.",
             "- B0/B1 are reused from W09; their state machines are not reimplemented.",
-            "- EWT and AIW are `NOT_ESTIMABLE`: W11 has no measured command/ACK/thermal "
-            "latency chain.",
+            "- EWT is `NOT_ESTIMABLE` here for a benchmark-specific reason: these "
+            "rows are synthetic and carry no authoritative physical, non-intervened "
+            "trajectory with frozen warning and reactive definitions supplying both "
+            "anchors in one trusted event-time domain. Command/ACK/thermal latency "
+            "is not an EWT requirement.",
+            "- AIW separately remains `NOT_ESTIMABLE` because no complete measured "
+            "command, ACK and thermal response latency chain exists.",
+            "- An episode is counted by onset before the evaluation cutoff; warning "
+            "inputs after the cutoff are truncated, never used to establish the "
+            "onset. Critical events beyond the cutoff are right-censored, not "
+            "silently dropped.",
+            "- False-warning rates use trusted all-channel-VALID exposure, not the "
+            "elapsed span from zero. A zero or untrusted denominator is undefined, "
+            "never zero.",
+            "- When any evaluable run has untrusted exposure, false-warning density "
+            "and event recall stay undefined; event precision remains over observed "
+            "episodes only.",
             "- A warning episode is one operational event, not one positive sample.",
             "- Eventless and censored populations remain undefined, never zero.",
             "",
@@ -638,8 +669,13 @@ def _report_markdown(
             f"- Benchmark status: `{real_status['BENCHMARK_STATUS']}`",
             f"- Real XGBoost benchmark: `{real_status['REAL_XGBOOST_BENCHMARK']}`",
             f"- Real baseline comparison: `{real_status['REAL_BASELINE_COMPARISON']}`",
-            f"- Real EWT: `{real_status['REAL_EWT']}`",
-            f"- Real AIW: `{real_status['REAL_AIW']}`",
+            f"- Real EWT: `{real_status['REAL_EWT']}` "
+            f"(`{real_status.get('REAL_EWT_REASON_CODE', 'EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY')}`) "
+            "— no eligible physical non-intervened event population and no "
+            "authoritative frozen warning/reactive timing pair.",
+            f"- Real AIW: `{real_status['REAL_AIW']}` "
+            f"(`{real_status.get('REAL_AIW_REASON_CODE', 'AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING')}`) "
+            "— no complete measured system/physical latency chain.",
             "- Refusal reasons: " + (", ".join(real_status.get("REASONS", ())) or "none"),
             "",
             "The A W09 capture is diagnostic only. Gate B RED is not permission to "
@@ -696,6 +732,8 @@ def _report_markdown(
             "- The synthetic AP is not a ColdGuard predictive-science result.",
             "- No real calibration, EWT, AIW, false-warning burden or baseline "
             "improvement is established.",
+            "- EWT and AIW have different evidence contracts. A future EWT value "
+            "would not establish AIW without a measured latency chain.",
             "- W12 owns the consolidated benchmark and Gate G3 report; W11 does not "
             "implement W12 conclusions.",
             "",
@@ -986,6 +1024,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                 "REAL_BASELINE_COMPARISON": "NOT_ESTABLISHED",
                 "REAL_EWT": "NOT_ESTIMABLE",
                 "REAL_AIW": "NOT_ESTIMABLE",
+                "REAL_EWT_REASON_CODE": EWT_REASON_NO_COMMON_TRAJECTORY,
+                "REAL_AIW_REASON_CODE": AIW_REASON_MISSING_LATENCY_CHAIN,
                 "REASONS": ["W08_MANIFEST_NOT_AVAILABLE"],
             }
         if args.mode == "real-development":
