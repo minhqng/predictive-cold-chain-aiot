@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import csv
 import hashlib
 import json
 import os
@@ -336,6 +337,15 @@ def test_cli_generates_consistent_artifacts(tmp_path: Path):
     assert "Physical Gate B | RED" in report
     assert "REAL_S2_LABEL_PILOT" not in report  # report uses human-readable status
     assert "NOT_EVALUABLE" in report
+    assert "Label spec version" in report
+    label_csv = list(csv.DictReader((tmp_path / "label-pilot-W10.csv").open(encoding="utf-8")))
+    assert "spec_version" in label_csv[0]
+    assert "spec_identity" in label_csv[0]
+    assert label_csv[0]["spec_version"] == "coldguard-w10-label-pilot-v1"
+    assert '"frozen_at": null' in label_csv[0]["spec_identity"]
+    real_row = next(row for row in label_csv if row["population"] == "REAL_S2")
+    assert real_row["eligible_s2_runs"] == "0"
+    assert real_row["status"] == "NOT_EVALUABLE"
     summary_csv = (tmp_path / "feature-summary-W10.csv").read_text(encoding="utf-8").splitlines()
     assert summary_csv[0].startswith("population,feature_id")
     assert len(summary_csv) == 1 + 2 * len(REGISTRY.features)

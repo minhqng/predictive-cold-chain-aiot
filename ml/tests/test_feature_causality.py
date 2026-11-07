@@ -396,6 +396,7 @@ def test_duplicate_open_samples_do_not_create_extra_transitions():
     )
     rows = _rows(trajectory)
     assert _value(_at(rows, 12.0), "count_past_60s") == 1
+    assert _value(_at(rows, 0.0), "count_past_60s") == 0
 
 
 def test_opening_count_boundary_is_open_left_closed_right():
@@ -592,3 +593,18 @@ def test_inconsistent_clock_domain_is_refused():
         )
     with pytest.raises(FeaturePipelineError, match="unknown clock domain"):
         dataclasses.replace(trajectory, clock_domain="LOCAL_WALL_CLOCK")
+
+
+def test_w02_adapter_refuses_non_synthetic_declaration():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    run = build_synthetic_run(
+        SyntheticRunSpec(run_id="CG-SYN-NONSYN-001", scenario_id="S1", seed=508)
+    )
+    with pytest.raises(FeaturePipelineError, match="only declared synthetic"):
+        trajectory_from_observations(
+            run.observations,
+            source_sha256="6" * 64,
+            source_type="REAL_A_CAPTURE",
+            synthetic_roles={"t1": "CHAMBER_CENTER"},
+        )

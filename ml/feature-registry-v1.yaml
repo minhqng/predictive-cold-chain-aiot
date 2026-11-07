@@ -529,8 +529,8 @@ features:
     lookback_s: 60.0
     minimum_history_s: 0.0
     max_gap_s: null
-    missing_data_policy: "0 when the interval is covered and no qualifying transition exists; missing is not used for absence of events"
-    first_valid_timestamp_rule: "first anchor with a trusted door state and evaluable interval"
+    missing_data_policy: "0 when no qualifying transition is observed in the available same-boot history; the window never crosses a boot boundary; missing is not used for absence of events"
+    first_valid_timestamp_rule: "first anchor of the boot; only transitions observed in the same boot are counted"
     causal_availability_condition: "transitions observed at or before t"
     aggregation_definition: "count of transitions with t - 60 < transition_time <= t"
     method: door_count_past_60s

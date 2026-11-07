@@ -307,6 +307,9 @@ def _label_pilot_csv(result: Any, real_status: dict[str, Any]) -> str:
             "population",
             "horizon_s",
             "status",
+            "eligible_s2_runs",
+            "spec_version",
+            "spec_identity",
             "independent_development_runs",
             "dependent_window_count",
             "positive_labels",
@@ -327,6 +330,9 @@ def _label_pilot_csv(result: Any, real_status: dict[str, Any]) -> str:
                 result.population,
                 horizon.horizon_s,
                 result.status,
+                "",
+                result.config.spec_version,
+                json.dumps(dict(horizon.spec_identity), sort_keys=True),
                 horizon.independent_runs,
                 horizon.anchors,
                 horizon.positive,
@@ -347,6 +353,8 @@ def _label_pilot_csv(result: Any, real_status: dict[str, Any]) -> str:
             "",
             real_status["REAL_S2_LABEL_PILOT"],
             real_status["ELIGIBLE_S2_RUNS"],
+            "",
+            "",
             0,
             0,
             0,
@@ -458,6 +466,9 @@ def _report_markdown(
             "",
             "A single-class population is not evidence that supervised evaluation "
             "is ready. No model was trained and no AP benchmark was computed.",
+            f"Label spec version: `{pilot.config.spec_version}`; "
+            "`frozen_at = None`; representative temperature and critical boundary "
+            "remain unselected; horizons are development candidates only.",
             "",
             "## 5. Real A W09 diagnostic feature view",
             "",

@@ -803,6 +803,11 @@ def trajectory_from_observations(
     """
     from .observations import canonical_order
 
+    if source_type != SOURCE_TYPE_SYNTHETIC:
+        raise FeaturePipelineError(
+            "W02 observations carry no door-quality or polarity attestation; "
+            "only declared synthetic fixtures may use this adapter"
+        )
     ordered = canonical_order(observations)
     role_map = dict(synthetic_roles or {})
     unsupported = set(role_map) - {"t1", "t2", "t3"}
