@@ -94,7 +94,20 @@ def test_cli_is_read_only_for_a_and_d_evidence(tmp_path):
 
 def test_cli_refuses_broken_source_bundle(tmp_path):
     out = tmp_path / "W12"
+    out.mkdir()
+    stale = out / "benchmark-synthesis-W12.md"
+    stale.write_text("stale package", encoding="utf-8")
     missing = tmp_path / "missing-W11"
     completed = _run(out, "--w11-reports", str(missing))
     assert completed.returncode == 2
     assert "REFUSED" in completed.stderr
+    assert not stale.exists()
+
+
+def test_manifest_records_w06_input(tmp_path):
+    out = tmp_path / "W12"
+    completed = _run(out)
+    assert completed.returncode == 0, completed.stderr
+    manifest = json.loads((out / "w12-manifest.json").read_text(encoding="utf-8"))
+    assert "w06_manifest" in manifest["repository_inputs"]
+    assert manifest["repository_inputs"]["w06_manifest"]["sha256"]

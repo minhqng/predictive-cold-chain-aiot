@@ -877,8 +877,19 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     ml_root = Path(__file__).resolve().parents[1]
     repo_root = ml_root.parent
-    out_dir = Path(args.out)
+    out_dir = (ml_root / args.out).resolve()
     out_dir.mkdir(parents=True, exist_ok=True)
+    for stale in (
+        "benchmark-synthesis-W12.md",
+        "grouped-metrics-W12.csv",
+        "event-operational-summary-W12.csv",
+        "ewt-assessment-W12.csv",
+        "feature-importance-W12.csv",
+        "gate-g3-W12.md",
+        "gate-g3-evidence-matrix-W12.csv",
+        "w12-manifest.json",
+    ):
+        (out_dir / stale).unlink(missing_ok=True)
     revision = args.repository_revision or _git_revision(repo_root)
     command = "python " + " ".join(sys.argv)
     w08_path = (ml_root / args.w08_manifest).resolve()
@@ -953,6 +964,13 @@ def main(argv: Sequence[str] | None = None) -> int:
             )
         )
         source_hashes = {
+            "w06_manifest": {
+                "path": "reports/W06/timing-manifest-W06.json",
+                "exists": w06_path.exists(),
+                "sha256": _sha256_bytes(w06_path.read_bytes())
+                if w06_path.exists()
+                else None,
+            },
             "w08_manifest": gate.source_revisions["w08_manifest"],
             "w09_manifest": gate.source_revisions["w09_manifest"],
             "w10_manifest": gate.source_revisions["w10_manifest"],

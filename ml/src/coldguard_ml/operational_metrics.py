@@ -207,6 +207,11 @@ def build_operational_report(bundle: W11Bundle) -> OperationalReport:
         )
     real_development = bundle.manifest.get("real_development", {})
     real_eligible = int(real_development.get("ELIGIBLE_RUNS", 0) or 0)
+    if real_eligible > 0:
+        raise OperationalMetricsError(
+            "eligible real runs exist; W12 must reassess operational metrics from "
+            "source evidence instead of retaining a refusal"
+        )
     real_status: dict[str, Any] = {
         "population": "real physical eligible S1/S2 runs",
         "eligible_runs": real_eligible,

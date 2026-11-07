@@ -78,7 +78,8 @@ def test_first_valid_warning_onset_is_used():
     case = _cases()["CASE_I_FIRST_VALID_ONSET"]
     assert case.status == "ESTIMABLE"
     assert case.ewt_s == 20.0
-    assert case.persistence_definition.startswith("coldguard-w12-synthetic-timing")
+    assert "bridge_gap_s=2" in case.persistence_definition
+    assert "coldguard-w12-synthetic-timing-episode-v1" in case.persistence_definition
 
 
 def test_every_synthetic_case_is_labeled_test_only():

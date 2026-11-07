@@ -118,6 +118,17 @@ def test_top_feature_is_the_synthetic_door_timing_signal(importance):
     assert importance.family_summaries[0].top_feature_id == "time_since_open"
 
 
+def test_fold_membership_must_match_w11_manifest(bundle):
+    import copy
+    import dataclasses
+
+    fold_manifest = copy.deepcopy(dict(bundle.fold_manifest))
+    fold_manifest["folds"][0]["validation_run_ids"].append("BOGUS-RUN")
+    tampered = dataclasses.replace(bundle, fold_manifest=fold_manifest)
+    with pytest.raises(FeatureImportanceError, match="membership"):
+        compute_feature_importance(tampered)
+
+
 def test_every_feature_has_missingness_context(importance):
     assert all(row.missingness_context for row in importance.rows)
     assert all(row.model_identity for row in importance.rows)

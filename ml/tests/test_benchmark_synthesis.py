@@ -129,6 +129,90 @@ def test_locked_test_use_is_rejected(tmp_path):
         _load(root)
 
 
+def test_locked_test_run_in_training_is_rejected(tmp_path):
+    root = _copy_bundle(tmp_path)
+    fold_path = root / "cv-fold-manifest.yaml"
+    fold = yaml.safe_load(fold_path.read_text(encoding="utf-8"))
+    locked_run = fold["test_runs"][0]
+    fold["folds"][0]["train_run_ids"].append(locked_run)
+    fold_path.write_text(yaml.safe_dump(fold), encoding="utf-8")
+    _rewrite_artifact_hash(root, "cv-fold-manifest.yaml")
+    csv_path = root / "fold-metrics-W11.csv"
+    import csv
+
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    for row in rows:
+        if row["fold_id"] == "F1":
+            row["train_run_ids"] = row["train_run_ids"] + ";" + locked_run
+    buffer = __import__("io").StringIO()
+    writer = csv.DictWriter(
+        buffer, fieldnames=list(rows[0].keys()), lineterminator="\n"
+    )
+    writer.writeheader()
+    writer.writerows(rows)
+    csv_path.write_text(buffer.getvalue(), encoding="utf-8")
+    _rewrite_artifact_hash(root, "fold-metrics-W11.csv")
+    with pytest.raises(SynthesisError, match="locked-test run in training"):
+        _load(root)
+
+
+def test_baseline_validation_run_mismatch_is_rejected(tmp_path):
+    root = _copy_bundle(tmp_path)
+    csv_path = root / "baseline-comparison-W11.csv"
+    import csv
+
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    for row in rows:
+        if row["method"] == "B0_THRESHOLD" and row["fold_id"] == "F1":
+            row["validation_run_ids"] = "BOGUS-RUN"
+    buffer = __import__("io").StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(rows[0].keys()), lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    csv_path.write_text(buffer.getvalue(), encoding="utf-8")
+    _rewrite_artifact_hash(root, "baseline-comparison-W11.csv")
+    with pytest.raises(SynthesisError, match="validation runs disagree"):
+        _load(root)
+
+
+def test_baseline_trusted_exposure_mismatch_is_rejected(tmp_path):
+    root = _copy_bundle(tmp_path)
+    csv_path = root / "baseline-comparison-W11.csv"
+    import csv
+
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    for row in rows:
+        if row["method"] == "B0_THRESHOLD" and row["fold_id"] == "F1":
+            row["trusted_exposure_s"] = "60"
+    buffer = __import__("io").StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(rows[0].keys()), lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    csv_path.write_text(buffer.getvalue(), encoding="utf-8")
+    _rewrite_artifact_hash(root, "baseline-comparison-W11.csv")
+    with pytest.raises(SynthesisError, match="trusted exposure differs"):
+        _load(root)
+
+
+def test_episode_arithmetic_is_rejected(tmp_path):
+    root = _copy_bundle(tmp_path)
+    csv_path = root / "baseline-comparison-W11.csv"
+    import csv
+
+    rows = list(csv.DictReader(csv_path.open(encoding="utf-8")))
+    for row in rows:
+        if row["method"] == "B0_THRESHOLD" and row["fold_id"] == "F1":
+            row["warning_episode_count"] = "99"
+    buffer = __import__("io").StringIO()
+    writer = csv.DictWriter(buffer, fieldnames=list(rows[0].keys()), lineterminator="\n")
+    writer.writeheader()
+    writer.writerows(rows)
+    csv_path.write_text(buffer.getvalue(), encoding="utf-8")
+    _rewrite_artifact_hash(root, "baseline-comparison-W11.csv")
+    with pytest.raises(SynthesisError, match="episode count"):
+        _load(root)
+
+
 def test_duplicate_validation_run_across_folds_is_rejected(tmp_path):
     root = _copy_bundle(tmp_path)
     fold_path = root / "cv-fold-manifest.yaml"
@@ -206,7 +290,7 @@ def test_event_count_mismatch_is_rejected(tmp_path):
     writer.writerows(rows)
     csv_path.write_text(buffer.getvalue(), encoding="utf-8")
     _rewrite_artifact_hash(root, "baseline-comparison-W11.csv")
-    with pytest.raises(SynthesisError, match="warning_episode_count"):
+    with pytest.raises(SynthesisError, match="episode count"):
         _load(root)
 
 

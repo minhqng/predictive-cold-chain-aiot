@@ -30,6 +30,7 @@ HARD_REQUIREMENTS = (
     "G3-D-CONTROLLER-A",
     "G3-D-COMMAND-VERIFY",
     "G3-C-PLATFORM-BACKUP",
+    "G3-TEAM-APPROVAL",
 )
 
 
@@ -194,8 +195,12 @@ def build_gate_g3_readiness(
         ("w09_binding", w09_path),
         ("w10_binding", w10_path),
     ):
-        binding = w11_manifest.get(binding_name, {})
-        if binding.get("sha256") and binding["sha256"] != record["sha256"]:
+        binding = w11_manifest.get(binding_name)
+        if not isinstance(binding, dict) or not binding.get("sha256"):
+            raise GateReadinessError(
+                f"W11 {binding_name} is missing provenance; evidence is not accepted"
+            )
+        if binding["sha256"] != record["sha256"]:
             raise GateReadinessError(
                 f"W11 {binding_name} does not match the actual source bytes; "
                 "mismatched evidence bundles are refused"
@@ -226,6 +231,28 @@ def build_gate_g3_readiness(
     a_posture = a_census.get("hardware_posture", "UNKNOWN")
     gate_b = physical.get("observed_status", "UNKNOWN")
     eligible_runs = real_a.get("eligible_s1_runs", 0) + real_a.get("eligible_s2_runs", 0)
+    ap_by_method: dict[str, list[float]] = {}
+    for comparison in w11_manifest.get("baseline_comparison", ()):
+        value = comparison.get("sample_ap")
+        if value is None or value == "":
+            continue
+        try:
+            number = float(value)
+        except (TypeError, ValueError):
+            continue
+        if number == number and number not in (float("inf"), float("-inf")):
+            ap_by_method.setdefault(comparison["method"], []).append(number)
+    ap_text = ", ".join(
+        f"{method}=" + (f"{sum(values) / len(values):.4f}" if values else "undefined")
+        for method, values in sorted(ap_by_method.items())
+    ) or "undefined"
+    leakage = w11_manifest.get("leakage_audit", {})
+    leakage_probes = leakage.get("probes", ())
+    leakage_failures = [
+        probe.get("probe_id")
+        for probe in leakage_probes
+        if probe.get("status") != "PASS"
+    ]
     rows = (
         _gate_row(
             requirement_id="G3-A-PHYSICAL-PLANT",
@@ -323,8 +350,8 @@ def build_gate_g3_readiness(
                 "the synthesis artifact hashes"
             ),
             observed_result=(
-                "synthetic grouped benchmark only: 8 pair groups, 4 folds, "
-                "XGBoost sample AP=1.0, B0≈0.988, B1≈0.691; no real benchmark"
+                "synthetic grouped benchmark only: 8 pair groups, 4 folds; mean "
+                f"sample AP by method: {ap_text}; no real benchmark"
             ),
             evidence_quality="SYNTHETIC_SOFTWARE_CONTROL_ONLY",
             readiness_status=BLOCKED_BY_MISSING_EVIDENCE,
@@ -455,11 +482,25 @@ def build_gate_g3_readiness(
             required_evidence="leakage audit, grouped split and locked-test discipline",
             actual_file_reference="reports/W11/leakage-audit-W11.md",
             source_hash_revision=f"W11={w11_path['sha256']}",
-            observed_result="W11 leakage audit PASS on the synthetic grouped fixture",
+            observed_result=(
+                "W11 leakage probes all PASS on the synthetic grouped fixture"
+                if not leakage_failures
+                else "W11 leakage probes failed: " + ", ".join(leakage_failures)
+            ),
             evidence_quality="SOFTWARE_VERIFICATION",
-            readiness_status=PASS_VERIFIED,
-            blocking_reason="",
-            next_required_evidence="none for the synthetic scope; repeat on real data",
+            readiness_status=(
+                PASS_VERIFIED if not leakage_failures else FAIL_VERIFIED
+            ),
+            blocking_reason=(
+                ""
+                if not leakage_failures
+                else "leakage audit failures: " + ", ".join(leakage_failures)
+            ),
+            next_required_evidence=(
+                "none for the synthetic scope; repeat on real data"
+                if not leakage_failures
+                else "repair the failing leakage probes before any benchmark claim"
+            ),
             review_authority="Project lead + Member B",
         ),
         _gate_row(
