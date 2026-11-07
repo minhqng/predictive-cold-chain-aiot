@@ -3,11 +3,11 @@
   "events": [
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-mixed",
       "clock_domain": "DEVICE_EVENT_UTC",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-MIXED",
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-mixed",
       "event_id": "cmd-publish",
       "event_time_utc": "2026-01-01T00:00:00Z",
       "event_type": "COMMAND_CREATED_OR_PUBLISHED",
@@ -20,17 +20,17 @@
         "quality.thermal": "VALID"
       },
       "reason_codes": [],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-mixed",
       "seq": 1,
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": 10,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-mixed",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-MIXED",
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-mixed",
       "device_uptime_ms": 1200,
       "event_id": "ack-1",
       "event_type": "DEVICE_ACK",
@@ -48,17 +48,17 @@
         "status": "ACCEPTED"
       },
       "reason_codes": [],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-mixed",
       "seq": 2,
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-mixed",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-MIXED",
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-mixed",
       "device_uptime_ms": 1500,
       "event_id": "applied-1",
       "event_type": "APPLIED_STATE",
@@ -72,7 +72,7 @@
         "quality.thermal": "VALID"
       },
       "reason_codes": [],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-mixed",
       "seq": 3,
       "uncertainty_s": 0.05
     }

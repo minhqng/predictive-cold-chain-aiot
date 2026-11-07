@@ -3,11 +3,11 @@
   "events": [
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-a",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-boots",
       "device_uptime_ms": 5000,
       "event_id": "boot-a-1",
       "event_type": "TELEMETRY_SAMPLE",
@@ -19,17 +19,17 @@
         "quality.thermal": "VALID"
       },
       "reason_codes": [],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-boots",
       "seq": 1,
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-2",
+      "boot_id": "sim-boot-b",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-boots",
       "device_uptime_ms": 5000,
       "event_id": "boot-b-1",
       "event_type": "TELEMETRY_SAMPLE",
@@ -41,7 +41,7 @@
         "quality.thermal": "VALID"
       },
       "reason_codes": [],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-boots",
       "seq": 1,
       "uncertainty_s": 0.05
     }

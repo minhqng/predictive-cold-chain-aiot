@@ -191,8 +191,8 @@ def test_same_boot_same_clock_orders_lifecycle_events():
     ids = [event.event_id for event in ordered.events]
     assert ids.index("cmd-publish") < ids.index("ack-1") < ids.index("applied-1")
     assert ordered.clock_domain == CLOCK_DEVICE_BOOT_UPTIME
-    assert ordered.device_id == "cg-sim-001"
-    assert ordered.boot_id == "sim-boot-1"
+    assert ordered.device_id == "cg-sim-qualified"
+    assert ordered.boot_id == "sim-boot-qualified"
 
 
 def test_two_boots_with_equal_uptime_are_not_joined():
