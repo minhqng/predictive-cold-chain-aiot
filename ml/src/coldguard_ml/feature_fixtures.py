@@ -114,6 +114,15 @@ def build_trajectory(
         raise FixtureError("an S1 fixture must not carry a door opening")
     if scenario == "S1" and critical_offsets_s:
         raise FixtureError("an S1 fixture must not carry a critical event")
+    for offset in critical_offsets_s:
+        if offset < 0 or offset > duration_s:
+            raise FixtureError(
+                f"critical offset {offset!r} falls outside the fixture duration"
+            )
+    if door_start_s is not None and not (0 <= door_start_s < duration_s):
+        raise FixtureError("door start must fall inside the fixture duration")
+    if unknown_start_s is not None and not (0 <= unknown_start_s < duration_s):
+        raise FixtureError("unknown-door start must fall inside the fixture duration")
     origin = _origin()
     source_sha256 = hashlib.sha256(
         f"{FIXTURE_VERSION}:{run_id}:{scenario}:{seed}".encode("utf-8")

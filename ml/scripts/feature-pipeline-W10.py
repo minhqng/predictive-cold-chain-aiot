@@ -186,7 +186,7 @@ def _rows_for_partitions(
             continue
         partition = dataset.partition_of(trajectory.run_id)
         rows_by_run[trajectory.run_id] = feature_rows(
-            trajectory, registry, partition=partition
+            trajectory, registry, partition=partition, split=dataset.split
         )
     return rows_by_run
 
@@ -595,16 +595,19 @@ def build_artifacts(
         audit_trajectory,
         registry,
         partition=dataset.partition_of(audit_trajectory.run_id or ""),
+        split=dataset.split,
     )
     mutated_rows = feature_rows(
         _mutate_after(audit_trajectory, anchor_s),
         registry,
         partition=dataset.partition_of(audit_trajectory.run_id or ""),
+        split=dataset.split,
     )
     truncated_rows = feature_rows(
         _truncate(audit_trajectory, anchor_s),
         registry,
         partition=dataset.partition_of(audit_trajectory.run_id or ""),
+        split=dataset.split,
     )
     future_ok = _compare_rows(baseline_rows, mutated_rows, max_anchor=anchor_s)
     truncation_ok = _compare_rows(baseline_rows, truncated_rows, max_anchor=anchor_s)
@@ -613,6 +616,7 @@ def build_artifacts(
             audit_trajectory,
             registry,
             partition=dataset.partition_of(audit_trajectory.run_id or ""),
+            split=dataset.split,
         ),
         registry,
     )

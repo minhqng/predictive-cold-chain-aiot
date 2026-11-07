@@ -26,6 +26,7 @@ from coldguard_ml.feature_pipeline import (
     PRESENT,
     SOURCE_TYPE_REAL_A,
     TIME_DOMAIN_BOOT_SCOPED,
+    FeaturePipelineError,
     feature_rows,
     summarize_feature_rows,
     trajectory_from_capture,
@@ -350,6 +351,26 @@ def test_cli_missing_w08_manifest_is_a_configuration_error(tmp_path: Path):
         tmp_path, "--a-w08-manifest", str(tmp_path / "missing-W08.json")
     )
     assert result.returncode == 1
+
+
+def test_feature_rows_refuse_a_split_partition_mismatch():
+    import dataclasses
+
+    dataset = build_development_dataset()
+    train_run_id = dataset.split.train_runs[0]
+    trajectory = dataset.trajectory(train_run_id)
+    with pytest.raises(FeaturePipelineError, match="belongs to partition"):
+        feature_rows(
+            trajectory,
+            REGISTRY,
+            partition="test",
+            split=dataset.split,
+        )
+    eligible = dataclasses.replace(
+        trajectory, physical_eligibility="ELIGIBLE", exclusion_reasons=()
+    )
+    with pytest.raises(FeaturePipelineError, match="requires the grouped split"):
+        feature_rows(eligible, REGISTRY, partition="train")
 
 
 def test_fixture_version_is_recorded_and_predictive_controllers_are_declared():

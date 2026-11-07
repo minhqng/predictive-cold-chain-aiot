@@ -633,12 +633,33 @@ def feature_rows(
     *,
     partition: str | None = None,
     anchors: Sequence[float] | None = None,
+    split: Any | None = None,
 ) -> tuple[FeatureRow, ...]:
-    """Compute every registered feature at each past-only anchor."""
+    """Compute every registered feature at each past-only anchor.
+
+    When ``split`` is supplied, the trajectory's run must belong to the
+    declared partition; an eligible physical trajectory may not be processed
+    without a grouped split at all.
+    """
     if not trajectory.samples:
         return ()
     if partition not in (None, "train", "validation", "test"):
         raise FeaturePipelineError(f"unknown split partition {partition!r}")
+    if split is not None:
+        if partition is None or trajectory.run_id is None:
+            raise FeaturePipelineError(
+                "split-bound feature generation requires a run identity and partition"
+            )
+        actual = split.partition_of(trajectory.run_id)
+        if actual != partition:
+            raise FeaturePipelineError(
+                f"run {trajectory.run_id!r} belongs to partition {actual!r}, "
+                f"not the requested {partition!r}"
+            )
+    elif trajectory.physical_eligibility == ELIGIBILITY_ELIGIBLE:
+        raise FeaturePipelineError(
+            "eligible physical feature generation requires the grouped split"
+        )
     roles = _chamber_roles(registry)
     snapshots = door_snapshots(trajectory.samples)
     times = [sample.time_s for sample in trajectory.samples]
