@@ -4,9 +4,9 @@ Report schema: `coldguard-w09-baseline-report-v1` · layer `coldguard-w09-determ
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `6995a59a90a56851f5b8a75eeaa62e60070d6a63809fadf15f79364d84b2fccd` |
-| Repository revision | `717bbfb2ca087a04864fce8c31de9a714bc49ac2` |
-| Generation command | `python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 717bbfb2ca087a04864fce8c31de9a714bc49ac2` |
+| Analysis code SHA-256 | `86d6a4d364fb476b3119b501a664bf8314e57aa9dc889517c4b8400149927057` |
+| Repository revision | `e64ed9e89593a27cb6f6f35e4ee2ca6d3cd2237e` |
+| Generation command | `python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision e64ed9e89593a27cb6f6f35e4ee2ca6d3cd2237e` |
 | Source | `evidence/A/W09/exports/CG-S1-H8C-600S.json` |
 | Source SHA-256 | `f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
