@@ -238,6 +238,104 @@ def test_get_device_telemetry_rejects_inverted_time_range_with_422():
     assert "start_time must be less than or equal to end_time" in response.json()["detail"]
 
 
+@pytest.mark.parametrize(
+    "query",
+    [
+        # naive start only
+        "start_time=2026-11-07T12:00:00",
+        # naive end only
+        "end_time=2026-11-07T12:00:00",
+        # both bounds naive (must never reach an aware/naive comparison)
+        "start_time=2026-11-07T11:00:00&end_time=2026-11-07T12:00:00",
+        # aware start + naive end: the original TypeError/HTTP 500 risk
+        "start_time=2026-11-07T11:00:00Z&end_time=2026-11-07T12:00:00",
+        # naive start + aware end
+        "start_time=2026-11-07T11:00:00&end_time=2026-11-07T12:00:00Z",
+    ],
+)
+def test_get_device_telemetry_rejects_naive_time_bounds_with_422(query):
+    """Naive timestamps are invalid user input: 422, never an unhandled 500."""
+    response = client.get(f"/api/devices/coldguard-001/telemetry?{query}")
+    assert response.status_code == 422
+    assert "timezone-aware" in response.json()["detail"]
+
+
+def test_get_device_telemetry_rejects_clockless_with_event_basis_422():
+    response = client.get(
+        "/api/devices/coldguard-001/telemetry?clockless_only=true&time_basis=event"
+    )
+    assert response.status_code == 422
+    assert "clockless_only" in response.json()["detail"]
+
+
+def test_get_device_telemetry_allows_clockless_with_received_basis():
+    """clockless_only is meaningful on the received basis (no contradiction)."""
+    mock_engine = MagicMock()
+    mock_conn = MagicMock()
+    cursor_twin = MagicMock()
+    cursor_twin.scalar_one_or_none.return_value = "coldguard-001"
+    cursor_rows = MagicMock()
+    cursor_rows.mappings.return_value.all.return_value = []
+    cursor_count = MagicMock()
+    cursor_count.scalar.return_value = 0
+    mock_conn.execute.side_effect = [cursor_twin, cursor_rows, cursor_count]
+    mock_engine.begin.return_value.__enter__.return_value = mock_conn
+
+    app.state.db_engine = mock_engine
+    try:
+        response = client.get(
+            "/api/devices/coldguard-001/telemetry?clockless_only=true&time_basis=received"
+        )
+        assert response.status_code == 200
+        assert response.json()["total"] == 0
+    finally:
+        app.state.db_engine = None
+
+
+def test_get_device_telemetry_does_not_swallow_raw_lookup_db_error():
+    """W05-FIX-07: a database failure in the provenance lookup must stay observable.
+
+    The old code wrapped the raw lookup in ``except Exception: raw_lookup = {}``,
+    silently reclassifying replay/provenance as absent and returning HTTP 200.
+    The error must now propagate instead of fabricating a clean response.
+    """
+    from sqlalchemy.exc import SQLAlchemyError
+
+    now = datetime.now(timezone.utc)
+    row = {
+        "id": 1, "device_id": "coldguard-001", "boot_id": "boot-x", "seq": 1,
+        "run_id": None, "time": now, "backend_received_at": now,
+        "t1_c": 4.0, "t2_c": 4.0, "t3_c": 4.0, "t_air_c": 20.0, "rh_pct": 50.0,
+        "door_state": "CLOSED", "cooling_voltage_v": 12.0, "cooling_current_a": 1.0,
+        "cooling_power_w": 12.0, "cooling_energy_counter_wh": 0.0,
+        "applied_cooling": "OFF", "applied_duty": 0.0, "thermal_quality": "VALID",
+        "environment_quality": "VALID", "electrical_quality": "VALID",
+        "overall_quality": "VALID", "device_mode": None,
+        "hardware_config_id": "HW-1", "firmware_version": "0.1.0",
+        "calibration_id": None, "schema_version": 1, "raw_id": 10,
+        "serial_source": None,
+    }
+    mock_engine = MagicMock()
+    mock_conn = MagicMock()
+    cursor_twin = MagicMock()
+    cursor_twin.scalar_one_or_none.return_value = "coldguard-001"
+    cursor_rows = MagicMock()
+    cursor_rows.mappings.return_value.all.return_value = [row]
+    cursor_count = MagicMock()
+    cursor_count.scalar.return_value = 1
+    mock_conn.execute.side_effect = [
+        cursor_twin, cursor_rows, cursor_count, SQLAlchemyError("db down"),
+    ]
+    mock_engine.begin.return_value.__enter__.return_value = mock_conn
+
+    app.state.db_engine = mock_engine
+    try:
+        with pytest.raises(SQLAlchemyError):
+            client.get("/api/devices/coldguard-001/telemetry")
+    finally:
+        app.state.db_engine = None
+
+
 def test_get_device_telemetry_detects_replay_from_raw_provenance():
     now = datetime.now(timezone.utc)
     mock_telemetry_rows = [

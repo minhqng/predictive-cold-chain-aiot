@@ -337,6 +337,11 @@ def query_telemetry(
         raise ValueError(f"order must be 'asc' or 'desc', got {order!r}")
     if time_basis not in ("received", "event"):
         raise ValueError(f"time_basis must be 'received' or 'event', got {time_basis!r}")
+    if clockless_only and time_basis == "event":
+        raise ValueError(
+            "clockless_only is incompatible with time_basis='event': "
+            "clockless rows have no event time"
+        )
     if start_time is not None and start_time.tzinfo is None:
         raise ValueError("start_time must be timezone-aware")
     if end_time is not None and end_time.tzinfo is None:
@@ -405,6 +410,11 @@ def count_telemetry(
     """Count normalized telemetry matching the specified filters."""
     if time_basis not in ("received", "event"):
         raise ValueError(f"time_basis must be 'received' or 'event', got {time_basis!r}")
+    if clockless_only and time_basis == "event":
+        raise ValueError(
+            "clockless_only is incompatible with time_basis='event': "
+            "clockless rows have no event time"
+        )
     if start_time is not None and start_time.tzinfo is None:
         raise ValueError("start_time must be timezone-aware")
     if end_time is not None and end_time.tzinfo is None:

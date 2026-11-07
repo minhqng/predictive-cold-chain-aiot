@@ -7,6 +7,13 @@ Endpoints:
 
 The MQTT ingestion consumer (C-W02-03) runs in this same process via ``lifespan``
 when ``COLDGUARD_MQTT_INGEST`` is truthy.
+
+Authentication limitation (W05): these read-only endpoints are unauthenticated
+in the local/dev profile and rely on network-level isolation (Compose binds the
+backend to 127.0.0.1). They expose no command mutation path. Production
+authorization (backend authn/authz, protected command endpoints) is a later
+security slice (W15); until then do not expose this service beyond a trusted
+local network.
 """
 
 from __future__ import annotations
@@ -208,10 +215,31 @@ def get_device_telemetry(
     if not cleaned_id:
         raise HTTPException(status_code=404, detail="Device not found")
 
+    # Validate user-supplied time bounds before any comparison. A naive
+    # timestamp must never reach an aware/naive subtraction (which would
+    # raise TypeError and surface as HTTP 500). Invalid input is always 422.
+    if start_time is not None and start_time.tzinfo is None:
+        raise HTTPException(
+            status_code=422, detail="start_time must be timezone-aware"
+        )
+    if end_time is not None and end_time.tzinfo is None:
+        raise HTTPException(
+            status_code=422, detail="end_time must be timezone-aware"
+        )
     if start_time is not None and end_time is not None and start_time > end_time:
         raise HTTPException(
             status_code=422,
             detail="start_time must be less than or equal to end_time",
+        )
+    # Event basis filters on device event time and excludes clockless rows
+    # (time IS NULL) by definition; combining it with clockless_only is a
+    # contradiction (time IS NULL AND time IS NOT NULL). Reject explicitly
+    # rather than silently returning an empty page.
+    if clockless_only and time_basis == "event":
+        raise HTTPException(
+            status_code=422,
+            detail="clockless_only=true is incompatible with time_basis=event; "
+            "clockless observations have no event time (use time_basis=received)",
         )
 
     with engine.begin() as connection:
@@ -254,16 +282,16 @@ def get_device_telemetry(
         raw_ids = [r["raw_id"] for r in rows if r.get("raw_id")]
         raw_lookup: dict[int, Any] = {}
         if raw_ids:
-            try:
-                raw_rows_stmt = select(telemetry_raw.c.id, telemetry_raw.c.raw_json).where(
-                    telemetry_raw.c.id.in_(raw_ids)
-                )
-                raw_lookup = {
-                    row["id"]: row["raw_json"]
-                    for row in connection.execute(raw_rows_stmt).mappings().all()
-                }
-            except Exception:
-                raw_lookup = {}
+            # Do not swallow database errors here: a failed raw lookup must
+            # remain observable (propagates as a server error) rather than
+            # silently reclassifying provenance/replay flags as absent.
+            raw_rows_stmt = select(telemetry_raw.c.id, telemetry_raw.c.raw_json).where(
+                telemetry_raw.c.id.in_(raw_ids)
+            )
+            raw_lookup = {
+                row["id"]: row["raw_json"]
+                for row in connection.execute(raw_rows_stmt).mappings().all()
+            }
 
     items = []
     for r in rows:
