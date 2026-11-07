@@ -1,0 +1,4 @@
+label,baseline,parameter_status,eligibility_status,observation_duration_s,evaluable_time_s,unknown_time_s,diagnostic_unmatched_episodes,false_warning_episode_count,false_warning_episodes_per_run,false_warning_episodes_per_hour,state_transition_count,on_off_toggles,chatter_event_count,outcome_status,outcome_reason
+SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY,B0_THRESHOLD,SYNTHETIC_ILLUSTRATIVE,BLOCKED,955.99,955.99,0.0,0,,,,2,,,UNDEFINED,run is not eligible for the S1 dataset; diagnostic replay only
+SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY,B1_HYSTERESIS,SYNTHETIC_ILLUSTRATIVE,BLOCKED,955.99,955.99,0.0,0,,,,3,3,0,UNDEFINED,run is not eligible for the S1 dataset; diagnostic replay only
+AUTHORITATIVE,NONE,PARAMETERS_NOT_FROZEN,BLOCKED,955.99,,,0,,,,,,,NOT_ESTIMABLE,PARAMETERS_NOT_FROZEN: no authoritative B0/B1 replay; the real run is not eligible for the S1 dataset
