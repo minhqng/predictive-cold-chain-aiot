@@ -87,6 +87,11 @@ A protocol relation is not a measured latency. Ordering refuses mixed clock
 domains, mixed devices/boots, missing timestamps and time reversal; it retains
 the events and returns a stable status/reason.
 
+A caller-supplied `device_id`/`boot_id` is a constraint validated against the
+events, never authority to rewrite their identities. A missing identifier on
+one side is not evidence that two events share a device or boot; an incomplete
+identity does not support a verified cross-stream association.
+
 ### 1.2 Forbidden subtractions
 
 Never subtract:
@@ -207,6 +212,11 @@ Rules:
   qualified. Synthetic numbers are never measured hardware performance.
 - `VERIFIED_MEASURED_RESPONSE` is the only state that may be read as a measured
   physical response.
+- An incomplete event identity (missing device or boot on either side) never
+  yields `VERIFIED_MEASURED_RESPONSE`. Same-source, same-boot evidence may
+  support an `OBSERVED_DIAGNOSTIC_ONLY` result, including a diagnostic numeric
+  delay; a cross-source association without a complete identity is not
+  estimable.
 
 ---
 

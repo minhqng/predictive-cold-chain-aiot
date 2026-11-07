@@ -40,7 +40,10 @@ from coldguard_ml.timing_alignment import (
     ORDERED_IN_DOMAIN,
     ORDER_AMBIGUOUS,
     ORDER_MIXED_BOOT,
+    ORDER_MIXED_DEVICE,
+    PROVENANCE_PHYSICAL_MEASURED,
     PROVENANCE_SYNTHETIC_FIXTURE,
+    PROVENANCE_UNVERIFIED,
     RESPONSE_CENSORED,
     RESPONSE_DUPLICATE_CANONICAL_NOT_APPLICATION,
     RESPONSE_NOT_APPLICABLE_ACK_NOT_ACCEPTED,
@@ -49,6 +52,7 @@ from coldguard_ml.timing_alignment import (
     RESPONSE_NOT_ESTIMABLE_QUALITY,
     RESPONSE_NOT_OBSERVED,
     RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
+    RESPONSE_VERIFIED_MEASURED_RESPONSE,
     ResponsePolicy,
     TimelineEvent,
     ack_to_applied,
@@ -157,6 +161,98 @@ def _event(
         normalized_fields=tuple(sorted((fields or {}).items())),
         uncertainty_s=uncertainty,
     )
+
+
+def _physical_event(
+    event_id,
+    event_type,
+    uptime,
+    *,
+    device="dev-1",
+    boot="boot-1",
+    command_id=None,
+    source="physical-source",
+    sha="a" * 64,
+    fields=None,
+    uncertainty=1.0,
+    provenance=PROVENANCE_PHYSICAL_MEASURED,
+):
+    return TimelineEvent(
+        event_id=event_id,
+        event_type=event_type,
+        provenance=provenance,
+        source_path=source,
+        source_sha256=sha,
+        source_namespace="probe/physical-shape",
+        device_id=device,
+        boot_id=boot,
+        run_id="run-1",
+        command_id=command_id,
+        device_uptime_ms=uptime,
+        clock_domain=CLOCK_DEVICE_BOOT_UPTIME,
+        clock_sync=CLOCK_SYNC_SYNTHETIC_EXACT,
+        normalized_fields=tuple(sorted((fields or {}).items())),
+        measurement_quality="VALID",
+        uncertainty_s=uncertainty,
+    )
+
+
+def _physical_command_chain(
+    *,
+    anchor_device="dev-1",
+    anchor_boot="boot-1",
+    sample_device="dev-1",
+    sample_boot="boot-1",
+    sample_source="physical-source",
+    sample_sha="a" * 64,
+):
+    command = _physical_event(
+        "cmd-identity",
+        EVENT_COMMAND_CREATED_OR_PUBLISHED,
+        2000,
+        device=anchor_device,
+        boot=anchor_boot,
+        command_id="CMD-ID",
+        source="physical-source",
+        sha="a" * 64,
+    )
+    applied = _physical_event(
+        "applied-identity",
+        EVENT_APPLIED_STATE,
+        2100,
+        device=anchor_device,
+        boot=anchor_boot,
+        command_id="CMD-ID",
+        source="physical-source",
+        sha="a" * 64,
+        fields={"applied_to": "ON", "quality.thermal": "VALID"},
+    )
+    samples = [
+        _physical_event(
+            f"sample-{index}",
+            EVENT_TELEMETRY_SAMPLE,
+            uptime,
+            device=sample_device,
+            boot=sample_boot,
+            source=sample_source,
+            sha=sample_sha,
+            fields={
+                "chamber_air_mean_c": f"{value:.6f}",
+                "quality.thermal": "VALID",
+            },
+        )
+        for index, (uptime, value) in enumerate(
+            [
+                (1000, 25.0),
+                (1500, 25.0),
+                (1900, 25.0),
+                (2200, 20.0),
+                (2400, 20.0),
+                (2600, 20.0),
+            ]
+        )
+    ]
+    return command, applied, samples
 
 
 def _baseline_events():
@@ -341,6 +437,75 @@ def test_ack_adapter_ignores_serial_telemetry_lines():
         event.source_namespace == "coldguard.command-ack-serial/v1"
         for event in load.events
     )
+
+
+def test_declared_boot_identity_does_not_clean_mixed_boot_events():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device="dev-1", boot="boot-1"),
+        _event("second", EVENT_TELEMETRY_SAMPLE, 2000, device="dev-1", boot="boot-2"),
+    ]
+    ordered = order_timeline(events, boot_id="boot-1")
+    assert ordered.status == ORDER_MIXED_BOOT
+    assert "CROSS_BOOT_JOIN_REFUSED" in ordered.reason_codes
+    assert ordered.boot_id is None
+    assert [event.event_id for event in ordered.events] == ["first", "second"]
+
+
+def test_declared_device_identity_does_not_clean_mixed_device_events():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device="dev-1", boot="boot-1"),
+        _event("second", EVENT_TELEMETRY_SAMPLE, 2000, device="dev-2", boot="boot-1"),
+    ]
+    ordered = order_timeline(events, device_id="dev-1")
+    assert ordered.status == ORDER_MIXED_DEVICE
+    assert "MIXED_DEVICE_IDENTITIES" in ordered.reason_codes
+    assert ordered.device_id is None
+    assert [event.event_id for event in ordered.events] == ["first", "second"]
+
+
+def test_declared_identity_without_event_evidence_is_not_alignable():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device=None, boot=None),
+        _event("second", EVENT_TELEMETRY_SAMPLE, 2000, device=None, boot=None),
+    ]
+    ordered = order_timeline(events, device_id="dev-1", boot_id="boot-1")
+    assert ordered.status != ORDERED_IN_DOMAIN
+    assert "DECLARED_DEVICE_ID_NOT_EVIDENCED" in ordered.reason_codes
+    assert ordered.device_id is None
+    assert ordered.boot_id is None
+
+
+def test_declared_identity_matching_events_orders_normally():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device="dev-1", boot="boot-1"),
+        _event("second", EVENT_TELEMETRY_SAMPLE, 2000, device="dev-1", boot="boot-1"),
+    ]
+    ordered = order_timeline(events, device_id="dev-1", boot_id="boot-1")
+    assert ordered.status == ORDERED_IN_DOMAIN
+    assert ordered.device_id == "dev-1"
+    assert ordered.boot_id == "boot-1"
+
+
+def test_declared_device_conflicting_with_events_is_rejected():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device="dev-1", boot="boot-1"),
+    ]
+    ordered = order_timeline(events, device_id="dev-2")
+    assert ordered.status == "NOT_ALIGNABLE"
+    assert "DECLARED_DEVICE_ID_CONFLICTS_WITH_EVENTS" in ordered.reason_codes
+    assert ordered.device_id is None
+    assert [event.event_id for event in ordered.events] == ["first"]
+
+
+def test_declared_boot_without_event_evidence_is_rejected():
+    events = [
+        _event("first", EVENT_TELEMETRY_SAMPLE, 1000, device="dev-1", boot=None),
+        _event("second", EVENT_TELEMETRY_SAMPLE, 2000, device="dev-1", boot=None),
+    ]
+    ordered = order_timeline(events, boot_id="boot-1")
+    assert ordered.status != ORDERED_IN_DOMAIN
+    assert "DECLARED_BOOT_ID_NOT_EVIDENCED" in ordered.reason_codes
+    assert ordered.boot_id is None
 
 
 def test_partial_order_claims_protocol_stage_not_latency():
@@ -542,6 +707,157 @@ def test_real_a_thermal_diagnostic_is_not_reported_as_a_numeric_delay():
     assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
     assert result.latency_s is None
     assert "ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY" in result.reason_codes
+
+
+def test_response_with_missing_sample_device_identity_is_not_estimable():
+    command, applied, samples = _physical_command_chain(sample_device=None)
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state != RESPONSE_VERIFIED_MEASURED_RESPONSE
+    assert result.latency_s is None
+    assert "STREAM_IDENTITY_NOT_ESTIMABLE" in result.reason_codes
+
+
+def test_response_with_missing_sample_boot_identity_is_not_estimable():
+    command, applied, samples = _physical_command_chain(sample_boot=None)
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state != RESPONSE_VERIFIED_MEASURED_RESPONSE
+    assert result.latency_s is None
+    assert "STREAM_IDENTITY_NOT_ESTIMABLE" in result.reason_codes
+
+
+def test_response_from_unrelated_source_is_not_attributed_across_identity():
+    command, applied, samples = _physical_command_chain(
+        sample_device=None,
+        sample_boot=None,
+        sample_source="unrelated-source",
+        sample_sha="u" * 64,
+    )
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state != RESPONSE_VERIFIED_MEASURED_RESPONSE
+    assert result.latency_s is None
+    assert "STREAM_IDENTITY_NOT_ESTIMABLE" in result.reason_codes
+
+
+def test_proven_device_conflict_rejects_response_association():
+    command, applied, samples = _physical_command_chain(sample_device="dev-2")
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state != RESPONSE_VERIFIED_MEASURED_RESPONSE
+    assert result.latency_s is None
+
+
+def test_same_source_missing_device_identity_is_diagnostic_not_verified():
+    command, applied, samples = _physical_command_chain(
+        anchor_device=None, sample_device=None
+    )
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+    assert result.latency_s == pytest.approx(0.2)
+    assert "INCOMPLETE_EVENT_IDENTITY_DIAGNOSTIC_ONLY" in result.reason_codes
+
+
+def test_ack_to_applied_missing_device_identity_is_diagnostic_not_verified():
+    ack = _physical_event(
+        "ack-identity",
+        EVENT_DEVICE_ACK,
+        1000,
+        device=None,
+        command_id="CMD-ID",
+        fields={"status": "ACCEPTED"},
+    )
+    applied = _physical_event(
+        "applied-identity",
+        EVENT_APPLIED_STATE,
+        1300,
+        device=None,
+        command_id="CMD-ID",
+        fields={"applied_to": "ON"},
+    )
+    result = ack_to_applied([ack], [applied])[0]
+    assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+    assert result.latency_s == pytest.approx(0.3)
+    assert "INCOMPLETE_EVENT_IDENTITY_DIAGNOSTIC_ONLY" in result.reason_codes
+
+
+def test_ack_to_applied_asymmetric_identity_is_not_estimable():
+    ack = _physical_event(
+        "ack-identity",
+        EVENT_DEVICE_ACK,
+        1000,
+        command_id="CMD-ID",
+        fields={"status": "ACCEPTED"},
+    )
+    applied = _physical_event(
+        "applied-identity",
+        EVENT_APPLIED_STATE,
+        1300,
+        device=None,
+        command_id="CMD-ID",
+        fields={"applied_to": "ON"},
+    )
+    result = ack_to_applied([ack], [applied])[0]
+    assert result.state == RESPONSE_NOT_ESTIMABLE_CLOCK
+    assert result.latency_s is None
+    assert "MIXED_CLOCK_DOMAIN_OR_STREAM" in result.reason_codes
+
+
+def test_both_events_missing_boot_identity_are_not_a_stream():
+    command, applied, samples = _physical_command_chain(
+        anchor_boot=None, sample_boot=None
+    )
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state == RESPONSE_NOT_ESTIMABLE_MISSING_ANCHOR
+    assert result.latency_s is None
+    assert "NO_APPLIED_STATE_EVIDENCE" in result.reason_codes
+
+
+def test_anchor_missing_device_with_full_sample_identity_is_not_estimable():
+    command, applied, samples = _physical_command_chain(anchor_device=None)
+    result = command_to_response(
+        [command], [applied], samples, DEFAULT_THERMAL_POLICY,
+        relationship="COMMAND_TO_THERMAL",
+    )[0]
+    assert result.state != RESPONSE_VERIFIED_MEASURED_RESPONSE
+    assert result.latency_s is None
+    assert "STREAM_IDENTITY_NOT_ESTIMABLE" in result.reason_codes
+
+
+def test_unverified_provenance_command_to_ack_has_no_numeric_latency():
+    command = _physical_event(
+        "cmd-unverified",
+        EVENT_COMMAND_CREATED_OR_PUBLISHED,
+        1000,
+        command_id="CMD-UNVERIFIED",
+    )
+    ack = _physical_event(
+        "ack-unverified",
+        EVENT_DEVICE_ACK,
+        1300,
+        command_id="CMD-UNVERIFIED",
+        fields={"status": "ACCEPTED"},
+        provenance=PROVENANCE_UNVERIFIED,
+    )
+    result = command_to_ack([command], [ack])[0]
+    assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+    assert result.latency_s is None
+    assert "UNVERIFIED_PROVENANCE_DIAGNOSTIC_ONLY" in result.reason_codes
 
 
 def test_tec_hot_side_is_never_a_chamber_air_response_channel():

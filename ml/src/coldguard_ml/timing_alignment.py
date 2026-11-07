@@ -120,6 +120,13 @@ REASON_AMBIGUOUS_ORDER = "AMBIGUOUS_ORDER"
 REASON_MIXED_CLOCK_DOMAINS = "MIXED_CLOCK_DOMAINS"
 REASON_CROSS_BOOT_REFUSED = "CROSS_BOOT_JOIN_REFUSED"
 REASON_HOST_TIME_NOT_SOURCE_TIME = "HOST_CAPTURE_TIME_NOT_SOURCE_TIME"
+REASON_INCOMPLETE_IDENTITY = "INCOMPLETE_EVENT_IDENTITY_DIAGNOSTIC_ONLY"
+REASON_STREAM_IDENTITY_NOT_ESTIMABLE = "STREAM_IDENTITY_NOT_ESTIMABLE"
+REASON_DECLARED_DEVICE_CONFLICT = "DECLARED_DEVICE_ID_CONFLICTS_WITH_EVENTS"
+REASON_DECLARED_DEVICE_NOT_EVIDENCED = "DECLARED_DEVICE_ID_NOT_EVIDENCED"
+REASON_DECLARED_BOOT_CONFLICT = "DECLARED_BOOT_ID_CONFLICTS_WITH_EVENTS"
+REASON_DECLARED_BOOT_NOT_EVIDENCED = "DECLARED_BOOT_ID_NOT_EVIDENCED"
+REASON_UNVERIFIED_PROVENANCE = "UNVERIFIED_PROVENANCE_DIAGNOSTIC_ONLY"
 
 IDENTITY_RESOLVED = "RESOLVED"
 IDENTITY_PARTIAL = "PARTIAL"
@@ -1300,12 +1307,50 @@ def order_timeline(
             boot_id=boot_id,
         )
     domain = next(iter(domains))
-    devices = {event.device_id for event in materialized if event.device_id}
-    boots = {event.boot_id for event in materialized if event.boot_id}
+    devices = {
+        event.device_id for event in materialized if event.device_id is not None
+    }
+    boots = {event.boot_id for event in materialized if event.boot_id is not None}
+    # A caller-supplied identity is a constraint to validate, never authority to
+    # rewrite identities carried by the events themselves.
     if device_id is not None:
-        devices = {device_id}
+        if devices and device_id not in devices:
+            return OrderedTimeline(
+                status=ORDER_NOT_ALIGNABLE,
+                events=tuple(materialized),
+                reason_codes=(REASON_DECLARED_DEVICE_CONFLICT,),
+                clock_domain=domain,
+                device_id=None,
+                boot_id=next(iter(boots), None) if len(boots) == 1 else None,
+            )
+        if not devices:
+            return OrderedTimeline(
+                status=ORDER_NOT_ALIGNABLE,
+                events=tuple(materialized),
+                reason_codes=(REASON_DECLARED_DEVICE_NOT_EVIDENCED,),
+                clock_domain=domain,
+                device_id=None,
+                boot_id=next(iter(boots), None) if len(boots) == 1 else None,
+            )
     if boot_id is not None:
-        boots = {boot_id}
+        if boots and boot_id not in boots:
+            return OrderedTimeline(
+                status=ORDER_NOT_ALIGNABLE,
+                events=tuple(materialized),
+                reason_codes=(REASON_DECLARED_BOOT_CONFLICT,),
+                clock_domain=domain,
+                device_id=next(iter(devices), None) if len(devices) == 1 else None,
+                boot_id=None,
+            )
+        if not boots:
+            return OrderedTimeline(
+                status=ORDER_NOT_ALIGNABLE,
+                events=tuple(materialized),
+                reason_codes=(REASON_DECLARED_BOOT_NOT_EVIDENCED,),
+                clock_domain=domain,
+                device_id=next(iter(devices), None) if len(devices) == 1 else None,
+                boot_id=None,
+            )
     if len(devices) > 1:
         return OrderedTimeline(
             status=ORDER_MIXED_DEVICE,
@@ -1313,7 +1358,7 @@ def order_timeline(
             reason_codes=("MIXED_DEVICE_IDENTITIES",),
             clock_domain=domain,
             device_id=None,
-            boot_id=boot_id,
+            boot_id=next(iter(boots), None) if len(boots) == 1 else None,
         )
     if len(boots) > 1:
         return OrderedTimeline(
@@ -1892,8 +1937,11 @@ def analyze_response(
     compatible: list[tuple[float, TimelineEvent]] = []
     quality_excluded = 0
     clock_excluded = 0
+    identity_excluded = 0
     for sample in samples:
         if not _same_stream(anchor, sample):
+            if sample.clock_domain == anchor.clock_domain:
+                identity_excluded += 1
             continue
         sample_time, _ = _event_time(sample)
         if sample_time is None:
@@ -1972,7 +2020,12 @@ def analyze_response(
             None,
             policy,
             ["BASELINE_NOT_OBSERVED"]
-            + (["QUALITY_EXCLUDED_SAMPLES"] if quality_excluded else []),
+            + (["QUALITY_EXCLUDED_SAMPLES"] if quality_excluded else [])
+            + (
+                [REASON_STREAM_IDENTITY_NOT_ESTIMABLE]
+                if identity_excluded
+                else []
+            ),
         )
     baseline_median = statistics.median(baseline)
 
@@ -2176,6 +2229,20 @@ def analyze_response(
                 policy,
                 ["ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY"],
             )
+        if not _identity_complete(anchor, onset_sample):
+            return _response(
+                relationship,
+                RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
+                anchor.command_id,
+                anchor.event_id,
+                latency,
+                uncertainty,
+                evidence_class,
+                len(sustained),
+                baseline_median,
+                policy,
+                [REASON_INCOMPLETE_IDENTITY],
+            )
         return _response(
             relationship,
             RESPONSE_VERIFIED_MEASURED_RESPONSE,
@@ -2262,16 +2329,37 @@ def _event_time(event: TimelineEvent) -> tuple[float | None, str | None]:
     return None, "NO_ANALYZABLE_EVENT_TIME_DOMAIN"
 
 
+def _identity_complete(anchor: TimelineEvent, sample: TimelineEvent) -> bool:
+    """Both events carry matching device and boot identities."""
+    return (
+        anchor.device_id is not None
+        and sample.device_id is not None
+        and anchor.boot_id is not None
+        and sample.boot_id is not None
+        and anchor.device_id == sample.device_id
+        and anchor.boot_id == sample.boot_id
+    )
+
+
 def _same_stream(anchor: TimelineEvent, sample: TimelineEvent) -> bool:
     if anchor.clock_domain != sample.clock_domain:
         return False
-    if anchor.device_id and sample.device_id and anchor.device_id != sample.device_id:
+    if anchor.device_id is not None or sample.device_id is not None:
+        # A missing identifier on one side is not evidence that the streams
+        # match; both sides must carry the same device and boot.
+        if anchor.device_id != sample.device_id:
+            return False
+        if anchor.boot_id is None or sample.boot_id is None:
+            return False
+        return anchor.boot_id == sample.boot_id
+    # Neither event carries a device identity: only same-source, same-boot
+    # evidence may support a diagnostic association. This is never a complete
+    # device/boot identity chain.
+    if anchor.boot_id is None or sample.boot_id is None:
         return False
-    if anchor.boot_id and sample.boot_id and anchor.boot_id != sample.boot_id:
+    if anchor.boot_id != sample.boot_id:
         return False
-    if not anchor.device_id and not sample.device_id:
-        return anchor.source_sha256 == sample.source_sha256
-    return True
+    return anchor.source_sha256 == sample.source_sha256
 
 
 def _response_value(event: TimelineEvent, channel: str) -> float | None:
@@ -2449,6 +2537,12 @@ def command_to_ack(
         ):
             state = RESPONSE_NOT_ESTIMABLE_CLOCK
             reasons = ["UNVERIFIED_CLOCK_SYNC"]
+        elif evidence != "PHYSICAL_MEASURED":
+            state = RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+            reasons = [REASON_UNVERIFIED_PROVENANCE]
+        elif not _identity_complete(command, ack):
+            state = RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+            reasons = [REASON_INCOMPLETE_IDENTITY]
         else:
             state = RESPONSE_VERIFIED_MEASURED_RESPONSE
             reasons = []
@@ -2467,7 +2561,7 @@ def command_to_ack(
                 latency if state in (
                     RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
                     RESPONSE_VERIFIED_MEASURED_RESPONSE,
-                ) else None,
+                ) and evidence in ("PHYSICAL_MEASURED", "SYNTHETIC_UNIT_TEST") else None,
                 uncertainty,
                 evidence,
                 2,
@@ -2695,16 +2789,19 @@ def ack_to_applied(
         uncertainty = _response_uncertainty(
             ack, applied, DEFAULT_ELECTRICAL_POLICY
         )
-        state = (
-            RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
-            if evidence == "SYNTHETIC_UNIT_TEST"
-            else RESPONSE_VERIFIED_MEASURED_RESPONSE
-        )
         quality_diagnostic_only = (
             evidence == "PHYSICAL_MEASURED"
             and applied.measurement_quality != "VALID"
         )
-        if quality_diagnostic_only:
+        identity_diagnostic_only = (
+            evidence == "PHYSICAL_MEASURED"
+            and not _identity_complete(ack, applied)
+        )
+        if evidence == "PHYSICAL_MEASURED" and not (
+            quality_diagnostic_only or identity_diagnostic_only
+        ):
+            state = RESPONSE_VERIFIED_MEASURED_RESPONSE
+        else:
             state = RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
         if uncertainty is None:
             state = RESPONSE_NOT_ESTIMABLE_UNCERTAINTY
@@ -2718,8 +2815,18 @@ def ack_to_applied(
                 RESPONSE_VERIFIED_MEASURED_RESPONSE,
             )
             and not quality_diagnostic_only
+            and evidence in ("PHYSICAL_MEASURED", "SYNTHETIC_UNIT_TEST")
             else None
         )
+        reasons: list[str] = []
+        if quality_diagnostic_only:
+            reasons.append("ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY")
+        if identity_diagnostic_only:
+            reasons.append(REASON_INCOMPLETE_IDENTITY)
+        if evidence == "UNVERIFIED":
+            reasons.append(REASON_UNVERIFIED_PROVENANCE)
+        if latency < 0:
+            reasons.append("NEGATIVE_ACK_TO_APPLIED_INTERVAL")
         results.append(
             replace(
                 _response(
@@ -2733,15 +2840,7 @@ def ack_to_applied(
                     2,
                     None,
                     DEFAULT_ELECTRICAL_POLICY,
-                    (
-                        ["ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY"]
-                        if quality_diagnostic_only
-                        else (
-                            []
-                            if latency >= 0
-                            else ["NEGATIVE_ACK_TO_APPLIED_INTERVAL"]
-                        )
-                    ),
+                    reasons,
                 ),
                 independent_application=True,
             )
