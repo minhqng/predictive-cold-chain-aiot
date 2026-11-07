@@ -16,6 +16,7 @@ import os
 import statistics
 import subprocess
 import sys
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -49,6 +50,7 @@ from coldguard_ml.plant_eda import (
     PHASE_PASSIVE_WARMUP,
     PHASE_POST_ACTION_RECOVERY,
     PHASE_UNDETERMINED,
+    REASON_DUPLICATE_VIEW_CONFLICT,
     REPEATABILITY_ESTABLISHED,
     REPEATABILITY_NOT_ESTABLISHED,
     PlantEDAConfig,
@@ -747,7 +749,14 @@ def test_n0_and_n1_statistics_are_undefined_not_zero():
 
 def test_n3_synthetic_fixture_yields_correct_mean_sd_iqr_and_cv():
     records = [
-        _record(PHASE_COOLING_STEP, value, source=f"synthetic-{index}", synthetic=True)
+        _record(
+            PHASE_COOLING_STEP,
+            value,
+            source=f"synthetic-{index}",
+            boot=f"synthetic-boot-{index}",
+            run_id=f"synthetic-run-{index}",
+            synthetic=True,
+        )
         for index, value in enumerate((10.0, 12.0, 14.0))
     ]
     summary = analyze_synthetic_control(records)
@@ -798,11 +807,25 @@ def test_cv_is_undefined_for_zero_mean_and_non_ratio_scale():
 
 def test_mixed_hardware_and_calibration_groups_are_not_pooled():
     group_a = [
-        _record(PHASE_COOLING_STEP, value, source=f"a-{index}", hardware="HW-A")
+        _record(
+            PHASE_COOLING_STEP,
+            value,
+            source=f"a-{index}",
+            boot=f"a-boot-{index}",
+            run_id=f"a-run-{index}",
+            hardware="HW-A",
+        )
         for index, value in enumerate((1.0, 2.0, 3.0))
     ]
     group_b = [
-        _record(PHASE_COOLING_STEP, value, source=f"b-{index}", hardware="HW-B")
+        _record(
+            PHASE_COOLING_STEP,
+            value,
+            source=f"b-{index}",
+            boot=f"b-boot-{index}",
+            run_id=f"b-run-{index}",
+            hardware="HW-B",
+        )
         for index, value in enumerate((10.0, 11.0, 12.0))
     ]
     summary = analyze_repeatability(group_a + group_b)
@@ -822,8 +845,22 @@ def test_mixed_hardware_and_calibration_groups_are_not_pooled():
 
 def test_paired_treatment_arms_are_not_plant_replicates():
     records = [
-        _record(PHASE_COOLING_STEP, 1.0, source="pair-a", pair_id="PAIR-1"),
-        _record(PHASE_COOLING_STEP, 2.0, source="pair-b", pair_id="PAIR-1"),
+        _record(
+            PHASE_COOLING_STEP,
+            1.0,
+            source="pair-a",
+            boot="pair-boot-a",
+            run_id="pair-run-a",
+            pair_id="PAIR-1",
+        ),
+        _record(
+            PHASE_COOLING_STEP,
+            2.0,
+            source="pair-b",
+            boot="pair-boot-b",
+            run_id="pair-run-b",
+            pair_id="PAIR-1",
+        ),
     ]
     summary = analyze_repeatability(records)
     assert summary.qualified_independent_runs == 0
@@ -839,7 +876,13 @@ def test_paired_treatment_arms_are_not_plant_replicates():
 
 def test_multiple_sources_with_multiple_phases_count_runs_not_phase_records():
     records = [
-        _record(phase, value, source=f"source-{source_index}")
+        _record(
+            phase,
+            value,
+            source=f"source-{source_index}",
+            boot=f"boot-{source_index}",
+            run_id=f"run-{source_index}",
+        )
         for source_index in range(2)
         for phase, value in (
             (PHASE_PASSIVE_WARMUP, 1.0),
@@ -876,7 +919,13 @@ def test_qualified_run_count_is_unique_physical_sources_not_phase_records():
 
 def test_insufficient_qualified_n_never_produces_established_repeatability():
     records = [
-        _record(PHASE_COOLING_STEP, 1.0, source=f"run-{index}")
+        _record(
+            PHASE_COOLING_STEP,
+            1.0,
+            source=f"run-{index}",
+            boot=f"boot-{index}",
+            run_id=f"run-{index}",
+        )
         for index in range(2)
     ]
     summary = analyze_repeatability(records)
@@ -886,10 +935,23 @@ def test_insufficient_qualified_n_never_produces_established_repeatability():
 
 def test_missing_outcomes_retain_the_qualified_denominator():
     records = [
-        _record(PHASE_COOLING_STEP, 1.0, source=f"run-{index}")
+        _record(
+            PHASE_COOLING_STEP,
+            1.0,
+            source=f"run-{index}",
+            boot=f"boot-{index}",
+            run_id=f"run-{index}",
+        )
         for index in range(2)
     ] + [
-        _record(PHASE_COOLING_STEP, None, source="run-missing", omit_metric=True)
+        _record(
+            PHASE_COOLING_STEP,
+            None,
+            source="run-missing",
+            boot="boot-missing",
+            run_id="run-missing",
+            omit_metric=True,
+        )
     ]
     summary = analyze_repeatability(records)
     row = next(
@@ -904,7 +966,14 @@ def test_missing_outcomes_retain_the_qualified_denominator():
 def test_synthetic_controls_never_enter_the_physical_repeatability_report():
     physical = [_record(PHASE_COOLING_STEP, 1.0, source="physical")]
     synthetic = [
-        _record(PHASE_COOLING_STEP, 2.0, source=f"syn-{index}", synthetic=True)
+        _record(
+            PHASE_COOLING_STEP,
+            2.0,
+            source=f"syn-{index}",
+            boot=f"syn-boot-{index}",
+            run_id=f"syn-run-{index}",
+            synthetic=True,
+        )
         for index in range(3)
     ]
     summary = analyze_repeatability(physical + synthetic)
@@ -920,6 +989,390 @@ def test_synthetic_controls_never_enter_the_physical_repeatability_report():
     )
     assert row.n_qualified == 3
     assert row.repeatability_status == "SYNTHETIC_CONTROL_ONLY"
+
+
+def test_three_exports_of_one_boot_are_not_three_independent_runs():
+    """R1 negative: an export hash proves different bytes, not a new run."""
+    phases = (
+        PHASE_PASSIVE_WARMUP,
+        PHASE_COOLING_STEP,
+        PHASE_POST_ACTION_RECOVERY,
+    )
+    records = [
+        _record(
+            phase,
+            10.0 + index,
+            source=f"export-{tag}",
+            boot="boot-1",
+            run_id="run-1",
+            device="dev-A",
+        )
+        for index, tag in enumerate("ABC")
+        for phase in phases
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 1
+    assert summary.qualified_independent_runs == 0
+    assert summary.conflicting_physical_sources == 1
+    assert REASON_DUPLICATE_VIEW_CONFLICT in summary.reason_codes
+    assert {
+        conflict.phase for conflict in summary.conflict_diagnostics
+    } == set(phases)
+    assert all(
+        conflict.conflicting_fields == ("outcomes",)
+        for conflict in summary.conflict_diagnostics
+    )
+    assert summary.verdict == REPEATABILITY_NOT_ESTABLISHED
+    row = next(
+        row for row in summary.rows
+        if row.phase == PHASE_COOLING_STEP and row.metric == "minutes_to_1c"
+    )
+    assert row.n_qualified == 0
+    assert row.n_values == 0
+    assert row.sample_sd is None
+    assert row.iqr is None
+    assert row.cv_pct is None
+    assert row.repeatability_status == REPEATABILITY_NOT_ESTABLISHED
+
+
+def test_identical_export_views_of_one_boot_collapse_to_one_run():
+    phases = (
+        PHASE_PASSIVE_WARMUP,
+        PHASE_COOLING_STEP,
+        PHASE_POST_ACTION_RECOVERY,
+    )
+    records = [
+        _record(
+            phase,
+            10.0,
+            source=f"export-{tag}",
+            boot="boot-1",
+            run_id="run-1",
+            device="dev-A",
+        )
+        for tag in "ABC"
+        for phase in phases
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 1
+    assert summary.qualified_independent_runs == 1
+    assert summary.duplicate_views == 6
+    assert summary.conflicting_physical_sources == 0
+    assert dict(summary.qualified_phase_counts) == {
+        PHASE_PASSIVE_WARMUP: 1,
+        PHASE_COOLING_STEP: 1,
+        PHASE_POST_ACTION_RECOVERY: 1,
+    }
+    assert summary.verdict == REPEATABILITY_NOT_ESTABLISHED
+    row = next(
+        row for row in summary.rows
+        if row.phase == PHASE_COOLING_STEP and row.metric == "minutes_to_1c"
+    )
+    assert row.n_qualified == 1
+    assert row.n_values == 1
+    assert row.sample_sd is None and row.iqr is None and row.cv_pct is None
+
+
+def test_passive_warmup_export_views_do_not_inflate_n():
+    records = [
+        _record(
+            PHASE_PASSIVE_WARMUP,
+            1.0,
+            source=f"warm-{tag}",
+            boot="boot-1",
+            run_id="run-1",
+            device="dev-A",
+        )
+        for tag in "ABC"
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 1
+    assert summary.qualified_independent_runs == 1
+    assert dict(summary.qualified_phase_counts) == {PHASE_PASSIVE_WARMUP: 1}
+    row = next(
+        row for row in summary.rows
+        if row.phase == PHASE_PASSIVE_WARMUP and row.metric == "minutes_to_1c"
+    )
+    assert row.n_qualified == 1
+    assert row.sample_sd is None and row.iqr is None and row.cv_pct is None
+
+
+def test_genuinely_independent_runs_on_one_device_remain_countable():
+    """Positive control: distinct certified runs on one device stay separate."""
+    phases = (
+        PHASE_PASSIVE_WARMUP,
+        PHASE_COOLING_STEP,
+        PHASE_POST_ACTION_RECOVERY,
+    )
+    records = [
+        _record(
+            phase,
+            10.0 + index,
+            source=f"indep-{index}-{phase}",
+            boot=f"boot-{index}",
+            run_id=f"run-{index}",
+            device="dev-A",
+        )
+        for index in range(3)
+        for phase in phases
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 3
+    assert summary.qualified_independent_runs == 3
+    assert summary.duplicate_views == 0
+    assert summary.conflicting_physical_sources == 0
+    assert summary.verdict == REPEATABILITY_ESTABLISHED
+    row = next(
+        row for row in summary.rows
+        if row.phase == PHASE_COOLING_STEP and row.metric == "minutes_to_1c"
+    )
+    assert row.n_qualified == 3
+    assert row.sample_sd == pytest.approx(1.0)
+    assert row.iqr == pytest.approx(1.0)
+
+
+def test_same_boot_distinct_run_ids_are_not_proven_independent():
+    records = [
+        _record(
+            PHASE_COOLING_STEP,
+            10.0 + index,
+            source=f"sameboot-{index}",
+            boot="boot-1",
+            run_id=f"run-{index}",
+            device="dev-A",
+        )
+        for index in range(3)
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 1
+    assert summary.qualified_independent_runs == 0
+    assert summary.conflicting_physical_sources == 1
+    assert REASON_DUPLICATE_VIEW_CONFLICT in summary.reason_codes
+    conflict = summary.conflict_diagnostics[0]
+    assert "run_id" in conflict.conflicting_fields
+    assert "reset/certification evidence" in conflict.detail
+
+
+def test_conflicting_validity_views_fail_closed_in_both_orders():
+    """R2 negative: contradictory views of one source never keep the winner."""
+    valid = _record(
+        PHASE_COOLING_STEP,
+        10.0,
+        source="a-valid",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+    )
+    invalid = _record(
+        PHASE_COOLING_STEP,
+        99.0,
+        source="z-invalid",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+        a_valid=False,
+        admission="EXCLUDED_OR_BLOCKED",
+    )
+    first = analyze_repeatability([valid, invalid])
+    second = analyze_repeatability([invalid, valid])
+    for summary in (first, second):
+        assert summary.independent_physical_sources == 1
+        assert summary.qualified_independent_runs == 0
+        assert summary.conflicting_physical_sources == 1
+        assert REASON_DUPLICATE_VIEW_CONFLICT in summary.reason_codes
+        row = next(
+            row for row in summary.rows
+            if row.phase == PHASE_COOLING_STEP and row.metric == "minutes_to_1c"
+        )
+        assert row.n_qualified == 0
+        assert row.n_values == 0
+        assert row.mean is None and row.sample_sd is None
+        assert REASON_DUPLICATE_VIEW_CONFLICT in row.reason_codes
+    assert first.to_dict() == second.to_dict()
+    paths = {
+        view["source_path"]
+        for view in first.conflict_diagnostics[0].to_dict()["views"]
+    }
+    assert paths == {"a-valid.json", "z-invalid.json"}
+
+
+def test_conflict_result_is_invariant_under_renaming_and_sha_changes():
+    def summary_for(valid_name, invalid_name):
+        return analyze_repeatability(
+            [
+                _record(
+                    PHASE_COOLING_STEP,
+                    10.0,
+                    source=valid_name,
+                    boot="boot-1",
+                    run_id="run-1",
+                    device="dev-A",
+                ),
+                _record(
+                    PHASE_COOLING_STEP,
+                    99.0,
+                    source=invalid_name,
+                    boot="boot-1",
+                    run_id="run-1",
+                    device="dev-A",
+                    a_valid=False,
+                    admission="EXCLUDED_OR_BLOCKED",
+                ),
+            ]
+        )
+
+    first = summary_for("a-valid", "z-invalid")
+    second = summary_for("zzz-valid", "a-invalid")
+    assert first.qualified_independent_runs == second.qualified_independent_runs == 0
+    assert first.verdict == second.verdict
+    assert first.reason_codes == second.reason_codes
+    assert first.independent_physical_sources == second.independent_physical_sources == 1
+    assert first.duplicate_views == second.duplicate_views == 0
+    first_stats = [
+        (row.metric, row.n_qualified, row.n_values, row.mean)
+        for row in first.rows
+    ]
+    second_stats = [
+        (row.metric, row.n_qualified, row.n_values, row.mean)
+        for row in second.rows
+    ]
+    assert first_stats == second_stats
+
+
+def test_conflicting_hardware_views_cannot_appear_in_either_group():
+    view_a = _record(
+        PHASE_COOLING_STEP,
+        1.0,
+        source="view-a",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+        hardware="HW-A",
+    )
+    view_b = _record(
+        PHASE_COOLING_STEP,
+        2.0,
+        source="view-b",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+        hardware="HW-B",
+    )
+    summary = analyze_repeatability([view_b, view_a])
+    assert summary.qualified_independent_runs == 0
+    assert summary.conflicting_physical_sources == 1
+    conflict = summary.conflict_diagnostics[0]
+    assert "hardware_config_id" in conflict.conflicting_fields
+    assert all(row.n_qualified == 0 and row.n_diagnostic == 0 for row in summary.rows)
+    assert all(row.mean is None and row.sample_sd is None for row in summary.rows)
+
+
+def test_consistent_duplicate_views_still_collapse_to_one_experiment():
+    records = [
+        _record(
+            PHASE_COOLING_STEP,
+            5.0,
+            source="view-1",
+            boot="boot-1",
+            run_id="run-1",
+            device="dev-A",
+        ),
+        _record(
+            PHASE_COOLING_STEP,
+            5.0,
+            source="view-2",
+            boot="boot-1",
+            run_id="run-1",
+            device="dev-A",
+        ),
+    ]
+    summary = analyze_repeatability(records)
+    assert summary.independent_physical_sources == 1
+    assert summary.qualified_independent_runs == 1
+    assert summary.duplicate_views == 1
+    assert summary.conflicting_physical_sources == 0
+    assert summary.verdict == REPEATABILITY_NOT_ESTABLISHED
+
+
+def test_divergent_derived_outcomes_are_not_selected_by_filename():
+    low = _record(
+        PHASE_COOLING_STEP,
+        10.0,
+        source="a-view",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+    )
+    high = _record(
+        PHASE_COOLING_STEP,
+        99.0,
+        source="z-view",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+    )
+    first = analyze_repeatability([low, high])
+    second = analyze_repeatability([high, low])
+    for summary in (first, second):
+        assert summary.independent_physical_sources == 1
+        assert summary.qualified_independent_runs == 0
+        assert summary.conflicting_physical_sources == 1
+        conflict = summary.conflict_diagnostics[0]
+        assert conflict.phase == PHASE_COOLING_STEP
+        assert conflict.conflicting_fields == ("outcomes",)
+        row = next(
+            row for row in summary.rows
+            if row.phase == PHASE_COOLING_STEP and row.metric == "minutes_to_1c"
+        )
+        assert row.n_qualified == 0
+        assert row.n_values == 0
+        assert row.mean is None and row.sample_sd is None
+        assert REASON_DUPLICATE_VIEW_CONFLICT in row.reason_codes
+    assert first.to_dict() == second.to_dict()
+
+
+def test_conflict_diagnostics_reach_report_and_manifest(real_result):
+    valid = _record(
+        PHASE_COOLING_STEP,
+        10.0,
+        source="a-valid",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+    )
+    invalid = _record(
+        PHASE_COOLING_STEP,
+        99.0,
+        source="z-invalid",
+        boot="boot-1",
+        run_id="run-1",
+        device="dev-A",
+        a_valid=False,
+        admission="EXCLUDED_OR_BLOCKED",
+    )
+    summary = analyze_repeatability([valid, invalid])
+    result = replace(real_result, repeatability=summary)
+    report = render_report(
+        result,
+        code_sha256="2" * 64,
+        repository_revision="test-revision",
+        generation_command="python scripts/plant-eda-W07.py --test",
+    )
+    assert "Duplicate-view conflicts (fail closed)" in report
+    assert REASON_DUPLICATE_VIEW_CONFLICT in report
+    manifest = json.loads(
+        build_manifest(
+            result,
+            code_sha256="2" * 64,
+            repository_revision="test-revision",
+            generation_command="python scripts/plant-eda-W07.py --test",
+            artifact_sha256={},
+        )
+    )
+    assert manifest["repeatability"]["conflicting_physical_sources"] == 1
+    diagnostics = manifest["repeatability"]["conflict_diagnostics"]
+    assert diagnostics[0]["reason_code"] == REASON_DUPLICATE_VIEW_CONFLICT
+    assert "a_valid" in diagnostics[0]["conflicting_fields"]
 
 
 def test_qualify_run_requires_complete_physical_identity():

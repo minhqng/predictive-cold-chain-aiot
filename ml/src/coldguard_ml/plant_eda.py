@@ -15,6 +15,10 @@ Scientific boundaries enforced here:
 * slopes name representation, window and estimator, and a trailing-window
   slope is never presented as a phase summary;
 * within-run row spread is not between-run repeatability;
+* an export SHA is evidence of different bytes, not of a different physical
+  experiment; repeated exports of one boot session collapse to one source;
+* contradictory duplicate views of one physical source fail closed instead of
+  keeping the most favorable view;
 * only qualified independent physical runs contribute to repeatability, and
   synthetic controls never enter the physical report;
 * electrical values without a recorded qualification stay diagnostic-only,
@@ -97,6 +101,7 @@ REASON_WITHIN_RUN_NOT_BETWEEN_RUN = "WITHIN_RUN_VARIATION_IS_NOT_BETWEEN_RUN_REP
 REASON_SAME_BOOT_PHASE = "SAME_BOOT_PHASE_SEGMENT_IS_NOT_AN_INDEPENDENT_RUN"
 REASON_DUPLICATE_VIEW = "DUPLICATE_SOURCE_VIEW_NOT_AN_EXTRA_RUN"
 REASON_PAIRED_ARM = "PAIRED_TREATMENT_ARM_IS_NOT_A_PLANT_REPLICATE"
+REASON_DUPLICATE_VIEW_CONFLICT = "DUPLICATE_VIEW_ADMISSION_CONFLICT"
 REASON_UNDETERMINED = "APPLIED_STATE_UNDETERMINED"
 REASON_LABEL_ABSENT = "APPLIED_LABEL_NOT_CARRIED"
 REASON_LABEL_CONTRADICTS_DUTY = "APPLIED_LABEL_CONTRADICTS_DUTY"
@@ -1216,12 +1221,21 @@ class RunRecord:
     reason_codes: tuple[str, ...]
 
     @property
-    def physical_source_key(self) -> tuple[str, str, str]:
-        return (
-            self.source_sha256,
-            self.boot_id or "NO_BOOT_ID",
-            self.device_id or "NO_DEVICE_ID",
-        )
+    def physical_source_key(self) -> tuple[Any, ...]:
+        """W04/W05 session semantics: one boot session on one device.
+
+        An export SHA proves different bytes, not a separate physical
+        experiment. Run labels inside one boot session never create
+        independent sources; without a boot identity the authoritative run
+        identity is the next best conservative key.
+        """
+        if self.boot_id:
+            if self.device_id:
+                return ("session", self.device_id, self.boot_id)
+            return ("session", self.boot_id)
+        if self.run_id:
+            return ("run", self.run_id)
+        return ("sha", self.source_sha256)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1482,6 +1496,35 @@ def summarize_metric(
 
 
 @dataclass(frozen=True)
+class DuplicateViewConflict:
+    """Contradictory views of one physical source, excluded fail-closed."""
+
+    source_key: tuple[Any, ...]
+    phase: str | None
+    reason_code: str
+    conflicting_fields: tuple[str, ...]
+    detail: str
+    views: tuple[tuple[str, str, str | None], ...]
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "source_key": list(self.source_key),
+            "phase": self.phase,
+            "reason_code": self.reason_code,
+            "conflicting_fields": list(self.conflicting_fields),
+            "detail": self.detail,
+            "views": [
+                {
+                    "source_path": path,
+                    "source_sha256": sha256,
+                    "run_id": run_id,
+                }
+                for path, sha256, run_id in self.views
+            ],
+        }
+
+
+@dataclass(frozen=True)
 class RepeatabilitySummary:
     verdict: str
     min_independent_runs: int
@@ -1493,6 +1536,13 @@ class RepeatabilitySummary:
     qualified_phase_counts: tuple[tuple[str, int], ...]
     rows: tuple[MetricSummary, ...]
     reason_codes: tuple[str, ...]
+    conflict_diagnostics: tuple[DuplicateViewConflict, ...] = ()
+
+    @property
+    def conflicting_physical_sources(self) -> int:
+        return len(
+            {conflict.source_key for conflict in self.conflict_diagnostics}
+        )
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1502,33 +1552,153 @@ class RepeatabilitySummary:
             "qualified_independent_runs": self.qualified_independent_runs,
             "excluded_records": self.excluded_records,
             "duplicate_views": self.duplicate_views,
+            "conflicting_physical_sources": self.conflicting_physical_sources,
             "diagnostic_phase_records": self.diagnostic_phase_records,
             "qualified_phase_counts": dict(self.qualified_phase_counts),
             "reason_codes": list(self.reason_codes),
+            "conflict_diagnostics": [
+                conflict.to_dict() for conflict in self.conflict_diagnostics
+            ],
             "rows": [row.to_dict() for row in self.rows],
         }
 
 
+_SOURCE_IDENTITY_FIELDS = (
+    "run_id",
+    "a_valid",
+    "admission_status",
+    "scenario_id",
+    "scenario_status",
+    "hardware_config_id",
+    "hardware_config_status",
+    "calibration_id",
+    "calibration_status",
+    "firmware_version",
+    "pair_id",
+    "controller_arm",
+    "quality",
+)
+
+
+def _view_sort_key(record: RunRecord) -> tuple[str, str, str]:
+    """Canonical, input-order-independent duplicate-view ordering."""
+    return (record.source_path, record.source_sha256, record.run_id or "")
+
+
+def _source_view_signature(record: RunRecord) -> tuple[Any, ...]:
+    return tuple(getattr(record, name) for name in _SOURCE_IDENTITY_FIELDS)
+
+
+def _conflicting_fields(records: Sequence[RunRecord]) -> tuple[str, ...]:
+    return tuple(
+        name
+        for name in _SOURCE_IDENTITY_FIELDS
+        if len({getattr(record, name) for record in records}) > 1
+    )
+
+
+def _duplicate_view_conflict(
+    source_key: tuple[Any, ...], ordered: Sequence[RunRecord]
+) -> DuplicateViewConflict:
+    fields = _conflicting_fields(ordered)
+    if "run_id" in fields:
+        detail = (
+            "one boot session carries contradictory run identities; the "
+            "schema does not prove that runs inside one boot were "
+            "independently reset and certified, so the physical source is "
+            "excluded until A provides per-run reset/certification evidence"
+        )
+    else:
+        detail = (
+            "repeated views of one physical source disagree on validity, "
+            "admission or configuration evidence; the source is excluded "
+            "instead of keeping the most favorable view"
+        )
+    return DuplicateViewConflict(
+        source_key=source_key,
+        phase=None,
+        reason_code=REASON_DUPLICATE_VIEW_CONFLICT,
+        conflicting_fields=fields,
+        detail=detail,
+        views=tuple(
+            (record.source_path, record.source_sha256, record.run_id)
+            for record in ordered
+        ),
+    )
+
+
+def _outcome_view_conflict(
+    source_key: tuple[Any, ...], phase: str, ordered: Sequence[RunRecord]
+) -> DuplicateViewConflict:
+    return DuplicateViewConflict(
+        source_key=source_key,
+        phase=phase,
+        reason_code=REASON_DUPLICATE_VIEW_CONFLICT,
+        conflicting_fields=("outcomes",),
+        detail=(
+            "repeated views of one physical source and phase disagree on "
+            "derived outcomes; the phase value is not uniquely determined, "
+            "so it is excluded instead of selecting a view by filename"
+        ),
+        views=tuple(
+            (record.source_path, record.source_sha256, record.run_id)
+            for record in ordered
+        ),
+    )
+
+
 def _collapse_units(
     records: Sequence[RunRecord],
-) -> tuple[dict[tuple[str, str, str, str], RunRecord], int]:
-    """One value per physical source per phase; duplicate views collapse."""
-    units: dict[tuple[str, str, str, str], RunRecord] = {}
+) -> tuple[dict[tuple[Any, ...], RunRecord], int]:
+    """Deterministic duplicate-view collapse for non-physical controls."""
+    units: dict[tuple[Any, ...], RunRecord] = {}
     duplicates = 0
-    for record in sorted(
-        records,
-        key=lambda item: (
-            item.phase,
-            item.physical_source_key,
-            item.source_path,
-            item.run_id or "",
-        ),
-    ):
+    for record in sorted(records, key=_view_sort_key):
         key = (*record.physical_source_key, record.phase)
         if key in units:
             duplicates += 1
-        units.setdefault(key, record)
+            continue
+        units[key] = record
     return units, duplicates
+
+
+def _collapse_physical_units(
+    records: Sequence[RunRecord],
+) -> tuple[
+    dict[tuple[Any, ...], RunRecord],
+    int,
+    tuple[DuplicateViewConflict, ...],
+]:
+    """One representative per (physical source, phase); contradictions fail closed.
+
+    The source key mirrors W04/W05: repeated exports of one boot session are
+    views of one physical source, never extra independent experiments. Views
+    that disagree on run identity, validity, admission or configuration are
+    excluded together rather than resolved by input order.
+    """
+    by_source: dict[tuple[Any, ...], list[RunRecord]] = {}
+    for record in records:
+        by_source.setdefault(record.physical_source_key, []).append(record)
+    units: dict[tuple[Any, ...], RunRecord] = {}
+    duplicates = 0
+    conflicts: list[DuplicateViewConflict] = []
+    for source_key, items in sorted(
+        by_source.items(), key=lambda item: str(item[0])
+    ):
+        ordered = sorted(items, key=_view_sort_key)
+        if len({_source_view_signature(item) for item in ordered}) > 1:
+            conflicts.append(_duplicate_view_conflict(source_key, ordered))
+            continue
+        by_phase: dict[str, list[RunRecord]] = {}
+        for record in ordered:
+            by_phase.setdefault(record.phase, []).append(record)
+        for phase, views in sorted(by_phase.items()):
+            if len({view.outcomes for view in views}) > 1:
+                conflicts.append(_outcome_view_conflict(source_key, phase, views))
+                continue
+            units[(source_key, phase)] = views[0]
+            duplicates += len(views) - 1
+    return units, duplicates, tuple(conflicts)
 
 
 def _group_key(record: RunRecord) -> tuple[str, str, str, str]:
@@ -1555,32 +1725,52 @@ def analyze_repeatability(
     Comparable phase groups are separated by scenario, hardware configuration
     and calibration identity; different populations are never pooled.
     """
-    physical = [record for record in records if not record.synthetic]
+    physical = [
+        record
+        for record in records
+        if not record.synthetic and record.phase != PHASE_UNDETERMINED
+    ]
     synthetic = [record for record in records if record.synthetic]
+    units, duplicates, conflicts = _collapse_physical_units(physical)
+    conflicted_sources = {
+        conflict.source_key for conflict in conflicts if conflict.phase is None
+    }
+    conflicted_units = {
+        (conflict.source_key, conflict.phase)
+        for conflict in conflicts
+        if conflict.phase is not None
+    }
     grouped: dict[tuple[str, str, str, str], list[RunRecord]] = {}
     for record in physical:
-        if record.phase == PHASE_UNDETERMINED:
-            continue
         grouped.setdefault(_group_key(record), []).append(record)
     rows: list[MetricSummary] = []
     qualified_phase_counts: dict[str, int] = {}
-    excluded = 0
-    duplicate_views = 0
-    qualified_source_keys: set[tuple[str, str, str]] = set()
+    excluded = sum(len(conflict.views) for conflict in conflicts)
+    duplicate_views = duplicates
+    qualified_source_keys: set[tuple[Any, ...]] = set()
     diagnostic_total = 0
     reasons: set[str] = set()
     required_phase_present = {
         phase: False for phase in REQUIRED_REPEATABILITY_PHASES
     }
     required_groups_ok = True
+    for conflict in conflicts:
+        reasons.add(conflict.reason_code)
     for group_key, group_records in sorted(grouped.items(), key=lambda item: str(item[0])):
         scenario, phase, hardware, calibration = group_key
         group_id = f"{scenario}|{phase}|{hardware}|{calibration}"
-        units, duplicates = _collapse_units(group_records)
-        duplicate_views += duplicates
         qualified: list[RunRecord] = []
         diagnostic: list[RunRecord] = []
-        for _, record in sorted(units.items()):
+        examined: set[tuple[Any, ...]] = set()
+        for raw_record in group_records:
+            source_key = raw_record.physical_source_key
+            unit_key = (source_key, raw_record.phase)
+            if source_key in conflicted_sources or unit_key in conflicted_units:
+                continue
+            if unit_key in examined:
+                continue
+            examined.add(unit_key)
+            record = units[unit_key]
             if record.pair_id is not None:
                 excluded += 1
                 reasons.add(REASON_PAIRED_ARM)
@@ -1695,6 +1885,7 @@ def analyze_repeatability(
         qualified_phase_counts=tuple(sorted(qualified_phase_counts.items())),
         rows=tuple(rows),
         reason_codes=tuple(sorted(reasons)),
+        conflict_diagnostics=conflicts,
     )
 
 
@@ -2814,6 +3005,10 @@ def render_report(
     add(f"| Qualified independent runs | {result.repeatability.qualified_independent_runs} |")
     add(f"| Diagnostic phase records | {result.repeatability.diagnostic_phase_records} |")
     add(f"| Duplicate source views | {result.repeatability.duplicate_views} |")
+    add(
+        f"| Conflicting physical sources | "
+        f"{result.repeatability.conflicting_physical_sources} |"
+    )
     add("")
     add(
         f"The {len(run.run_ids)} raw `run_id` label(s) are segments inside one boot. "
@@ -3025,8 +3220,36 @@ def render_report(
     add(f"| Qualified independent runs | {result.repeatability.qualified_independent_runs} |")
     add(f"| Excluded records | {result.repeatability.excluded_records} |")
     add(f"| Duplicate source views | {result.repeatability.duplicate_views} |")
+    add(
+        f"| Conflicting physical sources | "
+        f"{result.repeatability.conflicting_physical_sources} |"
+    )
     add(f"| Reason codes | {', '.join(result.repeatability.reason_codes)} |")
     add("")
+    if result.repeatability.conflict_diagnostics:
+        add("### Duplicate-view conflicts (fail closed)")
+        add("")
+        add("| Physical source key | Phase | Conflicting fields | Views | Detail |")
+        add("|---|---|---|---|---|")
+        for conflict in result.repeatability.conflict_diagnostics:
+            views = "; ".join(
+                f"{path} ({sha256[:12] or 'NO_SHA'})"
+                for path, sha256, _run_id in conflict.views
+            )
+            source_key = "\\|".join(
+                str(part) for part in conflict.source_key
+            )
+            add(
+                f"| {source_key} | {conflict.phase or 'ALL'} | "
+                f"{', '.join(conflict.conflicting_fields)} | {views} | "
+                f"{conflict.detail} |"
+            )
+        add("")
+        add(
+            "Contradictory views of one physical source are excluded from "
+            "qualified repeatability instead of keeping the most favorable view."
+        )
+        add("")
     add(
         f"No SD, IQR or CV is reported as between-run repeatability from the "
         f"{len(result.capture.rows)} telemetry rows or from the "
