@@ -32,6 +32,8 @@ from dataclasses import dataclass
 from typing import Any, Sequence
 
 from .intake import (
+    TIME_BOOT_SCOPED_UPTIME,
+    TIME_EVENT_UTC,
     AdmissionResult,
     AdmissionStage,
     Capture,
@@ -853,10 +855,36 @@ def _check(
     )
 
 
-def _row_time_s(row: NormalizedRow) -> float | None:
-    if row.device_ms is None:
-        return None
-    return row.device_ms / 1000.0
+def _capture_time_axis(
+    capture: Capture,
+) -> tuple[tuple[float | None, ...], str]:
+    """Mirror W05's trusted axis: event UTC, else boot-scoped uptime."""
+    rows = capture.rows
+    if capture.time.domain == TIME_EVENT_UTC:
+        stamps = [row.event_time_utc for row in rows]
+        if stamps and all(stamp is not None for stamp in stamps):
+            first = stamps[0]
+            return (
+                tuple(
+                    round((stamp - first).total_seconds(), 6)
+                    for stamp in stamps
+                    if stamp is not None
+                ),
+                TIME_EVENT_UTC,
+            )
+    if capture.time.domain == TIME_BOOT_SCOPED_UPTIME:
+        values = [row.device_ms for row in rows]
+        if values and all(value is not None for value in values):
+            first = values[0]
+            return (
+                tuple(
+                    round((value - first) / 1000.0, 9)
+                    for value in values
+                    if value is not None
+                ),
+                TIME_BOOT_SCOPED_UPTIME,
+            )
+    return tuple(None for _ in rows), "UNTRUSTED"
 
 
 def _quality(row: NormalizedRow, domain: str) -> str:
@@ -903,17 +931,15 @@ def _critical_row_ok(
 
 def _window_rows(
     rows: Sequence[NormalizedRow],
+    times: Sequence[float | None],
     start_s: float,
     end_s: float,
 ) -> list[NormalizedRow]:
-    selected: list[NormalizedRow] = []
-    for row in rows:
-        time_s = _row_time_s(row)
-        if time_s is None:
-            continue
-        if start_s <= time_s < end_s:
-            selected.append(row)
-    return selected
+    return [
+        row
+        for row, time_s in zip(rows, times)
+        if time_s is not None and start_s <= time_s < end_s
+    ]
 
 
 def _expected_samples(duration_s: float, nominal_dt_s: float | None, *, inclusive: bool) -> int | None:
@@ -1079,18 +1105,22 @@ def _channel_coverage(
     return tuple(coverage), tuple(findings)
 
 
-def _door_anchor(capture: Capture) -> tuple[float | None, int, str]:
-    ordered = [row for row in capture.rows if _row_time_s(row) is not None]
+def _door_anchor(
+    capture: Capture,
+    times: Sequence[float | None],
+) -> tuple[float | None, int, str]:
     previous: str | None = None
     anchor: float | None = None
     count = 0
-    for row in ordered:
+    for row, time_s in zip(capture.rows, times):
+        if time_s is None:
+            continue
         state = row.door_state
         if state in ("OPEN", "CLOSED"):
             if previous in ("OPEN", "CLOSED") and previous != state:
                 count += 1
                 if anchor is None and state == "OPEN":
-                    anchor = _row_time_s(row)
+                    anchor = time_s
             previous = state
         else:
             previous = "UNKNOWN"
@@ -1102,6 +1132,7 @@ def _event_coverage(
     requirement: ScenarioRequirement,
     completeness: Sequence[CompletenessResult],
     rows: Sequence[NormalizedRow],
+    times: Sequence[float | None],
 ) -> EventCoverage:
     if not requirement.requires_door_event:
         return EventCoverage(
@@ -1117,7 +1148,7 @@ def _event_coverage(
             detail="the declared scenario does not require a disturbance event",
             reason_codes=(REASON_NOT_APPLICABLE,),
         )
-    anchor, count, source = _door_anchor(capture)
+    anchor, count, source = _door_anchor(capture, times)
     if anchor is None:
         return EventCoverage(
             required=True,
@@ -1132,7 +1163,8 @@ def _event_coverage(
             detail="no CLOSED→OPEN door transition is observable in the capture",
             reason_codes=(REASON_EVENT_ANCHOR_MISSING,),
         )
-    end_s = max((_row_time_s(row) or 0.0) for row in rows) if rows else None
+    known_times = [time_s for time_s in times if time_s is not None]
+    end_s = max(known_times) if known_times else None
     event = next(
         (
             item
@@ -1291,6 +1323,7 @@ def validate_run(
     interval = session.interval_stats if session is not None else None
     nominal_dt = interval.nominal_dt_s if interval is not None else None
     rows = capture.rows
+    times, time_axis = _capture_time_axis(capture)
 
     # --- Identity and lineage ------------------------------------------------
     checks.append(
@@ -1422,9 +1455,7 @@ def validate_run(
             else (),
         )
     )
-    observed_times = [
-        time_s for row in rows if (time_s := _row_time_s(row)) is not None
-    ]
+    observed_times = [time_s for time_s in times if time_s is not None]
     planned_start_s = min(observed_times) if observed_times else None
     planned_end_s = (
         planned_start_s + planned_duration
@@ -1718,9 +1749,9 @@ def validate_run(
             STAGE_MEASUREMENTS,
             capture.time.domain != "NONE",
             detail=(
-                f"time domain {capture.time.domain!r}; event time "
-                f"{capture.time.event_time_status!r}; clock sync "
-                f"{capture.time.clock_sync!r}"
+                f"time domain {capture.time.domain!r}; analysis axis "
+                f"{time_axis!r}; event time {capture.time.event_time_status!r}; "
+                f"clock sync {capture.time.clock_sync!r}"
             ),
         )
     )
@@ -1838,8 +1869,8 @@ def validate_run(
     rows_in_plan = (
         [
             row
-            for row in rows
-            if (time_s := _row_time_s(row)) is not None
+            for row, time_s in zip(rows, times)
+            if time_s is not None
             and planned_start_s <= time_s <= planned_end_s
         ]
         if planned_start_s is not None and planned_end_s is not None
@@ -1904,14 +1935,16 @@ def validate_run(
         )
     )
     if requirement.requires_door_event:
-        anchor, _count, _source = _door_anchor(capture)
-        end_s = max((_row_time_s(row) or 0.0) for row in rows) if rows else None
+        anchor, _count, _source = _door_anchor(capture, times)
+        known_times = [time_s for time_s in times if time_s is not None]
+        end_s = max(known_times) if known_times else None
         baseline_expected = _expected_samples(
             requirement.baseline_window_s, nominal_dt, inclusive=False
         )
         baseline_rows = (
             _window_rows(
                 rows,
+                times,
                 anchor - requirement.baseline_window_s,
                 anchor,
             )
@@ -1955,7 +1988,7 @@ def validate_run(
             requirement.event_window_s, nominal_dt, inclusive=False
         )
         event_rows = (
-            _window_rows(rows, anchor, anchor + requirement.event_window_s)
+            _window_rows(rows, times, anchor, anchor + requirement.event_window_s)
             if anchor is not None
             else []
         )
@@ -1993,7 +2026,7 @@ def validate_run(
             inclusive=False,
         )
         recovery_rows = (
-            _window_rows(rows, recovery_start, recovery_end)
+            _window_rows(rows, times, recovery_start, recovery_end)
             if recovery_start is not None and recovery_end is not None
             else []
         )
@@ -2105,7 +2138,9 @@ def validate_run(
             ),
         )
     )
-    event_coverage = _event_coverage(capture, requirement, completeness, rows)
+    event_coverage = _event_coverage(
+        capture, requirement, completeness, rows, times
+    )
     if requirement.requires_door_event:
         checks.append(
             _check(
@@ -2661,6 +2696,14 @@ def build_gate_b_report(
         "No locked test manifest is created, inspected or frozen by W08.",
         "Synthetic controls never enter the physical dataset or the real split.",
         "A GREEN W08 software gate does not make the physical data GREEN.",
+        "Completeness uses the observed modal cadence; the project has not "
+        "frozen a cadence tolerance, so timing adequacy remains a separate "
+        "scientific decision.",
+        "A capture that starts late relative to the planned experiment start "
+        "is not detectable from boot-relative durations alone; a planned start "
+        "anchor is required for that claim.",
+        "The software gate is earned by the validator; the CLI additionally "
+        "verifies written artifact hashes and report/CSV agreement.",
     ]
     return GateBReport(
         scenario_requirement=requirement,

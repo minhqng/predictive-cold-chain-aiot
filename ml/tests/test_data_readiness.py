@@ -10,10 +10,12 @@ from __future__ import annotations
 import csv
 import dataclasses
 import hashlib
+import importlib.util
 import io
 import json
 import subprocess
 import sys
+import types
 from pathlib import Path
 
 import pytest
@@ -1215,6 +1217,54 @@ def test_cli_real_source_exits_0_with_red_gate_and_writes_artifacts(tmp_path):
     )
     assert rows[0]["b_eligibility"] == "BLOCKED"
     assert rows[0]["a_ledger_verdict"] == "INVALID"
+
+
+def _cli_module():
+    spec = importlib.util.spec_from_file_location("w08_cli_under_test", CLI)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_cli_artifact_verifier_detects_tampering(tmp_path):
+    output = tmp_path / "w08"
+    result = _run_cli(
+        [
+            "--source",
+            str(REAL_A_EXPORT),
+            "--a-run-index",
+            str(REAL_A_INDEX),
+            "--out",
+            str(output),
+            "--repository-revision",
+            "verifier-test",
+        ]
+    )
+    assert result.returncode == 0, result.stderr
+    rows = list(
+        csv.DictReader(
+            io.StringIO((output / "run-validation-W08.csv").read_text(encoding="utf-8"))
+        )
+    )
+    validations = [
+        types.SimpleNamespace(
+            source_path=row["source_path"],
+            eligibility=row["b_eligibility"],
+            a_ledger_verdict=row["a_ledger_verdict"],
+        )
+        for row in rows
+    ]
+    report = types.SimpleNamespace(
+        validations=validations,
+        physical_gate=types.SimpleNamespace(observed_status="RED"),
+        split_plan=types.SimpleNamespace(feasibility="NOT_FEASIBLE"),
+    )
+    module = _cli_module()
+    assert module._verify_written_artifacts(output, report) == []
+    csv_path = output / "run-validation-W08.csv"
+    csv_path.write_text(csv_path.read_text(encoding="utf-8") + "tampered\n", encoding="utf-8")
+    problems = module._verify_written_artifacts(output, report)
+    assert any("hash mismatch" in problem for problem in problems)
 
 
 def test_cli_deterministic_replay(tmp_path):
