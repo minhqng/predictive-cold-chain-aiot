@@ -46,6 +46,7 @@ from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend.normalized_store import insert_normalized, map_to_row
 from coldguard_backend.raw_store import RECEIVED_VALID, store_raw
+from coldguard_backend.twin_store import update_twin_reported
 from coldguard_backend.validation import validate_telemetry_payload
 
 log = logging.getLogger(__name__)
@@ -161,6 +162,48 @@ def ingest_message(
                 metrics.exact_duplicates += 1
             else:
                 metrics.conflicts += 1
+    twin_outcome: dict[str, Any] | None = None
+    if outcome["outcome"] == "inserted":
+        try:
+            reported_snapshot = {
+                "t1_c": row["t1_c"],
+                "t2_c": row["t2_c"],
+                "t3_c": row["t3_c"],
+                "t_air_c": row["t_air_c"],
+                "rh_pct": row["rh_pct"],
+                "door_state": row["door_state"],
+                "cooling_voltage_v": row["cooling_voltage_v"],
+                "cooling_current_a": row["cooling_current_a"],
+                "cooling_power_w": row["cooling_power_w"],
+                "cooling_energy_counter_wh": row["cooling_energy_counter_wh"],
+                "applied_cooling": row["applied_cooling"],
+                "applied_duty": row["applied_duty"],
+                "thermal_quality": row["thermal_quality"],
+                "environment_quality": row["environment_quality"],
+                "electrical_quality": row["electrical_quality"],
+                "overall_quality": row["overall_quality"],
+                "device_mode": row["device_mode"],
+                "captured_at": row["time"].isoformat() if row.get("time") else None,
+                "raw_id": row["raw_id"],
+                "run_id": row.get("run_id"),
+            }
+            twin_outcome = update_twin_reported(
+                engine_or_conn,
+                device_id=row["device_id"],
+                boot_id=row["boot_id"],
+                seq=row["seq"],
+                state=reported_snapshot,
+                reported_at=row["time"],
+            )
+        except Exception:
+            log.exception(
+                "twin update failed for device=%s boot=%s seq=%s",
+                row["device_id"],
+                row["boot_id"],
+                row["seq"],
+            )
+            twin_outcome = {"outcome": "failed"}
+
     if outcome["outcome"] == "conflict":
         log.warning(
             "conflicting replay for identity (%s, %s, %s): raw_id=%s kept as "
@@ -171,4 +214,9 @@ def ingest_message(
             stored["id"],
             outcome["id"],
         )
-    return {"raw_id": stored["id"], "raw_status": status, "normalized": outcome}
+    return {
+        "raw_id": stored["id"],
+        "raw_status": status,
+        "normalized": outcome,
+        "twin": twin_outcome,
+    }
