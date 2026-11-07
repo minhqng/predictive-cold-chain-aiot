@@ -10,4 +10,4 @@
 | D‑W12‑04 Command lifecycle proof | **OPEN** | A / D | End‑to‑end proof chain (reactive decision → command → ACK → electrical → thermal → VERIFIED) ; no complete physical proof |
 | D‑W12‑05 Gate G3 signoff | **OPEN** | A | Open blockers listed in `evidence/A/W12/gate-g3-input.json` (no host‑only sign‑off) |
 
-A's vidence/A/W12/gate-g3-input.json says electrical qualification, post-freeze inspection and fuse/conductor evidence remain open. This week is a readiness inventory, not a G3 pass.
+A's `evidence/A/W12/gate-g3-input.json` says electrical qualification, post-freeze inspection and fuse/conductor evidence remain open. This week is a readiness inventory, not a G3 pass.
