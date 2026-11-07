@@ -360,3 +360,90 @@ class Command(_WireBase):
         if self.expires_at <= self.created_at:
             raise ValueError("expires_at must be strictly after created_at")
         return self
+
+
+# Device command-ACK verdicts (Doc 02 §32.1, closed set; Member A W06 handoff).
+# An ACK is protocol evidence, never physical verification (Doc 02 §32.2).
+AckStatus = Literal[
+    "ACCEPTED",
+    "REJECTED",
+    "DUPLICATE_CANONICAL",
+    "EXPIRED",
+    "SAFETY_BLOCKED",
+    "INVALID_STATE",
+    "OUT_OF_RANGE",
+]
+
+
+class AppliedState(_WireBase):
+    """Device-reported applied output. Reported truth, not a thermal claim."""
+
+    cooling: CoolingState
+    duty: float | None = None
+
+    @field_validator("duty")
+    @classmethod
+    def _duty_in_unit_range(cls, value: float | None) -> float | None:
+        if value is not None and not 0.0 <= value <= 1.0:
+            raise ValueError("duty must be within [0.0, 1.0]")
+        return value
+
+
+class CommandAck(_WireBase):
+    """Backend MQTT command-ACK envelope (Doc 02 §32.3 / §64).
+
+    Carries the device verdict plus the interpretability fields from the
+    Member A W06 contract (time_sync_state, expiry_evaluable, output_stage,
+    fault_code, ack_seq, reapplied, canonical_status). ``device_id`` is the
+    device's own identity; the consumer additionally proves topic agreement.
+    ``applied`` is what the device reports it applied — an ACCEPTED ACK with
+    applied ON is still not proof the chamber cooled.
+    """
+
+    schema_version: Literal[1]
+    command_id: str
+    device_id: str
+    boot_id: str
+    status: AckStatus
+    reason_code: str
+    uptime_ms: int
+    applied: AppliedState | None = None
+    desired: CommandAction | None = None
+    device_mode: str | None = None
+    ack_seq: int | None = None
+    canonical_status: AckStatus | None = None
+    reapplied: bool | None = None
+    expiry_evaluable: bool | None = None
+    time_sync_state: Literal["SYNCHRONIZED", "UNSYNCHRONIZED"] | None = None
+    output_stage: Literal["ENABLED", "DISABLED"] | None = None
+    fault_code: str | None = None
+    ack_time: AwareDatetime | None = None
+
+    @field_validator("command_id", "device_id", "boot_id", "reason_code")
+    @classmethod
+    def _non_empty(cls, value: str) -> str:
+        if not value.strip():
+            raise ValueError("ACK identity/reason strings must be non-empty")
+        return value
+
+    @field_validator("uptime_ms")
+    @classmethod
+    def _uptime_non_negative(cls, value: int) -> int:
+        if value < 0:
+            raise ValueError("uptime_ms is a non-negative counter")
+        return value
+
+    @field_validator("ack_seq")
+    @classmethod
+    def _ack_seq_non_negative(cls, value: int | None) -> int | None:
+        if value is not None and value < 0:
+            raise ValueError("ack_seq is a non-negative counter")
+        return value
+
+    @model_validator(mode="after")
+    def _duplicate_carries_canonical(self) -> "CommandAck":
+        if self.status == "DUPLICATE_CANONICAL" and self.canonical_status is None:
+            raise ValueError(
+                "DUPLICATE_CANONICAL must carry canonical_status (the original verdict)"
+            )
+        return self
