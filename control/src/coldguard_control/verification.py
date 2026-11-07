@@ -18,7 +18,10 @@ database or GPIO code.
 
 Claim discipline
 ----------------
-``VERIFIED`` / ``HEALTHY_RESPONSE`` require a ``QUALIFIED`` envelope. Member A's
+``VERIFIED`` / ``HEALTHY_RESPONSE`` require a ``QUALIFIED`` envelope, observed
+applied ON, valid current/power, and a quality-tagged thermal baseline and
+follow-up. Timeout fault labels also require a configured observation-age
+bound at the response deadline; a data gap is ``UNKNOWN``. Member A's
 W08/W09 electrical values are real observations but their status tokens are
 empty (`usable_for_a_health_claim: false`), so the imported candidate envelope
 is marked ``CANDIDATE_UNQUALIFIED``. In that state the tracker can report that
@@ -80,9 +83,11 @@ def _optional_finite(name: str, value: object) -> float | None:
 class VerificationPolicy:
     """Versioned characterization envelope and response windows.
 
-    Every value is mandatory. The candidate JSON under ``evidence/D/W09`` is
-    synthetic test input; this package ships no physical default and does not
-    freeze an envelope.
+    Operating envelope and response-window values are explicit. The candidate
+    JSON under ``evidence/D/W09`` is synthetic test input; this package ships
+    no physical default and does not freeze an envelope. The optional
+    evidence-age bounds must come from a measured sampling contract before
+    timeout failures can be classified.
     """
 
     policy_version: str
@@ -97,6 +102,8 @@ class VerificationPolicy:
     active_power_min_w: float | None = None
     active_power_max_w: float | None = None
     source: str = ""
+    electrical_evidence_max_age_s: float | None = None
+    thermal_evidence_max_age_s: float | None = None
 
     def __post_init__(self) -> None:
         for name, value in (
@@ -126,6 +133,12 @@ class VerificationPolicy:
             raise ConfigError("response windows must be positive")
         if thermal_drop <= 0:
             raise ConfigError("thermal_min_drop_c must be positive")
+        for name, value in (
+            ("electrical_evidence_max_age_s", self.electrical_evidence_max_age_s),
+            ("thermal_evidence_max_age_s", self.thermal_evidence_max_age_s),
+        ):
+            if value is not None and _finite(name, value) <= 0:
+                raise ConfigError(f"{name} must be positive")
 
         power_min = _optional_finite("active_power_min_w", self.active_power_min_w)
         power_max = _optional_finite("active_power_max_w", self.active_power_max_w)
@@ -140,6 +153,10 @@ class VerificationPolicy:
                 raise ConfigError(
                     "active_power_min_w cannot exceed active_power_max_w"
                 )
+        if self.qualification is EnvelopeQualification.QUALIFIED and power_min is None:
+            raise ConfigError(
+                "QUALIFIED envelope requires measured active power bounds"
+            )
 
 
 @dataclass(frozen=True, slots=True)
@@ -149,7 +166,8 @@ class VerificationObservation:
     A value is usable as verification evidence only when its quality is exactly
     ``VALID``. ``DEGRADED``/``INVALID``/``UNKNOWN`` values are retained as
     evidence that data was missing/untusable, never silently treated as healthy
-    (Doc 01 section 19.4).
+    (Doc 01 section 19.4). Applied-state feedback is separate from the
+    requested action and is required for physical health claims.
     """
 
     now_s: float
@@ -159,9 +177,14 @@ class VerificationObservation:
     power_quality: QualityState = QualityState.UNKNOWN
     thermal_t_representative_c: float | None = None
     thermal_quality: QualityState = QualityState.UNKNOWN
+    applied_cooling: CoolingState | None = None
 
     def __post_init__(self) -> None:
         _finite_value("now_s", self.now_s)
+        if self.applied_cooling is not None and not isinstance(
+            self.applied_cooling, CoolingState
+        ):
+            raise ValueError("applied_cooling must be a CoolingState or None")
         for name, quality in (
             ("current_quality", self.current_quality),
             ("power_quality", self.power_quality),
@@ -221,6 +244,10 @@ class VerificationTracker:
         started_s: float,
         baseline_temperature_c: float | None = None,
     ) -> None:
+        # Kept for synthetic replay compatibility. A bare temperature has no
+        # observation quality or capture time and is never used to certify a
+        # physical thermal response; the tracker learns its baseline from a
+        # VALID applied-ON observation inside the electrical window.
         if not isinstance(policy, VerificationPolicy):
             raise ValueError("policy must be a VerificationPolicy")
         if not isinstance(command_id, str) or not command_id.strip():
@@ -238,7 +265,11 @@ class VerificationTracker:
         self._command_id = command_id
         self._action = action
         self._started_s = start
-        self._baseline_t = baseline
+        # Validated for API compatibility, but a bare number has no quality
+        # or capture time and cannot become a physical baseline.
+        self._baseline_t: float | None = None
+        self._baseline_s: float | None = None
+        self._baseline_from_valid_observation = False
         self._now_s = start
         self._last_observation_s: float | None = None
         self._last_observation: VerificationObservation | None = None
@@ -251,6 +282,9 @@ class VerificationTracker:
         self._valid_electrical_seen = False
         self._complete_electrical_seen = False
         self._valid_thermal_seen = False
+        self._last_valid_electrical_s: float | None = None
+        self._last_valid_thermal_s: float | None = None
+        self._applied_off_seen = False
         self._below_active_seen = False
         self._above_active_seen = False
 
@@ -348,15 +382,29 @@ class VerificationTracker:
         else:
             self._advance_on(observation)
 
+    @staticmethod
+    def _recent_at_deadline(
+        observed_s: float | None, deadline_s: float, max_age_s: float | None
+    ) -> bool:
+        """A timeout fault needs an explicit, characterized coverage bound."""
+        return (
+            observed_s is not None
+            and max_age_s is not None
+            and 0 <= deadline_s - observed_s <= max_age_s
+        )
+
     def _advance_off(self, observation: VerificationObservation | None) -> None:
         valid_current = (
             observation is not None
+            and observation.applied_cooling is CoolingState.OFF
             and observation.current_quality is QualityState.VALID
             and observation.current_a is not None
         )
         if valid_current:
             assert observation is not None and observation.current_a is not None
+            self._applied_off_seen = True
             self._valid_electrical_seen = True
+            self._last_valid_electrical_s = self._now_s
             if observation.current_a > self._policy.off_current_max_a:
                 if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
                     self._state = VerificationState.UNKNOWN
@@ -377,7 +425,16 @@ class VerificationTracker:
 
         if self._now_s >= self._electrical_deadline_s:
             self._closed = True
-            if self._valid_electrical_seen and self._policy.qualification is EnvelopeQualification.QUALIFIED:
+            if (
+                self._valid_electrical_seen
+                and self._applied_off_seen
+                and self._recent_at_deadline(
+                    self._last_valid_electrical_s,
+                    self._electrical_deadline_s,
+                    self._policy.electrical_evidence_max_age_s,
+                )
+                and self._policy.qualification is EnvelopeQualification.QUALIFIED
+            ):
                 self._state = VerificationState.NOT_REQUIRED
                 self._health = CoolingHealthState.UNKNOWN
                 self._reason = None
@@ -403,6 +460,7 @@ class VerificationTracker:
 
         valid_current = (
             observation is not None
+            and observation.applied_cooling is CoolingState.ON
             and observation.current_quality is QualityState.VALID
             and observation.current_a is not None
         )
@@ -410,6 +468,7 @@ class VerificationTracker:
         if valid_current:
             assert observation is not None and observation.current_a is not None
             self._valid_electrical_seen = True
+            self._last_valid_electrical_s = self._now_s
             current = observation.current_a
             in_current = (
                 self._policy.active_current_min_a
@@ -453,12 +512,19 @@ class VerificationTracker:
             self._thermal_deadline_s = (
                 self._now_s + self._policy.thermal_window_s
             )
-            if self._baseline_t is None and observation is not None:
-                if (
-                    observation.thermal_quality is QualityState.VALID
-                    and observation.thermal_t_representative_c is not None
-                ):
-                    self._baseline_t = observation.thermal_t_representative_c
+            # A bare constructor temperature has no quality or capture time.
+            # Only a VALID observation tied to the applied ON state can be a
+            # qualified baseline for a physical-response claim.
+            self._baseline_t = None
+            self._baseline_from_valid_observation = False
+            if (
+                observation is not None
+                and observation.thermal_quality is QualityState.VALID
+                and observation.thermal_t_representative_c is not None
+            ):
+                self._baseline_t = observation.thermal_t_representative_c
+                self._baseline_from_valid_observation = True
+                self._baseline_s = self._now_s
             self._detail = (
                 "current/power entered the active envelope; waiting for the "
                 "bounded thermal response window"
@@ -480,9 +546,18 @@ class VerificationTracker:
             self._health = CoolingHealthState.UNKNOWN
             self._reason = None
             self._detail = (
-                "no valid electrical evidence inside the electrical window; "
+                "no valid applied-ON electrical evidence inside the electrical window; "
                 "insufficient evidence to classify response"
             )
+        elif not self._recent_at_deadline(
+            self._last_valid_electrical_s,
+            self._electrical_deadline_s,
+            self._policy.electrical_evidence_max_age_s,
+        ):
+            self._state = VerificationState.UNKNOWN
+            self._health = CoolingHealthState.UNKNOWN
+            self._reason = None
+            self._detail = "electrical evidence was not fresh at the response deadline"
         elif (
             not self._complete_electrical_seen
             and not self._below_active_seen
@@ -527,15 +602,26 @@ class VerificationTracker:
             return
         valid_thermal = (
             observation is not None
+            and observation.applied_cooling is CoolingState.ON
             and observation.thermal_quality is QualityState.VALID
             and observation.thermal_t_representative_c is not None
         )
         if valid_thermal:
             assert observation is not None
             assert observation.thermal_t_representative_c is not None
-            self._valid_thermal_seen = True
+            if not self._baseline_from_valid_observation:
+                self._baseline_t = observation.thermal_t_representative_c
+                self._baseline_from_valid_observation = True
+                self._baseline_s = self._now_s
+                if self._now_s < self._thermal_deadline_s:
+                    return
+            assert self._baseline_s is not None
+            if self._now_s > self._baseline_s:
+                self._valid_thermal_seen = True
+                self._last_valid_thermal_s = self._now_s
             if (
-                self._baseline_t is not None
+                self._valid_thermal_seen
+                and self._baseline_t is not None
                 and self._baseline_t
                 - observation.thermal_t_representative_c
                 >= self._policy.thermal_min_drop_c
@@ -571,7 +657,15 @@ class VerificationTracker:
             return
 
         self._closed = True
-        if self._valid_thermal_seen and self._baseline_t is not None:
+        if (
+            self._valid_thermal_seen
+            and self._baseline_from_valid_observation
+            and self._recent_at_deadline(
+                self._last_valid_thermal_s,
+                self._thermal_deadline_s,
+                self._policy.thermal_evidence_max_age_s,
+            )
+        ):
             if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
                 self._state = VerificationState.UNKNOWN
                 self._health = CoolingHealthState.UNKNOWN
