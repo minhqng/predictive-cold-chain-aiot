@@ -82,7 +82,8 @@ class Bme280IntegrationHarnessTests(unittest.TestCase):
         includes = re.findall(r"^\s*#\s*include\s*[<\"]([^>\"]+)[>\"]", config, re.MULTILINE)
         for header in includes:
             self.assertFalse(
-                header.startswith(("driver/", "freertos/", "esp_", "sdkconfig")),
+                header.startswith(("driver/", "freertos/", "esp_", "sdkconfig", "soc/",
+                                   "hal/", "rom/")),
                 f"coldguard_config.h must stay host-buildable, found #include {header}",
             )
 
