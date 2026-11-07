@@ -27,6 +27,13 @@ from .commands import (
     validate_command,
 )
 from .config import ConfigError, PolicyConfig
+from .device_safety import (
+    ActuatorSafetyDecision,
+    ActuatorSafetyFinding,
+    ActuatorSafetyState,
+    DeviceSafetyInputError,
+    check_actuator_safety,
+)
 from .policy import (
     PolicyDecision,
     PolicyInput,
@@ -37,6 +44,13 @@ from .policy import (
     ThermalView,
     evaluate_policy,
     safe_local_exit_status,
+)
+from .quality import (
+    ChannelObservation,
+    QualityAssessment,
+    QualityBlocker,
+    QualityInputError,
+    assess_quality,
 )
 from .taxonomy import (
     FailureRule,
@@ -53,6 +67,7 @@ from .types import (
     DeviceMode,
     FailureDisposition,
     ModelHealth,
+    PhysicalVerificationState,
     PolicyState,
     QualityState,
     ReasonCode,
@@ -64,6 +79,10 @@ __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
     "AckStatus",
     "ActuationIntent",
+    "ActuatorSafetyDecision",
+    "ActuatorSafetyFinding",
+    "ActuatorSafetyState",
+    "ChannelObservation",
     "CommandDecision",
     "CommandRequest",
     "CommandSchemaError",
@@ -71,10 +90,12 @@ __all__ = [
     "ControllerId",
     "CoolingState",
     "DeviceMode",
+    "DeviceSafetyInputError",
     "FailureDisposition",
     "FailureRule",
     "LocalSafetyEvidence",
     "ModelHealth",
+    "PhysicalVerificationState",
     "PolicyConfig",
     "PolicyDecision",
     "PolicyInput",
@@ -82,12 +103,17 @@ __all__ = [
     "PolicyPreconditionError",
     "PolicyState",
     "PredictionView",
+    "QualityAssessment",
+    "QualityBlocker",
+    "QualityInputError",
     "QualityState",
     "ReasonCode",
     "RemotePathView",
     "ThermalView",
     "UnknownFailureError",
     "all_failure_rules",
+    "assess_quality",
+    "check_actuator_safety",
     "classify_failure",
     "evaluate_policy",
     "failures_with_disposition",

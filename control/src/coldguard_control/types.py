@@ -128,6 +128,25 @@ class AckStatus(str, Enum):
     OUT_OF_RANGE = "OUT_OF_RANGE"
 
 
+class PhysicalVerificationState(str, Enum):
+    """Independent physical-response verification (05D section 13).
+
+    This vocabulary is deliberately separate from :class:`AckStatus`: an ACK
+    only proves that the device handled a command according to protocol/local
+    validation. It never proves current flowed or the chamber cooled
+    (Doc 02 section 32.2; 05D sections 12 and 60.7).
+    """
+
+    NOT_REQUIRED = "NOT_REQUIRED"
+    PENDING = "PENDING"
+    ELECTRICAL_VERIFIED = "ELECTRICAL_VERIFIED"
+    THERMAL_VERIFIED = "THERMAL_VERIFIED"
+    VERIFIED = "VERIFIED"
+    FAILED_ELECTRICAL = "FAILED_ELECTRICAL"
+    FAILED_THERMAL = "FAILED_THERMAL"
+    UNKNOWN = "UNKNOWN"
+
+
 class FailureDisposition(str, Enum):
     """Allowed failure-handling dispositions for W03 (05D D-W03-03).
 
