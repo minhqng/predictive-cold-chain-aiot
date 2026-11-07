@@ -106,6 +106,12 @@ from .faults import (
     assert_protocol_allowed,
     audit_protocols,
 )
+from .incident import (
+    CANDIDATE_MAP_VERSION,
+    IncidentRecommendation,
+    recommend_incident_actions,
+)
+from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -177,5 +183,13 @@ __all__ = [
     "audit_protocols",
     "FORBIDDEN_TECHNIQUE_IDS",
     "get_protocol",
+    "CANDIDATE_MAP_VERSION",
+    "IncidentRecommendation",
+    "recommend_incident_actions",
+    "AIWInput",
+    "AIWResult",
+    "AIWStatus",
+    "TimingEvidence",
+    "assess_aiw",
 
 ]

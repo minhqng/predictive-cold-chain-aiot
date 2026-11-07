@@ -1,5 +1,8 @@
 # Member D evidence — W01–W06
 
+For the stacked W07–W13 work and the remaining acceptance dependencies across
+W04–W13, see [closure-plan-W04-W13.md](closure-plan-W04-W13.md).
+
 **Date:** 2026-11-07
 **Owner:** Member D (control / safety / security / resilience)
 **Precedence used:** Docs 00–03 (correctness) → Doc 04 (ownership/schedule) →

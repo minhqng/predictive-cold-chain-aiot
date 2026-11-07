@@ -4,7 +4,7 @@
 
 | Item | Status | Owner | Evidence needed |
 |------|--------|-------|-----------------|
-| D‑W13‑01 AIW inputs | **DEFINED** | D | Specification of inputs (B EWT/horizon, A response delay, C system latency) – no numeric values generated |
+| D‑W13‑01 AIW inputs | **CONTRACT + TESTED CALCULATOR; MEASURED INPUTS OPEN** | D | `aiw-input-contract.md` and `aiw.py` require qualified B/A/C timing and a shared clock; no project number generated |
 | D‑W13‑02 WATCH semantics | **DEFINED** | D | Mapping of elevated risk to WATCH state (policy code already implements) |
 | D‑W13‑03 PREEMPTIVE semantics | **DEFINED** | D | Mapping of risk above threshold & persistence to PREEMPTIVE_COOLING (policy code) |
 | D‑W13‑04 Hard protection dominance | **DEFINED** | D | CRITICAL_PROTECTION dominance already in policy logic |
