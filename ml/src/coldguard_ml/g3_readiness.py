@@ -44,6 +44,7 @@ def _sha256(path: Path) -> str:
 
 
 def _path_record(root: Path, relative: str) -> dict[str, Any]:
+    relative = relative.replace("\\", "/")
     path = root / relative
     if not path.exists():
         return {
@@ -61,9 +62,9 @@ def _path_record(root: Path, relative: str) -> dict[str, Any]:
 def _relative_or_str(root: Path, path: str | Path) -> str:
     resolved = Path(path)
     try:
-        return str(resolved.relative_to(root))
+        return resolved.relative_to(root).as_posix()
     except ValueError:
-        return str(resolved)
+        return resolved.as_posix()
 
 
 def _load_json(root: Path, relative: str) -> dict[str, Any]:

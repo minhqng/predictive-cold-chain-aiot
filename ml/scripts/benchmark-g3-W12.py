@@ -894,7 +894,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     ):
         (out_dir / stale).unlink(missing_ok=True)
     revision = args.repository_revision or _git_revision(repo_root)
-    command = "python " + " ".join(sys.argv)
+    command = "python " + " ".join(arg.replace("\\", "/") for arg in sys.argv)
     w08_path = (ml_root / args.w08_manifest).resolve()
     w09_path = (ml_root / args.w09_manifest).resolve()
     w10_path = (ml_root / args.w10_manifest).resolve()
