@@ -100,7 +100,8 @@ static void bme_task(void *arg)
 
     /* One-shot fitted-device diagnostic: emit the raw calibration bytes and one
      * raw measurement context so a host can decode the SAME bytes independently.
-     * Read-only; no value is published and the trim gate is untouched. */
+     * It configures the same control registers the producer does and publishes
+     * nothing; the trim gate is untouched. */
     {
         cg_bme280_diag_t diag;
         char tphex[2 * CG_BME280_CALIB_T_BYTES + 1];
