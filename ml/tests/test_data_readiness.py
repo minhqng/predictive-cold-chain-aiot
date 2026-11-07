@@ -593,6 +593,57 @@ def test_threshold_equality_passes_and_just_below_fails(tmp_path):
     assert whole.passes is False
 
 
+def test_short_capture_inside_declared_plan_cannot_pass_completeness(tmp_path):
+    export = _write_export(
+        tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows(12)
+    )
+    index = _write_index(
+        tmp_path / "index.json", [_entry("CG-S1-A-001", "boot-1")], valid_s1=["CG-S1-A-001"]
+    )
+    capture = load_capture(export, a_run_index=index)
+    linkage = dataclasses.replace(
+        _linkage(capture), planned_capture_duration_s=24.0
+    )
+    admission = evaluate_admission(capture)
+    validation = validate_run(
+        capture,
+        admission=admission,
+        requirement=default_scenario_requirement("S1"),
+        manifest_linkage=linkage,
+    )
+    whole = validation.completeness_for(DIMENSION_WHOLE)
+    critical = validation.completeness_for(DIMENSION_CRITICAL)
+    assert whole.status == CHECK_FAIL
+    assert critical.status == CHECK_FAIL
+    assert "CAPTURE_SHORTER_THAN_PLANNED_INTERVAL" in validation.reason_codes
+    assert validation.eligibility == ELIGIBILITY_BLOCKED
+
+
+def test_rows_outside_declared_plan_do_not_inflate_completeness(tmp_path):
+    export = _write_export(
+        tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows(20)
+    )
+    index = _write_index(
+        tmp_path / "index.json", [_entry("CG-S1-A-001", "boot-1")], valid_s1=["CG-S1-A-001"]
+    )
+    capture = load_capture(export, a_run_index=index)
+    linkage = dataclasses.replace(
+        _linkage(capture), planned_capture_duration_s=10.0
+    )
+    admission = evaluate_admission(capture)
+    validation = validate_run(
+        capture,
+        admission=admission,
+        requirement=default_scenario_requirement("S1"),
+        manifest_linkage=linkage,
+    )
+    whole = validation.completeness_for(DIMENSION_WHOLE)
+    assert whole.expected_samples == 11
+    assert whole.observed_samples == 11
+    assert whole.fraction == 1.0
+    assert whole.status == CHECK_PASS
+
+
 def test_unresolved_threshold_is_not_evaluated_as_zero(tmp_path):
     export = _write_export(
         tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
@@ -1092,6 +1143,30 @@ def test_cli_invalid_configuration_is_exit_1():
     )
     assert result.returncode == 1
     assert "INVALID CONFIGURATION" in result.stderr
+
+
+def test_cli_missing_required_argument_is_exit_1():
+    result = _run_cli([])
+    assert result.returncode == 1
+    assert "INVALID CONFIGURATION" in result.stderr
+
+
+def test_cli_malformed_index_is_refused_exit_2(tmp_path):
+    bad_index = tmp_path / "bad-index.json"
+    bad_index.write_text("{not-json", encoding="utf-8")
+    result = _run_cli(
+        [
+            "--source",
+            str(REAL_A_EXPORT),
+            "--a-run-index",
+            str(bad_index),
+            "--out",
+            str(tmp_path / "out"),
+        ]
+    )
+    assert result.returncode == 2
+    assert "SOURCE REFUSED" in result.stderr
+    assert not (tmp_path / "out").exists()
 
 
 def test_cli_refused_source_is_exit_2(tmp_path):

@@ -28,7 +28,9 @@ Exit codes:
 from __future__ import annotations
 
 import argparse
+import csv
 import hashlib
+import io
 import json
 import os
 import subprocess
@@ -146,8 +148,17 @@ def _command_path(value: str, root: Path) -> str:
         return candidate.name
 
 
+class _ArgumentParser(argparse.ArgumentParser):
+    """Usage errors are invalid input (exit 1), not source refusals (exit 2)."""
+
+    def error(self, message: str) -> None:
+        self.print_usage(sys.stderr)
+        print(f"INVALID CONFIGURATION: {message}", file=sys.stderr)
+        raise SystemExit(1)
+
+
 def _build_parser() -> argparse.ArgumentParser:
-    parser = argparse.ArgumentParser(
+    parser = _ArgumentParser(
         description=(
             "ColdGuard W08 Gate B dataset readiness. Read-only source analysis: "
             "no hardware action, no model training, no locked-test access."
@@ -416,6 +427,54 @@ def _load_w07_evidence(path: Path) -> dict[str, Any] | None:
     }
 
 
+def _verify_written_artifacts(output_dir: Path, report: Any) -> list[str]:
+    """Post-write software check: artifact hashes and report/CSV agreement."""
+    problems: list[str] = []
+    manifest_path = output_dir / "gate-b-manifest-W08.json"
+    try:
+        manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return [f"manifest not readable: {exc}"]
+    for name, digest in manifest.get("artifact_sha256", {}).items():
+        path = output_dir / name
+        if not path.is_file():
+            problems.append(f"{name} missing")
+        elif _sha256_file(path) != digest:
+            problems.append(f"{name} hash mismatch")
+    csv_path = output_dir / "run-validation-W08.csv"
+    try:
+        rows = list(
+            csv.DictReader(
+                io.StringIO(csv_path.read_text(encoding="utf-8"))
+            )
+        )
+    except OSError as exc:
+        return problems + [f"run-validation CSV not readable: {exc}"]
+    if len(rows) != len(report.validations):
+        problems.append("run-validation CSV row count differs from the report")
+    else:
+        for row, item in zip(rows, report.validations):
+            if row.get("b_eligibility") != item.eligibility:
+                problems.append(
+                    f"CSV eligibility mismatch for {item.source_path}"
+                )
+            if row.get("a_ledger_verdict") != item.a_ledger_verdict:
+                problems.append(
+                    f"CSV A-ledger mismatch for {item.source_path}"
+                )
+    if (
+        manifest.get("physical_gate", {}).get("observed_status")
+        != report.physical_gate.observed_status
+    ):
+        problems.append("manifest physical-gate status differs from the report")
+    if (
+        manifest.get("split_plan", {}).get("feasibility")
+        != report.split_plan.feasibility
+    ):
+        problems.append("manifest split feasibility differs from the report")
+    return problems
+
+
 def main(argv: Sequence[str] | None = None) -> int:
     parser = _build_parser()
     arguments = parser.parse_args(argv)
@@ -464,6 +523,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             return 2
         except OSError as exc:
             print(f"SOURCE ERROR: {exc}", file=sys.stderr)
+            return 1
+        except (ValueError, json.JSONDecodeError) as exc:
+            print(f"INVALID CONFIGURATION: {exc}", file=sys.stderr)
             return 1
         admission = evaluate_admission(capture)
         qa = analyze_capture(capture, admission=admission, config=QAConfig())
@@ -593,6 +655,13 @@ def main(argv: Sequence[str] | None = None) -> int:
         encoding="utf-8",
         newline="\n",
     )
+    problems = _verify_written_artifacts(output_dir, report)
+    if problems:
+        print(
+            "SOFTWARE VERIFICATION FAILED: " + "; ".join(problems),
+            file=sys.stderr,
+        )
+        return 1
     print(
         "W08 GATE B READINESS COMPLETE: "
         f"W08 software {report.software_gate.observed_status} · "

@@ -96,6 +96,8 @@ Rules:
 - expected counts use the observed acquisition cadence, never a filename;
 - whole-capture completeness uses the **declared planned capture duration**,
   never the observed partial window;
+- rows outside the declared planned interval are excluded from the numerator,
+  and a capture ending before the planned end cannot pass;
 - event-window completeness is evaluated separately and cannot be hidden by a
   high whole-run percentage;
 - missing, INVALID and untrusted critical samples are counted distinctly;
@@ -149,6 +151,10 @@ The manifest records source SHA-256 values, the A-index SHA-256, analysis-code
 SHA-256, repository revision, generation command, schema/layer versions,
 completeness-policy version, run groups, decisions and reason codes. Output
 ordering and numerical formatting are deterministic.
+
+After writing, the CLI re-reads the manifest and CSV, verifies every artifact
+hash and the gate/eligibility agreement, and fails with a software error if the
+written artifacts disagree. Scientific RED still exits 0.
 
 ## 8. Current real-data expectation
 

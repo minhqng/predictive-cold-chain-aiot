@@ -129,6 +129,7 @@ REASON_DIAGNOSTIC_ONLY = "STRUCTURALLY_VALID_BUT_NOT_DATASET_ELIGIBLE"
 REASON_MANIFEST_MISSING = "RUN_MANIFEST_LINKAGE_NOT_PROVIDED"
 REASON_MANIFEST_MISMATCH = "RUN_MANIFEST_LINKAGE_MISMATCH"
 REASON_CAPTURE_DURATION = "CAPTURE_DURATION_NOT_DECLARED"
+REASON_CAPTURE_SHORTER = "CAPTURE_SHORTER_THAN_PLANNED_INTERVAL"
 REASON_EVENT_ANCHOR_MISSING = "REQUIRED_EVENT_ANCHOR_MISSING"
 REASON_EVENT_UNQUALIFIED = "REQUIRED_EVENT_UNQUALIFIED"
 REASON_EVENT_WINDOW_GAP = "PRIMARY_EVENT_WINDOW_INCOMPLETE"
@@ -1421,6 +1422,35 @@ def validate_run(
             else (),
         )
     )
+    observed_times = [
+        time_s for row in rows if (time_s := _row_time_s(row)) is not None
+    ]
+    planned_start_s = min(observed_times) if observed_times else None
+    planned_end_s = (
+        planned_start_s + planned_duration
+        if planned_start_s is not None and duration_declared
+        else None
+    )
+    interval_covered = (
+        planned_end_s is not None
+        and observed_times
+        and max(observed_times) >= planned_end_s - (nominal_dt or 0.0)
+    )
+    checks.append(
+        _check(
+            "PLANNED_INTERVAL_COVERED",
+            STAGE_MEASUREMENTS,
+            interval_covered if duration_declared else None,
+            detail=(
+                f"observed capture reaches the planned end {planned_end_s!r} s"
+                if interval_covered
+                else "the capture ends before the declared planned interval; "
+                "missing planned samples cannot be replaced by observed rows "
+                "outside the plan"
+            ),
+            reason_codes=() if interval_covered else (REASON_CAPTURE_SHORTER,),
+        )
+    )
     checks.append(
         _check(
             "SCENARIO_DESIGNATED",
@@ -1805,7 +1835,17 @@ def validate_run(
         if duration_declared and nominal_dt
         else None
     )
-    received_whole = session.row_count if session is not None else None
+    rows_in_plan = (
+        [
+            row
+            for row in rows
+            if (time_s := _row_time_s(row)) is not None
+            and planned_start_s <= time_s <= planned_end_s
+        ]
+        if planned_start_s is not None and planned_end_s is not None
+        else []
+    )
+    received_whole = len(rows_in_plan) if expected_whole is not None else None
     diagnostic_whole = interval.captured_frame_completeness if interval else None
     whole_missing = (
         max((expected_whole or 0) - (received_whole or 0), 0)
@@ -1824,8 +1864,10 @@ def validate_run(
             detail=(
                 f"expected samples from the declared planned duration "
                 f"{planned_duration!r} s and observed nominal cadence "
-                f"{nominal_dt!r} from {interval.nominal_source!r}; the W05 "
-                f"observed-window fraction {diagnostic_whole!r} "
+                f"{nominal_dt!r} from {interval.nominal_source!r}; "
+                f"{len(rows) - len(rows_in_plan)} observed row(s) outside the "
+                f"planned interval are excluded; the W05 observed-window "
+                f"fraction {diagnostic_whole!r} "
                 f"({interval.completeness_status!r}) is diagnostic only"
                 if expected_whole is not None and interval is not None
                 else "no declared planned capture duration; the observed "
@@ -1837,7 +1879,7 @@ def validate_run(
     critical_observed = 0
     critical_missing = 0
     critical_invalid_rows = 0
-    for row in rows:
+    for row in rows_in_plan:
         ok, missing, invalid = _critical_row_ok(row, capture, requirement)
         if ok:
             critical_observed += 1
@@ -2336,8 +2378,8 @@ def assess_gate_b(
         severity=SEVERITY_INFO,
         required_checks=(
             "RUN_VALIDATION_COMPLETED",
-            "ARTIFACTS_WRITTEN",
-            "REPORT_CSV_MANIFEST_AGREE",
+            "CHECKS_EVALUATED",
+            "DETERMINISTIC_SERIALIZATION",
         ),
         reason_codes=software_reasons,
         validations=scenario_runs,
