@@ -82,6 +82,21 @@ def test_query_telemetry_validates_pagination_bounds():
     with pytest.raises(ValueError, match="order must be 'asc' or 'desc'"):
         query_telemetry(dummy_engine, order="invalid")
 
+    with pytest.raises(ValueError, match="time_basis must be 'received' or 'event'"):
+        query_telemetry(dummy_engine, time_basis="invalid")
+
+    now = datetime.now(timezone.utc)
+    naive = datetime(2026, 11, 7, 12, 0, 0)
+    with pytest.raises(ValueError, match="start_time must be timezone-aware"):
+        query_telemetry(dummy_engine, start_time=naive)
+
+    with pytest.raises(ValueError, match="end_time must be timezone-aware"):
+        query_telemetry(dummy_engine, end_time=naive)
+
+    earlier = now - datetime.resolution
+    with pytest.raises(ValueError, match="start_time must be less than or equal to end_time"):
+        query_telemetry(dummy_engine, start_time=now, end_time=earlier)
+
 
 # --- Provider tests (Requires COLDGUARD_TEST_DATABASE_URL) ---
 
@@ -90,6 +105,11 @@ def test_query_telemetry_validates_pagination_bounds():
 def test_migration_0006_upgrade_and_downgrade():
     engine = create_engine(_db_url())
     try:
+        with engine.begin() as conn:
+            # Clean clockless samples so 0005 downgrade to 0004 (which requires time NOT NULL) succeeds
+            conn.execute(text("DELETE FROM telemetry"))
+            conn.execute(text("DELETE FROM telemetry_raw"))
+
         _downgrade("base")
         _upgrade("0005")
 
@@ -118,28 +138,149 @@ def test_migration_0006_upgrade_and_downgrade():
 
 @needs_real_db
 def test_query_telemetry_filters_and_ordering():
+    from datetime import timedelta
+    from coldguard_backend.reconciliation import reconcile_telemetry
+
     engine = create_engine(_db_url())
     try:
         _upgrade("0006")
         now = datetime.now(timezone.utc)
-        # Test query execution against real PostgreSQL
-        results = query_telemetry(
+
+        with engine.begin() as conn:
+            # Clean test tables for deterministic checks
+            conn.execute(text("DELETE FROM telemetry"))
+            conn.execute(text("DELETE FROM telemetry_raw"))
+
+            # Seed telemetry_raw rows
+            t1 = now - timedelta(seconds=10)
+            t2 = now - timedelta(seconds=5)
+            t3 = now - timedelta(seconds=1)
+
+            # Raw 1
+            raw1_id = conn.execute(
+                text(
+                    "INSERT INTO telemetry_raw (device_id, boot_id, seq, topic, schema_version, "
+                    "backend_received_at, raw_payload, payload_sha256, ingest_status, run_id, created_at) "
+                    "VALUES ('coldguard-001', 'boot-1', 10, 'coldguard/coldguard-001/telemetry', 1, "
+                    ":recv, :payload, 'sha1', 'RECEIVED_VALID', 'RUN-100', :recv) "
+                    "RETURNING id"
+                ),
+                {"recv": t1, "payload": '{"calibration_id": "CAL-01"}'},
+            ).scalar_one()
+
+            # Raw 2
+            raw2_id = conn.execute(
+                text(
+                    "INSERT INTO telemetry_raw (device_id, boot_id, seq, topic, schema_version, "
+                    "backend_received_at, raw_payload, payload_sha256, ingest_status, run_id, created_at) "
+                    "VALUES ('coldguard-001', 'boot-1', 11, 'coldguard/coldguard-001/telemetry', 1, "
+                    ":recv, :payload, 'sha2', 'RECEIVED_VALID', 'RUN-100', :recv) "
+                    "RETURNING id"
+                ),
+                {"recv": t2, "payload": '{"calibration_id": "CAL-01"}'},
+            ).scalar_one()
+
+            # Raw 3 (Clockless serial)
+            raw3_id = conn.execute(
+                text(
+                    "INSERT INTO telemetry_raw (device_id, boot_id, seq, topic, schema_version, "
+                    "backend_received_at, raw_payload, payload_sha256, ingest_status, run_id, created_at) "
+                    "VALUES ('coldguard-001', 'boot-1', 12, 'coldguard/coldguard-001/telemetry', 2, "
+                    ":recv, :payload, 'sha3', 'RECEIVED_VALID', 'RUN-100', :recv) "
+                    "RETURNING id"
+                ),
+                {"recv": t3, "payload": '{"calibration_id": null}'},
+            ).scalar_one()
+
+            # Seed normalized telemetry rows
+            conn.execute(
+                text(
+                    "INSERT INTO telemetry (time, device_id, boot_id, seq, run_id, door_state, "
+                    "applied_cooling, thermal_quality, environment_quality, electrical_quality, "
+                    "overall_quality, hardware_config_id, firmware_version, schema_version, "
+                    "backend_received_at, raw_id, calibration_id) "
+                    "VALUES (:time, 'coldguard-001', 'boot-1', 10, 'RUN-100', 'CLOSED', 'OFF', "
+                    "'VALID', 'VALID', 'VALID', 'VALID', 'HW-1', '0.1.0', 1, :recv, :raw_id, 'CAL-01')"
+                ),
+                {"time": t1 - timedelta(milliseconds=100), "recv": t1, "raw_id": raw1_id},
+            )
+
+            conn.execute(
+                text(
+                    "INSERT INTO telemetry (time, device_id, boot_id, seq, run_id, door_state, "
+                    "applied_cooling, thermal_quality, environment_quality, electrical_quality, "
+                    "overall_quality, hardware_config_id, firmware_version, schema_version, "
+                    "backend_received_at, raw_id, calibration_id) "
+                    "VALUES (:time, 'coldguard-001', 'boot-1', 11, 'RUN-100', 'CLOSED', 'ON', "
+                    "'VALID', 'VALID', 'VALID', 'VALID', 'HW-1', '0.1.0', 1, :recv, :raw_id, 'CAL-01')"
+                ),
+                {"time": t2 - timedelta(milliseconds=100), "recv": t2, "raw_id": raw2_id},
+            )
+
+            # Clockless normalized row (time IS NULL, requires schema_version=2 and serial_source object)
+            conn.execute(
+                text(
+                    "INSERT INTO telemetry (time, device_id, boot_id, seq, run_id, door_state, "
+                    "applied_cooling, thermal_quality, environment_quality, electrical_quality, "
+                    "overall_quality, hardware_config_id, firmware_version, schema_version, "
+                    "backend_received_at, raw_id, calibration_id, serial_source) "
+                    "VALUES (NULL, 'coldguard-001', 'boot-1', 12, 'RUN-100', 'UNKNOWN', 'OFF', "
+                    "'VALID', 'UNKNOWN', 'VALID', 'DEGRADED', 'HW-1', '0.1.0', 2, :recv, :raw_id, NULL, :serial)"
+                ),
+                {
+                    "recv": t3,
+                    "raw_id": raw3_id,
+                    "serial": '{"schema_version": 2, "clock_quality": "UNAVAILABLE"}',
+                },
+            )
+
+        # 1. Received basis includes all 3 records (including clockless)
+        received_results = query_telemetry(
             engine,
             device_id="coldguard-001",
+            time_basis="received",
             limit=10,
             order="desc",
         )
-        assert isinstance(results, list)
+        assert len(received_results) == 3
+        assert received_results[0]["seq"] == 12  # newest received
+        assert received_results[1]["seq"] == 11
+        assert received_results[2]["seq"] == 10
 
-        count = count_telemetry(engine, device_id="coldguard-001")
-        assert isinstance(count, int)
+        assert count_telemetry(engine, device_id="coldguard-001", time_basis="received") == 3
 
+        # 2. Event basis excludes clockless records (time IS NULL)
+        event_results = query_telemetry(
+            engine,
+            device_id="coldguard-001",
+            time_basis="event",
+            limit=10,
+            order="desc",
+        )
+        assert len(event_results) == 2
+        assert all(r["time"] is not None for r in event_results)
+        assert event_results[0]["seq"] == 11  # newest event
+        assert event_results[1]["seq"] == 10
+
+        assert count_telemetry(engine, device_id="coldguard-001", time_basis="event") == 2
+
+        # 3. Clockless only returns exactly the clockless record
         clockless_results = query_telemetry(
             engine,
             device_id="coldguard-001",
             clockless_only=True,
             limit=5,
         )
-        assert isinstance(clockless_results, list)
+        assert len(clockless_results) == 1
+        assert clockless_results[0]["seq"] == 12
+        assert clockless_results[0]["time"] is None
+
+        # 4. Real provider reconciliation check
+        report = reconcile_telemetry(engine, device_id="coldguard-001")
+        assert report.raw_total == 3
+        assert report.normalized_total == 3
+        assert report.unique_normalized_deliveries == 3
+        assert report.discrepancy == 0
+        assert report.is_reconciled is True
     finally:
         engine.dispose()
