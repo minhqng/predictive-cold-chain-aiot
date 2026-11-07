@@ -4,8 +4,10 @@ from sqlalchemy import case, select
 from sqlalchemy.engine import Connection
 
 from coldguard_backend.command_store import (
-    DEVICE_VERDICT_STATUS, CommandNotFound, command_acks, get_command,
+    ACK_ACCEPTED, DEVICE_VERDICT_STATUS, ELECTRICAL_VERIFIED, PHYSICAL_STATES,
+    THERMAL_VERIFIED, CommandNotFound, command_acks, get_command,
 )
+from coldguard_backend.physical_verification import physical_assessments
 
 
 def _duration_ms(start, end):
@@ -22,7 +24,8 @@ def command_timing(connection: Connection, command_id: str) -> dict:
     effective_verdict = case(
         (ack.device_status == "DUPLICATE_CANONICAL", ack.canonical_status), else_=ack.device_status,
     )
-    verdicts = [verdict for verdict, status in DEVICE_VERDICT_STATUS.items() if status == command["status"]]
+    protocol_status = ACK_ACCEPTED if command["status"] in PHYSICAL_STATES else command["status"]
+    verdicts = [verdict for verdict, status in DEVICE_VERDICT_STATUS.items() if status == protocol_status]
     receipt = None
     if verdicts:
         receipt = connection.execute(
@@ -35,6 +38,11 @@ def command_timing(connection: Connection, command_id: str) -> dict:
     created = command["created_db_at"]
     puback = command["published_at"]
     received = receipt["backend_received_at"] if receipt else None
+    assessments = dict(connection.execute(
+        select(physical_assessments.c.stage, physical_assessments.c.assessed_at)
+        .where(physical_assessments.c.command_id == command_id)
+        .order_by(physical_assessments.c.assessed_at)
+    ).all())
     return {
         "command_id": command_id,
         "device_id": command["device_id"],
@@ -46,9 +54,9 @@ def command_timing(connection: Connection, command_id: str) -> dict:
         "device_ack_received_at": received,
         "device_ack_reported_at": receipt["ack_time"] if receipt else None,
         "ack_receipt_id": receipt["id"] if receipt else None,
-        "electrical_verified_at": None,
-        "thermal_verified_at": None,
-        "physical_timing_reason": "NO_TRUSTED_PHYSICAL_EVIDENCE",
+        "electrical_verified_at": assessments.get(ELECTRICAL_VERIFIED),
+        "thermal_verified_at": assessments.get(THERMAL_VERIFIED),
+        "physical_timing_reason": "TRUSTED_ASSESSMENT" if assessments else "NO_TRUSTED_PHYSICAL_EVIDENCE",
         "created_to_puback_ms": _duration_ms(created, puback),
         "created_to_device_ack_ms": _duration_ms(created, received),
         "device_ack_preceded_puback_record": bool(received and puback and received < puback),

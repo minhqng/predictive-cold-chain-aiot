@@ -28,8 +28,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W17 added revision 0011 (hypothetical shadow evidence).
-EXPECTED_HEAD = "0011"
+# W18 added revision 0012 (trusted assessments and exact policy approvals).
+EXPECTED_HEAD = "0012"
 
 needs_real_db = pytest.mark.skipif(
     not os.environ.get("COLDGUARD_TEST_DATABASE_URL"),
@@ -67,7 +67,8 @@ def test_baseline_upgrades_from_empty_and_persists_head():
         "reconciliation_boundary", "reconciliation_legacy_audit",
         "commands", "command_attempts", "command_acks", "command_transitions",
         "experiments", "experiment_transitions",
-        "predictions", "prediction_inputs", "shadow_decisions",
+        "predictions", "prediction_inputs", "shadow_decisions", "physical_assessments",
+        "policy_approvals",
     }
 
 

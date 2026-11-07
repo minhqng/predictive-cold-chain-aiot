@@ -5,7 +5,7 @@ from typing import Callable
 
 from sqlalchemy.engine import Engine
 
-from coldguard_backend.command_publisher import CommandPublisher, PublishFn
+from coldguard_backend.command_publisher import CommandPublisher, DispatchGuard, PublishFn
 from coldguard_backend.command_service import create_command_intent
 from coldguard_backend.contracts import Command
 
@@ -35,7 +35,9 @@ class AuthorizedCommandGateway:
         self._engine = engine
         self._publisher = CommandPublisher(engine, transport)
 
-    def dispatch(self, command: Command, *, backend_token: str | None) -> dict:
+    def dispatch(
+        self, command: Command, *, backend_token: str | None, guard: DispatchGuard | None = None,
+    ) -> dict:
         supplied = backend_token.encode("utf-8") if isinstance(backend_token, str) else b""
         if not hmac.compare_digest(supplied, self._token):
             raise CommandAccessDenied("backend authentication failed")
@@ -46,4 +48,4 @@ class AuthorizedCommandGateway:
         if self._transport_ready() is not True:
             raise CommandDispatchUnavailable("command transport is unavailable")
         create_command_intent(self._engine, command)
-        return self._publisher.publish(command.command_id)
+        return self._publisher.publish(command.command_id, guard=guard)

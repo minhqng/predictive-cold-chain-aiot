@@ -28,6 +28,7 @@ tests use a real disposable Mosquitto. No physical hardware is involved.
 
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import threading
@@ -39,7 +40,7 @@ from typing import Any, Callable
 import paho.mqtt.client as mqtt
 from paho.mqtt.packettypes import PacketTypes
 from paho.mqtt.properties import Properties
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend import command_store as cs
 from coldguard_backend.command_service import current_desired_command_id
@@ -62,6 +63,7 @@ class PublishResult:
 
 
 PublishFn = Callable[[str, bytes, int, bool], PublishResult]
+DispatchGuard = Callable[[Connection, dict[str, Any]], bool]
 
 
 def command_topic(device_id: str) -> str:
@@ -95,11 +97,13 @@ class CommandPublisher:
         self._engine = engine
         self._publish = publish_fn
 
-    def publish(self, command_id: str, *, now: datetime | None = None) -> dict[str, Any]:
+    def publish(
+        self, command_id: str, *, now: datetime | None = None, guard: DispatchGuard | None = None,
+    ) -> dict[str, Any]:
         started = monotonic()
         identifiers: dict[str, Any] = {"command_id": command_id}
         try:
-            result = self._publish_command(command_id, now, identifiers)
+            result = self._publish_command(command_id, now, identifiers, guard)
         except Exception:
             record_event(log, "command_publish", "workflow_failed", started, level=logging.ERROR, **identifiers)
             raise
@@ -108,12 +112,18 @@ class CommandPublisher:
 
     def _publish_command(
         self, command_id: str, now: datetime | None, identifiers: dict[str, Any],
+        guard: DispatchGuard | None,
     ) -> dict[str, Any]:
         with self._engine.begin() as connection:
             row = cs.get_command(connection, command_id)
             if row is None:
                 raise cs.CommandNotFound(f"command {command_id!r} does not exist")
             identifiers.update({key: row[key] for key in ("device_id", "run_id", "prediction_id")})
+            if row["controller_id"] == "PREDICTIVE":
+                from coldguard_backend.controller_b import ControllerBGuard
+
+                if not isinstance(guard, ControllerBGuard) or not guard.approved():
+                    return {"outcome": "policy_fence_rejected", "status": row["status"]}
             cs.lock_command_device(connection, row["device_id"])
             stamp = now or datetime.now(timezone.utc)
             if row["expires_at"] < stamp:
@@ -124,6 +134,10 @@ class CommandPublisher:
             phase1 = cs.begin_publish_attempt(
                 connection, command_id, payload_sha256=row["payload_sha256"], now=now
             )
+            if phase1["outcome"] == "ready" and row["controller_id"] == "PREDICTIVE":
+                if not guard.record_approval(connection, phase1["command"]):
+                    cs.complete_attempt(connection, phase1["attempt_id"], outcome="FAILED", broker_reason="policy_fence_rejected")
+                    return {"outcome": "policy_fence_rejected", "status": row["status"]}
         if phase1["outcome"] != "ready":
             return {"outcome": phase1["outcome"], "status": phase1["command"]["status"]}
 
@@ -151,6 +165,14 @@ class CommandPublisher:
                 reason = "expired"
             elif row["status"] not in cs.PUBLISHABLE_STATES:
                 reason = "not_publishable"
+            elif hashlib.sha256(payload).hexdigest() != row["payload_sha256"]:
+                reason = "payload_fence_rejected"
+            elif guard is not None:
+                if not guard(connection, row):
+                    reason = "policy_fence_rejected"
+                stamp = now or datetime.now(timezone.utc)
+                if row["expires_at"] < stamp:
+                    reason = "expired"
             if reason is not None:
                 cs.complete_attempt(connection, attempt_id, outcome="FAILED", broker_reason=reason)
                 if reason == "expired" and row["status"] not in cs.SETTLED_STATES:

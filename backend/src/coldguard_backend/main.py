@@ -31,6 +31,7 @@ from sqlalchemy import Engine, create_engine, select
 from coldguard_backend import experiment_store as runs
 from coldguard_backend.command_store import CommandNotFound
 from coldguard_backend.command_timing import command_timing
+from coldguard_backend.controller_b_trace import controller_b_trace
 from coldguard_backend.dataset_export import run_integrity
 from coldguard_backend.event_timeline import s2_timeline_page
 from coldguard_backend.experiment_evidence import (
@@ -326,6 +327,25 @@ def read_shadow_trace(
             return shadow_trace(connection, runs.get_run(connection, run_id), limit=limit, offset=offset)
     except runs.RunNotFound as exc:
         raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/controller-b-trace")
+def read_controller_b_trace(
+    run_id: str,
+    limit: int = Query(default=10, ge=1, le=25),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    download: bool = False,
+    engine: Engine = Depends(get_db_engine),
+) -> Response:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            content = encode_evidence(controller_b_trace(
+                connection, runs.get_run(connection, run_id), limit=limit, offset=offset,
+            ))
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    headers = {"Content-Disposition": 'attachment; filename="controller-b-trace.json"'} if download else None
+    return Response(content, media_type="application/json", headers=headers)
 
 
 @app.get("/api/runs/{run_id}/{kind}")

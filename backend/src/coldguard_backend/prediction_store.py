@@ -100,12 +100,16 @@ def _latest(connection: Connection, device_id: str, run_id: str | None = None):
     ).mappings().one_or_none()
 
 
-def record_prediction(connection: Connection, draft: PredictionDraft) -> dict:
-    """Persist checked provenance and update only the derived domain atomically."""
+def lock_prediction_device(connection: Connection, device_id: str) -> None:
     # Separate lock namespace from command dispatch; only derived writers contend here.
     connection.execute(select(func.pg_advisory_xact_lock(
-        func.hashtext("prediction"), func.hashtext(draft.device_id),
+        func.hashtext("prediction"), func.hashtext(device_id),
     )))
+
+
+def record_prediction(connection: Connection, draft: PredictionDraft) -> dict:
+    """Persist checked provenance and update only the derived domain atomically."""
+    lock_prediction_device(connection, draft.device_id)
     data = draft.model_dump()
     digest = hashlib.sha256(encode_evidence(data)).hexdigest()
     old = connection.execute(
