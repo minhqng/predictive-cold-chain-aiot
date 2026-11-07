@@ -21,7 +21,7 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, Response
@@ -41,6 +41,9 @@ from coldguard_backend.normalized_store import (
     telemetry,
 )
 from coldguard_backend.observability import runtime_metrics
+from coldguard_backend.prediction_store import (
+    current_prediction, derived_prediction_view, prediction_details, prediction_history,
+)
 from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
@@ -301,7 +304,7 @@ def get_device_state(
         "twin_version": twin_row["twin_version"],
         "reported_state": twin_row["reported_state"],
         "desired_state": twin_row["desired_state"],
-        "derived_state": twin_row["derived_state"],
+        "derived_state": derived_prediction_view(twin_row["derived_state"], datetime.now(timezone.utc)),
         "connectivity_state": twin_row["connectivity_state"],
         "device_mode": twin_row["device_mode"],
         "last_boot_id": twin_row["last_boot_id"],
@@ -325,6 +328,38 @@ def get_device_state(
             twin_row["updated_at"].isoformat() if twin_row["updated_at"] else None
         ),
     }
+
+
+@app.get("/api/devices/{device_id}/predictions/current")
+def read_current_prediction(
+    device_id: str, run_id: str | None = None, engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect() as connection:
+        return current_prediction(connection, device_id, run_id)
+
+
+@app.get("/api/devices/{device_id}/predictions")
+def read_prediction_history(
+    device_id: str,
+    run_id: str | None = None,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect() as connection:
+        items = prediction_history(connection, device_id, run_id, limit, offset)
+    return {"device_id": device_id, "run_id": run_id, "items": items, "limit": limit, "offset": offset}
+
+
+@app.get("/api/devices/{device_id}/predictions/{prediction_id}")
+def read_prediction_details(
+    device_id: str, prediction_id: str, engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+        item = prediction_details(connection, device_id, prediction_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+    return item
 
 
 @app.get("/api/devices/{device_id}/telemetry")
