@@ -129,7 +129,7 @@ From `backend/` (uses `DATABASE_URL` when set, else validated config):
 
 ```bash
 uv run --locked alembic -c alembic.ini upgrade head
-uv run --locked alembic -c alembic.ini current   # expect: 0004 (head)
+uv run --locked alembic -c alembic.ini current   # expect: 0005 (head)
 ```
 
 Timescale extension ownership stays with

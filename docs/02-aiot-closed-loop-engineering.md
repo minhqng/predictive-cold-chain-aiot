@@ -641,6 +641,15 @@ Backend dedup identity:
 (device_id, boot_id, seq)
 ```
 
+MQTT telemetry schema 1 requires a timezone-aware device `captured_at`.
+For clockless Member A serial telemetry, schema 2 requires explicit
+`captured_at: null`, device `uptime_ms`, and a `serial_source` object with
+the source schema, original frame, timezone-aware gateway receipt time and
+`clock_quality: UNAVAILABLE`. Gateway and backend receipt times describe
+separate processing steps. Neither establishes the device measurement time
+or the ordering of device boots. Schema 2 preserves the source's `UNKNOWN`
+quality. Both schemas use the same topic, QoS and logical identity.
+
 ---
 
 ## 4.3 Why timestamp alone is not dedup identity

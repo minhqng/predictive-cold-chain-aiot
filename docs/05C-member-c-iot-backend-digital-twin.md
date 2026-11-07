@@ -1610,11 +1610,50 @@ A telemetry:
 
 ```text
 ESP
+→ serial gateway
 → Mosquitto
 → raw
 → normalized
 → reported twin
 ```
+
+Run the gateway from the repository checkout with the backend environment.
+Apply the backend migrations before starting ingestion. From `backend/`:
+
+```sh
+uv run --locked --extra gateway python scripts/serial_gateway.py \
+  --serial-port PORT --device-id coldguard-001 --broker-host localhost
+```
+
+The gateway reads `MQTT_USERNAME` and `MQTT_PASSWORD` from the environment.
+Use `--tls` or `--ca-file` for a remote broker. The default serial baud is
+115200, and the publisher uses QoS 1 with retain disabled. Broker confirmation
+and database persistence are separate observations.
+
+The gateway reuses the committed Member A parser. Source schemas 2 and 3 carry
+device and sequence identity. Schema 1 captures lack those fields and are
+rejected for publishing. Member A's frame and source statuses remain in raw
+evidence. T2 is a probe slot with hot-side provenance from its ROM. Chamber
+environment fields use the ambient sensor and humidity fields. Missing or
+unverified values remain null, and incomplete sections cannot claim VALID.
+The source's `UNSET` run label and `UNRECORDED` calibration label remain in
+the raw frame and map to null identifiers.
+Mode stays null when the source frame carries no compatible mode. CMDACK lines
+are excluded from the telemetry publish path.
+
+Use `--replay-file PATH` in place of `--serial-port` for saved captures.
+This sets `replay: true`, which the backend stores as history. The live
+gateway flushes the serial input on each open and keeps at most one MQTT
+publish in flight. Link failures close the session, discard unread bytes,
+and reconnect with a fresh serial buffer. A reconnect can leave gaps, and
+the gateway relies on the live port to supply current device bytes.
+
+Revision `0005` stores clockless measurements with null event time and keeps
+serial provenance with the normalized row and reported projection. The
+downgrade refuses to remove this capability while clockless rows are present.
+Software verification can use a serial byte-stream harness. Physical
+acceptance requires a device-originating ESP32-S3 trace through the full
+pathway.
 
 ---
 
