@@ -27,6 +27,7 @@ def test_authentication_device_scope_and_policy_precede_persistence(db_engine):
         db_engine, lambda *args: sent.append(args) or PublishResult("PUBACK"),
         backend_token=token, allowed_devices=frozenset({allowed}),
         policy_allows=lambda cmd: cmd.command_id == command.command_id,
+        transport_ready=lambda: True,
     )
     try:
         for candidate, credential, message in (
