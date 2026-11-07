@@ -158,6 +158,21 @@ def test_history_only_delivery_cannot_initialize_or_be_promoted(engine, device_i
     assert _twin(engine, device_id) is None
 
 
+@pytest.mark.parametrize("marker", ["replay", "synthetic"])
+def test_duplicate_provenance_marker_stays_history(engine, device_id, marker):
+    original = json.dumps(_payload(device_id, 1))
+    wire = (original[:-1] + f', "{marker}": true, "{marker}": false' + "}").encode()
+    result = ingest_message(engine, topic=f"coldguard/{device_id}/telemetry", payload=wire)
+    assert result["normalized"]["outcome"] == "inserted"
+    with engine.connect() as connection:
+        assert connection.execute(
+            text("SELECT raw_payload FROM telemetry_raw WHERE id = :id"),
+            {"id": result["raw_id"]},
+        ).scalar_one() == wire.decode()
+    assert _history(engine, device_id)[0]["twin_eligible"] is False
+    assert _twin(engine, device_id) is None
+
+
 def test_rejected_or_non_observation_cannot_project(engine, device_id):
     payload = _payload(device_id, 1)
     assert _ingest(engine, payload, topic="coldguard/other/telemetry")["normalized"].startswith(

@@ -1582,15 +1582,19 @@ Valid, topic-matched live telemetry can initialize reported state and advance
 it by sequence within the current boot. Publishers of historical telemetry
 must set the top-level boolean `replay: true`. The ingest path keeps replay,
 synthetic, and retained deliveries in history and excludes them from reported
-state. A missing marker on an authorized live topic is interpreted as live
-under the publisher contract. Rows from before revision `0004` lack an
-admission decision and remain history.
+state. Repeated or non-boolean markers also keep a delivery out of reported
+state. Broker authentication and topic ACLs establish publisher access. The
+backend relies on the publisher to mark historical and synthetic data because
+an absent marker on an authorized live topic is interpreted as live. Rows
+from before revision `0004` lack an admission decision and remain history.
 
 An unfamiliar boot stays in history until a trusted backend caller verifies
 boot order independently and calls `reconcile_reported_boot` with the
 expected current boot. This operation promotes the highest eligible sequence
 from the verified boot and retires the previous one in the same transaction.
 Receipt time, device time, and the boot ID string carry no boot-order authority.
+Reconciliation is an internal database service. Caller authorization and
+verification of successor chronology are the caller's responsibility.
 
 The reported snapshot carries its normalized and raw row IDs and the original
 event time. `last_reported_at` records when the database updated the projection.

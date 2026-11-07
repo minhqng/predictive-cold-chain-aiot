@@ -88,6 +88,14 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _decode_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
+    """Mark repeated provenance keys as ambiguous for Twin admission."""
+    obj = {}
+    for key, value in pairs:
+        obj[key] = None if key in ("synthetic", "replay") and key in obj else value
+    return obj
+
+
 def _normalize(connection: Connection, row: dict[str, Any]) -> dict[str, Any]:
     outcome = insert_normalized(connection, row)
     if outcome["outcome"] == "inserted" and row["twin_eligible"]:
@@ -143,7 +151,7 @@ def ingest_message(
     # Re-derive the validated model from the exact received bytes so
     # mapping input equals stored evidence (VALID implies UTF-8 JSON).
     try:
-        parsed = json.loads(payload.decode("utf-8"))
+        parsed = json.loads(payload.decode("utf-8"), object_pairs_hook=_decode_object)
         validated, errors = validate_telemetry_payload(parsed)
         if validated is None:  # pragma: no cover - defensive; status says valid
             raise RuntimeError(f"raw row marked valid but revalidation failed: {errors}")
