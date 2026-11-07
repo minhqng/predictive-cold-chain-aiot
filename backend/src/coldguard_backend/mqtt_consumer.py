@@ -52,6 +52,7 @@ from sqlalchemy.engine import Engine
 
 from coldguard_backend.config import ColdGuardConfig
 from coldguard_backend.ingest import IngestMetrics, ingest_message
+from coldguard_backend.mqtt_security import configure_mqtt_client
 
 log = logging.getLogger(__name__)
 
@@ -175,8 +176,7 @@ class MqttIngestConsumer:
             client_id=self._client_id,
             protocol=mqtt.MQTTv5,
         )
-        if self._config.mqtt_username:
-            client.username_pw_set(self._config.mqtt_username, self._config.mqtt_password)
+        configure_mqtt_client(client, self._config)
         client.on_connect = self._on_connect
         client.on_message = self._on_message
         client.on_disconnect = self._on_disconnect

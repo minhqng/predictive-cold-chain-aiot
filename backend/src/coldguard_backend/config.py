@@ -31,7 +31,7 @@ DEFAULT_PROFILE = "dev"
 
 _ENV_PREFIX_DOC = (
     "COLDGUARD_PROFILE, POSTGRES_HOST/PORT/DB/USER/PASSWORD, "
-    "MQTT_HOST/PORT/USERNAME/PASSWORD, COLDGUARD_MQTT_INGEST, BACKEND_HOST/PORT"
+    "MQTT_HOST/PORT/USERNAME/PASSWORD/TLS_CA, COLDGUARD_MQTT_INGEST, BACKEND_HOST/PORT"
 )
 
 
@@ -74,6 +74,7 @@ class ColdGuardConfig:
     mqtt_password: str
     backend_host: str
     backend_port: int
+    mqtt_tls_ca: str = ""
 
     @classmethod
     def load(
@@ -100,6 +101,7 @@ class ColdGuardConfig:
             mqtt_password=_get(source, "MQTT_PASSWORD", ""),
             backend_host=_non_empty(source, "BACKEND_HOST", "127.0.0.1"),
             backend_port=_port(source, "BACKEND_PORT", 8000),
+            mqtt_tls_ca=_get(source, "MQTT_TLS_CA", ""),
         )
 
     @property
