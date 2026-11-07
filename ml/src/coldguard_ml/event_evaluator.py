@@ -313,9 +313,7 @@ class CriticalEventInput:
             raise EventEvaluationError(
                 "an observed critical event requires a finite event time"
             )
-        if self.censored and not self.observed:
-            pass
-        elif self.censored and self.observed:
+        if self.censored and self.observed:
             raise EventEvaluationError(
                 "an observed event cannot also be censored"
             )
@@ -1185,11 +1183,8 @@ def aggregate_s1(runs: Sequence[S1RunAnalysis], *, synthetic_control: bool = Fal
     eligible = [
         item for item in runs if item.outcome_status == METRIC_DEFINED
     ]
-    estimable = [
-        item for item in runs if item.false_warning_episode_count is not None
-    ]
     false_total = sum(
-        item.false_warning_episode_count or 0 for item in estimable
+        item.false_warning_episode_count or 0 for item in eligible
     )
     per_run = (
         false_total / len(eligible) if eligible else None
@@ -1211,7 +1206,7 @@ def aggregate_s1(runs: Sequence[S1RunAnalysis], *, synthetic_control: bool = Fal
     return S1Aggregate(
         runs=tuple(runs),
         eligible_run_count=len(eligible),
-        estimable_run_count=len(estimable),
+        estimable_run_count=len(eligible),
         false_warning_episodes_per_eligible_run=per_run,
         false_warning_episodes_per_eligible_hour=per_hour,
         stability_status=stability,

@@ -621,6 +621,7 @@ def representative_value(
     row: NormalizedRow,
     representation: RepresentativeTemperature,
 ) -> float | None:
+    validate_representation(capture, representation)
     values: list[float] = []
     for slot in representation.slots:
         try:
