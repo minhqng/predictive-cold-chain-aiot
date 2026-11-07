@@ -956,6 +956,42 @@ def test_conflicting_duplicate_view_report_marks_view_verdict_non_authoritative(
     assert report.count("| EXCLUDED_OR_BLOCKED | USABLE_FOR_DIAGNOSTIC_QA |") == 1
 
 
+def test_conflicting_views_with_different_export_bytes_still_fail_closed(tmp_path):
+    valid_dir = tmp_path / "valid"
+    valid_dir.mkdir(parents=True)
+    valid_capture = load_capture(
+        _positive_export(valid_dir),
+        a_run_index=_positive_index(valid_dir, valid=True),
+    )
+    invalid_dir = tmp_path / "invalid"
+    invalid_dir.mkdir(parents=True)
+    invalid_export = _positive_export(invalid_dir)
+    payload = json.loads(invalid_export.read_text(encoding="utf-8"))
+    payload["variant_note"] = "different export bytes, same device/boot/run"
+    invalid_export.write_text(
+        json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8"
+    )
+    invalid_capture = load_capture(
+        invalid_export,
+        a_run_index=_positive_index(invalid_dir, valid=False),
+    )
+    assert valid_capture.source.sha256 != invalid_capture.source.sha256
+    assert valid_capture.run.boot_id == invalid_capture.run.boot_id
+    assert valid_capture.run.device_id == invalid_capture.run.device_id
+
+    analyses = analyze_captures([valid_capture, invalid_capture])
+    suite = summarize_qa_suite(analyses)
+    assert suite.predictive_dataset_readiness == "NOT_READY"
+    assert len(suite.conflicts) == 1
+
+    rows = _csv_rows(channel_summary_csv(analyses))
+    assert len(rows) == sum(len(analysis.channels) for analysis in analyses)
+    assert "ELIGIBLE_FOR_PREDICTIVE_DATASET" not in channel_summary_csv(analyses)
+    for row in rows:
+        assert row["physical_admission_status"] == "EXCLUDED_OR_BLOCKED"
+        assert "DUPLICATE_VIEW_ADMISSION_CONFLICT" in row["reason_codes"]
+
+
 def test_single_eligible_view_keeps_its_csv_status(tmp_path):
     (tmp_path / "eligible").mkdir(parents=True)
     (tmp_path / "eligible-index").mkdir(parents=True)

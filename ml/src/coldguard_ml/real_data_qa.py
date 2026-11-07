@@ -36,6 +36,7 @@ from .intake import (
     admission_signature,
     count_independent_runs,
     evaluate_admission,
+    physical_source_key,
     summarize_readiness,
 )
 
@@ -2146,16 +2147,34 @@ def _csv_value(value: Any, *, unavailable: str = _UNAVAILABLE) -> str:
     return str(value)
 
 
+def _conflicting_physical_sources(
+    analyses: Sequence[QAAnalysis],
+) -> set[tuple[Any, ...]]:
+    groups: dict[tuple[Any, ...], list[QAAnalysis]] = {}
+    for analysis in analyses:
+        groups.setdefault(
+            physical_source_key(analysis.capture), []
+        ).append(analysis)
+    return {
+        key
+        for key, items in groups.items()
+        if len({admission_signature(item.admission) for item in items}) > 1
+    }
+
+
 def _conflict_channel_summary(
-    views: Sequence[tuple[ChannelSummary, tuple[Any, ...]]],
+    views: Sequence[tuple[ChannelSummary, tuple[Any, ...], tuple[Any, ...]]],
+    *,
+    force_conflict: bool = False,
 ) -> ChannelSummary:
     """One CSV row per source/session/channel; contradictory views fail closed.
 
     The row is selected deterministically from the sorted views. When the
-    views of one source/session/channel disagree on the W04 admission
-    signature, the row carries the excluded status and the stable
+    views of one physical source disagree on the W04 admission signature,
+    the row carries the excluded status and the stable
     ``DUPLICATE_VIEW_ADMISSION_CONFLICT`` reason instead of the first view's
-    possibly favorable verdict.
+    possibly favorable verdict. ``force_conflict`` covers repeated exports of
+    one device/boot whose differing source bytes land in separate CSV groups.
     """
     ordered = sorted(
         views,
@@ -2167,14 +2186,15 @@ def _conflict_channel_summary(
         ),
     )
     representative = ordered[0][0]
-    signatures = {signature for _channel, signature in ordered}
-    if len(signatures) == 1:
+    signatures = {signature for _channel, signature, _source in ordered}
+    conflicting = force_conflict or len(signatures) > 1
+    if not conflicting:
         return representative
     reason_codes = tuple(
         sorted(
             {
                 code
-                for channel, _signature in ordered
+                for channel, _signature, _source in ordered
                 for code in channel.reason_codes
             }
             | {DUPLICATE_VIEW_ADMISSION_CONFLICT}
@@ -2193,18 +2213,28 @@ def channel_summary_csv(analyses: Sequence[QAAnalysis]) -> str:
         buffer, fieldnames=CSV_COLUMNS, lineterminator="\n"
     )
     writer.writeheader()
+    conflicting_sources = _conflicting_physical_sources(analyses)
     grouped: dict[
-        tuple[str, str, str], list[tuple[ChannelSummary, tuple[Any, ...]]]
+        tuple[str, str, str],
+        list[tuple[ChannelSummary, tuple[Any, ...], tuple[Any, ...]]],
     ] = {}
     for analysis in analyses:
         view_key = admission_signature(analysis.admission)
+        source_key = physical_source_key(analysis.capture)
         for channel in analysis.channels:
             grouped.setdefault(
                 (channel.source_sha256, channel.session_id, channel.channel),
                 [],
-            ).append((channel, view_key))
+            ).append((channel, view_key, source_key))
     unique = [
-        _conflict_channel_summary(grouped[key]) for key in sorted(grouped)
+        _conflict_channel_summary(
+            grouped[key],
+            force_conflict=any(
+                source_key in conflicting_sources
+                for _channel, _signature, source_key in grouped[key]
+            ),
+        )
+        for key in sorted(grouped)
     ]
     for channel in sorted(
         unique,
