@@ -1491,6 +1491,9 @@ def validate_run(
             "PLANNED_INTERVAL_COVERED",
             STAGE_MEASUREMENTS,
             interval_covered,
+            severity=(
+                SEVERITY_BLOCKING if duration_declared else SEVERITY_INFO
+            ),
             detail=(
                 f"observed capture reaches the planned end {planned_end_s!r} s"
                 if interval_covered
