@@ -32,6 +32,20 @@ connection, and acknowledged subscriptions. On disconnect it clears broker
 readiness. The consumer resubscribes on reconnect and does not change the
 device's reported Twin based on the broker connection.
 
+## Replay accounting
+
+Every receipt remains in raw storage. The first normalized row for
+`(device_id, boot_id, seq)` remains authoritative. A new row counts as
+out of order when the normalization transaction can already see a larger
+sequence number from the same device and boot. `replay` and `is_replay`
+flags identify historical deliveries, including clockless buffered frames.
+Explicit replay and out-of-order counts can overlap. Replay cannot advance the
+reported Twin, and a boot change still requires trusted reconciliation.
+
+Consumer snapshots expose `exact_duplicates`, `conflicts`, `out_of_order`,
+and `explicit_replays` as process-local counts. Use the reconciliation script
+or stored raw and normalized rows for durable accounting across restarts.
+
 To exercise a real restart, set `COLDGUARD_TEST_DATABASE_URL` to a disposable
 database and `COLDGUARD_TEST_MOSQUITTO_EXE` to the broker executable with
 `mosquitto_passwd` available alongside it. The test provisions an
