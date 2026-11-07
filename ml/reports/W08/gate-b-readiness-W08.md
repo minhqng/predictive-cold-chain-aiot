@@ -1,14 +1,14 @@
 # ColdGuard W08 — Gate B dataset readiness
 
-Report schema: `coldguard-w08-gate-b-readiness-report-v1` · layer `coldguard-w08-gate-b-readiness-v1`
+Report schema: `coldguard-w08-gate-b-readiness-report-v2` · layer `coldguard-w08-gate-b-readiness-v2`
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `78308350b9487effd17dbe3b9a2b987b58c595d3dac07eccf56d5be0b581a372` |
-| Repository revision | `caf761c4dbf3d7c9ae6f2a81c8821026224c8100` |
-| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision caf761c4dbf3d7c9ae6f2a81c8821026224c8100` |
+| Analysis code SHA-256 | `02f89a90a9eb92f10efaadd7455874bade7f7fb12bc49809f8c01437084506cb` |
+| Repository revision | `a1071016831eee2b28afc9be43756e10ee8d9440` |
+| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision a1071016831eee2b28afc9be43756e10ee8d9440` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
-| Completeness policy | `coldguard-w08-completeness-policy-draft-v1` |
+| Completeness policy | `coldguard-w08-completeness-policy-draft-v2` |
 | Data origin | **`MEASURED_PHYSICAL_DATA`** |
 
 ## 1. Declared purpose

@@ -1,6 +1,6 @@
 # W08 completeness threshold draft (B-W08-02)
 
-Policy version: `coldguard-w08-completeness-policy-draft-v1`
+Policy version: `coldguard-w08-completeness-policy-draft-v2`
 
 The policy is derived from physical and event requirements. It does not assert a universal 99.9% threshold. `PROPOSED` values are planning candidates and remain provisional until the owner and reviewer freeze them. `FROZEN` additionally requires recorded freeze evidence; a status string alone is not an approval. `UNRESOLVED` means the validator cannot evaluate the dimension; it is never replaced by zero.
 

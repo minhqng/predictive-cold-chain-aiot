@@ -1,9 +1,9 @@
 {
-  "analysis_code_sha256": "78308350b9487effd17dbe3b9a2b987b58c595d3dac07eccf56d5be0b581a372",
+  "analysis_code_sha256": "02f89a90a9eb92f10efaadd7455874bade7f7fb12bc49809f8c01437084506cb",
   "artifact_sha256": {
-    "completeness-policy-W08.md": "101af991d9bdfce7b29d45382f15236c489b4443020d0c9c98f224d42098d347",
+    "completeness-policy-W08.md": "72609e4763a43f1a66c9258a0ca6fc8924a1dd4bafc270b89f4467ea0dbd4c59",
     "development-split-plan-W08.md": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab",
-    "gate-b-readiness-W08.md": "62d9a16b49e0ddd784677285d41c53b86385129f6fea7d3b0f4dbc0e463dfa37",
+    "gate-b-readiness-W08.md": "7e505dec5e5d53343c40ecce7b29e1de381cdd4fc61090f03b0de336ecb4ea97",
     "run-validation-W08.csv": "54228f7a2ef244206a6be119e062fcd2d74be8e3e7c449c510627e8a51a6084e"
   },
   "completeness_policy": {
@@ -12,7 +12,7 @@
       "PROPOSED values are planning candidates and must be reviewed before any frozen dataset claim.",
       "UNRESOLVED is not zero: the validator reports what is not evaluable."
     ],
-    "policy_version": "coldguard-w08-completeness-policy-draft-v1",
+    "policy_version": "coldguard-w08-completeness-policy-draft-v2",
     "thresholds": [
       {
         "applicable_scenario": "S1 and S2",
@@ -124,11 +124,11 @@
       }
     ]
   },
-  "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v1",
+  "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v2",
   "data_origin": "MEASURED_PHYSICAL_DATA",
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision caf761c4dbf3d7c9ae6f2a81c8821026224c8100",
-  "layer_version": "coldguard-w08-gate-b-readiness-v1",
+  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision a1071016831eee2b28afc9be43756e10ee8d9440",
+  "layer_version": "coldguard-w08-gate-b-readiness-v2",
   "limitations": [
     "A scientific RED is a successful software result, not a CLI failure.",
     "No locked test manifest is created, inspected or frozen by W08.",
@@ -230,7 +230,7 @@
     "scenario": "S1",
     "severity": "BLOCKING"
   },
-  "repository_revision": "caf761c4dbf3d7c9ae6f2a81c8821026224c8100",
+  "repository_revision": "a1071016831eee2b28afc9be43756e10ee8d9440",
   "runs": [
     {
       "a_ledger_reasons": [
@@ -1157,7 +1157,7 @@
     "requires_timing_alignment": false,
     "scenario_id": "S1"
   },
-  "schema": "coldguard-w08-gate-b-readiness-manifest-v1",
+  "schema": "coldguard-w08-gate-b-readiness-manifest-v2",
   "separation": {
     "DATASET_READINESS": "NOT_READY",
     "DATA_ORIGIN": "MEASURED_PHYSICAL_DATA",
@@ -1275,5 +1275,5 @@
     ],
     "verdict": "NOT_ESTABLISHED"
   },
-  "w08_layer_version": "coldguard-w08-gate-b-readiness-v1"
+  "w08_layer_version": "coldguard-w08-gate-b-readiness-v2"
 }
