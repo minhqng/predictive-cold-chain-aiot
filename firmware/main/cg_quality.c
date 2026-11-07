@@ -82,10 +82,11 @@ static const char *environment_quality(const cg_quality_input_t *in)
          * §19.2 DEGRADED ("a defined degraded path remains legal") is the right
          * name, and §19.4 UNKNOWN would wrongly imply the firmware cannot tell
          * whether the sensor is there. It still keeps the collapsed `quality`
-         * from reading VALID in this build. */
+         * from reading VALID while the module is absent. */
         return CG_Q_DEGRADED;
     }
-    return cg_source_quality_name(in->bme_state, 0);
+    return cg_source_quality_name(in->bme_state,
+                                  in->bme_age_ms > in->bme_age_limit_ms);
 }
 
 static const char *door_quality(const cg_quality_input_t *in)
