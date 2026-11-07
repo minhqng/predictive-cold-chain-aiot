@@ -1,9 +1,9 @@
 {
-  "analysis_code_sha256": "8e412d26f8d494ffdf6194ba3c7b67941811e7efffbed6569a6e8df5bd49cc73",
+  "analysis_code_sha256": "b56d59223db2fadff7f3d153f2ac8696584504601512206df62d45c1625c4c1f",
   "artifacts": {
     "S2-feature-report.md": {
-      "bytes": 7351,
-      "sha256": "c86b752cbc9cbf4e404a2a534bdd2319bb22a643999abd6892c7481f168c643e"
+      "bytes": 7533,
+      "sha256": "10a954f05452b0bb0bcca1d4113c350d9de1d01f1f10370535fa3d70bcfc72db"
     },
     "feature-audit-W10.svg": {
       "bytes": 45977,
@@ -14,8 +14,8 @@
       "sha256": "f34ecbc7f00834f13292d90c067a3d5e4a78735518288e5fc796f5f434c07335"
     },
     "label-pilot-W10.csv": {
-      "bytes": 1973,
-      "sha256": "e17e3b7c0c22a666d1eb89828776e4677cc984438259358c88730c5e286bd541"
+      "bytes": 2905,
+      "sha256": "cb1eaa55f5e59b3c06b583a62b39f736987bd5e76430ad7862f538166f98226c"
     },
     "real-diagnostic-W10.svg": {
       "bytes": 57437,
@@ -29,7 +29,7 @@
     "version": "coldguard-w10-synthetic-s2-v1"
   },
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision a9b7310319226c11d0551605eca3328541bfba74",
+  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
   "layer_version": "coldguard-w10-causal-feature-pipeline-v1",
   "real_a": {
     "boot_id": "56044b74",
@@ -140,7 +140,7 @@
         "past_only_spatial_spread_60s"
       ]
     },
-    "registry_sha256": "ddbfe96e530d2dda79246dbb8eadd800922ea3aa03dbf4aacde433736b38136b"
+    "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
   },
   "registry_policy": {
     "boot_boundary_policy": "no_rolling_or_door_continuity_across_boot",
@@ -155,7 +155,7 @@
     "window_convention": "(t - lookback_s, t]"
   },
   "report_schema": "coldguard-w10-s2-feature-report-v1",
-  "repository_revision": "a9b7310319226c11d0551605eca3328541bfba74",
+  "repository_revision": "d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
   "role_map": {
     "chamber_air_roles": [
       "CHAMBER_CENTER",

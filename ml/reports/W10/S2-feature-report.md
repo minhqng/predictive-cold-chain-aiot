@@ -17,7 +17,7 @@
 ## 2. Frozen feature registry identity
 
 - Feature schema version: `CG-FEAT-1.0`
-- Registry SHA-256: `ddbfe96e530d2dda79246dbb8eadd800922ea3aa03dbf4aacde433736b38136b`
+- Registry SHA-256: `1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9`
 - Feature count: 31
 - Freeze status: `FROZEN_DEFINITIONS`
 - Frozen scope: feature_names, formulas, source_roles, input_quality_requirements, lookback_semantics, missingness_behavior, feature_order, feature_schema_hash
@@ -66,6 +66,7 @@ Synthetic label-pilot counts (development partitions only):
 | 300 | 4 | 484 | 160 | 0 | 324 | 0 | 1.0000 |
 
 A single-class population is not evidence that supervised evaluation is ready. No model was trained and no AP benchmark was computed.
+Label spec version: `coldguard-w10-label-pilot-v1`; `frozen_at = None`; representative temperature and critical boundary remain unselected; horizons are development candidates only.
 
 ## 5. Real A W09 diagnostic feature view
 
