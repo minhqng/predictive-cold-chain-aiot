@@ -251,6 +251,9 @@ def compute_feature_importance(
         raise FeatureImportanceError(
             "locked-test runs appear in a fold used for importance"
         )
+    recorded_metrics = {
+        (row["fold_id"], row["strategy"]): row for row in bundle.fold_rows
+    }
     rows: list[ImportanceRow] = []
     identities: list[Mapping[str, Any]] = []
     refusals: list[Mapping[str, Any]] = []
@@ -288,6 +291,40 @@ def compute_feature_importance(
             if model.n_features_in_ != len(expected_features):
                 raise FeatureImportanceError(
                     "model feature count does not match the registered feature order"
+                )
+            recorded = recorded_metrics.get((fold.fold_id, strategy))
+            if recorded is None:
+                raise FeatureImportanceError(
+                    f"fold {fold.fold_id!r}/{strategy}: no W11 metric record to bind"
+                )
+            recorded_ap = recorded.get("average_precision")
+            fitted_ap = (
+                result.metrics["average_precision"]["value"]
+                if result.metrics is not None
+                else None
+            )
+            try:
+                recorded_value = (
+                    None if recorded_ap in (None, "") else float(recorded_ap)
+                )
+            except (TypeError, ValueError):
+                recorded_value = None
+            if recorded_value is None or fitted_ap is None:
+                raise FeatureImportanceError(
+                    f"fold {fold.fold_id!r}/{strategy}: AP is undefined in W11"
+                )
+            if abs(float(fitted_ap) - recorded_value) > 1e-12:
+                raise FeatureImportanceError(
+                    f"fold {fold.fold_id!r}/{strategy}: refit model does not "
+                    "reproduce the W11 fold AP"
+                )
+            if (
+                int(recorded["validation_samples"]) != len(validation_samples)
+                or int(recorded["train_samples"]) != len(train_samples)
+            ):
+                raise FeatureImportanceError(
+                    f"fold {fold.fold_id!r}/{strategy}: refit population does not "
+                    "match W11"
                 )
             identity = _model_identity(
                 config_sha256=config.config_sha256,
@@ -375,7 +412,7 @@ def compute_feature_importance(
         "feature_registry_sha256": registry.schema_sha256,
         "config_sha256": config.config_sha256,
         "provenance": SYNTHETIC_PROVENANCE,
-        "locked_test_used": False,
+        "locked_test_used": bool(test_runs & fold_run_ids),
         "fold_model_count": fold_model_count,
     }
     limitations = (

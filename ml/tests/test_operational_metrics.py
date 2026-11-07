@@ -59,7 +59,7 @@ def test_per_hour_uses_trusted_exposure(report):
 
 def test_run_and_window_denominators_are_retained(report):
     for row in report.synthetic_rows:
-        assert row.independent_run_count == 4
+        assert row.validation_run_count == 4
         assert row.group_count == 2
         assert row.eligible_windows == 484
 
