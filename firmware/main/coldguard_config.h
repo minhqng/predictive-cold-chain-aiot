@@ -206,6 +206,22 @@
 #endif
 
 /* ------------------------------------------------------------------ */
+/* Test-only reversible fault injection (A-W21-02 / A-W21-03)          */
+/* ------------------------------------------------------------------ */
+
+/* Fail closed: the injection path is entirely absent from a normal production
+ * build. Only an explicit test build (CMake -DCG_FAULT_INJECTION=1, forwarded
+ * to the compiler) enables it, and even then it is reachable only from the
+ * local operator console, never from a network or TEC command. See
+ * cg_fault_inject.h for the safety contract. */
+#ifndef CG_FAULT_INJECTION
+#define CG_FAULT_INJECTION 0
+#endif
+#if CG_FAULT_INJECTION != 0 && CG_FAULT_INJECTION != 1
+#error "CG_FAULT_INJECTION must be 0 or 1"
+#endif
+
+/* ------------------------------------------------------------------ */
 /* DS18B20 acquisition - docs/01 sections 6.6 / 6.7                    */
 /* ------------------------------------------------------------------ */
 
