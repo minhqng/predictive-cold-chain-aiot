@@ -106,23 +106,23 @@ static size_t render(char *line, size_t cap, env_mode_t env_mode)
         case ENV_ABSENT:
             env_present = false;
             env_valid = false;
-            cg_snapshot_publish_env(false, false, 0.0f, 0.0f, (uint8_t)CG_BME_STATE_ABSENT,
+            cg_snapshot_publish_env(env_present, env_valid, 0.0f, 0.0f, (uint8_t)CG_BME_STATE_ABSENT,
                                     (uint8_t)CG_BME_READ_ABSENT, 0x76U, 0U, env_obs_ms);
             break;
         case ENV_FRESH_OK:
-            cg_snapshot_publish_env(true, true, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+            cg_snapshot_publish_env(env_present, env_valid, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
                                     (uint8_t)CG_BME_READ_OK, 0x76U, 14U, env_obs_ms);
             break;
         case ENV_REFUSED:
             env_valid = false;
-            cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_FAULT,
+            cg_snapshot_publish_env(env_present, env_valid, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_FAULT,
                                     (uint8_t)CG_BME_READ_OUT_OF_RANGE, 0x76U, 14U, env_obs_ms);
             break;
         case ENV_TRIM_GATED:
             /* The shipped build's trim gate: the module answers, the decode is
              * withheld until someone confirms the layout on hardware. */
             env_valid = false;
-            cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+            cg_snapshot_publish_env(env_present, env_valid, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
                                     (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED, 0x76U, 14U,
                                     env_obs_ms);
             break;
@@ -132,7 +132,7 @@ static size_t render(char *line, size_t cap, env_mode_t env_mode)
              * than stay degraded on the strength of an old reason. */
             env_obs_ms = 1000000U - (uint64_t)CG_TELEM_STALE_ENV_MS - 5000U;
             env_valid = false;
-            cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+            cg_snapshot_publish_env(env_present, env_valid, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
                                     (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED, 0x76U, 14U,
                                     env_obs_ms);
             break;
@@ -140,7 +140,7 @@ static size_t render(char *line, size_t cap, env_mode_t env_mode)
             /* Older than the ambient freshness bound by construction, so the
              * bound itself is what the scenario pins. */
             env_obs_ms = 1000000U - (uint64_t)CG_TELEM_STALE_ENV_MS - 5000U;
-            cg_snapshot_publish_env(true, true, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+            cg_snapshot_publish_env(env_present, env_valid, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
                                     (uint8_t)CG_BME_READ_OK, 0x76U, 14U, env_obs_ms);
             break;
     }
