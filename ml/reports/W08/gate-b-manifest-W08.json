@@ -1,0 +1,1244 @@
+{
+  "analysis_code_sha256": "3d6699127de299d6dce3a11e5a32ff33890f5bfc5367caf464efd0e9101345cb",
+  "artifact_sha256": {
+    "completeness-policy-W08.md": "c03f2c46eeb9954ab579b20a5e9352942217063ca6fb8128e0f81270f80a8b22",
+    "development-split-plan-W08.md": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab",
+    "gate-b-readiness-W08.md": "6dea56792098633f8bc7ff8c456dfcc6cb7fa417a308ad879a62f6c05ca82561",
+    "run-validation-W08.csv": "54228f7a2ef244206a6be119e062fcd2d74be8e3e7c449c510627e8a51a6084e"
+  },
+  "completeness_policy": {
+    "notes": [
+      "No universal 99.9% threshold is asserted.",
+      "PROPOSED values are planning candidates and must be reviewed before any frozen dataset claim.",
+      "UNRESOLVED is not zero: the validator reports what is not evaluable."
+    ],
+    "policy_version": "coldguard-w08-completeness-policy-draft-v1",
+    "thresholds": [
+      {
+        "applicable_scenario": "S1 and S2",
+        "blocking_severity": "BLOCKING",
+        "channel_family": "all received frames",
+        "comparison_at_equality": "fraction >= threshold passes",
+        "definition": "received frames divided by expected samples derived from the observed modal cadence and the measured capture duration",
+        "dimension": "WHOLE_CAPTURE_COMPLETENESS",
+        "expected_sample_denominator": "declared planned capture duration divided by the observed modal cadence, plus one; the W05 observed-window fraction is diagnostic only",
+        "missing_quality_semantics": "missing frames reduce the numerator; an undeclared planned duration makes the value NOT_ESTIMABLE, never 1.0",
+        "name": "whole_capture_frames",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "whole capture",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 03 §119 requires completeness against actual cadence; W05 supplies the observed cadence and a provisional denominator",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.95
+      },
+      {
+        "applicable_scenario": "S1 and S2",
+        "blocking_severity": "BLOCKING",
+        "channel_family": "required thermal channels; door for S2; PZEM only when claimed",
+        "comparison_at_equality": "fraction >= threshold passes",
+        "definition": "frames where every declared critical channel is present and source-quality VALID divided by expected samples",
+        "dimension": "CRITICAL_CHANNEL_COMPLETENESS",
+        "expected_sample_denominator": "declared planned capture duration divided by the observed modal cadence, plus one",
+        "missing_quality_semantics": "missing, INVALID and DEGRADED critical samples are counted separately; none is converted to a numeric zero",
+        "name": "critical_channel_samples",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "whole capture for S1; event windows for S2",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 01 §§19,33 and Doc 03 §122: a critical channel gap overlapping the primary outcome invalidates the run; the numeric fraction is provisional pending A's physical review",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.99
+      },
+      {
+        "applicable_scenario": "S2 (event-required scenarios)",
+        "blocking_severity": "BLOCKING",
+        "channel_family": "required thermal + door channels",
+        "comparison_at_equality": "fraction >= threshold passes",
+        "definition": "critical-valid frames inside the primary event window divided by expected samples for that window at the observed cadence",
+        "dimension": "PRIMARY_EVENT_WINDOW_COMPLETENESS",
+        "expected_sample_denominator": "round(event_window_s / nominal_dt_s)",
+        "missing_quality_semantics": "a window gap is counted separately from whole-capture loss; a missing event anchor makes the dimension NOT_ESTIMABLE",
+        "name": "primary_event_window_samples",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "[event anchor, anchor + event window]",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 03 §119 requires stronger completeness around the event that defines the primary outcome than over the whole run; the event window length is a planning candidate only",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.99
+      },
+      {
+        "applicable_scenario": "S2 (event-required scenarios)",
+        "blocking_severity": "BLOCKING",
+        "channel_family": "required thermal + door channels",
+        "comparison_at_equality": "fraction >= threshold passes",
+        "definition": "critical-valid frames in the pre-event baseline divided by expected samples for that window at the observed cadence",
+        "dimension": "PRE_EVENT_BASELINE_COMPLETENESS",
+        "expected_sample_denominator": "round(baseline_window_s / nominal_dt_s)",
+        "missing_quality_semantics": "a baseline shorter than the required window is incomplete; missing samples are never back-filled",
+        "name": "pre_event_baseline_samples",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "[anchor - baseline window, anchor)",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 03 §§5–8 require a pre-event baseline for response and prediction claims; W10's 120 s recipe is a planning candidate",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.95
+      },
+      {
+        "applicable_scenario": "S2 (event-required scenarios)",
+        "blocking_severity": "BLOCKING",
+        "channel_family": "required thermal channels",
+        "comparison_at_equality": "fraction >= threshold passes",
+        "definition": "critical-valid frames in the follow-up window divided by expected samples for that window at the observed cadence; a capture ending before the horizon is censored",
+        "dimension": "POST_EVENT_OR_RECOVERY_COMPLETENESS",
+        "expected_sample_denominator": "round((horizon_s - event_window_s) / nominal_dt_s)",
+        "missing_quality_semantics": "a censored capture is reported as CENSORED and does not pass; the recovery criterion itself is not invented here",
+        "name": "recovery_followup_samples",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "[anchor + event window, anchor + horizon)",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 01 §20.6 and Doc 03 §7 require a defined recovery reference; W07 reports reset criteria as unresolved, so the numeric value stays provisional",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.9
+      },
+      {
+        "applicable_scenario": "S1 and S2",
+        "blocking_severity": "INFO",
+        "channel_family": "sequence/time",
+        "comparison_at_equality": "not evaluable until a tolerance is frozen",
+        "definition": "observed intervals inside a frozen cadence tolerance divided by expected intervals",
+        "dimension": "TIMING_ALIGNMENT_COMPLETENESS",
+        "expected_sample_denominator": "expected sample count minus one",
+        "missing_quality_semantics": "negative/zero intervals, sequence reversals and long gaps are reported individually; no tolerance is fabricated here",
+        "name": "timing_alignment_intervals",
+        "owner": "Member B — AI & Experimental Data",
+        "required_event_window": "whole capture and primary event window",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_source_justification": "Doc 03 §120 forbids assuming exact 1.000 s cadence; the project has not frozen a tolerance, so the fraction remains UNRESOLVED while timing-integrity booleans are still checked",
+        "threshold_status": "UNRESOLVED",
+        "threshold_value": null
+      }
+    ]
+  },
+  "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v1",
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 2809788e4b02aa95e268cddfa5634b195c526d13",
+  "layer_version": "coldguard-w08-gate-b-readiness-v1",
+  "limitations": [
+    "A scientific RED is a successful software result, not a CLI failure.",
+    "No locked test manifest is created, inspected or frozen by W08.",
+    "Synthetic controls never enter the physical dataset or the real split.",
+    "A GREEN W08 software gate does not make the physical data GREEN.",
+    "The A W09 export and validity index were consumed read-only.",
+    "No run manifest is fabricated; missing linkage is reported."
+  ],
+  "physical_gate": {
+    "allowed_uses": [
+      "diagnostic QA of structurally valid captures"
+    ],
+    "declared_dataset_purpose": "S1 normal-baseline predictive dataset",
+    "evidence_paths": [
+      "evidence/A/W09/exports/CG-S1-H8C-600S.json"
+    ],
+    "evidence_sha256": [
+      "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb"
+    ],
+    "gate": "GATE_B_PHYSICAL_DATA",
+    "next_evidence_required": "A-valid, independently identified runs with verified hardware, calibration and clock evidence; required event coverage; run manifest linkage; and at least 3 independent run(s) for the declared scenario",
+    "observed_status": "RED",
+    "owner": "Member B — AI & Experimental Data",
+    "population": "1 candidate run(s); 0 eligible",
+    "prohibited_uses": [
+      "predictive model training or benchmark claims",
+      "locked test or Gate C evidence",
+      "any claim that physical repeatability is established"
+    ],
+    "reason_codes": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "INDEPENDENT_RUN_POPULATION_INSUFFICIENT",
+      "NO_ELIGIBLE_RUNS_FOR_DECLARED_SCENARIO",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED"
+    ],
+    "required_checks": [
+      "A_LEDGER_VALID",
+      "PHYSICAL_RUN_IDENTITY",
+      "HARDWARE_AND_CALIBRATION_VERIFIED",
+      "REQUIRED_CHANNELS_QUALIFIED",
+      "EVENT_COMPLETENESS_FOR_DECLARED_SCENARIO",
+      "RUN_MANIFEST_LINKAGE",
+      "INDEPENDENT_RUN_POPULATION",
+      "NO_DUPLICATE_VIEW_CONFLICT"
+    ],
+    "scenario": "S1",
+    "severity": "BLOCKING"
+  },
+  "predictive_gate": {
+    "allowed_uses": [
+      "dataset readiness reporting"
+    ],
+    "declared_dataset_purpose": "S1 normal-baseline predictive dataset",
+    "evidence_paths": [
+      "evidence/A/W09/exports/CG-S1-H8C-600S.json"
+    ],
+    "evidence_sha256": [
+      "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb"
+    ],
+    "gate": "PREDICTIVE_DATASET_READINESS",
+    "next_evidence_required": "a GREEN Gate B physical-data decision for the declared population",
+    "observed_status": "NOT_READY",
+    "owner": "Member B — AI & Experimental Data",
+    "population": "1 candidate run(s); 0 eligible",
+    "prohibited_uses": [
+      "model training while NOT_READY"
+    ],
+    "reason_codes": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "GATE_B_NOT_GREEN",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "INDEPENDENT_RUN_POPULATION_INSUFFICIENT",
+      "NO_ELIGIBLE_RUNS_FOR_DECLARED_SCENARIO",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED"
+    ],
+    "required_checks": [
+      "GATE_B_PHYSICAL_DATA_GREEN"
+    ],
+    "scenario": "S1",
+    "severity": "BLOCKING"
+  },
+  "repository_revision": "2809788e4b02aa95e268cddfa5634b195c526d13",
+  "runs": [
+    {
+      "a_ledger_reasons": [
+        "AUTHORITY_A_LEDGER_INVALID",
+        "run_id_status=UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID: source run_id segments ['run-00000000', 'run-00000001'] under one boot_id are not independent runs and no joined run_id exists in the source, so none can be published for a join",
+        "majority of frames unusable"
+      ],
+      "a_ledger_verdict": "INVALID",
+      "admission_highest_stage": "USABLE_FOR_DIAGNOSTIC_QA",
+      "admission_status": "EXCLUDED_OR_BLOCKED",
+      "boot_id": "56044b74",
+      "calibration_id": null,
+      "calibration_status": "NOT_AVAILABLE",
+      "channel_coverage": [
+        {
+          "channel": "applied_cooling_state",
+          "diagnostic_status": "DIAGNOSTIC_CAUTION",
+          "family": "ACTUATION",
+          "missing_count": 0,
+          "physical_role": "APPLIED_COOLING_STATE",
+          "present_count": 952,
+          "quality_DEGRADED": 940,
+          "quality_INVALID": 17,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "APPLIED_COOLING_STATE_UNOBSERVED",
+            "SOURCE_QUALITY_DEGRADED",
+            "SOURCE_QUALITY_INVALID"
+          ],
+          "required": false
+        },
+        {
+          "channel": "applied_duty_permille",
+          "diagnostic_status": "DIAGNOSTIC_CAUTION",
+          "family": "ACTUATION",
+          "missing_count": 0,
+          "physical_role": "APPLIED_DUTY",
+          "present_count": 957,
+          "quality_DEGRADED": 940,
+          "quality_INVALID": 17,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_DEGRADED",
+            "SOURCE_QUALITY_INVALID"
+          ],
+          "required": false
+        },
+        {
+          "channel": "cooling_current_a",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "PZEM-017",
+          "missing_count": 0,
+          "physical_role": "COOLING_BRANCH_CURRENT",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "cooling_energy_counter_wh",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "PZEM-017",
+          "missing_count": 0,
+          "physical_role": "COOLING_BRANCH_ENERGY_COUNTER",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "PZEM_ENERGY_UNQUALIFIED_DIAGNOSTIC_ONLY",
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "cooling_power_w",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "PZEM-017",
+          "missing_count": 0,
+          "physical_role": "COOLING_BRANCH_POWER",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "PZEM_POWER_UNQUALIFIED_DIAGNOSTIC_ONLY",
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "cooling_voltage_v",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "PZEM-017",
+          "missing_count": 0,
+          "physical_role": "COOLING_BRANCH_VOLTAGE",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "device_ms",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "TIME",
+          "missing_count": 0,
+          "physical_role": "BOOT_SCOPED_UPTIME",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [],
+          "required": false
+        },
+        {
+          "channel": "door_polarity",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "DOOR",
+          "missing_count": 0,
+          "physical_role": "DOOR_POLARITY_EVIDENCE",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "DOOR_POLARITY_UNCONFIRMED_PRESENT",
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "door_state",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "DOOR",
+          "missing_count": 0,
+          "physical_role": "CHAMBER_DOOR",
+          "present_count": 940,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "DOOR_NO_OPEN_EVENT_IN_CAPTURE",
+            "DOOR_STATE_UNKNOWN_PRESENT",
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "pressure_hpa",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "BME280",
+          "missing_count": 0,
+          "physical_role": "ENVIRONMENT_CONTEXT_NOT_P0_FEATURE",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "readback_duty_permille",
+          "diagnostic_status": "DIAGNOSTIC_CAUTION",
+          "family": "ACTUATION",
+          "missing_count": 0,
+          "physical_role": "READBACK_DUTY",
+          "present_count": 957,
+          "quality_DEGRADED": 940,
+          "quality_INVALID": 17,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_DEGRADED",
+            "SOURCE_QUALITY_INVALID"
+          ],
+          "required": false
+        },
+        {
+          "channel": "requested_duty_permille",
+          "diagnostic_status": "DIAGNOSTIC_CAUTION",
+          "family": "ACTUATION",
+          "missing_count": 0,
+          "physical_role": "REQUESTED_DUTY",
+          "present_count": 957,
+          "quality_DEGRADED": 940,
+          "quality_INVALID": 17,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_DEGRADED",
+            "SOURCE_QUALITY_INVALID"
+          ],
+          "required": false
+        },
+        {
+          "channel": "rh_pct",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "BME280",
+          "missing_count": 0,
+          "physical_role": "ENVIRONMENT_CONTEXT",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        },
+        {
+          "channel": "seq",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "IDENTITY",
+          "missing_count": 0,
+          "physical_role": "SEQUENCE",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [],
+          "required": false
+        },
+        {
+          "channel": "t1",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "DS18B20",
+          "missing_count": 0,
+          "physical_role": "CHAMBER_CENTER",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_125.990s"
+          ],
+          "required": true
+        },
+        {
+          "channel": "t2",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "DS18B20",
+          "missing_count": 0,
+          "physical_role": "TEC_HOT_SIDE",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_21.990s"
+          ],
+          "required": false
+        },
+        {
+          "channel": "t3",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "DS18B20",
+          "missing_count": 0,
+          "physical_role": "CHAMBER_BOTTOM",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_164.990s"
+          ],
+          "required": true
+        },
+        {
+          "channel": "t4",
+          "diagnostic_status": "DIAGNOSTIC_QUALIFIED",
+          "family": "DS18B20",
+          "missing_count": 0,
+          "physical_role": "CHAMBER_NEAR_DOOR",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 0,
+          "quality_VALID": 957,
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_47.990s"
+          ],
+          "required": true
+        },
+        {
+          "channel": "t_air_c",
+          "diagnostic_status": "DIAGNOSTIC_READABLE_UNQUALIFIED",
+          "family": "BME280",
+          "missing_count": 0,
+          "physical_role": "ENVIRONMENT_CONTEXT",
+          "present_count": 957,
+          "quality_DEGRADED": 0,
+          "quality_INVALID": 0,
+          "quality_UNKNOWN": 957,
+          "quality_VALID": 0,
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_21.990_35.990s",
+            "SOURCE_QUALITY_UNKNOWN"
+          ],
+          "required": false
+        }
+      ],
+      "checks": [
+        {
+          "code": "SOURCE_HASH_PRESENT",
+          "detail": "source SHA-256 f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+          "evidence": [
+            "evidence/A/W09/exports/CG-S1-H8C-600S.json"
+          ],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "SCHEMA_NAMESPACE_RECOGNIZED",
+          "detail": "schema namespace 'w09-run-export/v2'",
+          "evidence": [
+            "a-w09-run-export-v2"
+          ],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "PHYSICAL_PROVENANCE",
+          "detail": "source provenance 'PHYSICAL'; only a declared physical measurement can enter a physical dataset",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "RUN_IDENTITY_CARRIED",
+          "detail": "run_id=None status='UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID'",
+          "evidence": [],
+          "reason_codes": [
+            "RUN_IDENTITY_UNRESOLVED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "FAIL"
+        },
+        {
+          "code": "BOOT_IDENTITY_CARRIED",
+          "detail": "boot_id='56044b74' status='SOURCE_CARRIED_SINGLE'",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "DEVICE_IDENTITY_CARRIED",
+          "detail": "device_id=None status='NOT_CARRIED_BY_THIS_ENCODING'",
+          "evidence": [],
+          "reason_codes": [
+            "DEVICE_IDENTITY_MISSING"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "FAIL"
+        },
+        {
+          "code": "SEQUENCE_IDENTITY_UNIQUE",
+          "detail": "0 duplicate (device,boot,seq) key(s) across 957 rows",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "SEQUENCE_MONOTONIC",
+          "detail": "sequence strictly increases within the boot",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "RUN_MANIFEST_LINKED",
+          "detail": "no run manifest linkage was supplied; an A ledger entry or file label is not a complete run manifest",
+          "evidence": [],
+          "reason_codes": [
+            "RUN_MANIFEST_LINKAGE_NOT_PROVIDED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "NOT_EVALUABLE"
+        },
+        {
+          "code": "CAPTURE_DURATION_DECLARED",
+          "detail": "no planned capture duration was declared; whole-capture completeness cannot be estimated from the observed partial window",
+          "evidence": [],
+          "reason_codes": [
+            "CAPTURE_DURATION_NOT_DECLARED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "FAIL"
+        },
+        {
+          "code": "SCENARIO_DESIGNATED",
+          "detail": "scenario 'S1'",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "IDENTITY_AND_LINEAGE",
+          "status": "PASS"
+        },
+        {
+          "code": "A_LEDGER_VERDICT",
+          "detail": "A's authoritative ledger excludes this run; B never overrides it: run_id_status=UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID: source run_id segments ['run-00000000', 'run-00000001'] under one boot_id are not independent runs and no joined run_id exists in the source, so none can be published for a join; majority of frames unusable",
+          "evidence": [
+            "a-run-index:..\\evidence\\A\\W09\\s1-run-index.json"
+          ],
+          "reason_codes": [
+            "AUTHORITY_A_LEDGER_INVALID"
+          ],
+          "severity": "BLOCKING",
+          "stage": "AUTHORITY",
+          "status": "FAIL"
+        },
+        {
+          "code": "A_SCENARIO_SCOPE_GRANTED",
+          "detail": "A validity scope [] vs run scenario 'S1'",
+          "evidence": [],
+          "reason_codes": [
+            "SCENARIO_VALIDITY_NOT_GRANTED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "AUTHORITY",
+          "status": "FAIL"
+        },
+        {
+          "code": "HARDWARE_CONFIG_VERIFIED",
+          "detail": "hardware config 'CG-HW-001' status='DECLARED_NOT_VERIFIED'",
+          "evidence": [],
+          "reason_codes": [
+            "HARDWARE_CONFIG_NOT_VERIFIED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "FAIL"
+        },
+        {
+          "code": "FIRMWARE_IDENTITY_CARRIED",
+          "detail": "firmware 'cg-w04-0.1.0'",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "PASS"
+        },
+        {
+          "code": "CONTROLLER_IDENTITY_CARRIED",
+          "detail": "controller identity None status='NOT_CARRIED'; required for paired A/B comparisons, not for a passive S1 baseline",
+          "evidence": [],
+          "reason_codes": [],
+          "severity": "INFO",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "FAIL"
+        },
+        {
+          "code": "CALIBRATION_VERIFIED",
+          "detail": "calibration None status='NOT_AVAILABLE'",
+          "evidence": [],
+          "reason_codes": [
+            "CALIBRATION_UNVERIFIED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "FAIL"
+        },
+        {
+          "code": "PROBE_ROM_IDENTITY_KNOWN",
+          "detail": "all probe ROM identities are carried",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "PASS"
+        },
+        {
+          "code": "PROBE_ROLES_KNOWN",
+          "detail": "all physical positions and chamber-air roles are known",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "PASS"
+        },
+        {
+          "code": "PROBE_ROM_READBACK_VERIFIED",
+          "detail": "ROM readback is not independently verified; positions rely on the operator-frozen record",
+          "evidence": [],
+          "reason_codes": [],
+          "severity": "INFO",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "FAIL"
+        },
+        {
+          "code": "INSTRUMENT_UNITS_CONSISTENT",
+          "detail": "all required physical channels carry a declared unit",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PHYSICAL_CONFIGURATION",
+          "status": "PASS"
+        },
+        {
+          "code": "REQUIRED_CHANNEL_PRESENT",
+          "detail": "required channels present: ['t1', 't3', 't4']",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "MEASUREMENTS",
+          "status": "PASS"
+        },
+        {
+          "code": "CRITICAL_CHANNELS_QUALIFIED",
+          "detail": "all required channels are source-quality VALID for every row",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "MEASUREMENTS",
+          "status": "PASS"
+        },
+        {
+          "code": "TIME_DOMAIN_DECLARED",
+          "detail": "time domain 'BOOT_SCOPED_UPTIME'; event time 'UNAVAILABLE'; clock sync 'NOT_EVIDENCED'",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "MEASUREMENTS",
+          "status": "PASS"
+        },
+        {
+          "code": "ABSOLUTE_TIME_FOR_CLAIM",
+          "detail": "absolute-time claims require event-time UTC and evidenced clock synchronization; boot-relative data is diagnostic only",
+          "evidence": [],
+          "reason_codes": [
+            "ABSOLUTE_TIME_NOT_EVIDENCED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "MEASUREMENTS",
+          "status": "FAIL"
+        },
+        {
+          "code": "TIMING_INTEGRITY",
+          "detail": "timing audit reason codes: ['MISSING_CAPTURE_TIME', 'MISSING_RECEIVE_TIME', 'UNCERTAIN_CROSS_STREAM_ASSOCIATION']",
+          "evidence": [],
+          "reason_codes": [
+            "TIMING_INTEGRITY_FAILED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "MEASUREMENTS",
+          "status": "FAIL"
+        },
+        {
+          "code": "PZEM_QUALIFIED_IF_CLAIMED",
+          "detail": "PZEM power/current/voltage are unqualified or the declared analysis does not require electrical evidence; numeric values are diagnostic only and missing values are never zero",
+          "evidence": [],
+          "reason_codes": [],
+          "severity": "INFO",
+          "stage": "MEASUREMENTS",
+          "status": "NOT_EVALUABLE"
+        },
+        {
+          "code": "DOOR_QUALIFIED_IF_REQUIRED",
+          "detail": "door state/polarity are unqualified; no disturbance claim is admissible",
+          "evidence": [],
+          "reason_codes": [],
+          "severity": "INFO",
+          "stage": "MEASUREMENTS",
+          "status": "NOT_EVALUABLE"
+        },
+        {
+          "code": "PLANNED_VERSUS_OBSERVED_SCENARIO",
+          "detail": "declared dataset scenario 'S1' vs source scenario 'S1'",
+          "evidence": [],
+          "reason_codes": [
+            "CHECK_PASSED"
+          ],
+          "severity": "BLOCKING",
+          "stage": "PROTOCOL_AND_EVENTS",
+          "status": "PASS"
+        },
+        {
+          "code": "COMMAND_CHAIN_COMPLETE_IF_REQUIRED",
+          "detail": "the declared analysis does not require a command/ACK chain",
+          "evidence": [],
+          "reason_codes": [],
+          "severity": "INFO",
+          "stage": "PROTOCOL_AND_EVENTS",
+          "status": "NOT_EVALUABLE"
+        },
+        {
+          "code": "INTERVENTION_AND_CENSORING_RECORDED",
+          "detail": "row invalidation/censoring codes: ['AIR_C_STATUS_ABSENT', 'DOOR_POLARITY_UNCONFIRMED', 'DOOR_STATE_UNKNOWN', 'DOOR_STATUS_ABSENT', 'ELECTRICAL_UNQUALIFIED', 'ENERGY_ACCUMULATOR_UNQUALIFIED', 'MASKS_ABSENT', 'POWER_W_STATUS_ABSENT', 'RH_PCT_STATUS_ABSENT', 'SNAPSHOT_INVALID']; the recovery criterion remains unresolved",
+          "evidence": [],
+          "reason_codes": [
+            "INTERVENTION_OR_CENSORING_NOT_RECORDED"
+          ],
+          "severity": "WARNING",
+          "stage": "PROTOCOL_AND_EVENTS",
+          "status": "PASS"
+        }
+      ],
+      "clock_sync_status": "NOT_EVIDENCED",
+      "completeness": [
+        {
+          "denominator_definition": "declared planned capture duration divided by the observed modal cadence, plus one; the W05 observed-window fraction is diagnostic only",
+          "detail": "no declared planned capture duration; the observed partial window is not a full-run denominator",
+          "dimension": "WHOLE_CAPTURE_COMPLETENESS",
+          "equality_behavior": "fraction >= threshold passes",
+          "expected_samples": null,
+          "fraction": null,
+          "invalid_samples": null,
+          "missing_samples": null,
+          "observed_samples": 957,
+          "passes": null,
+          "reason_codes": [
+            "COMPLETENESS_NOT_ESTIMABLE"
+          ],
+          "status": "NOT_EVALUABLE",
+          "threshold": 0.95,
+          "threshold_status": "PROPOSED",
+          "untrusted_samples": null
+        },
+        {
+          "denominator_definition": "declared planned capture duration divided by the observed modal cadence, plus one",
+          "detail": "critical channels are thermal chamber-air slots",
+          "dimension": "CRITICAL_CHANNEL_COMPLETENESS",
+          "equality_behavior": "fraction >= threshold passes",
+          "expected_samples": null,
+          "fraction": null,
+          "invalid_samples": 0,
+          "missing_samples": 0,
+          "observed_samples": 957,
+          "passes": null,
+          "reason_codes": [
+            "COMPLETENESS_NOT_ESTIMABLE"
+          ],
+          "status": "NOT_EVALUABLE",
+          "threshold": 0.99,
+          "threshold_status": "PROPOSED",
+          "untrusted_samples": null
+        },
+        {
+          "denominator_definition": "round(baseline_window_s / nominal_dt_s)",
+          "detail": "the declared scenario has no required disturbance event",
+          "dimension": "PRE_EVENT_BASELINE_COMPLETENESS",
+          "equality_behavior": "fraction >= threshold passes",
+          "expected_samples": null,
+          "fraction": null,
+          "invalid_samples": null,
+          "missing_samples": null,
+          "observed_samples": null,
+          "passes": null,
+          "reason_codes": [
+            "CHECK_NOT_APPLICABLE"
+          ],
+          "status": "NOT_APPLICABLE",
+          "threshold": 0.95,
+          "threshold_status": "PROPOSED",
+          "untrusted_samples": null
+        },
+        {
+          "denominator_definition": "round(event_window_s / nominal_dt_s)",
+          "detail": "the declared scenario has no required disturbance event",
+          "dimension": "PRIMARY_EVENT_WINDOW_COMPLETENESS",
+          "equality_behavior": "fraction >= threshold passes",
+          "expected_samples": null,
+          "fraction": null,
+          "invalid_samples": null,
+          "missing_samples": null,
+          "observed_samples": null,
+          "passes": null,
+          "reason_codes": [
+            "CHECK_NOT_APPLICABLE"
+          ],
+          "status": "NOT_APPLICABLE",
+          "threshold": 0.99,
+          "threshold_status": "PROPOSED",
+          "untrusted_samples": null
+        },
+        {
+          "denominator_definition": "round((horizon_s - event_window_s) / nominal_dt_s)",
+          "detail": "the declared scenario has no required disturbance event",
+          "dimension": "POST_EVENT_OR_RECOVERY_COMPLETENESS",
+          "equality_behavior": "fraction >= threshold passes",
+          "expected_samples": null,
+          "fraction": null,
+          "invalid_samples": null,
+          "missing_samples": null,
+          "observed_samples": null,
+          "passes": null,
+          "reason_codes": [
+            "CHECK_NOT_APPLICABLE"
+          ],
+          "status": "NOT_APPLICABLE",
+          "threshold": 0.9,
+          "threshold_status": "PROPOSED",
+          "untrusted_samples": null
+        },
+        {
+          "denominator_definition": "expected sample count minus one",
+          "detail": "observed cadence is not assumed to be exactly 1 Hz; no cadence tolerance has been frozen, so this fraction is not evaluable",
+          "dimension": "TIMING_ALIGNMENT_COMPLETENESS",
+          "equality_behavior": "not evaluable until a tolerance is frozen",
+          "expected_samples": 956,
+          "fraction": null,
+          "invalid_samples": 0,
+          "missing_samples": 0,
+          "observed_samples": 956,
+          "passes": null,
+          "reason_codes": [
+            "COMPLETENESS_THRESHOLD_UNRESOLVED"
+          ],
+          "status": "NOT_EVALUABLE",
+          "threshold": null,
+          "threshold_status": "UNRESOLVED",
+          "untrusted_samples": null
+        }
+      ],
+      "controller_id": null,
+      "device_id": null,
+      "eligibility": "BLOCKED",
+      "event_coverage": {
+        "anchor_count": 0,
+        "anchor_present": false,
+        "anchor_source": "NOT_REQUIRED",
+        "anchor_time_s": null,
+        "baseline_seconds": null,
+        "censored": false,
+        "detail": "the declared scenario does not require a disturbance event",
+        "event_seconds": null,
+        "reason_codes": [
+          "CHECK_NOT_APPLICABLE"
+        ],
+        "recovery_seconds": null,
+        "required": false
+      },
+      "firmware_version": "cg-w04-0.1.0",
+      "hardware_config_id": "CG-HW-001",
+      "hardware_config_status": "DECLARED_NOT_VERIFIED",
+      "pair_id": null,
+      "physical_source_key": [
+        "session",
+        "56044b74"
+      ],
+      "quality_findings": [
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957,
+          "critical_channels": [
+            "t1",
+            "t3",
+            "t4"
+          ],
+          "domain": "thermal",
+          "rows": 957
+        },
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0,
+          "critical_channels": [],
+          "domain": "environment",
+          "rows": 957
+        },
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0,
+          "critical_channels": [],
+          "domain": "door",
+          "rows": 957
+        },
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 957,
+          "VALID": 0,
+          "critical_channels": [],
+          "domain": "electrical",
+          "rows": 957
+        },
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957,
+          "critical_channels": [],
+          "domain": "sequence",
+          "rows": 957
+        },
+        {
+          "DEGRADED": 0,
+          "INVALID": 0,
+          "UNKNOWN": 0,
+          "VALID": 957,
+          "critical_channels": [],
+          "domain": "provenance",
+          "rows": 957
+        }
+      ],
+      "reason_codes": [
+        "ABSOLUTE_TIME_NOT_EVIDENCED",
+        "AUTHORITY_A_LEDGER_INVALID",
+        "CALIBRATION_UNVERIFIED",
+        "CAPTURE_DURATION_NOT_DECLARED",
+        "DEVICE_IDENTITY_MISSING",
+        "HARDWARE_CONFIG_NOT_VERIFIED",
+        "RUN_IDENTITY_UNRESOLVED",
+        "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+        "SCENARIO_VALIDITY_NOT_GRANTED",
+        "TIMING_INTEGRITY_FAILED"
+      ],
+      "run_id": null,
+      "run_id_status": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+      "scenario_id": "S1",
+      "scenario_status": "CANDIDATE_NOT_CERTIFIED",
+      "source_path": "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+      "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+      "time_domain": "BOOT_SCOPED_UPTIME"
+    }
+  ],
+  "scenario_requirement": {
+    "baseline_window_s": 120.0,
+    "dataset_purpose": "S1 normal-baseline predictive dataset",
+    "event_window_s": 60.0,
+    "recovery_horizon_s": 900.0,
+    "require_absolute_time": true,
+    "requires_command_chain": false,
+    "requires_door_event": false,
+    "requires_electrical_evidence": false,
+    "scenario_id": "S1"
+  },
+  "schema": "coldguard-w08-gate-b-readiness-manifest-v1",
+  "separation": {
+    "DATASET_READINESS": "NOT_READY",
+    "DIAGNOSTIC_USABILITY": "PASS",
+    "PHYSICAL_RUN_VALIDITY": "RED",
+    "SCENARIO_ELIGIBILITY": "INELIGIBLE",
+    "SPLIT_FEASIBILITY": "NOT_FEASIBLE",
+    "STRUCTURAL_VALIDITY": "PASS"
+  },
+  "software_gate": {
+    "allowed_uses": [],
+    "declared_dataset_purpose": "S1 normal-baseline predictive dataset",
+    "evidence_paths": [
+      "evidence/A/W09/exports/CG-S1-H8C-600S.json"
+    ],
+    "evidence_sha256": [
+      "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb"
+    ],
+    "gate": "W08_SOFTWARE_VERIFICATION",
+    "next_evidence_required": "none; software verification is independent of the data verdict",
+    "observed_status": "GREEN",
+    "owner": "Member B — AI & Experimental Data",
+    "population": "1 candidate run(s); 0 eligible",
+    "prohibited_uses": [],
+    "reason_codes": [
+      "SOFTWARE_VALIDATION_COMPLETED"
+    ],
+    "required_checks": [
+      "RUN_VALIDATION_COMPLETED",
+      "ARTIFACTS_WRITTEN",
+      "REPORT_CSV_MANIFEST_AGREE"
+    ],
+    "scenario": "S1",
+    "severity": "INFO"
+  },
+  "source_index_sha256": "eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af",
+  "split_gate": {
+    "allowed_uses": [],
+    "declared_dataset_purpose": "S1 normal-baseline predictive dataset",
+    "evidence_paths": [
+      "evidence/A/W09/exports/CG-S1-H8C-600S.json"
+    ],
+    "evidence_sha256": [
+      "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb"
+    ],
+    "gate": "SPLIT_FEASIBILITY",
+    "next_evidence_required": "enough independently valid physical runs to populate three non-empty grouped partitions",
+    "observed_status": "RED",
+    "owner": "Member B — AI & Experimental Data",
+    "population": "1 candidate run(s); 0 eligible",
+    "prohibited_uses": [
+      "frozen locked-test IDs",
+      "model selection against test outcomes"
+    ],
+    "reason_codes": [
+      "SPLIT_POPULATION_INSUFFICIENT"
+    ],
+    "required_checks": [
+      "INDEPENDENT_RUN_GROUPS",
+      "PAIR_LINEAGE_PRESERVED",
+      "NO_REPEATED_VIEW_GROUPS",
+      "P1_P2_P3_DISJOINT",
+      "P3_NOT_FROZEN"
+    ],
+    "scenario": "S1",
+    "severity": "BLOCKING"
+  },
+  "split_plan": {
+    "P1_training": [],
+    "P2_held_back_development_validation": [],
+    "P3_future_locked_planning_candidates": [],
+    "P3_status": "PLANNING_CANDIDATES_ONLY_NOT_A_LOCKED_TEST",
+    "candidate_count": 1,
+    "definition": "development = P1_training ∪ P2_held_back_validation",
+    "development_runs": [],
+    "eligible_count": 0,
+    "excluded": [],
+    "feasibility": "NOT_FEASIBLE",
+    "grouping_key": "run_id; pair_id groups both arms",
+    "minimum_evidence": [
+      "at least one A-valid, physically qualified run with a resolved run identity, verified hardware/calibration and complete event coverage for the declared scenario"
+    ],
+    "pair_lineage": [],
+    "planning_shape": "Doc 03 §48 illustrative shape ~16 development / 4 validation / 4 test for ~24 runs; not executable with the current population",
+    "reasons": [
+      "SPLIT_POPULATION_INSUFFICIENT",
+      "NO_ELIGIBLE_RUNS_FOR_DECLARED_SCENARIO"
+    ],
+    "split_seed": null,
+    "synthetic_control": false
+  },
+  "suite": {
+    "analyzed_sources": 1,
+    "duplicate_views": 0,
+    "eligible_runs": 0,
+    "predictive_dataset_readiness": "NOT_READY",
+    "unique_physical_sources": 1
+  },
+  "w07_evidence": {
+    "independent_physical_sources": 1,
+    "manifest_path": "reports/W07/plant-eda-manifest-W07.json",
+    "manifest_sha256": "3252e9f3ee4f8a97877fd5cb6211e1e4be20caa9f3801a8ce3317fc4c9415dcb",
+    "qualified_independent_runs": 0,
+    "reason_codes": [
+      "ADMISSION_NOT_PHYSICALLY_QUALIFIED",
+      "A_LEDGER_NOT_VALID",
+      "CALIBRATION_IDENTITY_MISSING",
+      "DEVICE_IDENTITY_MISSING",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "MINIMUM_INDEPENDENT_RUNS_NOT_MET",
+      "NO_QUALIFIED_INDEPENDENT_RUNS",
+      "RUN_IDENTITY_UNRESOLVED",
+      "SCENARIO_NOT_CERTIFIED"
+    ],
+    "verdict": "NOT_ESTABLISHED"
+  },
+  "w08_layer_version": "coldguard-w08-gate-b-readiness-v1"
+}
