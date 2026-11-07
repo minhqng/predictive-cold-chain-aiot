@@ -19,7 +19,9 @@ legal; W02 makes the data-side rules executable:
   physical-state plots over W04 captures (B-W05-01 … B-W05-04);
 * ``timing_alignment`` — provenance-aware event alignment, clock/sequence
   diagnostics, bounded response helpers and duplicate-event handling
-  (B-W06-01 … B-W06-04).
+  (B-W06-01 … B-W06-04);
+* ``plant_eda`` — W07 physical baseline EDA, qualified-run repeatability,
+  confounding inventory and pairing candidate variables (B-W07-01 … B-W07-04).
 
 No model fitting, feature registry, or score computation exists yet.
 """
@@ -152,6 +154,29 @@ from .timing_alignment import (
     partial_order,
     response_summary_csv,
     source_contract_ledger,
+)
+from .plant_eda import (
+    PHASE_COOLING_STEP,
+    PHASE_PASSIVE_WARMUP,
+    PHASE_POST_ACTION_RECOVERY,
+    PHASE_UNDETERMINED,
+    PlantEDAConfig,
+    PlantEDAError,
+    PlantEDAResult,
+    RepeatabilitySummary,
+    RunRecord,
+    analyze_capture_eda,
+    analyze_repeatability,
+    analyze_synthetic_control,
+    build_manifest,
+    build_representations,
+    cross_check_a_references,
+    render_pairing_markdown,
+    render_plant_svg,
+    render_report,
+    repeatability_csv,
+    segment_phases,
+    summarize_metric,
 )
 from .observations import (
     Observation,
@@ -359,4 +384,26 @@ __all__ = [
     "response_summary_csv",
     "source_contract_ledger",
     "event_manifest",
+    # plant EDA and repeatability (B-W07-01 … B-W07-04)
+    "PHASE_PASSIVE_WARMUP",
+    "PHASE_COOLING_STEP",
+    "PHASE_POST_ACTION_RECOVERY",
+    "PHASE_UNDETERMINED",
+    "PlantEDAConfig",
+    "PlantEDAError",
+    "PlantEDAResult",
+    "RepeatabilitySummary",
+    "RunRecord",
+    "analyze_capture_eda",
+    "analyze_repeatability",
+    "analyze_synthetic_control",
+    "build_manifest",
+    "build_representations",
+    "cross_check_a_references",
+    "render_pairing_markdown",
+    "render_plant_svg",
+    "render_report",
+    "repeatability_csv",
+    "segment_phases",
+    "summarize_metric",
 ]
