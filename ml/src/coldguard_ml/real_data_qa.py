@@ -2269,7 +2269,7 @@ def qa_manifest(
 ) -> dict[str, Any]:
     return {
         "qa_layer_version": QA_LAYER_VERSION,
-        "report_schema": "coldguard-w05-qa-report-v1",
+        "report_schema": "coldguard-w05-qa-report-v2",
         "analysis_code_sha256": analysis_code_sha256,
         "repository_revision": repository_revision,
         "generation_command": command,
