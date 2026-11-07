@@ -9,7 +9,9 @@ from coldguard_ml.baselines import (
     B1_HYSTERESIS,
     CERTAINTY_EXACT,
     CERTAINTY_INTERVAL,
+    ReplayCoverage,
     ReplayResult,
+    ReplaySample,
     TRANSITION_CRITERION,
     TRANSITION_ON,
 )
@@ -23,6 +25,8 @@ from coldguard_ml.event_evaluator import (
     EVENT_UNTRUSTED_INTERVAL,
     EVENT_WARNING_EPISODE,
     EPISODE_POLICY_VERSION,
+    EXCLUDED_PROVENANCE_MISMATCH,
+    PROVENANCE_MISMATCH,
     WARNING,
     NO_WARNING,
     UNKNOWN,
@@ -40,6 +44,7 @@ from coldguard_ml.event_evaluator import (
     critical_events_from_replay,
     evaluate_events,
     event_definitions,
+    warning_samples_from_replay,
 )
 from coldguard_ml.event_evaluator import METRIC_DEFINED, METRIC_UNDEFINED
 
@@ -535,3 +540,359 @@ def test_aiw_is_not_synthesized():
     status = aiw_boundary_status()
     assert status["status"] == "NOT_ESTIMABLE"
     assert status["synthetic_latency_allowed"] is False
+
+
+# ---------------------------------------------------------------------------
+# W09 integrity regressions: event lineage (R1) and duplicate conflicts (R2)
+# ---------------------------------------------------------------------------
+
+OTHER_SOURCE = "d" * 64
+
+
+def _identified_episodes(run_id, source, start=10.0, count=2):
+    samples = tuple(
+        WarningSample(
+            time_s=start + index,
+            state=WARNING,
+            sample_id=f"{run_id}-{start}-{index}",
+        )
+        for index in range(count)
+    )
+    return build_warning_episodes(
+        samples,
+        _episode_policy(),
+        run_id=run_id,
+        source_sha256=source,
+        synthetic_control=True,
+    ).episodes
+
+
+def _identified_event(event_id, time_s, run_id, source):
+    return CriticalEventInput(
+        event_id=event_id,
+        time_s=time_s,
+        run_id=run_id,
+        source_sha256=source,
+        definition_version="synthetic-def-v1",
+        source="synthetic",
+        time_certainty=CERTAINTY_INTERVAL,
+    )
+
+
+def _evaluate_identified(run_id, source, episodes, events):
+    return evaluate_events(
+        run_id=run_id,
+        source_sha256=source,
+        episodes=episodes,
+        critical_events=events,
+        episode_policy=_episode_policy(),
+        association_policy=_association(),
+        warning_definition="synthetic warning",
+        coverage_trustworthy=True,
+        eligible_run_count=1,
+        evaluable_duration_s=600.0,
+        synthetic_control=True,
+    )
+
+
+def _critical_statuses(result):
+    return {
+        item["event_id"]: item["match_status"]
+        for item in result.events
+        if item["event_type"] == EVENT_CRITICAL_EVENT
+    }
+
+
+def _episode_statuses(result):
+    return {
+        item["event_id"]: item["match_status"]
+        for item in result.events
+        if item["event_type"] == EVENT_WARNING_EPISODE
+    }
+
+
+def test_cross_run_cross_source_episode_never_matches_foreign_event():
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        _identified_episodes(RUN, SOURCE),
+        [_identified_event("E-FOREIGN", 12.0, "RUN-B", OTHER_SOURCE)],
+    )
+    assert result.matches == ()
+    assert result.metrics.true_matched_warning_episodes == 0
+    assert result.metrics.provenance_mismatch_event_count == 1
+    assert _critical_statuses(result) == {
+        "E-FOREIGN": EXCLUDED_PROVENANCE_MISMATCH
+    }
+    assert not any(
+        item["event_type"] == EVENT_NO_EVENT_OBSERVATION
+        for item in result.events
+    )
+
+
+def test_same_run_different_source_never_matches():
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        _identified_episodes(RUN, SOURCE),
+        [_identified_event("E-OTHER-SOURCE", 12.0, RUN, OTHER_SOURCE)],
+    )
+    assert result.matches == ()
+    assert _critical_statuses(result) == {
+        "E-OTHER-SOURCE": EXCLUDED_PROVENANCE_MISMATCH
+    }
+
+
+def test_same_source_different_run_never_matches():
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        _identified_episodes(RUN, SOURCE),
+        [_identified_event("E-OTHER-RUN", 12.0, "RUN-B", SOURCE)],
+    )
+    assert result.matches == ()
+    assert _critical_statuses(result) == {
+        "E-OTHER-RUN": EXCLUDED_PROVENANCE_MISMATCH
+    }
+
+
+def test_missing_run_id_is_not_a_provenance_wildcard():
+    episodes = _identified_episodes(None, SOURCE)
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        episodes,
+        [_identified_event("E-RUN", 12.0, "RUN-B", SOURCE)],
+    )
+    assert result.matches == ()
+    assert result.metrics.provenance_mismatch_event_count == 1
+    assert result.metrics.provenance_mismatch_episode_count == 1
+    assert _episode_statuses(result) == {
+        episodes[0].episode_id: PROVENANCE_MISMATCH
+    }
+
+
+def test_evaluation_arguments_must_agree_with_both_records():
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        _identified_episodes("RUN-B", OTHER_SOURCE),
+        [_identified_event("E-B", 12.0, "RUN-B", OTHER_SOURCE)],
+    )
+    assert result.matches == ()
+    assert result.episodes == ()
+    assert result.metrics.provenance_mismatch_event_count == 1
+    assert result.metrics.provenance_mismatch_episode_count == 1
+
+
+def test_mixed_episode_collection_only_matches_in_scope_lineage():
+    in_scope = _identified_episodes(RUN, SOURCE, start=10.0)
+    foreign = _identified_episodes("RUN-B", OTHER_SOURCE, start=11.0)
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        in_scope + foreign,
+        [_identified_event("E-IN", 13.0, RUN, SOURCE)],
+    )
+    assert result.metrics.true_matched_warning_episodes == 1
+    assert result.metrics.unmatched_warning_episodes == 0
+    assert result.metrics.episode_support == 1
+    assert result.metrics.provenance_mismatch_episode_count == 1
+    assert result.matches[0].alternative_episode_ids == ()
+    assert _episode_statuses(result)[foreign[0].episode_id] == PROVENANCE_MISMATCH
+
+
+def test_strict_lineage_equality_preserves_positive_control():
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        _identified_episodes(RUN, SOURCE, start=10.0),
+        [_identified_event("E-IN", 13.0, RUN, SOURCE)],
+    )
+    assert result.metrics.true_matched_warning_episodes == 1
+    assert result.metrics.provenance_mismatch_event_count == 0
+    assert _critical_statuses(result) == {"E-IN": "MATCHED"}
+
+
+def test_missing_run_identity_pairs_only_with_same_source():
+    result = _evaluate_identified(
+        None,
+        SOURCE,
+        _identified_episodes(None, SOURCE, start=10.0),
+        [_identified_event("E-IN", 13.0, None, SOURCE)],
+    )
+    assert result.metrics.true_matched_warning_episodes == 1
+
+
+def test_empty_source_identity_never_matches():
+    result = _evaluate_identified(
+        RUN,
+        "",
+        _identified_episodes(RUN, "", start=10.0),
+        [_identified_event("E-EMPTY", 13.0, RUN, "")],
+    )
+    assert result.matches == ()
+    assert result.metrics.provenance_mismatch_event_count == 1
+    assert result.metrics.provenance_mismatch_episode_count == 1
+
+
+@pytest.mark.parametrize(
+    "first, second",
+    [
+        (WARNING, NO_WARNING),
+        (NO_WARNING, WARNING),
+        (UNKNOWN, WARNING),
+        (WARNING, UNKNOWN),
+    ],
+)
+def test_contradictory_duplicate_state_fails_closed_in_both_orders(first, second):
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        _episodes(
+            (
+                WarningSample(100.0, first, "X1"),
+                WarningSample(100.0, second, "X1"),
+            )
+        )
+
+
+def test_contradictory_duplicate_time_fails_closed():
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        _episodes(
+            (
+                WarningSample(100.0, WARNING, "X1"),
+                WarningSample(110.0, WARNING, "X1"),
+            )
+        )
+
+
+def test_contradictory_duplicate_quality_fails_closed():
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        _episodes(
+            (
+                WarningSample(100.0, WARNING, "X1", quality="EVALUABLE"),
+                WarningSample(100.0, WARNING, "X1", quality="INVALID"),
+            )
+        )
+
+
+def test_exact_duplicate_identity_still_collapses():
+    result = _episodes(
+        (
+            WarningSample(100.0, WARNING, "X1"),
+            WarningSample(100.0, WARNING, "X1"),
+            WarningSample(101.0, WARNING, "X2"),
+        )
+    )
+    assert len(result.episodes) == 1
+    assert result.episodes[0].sample_count == 2
+
+
+def test_distinct_identities_at_equal_timestamp_stay_distinct():
+    result = _episodes(
+        (
+            WarningSample(100.0, WARNING, "X1"),
+            WarningSample(100.0, WARNING, "X2"),
+        )
+    )
+    assert len(result.episodes) == 1
+    assert result.episodes[0].sample_count == 2
+
+
+def _replay_sample(index, sample_id, time_s, criterion_state, status="EVALUABLE"):
+    return ReplaySample(
+        index=index,
+        sample_id=sample_id,
+        seq=index + 1,
+        source_line_index=index,
+        time_s=time_s,
+        representative_c=5.0 if criterion_state else 2.0,
+        sample_status=status,
+        criterion_state=criterion_state,
+        decision="WARN" if criterion_state else "OK",
+        prior_state=None,
+        new_state="ON" if criterion_state else "OFF",
+        transition=None,
+        reason="synthetic",
+    )
+
+
+def _replay_with(samples):
+    return ReplayResult(
+        baseline=B0_THRESHOLD,
+        config_version="synthetic",
+        config_sha256="e" * 64,
+        source_path="synthetic",
+        source_sha256=SOURCE,
+        run_id=RUN,
+        scenario_id=None,
+        boot_sessions=1,
+        time_domain="synthetic",
+        parameter_status=STATUS,
+        parameter_source="synthetic",
+        evaluability="DIAGNOSTIC",
+        refusal_reason="",
+        samples=tuple(samples),
+        transitions=(),
+        refused_intervals=(),
+        coverage=ReplayCoverage(
+            observation_duration_s=600.0,
+            evaluable_duration_s=600.0,
+            unknown_duration_s=0.0,
+            evaluable_fraction=1.0,
+            sample_count=len(samples),
+            evaluable_sample_count=len(samples),
+            unknown_sample_count=0,
+            duplicate_sample_count=0,
+            gap_count=0,
+        ),
+        persistence=None,
+        limitations=(),
+    )
+
+
+@pytest.mark.parametrize("warning_first", [True, False])
+def test_replay_adapter_refuses_contradictory_duplicates(warning_first):
+    first = _replay_sample(0, "X1", 100.0, warning_first)
+    second = _replay_sample(1, "X1", 100.0, not warning_first)
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        warning_samples_from_replay(
+            _replay_with((first, second)), warning_definition="synthetic"
+        )
+
+
+def test_replay_adapter_keeps_exact_duplicates_idempotent():
+    samples, duplicates = warning_samples_from_replay(
+        _replay_with(
+            (
+                _replay_sample(0, "X1", 100.0, True),
+                _replay_sample(1, "X1", 100.0, True),
+            )
+        ),
+        warning_definition="synthetic",
+    )
+    assert duplicates == 1
+    assert len(samples) == 1
+    assert samples[0].state == WARNING
+
+
+def test_replay_adapter_refuses_duplicate_time_and_quality_conflicts():
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        warning_samples_from_replay(
+            _replay_with(
+                (
+                    _replay_sample(0, "X1", 100.0, True),
+                    _replay_sample(1, "X1", 110.0, True),
+                )
+            ),
+            warning_definition="synthetic",
+        )
+    with pytest.raises(EventEvaluationError, match="contradictory duplicate"):
+        warning_samples_from_replay(
+            _replay_with(
+                (
+                    _replay_sample(0, "X1", 100.0, True, "EVALUABLE"),
+                    _replay_sample(1, "X1", 100.0, True, "INVALID"),
+                )
+            ),
+            warning_definition="synthetic",
+        )

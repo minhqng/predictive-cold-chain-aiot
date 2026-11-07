@@ -13,6 +13,10 @@ Scientific rules enforced here:
 * censored or untrusted observations never become negative controls;
 * one critical event is matched at most once, and one episode is matched at
   most once; alternatives are recorded;
+* a matched pair must share run identity and source content hash; mismatched
+  evidence is retained with an explicit status but never counted;
+* a repeated sample identity collapses only when its canonical warning
+  payload is identical; contradictory duplicates fail closed;
 * zero denominators stay undefined;
 * an ON transition is never silently treated as a thermal critical crossing;
 * EWT compatibility is delegated to W04 ``compute_ewt``; W09 never invents a
@@ -165,6 +169,9 @@ AIW_REASON = (
 
 METRIC_DEFINED = "DEFINED"
 METRIC_UNDEFINED = "UNDEFINED"
+
+EXCLUDED_PROVENANCE_MISMATCH = "EXCLUDED_PROVENANCE_MISMATCH"
+PROVENANCE_MISMATCH = "PROVENANCE_MISMATCH"
 
 
 class EventEvaluationError(ValueError):
@@ -414,6 +421,8 @@ class EventMetrics:
     censored_event_count: int
     untrusted_event_count: int
     intervened_event_count: int
+    provenance_mismatch_event_count: int
+    provenance_mismatch_episode_count: int
     run_support: int
     event_support: int
     episode_support: int
@@ -437,6 +446,12 @@ class EventMetrics:
             "censored_event_count": self.censored_event_count,
             "untrusted_event_count": self.untrusted_event_count,
             "intervened_event_count": self.intervened_event_count,
+            "provenance_mismatch_event_count": (
+                self.provenance_mismatch_event_count
+            ),
+            "provenance_mismatch_episode_count": (
+                self.provenance_mismatch_episode_count
+            ),
             "run_support": self.run_support,
             "event_support": self.event_support,
             "episode_support": self.episode_support,
@@ -507,21 +522,28 @@ def warning_samples_from_replay(
     ):
         raise EventEvaluationError(f"unknown replay baseline {replay.baseline!r}")
     samples: list[WarningSample] = []
-    seen: set[str] = set()
+    seen: dict[str, tuple[float | None, str, str]] = {}
     duplicates = 0
     for sample in replay.samples:
-        if sample.sample_id in seen:
-            duplicates += 1
-            continue
-        seen.add(sample.sample_id)
-        if sample.time_s is None:
-            continue
         if sample.criterion_state is None:
             state = UNKNOWN
         elif sample.criterion_state:
             state = WARNING
         else:
             state = NO_WARNING
+        payload = (sample.time_s, state, sample.sample_status)
+        if sample.sample_id in seen:
+            duplicates += 1
+            if seen[sample.sample_id] != payload:
+                raise EventEvaluationError(
+                    f"contradictory duplicate warning sample "
+                    f"{sample.sample_id!r}: {seen[sample.sample_id]!r} vs "
+                    f"{payload!r}; input order cannot resolve the conflict"
+                )
+            continue
+        seen[sample.sample_id] = payload
+        if sample.time_s is None:
+            continue
         samples.append(
             WarningSample(
                 time_s=sample.time_s,
@@ -636,11 +658,18 @@ def build_warning_episodes(
         active_samples = []
         active_censored = False
 
-    seen: set[str] = set()
+    seen: dict[str, tuple[float, str, str]] = {}
     for sample in samples:
+        payload = (sample.time_s, sample.state, sample.quality)
         if sample.sample_id in seen:
+            if seen[sample.sample_id] != payload:
+                raise EventEvaluationError(
+                    f"contradictory duplicate warning sample "
+                    f"{sample.sample_id!r}: {seen[sample.sample_id]!r} vs "
+                    f"{payload!r}; input order cannot resolve the conflict"
+                )
             continue
-        seen.add(sample.sample_id)
+        seen[sample.sample_id] = payload
         if sample.state == WARNING:
             if active_start is None:
                 active_start = sample.time_s
@@ -734,6 +763,28 @@ def _window_match(
     )
 
 
+def _lineage_compatible(
+    *,
+    run_id: str | None,
+    source_sha256: str,
+    other_run_id: str | None,
+    other_source_sha256: str,
+) -> bool:
+    """Require strict acquisition-lineage equality before any match.
+
+    The W09 event types cannot express verified cross-export lineage, so two
+    records may interact only when their source content identity and run
+    identity are both equal. A missing ``run_id`` is never a wildcard: it may
+    pair only with another missing run identity from the same source.
+    """
+    if not source_sha256 or not other_source_sha256:
+        return False
+    return (
+        source_sha256 == other_source_sha256
+        and run_id == other_run_id
+    )
+
+
 def evaluate_events(
     *,
     run_id: str | None,
@@ -749,7 +800,15 @@ def evaluate_events(
     untrusted_intervals: Iterable[dict[str, Any]] = (),
     synthetic_control: bool = False,
 ) -> EventEvaluationResult:
-    """Match warning episodes to observed critical events and compute metrics."""
+    """Match warning episodes to observed critical events and compute metrics.
+
+    A candidate pair must share the evaluation's run identity and source
+    content hash; same-time evidence from a different run or source is never a
+    match. Time-domain compatibility is established upstream by the acquisition
+    contract and is not representable in these event types, so callers must not
+    mix clock domains in one evaluation. Foreign evidence stays in ``events``
+    with an explicit mismatch status and is excluded from denominators.
+    """
     if eligible_run_count < 0:
         raise EventEvaluationError("eligible_run_count cannot be negative")
     if evaluable_duration_s is not None and (
@@ -768,16 +827,44 @@ def evaluate_events(
                 f"duplicate critical-event identity {event.event_id!r}"
             )
         events_by_id[event.event_id] = event
-    unmatched_episodes = {episode.episode_id: episode for episode in episodes}
+    in_scope_episodes = tuple(
+        episode
+        for episode in episodes
+        if _lineage_compatible(
+            run_id=run_id,
+            source_sha256=source_sha256,
+            other_run_id=episode.run_id,
+            other_source_sha256=episode.source_sha256,
+        )
+    )
+    in_scope_ids = {episode.episode_id for episode in in_scope_episodes}
+    foreign_episode_ids = {
+        episode.episode_id
+        for episode in episodes
+        if episode.episode_id not in in_scope_ids
+    }
+    unmatched_episodes = {
+        episode.episode_id: episode for episode in in_scope_episodes
+    }
     matches: list[EpisodeMatch] = []
     missed: list[str] = []
     censored = 0
     untrusted = 0
     intervened = 0
+    provenance_mismatch_events = 0
     excluded_events: dict[str, str] = {}
     for event in sorted(
         critical_events, key=lambda item: (item.time_s is None, item.time_s or 0.0, item.event_id)
     ):
+        if not _lineage_compatible(
+            run_id=run_id,
+            source_sha256=source_sha256,
+            other_run_id=event.run_id,
+            other_source_sha256=event.source_sha256,
+        ):
+            provenance_mismatch_events += 1
+            excluded_events[event.event_id] = EXCLUDED_PROVENANCE_MISMATCH
+            continue
         if not event.observed:
             censored += 1
             excluded_events[event.event_id] = "EXCLUDED_CENSORED"
@@ -796,8 +883,14 @@ def evaluate_events(
             continue
         candidates = [
             episode
-            for episode in episodes
+            for episode in in_scope_episodes
             if episode.episode_id in unmatched_episodes
+            and _lineage_compatible(
+                run_id=event.run_id,
+                source_sha256=event.source_sha256,
+                other_run_id=episode.run_id,
+                other_source_sha256=episode.source_sha256,
+            )
             and _window_match(event.time_s, episode, association_policy)
         ]
         if not candidates:
@@ -886,9 +979,11 @@ def evaluate_events(
         censored_event_count=censored,
         untrusted_event_count=untrusted,
         intervened_event_count=intervened,
+        provenance_mismatch_event_count=provenance_mismatch_events,
+        provenance_mismatch_episode_count=len(foreign_episode_ids),
         run_support=eligible_run_count,
         event_support=denominator,
-        episode_support=len(episodes),
+        episode_support=len(in_scope_episodes),
         undefined_reasons=tuple(undefined_reasons),
     )
     events: list[dict[str, Any]] = []
@@ -901,11 +996,18 @@ def evaluate_events(
         )
         events.append(item)
     for episode in episodes:
-        events.append(episode.to_dict() | {
-            "match_status": (
-                "MATCHED" if episode.episode_id in matched_episode_ids else "UNMATCHED"
+        if episode.episode_id in foreign_episode_ids:
+            status = PROVENANCE_MISMATCH
+        elif episode.episode_id in matched_episode_ids:
+            status = "MATCHED"
+        else:
+            status = "UNMATCHED"
+        item = episode.to_dict() | {"match_status": status}
+        if status == PROVENANCE_MISMATCH:
+            item["reason"] = (
+                "episode acquisition lineage does not match this evaluation"
             )
-        })
+        events.append(item)
     untrusted_list = list(untrusted_intervals)
     if not coverage_trustworthy:
         events.append(
@@ -918,7 +1020,12 @@ def evaluate_events(
                 "reason": "coverage is not trustworthy for event matching",
             }
         )
-    elif denominator == 0 and not untrusted_list:
+    elif (
+        denominator == 0
+        and not untrusted_list
+        and provenance_mismatch_events == 0
+        and not foreign_episode_ids
+    ):
         events.append(
             {
                 "event_type": EVENT_NO_EVENT_OBSERVATION,
@@ -945,7 +1052,7 @@ def evaluate_events(
         run_id=run_id,
         source_sha256=source_sha256,
         events=tuple(events),
-        episodes=tuple(episodes),
+        episodes=in_scope_episodes,
         matches=tuple(matches),
         unmatched_episode_ids=tuple(sorted(unmatched_episodes)),
         missed_event_ids=tuple(missed),
