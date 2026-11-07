@@ -20,8 +20,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W05 remediation added revision 0007 (reconciliation admission metadata).
-EXPECTED_HEAD = "0007"
+# W06 added revision 0008 (durable command lifecycle storage).
+EXPECTED_HEAD = "0008"
 
 # C-W03 evolution: head moved 0002 -> 0003; the assertions above now
 # cover the normalized telemetry table as well. The W02->W03 upgrade
@@ -157,6 +157,7 @@ def _assert_expected_schema() -> None:
         "alembic_version", "telemetry_raw", "telemetry",
         "device_twin", "device_twin_retired_boot",
         "reconciliation_boundary", "reconciliation_legacy_audit",
+        "commands", "command_attempts", "command_acks", "command_transitions",
     }, tables
     assert columns == EXPECTED_COLUMNS, columns - EXPECTED_COLUMNS or EXPECTED_COLUMNS - columns
     assert EXPECTED_INDEXES <= indexes, EXPECTED_INDEXES - indexes
