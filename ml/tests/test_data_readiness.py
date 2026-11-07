@@ -302,6 +302,7 @@ def _green_suite(
                 admission=admission,
                 qa=qa,
                 requirement=requirement,
+                policy=policy,
                 manifest_linkage=_linkage(capture),
             )
         )
@@ -1057,6 +1058,34 @@ def test_unknown_threshold_status_is_rejected(tmp_path):
     threshold = default_completeness_policy().threshold(DIMENSION_WHOLE)
     with pytest.raises(ValueError):
         dataclasses.replace(threshold, status="approved")
+    with pytest.raises(ValueError):
+        dataclasses.replace(threshold, value=float("nan"))
+    duplicate = tmp_path / "duplicate-policy.json"
+    duplicate.write_text(
+        json.dumps(
+            {
+                "thresholds": [
+                    {"dimension": DIMENSION_WHOLE, "status": "PROPOSED"},
+                    {"dimension": DIMENSION_WHOLE, "status": "PROPOSED"},
+                ]
+            }
+        ),
+        encoding="utf-8",
+    )
+    duplicate_result = _run_cli(
+        [
+            "--source",
+            str(REAL_A_EXPORT),
+            "--a-run-index",
+            str(REAL_A_INDEX),
+            "--completeness-policy",
+            str(duplicate),
+            "--out",
+            str(tmp_path / "duplicate-out"),
+        ]
+    )
+    assert duplicate_result.returncode == 1
+    assert "INVALID CONFIGURATION" in duplicate_result.stderr
     bad_policy = tmp_path / "bad-policy.json"
     bad_policy.write_text(
         json.dumps(
@@ -1107,6 +1136,43 @@ def test_frozen_threshold_without_value_cannot_be_green(tmp_path):
     assert report.physical_gate.observed_status == "YELLOW"
     assert "THRESHOLD_VALUE_MISSING" in report.physical_gate.reason_codes
     assert report.predictive_gate.observed_status == "NOT_READY"
+
+
+def test_report_policy_must_match_the_validation_policy(tmp_path):
+    report, validations, admissions = _green_suite(tmp_path)
+    assert report.physical_gate.observed_status == "GREEN"
+    mismatched = build_gate_b_report(
+        validations,
+        admissions,
+        default_scenario_requirement("S1"),
+        policy=_frozen_policy(evidence=True),
+        synthetic_control=False,
+    )
+    assert mismatched.physical_gate.observed_status == "RED"
+    assert (
+        "THRESHOLD_POLICY_MISMATCH"
+        in mismatched.physical_gate.reason_codes
+    )
+    assert mismatched.predictive_gate.observed_status == "NOT_READY"
+    altered_policy = _frozen_policy(evidence=True)
+    altered_policy = dataclasses.replace(
+        altered_policy,
+        thresholds=tuple(
+            dataclasses.replace(threshold, value=0.5)
+            if threshold.value is not None
+            else threshold
+            for threshold in altered_policy.thresholds
+        ),
+    )
+    altered = build_gate_b_report(
+        validations,
+        admissions,
+        default_scenario_requirement("S1"),
+        policy=altered_policy,
+        synthetic_control=True,
+    )
+    assert altered.physical_gate.observed_status == "RED"
+    assert "THRESHOLD_POLICY_MISMATCH" in altered.physical_gate.reason_codes
 
 
 def test_blocking_completeness_not_evaluable_cannot_be_green(tmp_path):
@@ -1716,6 +1782,40 @@ def test_bare_eligible_boolean_cannot_bypass_validation_gate():
     assert all(
         "SPLIT_ELIGIBILITY_PROVENANCE_MISSING" in item["reason"]
         for item in plan.excluded
+    )
+
+
+def test_split_group_conflict_reason_propagates_to_split_gate(tmp_path):
+    candidates = [
+        _candidate(f"CG-S1-A-{index:03d}", source=f"source-{index}")
+        for index in range(1, 25)
+    ]
+    conflict_run = "CG-S1-A-900"
+    candidates.extend(
+        [
+            _candidate(conflict_run, source="conflict-source", eligible=True),
+            _candidate(
+                conflict_run,
+                source="conflict-source",
+                eligible=False,
+                reason="A_LEDGER_INVALID",
+                ledger="INVALID",
+            ),
+        ]
+    )
+    plan = plan_development_split(candidates)
+    assert plan.feasibility == "FEASIBLE"
+    assert "SPLIT_GROUP_CONFLICT_REPORTED" in plan.reasons
+    report, validations, admissions = _green_suite(tmp_path)
+    with_conflict = build_gate_b_report(
+        validations,
+        admissions,
+        default_scenario_requirement("S1"),
+        split_plan=plan,
+        synthetic_control=True,
+    )
+    assert "SPLIT_GROUP_CONFLICT_REPORTED" in (
+        with_conflict.split_gate.reason_codes
     )
 
 

@@ -170,6 +170,7 @@ REASON_SPLIT_PAIR_STRADDLE = "PAIR_LINEAGE_CANNOT_BE_SPLIT"
 REASON_SPLIT_PLANNING = "SPLIT_PLAN_IS_PROVISIONAL"
 REASON_SPLIT_GROUP_CONFLICT = "SPLIT_GROUP_CONFLICT_REPORTED"
 REASON_ELIGIBILITY_PROVENANCE_MISSING = "SPLIT_ELIGIBILITY_PROVENANCE_MISSING"
+REASON_THRESHOLD_POLICY_MISMATCH = "THRESHOLD_POLICY_MISMATCH"
 REASON_COMPLETENESS_NOT_FROZEN = "COMPLETENESS_POLICY_NOT_FROZEN"
 REASON_FREEZE_EVIDENCE_MISSING = "THRESHOLD_FREEZE_EVIDENCE_MISSING"
 REASON_THRESHOLD_VALUE_MISSING = "THRESHOLD_VALUE_MISSING"
@@ -2557,6 +2558,52 @@ def policy_freeze_gaps(
     return gaps
 
 
+def threshold_policy_mismatches(
+    validations: Sequence[RunValidation],
+    policy: CompletenessPolicy,
+) -> tuple[dict[str, Any], ...]:
+    """Validation results must have been computed under the reported policy.
+
+    A gate may not combine a PROPOSED-policy validation with a FROZEN-policy
+    report (or a different cutoff): the completeness result would no longer be
+    evidence for the reported decision. Applicable dimensions only; a
+    NOT_APPLICABLE event dimension cannot create a false mismatch.
+    """
+    mismatches: list[dict[str, Any]] = []
+    for item in validations:
+        for result in item.completeness:
+            if result.status == CHECK_NOT_APPLICABLE:
+                continue
+            try:
+                threshold = policy.threshold(result.dimension)
+            except KeyError:
+                mismatches.append(
+                    {
+                        "source_path": item.source_path,
+                        "dimension": result.dimension,
+                        "reason": "DIMENSION_ABSENT_FROM_REPORTED_POLICY",
+                    }
+                )
+                continue
+            if (
+                result.threshold != threshold.value
+                or result.threshold_status != threshold.status
+                or result.equality_behavior != threshold.equality_behavior
+            ):
+                mismatches.append(
+                    {
+                        "source_path": item.source_path,
+                        "dimension": result.dimension,
+                        "validation_threshold": result.threshold,
+                        "validation_status": result.threshold_status,
+                        "reported_threshold": threshold.value,
+                        "reported_status": threshold.status,
+                        "reason": "VALIDATION_POLICY_DIFFERS_FROM_REPORT",
+                    }
+                )
+    return tuple(mismatches)
+
+
 def assess_gate_b(
     validations: Sequence[RunValidation],
     admissions: Sequence[AdmissionResult],
@@ -2635,6 +2682,8 @@ def assess_gate_b(
         reasons.append(REASON_DUPLICATE_CONFLICT)
     if duplicate_run_ids:
         reasons.append(REASON_DUPLICATE_RUN_ID)
+    if threshold_policy_mismatches(scenario_runs, policy):
+        reasons.append(REASON_THRESHOLD_POLICY_MISMATCH)
     required_failed = [
         item
         for item in eligible
@@ -2772,6 +2821,7 @@ def assess_gate_b(
             "RUN_MANIFEST_LINKAGE",
             "INDEPENDENT_RUN_POPULATION",
             "NO_DUPLICATE_VIEW_CONFLICT",
+            "THRESHOLD_POLICY_BOUND_TO_VALIDATION",
         ),
         reason_codes=reasons or [REASON_PASS],
         validations=scenario_runs,

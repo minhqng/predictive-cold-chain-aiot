@@ -272,20 +272,36 @@ def _load_json(path: Path) -> Any:
     return json.loads(path.read_text(encoding="utf-8"))
 
 
+def _policy_notes(payload: dict[str, Any], fallback: Sequence[str]) -> tuple[str, ...]:
+    notes = payload.get("notes", [])
+    if not isinstance(notes, list):
+        raise ValueError("completeness policy notes must be a list")
+    return tuple(str(note) for note in notes) or tuple(fallback)
+
+
 def _load_policy(path: Path) -> CompletenessPolicy:
     payload = _load_json(path)
     if not isinstance(payload, dict):
         raise ValueError("completeness policy must be a JSON object")
     if "thresholds" in payload:
+        raw_thresholds = payload["thresholds"]
+        if not isinstance(raw_thresholds, list):
+            raise ValueError("completeness policy thresholds must be a list")
         thresholds = []
+        seen_dimensions: set[str] = set()
         by_dimension = {
             threshold.dimension: threshold
             for threshold in default_completeness_policy().thresholds
         }
-        for item in payload["thresholds"]:
+        for item in raw_thresholds:
             if not isinstance(item, dict) or "dimension" not in item:
                 raise ValueError("each threshold requires a dimension")
             dimension = str(item["dimension"])
+            if dimension in seen_dimensions:
+                raise ValueError(
+                    f"duplicate completeness dimension {dimension!r}"
+                )
+            seen_dimensions.add(dimension)
             base = by_dimension.get(dimension)
             if base is None:
                 raise ValueError(f"unknown completeness dimension {dimension!r}")
@@ -328,8 +344,9 @@ def _load_policy(path: Path) -> CompletenessPolicy:
                 payload.get("policy_version", COMPLETENESS_POLICY_VERSION)
             ),
             thresholds=tuple(thresholds),
-            notes=tuple(payload.get("notes", []))
-            or default_completeness_policy().notes,
+            notes=_policy_notes(
+                payload, default_completeness_policy().notes
+            ),
         )
     overrides = payload.get("overrides", payload)
     if not isinstance(overrides, dict):
@@ -374,7 +391,7 @@ def _load_policy(path: Path) -> CompletenessPolicy:
             payload.get("policy_version", COMPLETENESS_POLICY_VERSION)
         ),
         thresholds=tuple(thresholds),
-        notes=tuple(payload.get("notes", [])) or base_policy.notes,
+        notes=_policy_notes(payload, base_policy.notes),
     )
 
 

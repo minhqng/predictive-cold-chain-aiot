@@ -123,8 +123,11 @@ GREEN software branch as a contract positive control. It is reported as
 `DATA_ORIGIN = SYNTHETIC_CONTROL_ONLY`, its predictive dataset stays
 `NOT_READY`, and it never certifies measured physical data.
 
-The draft policy lives in `coldguard-w08-completeness-policy-draft-v1` and is
-rendered as `completeness-policy-W08.md`.
+The draft policy lives in `coldguard-w08-completeness-policy-draft-v2` and is
+rendered as `completeness-policy-W08.md`. A report may not combine validation
+results computed under one policy with a different reported policy: a
+threshold/status/equality mismatch is a RED gate reason
+(`THRESHOLD_POLICY_MISMATCH`).
 
 ## 5. Gate decision model (B-W08-03)
 
