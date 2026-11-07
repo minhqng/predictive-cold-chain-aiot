@@ -230,6 +230,11 @@ class ThresholdConfig:
             raise BaselineConfigError(
                 "time_domain must be BOOT_SCOPED_UPTIME or EVENT_UTC"
             )
+        if not (self.scenario_id or "").strip():
+            raise BaselineConfigError(
+                "scenario provenance is required; a baseline cannot be "
+                "attached to an undeclared scenario"
+            )
         if not self.policy_version.strip():
             raise BaselineConfigError("policy_version must be non-empty")
 
@@ -292,6 +297,11 @@ class HysteresisConfig:
         _require_positive_finite(
             "max_continuity_gap_s", self.max_continuity_gap_s
         )
+        if not (self.scenario_id or "").strip():
+            raise BaselineConfigError(
+                "scenario provenance is required; a baseline cannot be "
+                "attached to an undeclared scenario"
+            )
         if not self.policy_version.strip():
             raise BaselineConfigError("policy_version must be non-empty")
 
