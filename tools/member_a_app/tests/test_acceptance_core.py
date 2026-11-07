@@ -258,6 +258,44 @@ class EvidenceTests(unittest.TestCase):
         self.assertIsNotNone(got)
         self.assertIs(got.outcome, model.Outcome.PASS)
 
+    def test_bench_result_accepts_safe_kind(self):
+        rec = self.store.record_bench_result("h8-stage-f", {"outcome": "PASS"})
+        self.assertTrue((self.store.root / rec["stored"]).is_file())
+        self.assertEqual(rec["sha256"],
+                         hashlib.sha256((self.store.root / rec["stored"]).read_bytes()).hexdigest())
+
+    def test_bench_result_rejects_unsafe_kind(self):
+        for bad in ("../escape", "a/b", "a\\b", "/abs", "..", "", ".hidden", "C:x"):
+            with self.assertRaises(evidence.EvidenceError, msg=f"kind={bad!r}"):
+                self.store.record_bench_result(bad, {})
+
+    def test_attempt_count_rejects_noncanonical_id(self):
+        for bad in ("../escape", "a/b", "A-W02-06/..", "not-canonical", ""):
+            with self.assertRaises(evidence.EvidenceError, msg=f"id={bad!r}"):
+                self.store.attempt_count(bad)
+
+    def test_attempt_count_accepts_canonical_id(self):
+        self.assertEqual(self.store.attempt_count("A-W02-06"), 0)
+        r = model.TestResult(test_id="A-W02-06", outcome=model.Outcome.FAIL,
+                             started_at="s", ended_at="e", source="HARDWARE")
+        self.store.record_result(r)
+        self.assertEqual(self.store.attempt_count("A-W02-06"), 1)
+
+    def test_bench_result_rejects_overlong_kind(self):
+        with self.assertRaises(evidence.EvidenceError):
+            self.store.record_bench_result("k" * 121, {})
+
+    def test_attachment_name_is_confined(self):
+        f = evidence._safe_attachment_name
+        self.assertEqual(f("trailing."), "trailing")
+        self.assertEqual(f("..."), "evidence")
+        self.assertEqual(f(""), "evidence")
+        self.assertLessEqual(len(f("a" * 200)), 120)
+        cleaned = f("a/b\\c:d")
+        self.assertNotIn("/", cleaned)
+        self.assertNotIn("\\", cleaned)
+        self.assertNotIn(":", cleaned)
+
 
 if __name__ == "__main__":
     unittest.main()
