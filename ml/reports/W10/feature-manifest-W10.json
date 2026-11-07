@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "b56d59223db2fadff7f3d153f2ac8696584504601512206df62d45c1625c4c1f",
+  "analysis_code_sha256": "c42cd959b172fe3c244f9d475f5e129e30700061fb3eb5793a38db7fe16feb48",
   "artifacts": {
     "S2-feature-report.md": {
       "bytes": 7533,
@@ -14,8 +14,8 @@
       "sha256": "f34ecbc7f00834f13292d90c067a3d5e4a78735518288e5fc796f5f434c07335"
     },
     "label-pilot-W10.csv": {
-      "bytes": 2905,
-      "sha256": "cb1eaa55f5e59b3c06b583a62b39f736987bd5e76430ad7862f538166f98226c"
+      "bytes": 2907,
+      "sha256": "1ed9ebf0c7de0275b79905403f0a61a4a51c8ef79d3515b61197c191fdebd5e2"
     },
     "real-diagnostic-W10.svg": {
       "bytes": 57437,
@@ -29,7 +29,7 @@
     "version": "coldguard-w10-synthetic-s2-v1"
   },
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
+  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision 3b31e28ea752dac8254c98c42736519e3db477dd",
   "layer_version": "coldguard-w10-causal-feature-pipeline-v1",
   "real_a": {
     "boot_id": "56044b74",
@@ -155,7 +155,7 @@
     "window_convention": "(t - lookback_s, t]"
   },
   "report_schema": "coldguard-w10-s2-feature-report-v1",
-  "repository_revision": "d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
+  "repository_revision": "3b31e28ea752dac8254c98c42736519e3db477dd",
   "role_map": {
     "chamber_air_roles": [
       "CHAMBER_CENTER",
