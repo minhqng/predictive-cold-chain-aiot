@@ -29,8 +29,9 @@ idf_component_register(
     # GPIO APIs (driver/gpio.h) live in esp_driver_gpio and UART APIs
     # (driver/uart.h) live in esp_driver_uart on ESP-IDF v6.x: the legacy
     # "driver" meta-component no longer re-exports those headers. Both must
-    # be direct requirements of this component.
-    PRIV_REQUIRES esp_driver_gpio esp_driver_uart
+    # be direct requirements of this component. The command console reads the
+    # native USB-Serial/JTAG port when that is the configured console.
+    PRIV_REQUIRES esp_driver_gpio esp_driver_uart esp_driver_usb_serial_jtag
 )
 
 # CG_FAULT_INJECTION is a test-only, auditable build switch (A-W21-02/03). The
