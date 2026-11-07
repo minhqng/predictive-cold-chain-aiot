@@ -2965,6 +2965,57 @@ def source_contract_ledger() -> tuple[dict[str, str], ...]:
     )
 
 
+def _event_index(event: TimelineEvent) -> dict[str, Any]:
+    return {
+        "event_id": event.event_id,
+        "event_type": event.event_type,
+        "provenance": event.provenance,
+        "source_path": event.source_path,
+        "source_sha256": event.source_sha256,
+        "source_namespace": event.source_namespace,
+        "device_id": event.device_id,
+        "boot_id": event.boot_id,
+        "run_id": event.run_id,
+        "identity_status": event.identity_status,
+        "command_id": event.command_id,
+        "ack_seq": event.ack_seq,
+        "seq": event.seq,
+        "clock_domain": event.clock_domain,
+        "clock_sync": event.clock_sync,
+        "measurement_quality": event.measurement_quality,
+        "uncertainty_s": event.uncertainty_s,
+        "eligibility": event.eligibility,
+        "delivery_count": event.delivery_count,
+        "reason_codes": list(event.reason_codes),
+    }
+
+
+def _compact_dedup(dedup: DedupResult) -> dict[str, Any]:
+    return {
+        "canonical_event_ids": [
+            event.event_id for event in dedup.canonical_events
+        ],
+        "canonical_delivery_counts": {
+            event.event_id: event.delivery_count
+            for event in dedup.canonical_events
+            if event.delivery_count > 1
+        },
+        "contradictory_events": [
+            event.to_dict() for event in dedup.contradictory_events
+        ],
+        "missing_identity_events": [
+            event.to_dict() for event in dedup.missing_identity_events
+        ],
+        "duplicate_deliveries": dedup.duplicate_deliveries,
+        "contradictory_identity_count": dedup.contradictory_identity_count,
+        "duplicate_canonical_acks": dedup.duplicate_canonical_acks,
+        "multiple_ack_without_canonical": dedup.multiple_ack_without_canonical,
+        "reboot_identity_resets": dedup.reboot_identity_resets,
+        "new_commands_same_action": dedup.new_commands_same_action,
+        "reason_codes": list(dedup.reason_codes),
+    }
+
+
 def event_manifest(
     events: Sequence[TimelineEvent],
     responses: Sequence[ResponseResult],
@@ -2991,10 +3042,10 @@ def event_manifest(
         "sources": list(sources),
         "ordering": [result.to_dict() for result in ordering],
         "audit": audit.to_dict(),
-        "dedup": dedup.to_dict(),
+        "dedup": _compact_dedup(dedup),
         "responses": [result.to_dict() for result in responses],
         "counts": event_counts(events, responses, dedup, ordering, audit),
         "policies": [policy.to_dict() for policy in configs],
-        "timeline_events": [event.to_dict() for event in events],
+        "timeline_events": [_event_index(event) for event in events],
         "separation": dict(statuses),
     }
