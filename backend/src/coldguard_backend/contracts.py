@@ -37,7 +37,7 @@ from pydantic import BaseModel, ConfigDict, field_validator, model_validator
 
 WIRE_SCHEMA_VERSION = 1
 
-Quality = Literal["VALID", "DEGRADED", "INVALID"]
+Quality = Literal["VALID", "DEGRADED", "INVALID", "UNKNOWN"]
 DeviceMode = Literal[
     "BOOT", "SELF_TEST", "ONLINE_NORMAL", "ONLINE_DEGRADED", "SAFE_LOCAL", "FAULT_LOCKOUT"
 ]
