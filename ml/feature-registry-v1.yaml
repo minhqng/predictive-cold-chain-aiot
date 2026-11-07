@@ -1,0 +1,840 @@
+# ColdGuard W10 feature registry v1 (B-W10-01).
+#
+# The registry freezes FEATURE SCHEMA AND CAUSAL DEFINITIONS only. Physical
+# thresholds, the final representative temperature, the primary horizon,
+# operating thresholds, warning persistence and matching tolerances remain
+# controlled by their own freeze authorities and are NOT frozen here.
+#
+# Every listed feature is computed from information observed at or before the
+# prediction anchor. The registry file is the version identity: its canonical
+# SHA-256 is recorded on every generated feature row and artifact.
+schema: coldguard-feature-registry-v1
+feature_version: CG-FEAT-1.0
+registry_status: FROZEN_DEFINITIONS
+frozen_scope:
+  - feature_names
+  - formulas
+  - source_roles
+  - input_quality_requirements
+  - lookback_semantics
+  - missingness_behavior
+  - feature_order
+  - feature_schema_hash
+not_frozen_here:
+  - T_critical_c
+  - representative_temperature_for_final_labels
+  - primary_horizon_H
+  - operating_threshold
+  - warning_persistence
+  - matching_tolerances
+  - physical_completeness_thresholds
+policy:
+  window_convention: "(t - lookback_s, t]"
+  minimum_history_rule: "earliest included sample must satisfy t - time >= minimum_history_s; coverage is measured on actual event time, never on sample count"
+  max_gap_s: 5.0
+  duplicate_policy: "collapse identical canonical payloads per sample identity; refuse contradictory payloads (input order never decides)"
+  missing_data_policy: explicit_missing_never_zero_filled
+  time_domain_policy: source_declared_never_inferred_from_receive_time
+  boot_boundary_policy: no_rolling_or_door_continuity_across_boot
+  fit_policy: no_cross_partition_fit_no_normalization
+  electrical_qualification: "only VALID electrical samples produce electrical features; UNKNOWN/INVALID/DEGRADED stay missing"
+  door_trust_rule: "trusted only when state is OPEN or CLOSED, door quality is VALID and polarity is attested"
+role_map:
+  observed_rig:
+    source: "A operator as-built role record as analysed in evidence/A/W07/repeatability-tmean_airroles_v0.json; a role record, not independently measured calibration"
+    slots:
+      t1:
+        physical_position: CHAMBER_CENTER
+        in_chamber_air_aggregate: true
+      t2:
+        physical_position: TEC_HOT_SIDE
+        in_chamber_air_aggregate: false
+      t3:
+        physical_position: CHAMBER_BOTTOM
+        in_chamber_air_aggregate: true
+      t4:
+        physical_position: CHAMBER_NEAR_DOOR
+        in_chamber_air_aggregate: true
+  chamber_air_roles:
+    - CHAMBER_CENTER
+    - CHAMBER_BOTTOM
+    - CHAMBER_NEAR_DOOR
+  hot_side_roles:
+    - TEC_HOT_SIDE
+
+features:
+  - feature_id: T_chamber_max_c
+    feature_name: Chamber-air maximum temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Hottest role-qualified chamber-air probe at the anchor."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID; every required role-qualified probe present"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when any required probe or thermal quality is absent; never a partial maximum"
+    first_valid_timestamp_rule: "first anchor where all required chamber-air roles are present and thermal quality is VALID"
+    causal_availability_condition: "all probe values observed at or before t"
+    aggregation_definition: "max of the three role-qualified chamber-air probes"
+    method: instantaneous_aggregate
+    method_params: {statistic: max}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_chamber_min_c
+    feature_name: Chamber-air minimum temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Coldest role-qualified chamber-air probe at the anchor."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID; every required role-qualified probe present"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when any required probe or thermal quality is absent; never a partial minimum"
+    first_valid_timestamp_rule: "first anchor where all required chamber-air roles are present and thermal quality is VALID"
+    causal_availability_condition: "all probe values observed at or before t"
+    aggregation_definition: "min of the three role-qualified chamber-air probes"
+    method: instantaneous_aggregate
+    method_params: {statistic: min}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_chamber_mean_c
+    feature_name: Chamber-air mean temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Equal-weight mean of the three role-qualified chamber-air probes."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID; every required role-qualified probe present"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when any required probe or thermal quality is absent; never a two-probe substitute"
+    first_valid_timestamp_rule: "first anchor where all required chamber-air roles are present and thermal quality is VALID"
+    causal_availability_condition: "all probe values observed at or before t"
+    aggregation_definition: "arithmetic mean of the three role-qualified chamber-air probes"
+    method: instantaneous_aggregate
+    method_params: {statistic: mean}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_chamber_spread_c
+    feature_name: Chamber-air spatial spread
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Instantaneous spatial spread across role-qualified chamber-air probes."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID; every required role-qualified probe present"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when any required probe or thermal quality is absent"
+    first_valid_timestamp_rule: "first anchor where all required chamber-air roles are present and thermal quality is VALID"
+    causal_availability_condition: "all probe values observed at or before t"
+    aggregation_definition: "max minus min of the three role-qualified chamber-air probes"
+    method: instantaneous_aggregate
+    method_params: {statistic: spread}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_center_c
+    feature_name: Chamber-center temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Role-qualified CHAMBER_CENTER probe temperature."
+    source_fields: [t1_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER]
+    quality_requirements: "thermal quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the probe or thermal quality is absent"
+    first_valid_timestamp_rule: "first anchor with a VALID CHAMBER_CENTER value"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single probe value"
+    method: instantaneous_probe
+    method_params: {role: CHAMBER_CENTER}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_bottom_c
+    feature_name: Chamber-bottom temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Role-qualified CHAMBER_BOTTOM probe temperature."
+    source_fields: [t3_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_BOTTOM]
+    quality_requirements: "thermal quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the probe or thermal quality is absent"
+    first_valid_timestamp_rule: "first anchor with a VALID CHAMBER_BOTTOM value"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single probe value"
+    method: instantaneous_probe
+    method_params: {role: CHAMBER_BOTTOM}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_near_door_c
+    feature_name: Chamber near-door temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: instantaneous_thermal
+    physical_meaning: "Role-qualified CHAMBER_NEAR_DOOR probe temperature."
+    source_fields: [t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the probe or thermal quality is absent"
+    first_valid_timestamp_rule: "first anchor with a VALID CHAMBER_NEAR_DOOR value"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single probe value"
+    method: instantaneous_probe
+    method_params: {role: CHAMBER_NEAR_DOOR}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: T_tec_hot_side_c
+    feature_name: TEC hot-side temperature (diagnostic)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: diagnostic_thermal
+    physical_meaning: "TEC hot-side metal temperature; not chamber air and never part of a chamber-air aggregate."
+    source_fields: [t2_c]
+    source_schema: "W04 NormalizedRow adapter"
+    sensor_roles: [TEC_HOT_SIDE]
+    quality_requirements: "thermal quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the probe or thermal quality is absent"
+    first_valid_timestamp_rule: "first anchor with a VALID TEC_HOT_SIDE value"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single probe value"
+    method: instantaneous_probe
+    method_params: {role: TEC_HOT_SIDE}
+    provenance: "registry CG-FEAT-1.0; role map observed_rig"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: diagnostic_only_never_chamber_air_model_input
+  - feature_id: rolling_mean_temperature_60s
+    feature_name: Time-weighted rolling chamber-air mean (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Time-weighted mean of the instantaneous chamber-air mean over the causal lookback."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t] left-hold time weighting on actual event times"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution; never sample-count padded"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "sum(w_i * x_i) / sum(w_i) with w_i the hold interval since the previous sample or window start"
+    method: rolling_thermal
+    method_params: {statistic: time_weighted_mean}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: rolling_std_temperature_60s
+    feature_name: Time-weighted rolling chamber-air standard deviation (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Time-weighted population standard deviation of the instantaneous chamber-air mean."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t] left-hold time weighting on actual event times"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "sqrt(sum(w_i * (x_i - mu)^2) / sum(w_i)) using the same weights as the rolling mean"
+    method: rolling_thermal
+    method_params: {statistic: time_weighted_std}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: rolling_min_temperature_60s
+    feature_name: Rolling chamber-air minimum (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Minimum of the per-sample chamber-air means in the causal lookback."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t]"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "min over per-sample chamber-air means"
+    method: rolling_thermal
+    method_params: {statistic: min}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: rolling_max_temperature_60s
+    feature_name: Rolling chamber-air maximum (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Maximum of the per-sample chamber-air means in the causal lookback."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t]"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "max over per-sample chamber-air means"
+    method: rolling_thermal
+    method_params: {statistic: max}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: past_only_slope_c_per_min_60s
+    feature_name: Past-only chamber-air slope (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC_per_min
+    family: rolling_thermal
+    physical_meaning: "Least-squares slope of the chamber-air mean against actual event time."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present; at least 3 samples"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t] least squares on actual event times"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, on any non-VALID contribution, or with fewer than 3 samples"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history and at least 3 samples"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "cov(time, x) / var(time) * 60"
+    method: rolling_thermal
+    method_params: {statistic: least_squares_slope}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: past_only_temperature_delta_60s
+    feature_name: Past-only chamber-air temperature delta (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Change in chamber-air mean from the first to the last sample in the causal lookback."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t]"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "x_last - x_first over the window"
+    method: rolling_thermal
+    method_params: {statistic: delta}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: past_only_spatial_spread_60s
+    feature_name: Past-only mean spatial spread (60 s)
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: rolling_thermal
+    physical_meaning: "Time-weighted mean of the instantaneous chamber-air spatial spread."
+    source_fields: [t1_c, t3_c, t4_c]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [CHAMBER_CENTER, CHAMBER_BOTTOM, CHAMBER_NEAR_DOOR]
+    quality_requirements: "thermal quality VALID for every contributing sample; all required roles present"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t] left-hold time weighting on actual event times"
+    lookback_s: 60.0
+    minimum_history_s: 60.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing before minimum history, on a gap above max_gap_s, or on any non-VALID contribution"
+    first_valid_timestamp_rule: "first anchor with 60 s of covered VALID history ending at t"
+    causal_availability_condition: "all samples in (t - 60 s, t]"
+    aggregation_definition: "time-weighted mean of per-sample (max - min) chamber-air spread"
+    method: rolling_thermal
+    method_params: {statistic: time_weighted_spread}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: door_open
+    feature_name: Door open state
+    version: "1.0"
+    dtype: float
+    unit: state_1_open_0_closed
+    family: door_context
+    physical_meaning: "Trusted current door state; UNKNOWN is missing, never CLOSED."
+    source_fields: [door_state, door_quality, door_polarity]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [DOOR_MC38]
+    quality_requirements: "trusted state: OPEN or CLOSED, door quality VALID, polarity attested"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing for UNKNOWN, untrusted quality or missing polarity attestation; never inferred from thermal data"
+    first_valid_timestamp_rule: "first anchor with a trusted OPEN or CLOSED state"
+    causal_availability_condition: "state observed at or before t"
+    aggregation_definition: "1.0 for trusted OPEN, 0.0 for trusted CLOSED, otherwise missing"
+    method: door_open
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0; state machine"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: time_since_open
+    feature_name: Time since last observed opening transition
+    version: "1.0"
+    dtype: float
+    unit: s
+    family: door_context
+    physical_meaning: "Elapsed time since the last trusted CLOSED-to-OPEN transition in the same boot."
+    source_fields: [door_state, door_quality, door_polarity]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [DOOR_MC38]
+    quality_requirements: "opening transition observed with trusted state and attested polarity"
+    time_domain: source_declared
+    lookback_rule: "since last observed transition, same boot only"
+    lookback_s: null
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when no opening transition has been observed in this boot; no historical event is invented"
+    first_valid_timestamp_rule: "first anchor at or after a trusted CLOSED-to-OPEN transition"
+    causal_availability_condition: "last transition observed at or before t"
+    aggregation_definition: "t - time_of_last_trusted_opening"
+    method: door_time_since_open
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0; state machine"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: duration_so_far
+    feature_name: Current opening duration so far
+    version: "1.0"
+    dtype: float
+    unit: s
+    family: door_context
+    physical_meaning: "Elapsed duration of the currently observed continuous OPEN interval; 0 when trusted CLOSED."
+    source_fields: [door_state, door_quality, door_polarity]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [DOOR_MC38]
+    quality_requirements: "continuous trusted OPEN interval with an observed opening edge"
+    time_domain: source_declared
+    lookback_rule: "current open interval only, same boot only"
+    lookback_s: null
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing while UNKNOWN, after an UNKNOWN interruption, or when the sequence starts OPEN without an observed edge; never reveals the final opening duration"
+    first_valid_timestamp_rule: "first trusted OPEN sample preceded by a trusted CLOSED-to-OPEN transition"
+    causal_availability_condition: "open interval start observed at or before t"
+    aggregation_definition: "t - time_of_current_interval_opening"
+    method: door_duration_so_far
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0; state machine"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: count_past_60s
+    feature_name: Opening transitions in the past 60 seconds
+    version: "1.0"
+    dtype: int
+    unit: count
+    family: door_context
+    physical_meaning: "Count of trusted opening transitions strictly after t - 60 s and at or before t."
+    source_fields: [door_state, door_quality, door_polarity]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [DOOR_MC38]
+    quality_requirements: "trusted transitions only; duplicate deliveries never create transitions"
+    time_domain: source_declared
+    lookback_rule: "(t - 60 s, t]"
+    lookback_s: 60.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "0 when the interval is covered and no qualifying transition exists; missing is not used for absence of events"
+    first_valid_timestamp_rule: "first anchor with a trusted door state and evaluable interval"
+    causal_availability_condition: "transitions observed at or before t"
+    aggregation_definition: "count of transitions with t - 60 < transition_time <= t"
+    method: door_count_past_60s
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0; state machine"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: requested_cooling
+    feature_name: Requested cooling state
+    version: "1.0"
+    dtype: float
+    unit: state_1_on_0_off
+    family: actuation_context
+    physical_meaning: "Requested cooling intent, not an applied or verified actuation."
+    source_fields: [requested_duty_permille]
+    source_schema: "W04 NormalizedRow adapter"
+    sensor_roles: [POWER_PATH]
+    quality_requirements: "requested duty present at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the request field is absent"
+    first_valid_timestamp_rule: "first anchor carrying a requested duty"
+    causal_availability_condition: "request recorded at or before t"
+    aggregation_definition: "1.0 when requested duty > 0, 0.0 when == 0"
+    method: actuation_state
+    method_params: {channel: requested}
+    provenance: "registry CG-FEAT-1.0; requested != applied != readback"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: applied_cooling
+    feature_name: Edge-applied cooling state
+    version: "1.0"
+    dtype: float
+    unit: state_1_on_0_off
+    family: actuation_context
+    physical_meaning: "Cooling state actually driven at the edge, not an ACK and not electrical proof."
+    source_fields: [applied_cooling]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [POWER_PATH]
+    quality_requirements: "applied state present at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the applied state is absent"
+    first_valid_timestamp_rule: "first anchor carrying an applied state"
+    causal_availability_condition: "applied state observed at or before t"
+    aggregation_definition: "1.0 for ON, 0.0 for OFF"
+    method: actuation_state
+    method_params: {channel: applied}
+    provenance: "registry CG-FEAT-1.0; requested != applied != readback"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: readback_cooling
+    feature_name: Readback cooling state
+    version: "1.0"
+    dtype: float
+    unit: state_1_on_0_off
+    family: actuation_context
+    physical_meaning: "Device readback status, which is protocol evidence rather than physical proof."
+    source_fields: [readback_duty_permille]
+    source_schema: "W04 NormalizedRow adapter"
+    sensor_roles: [POWER_PATH]
+    quality_requirements: "readback duty present at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when the readback field is absent"
+    first_valid_timestamp_rule: "first anchor carrying a readback duty"
+    causal_availability_condition: "readback recorded at or before t"
+    aggregation_definition: "1.0 when readback duty > 0, 0.0 when == 0"
+    method: actuation_state
+    method_params: {channel: readback}
+    provenance: "registry CG-FEAT-1.0; requested != applied != readback"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: applied_duty
+    feature_name: Edge-applied duty
+    version: "1.0"
+    dtype: float
+    unit: ratio
+    family: actuation_context
+    physical_meaning: "Edge-applied PWM duty ratio at the anchor."
+    source_fields: [applied_duty]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [POWER_PATH]
+    quality_requirements: "applied duty present at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when duty is absent; a missing duty is never zero"
+    first_valid_timestamp_rule: "first anchor carrying an applied duty"
+    causal_availability_condition: "duty observed at or before t"
+    aggregation_definition: "single ratio value"
+    method: actuation_duty
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: time_since_confirmed_applied_change
+    feature_name: Time since confirmed applied-state change
+    version: "1.0"
+    dtype: float
+    unit: s
+    family: actuation_context
+    physical_meaning: "Elapsed time since the last observed change of the (applied_cooling, applied_duty) pair in the same boot."
+    source_fields: [applied_cooling, applied_duty]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [POWER_PATH]
+    quality_requirements: "both applied state and duty present at the change and at the anchor"
+    time_domain: source_declared
+    lookback_rule: "since last observed applied change, same boot only"
+    lookback_s: null
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing when no applied change has been observed in this boot or the current state is absent"
+    first_valid_timestamp_rule: "first anchor after an observed applied change"
+    causal_availability_condition: "change observed at or before t"
+    aggregation_definition: "t - time_of_last_applied_change"
+    method: actuation_since_change
+    method_params: {}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: cooling_voltage_v
+    feature_name: Cooling-branch voltage
+    version: "1.0"
+    dtype: float
+    unit: V
+    family: electrical_context
+    physical_meaning: "PZEM cooling-branch voltage; never a total-system quantity."
+    source_fields: [cooling_voltage_v]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [PZEM_COOLING_BRANCH]
+    quality_requirements: "electrical quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless electrical quality is VALID; numeric UNKNOWN values are never promoted"
+    first_valid_timestamp_rule: "first anchor with VALID electrical quality"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single branch voltage"
+    method: electrical_channel
+    method_params: {field: voltage_v}
+    provenance: "registry CG-FEAT-1.0; cooling branch only"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: cooling_current_a
+    feature_name: Cooling-branch current
+    version: "1.0"
+    dtype: float
+    unit: A
+    family: electrical_context
+    physical_meaning: "PZEM cooling-branch current; never a total-system quantity."
+    source_fields: [cooling_current_a]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [PZEM_COOLING_BRANCH]
+    quality_requirements: "electrical quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless electrical quality is VALID"
+    first_valid_timestamp_rule: "first anchor with VALID electrical quality"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single branch current"
+    method: electrical_channel
+    method_params: {field: current_a}
+    provenance: "registry CG-FEAT-1.0; cooling branch only"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: cooling_power_w
+    feature_name: Cooling-branch power
+    version: "1.0"
+    dtype: float
+    unit: W
+    family: electrical_context
+    physical_meaning: "PZEM cooling-branch power; not whole-system energy."
+    source_fields: [cooling_power_w]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [PZEM_COOLING_BRANCH]
+    quality_requirements: "electrical quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless electrical quality is VALID; absent PZEM is not zero"
+    first_valid_timestamp_rule: "first anchor with VALID electrical quality"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single branch power"
+    method: electrical_channel
+    method_params: {field: power_w}
+    provenance: "registry CG-FEAT-1.0; cooling branch only"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: energy_counter_wh
+    feature_name: PZEM energy register
+    version: "1.0"
+    dtype: float
+    unit: Wh
+    family: electrical_context
+    physical_meaning: "Monotonic PZEM register value; reset/rollover is reported as missing, never silently integrated."
+    source_fields: [cooling_energy_counter_wh]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [PZEM_COOLING_BRANCH]
+    quality_requirements: "electrical quality VALID and non-decreasing counter within the boot"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor with reset detection
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless VALID and not below the previous VALID counter in the same boot"
+    first_valid_timestamp_rule: "first VALID counter sample"
+    causal_availability_condition: "counter observed at or before t"
+    aggregation_definition: "register value with counter-reset refusal"
+    method: electrical_channel
+    method_params: {field: counter_wh}
+    provenance: "registry CG-FEAT-1.0; cooling branch only"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: past_integrated_cooling_energy_wh
+    feature_name: Past integrated cooling-branch energy
+    version: "1.0"
+    dtype: float
+    unit: Wh
+    family: electrical_context
+    physical_meaning: "Left-rectangle integral of VALID cooling-branch power since the first VALID electrical sample of the boot."
+    source_fields: [cooling_power_w]
+    source_schema: "W04 NormalizedRow adapter / W02 Observation adapter"
+    sensor_roles: [PZEM_COOLING_BRANCH]
+    quality_requirements: "every interval since integration start is VALID with a gap no longer than max_gap_s"
+    time_domain: source_declared
+    lookback_rule: "since first VALID electrical sample, same boot only"
+    lookback_s: null
+    minimum_history_s: 0.0
+    max_gap_s: 5.0
+    missing_data_policy: "missing when any contributing interval is non-VALID or longer than max_gap_s; never bridged"
+    first_valid_timestamp_rule: "first anchor with a VALID electrical sample and a closed VALID interval"
+    causal_availability_condition: "all power samples from integration start through t"
+    aggregation_definition: "(1/3600) * sum(P_previous * delta_t_seconds) over adjacent VALID samples"
+    method: integrated_power
+    method_params: {window: since_boot_start}
+    provenance: "registry CG-FEAT-1.0; Doc 01 §35.2 sampled-power integration"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: ambient_temperature_c
+    feature_name: Ambient air temperature
+    version: "1.0"
+    dtype: float
+    unit: degC
+    family: environmental_context
+    physical_meaning: "BME280 ambient air temperature with its own quality and freshness."
+    source_fields: [t_air_c]
+    source_schema: "W02 Observation adapter"
+    sensor_roles: [BME280_AMBIENT]
+    quality_requirements: "environment quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless environment quality is VALID"
+    first_valid_timestamp_rule: "first anchor with VALID environment quality"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single ambient temperature"
+    method: environment_channel
+    method_params: {field: t_air_c}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
+  - feature_id: relative_humidity_pct
+    feature_name: Ambient relative humidity
+    version: "1.0"
+    dtype: float
+    unit: percent
+    family: environmental_context
+    physical_meaning: "BME280 relative humidity with its own quality and freshness."
+    source_fields: [rh_pct]
+    source_schema: "W02 Observation adapter"
+    sensor_roles: [BME280_AMBIENT]
+    quality_requirements: "environment quality VALID at the anchor"
+    time_domain: source_declared
+    lookback_rule: instantaneous_at_anchor
+    lookback_s: 0.0
+    minimum_history_s: 0.0
+    max_gap_s: null
+    missing_data_policy: "missing unless environment quality is VALID"
+    first_valid_timestamp_rule: "first anchor with VALID environment quality"
+    causal_availability_condition: "value observed at or before t"
+    aggregation_definition: "single relative-humidity value"
+    method: environment_channel
+    method_params: {field: rh_pct}
+    provenance: "registry CG-FEAT-1.0"
+    freeze_status: FROZEN_DEFINITION
+    intended_use: model_input_candidate
