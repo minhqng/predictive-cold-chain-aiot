@@ -4,9 +4,9 @@ Report schema: `coldguard-w08-gate-b-readiness-report-v1` · layer `coldguard-w0
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `35db4f64e3abeb99178aea65361eab9397abc33eb8bd192f50be7e30da5eddad` |
-| Repository revision | `01f6db819231f3da91449980fcb92f5fca35edc4` |
-| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 01f6db819231f3da91449980fcb92f5fca35edc4` |
+| Analysis code SHA-256 | `df9fb44b4d73aebdeb9320eeb43ebc1f1b4f84751c3b27ca4bfad55b4fe1caaf` |
+| Repository revision | `09c32265228780912560ec065d83ebb324cabee8` |
+| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 09c32265228780912560ec065d83ebb324cabee8` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
 | Completeness policy | `coldguard-w08-completeness-policy-draft-v1` |
 
@@ -117,5 +117,8 @@ No final test ID list is created or frozen. `development-split-plan-W08.md` carr
 - No locked test manifest is created, inspected or frozen by W08.
 - Synthetic controls never enter the physical dataset or the real split.
 - A GREEN W08 software gate does not make the physical data GREEN.
+- Completeness uses the observed modal cadence; the project has not frozen a cadence tolerance, so timing adequacy remains a separate scientific decision.
+- A capture that starts late relative to the planned experiment start is not detectable from boot-relative durations alone; a planned start anchor is required for that claim.
+- The software gate is earned by the validator; the CLI additionally verifies written artifact hashes and report/CSV agreement.
 - The A W09 export and validity index were consumed read-only.
 - No run manifest is fabricated; missing linkage is reported.

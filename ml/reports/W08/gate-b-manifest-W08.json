@@ -1,9 +1,9 @@
 {
-  "analysis_code_sha256": "35db4f64e3abeb99178aea65361eab9397abc33eb8bd192f50be7e30da5eddad",
+  "analysis_code_sha256": "df9fb44b4d73aebdeb9320eeb43ebc1f1b4f84751c3b27ca4bfad55b4fe1caaf",
   "artifact_sha256": {
     "completeness-policy-W08.md": "c03f2c46eeb9954ab579b20a5e9352942217063ca6fb8128e0f81270f80a8b22",
     "development-split-plan-W08.md": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab",
-    "gate-b-readiness-W08.md": "b83879712e65c37e88d578af375fe0c45e2c8844c35eddc3de0a95562b0566b6",
+    "gate-b-readiness-W08.md": "9009cacfa3126b07a65d3569116cc78522759bf3f6c806d8372a6d6cfc39d96b",
     "run-validation-W08.csv": "af0337e3d3c8b04f0c2f7b14728acc180d3275d31c4684e96eb0fbb208112d1d"
   },
   "completeness_policy": {
@@ -120,13 +120,16 @@
   },
   "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v1",
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 01f6db819231f3da91449980fcb92f5fca35edc4",
+  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 09c32265228780912560ec065d83ebb324cabee8",
   "layer_version": "coldguard-w08-gate-b-readiness-v1",
   "limitations": [
     "A scientific RED is a successful software result, not a CLI failure.",
     "No locked test manifest is created, inspected or frozen by W08.",
     "Synthetic controls never enter the physical dataset or the real split.",
     "A GREEN W08 software gate does not make the physical data GREEN.",
+    "Completeness uses the observed modal cadence; the project has not frozen a cadence tolerance, so timing adequacy remains a separate scientific decision.",
+    "A capture that starts late relative to the planned experiment start is not detectable from boot-relative durations alone; a planned start anchor is required for that claim.",
+    "The software gate is earned by the validator; the CLI additionally verifies written artifact hashes and report/CSV agreement.",
     "The A W09 export and validity index were consumed read-only.",
     "No run manifest is fabricated; missing linkage is reported."
   ],
@@ -220,7 +223,7 @@
     "scenario": "S1",
     "severity": "BLOCKING"
   },
-  "repository_revision": "01f6db819231f3da91449980fcb92f5fca35edc4",
+  "repository_revision": "09c32265228780912560ec065d83ebb324cabee8",
   "runs": [
     {
       "a_ledger_reasons": [
@@ -821,7 +824,7 @@
         },
         {
           "code": "TIME_DOMAIN_DECLARED",
-          "detail": "time domain 'BOOT_SCOPED_UPTIME'; event time 'UNAVAILABLE'; clock sync 'NOT_EVIDENCED'",
+          "detail": "time domain 'BOOT_SCOPED_UPTIME'; analysis axis 'BOOT_SCOPED_UPTIME'; event time 'UNAVAILABLE'; clock sync 'NOT_EVIDENCED'",
           "evidence": [],
           "reason_codes": [
             "CHECK_PASSED"
