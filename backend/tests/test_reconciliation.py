@@ -136,3 +136,166 @@ def test_reconciliation_detects_normalization_failures():
     assert report.is_reconciled is False
     assert "FAILED" in report.summary()
 
+
+def test_reconciliation_detects_cross_run_collision():
+    """A raw row in RUN-B sharing identity with a row that won in RUN-A is a cross-run collision, not a norm failure."""
+    now = datetime.now(timezone.utc)
+    raw_payload = (
+        '{"schema_version":1,"device_id":"coldguard-001","boot_id":"boot-1","seq":1,'
+        '"captured_at":"' + now.isoformat() + '","uptime_ms":1000,'
+        '"run_id":"RUN-B","hardware_config_id":"HW-1","firmware_version":"0.1.0",'
+        '"thermal":{"t1":4.0,"t2":4.0,"t3":4.0},'
+        '"environment":{"t_air":20.0,"rh":50.0},'
+        '"door":{"state":"CLOSED"},'
+        '"electrical":{"voltage_v":12.0,"current_a":1.0,"power_w":12.0,"energy_wh":1.0},'
+        '"actuation":{"cooling":"OFF","duty":0.0},'
+        '"quality":{"thermal":"VALID","environment":"VALID","electrical":"VALID","overall":"VALID"}}'
+    )
+
+    # Scoped raw rows for RUN-B
+    mock_raw_rows_run_b = [
+        {"id": 20, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 1, "run_id": "RUN-B", "ingest_status": "RECEIVED_VALID", "raw_payload": raw_payload, "backend_received_at": now},
+    ]
+    # Scoped normalized rows for RUN-B: empty because identity won under RUN-A!
+    mock_norm_rows_run_b = []
+
+    # Global normalized rows: contains the winner under RUN-A
+    mock_global_norm_rows = [
+        {
+            "id": 1, "raw_id": 10, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 1,
+            "run_id": "RUN-A", "time": now, "t1_c": 4.0, "t2_c": 4.0, "t3_c": 4.0,
+            "t_air_c": 20.0, "rh_pct": 50.0, "door_state": "CLOSED",
+            "cooling_voltage_v": 12.0, "cooling_current_a": 1.0, "cooling_power_w": 12.0,
+            "cooling_energy_counter_wh": 1.0, "applied_cooling": "OFF", "applied_duty": 0.0,
+            "thermal_quality": "VALID", "environment_quality": "VALID",
+            "electrical_quality": "VALID", "overall_quality": "VALID",
+            "device_mode": None, "hardware_config_id": "HW-1", "firmware_version": "0.1.0",
+            "calibration_id": None, "schema_version": 1, "backend_received_at": now,
+            "serial_source": None,
+        }
+    ]
+
+    mock_conn = MagicMock()
+    mock_cursor_raw = MagicMock()
+    mock_cursor_raw.mappings.return_value.all.return_value = mock_raw_rows_run_b
+    mock_cursor_norm = MagicMock()
+    mock_cursor_norm.mappings.return_value.all.return_value = mock_norm_rows_run_b
+    mock_cursor_global_norm = MagicMock()
+    mock_cursor_global_norm.mappings.return_value.all.return_value = mock_global_norm_rows
+
+    mock_conn.execute.side_effect = [mock_cursor_raw, mock_cursor_norm, mock_cursor_global_norm]
+
+    report = reconcile_telemetry(mock_conn, run_id="RUN-B")
+
+    assert report.raw_total == 1
+    assert report.normalized_total == 0
+    assert report.normalization_failures == 0  # NOT a normalization failure!
+    assert report.conflicting_duplicates == 1  # Classified as conflicting duplicate across runs
+    assert report.provenance.cross_run_collision_count == 1
+    assert report.discrepancy == 0
+    assert report.is_reconciled is True
+
+
+def test_reconciliation_detects_provenance_mismatch():
+    """If normalized row points to a raw row with different identity, flag provenance violation."""
+    now = datetime.now(timezone.utc)
+    mock_raw_rows = [
+        # Winning raw delivery has seq=100
+        {"id": 1, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 100, "run_id": "RUN-1", "ingest_status": "RECEIVED_VALID", "raw_payload": "{}", "backend_received_at": now},
+    ]
+    mock_norm_rows = [
+        # Normalized row points to raw_id=1, but claims seq=200!
+        {
+            "id": 1, "raw_id": 1, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 200,
+            "run_id": "RUN-1", "time": now, "t1_c": 4.0, "t2_c": 4.0, "t3_c": 4.0,
+            "t_air_c": 20.0, "rh_pct": 50.0, "door_state": "CLOSED",
+            "cooling_voltage_v": 12.0, "cooling_current_a": 1.0, "cooling_power_w": 12.0,
+            "cooling_energy_counter_wh": 1.0, "applied_cooling": "OFF", "applied_duty": 0.0,
+            "thermal_quality": "VALID", "environment_quality": "VALID",
+            "electrical_quality": "VALID", "overall_quality": "VALID",
+            "device_mode": None, "hardware_config_id": "HW-1", "firmware_version": "0.1.0",
+            "calibration_id": "CAL-01", "schema_version": 1, "backend_received_at": now,
+            "serial_source": None,
+        }
+    ]
+
+    mock_conn = MagicMock()
+    mock_cursor_raw = MagicMock()
+    mock_cursor_raw.mappings.return_value.all.return_value = mock_raw_rows
+    mock_cursor_norm = MagicMock()
+    mock_cursor_norm.mappings.return_value.all.return_value = mock_norm_rows
+    mock_conn.execute.side_effect = [mock_cursor_raw, mock_cursor_norm]
+
+    report = reconcile_telemetry(mock_conn)
+
+    assert report.provenance.provenance_mismatch_count == 1
+    assert report.is_reconciled is False
+
+
+def test_reconciliation_distinguishes_historical_pre_normalization_raw():
+    """Raw rows with id lower than min_norm_raw_id are historical pre-norm rows, not failures."""
+    now = datetime.now(timezone.utc)
+    mock_raw_rows = [
+        # Pre-normalization W02 raw delivery (id=5)
+        {"id": 5, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 1, "run_id": "RUN-1", "ingest_status": "RECEIVED_VALID", "raw_payload": "{}", "backend_received_at": now},
+        # Normalized post-upgrade delivery (id=10)
+        {"id": 10, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 2, "run_id": "RUN-1", "ingest_status": "RECEIVED_VALID", "raw_payload": "{}", "backend_received_at": now},
+    ]
+    mock_norm_rows = [
+        # First normalized row has raw_id=10
+        {
+            "id": 1, "raw_id": 10, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 2,
+            "run_id": "RUN-1", "time": now, "t1_c": 4.0, "t2_c": 4.0, "t3_c": 4.0,
+            "t_air_c": 20.0, "rh_pct": 50.0, "door_state": "CLOSED",
+            "cooling_voltage_v": 12.0, "cooling_current_a": 1.0, "cooling_power_w": 12.0,
+            "cooling_energy_counter_wh": 1.0, "applied_cooling": "OFF", "applied_duty": 0.0,
+            "thermal_quality": "VALID", "environment_quality": "VALID",
+            "electrical_quality": "VALID", "overall_quality": "VALID",
+            "device_mode": None, "hardware_config_id": "HW-1", "firmware_version": "0.1.0",
+            "calibration_id": "CAL-01", "schema_version": 1, "backend_received_at": now,
+            "serial_source": None,
+        }
+    ]
+
+    mock_conn = MagicMock()
+    mock_cursor_raw = MagicMock()
+    mock_cursor_raw.mappings.return_value.all.return_value = mock_raw_rows
+    mock_cursor_norm = MagicMock()
+    mock_cursor_norm.mappings.return_value.all.return_value = mock_norm_rows
+    mock_conn.execute.side_effect = [mock_cursor_raw, mock_cursor_norm]
+
+    report = reconcile_telemetry(mock_conn)
+
+    assert report.raw_total == 2
+    assert report.normalized_total == 1
+    assert report.unique_normalized_deliveries == 1
+    assert report.historical_raw_unnormalized == 1
+    assert report.normalization_failures == 0
+    assert report.discrepancy == 0
+    assert report.is_reconciled is True
+
+
+def test_reconciliation_guards_unknown_status():
+    """Unhandled or corrupted status is not swept into observed; causes reconciliation failure."""
+    now = datetime.now(timezone.utc)
+    mock_raw_rows = [
+        {"id": 1, "device_id": "coldguard-001", "boot_id": "boot-1", "seq": 1, "run_id": "RUN-1", "ingest_status": "CORRUPTED_CUSTOM_STATUS", "raw_payload": "{}", "backend_received_at": now},
+    ]
+    mock_norm_rows = []
+
+    mock_conn = MagicMock()
+    mock_cursor_raw = MagicMock()
+    mock_cursor_raw.mappings.return_value.all.return_value = mock_raw_rows
+    mock_cursor_norm = MagicMock()
+    mock_cursor_norm.mappings.return_value.all.return_value = mock_norm_rows
+    mock_conn.execute.side_effect = [mock_cursor_raw, mock_cursor_norm]
+
+    report = reconcile_telemetry(mock_conn)
+
+    assert report.unknown_status_count == 1
+    assert report.observed_non_telemetry == 0
+    assert report.accounted_total == 1
+    assert report.discrepancy == 0
+    assert report.is_reconciled is False
+
+
