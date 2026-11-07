@@ -1,9 +1,9 @@
 {
-  "analysis_code_sha256": "da443b88fb07b81c072fd1670d85a686c905c57d946bde7826132c5206502653",
+  "analysis_code_sha256": "78308350b9487effd17dbe3b9a2b987b58c595d3dac07eccf56d5be0b581a372",
   "artifact_sha256": {
-    "completeness-policy-W08.md": "c03f2c46eeb9954ab579b20a5e9352942217063ca6fb8128e0f81270f80a8b22",
+    "completeness-policy-W08.md": "101af991d9bdfce7b29d45382f15236c489b4443020d0c9c98f224d42098d347",
     "development-split-plan-W08.md": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab",
-    "gate-b-readiness-W08.md": "6a4c07569199767c686e84c036b6a7e0adad48a86aa55392c69eb370d1e86407",
+    "gate-b-readiness-W08.md": "62d9a16b49e0ddd784677285d41c53b86385129f6fea7d3b0f4dbc0e463dfa37",
     "run-validation-W08.csv": "54228f7a2ef244206a6be119e062fcd2d74be8e3e7c449c510627e8a51a6084e"
   },
   "completeness_policy": {
@@ -22,6 +22,7 @@
         "definition": "received frames divided by expected samples derived from the observed modal cadence and the measured capture duration",
         "dimension": "WHOLE_CAPTURE_COMPLETENESS",
         "expected_sample_denominator": "declared planned capture duration divided by the observed modal cadence, plus one; the W05 observed-window fraction is diagnostic only",
+        "freeze_evidence": null,
         "missing_quality_semantics": "missing frames reduce the numerator; an undeclared planned duration makes the value NOT_ESTIMABLE, never 1.0",
         "name": "whole_capture_frames",
         "owner": "Member B — AI & Experimental Data",
@@ -39,6 +40,7 @@
         "definition": "frames where every declared critical channel is present and source-quality VALID divided by expected samples",
         "dimension": "CRITICAL_CHANNEL_COMPLETENESS",
         "expected_sample_denominator": "declared planned capture duration divided by the observed modal cadence, plus one",
+        "freeze_evidence": null,
         "missing_quality_semantics": "missing, INVALID and DEGRADED critical samples are counted separately; none is converted to a numeric zero",
         "name": "critical_channel_samples",
         "owner": "Member B — AI & Experimental Data",
@@ -56,6 +58,7 @@
         "definition": "critical-valid frames inside the primary event window divided by expected samples for that window at the observed cadence",
         "dimension": "PRIMARY_EVENT_WINDOW_COMPLETENESS",
         "expected_sample_denominator": "round(event_window_s / nominal_dt_s)",
+        "freeze_evidence": null,
         "missing_quality_semantics": "a window gap is counted separately from whole-capture loss; a missing event anchor makes the dimension NOT_ESTIMABLE",
         "name": "primary_event_window_samples",
         "owner": "Member B — AI & Experimental Data",
@@ -73,6 +76,7 @@
         "definition": "critical-valid frames in the pre-event baseline divided by expected samples for that window at the observed cadence",
         "dimension": "PRE_EVENT_BASELINE_COMPLETENESS",
         "expected_sample_denominator": "round(baseline_window_s / nominal_dt_s)",
+        "freeze_evidence": null,
         "missing_quality_semantics": "a baseline shorter than the required window is incomplete; missing samples are never back-filled",
         "name": "pre_event_baseline_samples",
         "owner": "Member B — AI & Experimental Data",
@@ -90,6 +94,7 @@
         "definition": "critical-valid frames in the follow-up window divided by expected samples for that window at the observed cadence; a capture ending before the horizon is censored",
         "dimension": "POST_EVENT_OR_RECOVERY_COMPLETENESS",
         "expected_sample_denominator": "round((horizon_s - event_window_s) / nominal_dt_s)",
+        "freeze_evidence": null,
         "missing_quality_semantics": "a censored capture is reported as CENSORED and does not pass; the recovery criterion itself is not invented here",
         "name": "recovery_followup_samples",
         "owner": "Member B — AI & Experimental Data",
@@ -107,6 +112,7 @@
         "definition": "observed intervals inside a frozen cadence tolerance divided by expected intervals",
         "dimension": "TIMING_ALIGNMENT_COMPLETENESS",
         "expected_sample_denominator": "expected sample count minus one",
+        "freeze_evidence": null,
         "missing_quality_semantics": "negative/zero intervals, sequence reversals and long gaps are reported individually; no tolerance is fabricated here",
         "name": "timing_alignment_intervals",
         "owner": "Member B — AI & Experimental Data",
@@ -119,19 +125,22 @@
     ]
   },
   "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v1",
+  "data_origin": "MEASURED_PHYSICAL_DATA",
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision cb11c8693fbbcd5f19d5f04476cd2aa06bd283aa",
+  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision caf761c4dbf3d7c9ae6f2a81c8821026224c8100",
   "layer_version": "coldguard-w08-gate-b-readiness-v1",
   "limitations": [
     "A scientific RED is a successful software result, not a CLI failure.",
     "No locked test manifest is created, inspected or frozen by W08.",
-    "Synthetic controls never enter the physical dataset or the real split.",
+    "Synthetic controls never enter the physical dataset or the real split; a synthetic control can exercise the GREEN software branch but never certifies a measured physical dataset.",
+    "A PROPOSED completeness cutoff is never treated as a frozen scientific cutoff; a measured dataset under unfrozen thresholds is at most YELLOW.",
     "A GREEN W08 software gate does not make the physical data GREEN.",
     "Completeness uses the observed modal cadence; the project has not frozen a cadence tolerance, so timing adequacy remains a separate scientific decision.",
     "A capture that starts late relative to the planned experiment start is not detectable from boot-relative durations alone; a planned start anchor is required for that claim.",
     "The software gate is earned by the validator; the CLI additionally verifies written artifact hashes and report/CSV agreement.",
     "The A W09 export and validity index were consumed read-only.",
-    "No run manifest is fabricated; missing linkage is reported."
+    "No run manifest is fabricated; missing linkage is reported.",
+    "Inputs are treated as measured physical data."
   ],
   "physical_gate": {
     "allowed_uses": [
@@ -221,7 +230,7 @@
     "scenario": "S1",
     "severity": "BLOCKING"
   },
-  "repository_revision": "cb11c8693fbbcd5f19d5f04476cd2aa06bd283aa",
+  "repository_revision": "caf761c4dbf3d7c9ae6f2a81c8821026224c8100",
   "runs": [
     {
       "a_ledger_reasons": [
@@ -1145,11 +1154,13 @@
     "requires_command_chain": false,
     "requires_door_event": false,
     "requires_electrical_evidence": false,
+    "requires_timing_alignment": false,
     "scenario_id": "S1"
   },
   "schema": "coldguard-w08-gate-b-readiness-manifest-v1",
   "separation": {
     "DATASET_READINESS": "NOT_READY",
+    "DATA_ORIGIN": "MEASURED_PHYSICAL_DATA",
     "DIAGNOSTIC_USABILITY": "PASS",
     "PHYSICAL_RUN_VALIDITY": "RED",
     "SCENARIO_ELIGIBILITY": "INELIGIBLE",
@@ -1245,6 +1256,7 @@
     "predictive_dataset_readiness": "NOT_READY",
     "unique_physical_sources": 1
   },
+  "synthetic_control": false,
   "w07_evidence": {
     "independent_physical_sources": 1,
     "manifest_path": "reports/W07/plant-eda-manifest-W07.json",

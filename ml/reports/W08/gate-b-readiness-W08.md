@@ -4,11 +4,12 @@ Report schema: `coldguard-w08-gate-b-readiness-report-v1` · layer `coldguard-w0
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `da443b88fb07b81c072fd1670d85a686c905c57d946bde7826132c5206502653` |
-| Repository revision | `cb11c8693fbbcd5f19d5f04476cd2aa06bd283aa` |
-| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision cb11c8693fbbcd5f19d5f04476cd2aa06bd283aa` |
+| Analysis code SHA-256 | `78308350b9487effd17dbe3b9a2b987b58c595d3dac07eccf56d5be0b581a372` |
+| Repository revision | `caf761c4dbf3d7c9ae6f2a81c8821026224c8100` |
+| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision caf761c4dbf3d7c9ae6f2a81c8821026224c8100` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
 | Completeness policy | `coldguard-w08-completeness-policy-draft-v1` |
+| Data origin | **`MEASURED_PHYSICAL_DATA`** |
 
 ## 1. Declared purpose
 
@@ -16,6 +17,8 @@ Report schema: `coldguard-w08-gate-b-readiness-report-v1` · layer `coldguard-w0
 - Purpose: S1 normal-baseline predictive dataset
 - Event required: NO
 - Absolute event-time claim: YES
+- Timing-alignment claim required: NO
+- Synthetic control: NO
 
 ## 2. Gate decisions
 
@@ -115,10 +118,12 @@ No final test ID list is created or frozen. `development-split-plan-W08.md` carr
 
 - A scientific RED is a successful software result, not a CLI failure.
 - No locked test manifest is created, inspected or frozen by W08.
-- Synthetic controls never enter the physical dataset or the real split.
+- Synthetic controls never enter the physical dataset or the real split; a synthetic control can exercise the GREEN software branch but never certifies a measured physical dataset.
+- A PROPOSED completeness cutoff is never treated as a frozen scientific cutoff; a measured dataset under unfrozen thresholds is at most YELLOW.
 - A GREEN W08 software gate does not make the physical data GREEN.
 - Completeness uses the observed modal cadence; the project has not frozen a cadence tolerance, so timing adequacy remains a separate scientific decision.
 - A capture that starts late relative to the planned experiment start is not detectable from boot-relative durations alone; a planned start anchor is required for that claim.
 - The software gate is earned by the validator; the CLI additionally verifies written artifact hashes and report/CSV agreement.
 - The A W09 export and validity index were consumed read-only.
 - No run manifest is fabricated; missing linkage is reported.
+- Inputs are treated as measured physical data.
