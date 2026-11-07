@@ -19,12 +19,13 @@ from alembic import command
 from alembic.config import Config
 from alembic.migration import MigrationContext
 from sqlalchemy import create_engine, inspect, select, text
+from sqlalchemy.exc import DBAPIError
 
 from coldguard_backend import command_store as cs
 from coldguard_backend.normalized_store import insert_normalized, map_to_row, telemetry
 from coldguard_backend.raw_store import store_raw, telemetry_raw
 from coldguard_backend.validation import validate_telemetry_payload
-from tests.command_testkit import make_command
+from tests.command_testkit import make_command, utcnow
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
 FIXTURE_V0 = BACKEND_DIR / "fixtures" / "telemetry_v0.json"
@@ -148,12 +149,35 @@ def test_0008_populated_upgrade_preserves_existing_telemetry():
         assert COMMAND_TABLES <= _tables(engine)
         assert _telemetry_snapshot(engine, device) == before
 
-        # Command data lives only in 0008; a downgrade drops it (by design) but
-        # must never disturb the pre-existing telemetry evidence.
         with engine.begin() as conn:
             cs.create_command(conn, make_command("cmd-mig", device_id=device))
+            row = cs.get_command(conn, "cmd-mig")
+            cs.begin_publish_attempt(conn, "cmd-mig", payload_sha256=row["payload_sha256"])
+            cs.record_ack(
+                conn, topic_device_id=device, raw_payload="{}", payload_sha256="test",
+                backend_received_at=utcnow(), ack=None, validity="INVALID_SCHEMA",
+            )
+        with pytest.raises(DBAPIError, match="downgrade refused"):
+            _downgrade("0007")
+        assert _revision(engine) == "0008"
+        assert COMMAND_TABLES <= _tables(engine)
+        assert _telemetry_snapshot(engine, device) == before
+        with engine.begin() as conn:
+            assert cs.get_command(conn, "cmd-mig")
+            assert cs.pending_attempt(conn, "cmd-mig")
+            assert conn.execute(select(cs.command_transitions.c.id).where(
+                cs.command_transitions.c.command_id == "cmd-mig"
+            )).scalar_one()
+            conn.execute(cs.commands.delete().where(cs.commands.c.command_id == "cmd-mig"))
+        # Quarantined ACK evidence can exist independently of command rows.
+        with pytest.raises(DBAPIError, match="downgrade refused"):
+            _downgrade("0007")
+        with engine.begin() as conn:
+            assert conn.execute(select(cs.command_acks.c.id).where(
+                cs.command_acks.c.topic_device_id == device
+            )).scalar_one()
+            conn.execute(cs.command_acks.delete().where(cs.command_acks.c.topic_device_id == device))
         _downgrade("0007")
-        assert not (COMMAND_TABLES & _tables(engine))
         assert _telemetry_snapshot(engine, device) == before
 
         _upgrade("0008")

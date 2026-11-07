@@ -17,7 +17,7 @@ Creates the Member C command path storage. Design invariants:
   at ``NONE`` and W06 software never advances it beyond ``NONE``. ACK acceptance
   is protocol evidence, not electrical/thermal verification (Doc 02 §32.2).
 
-Downgrade drops only these tables; telemetry/twin/reconciliation are untouched.
+Downgrade drops these tables only if they contain no evidence.
 """
 
 import sqlalchemy as sa
@@ -188,6 +188,22 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    # Lock writers before checking. The locks last through the transactional DDL.
+    op.execute("""
+        DO $$
+        BEGIN
+            LOCK TABLE commands, command_attempts, command_acks, command_transitions
+                IN ACCESS EXCLUSIVE MODE;
+            IF EXISTS (SELECT 1 FROM commands)
+                OR EXISTS (SELECT 1 FROM command_attempts)
+                OR EXISTS (SELECT 1 FROM command_acks)
+                OR EXISTS (SELECT 1 FROM command_transitions)
+            THEN
+                RAISE EXCEPTION 'revision 0008 downgrade refused: command evidence exists';
+            END IF;
+        END
+        $$;
+    """)
     op.drop_table("command_transitions")
     op.drop_table("command_acks")
     op.drop_table("command_attempts")
