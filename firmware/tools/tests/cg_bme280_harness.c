@@ -8,6 +8,7 @@
  * here is presented as hardware verification. The physical readback stays an
  * operator evidence item.
  */
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -30,6 +31,7 @@ static int status_reads;
 static int write_count;
 static int mode_configured;   /* CTRL_MEAS(normal) has been written */
 static int data_before_mode;  /* data burst read before mode configured  */
+static int settle_after_mode; /* conversion settle observed after mode   */
 
 static void check(int cond, const char *what)
 {
@@ -89,7 +91,14 @@ static cg_bme_port_result_t fake_write(void *ctx, uint8_t reg, uint8_t value)
 
 static uint64_t clock_ms;
 static uint64_t fake_now(void *ctx) { (void)ctx; return clock_ms; }
-static void fake_settle(void *ctx, uint32_t ms) { (void)ctx; clock_ms += ms; }
+static void fake_settle(void *ctx, uint32_t ms)
+{
+    (void)ctx;
+    clock_ms += ms;
+    if (mode_configured) {
+        settle_after_mode++;
+    }
+}
 
 static void load_scratch(void)
 {
@@ -129,6 +138,31 @@ static void load_scratch(void)
  * fail for the mistakes they exist to catch. None of this is silicon evidence -
  * it says the arithmetic follows the specification, not that a fitted module
  * behaves that way on this board. */
+/* Loads the golden trim and raw codes into the scripted fixture. Unlike
+ * load_scratch() this frame has a non-zero humidity, which is what makes the
+ * unit-conversion assertions below able to fail on a wrong divisor. */
+static void load_golden(void)
+{
+    static const uint8_t g_tp[CG_BME280_CALIB_T_BYTES] = {
+        0x70, 0x6B, 0x43, 0x67, 0x18, 0xFC, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+        0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+    };
+    static const uint8_t g_hb[CG_BME280_CALIB_H_BLOCK] = {
+        0x41, 0x01, 0x0E, 0x00, 0xC8, 0x0C, 0x9C
+    };
+    uint32_t adc_t = 518500u, adc_h = 20000u;
+
+    memcpy(tp, g_tp, sizeof(tp));
+    memcpy(hb, g_hb, sizeof(hb));
+    h1 = 0x64u;
+    memset(data, 0, sizeof(data));
+    data[CG_BME280_OFF_TEMP_MSB] = (uint8_t)((adc_t >> 12) & 0xFFu);
+    data[CG_BME280_OFF_TEMP_LSB] = (uint8_t)((adc_t >> 4) & 0xFFu);
+    data[CG_BME280_OFF_TEMP_XLSB] = (uint8_t)((adc_t & 0x0Fu) << 4);
+    data[CG_BME280_OFF_HUM_MSB] = (uint8_t)((adc_h >> 8) & 0xFFu);
+    data[CG_BME280_OFF_HUM_LSB] = (uint8_t)(adc_h & 0xFFu);
+}
+
 static void check_golden_vectors(void)
 {
     static const uint8_t g_tp[CG_BME280_CALIB_T_BYTES] = {
@@ -280,6 +314,40 @@ static void check_diag(void)
           "diag: data-read timeout surfaced, not a partial dump");
 }
 
+/* The published floats must be the compensated integers converted with the
+ * datasheet's units: hundredths of a degree and Q22.10 humidity. Comparing
+ * against the same integers pins the conversion, which a wrong divisor (e.g.
+ * /1000 humidity) would otherwise leave untested. */
+static void check_published_units(void)
+{
+    cg_bme280_port_t port;
+    cg_bme280_t s;
+    cg_bme280_obs_t obs;
+    int32_t t_dc;
+    uint32_t h_q;
+
+    port.ctx = NULL;
+    port.read = fake_read;
+    port.write = fake_write;
+    port.now_ms = fake_now;
+    port.settle_ms = fake_settle;
+    load_golden();
+    scenario = SCEN_OK;
+    status_reads = 0;
+    cg_bme280_reset(&s);
+    check(cg_bme280_probe(&port, &s) == CG_BME_READ_OK, "units: probe");
+    check(cg_bme280_sample(&port, &s, &obs) == CG_BME_READ_OK, "units: sample");
+    t_dc = cg_bme280_compensate_temperature(&s.calib, cg_bme280_unpack_temperature_raw(data));
+    h_q = cg_bme280_compensate_humidity(&s.calib, cg_bme280_unpack_humidity_raw(data));
+    /* A zero humidity would make the comparison below pass under any divisor. */
+    check(h_q > 0u, "units: scripted frame has a non-zero humidity");
+    check(obs.valid, "units: reading published");
+    check(fabsf(obs.temperature_c - (float)t_dc / 100.0f) < 0.001f,
+          "units: centi-degree to C");
+    check(fabsf(obs.relative_humidity_pct - (float)h_q / 1024.0f) < 0.001f,
+          "units: Q22.10 to %RH");
+}
+
 int main(void)
 {
     cg_bme280_port_t port;
@@ -299,12 +367,19 @@ int main(void)
     check_hand_derived_vector();
     check_burst_offsets();
     check_diag();
+    check_published_units();
 
     /* 1. nominal probe: identity, NVM wait, trim, control writes */
     scenario = SCEN_OK;
+    load_scratch();
     cg_bme280_reset(&s);
-    status_reads = 0; write_count = 0;
+    status_reads = 0; write_count = 0; settle_after_mode = 0;
+    mode_configured = 0; data_before_mode = 0;
     check(cg_bme280_probe(&port, &s) == CG_BME_READ_OK, "nominal probe succeeds");
+    /* A reset or sleeping module holds 0x80000/0x8000 in its data registers,
+     * which decode to a plausible reading. The probe must give the first
+     * conversion time to land before the caller reads that burst. */
+    check(settle_after_mode >= 1, "probe waits one conversion after configuring mode");
     check(s.state == CG_BME_STATE_READY, "ready after probe");
     check(write_count == 3, "ctrl_hum, ctrl_meas, config all written");
     check(cg_bme280_is_present(&s), "present after successful probe");

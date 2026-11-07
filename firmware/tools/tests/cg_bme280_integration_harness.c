@@ -60,6 +60,7 @@ typedef enum {
     ENV_ABSENT,      /* a cycle completed and no module acknowledges the bus   */
     ENV_FRESH_OK,    /* a module answered with a reading inside range          */
     ENV_REFUSED,     /* a module answered but the reading was rejected         */
+    ENV_TRIM_GATED,  /* a module answered; board policy refuses the decode     */
     ENV_STALE        /* a module answered once and has not been heard since    */
 } env_mode_t;
 
@@ -115,6 +116,14 @@ static size_t render(char *line, size_t cap, env_mode_t env_mode)
             env_valid = false;
             cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_FAULT,
                                     (uint8_t)CG_BME_READ_OUT_OF_RANGE, 0x76U, 14U, env_obs_ms);
+            break;
+        case ENV_TRIM_GATED:
+            /* The shipped build's trim gate: the module answers, the decode is
+             * withheld until someone confirms the layout on hardware. */
+            env_valid = false;
+            cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+                                    (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED, 0x76U, 14U,
+                                    env_obs_ms);
             break;
         case ENV_STALE:
             /* Older than the ambient freshness bound by construction, so the
@@ -211,6 +220,26 @@ static bool test_refused_reading_never_reaches_the_line(void)
     return true;
 }
 
+/* A policy refusal is a known configuration limitation, not a failed reading.
+ * The shipped build withholds the ambient value until the trim layout is
+ * confirmed; the field must say INVALID (no number), but the group is DEGRADED
+ * so a fitted module does not drag the whole frame to INVALID - matching what
+ * docs/06 states the delivered build reports. */
+static bool test_trim_gate_refusal_degrades_but_never_invents(void)
+{
+    char line[CG_TELEMETRY_LINE_MAX];
+
+    CHECK(render(line, sizeof(line), ENV_TRIM_GATED) > 0U);
+    CHECK(has(line, "t_ambient_status=INVALID"));
+    CHECK(has(line, "relative_humidity_status=INVALID"));
+    CHECK(has(line, "t_ambient_c=" CG_INVALID_VALUE_TOKEN));
+    CHECK(has(line, "relative_humidity_pct=" CG_INVALID_VALUE_TOKEN));
+    CHECK(has(line, "environment_quality=DEGRADED"));
+    CHECK(has(line, " quality=DEGRADED"));
+    CHECK(!has(line, "30.41"));
+    return true;
+}
+
 static bool test_stale_ambient_loses_its_number(void)
 {
     char line[CG_TELEMETRY_LINE_MAX];
@@ -280,6 +309,8 @@ static const test_case_t k_tests[] = {
     {"absent_module_is_a_fact_not_a_failure", test_absent_module_is_a_fact_not_a_failure},
     {"fresh_ambient_publishes_measured_values", test_fresh_ambient_publishes_measured_values},
     {"refused_reading_never_reaches_the_line", test_refused_reading_never_reaches_the_line},
+    {"trim_gate_refusal_degrades_but_never_invents",
+     test_trim_gate_refusal_degrades_but_never_invents},
     {"stale_ambient_loses_its_number", test_stale_ambient_loses_its_number},
     {"absent_still_advances_the_observation_time", test_absent_still_advances_the_observation_time},
     {"driver_state_names_are_distinct", test_driver_state_names_are_distinct},
