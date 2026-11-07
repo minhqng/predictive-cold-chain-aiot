@@ -35,6 +35,7 @@ from .baselines import (
     B1_PERSISTENCE_CANDIDATE,
     CERTAINTY_INTERVAL,
     ReplayResult,
+    SAMPLE_DUPLICATE,
     TRANSITION_CRITERION,
     TRANSITION_OFF,
     TRANSITION_ON,
@@ -421,12 +422,12 @@ class EventMetrics:
     censored_event_count: int
     untrusted_event_count: int
     intervened_event_count: int
-    provenance_mismatch_event_count: int
-    provenance_mismatch_episode_count: int
     run_support: int
     event_support: int
     episode_support: int
     undefined_reasons: tuple[str, ...]
+    provenance_mismatch_event_count: int = 0
+    provenance_mismatch_episode_count: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -461,6 +462,13 @@ class EventMetrics:
 
 @dataclass(frozen=True)
 class EventEvaluationResult:
+    """Evaluation output.
+
+    ``episodes`` contains only lineage-compatible episodes of the evaluated
+    run/source; foreign episodes are retained in ``events`` with
+    ``PROVENANCE_MISMATCH`` and excluded from denominators.
+    """
+
     run_id: str | None
     source_sha256: str
     events: tuple[dict[str, Any], ...]
@@ -525,6 +533,20 @@ def warning_samples_from_replay(
     seen: dict[str, tuple[float | None, str, str]] = {}
     duplicates = 0
     for sample in replay.samples:
+        if sample.sample_status == SAMPLE_DUPLICATE:
+            duplicates += 1
+            original = seen.get(sample.sample_id)
+            if original is None:
+                raise EventEvaluationError(
+                    f"duplicate-delivery sample {sample.sample_id!r} has no "
+                    "previously observed original in this replay"
+                )
+            if original[0] != sample.time_s:
+                raise EventEvaluationError(
+                    f"duplicate-delivery sample {sample.sample_id!r} contradicts "
+                    "the original event time; input order cannot resolve the conflict"
+                )
+            continue
         if sample.criterion_state is None:
             state = UNKNOWN
         elif sample.criterion_state:
@@ -592,6 +614,11 @@ def build_warning_episodes(
     synthetic_control: bool = False,
 ) -> EpisodeBuildResult:
     """Merge warning samples into policy-defined episodes."""
+    if not source_sha256.strip():
+        raise EventEvaluationError(
+            "source_sha256 is required; a source without content identity cannot "
+            "produce provenance-bearing episodes"
+        )
     if not samples:
         return EpisodeBuildResult((), (), policy)
     episodes: list[WarningEpisode] = []
@@ -660,6 +687,19 @@ def build_warning_episodes(
 
     seen: dict[str, tuple[float, str, str]] = {}
     for sample in samples:
+        if sample.quality == SAMPLE_DUPLICATE:
+            original = seen.get(sample.sample_id)
+            if original is None:
+                raise EventEvaluationError(
+                    f"duplicate-delivery sample {sample.sample_id!r} has no "
+                    "previously observed original in this episode input"
+                )
+            if original[0] != sample.time_s:
+                raise EventEvaluationError(
+                    f"duplicate-delivery sample {sample.sample_id!r} contradicts "
+                    "the original event time; input order cannot resolve the conflict"
+                )
+            continue
         payload = (sample.time_s, sample.state, sample.quality)
         if sample.sample_id in seen:
             if seen[sample.sample_id] != payload:
@@ -811,6 +851,10 @@ def evaluate_events(
     """
     if eligible_run_count < 0:
         raise EventEvaluationError("eligible_run_count cannot be negative")
+    if not source_sha256.strip():
+        raise EventEvaluationError(
+            "source_sha256 is required; provenance-free evaluations are refused"
+        )
     if evaluable_duration_s is not None and (
         isinstance(evaluable_duration_s, bool)
         or not isinstance(evaluable_duration_s, (int, float))
@@ -827,6 +871,14 @@ def evaluate_events(
                 f"duplicate critical-event identity {event.event_id!r}"
             )
         events_by_id[event.event_id] = event
+    episode_ids: set[str] = set()
+    for episode in episodes:
+        if episode.episode_id in episode_ids:
+            raise EventEvaluationError(
+                f"duplicate warning-episode identity {episode.episode_id!r}; "
+                "episode identity must be unique within one evaluation"
+            )
+        episode_ids.add(episode.episode_id)
     in_scope_episodes = tuple(
         episode
         for episode in episodes
@@ -1025,6 +1077,9 @@ def evaluate_events(
         and not untrusted_list
         and provenance_mismatch_events == 0
         and not foreign_episode_ids
+        and censored == 0
+        and untrusted == 0
+        and intervened == 0
     ):
         events.append(
             {
@@ -1196,6 +1251,8 @@ def analyze_s1_run(
     eligible = (
         eligibility_status == ELIGIBLE_FOR_S1_DATASET
         and coverage_trustworthy
+        and evaluation.metrics.provenance_mismatch_event_count == 0
+        and evaluation.metrics.provenance_mismatch_episode_count == 0
     )
     false_count = (
         evaluation.metrics.false_warning_episodes if eligible else None
@@ -1214,6 +1271,15 @@ def analyze_s1_run(
     if eligible:
         outcome_status = METRIC_DEFINED
         outcome_reason = "eligible, fully observed S1 run under the declared policy"
+    elif (
+        evaluation.metrics.provenance_mismatch_event_count
+        or evaluation.metrics.provenance_mismatch_episode_count
+    ):
+        outcome_status = METRIC_UNDEFINED
+        outcome_reason = (
+            "provenance-mismatched evidence was excluded; the run cannot be a "
+            "clean negative control"
+        )
     elif not coverage_trustworthy:
         outcome_status = METRIC_UNDEFINED
         outcome_reason = "coverage is not trustworthy; the run is not a negative control"

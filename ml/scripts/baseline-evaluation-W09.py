@@ -1393,6 +1393,11 @@ def _render_report(
             "",
             "Zero denominators stay undefined. Unmatched episodes are false "
             "warning burden only when the run is eligible and fully observed. "
+            "Every evaluation also records "
+            "`provenance_mismatch_event_count`/`provenance_mismatch_episode_count`; "
+            "a nonzero value means foreign run/source evidence was retained but "
+            "excluded, and the affected S1 outcome is undefined rather than a "
+            "clean zero. "
             "Matching is a retrospective offline annotation; it is not an "
             "online causal warning stream. W09 contains no predictive action "
             "stream, so non-intervention is an explicit assumption rather "

@@ -724,16 +724,13 @@ def test_missing_run_identity_pairs_only_with_same_source():
     assert result.metrics.true_matched_warning_episodes == 1
 
 
-def test_empty_source_identity_never_matches():
-    result = _evaluate_identified(
-        RUN,
-        "",
-        _identified_episodes(RUN, "", start=10.0),
-        [_identified_event("E-EMPTY", 13.0, RUN, "")],
-    )
-    assert result.matches == ()
-    assert result.metrics.provenance_mismatch_event_count == 1
-    assert result.metrics.provenance_mismatch_episode_count == 1
+def test_empty_source_identity_is_refused():
+    with pytest.raises(EventEvaluationError, match="source_sha256 is required"):
+        _identified_episodes(RUN, "", start=10.0)
+    with pytest.raises(EventEvaluationError, match="source_sha256 is required"):
+        _evaluate_identified(
+            RUN, "", (), [_identified_event("E-EMPTY", 13.0, RUN, "")]
+        )
 
 
 @pytest.mark.parametrize(
@@ -896,3 +893,103 @@ def test_replay_adapter_refuses_duplicate_time_and_quality_conflicts():
             ),
             warning_definition="synthetic",
         )
+
+
+def test_replay_adapter_skips_marked_duplicate_deliveries():
+    samples, duplicates = warning_samples_from_replay(
+        _replay_with(
+            (
+                _replay_sample(0, "X1", 100.0, True),
+                _replay_sample(1, "X1", 100.0, None, "DUPLICATE_DELIVERY"),
+            )
+        ),
+        warning_definition="synthetic",
+    )
+    assert duplicates == 1
+    assert len(samples) == 1
+    assert samples[0].sample_id == "X1"
+    assert samples[0].quality == "EVALUABLE"
+
+
+def test_replay_adapter_refuses_marked_duplicate_with_conflicting_time():
+    with pytest.raises(EventEvaluationError, match="contradicts the original"):
+        warning_samples_from_replay(
+            _replay_with(
+                (
+                    _replay_sample(0, "X1", 100.0, True),
+                    _replay_sample(1, "X1", 110.0, None, "DUPLICATE_DELIVERY"),
+                )
+            ),
+            warning_definition="synthetic",
+        )
+
+
+def test_episode_builder_skips_marked_duplicate_deliveries():
+    result = _episodes(
+        (
+            WarningSample(100.0, WARNING, "X1", quality="EVALUABLE"),
+            WarningSample(100.0, WARNING, "X1", quality="DUPLICATE_DELIVERY"),
+            WarningSample(101.0, WARNING, "X2", quality="EVALUABLE"),
+        )
+    )
+    assert len(result.episodes) == 1
+    assert result.episodes[0].sample_count == 2
+
+
+def test_duplicate_episode_identity_is_refused():
+    samples = (WarningSample(100.0, WARNING, "S0"),)
+    base = build_warning_episodes(
+        samples,
+        _episode_policy(),
+        run_id=RUN,
+        source_sha256=SOURCE,
+        synthetic_control=True,
+    )
+    other_run = build_warning_episodes(
+        samples,
+        _episode_policy(),
+        run_id="RUN-B",
+        source_sha256=SOURCE,
+        synthetic_control=True,
+    )
+    assert base.episodes[0].episode_id == other_run.episodes[0].episode_id
+    with pytest.raises(EventEvaluationError, match="duplicate warning-episode identity"):
+        evaluate_events(
+            run_id=RUN,
+            source_sha256=SOURCE,
+            episodes=base.episodes + other_run.episodes,
+            critical_events=[],
+            episode_policy=_episode_policy(),
+            association_policy=_association(),
+            warning_definition="synthetic warning",
+            coverage_trustworthy=True,
+            eligible_run_count=1,
+            evaluable_duration_s=600.0,
+            synthetic_control=True,
+        )
+
+
+def test_censored_event_suppresses_no_event_observation():
+    result = _evaluate(
+        _single_episode(10.0, 11.0),
+        [_event("E1", 10.0, observed=False, censored=True)],
+    )
+    assert result.metrics.eligible_critical_event_denominator == 0
+    assert not any(
+        item["event_type"] == EVENT_NO_EVENT_OBSERVATION
+        for item in result.events
+    )
+
+
+def test_provenance_mismatch_gates_s1_outcome_undefined():
+    episodes = _single_episode(10.0, 11.0)
+    result = _evaluate_identified(
+        RUN,
+        SOURCE,
+        episodes,
+        [_identified_event("E-FOREIGN", 12.0, "RUN-B", OTHER_SOURCE)],
+    )
+    analysis = _analysis(result, eligible=True)
+    assert analysis.false_warning_episode_count is None
+    assert analysis.outcome_status == METRIC_UNDEFINED
+    assert "provenance-mismatched" in analysis.outcome_reason

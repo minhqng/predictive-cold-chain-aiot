@@ -50,6 +50,7 @@ from coldguard_ml.baselines import (
     evaluate_b1,
     representative_value,
 )
+from coldguard_ml.event_evaluator import warning_samples_from_replay
 from coldguard_ml.intake import (
     Capture,
     NormalizedRow,
@@ -445,6 +446,24 @@ def test_b0_duplicate_delivery_does_not_create_a_second_crossing():
     assert any(
         sample.sample_status == SAMPLE_DUPLICATE for sample in result.samples
     )
+
+
+def test_b0_duplicate_delivery_is_idempotent_in_warning_adapter():
+    rows = [
+        _row(0, 29.0),
+        _row(1, 30.0),
+        _row(1, 30.0, dedup_key=("boot-1", "2")),
+        _row(2, 30.0),
+        _row(3, 30.0),
+    ]
+    capture = _capture([], rows=rows)
+    result = evaluate_b0(capture, _b0())
+    samples, duplicates = warning_samples_from_replay(
+        result, warning_definition="SYNTHETIC_CT_WARNING_STATE"
+    )
+    assert duplicates == 1
+    assert len(samples) == 4
+    assert all(sample.quality == "EVALUABLE" for sample in samples)
 
 
 def test_b0_staying_above_threshold_is_one_crossing():
