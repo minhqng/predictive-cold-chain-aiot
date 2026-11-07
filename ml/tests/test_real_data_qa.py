@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import csv
 import dataclasses
+import importlib.util
 import io
 import json
 import subprocess
@@ -72,6 +73,29 @@ def _run_cli(arguments, cwd=ML_ROOT):
         text=True,
         timeout=120,
     )
+
+
+def _cli_module():
+    spec = importlib.util.spec_from_file_location("w05_cli_under_test", CLI)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _conflicting_views(tmp_path):
+    """Same export bytes; two alternative A validity ledgers."""
+    (tmp_path / "export").mkdir(parents=True)
+    (tmp_path / "valid").mkdir(parents=True)
+    (tmp_path / "invalid").mkdir(parents=True)
+    export = _positive_export(tmp_path / "export")
+    valid_index = _positive_index(tmp_path / "valid", valid=True)
+    invalid_index = _positive_index(tmp_path / "invalid", valid=False)
+    valid_view = load_capture(export, a_run_index=valid_index)
+    invalid_view = load_capture(export, a_run_index=invalid_index)
+    assert valid_view.source.path == invalid_view.source.path
+    assert valid_view.source.sha256 == invalid_view.source.sha256
+    assert valid_view.run.boot_id == invalid_view.run.boot_id
+    return valid_view, invalid_view
 
 
 def _channel(analysis, name):
@@ -862,6 +886,115 @@ def test_conflicting_duplicate_view_admissions_fail_closed(tmp_path):
         blocker["code"] == "DUPLICATE_VIEW_ADMISSION_CONFLICT"
         for blocker in suite.conflicts[0]["blockers"]
     )
+
+
+def test_conflicting_duplicate_view_csv_fails_closed_and_is_order_independent(
+    tmp_path,
+):
+    valid_view, invalid_view = _conflicting_views(tmp_path)
+    first = analyze_captures([valid_view, invalid_view])
+    second = analyze_captures([invalid_view, valid_view])
+
+    first_csv = channel_summary_csv(first)
+    second_csv = channel_summary_csv(second)
+    assert first_csv == second_csv
+    assert "ELIGIBLE_FOR_PREDICTIVE_DATASET" not in first_csv
+
+    first_rows = _csv_rows(first_csv)
+    assert len(first_rows) == len(first[0].channels)
+    for row in first_rows:
+        assert row["physical_admission_status"] == "EXCLUDED_OR_BLOCKED"
+        assert "DUPLICATE_VIEW_ADMISSION_CONFLICT" in row["reason_codes"]
+
+    first_suite = summarize_qa_suite(first)
+    assert first_suite.predictive_dataset_readiness == "NOT_READY"
+    assert first_suite.eligible_s1_runs == 0
+    assert first_suite.eligible_s2_runs == 0
+    assert len(first_suite.conflicts) == 1
+    assert any(
+        blocker["code"] == "DUPLICATE_VIEW_ADMISSION_CONFLICT"
+        for blocker in first_suite.conflicts[0]["blockers"]
+    )
+
+    manifest = qa_manifest(
+        first,
+        first_suite,
+        config=first[0].config,
+        command="test",
+        repository_revision="test",
+        source_index=None,
+    )
+    view_statuses = [source["admission"]["status"] for source in manifest["sources"]]
+    assert "ELIGIBLE_FOR_PREDICTIVE_DATASET" in view_statuses
+    assert "EXCLUDED_OR_BLOCKED" in view_statuses
+    assert any(
+        blocker["code"] == "DUPLICATE_VIEW_ADMISSION_CONFLICT"
+        for blocker in manifest["suite"]["conflicts"][0]["blockers"]
+    )
+
+
+def test_conflicting_duplicate_view_report_marks_view_verdict_non_authoritative(
+    tmp_path,
+):
+    valid_view, invalid_view = _conflicting_views(tmp_path)
+    analyses = analyze_captures([valid_view, invalid_view])
+    suite = summarize_qa_suite(analyses)
+    report = _cli_module()._render_markdown(
+        analyses,
+        suite,
+        revision="test",
+        command="test",
+        output_label="test",
+        code_sha256="0" * 64,
+        source_index=None,
+        plot_names=[[] for _ in analyses],
+    )
+    assert report.count("DUPLICATE_VIEW_ADMISSION_CONFLICT | TRUE") == 2
+    assert report.count("| READY (VIEW ONLY; not the authoritative source verdict)") == 1
+    assert "## 5. Duplicate-view admission conflicts" in report
+    assert "| Adjudicated status |" in report
+    assert report.count("| EXCLUDED_OR_BLOCKED | USABLE_FOR_DIAGNOSTIC_QA |") == 1
+
+
+def test_single_eligible_view_keeps_its_csv_status(tmp_path):
+    (tmp_path / "eligible").mkdir(parents=True)
+    (tmp_path / "eligible-index").mkdir(parents=True)
+    export = _positive_export(tmp_path / "eligible")
+    view = load_capture(
+        export,
+        a_run_index=_positive_index(tmp_path / "eligible-index", valid=True),
+    )
+    analysis = analyze_capture(view)
+    rows = _csv_rows(channel_summary_csv([analysis]))
+    assert rows
+    assert {
+        row["physical_admission_status"] for row in rows
+    } == {"ELIGIBLE_FOR_PREDICTIVE_DATASET"}
+    assert all(
+        "DUPLICATE_VIEW_ADMISSION_CONFLICT" not in row["reason_codes"]
+        for row in rows
+    )
+
+
+def test_consistent_duplicate_views_collapse_once_in_csv():
+    analysis = analyze_capture(_real_capture())
+    duplicate = analyze_capture(_real_capture())
+    assert channel_summary_csv([analysis, duplicate]) == channel_summary_csv(
+        [analysis]
+    )
+
+
+def test_unrelated_devices_are_not_coalesced_in_csv(tmp_path):
+    first = _export(tmp_path / "a", _row_overrides([0, 1000, 2000]))
+    second = _export(
+        tmp_path / "b",
+        _row_overrides([0, 1000, 2000]),
+        boot_id="boot-two",
+    )
+    analyses = analyze_captures([load_capture(first), load_capture(second)])
+    rows = _csv_rows(channel_summary_csv(analyses))
+    assert len({row["session_id"] for row in rows}) == 2
+    assert len(rows) == sum(len(analysis.channels) for analysis in analyses)
 
 
 def test_blocked_run_remains_blocked_in_manifest(tmp_path):

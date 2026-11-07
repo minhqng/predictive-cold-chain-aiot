@@ -70,7 +70,7 @@ except ModuleNotFoundError:  # direct checkout invocation without installation
     )
     from coldguard_ml.real_data_qa import QA_LAYER_VERSION
 
-REPORT_VERSION = "coldguard-w05-qa-report-v1"
+REPORT_VERSION = "coldguard-w05-qa-report-v2"
 _MD = "md"
 _HTML = "html"
 _BOTH = "both"
@@ -242,22 +242,70 @@ def _command_line(args: argparse.Namespace, root: Path) -> str:
     return " ".join(parts)
 
 
-def _status_rows(analysis: QAAnalysis) -> list[tuple[str, str]]:
+def _status_rows(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[tuple[str, str]]:
     statuses = analysis.statuses
-    return [
+    admission_status = statuses.physical_admission_status
+    readiness = statuses.predictive_dataset_readiness
+    if conflicting:
+        view_only = " (VIEW ONLY; not the authoritative source verdict)"
+        admission_status += view_only
+        readiness += view_only
+    rows = [
         ("QA_EXECUTION_STATUS", statuses.qa_execution_status),
         ("SOURCE_STRUCTURE_STATUS", statuses.source_structure_status),
         ("CHANNEL_QUALITY_STATUS", statuses.channel_quality_status),
         (
             "PHYSICAL_ADMISSION_STATUS",
-            f"{statuses.physical_admission_status} "
+            f"{admission_status} "
             f"(highest stage: {statuses.physical_highest_stage})",
         ),
-        (
-            "PREDICTIVE_DATASET_READINESS",
-            statuses.predictive_dataset_readiness,
-        ),
+        ("PREDICTIVE_DATASET_READINESS", readiness),
     ]
+    if conflicting:
+        rows.append(
+            (
+                "DUPLICATE_VIEW_ADMISSION_CONFLICT",
+                "TRUE — this view-level verdict is not the authoritative "
+                "source verdict; the source is excluded and the suite "
+                "readiness is NOT_READY",
+            )
+        )
+    return rows
+
+
+def _conflict_view_keys(suite: QASuiteSummary) -> set[tuple[str, str]]:
+    keys: set[tuple[str, str]] = set()
+    for conflict in suite.conflicts:
+        for view in conflict.get("view_verdicts", []):
+            path = view.get("source_path")
+            sha256 = view.get("source_sha256")
+            if isinstance(path, str) and isinstance(sha256, str):
+                keys.add((path, sha256))
+    return keys
+
+
+def _conflict_rows(
+    suite: QASuiteSummary,
+) -> list[tuple[str, str, str, str, str]]:
+    rows: list[tuple[str, str, str, str, str]] = []
+    for conflict in suite.conflicts:
+        rows.append(
+            (
+                ", ".join(conflict.get("source_paths") or [conflict.get("source_path", "")]),
+                str(conflict.get("status", "")),
+                str(conflict.get("highest_stage", "")),
+                _code_list(
+                    [
+                        str(blocker.get("code", ""))
+                        for blocker in conflict.get("blockers", [])
+                    ]
+                ),
+                str(conflict.get("views", "")),
+            )
+        )
+    return rows
 
 
 def _evidence_category(analysis: QAAnalysis) -> str:
@@ -1417,6 +1465,7 @@ def _header_md(
     code_sha256: str,
     source_index: dict[str, Any] | None,
 ) -> list[str]:
+    conflict_views = _conflict_view_keys(suite)
     lines = [
         "# ColdGuard W05 — Real Telemetry QA Report",
         "",
@@ -1427,7 +1476,11 @@ def _header_md(
         "",
     ]
     for index, analysis in enumerate(analyses):
-        rows = _status_rows(analysis)
+        conflicting = (
+            analysis.capture.source.path,
+            analysis.capture.source.sha256,
+        ) in conflict_views
+        rows = _status_rows(analysis, conflicting=conflicting)
         lines.extend(
             [
                 f"**Source {index + 1}: `{analysis.capture.source.path}`**",
@@ -1590,6 +1643,7 @@ def _header_html(
     code_sha256: str,
     source_index: dict[str, Any] | None,
 ) -> list[str]:
+    conflict_views = _conflict_view_keys(suite)
     parts = [
         "<h1>ColdGuard W05 — Real Telemetry QA Report</h1>",
         "<p>Diagnostic QA over the W04 source-aware intake. No model training, "
@@ -1597,12 +1651,19 @@ def _header_html(
         "<h2>0. Five independent statuses</h2>",
     ]
     for index, analysis in enumerate(analyses):
+        conflicting = (
+            analysis.capture.source.path,
+            analysis.capture.source.sha256,
+        ) in conflict_views
         parts.append(
             f"<p><strong>Source {index + 1}: "
             f"<code>{_html.escape(analysis.capture.source.path)}</code></strong></p>"
         )
         parts.append(
-            _html_table(("Status", "Value"), _status_rows(analysis))
+            _html_table(
+                ("Status", "Value"),
+                _status_rows(analysis, conflicting=conflicting),
+            )
         )
     parts.append(
         "<p>A single <code>PASS</code> never implies that all five statuses "
@@ -1790,7 +1851,18 @@ def _render_markdown(
                 "",
                 "`summary_readiness` failed closed on contradictory views of one "
                 "physical source. The source is excluded; no favorable view was "
-                "kept.",
+                "kept. Per-view verdicts remain in `qa-manifest-W05.json`.",
+                "",
+                _md_table(
+                    [
+                        "Source paths",
+                        "Adjudicated status",
+                        "Highest stage",
+                        "Blockers",
+                        "Views",
+                    ],
+                    _conflict_rows(suite),
+                ),
                 "",
             ]
         )
@@ -1852,6 +1924,26 @@ th{background:#f5f5f5}blockquote{border-left:4px solid #d0a000;margin:0.8rem 0;p
         "The report contains no runtime generation timestamp and no local "
         "absolute path.</p>"
     )
+    if suite.conflicts:
+        parts.append(
+            "<h2>5. Duplicate-view admission conflicts</h2>"
+            "<p><code>summary_readiness</code> failed closed on contradictory "
+            "views of one physical source. The source is excluded; no favorable "
+            "view was kept. Per-view verdicts remain in "
+            "<code>qa-manifest-W05.json</code>.</p>"
+        )
+        parts.append(
+            _html_table(
+                (
+                    "Source paths",
+                    "Adjudicated status",
+                    "Highest stage",
+                    "Blockers",
+                    "Views",
+                ),
+                _conflict_rows(suite),
+            )
+        )
     parts.append("</body></html>")
     return "\n".join(parts) + "\n"
 

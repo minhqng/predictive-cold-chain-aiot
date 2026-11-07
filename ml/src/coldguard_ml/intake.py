@@ -2997,7 +2997,7 @@ _STAGE_ORDER = {
 }
 
 
-def _admission_signature(result: AdmissionResult) -> tuple[Any, ...]:
+def admission_signature(result: AdmissionResult) -> tuple[Any, ...]:
     """Comparable verdict signature for one view of a physical source."""
     return (
         result.eligible,
@@ -3019,7 +3019,7 @@ def _view_sort_key(result: AdmissionResult) -> tuple[Any, ...]:
         result.capture.source.sha256,
         result.status.value,
         _STAGE_ORDER.get(result.highest_stage, -1),
-        _admission_signature(result),
+        admission_signature(result),
     )
 
 
@@ -3029,7 +3029,7 @@ def _summarize_physical_source(
     """One verdict per physical source; contradictory views fail closed."""
     ordered = sorted(items, key=_view_sort_key)
     representative = ordered[0]
-    if len({_admission_signature(item) for item in ordered}) == 1:
+    if len({admission_signature(item) for item in ordered}) == 1:
         if representative.eligible:
             return (
                 representative.eligible_s1_runs,

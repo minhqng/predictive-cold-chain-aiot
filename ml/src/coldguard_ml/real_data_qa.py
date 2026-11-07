@@ -33,12 +33,14 @@ from .intake import (
     SOURCE_FORMAT_C_TELEMETRY_V1,
     TIME_BOOT_SCOPED_UPTIME,
     TIME_EVENT_UTC,
+    admission_signature,
     count_independent_runs,
     evaluate_admission,
     summarize_readiness,
 )
 
-QA_LAYER_VERSION = "coldguard-w05-qa-v1"
+QA_LAYER_VERSION = "coldguard-w05-qa-v2"
+DUPLICATE_VIEW_ADMISSION_CONFLICT = "DUPLICATE_VIEW_ADMISSION_CONFLICT"
 
 QA_EXECUTION_COMPLETED = "COMPLETED"
 QA_EXECUTION_FAILED = "FAILED"
@@ -2144,23 +2146,68 @@ def _csv_value(value: Any, *, unavailable: str = _UNAVAILABLE) -> str:
     return str(value)
 
 
+def _conflict_channel_summary(
+    views: Sequence[tuple[ChannelSummary, tuple[Any, ...]]],
+) -> ChannelSummary:
+    """One CSV row per source/session/channel; contradictory views fail closed.
+
+    The row is selected deterministically from the sorted views. When the
+    views of one source/session/channel disagree on the W04 admission
+    signature, the row carries the excluded status and the stable
+    ``DUPLICATE_VIEW_ADMISSION_CONFLICT`` reason instead of the first view's
+    possibly favorable verdict.
+    """
+    ordered = sorted(
+        views,
+        key=lambda item: (
+            item[0].source_id,
+            item[0].physical_admission_status,
+            item[1],
+            item[0].reason_codes,
+        ),
+    )
+    representative = ordered[0][0]
+    signatures = {signature for _channel, signature in ordered}
+    if len(signatures) == 1:
+        return representative
+    reason_codes = tuple(
+        sorted(
+            {
+                code
+                for channel, _signature in ordered
+                for code in channel.reason_codes
+            }
+            | {DUPLICATE_VIEW_ADMISSION_CONFLICT}
+        )
+    )
+    return replace(
+        representative,
+        physical_admission_status=AdmissionStage.EXCLUDED_OR_BLOCKED.value,
+        reason_codes=reason_codes,
+    )
+
+
 def channel_summary_csv(analyses: Sequence[QAAnalysis]) -> str:
     buffer = io.StringIO()
     writer = csv.DictWriter(
         buffer, fieldnames=CSV_COLUMNS, lineterminator="\n"
     )
     writer.writeheader()
-    rows: list[ChannelSummary] = []
+    grouped: dict[
+        tuple[str, str, str], list[tuple[ChannelSummary, tuple[Any, ...]]]
+    ] = {}
     for analysis in analyses:
-        rows.extend(analysis.channels)
-    unique: dict[tuple[str, str, str], ChannelSummary] = {}
-    for channel in rows:
-        unique.setdefault(
-            (channel.source_sha256, channel.session_id, channel.channel),
-            channel,
-        )
+        view_key = admission_signature(analysis.admission)
+        for channel in analysis.channels:
+            grouped.setdefault(
+                (channel.source_sha256, channel.session_id, channel.channel),
+                [],
+            ).append((channel, view_key))
+    unique = [
+        _conflict_channel_summary(grouped[key]) for key in sorted(grouped)
+    ]
     for channel in sorted(
-        unique.values(),
+        unique,
         key=lambda item: (item.source_id, item.session_id, item.channel),
     ):
         writer.writerow(
