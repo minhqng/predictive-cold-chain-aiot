@@ -2522,8 +2522,10 @@ def policy_freeze_gaps(
         if dimension == DIMENSION_TIMING:
             if not require_timing_alignment:
                 continue
-        elif threshold.blocking_severity != SEVERITY_BLOCKING:
-            continue
+        # An applicable dimension's PROPOSED/FROZEN state is scientific
+        # information regardless of a caller-declared blocking severity. A
+        # policy cannot downgrade a proposed cutoff to INFO to avoid the
+        # provisional status.
         gap: dict[str, Any] = {
             "dimension": dimension,
             "threshold_name": threshold.name,

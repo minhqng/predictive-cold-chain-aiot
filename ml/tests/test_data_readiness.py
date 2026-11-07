@@ -1043,6 +1043,25 @@ def test_measured_data_under_proposed_policy_cannot_be_green(tmp_path):
     )
 
 
+def test_proposed_threshold_cannot_be_downgraded_to_info(tmp_path):
+    policy = default_completeness_policy()
+    thresholds = tuple(
+        dataclasses.replace(threshold, blocking_severity="INFO")
+        if threshold.dimension in (DIMENSION_WHOLE, DIMENSION_CRITICAL)
+        else threshold
+        for threshold in policy.thresholds
+    )
+    downgraded = dataclasses.replace(policy, thresholds=thresholds)
+    report, _, _ = _green_suite(
+        tmp_path, policy=downgraded, synthetic_control=False
+    )
+    assert report.physical_gate.observed_status == "YELLOW"
+    assert "COMPLETENESS_POLICY_NOT_FROZEN" in (
+        report.physical_gate.reason_codes
+    )
+    assert report.predictive_gate.observed_status == "NOT_READY"
+
+
 def test_frozen_policy_with_evidence_reaches_green_and_ready(tmp_path):
     report, _, _ = _green_suite(
         tmp_path,
