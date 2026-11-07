@@ -17,7 +17,7 @@
 ## 2. Frozen feature registry identity
 
 - Feature schema version: `CG-FEAT-1.0`
-- Registry SHA-256: `56cef1f752126b5605d33b09ff9ddfb9f1a22bc969d02086f33f34805f0c1392`
+- Registry SHA-256: `ddbfe96e530d2dda79246dbb8eadd800922ea3aa03dbf4aacde433736b38136b`
 - Feature count: 31
 - Freeze status: `FROZEN_DEFINITIONS`
 - Frozen scope: feature_names, formulas, source_roles, input_quality_requirements, lookback_semantics, missingness_behavior, feature_order, feature_schema_hash
