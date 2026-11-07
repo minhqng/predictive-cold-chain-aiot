@@ -954,8 +954,37 @@ def test_conflicting_duplicate_view_report_marks_view_verdict_non_authoritative(
     assert "## 5. Duplicate-view admission conflicts" in report
     assert "| Adjudicated status |" in report
     assert report.count("| EXCLUDED_OR_BLOCKED | USABLE_FOR_DIAGNOSTIC_QA |") == 1
-    assert "| SOURCE_AUTHORITATIVE_STATUS | EXCLUDED_OR_BLOCKED |" in report
-    assert "| SOURCE_AUTHORITATIVE_READINESS | NOT_READY |" in report
+    assert report.count("| SOURCE_AUTHORITATIVE_STATUS | EXCLUDED_OR_BLOCKED |") == 2
+    assert report.count("| SOURCE_AUTHORITATIVE_READINESS | NOT_READY |") == 2
+    assert (
+        "| status | ELIGIBLE_FOR_PREDICTIVE_DATASET "
+        "(VIEW ONLY; not the authoritative source verdict) |"
+    ) in report
+    assert (
+        "| eligible | True (VIEW ONLY; not the authoritative source verdict) |"
+    ) in report
+    assert (
+        "| eligible S1 runs | 1 (VIEW ONLY; not the authoritative source verdict) |"
+    ) in report
+    assert (
+        "| predictive dataset readiness | READY "
+        "(VIEW ONLY; not the authoritative source verdict) |"
+    ) in report
+    assert report.count(
+        "| S1_NORMAL_BASELINE | True "
+        "(VIEW ONLY; not the authoritative source verdict) |"
+    ) == 2
+    assert report.count(
+        "This view-level W04 verdict is not the authoritative source verdict"
+    ) == 2
+    assert report.count(
+        "- Authoritative source result: `EXCLUDED_OR_BLOCKED`; authoritative "
+        "suite readiness `NOT_READY`; authoritative eligible S1/S2 runs 0."
+    ) == 2
+    assert (
+        "- View-level predictive dataset readiness: `READY` "
+        "(VIEW ONLY; not the authoritative source verdict)"
+    ) in report
 
     positive_lines = [
         line
@@ -986,8 +1015,13 @@ def test_conflicting_duplicate_view_report_marks_view_verdict_non_authoritative(
         svgs=[[] for _ in analyses],
     )
     assert html.count("DUPLICATE_VIEW_ADMISSION_CONFLICT:</strong>") == 4
-    assert "SOURCE_AUTHORITATIVE_STATUS" in html
-    assert "VIEW ONLY; not the authoritative source verdict" in html
+    assert html.count("SOURCE_AUTHORITATIVE_STATUS") == 2
+    assert html.count("SOURCE_AUTHORITATIVE_READINESS") == 2
+    assert html.count("True (VIEW ONLY; not the authoritative source verdict)") >= 2
+    assert html.count(
+        "This view-level W04 verdict is not the authoritative source verdict"
+    ) == 2
+    assert html.count("Authoritative source result") == 2
 
 
 def test_conflicting_views_with_different_export_bytes_still_fail_closed(tmp_path):
