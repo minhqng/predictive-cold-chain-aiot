@@ -10,6 +10,7 @@ Physical acceptance is explicitly NOT claimed.
 import json
 import os
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 
 import paho.mqtt.client as mqtt
@@ -18,6 +19,7 @@ from sqlalchemy import create_engine
 
 from coldguard_backend import command_store as cs
 from coldguard_backend import command_service as svc
+from coldguard_backend import command_publisher as publishing
 from coldguard_backend.ack_consumer import AckConsumer
 from coldguard_backend.command_publisher import (
     CommandPublisher,
@@ -51,7 +53,7 @@ needs_providers = pytest.mark.skipif(
 def _connect(user, password, client_id):
     params = mqtt_params()
     client = mqtt.Client(
-        mqtt.CallbackAPIVersion.VERSION2, client_id=client_id, protocol=mqtt.MQTTv5
+        mqtt.CallbackAPIVersion.VERSION2, client_id=client_id, protocol=mqtt.MQTTv5, reconnect_on_failure=False
     )
     client.username_pw_set(user, password)
     connected = threading.Event()
@@ -111,8 +113,16 @@ def test_desired_expiry_removes_executable_meaning(db_engine):
 def test_superseded_command_loses_executable_meaning(db_engine):
     cleanup_commands(db_engine)
     try:
-        svc.create_command_intent(db_engine, make_command("cmd-old"))
+        old = make_command("cmd-old")
+        svc.create_command_intent(db_engine, old)
         svc.create_command_intent(db_engine, make_command("cmd-new"))
+        version = _twin(db_engine)["twin_version"]
+        assert svc.create_command_intent(db_engine, old)["outcome"] == "exists"
+        assert _twin(db_engine)["twin_version"] == version
+        sent = []
+        publisher = CommandPublisher(db_engine, lambda *args: sent.append(args) or PublishResult("PUBACK"))
+        assert publisher.publish("cmd-old")["outcome"] == "superseded"
+        assert not sent
         active = svc.active_desired_intent(db_engine, "coldguard-001")
         assert active["command_id"] == "cmd-new"
         # Old command remains auditable but is no longer the active intent.
@@ -120,6 +130,107 @@ def test_superseded_command_loses_executable_meaning(db_engine):
             assert cs.get_command(conn, "cmd-old") is not None
     finally:
         cleanup_commands(db_engine)
+
+
+@pytest.mark.parametrize("verdict,status", [
+    ("ACCEPTED", cs.ACK_ACCEPTED), ("REJECTED", cs.ACK_REJECTED),
+])
+def test_early_ack_precedes_puback_commit(db_engine, verdict, status):
+    from tests.test_command_store import _record_ack
+
+    cleanup_commands(db_engine)
+    try:
+        svc.create_command_intent(db_engine, make_command("cmd-early"))
+        ack = make_ack("cmd-early", verdict)
+        assert _record_ack(db_engine, ack)["outcome"] == "conflict"
+
+        def send(*_):
+            assert _record_ack(db_engine, ack)["outcome"] == "applied"
+            assert _record_ack(db_engine, ack)["outcome"] == "duplicate"
+            return PublishResult("PUBACK", mid=1)
+
+        result = CommandPublisher(db_engine, send).publish("cmd-early")
+        assert result["status"] == status
+        assert result["outcome"] == "puback"
+        with db_engine.connect() as conn:
+            row = cs.get_command(conn, "cmd-early")
+            assert row["status"] == status
+            assert row["published_at"] is not None
+            assert row["verification_status"] == "NONE"
+            assert cs.get_attempt(conn, result["attempt_id"])["outcome"] == "PUBACK"
+    finally:
+        cleanup_commands(db_engine)
+
+
+def test_supersession_between_attempt_commit_and_send_fences_retry(db_engine, monkeypatch):
+    cleanup_commands(db_engine)
+    original = publishing.command_from_row
+
+    def supersede(row):
+        svc.create_command_intent(db_engine, make_command("cmd-new-between"))
+        return original(row)
+
+    try:
+        svc.create_command_intent(db_engine, make_command("cmd-old-between"))
+        monkeypatch.setattr(publishing, "command_from_row", supersede)
+        sent = []
+        publisher = CommandPublisher(db_engine, lambda *args: sent.append(args) or PublishResult("PUBACK"))
+        result = publisher.publish("cmd-old-between")
+        assert result["outcome"] == "superseded"
+        assert publisher.publish("cmd-old-between")["outcome"] == "superseded"
+        assert not sent
+        with db_engine.connect() as conn:
+            assert cs.get_attempt(conn, result["attempt_id"])["broker_reason"] == "superseded"
+    finally:
+        cleanup_commands(db_engine)
+
+
+def test_device_fence_serializes_supersession_during_transport(db_engine):
+    cleanup_commands(db_engine)
+    started = threading.Event()
+    release = threading.Event()
+    creator_started = threading.Event()
+
+    def transport(*_):
+        started.set()
+        assert release.wait(5)
+        return PublishResult("PUBACK")
+
+    def replace():
+        creator_started.set()
+        return svc.create_command_intent(db_engine, make_command("cmd-next"))
+
+    try:
+        svc.create_command_intent(db_engine, make_command("cmd-first"))
+        publisher = CommandPublisher(db_engine, transport)
+        with ThreadPoolExecutor(max_workers=2) as workers:
+            publication = workers.submit(publisher.publish, "cmd-first")
+            try:
+                assert started.wait(5)
+                supersession = workers.submit(replace)
+                assert creator_started.wait(5)
+                assert wait_for(lambda: _creator_waits_for_lock(db_engine), timeout_s=3)
+                assert _twin(db_engine)["desired_state"]["command_id"] == "cmd-first"
+            finally:
+                release.set()
+            assert publication.result(5)["outcome"] == "puback"
+            assert supersession.result(5)["outcome"] == "created"
+        assert _twin(db_engine)["desired_state"]["command_id"] == "cmd-next"
+    finally:
+        cleanup_commands(db_engine)
+
+
+def _creator_waits_for_lock(engine):
+    from sqlalchemy import text
+
+    with engine.connect() as conn:
+        return conn.execute(text("""
+            SELECT EXISTS (
+                SELECT 1 FROM pg_locks
+                WHERE locktype = 'advisory' AND NOT granted
+                  AND database = (SELECT oid FROM pg_database WHERE datname = current_database())
+            )
+        """)).scalar_one()
 
 
 def test_rejected_intent_not_executable(db_engine):
@@ -258,29 +369,39 @@ def test_legal_fresh_command_end_to_end(db_engine):
     assert consumer.wait_subscribed(10)
     received_commands = []
     try:
-        device_client.on_message = lambda c, u, m: received_commands.append(m)
-        device_client.subscribe(command_topic("coldguard-001"), qos=1)
-        import time
+        subscribed = threading.Event()
+        device_client.on_subscribe = lambda *_: subscribed.set()
 
-        time.sleep(0.3)
-        # 1. Create durable intent + desired link.
+        def mock_device(c, u, message):
+            received_commands.append(message)
+            ack = make_ack(json.loads(message.payload)["command_id"])
+            c.publish(ack_topic(), ack_bytes(ack), qos=1)
+
+        device_client.on_message = mock_device
+        device_client.subscribe(command_topic("coldguard-001"), qos=1)
+        assert subscribed.wait(10)
         svc.create_command_intent(db_engine, make_command("cmd-e2e"))
-        # 2. Publish to the real broker (QoS1, non-retained).
-        publisher = CommandPublisher(db_engine, PahoCommandTransport(publisher_client))
+        transport = PahoCommandTransport(publisher_client)
+        observed_early = []
+
+        def delay_puback_recording(*args):
+            result = transport(*args)
+            observed_early.append(wait_for(
+                lambda: _status(db_engine, "cmd-e2e") == cs.ACK_ACCEPTED, timeout_s=10
+            ))
+            return result
+
+        publisher = CommandPublisher(db_engine, delay_puback_recording)
         pub_result = publisher.publish("cmd-e2e")
-        assert pub_result["status"] == cs.PUBLISHED
-        assert wait_for(lambda: len(received_commands) >= 1, timeout_s=10)
+        assert observed_early == [True]
+        assert pub_result["outcome"] == "puback"
+        assert pub_result["status"] == cs.ACK_ACCEPTED
         assert received_commands[0].qos == 1
         assert received_commands[0].retain is False
-        # 3. Mock device accepts and publishes an ACK.
-        info = device_client.publish(ack_topic(), ack_bytes(make_ack("cmd-e2e", "ACCEPTED")), qos=1)
-        info.wait_for_publish(timeout=10)
-        # 4. Consumer correlates; command reaches ACK_ACCEPTED, never VERIFIED.
-        assert wait_for(
-            lambda: _status(db_engine, "cmd-e2e") == cs.ACK_ACCEPTED, timeout_s=10
-        )
         with db_engine.begin() as conn:
             row = cs.get_command(conn, "cmd-e2e")
+            assert row["published_at"] is not None
+            assert cs.get_attempt(conn, pub_result["attempt_id"])["outcome"] == "PUBACK"
         assert row["verification_status"] == "NONE"
         assert row["status"] != cs.VERIFIED
         # Reported state is still untouched by the command/ACK path.

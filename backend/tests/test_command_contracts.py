@@ -28,6 +28,16 @@ def test_command_rejects_expiry_not_after_creation():
         make_command("cmd-1", created_at=now, ttl_s=0)
 
 
+@pytest.mark.parametrize("naive_field", ["created_at", "expires_at", "both"])
+def test_command_rejects_naive_timestamps(naive_field):
+    command = make_command("cmd-tz").model_dump(mode="json")
+    for field in ("created_at", "expires_at"):
+        if naive_field in (field, "both"):
+            command[field] = getattr(make_command("cmd-tz"), field).replace(tzinfo=None).isoformat()
+    with pytest.raises(ValidationError):
+        Command.model_validate(command)
+
+
 def test_command_rejects_out_of_range_duty():
     with pytest.raises(ValidationError):
         make_command("cmd-1", duty=1.5)

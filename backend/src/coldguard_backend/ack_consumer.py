@@ -28,7 +28,7 @@ import threading
 from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, select
 from sqlalchemy.engine import Engine
 
 from coldguard_backend import command_store as cs
@@ -124,9 +124,9 @@ class AckConsumer:
         self._client: mqtt.Client | None = None
         self._lock = threading.Lock()
         self._running = False
-        self._connected = threading.Event()
         self._subscribed = threading.Event()
-        self._connect_error: str | None = None
+        self._startup_ready = threading.Event()
+        self._startup_error: str | None = None
         self.metrics = AckMetrics()
 
     @classmethod
@@ -150,15 +150,25 @@ class AckConsumer:
             if self._running:
                 raise RuntimeError("AckConsumer is already running")
             self._running = True
-        self._connected.clear()
         self._subscribed.clear()
-        self._connect_error = None
+        self._startup_ready.clear()
+        self._startup_error = None
+        try:
+            self._start()
+        except BaseException:
+            self.stop()
+            raise
+
+    def _start(self) -> None:
+        if not self._config.mqtt_username or not self._config.mqtt_password:
+            raise ValueError("ACK ingestion requires provisioned MQTT credentials")
         self._engine = self._build_engine()
+        with self._engine.connect() as connection:
+            connection.execute(select(cs.command_acks.c.id).limit(0))
         client = mqtt.Client(
             mqtt.CallbackAPIVersion.VERSION2, client_id=self._client_id, protocol=mqtt.MQTTv5,
         )
-        if self._config.mqtt_username:
-            client.username_pw_set(self._config.mqtt_username, self._config.mqtt_password)
+        client.username_pw_set(self._config.mqtt_username, self._config.mqtt_password)
         client.on_connect = self._on_connect
         client.on_message = self._on_message
         client.on_disconnect = self._on_disconnect
@@ -166,18 +176,15 @@ class AckConsumer:
         self._client = client
         try:
             client.connect(self._config.mqtt_host, self._config.mqtt_port, keepalive=30)
-        except Exception as exc:
-            self._shutdown_locked()
+        except OSError as exc:
             raise TimeoutError(
                 f"mqtt broker unreachable at {self._config.mqtt_host}:{self._config.mqtt_port}: {exc}"
             ) from exc
         client.loop_start()
-        if not self._connected.wait(timeout=_CONNECT_TIMEOUT_S):
-            self.stop()
-            raise TimeoutError("mqtt broker did not answer CONNECT within timeout")
-        if self._connect_error is not None:
-            self.stop()
-            raise ConnectionError(self._connect_error)
+        if not self._startup_ready.wait(timeout=_CONNECT_TIMEOUT_S):
+            raise TimeoutError("mqtt broker did not confirm the ACK subscription within timeout")
+        if self._startup_error is not None or not self._subscribed.is_set():
+            raise ConnectionError(self._startup_error or "mqtt ACK subscription lost during startup")
 
     def wait_subscribed(self, timeout_s: float = _CONNECT_TIMEOUT_S) -> bool:
         """Block until the broker has acknowledged the ACK subscription.
@@ -190,16 +197,18 @@ class AckConsumer:
 
     def stop(self) -> None:
         client, engine = self._shutdown_locked()
-        if client is not None:
-            try:
-                client.loop_stop()
-            finally:
+        try:
+            if client is not None:
                 try:
                     client.disconnect()
                 except Exception:  # noqa: BLE001
                     log.warning("mqtt disconnect raised during stop", exc_info=True)
-        if engine is not None:
-            engine.dispose()
+                finally:
+                    client.loop_stop()
+        finally:
+            self._subscribed.clear()
+            if engine is not None:
+                engine.dispose()
 
     def _shutdown_locked(self):
         with self._lock:
@@ -210,22 +219,33 @@ class AckConsumer:
 
     def _on_connect(self, client, userdata, flags, reason_code, properties=None) -> None:
         if reason_failed(reason_code):
-            self._connect_error = (
+            self._subscription_failed(
                 f"mqtt authentication refused for user {self._config.mqtt_username!r} "
                 f"(reason {reason_code}); check provisioned broker credentials"
             )
-            self._connected.set()
             return
-        for topic, qos in self._subscriptions:
-            result, _mid = client.subscribe(topic, options=mqtt.SubscribeOptions(qos=qos))
-            if result != mqtt.MQTT_ERR_SUCCESS:
-                log.error("ack subscribe failed: topic=%s rc=%s", topic, result)
-        self._connected.set()
+        result, _mid = client.subscribe([
+            (topic, mqtt.SubscribeOptions(qos=qos, retainAsPublished=True, retainHandling=2))
+            for topic, qos in self._subscriptions
+        ])
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            self._subscription_failed(f"mqtt ACK subscription failed: rc={result}")
+
+    def _subscription_failed(self, message: str) -> None:
+        self._startup_error = message
+        log.error("%s", message)
+        self._startup_ready.set()
 
     def _on_subscribe(self, client, userdata, mid, reason_code_list, properties=None) -> None:
+        expected = [qos for _, qos in self._subscriptions]
+        if [code.value for code in reason_code_list] != expected:
+            self._subscription_failed(f"mqtt ACK subscription rejected or downgraded: {reason_code_list}")
+            return
         self._subscribed.set()
+        self._startup_ready.set()
 
     def _on_disconnect(self, client, userdata, flags, reason_code, properties=None) -> None:
+        self._subscribed.clear()
         if reason_failed(reason_code):
             log.warning("ack consumer disconnected unexpectedly: %s", reason_code)
 
@@ -238,6 +258,8 @@ class AckConsumer:
             log.error("ack dropped: consumer engine unavailable")
             return
         classified = classify_ack(message.topic, bytes(message.payload))
+        if message.retain and classified["validity"] == "VALID":
+            classified.update(validity="CONFLICT", diagnostics={"code": "RETAINED_ACK"})
         try:
             with engine.begin() as connection:
                 result = cs.record_ack(
@@ -265,6 +287,6 @@ class AckConsumer:
 
     def snapshot(self) -> dict:
         with self._lock:
-            base = {"running": self._running}
+            base = {"running": self._running, "subscribed": self._subscribed.is_set()}
         base.update(self.metrics.snapshot())
         return base

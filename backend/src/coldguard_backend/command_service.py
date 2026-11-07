@@ -22,8 +22,8 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from sqlalchemy import func, select
-from sqlalchemy.engine import Engine
+from sqlalchemy import select
+from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend import command_store as cs
 from coldguard_backend.contracts import Command
@@ -62,19 +62,20 @@ def create_command_intent(
     a per-device advisory lock serializes concurrent intent creators. Returns
     ``{"outcome", "command", "desired_twin_version"}``.
     """
-    stamp = now or _utcnow()
     with engine.begin() as connection:
-        connection.execute(
-            select(func.pg_advisory_xact_lock(func.hashtext(command.device_id)))
-        )
+        cs.lock_command_device(connection, command.device_id)
         created = cs.create_command(connection, command)
         row = created["command"]
+        if created["outcome"] == "exists":
+            return {**created, "desired_twin_version": row["desired_twin_version"]}
+        stamp = now or _utcnow()
         # If the intent is already past expiry at creation, it has no executable
         # meaning; record it as EXPIRED rather than advertising active intent.
-        if row["expires_at"] < stamp and row["status"] not in cs.SETTLED_STATES:
+        if row["expires_at"] < stamp:
             row = cs.transition_command(
                 connection, command.command_id, cs.EXPIRED, reason="expired_at_creation", now=stamp
             )
+            return {"outcome": "created", "command": row, "desired_twin_version": None}
         twin = connection.execute(
             select(device_twin.c.twin_version).where(
                 device_twin.c.device_id == command.device_id
@@ -82,8 +83,6 @@ def create_command_intent(
         ).scalar_one_or_none()
         expected_version = int(twin) if twin is not None else 0
         desired = desired_state_for(command)
-        if row["status"] == cs.EXPIRED:
-            desired["intent"] = "EXPIRED"
         new_version = update_desired(
             connection,
             device_id=command.device_id,
@@ -95,11 +94,19 @@ def create_command_intent(
                 desired_twin_version=new_version
             )
         )
+        row["desired_twin_version"] = new_version
     return {
         "outcome": created["outcome"],
         "command": row,
         "desired_twin_version": new_version,
     }
+
+
+def current_desired_command_id(connection: Connection, device_id: str) -> str | None:
+    desired = connection.execute(
+        select(device_twin.c.desired_state).where(device_twin.c.device_id == device_id)
+    ).scalar_one_or_none()
+    return desired.get("command_id") if isinstance(desired, dict) else None
 
 
 def active_desired_intent(
@@ -113,12 +120,10 @@ def active_desired_intent(
     """
     stamp = now or _utcnow()
     with engine.begin() as connection:
-        desired = connection.execute(
-            select(device_twin.c.desired_state).where(device_twin.c.device_id == device_id)
-        ).scalar_one_or_none()
-        if not isinstance(desired, dict) or not desired.get("command_id"):
+        command_id = current_desired_command_id(connection, device_id)
+        if not command_id:
             return None
-        command = cs.get_command(connection, desired["command_id"])
+        command = cs.get_command(connection, command_id)
         if command is None or command["device_id"] != device_id:
             return None
         if command["status"] not in EXECUTABLE_STATES:

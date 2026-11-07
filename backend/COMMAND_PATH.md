@@ -36,9 +36,8 @@ contract item (A-W06 handoff §6.2), **not** implemented or claimed here.
 
 ## Lifecycle states and transition matrix
 
-Implemented in `command_store.ALLOWED_TRANSITIONS`. W06 software only ever
-drives the non-physical states; the physical verification states are defined
-but never set from software mocks.
+The ordinary transition API uses `command_store.ALLOWED_TRANSITIONS`. Physical
+states remain readable in storage and have no protocol transition edges.
 
 | From | Allowed to |
 |---|---|
@@ -47,18 +46,15 @@ but never set from software mocks.
 | `PUBLISHED` | ACK_ACCEPTED, ACK_REJECTED, EXPIRED, UNKNOWN |
 | `UNKNOWN` | PUBLISHED, ACK_ACCEPTED, ACK_REJECTED, EXPIRED |
 | `PUBLISH_FAILED` | PUBLISHED, EXPIRED, UNKNOWN |
-| `ACK_ACCEPTED` | EXECUTED, ELECTRICAL_VERIFIED, THERMAL_VERIFIED, VERIFIED, FAILED_VERIFICATION *(reserved physical stages)* |
+| `ACK_ACCEPTED` | *(settled protocol verdict)* |
 | `ACK_REJECTED` | *(terminal)* |
 | `EXPIRED` | *(terminal — never executable again)* |
-| `EXECUTED` | ELECTRICAL_VERIFIED, FAILED_VERIFICATION |
-| `ELECTRICAL_VERIFIED` | THERMAL_VERIFIED, FAILED_VERIFICATION |
-| `THERMAL_VERIFIED` | VERIFIED, FAILED_VERIFICATION |
-| `VERIFIED` | *(terminal)* |
-| `FAILED_VERIFICATION` | *(terminal)* |
+| Physical verification states | *(reserved for an independent evidence authority)* |
 
 Hard rules enforced by the matrix and row-locked compare-and-swap:
 
-- A broker PUBACK sets `PUBLISHED`, never `ACK_ACCEPTED`.
+- A successful broker PUBACK records broker delivery and sets `PUBLISHED` if
+  the command remains unsettled and fresh.
 - A device `ACCEPTED` ACK sets `ACK_ACCEPTED`, never `VERIFIED`;
   `verification_status` stays `NONE`.
 - An expired command can never return to a publishable state.
@@ -77,27 +73,36 @@ Hard rules enforced by the matrix and row-locked compare-and-swap:
   `command_id`, so forged/unmatched ACKs remain observable.
 - `command_transitions` — append-only lifecycle audit trail.
 
+Downgrade to revision 0007 takes exclusive locks on the four command tables and
+refuses to proceed if any holds evidence, including unmatched ACKs. An empty
+command schema can downgrade while preserving W05 tables.
+
 ## Publish workflow and crash windows
 
 `CommandPublisher.publish` is three phase:
 
-1. **Fence (DB txn).** `begin_publish_attempt` locks the command row, refuses
-   expired commands (→ `EXPIRED`), refuses non-publishable states, fences
-   concurrent publishers via an existing `PENDING` attempt, and records a new
-   `PENDING` attempt. Commits before any broker traffic.
-2. **Publish (broker).** Send QoS 1 / retain=false; wait for the broker PUBACK.
-   A PUBACK proves broker acceptance only.
-3. **Record (DB txn).** `finish_publish_attempt` persists the outcome:
+1. **Fence (DB transaction).** Check desired ownership under the per-device
+   advisory lock and reserve a `PENDING` attempt under the command row lock.
+   Commit before any broker traffic.
+2. **Dispatch (new DB transaction).** Reacquire the device lock, recheck
+   ownership, expiry, and pending attempt, then send at QoS 1 with retain
+   disabled. Supersession waits for this bounded handoff to finish. The command
+   row stays unlocked during transport so ACK ingestion can commit independently.
+3. **Record (same DB transaction as dispatch).** Persist the outcome:
    `PUBACK` → `PUBLISHED`, definite failure → `PUBLISH_FAILED`,
-   timeout/ambiguous → `UNKNOWN`.
+   timeout/ambiguous → `UNKNOWN`. A late PUBACK fills broker evidence without
+   replacing a device verdict or reviving an expired command.
 
 Crash window: a crash after phase 1 but before phase 3 leaves a `PENDING`
 attempt and a non-settled command. `reconcile_pending_attempts` resolves these
 to `UNKNOWN` on recovery and **never auto-replays** them. An operator retry
 reuses the same `command_id`, re-checks expiry, and allocates a new attempt
-number. A reconnect therefore cannot resend an expired command nor silently
-re-actuate. The device's own idempotency memory is volatile (A-W06 handoff §3),
-so the backend does not rely on it for cross-reboot safety.
+number. Paho transport requires a dedicated MQTT 5 client constructed with
+`reconnect_on_failure=False`. After ambiguous delivery it retires the client.
+A deliberate retry after retirement uses a fresh client. The device must still
+check the absolute expiry and deduplicate the stable ID. An already queued
+packet can arrive after a newer intent commits or after the expiry check. The
+database lock covers backend dispatch order and cannot revoke a broker packet.
 
 ## ACK arbitration
 
@@ -110,8 +115,9 @@ topic-agreeing ACK:
   `EXPIRED`, ACK retained as `LATE` (no resurrection);
 - already settled with the same effective verdict → `DUPLICATE` (no second
   transition); different verdict → `CONFLICT` (settled verdict preserved);
-- otherwise → matrix-checked transition to `ACK_ACCEPTED`/`ACK_REJECTED`/
-  `EXPIRED`.
+- before a recorded PUBACK, a same-device ACK can settle a matching attempt
+  whose dispatch may have reached the broker. A receipt without such an attempt
+  is quarantined. The broker ACL supplies the authenticated device boundary.
 
 `DUPLICATE_CANONICAL` uses `canonical_status` as the effective verdict.
 
@@ -127,6 +133,20 @@ meaning only while the command status is executable and unexpired; expired,
 rejected and superseded commands lose executable meaning while remaining
 auditable. An uncertain (`UNKNOWN`) publish is represented explicitly, never as
 a fabricated device OFF/ON.
+
+Replaying an existing command ID returns its stored record without changing
+desired ownership. An intent that is already expired at creation is recorded
+as expired and cannot displace the current desired command.
+
+## ACK ingestion startup
+
+Set `COLDGUARD_MQTT_ACK_INGEST=true` to start the ACK subscriber with the
+backend lifespan. It defaults to disabled. Apply revision 0008 first and
+provide the backend subscriber credentials. Startup waits for successful
+subscription acknowledgement and fails visibly if database access, broker
+authentication, or subscription readiness fails. Disconnect clears readiness.
+The subscriber uses a dedicated MQTT client and disposes its database engine
+on shutdown.
 
 ## Safety boundary
 

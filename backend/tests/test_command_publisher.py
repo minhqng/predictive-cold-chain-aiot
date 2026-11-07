@@ -16,6 +16,8 @@ import pytest
 from sqlalchemy import create_engine
 
 from coldguard_backend import command_store as cs
+from coldguard_backend import command_publisher as publishing
+from coldguard_backend.command_service import create_command_intent
 from coldguard_backend.command_publisher import (
     COMMAND_QOS,
     COMMAND_RETAIN,
@@ -39,7 +41,7 @@ PUBLISH_PASSWORD = "backend_cmd_dev_only"
 def _connect(user: str, password: str, client_id: str):
     params = mqtt_params()
     client = mqtt.Client(
-        mqtt.CallbackAPIVersion.VERSION2, client_id=client_id, protocol=mqtt.MQTTv5
+        mqtt.CallbackAPIVersion.VERSION2, client_id=client_id, protocol=mqtt.MQTTv5, reconnect_on_failure=False
     )
     client.username_pw_set(user, password)
     connected = threading.Event()
@@ -84,8 +86,7 @@ def test_publish_qos1_non_retained_on_wire(db_engine, publisher_client, device_s
     cleanup_commands(db_engine)
     try:
         cmd = make_command("cmd-wire")
-        with db_engine.begin() as conn:
-            cs.create_command(conn, cmd)
+        create_command_intent(db_engine, cmd)
         topic = command_topic(cmd.device_id)
         received = _subscribe(device_subscriber, topic, qos=1)
         import time
@@ -113,8 +114,7 @@ def test_publish_qos1_non_retained_on_wire(db_engine, publisher_client, device_s
 def test_no_retained_command_for_late_subscriber(db_engine, publisher_client):
     cleanup_commands(db_engine)
     try:
-        with db_engine.begin() as conn:
-            cs.create_command(conn, make_command("cmd-retain"))
+        create_command_intent(db_engine, make_command("cmd-retain"))
         publisher = CommandPublisher(db_engine, PahoCommandTransport(publisher_client))
         publisher.publish("cmd-retain")
         # A brand-new subscriber after the publish must receive nothing retained.
@@ -140,8 +140,7 @@ def test_expired_command_never_published(db_engine, publisher_client, device_sub
     try:
         now = utcnow()
         expired = make_command("cmd-expired", created_at=now - timedelta(minutes=10), ttl_s=60)
-        with db_engine.begin() as conn:
-            cs.create_command(conn, expired)
+        create_command_intent(db_engine, expired, now=now)
         received = _subscribe(device_subscriber, command_topic("coldguard-001"))
         publisher = CommandPublisher(db_engine, PahoCommandTransport(publisher_client))
         result = publisher.publish("cmd-expired", now=now)
@@ -158,8 +157,7 @@ def test_expired_command_never_published(db_engine, publisher_client, device_sub
 def test_retry_reuses_command_id_and_increments_attempt(db_engine):
     cleanup_commands(db_engine)
     try:
-        with db_engine.begin() as conn:
-            cs.create_command(conn, make_command("cmd-retry"))
+        create_command_intent(db_engine, make_command("cmd-retry"))
         outcomes = iter([PublishResult("FAILED", reason="broker_down"), PublishResult("PUBACK", mid=2)])
         publisher = CommandPublisher(db_engine, lambda *a: next(outcomes))
         first = publisher.publish("cmd-retry")
@@ -183,11 +181,36 @@ def test_retry_reuses_command_id_and_increments_attempt(db_engine):
 def test_timeout_marks_unknown(db_engine):
     cleanup_commands(db_engine)
     try:
-        with db_engine.begin() as conn:
-            cs.create_command(conn, make_command("cmd-timeout"))
+        create_command_intent(db_engine, make_command("cmd-timeout"))
         publisher = CommandPublisher(db_engine, lambda *a: PublishResult("TIMEOUT", reason="puback_timeout"))
         result = publisher.publish("cmd-timeout")
         assert result["status"] == cs.UNKNOWN
+    finally:
+        cleanup_commands(db_engine)
+
+
+def test_expiry_between_attempt_commit_and_send(db_engine, monkeypatch):
+    cleanup_commands(db_engine)
+    try:
+        clock = utcnow()
+        cmd = make_command("cmd-expired-between", created_at=clock, ttl_s=60)
+        create_command_intent(db_engine, cmd, now=clock)
+        times = iter([clock, cmd.expires_at + timedelta(microseconds=1)])
+
+        class Clock:
+            @staticmethod
+            def now(tz):
+                return next(times)
+
+        monkeypatch.setattr(publishing, "datetime", Clock)
+        sent = []
+        publisher = CommandPublisher(db_engine, lambda *args: sent.append(args) or PublishResult("PUBACK"))
+        result = publisher.publish(cmd.command_id)
+        assert result["outcome"] == "expired"
+        assert result["status"] == cs.EXPIRED
+        assert not sent
+        with db_engine.connect() as conn:
+            assert cs.get_attempt(conn, result["attempt_id"])["outcome"] == "FAILED"
     finally:
         cleanup_commands(db_engine)
 

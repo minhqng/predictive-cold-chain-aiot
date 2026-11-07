@@ -325,8 +325,8 @@ class Command(_WireBase):
     schema_version: Literal[1]
     command_id: str
     device_id: str
-    created_at: datetime
-    expires_at: datetime
+    created_at: AwareDatetime
+    expires_at: AwareDatetime
     controller_id: str
     policy_version: str
     reason_code: str

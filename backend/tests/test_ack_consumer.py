@@ -97,6 +97,98 @@ def test_classify_ack_pure_variants():
     assert classify_ack(ack_topic(), forged)["validity"] == "TOPIC_MISMATCH"
 
 
+def test_app_ack_ingestion_disabled_by_default(monkeypatch):
+    from fastapi.testclient import TestClient
+    from coldguard_backend.main import app
+
+    monkeypatch.delenv("COLDGUARD_MQTT_ACK_INGEST", raising=False)
+    monkeypatch.delenv("COLDGUARD_MQTT_INGEST", raising=False)
+    with TestClient(app):
+        assert app.state.ack_consumer is None
+
+
+def _enable_app_ack(monkeypatch):
+    from urllib.parse import urlsplit
+
+    params = mqtt_params()
+    db = urlsplit(os.environ["COLDGUARD_TEST_DATABASE_URL"])
+    monkeypatch.delenv("COLDGUARD_MQTT_INGEST", raising=False)
+    for name, value in {
+        "COLDGUARD_PROFILE": "integration",
+        "COLDGUARD_MQTT_ACK_INGEST": "true",
+        "POSTGRES_HOST": db.hostname,
+        "POSTGRES_PORT": db.port,
+        "POSTGRES_DB": db.path.lstrip("/"),
+        "POSTGRES_USER": db.username,
+        "POSTGRES_PASSWORD": db.password or "",
+        "MQTT_HOST": params["host"],
+        "MQTT_PORT": params["port"],
+        "MQTT_USERNAME": params["backend_user"],
+        "MQTT_PASSWORD": params["backend_password"],
+    }.items():
+        monkeypatch.setenv(name, str(value))
+
+
+@needs_providers
+def test_app_ack_starts_subscribed_and_stops(db_engine, device_publisher, monkeypatch):
+    from fastapi.testclient import TestClient
+    from coldguard_backend.main import app
+
+    cleanup_commands(db_engine)
+    _enable_app_ack(monkeypatch)
+    try:
+        with TestClient(app):
+            consumer = app.state.ack_consumer
+            assert consumer.snapshot()["subscribed"]
+            _prepare_published_command(db_engine, "cmd-app-ack")
+            _publish_ack(device_publisher, ack_bytes(make_ack("cmd-app-ack")))
+            assert wait_for(
+                lambda: _command_status(db_engine, "cmd-app-ack") == cs.ACK_ACCEPTED,
+                timeout_s=5,
+            )
+        assert not consumer.running
+        assert not consumer.snapshot()["subscribed"]
+        assert consumer._engine is None
+    finally:
+        cleanup_commands(db_engine)
+
+
+@needs_providers
+@pytest.mark.parametrize("bad_target", ["credentials", "database"])
+def test_app_ack_startup_fails_closed(db_engine, monkeypatch, bad_target):
+    from fastapi.testclient import TestClient
+    from sqlalchemy.exc import OperationalError
+    from coldguard_backend.main import app
+
+    _enable_app_ack(monkeypatch)
+    if bad_target == "credentials":
+        monkeypatch.setenv("MQTT_PASSWORD", "invalid-test-password")
+        error, message = ConnectionError, "authentication refused"
+    else:
+        monkeypatch.setenv("POSTGRES_DB", "nonexistent_coldguard_db")
+        error, message = OperationalError, "does not exist"
+    with pytest.raises(error, match=message):
+        with TestClient(app):
+            pytest.fail("ACK startup should fail before serving")
+
+
+@needs_providers
+def test_app_ack_startup_fails_for_unreachable_broker(db_engine, monkeypatch):
+    import socket
+    from fastapi.testclient import TestClient
+    from coldguard_backend.main import app
+
+    _enable_app_ack(monkeypatch)
+    # Reserve a loopback port without listening so no other provider is contacted.
+    with socket.socket() as unused:
+        unused.bind(("127.0.0.1", 0))
+        monkeypatch.setenv("MQTT_HOST", "127.0.0.1")
+        monkeypatch.setenv("MQTT_PORT", str(unused.getsockname()[1]))
+        with pytest.raises(TimeoutError, match="broker unreachable"):
+            with TestClient(app):
+                pytest.fail("ACK startup should fail before serving")
+
+
 @needs_providers
 def test_valid_ack_correlates_and_transitions(db_engine, device_publisher):
     cleanup_commands(db_engine)

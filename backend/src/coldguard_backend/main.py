@@ -89,20 +89,34 @@ def _start_consumer():
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     consumer = None
-    if _ingest_enabled():
-        consumer = _start_consumer()
-        log.info("mqtt ingestion consumer started")
-    app.state.mqtt_consumer = consumer
+    ack_consumer = None
     try:
+        if _ingest_enabled():
+            consumer = _start_consumer()
+            log.info("mqtt ingestion consumer started")
+        app.state.mqtt_consumer = consumer
+        if os.environ.get("COLDGUARD_MQTT_ACK_INGEST", "").strip().lower() in ("1", "true", "yes"):
+            from coldguard_backend.ack_consumer import AckConsumer
+            from coldguard_backend.config import ColdGuardConfig
+
+            ack_consumer = AckConsumer.from_config(ColdGuardConfig.load())
+            ack_consumer.start()
+            log.info("mqtt ACK consumer subscribed")
+        app.state.ack_consumer = ack_consumer
         yield
     finally:
-        if consumer is not None:
-            consumer.stop()
-            log.info("mqtt ingestion consumer stopped")
+        try:
+            if ack_consumer is not None:
+                ack_consumer.stop()
+        finally:
+            if consumer is not None:
+                consumer.stop()
+                log.info("mqtt ingestion consumer stopped")
 
 
 app = FastAPI(title="ColdGuard Backend", lifespan=lifespan)
 app.state.mqtt_consumer = None
+app.state.ack_consumer = None
 app.state.db_engine = None
 
 

@@ -40,10 +40,25 @@ def test_puback_never_implies_ack_accepted_in_matrix_origin():
 
 
 def test_ack_accepted_does_not_advance_to_verified_software():
-    # Physical verification states are reserved; the only edges out of
-    # ACK_ACCEPTED are the later physical stages, not a software shortcut.
-    assert cs.VERIFIED in cs.ALLOWED_TRANSITIONS[cs.ACK_ACCEPTED]
-    assert cs.EXPIRED not in cs.ALLOWED_TRANSITIONS[cs.ACK_ACCEPTED]
+    assert cs.ALLOWED_TRANSITIONS[cs.ACK_ACCEPTED] == frozenset()
+
+
+@pytest.mark.parametrize("target", [
+    cs.EXECUTED, cs.ELECTRICAL_VERIFIED, cs.THERMAL_VERIFIED, cs.VERIFIED,
+    cs.FAILED_VERIFICATION,
+])
+def test_public_transition_rejects_physical_status(db_engine, target):
+    cleanup_commands(db_engine)
+    try:
+        with db_engine.begin() as conn:
+            cs.create_command(conn, make_command("cmd-physical"))
+            cs.transition_command(conn, "cmd-physical", cs.PUBLISHED)
+            cs.transition_command(conn, "cmd-physical", cs.ACK_ACCEPTED)
+            with pytest.raises(cs.InvalidTransition):
+                cs.transition_command(conn, "cmd-physical", target)
+            assert cs.get_command(conn, "cmd-physical")["verification_status"] == "NONE"
+    finally:
+        cleanup_commands(db_engine)
 
 
 def test_expired_cannot_return_to_publishable():

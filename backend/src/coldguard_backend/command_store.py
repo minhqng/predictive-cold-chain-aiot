@@ -4,8 +4,8 @@ The command path never confuses broker delivery, device ACK and physical
 actuation. Lifecycle transitions are database-arbitrated (row locks + an
 explicit allowed-transition matrix), append-only attempts/ACKs/transitions
 preserve audit evidence, and expired commands can never become executable
-again. Physical verification states exist in the matrix but W06 software never
-advances into them: an ACCEPTED ACK is protocol evidence, not proof of cooling
+again. Physical verification states are reserved in storage and have no
+protocol transitions: an ACCEPTED ACK is protocol evidence, not proof of cooling
 (Doc 02 §32.2, §33).
 
 Concurrency:
@@ -150,14 +150,12 @@ ALLOWED_TRANSITIONS: dict[str, frozenset[str]] = {
     PUBLISHED: frozenset({ACK_ACCEPTED, ACK_REJECTED, EXPIRED, UNKNOWN}),
     UNKNOWN: frozenset({PUBLISHED, ACK_ACCEPTED, ACK_REJECTED, EXPIRED}),
     PUBLISH_FAILED: frozenset({PUBLISHED, EXPIRED, UNKNOWN}),
-    ACK_ACCEPTED: frozenset(
-        {EXECUTED, ELECTRICAL_VERIFIED, THERMAL_VERIFIED, VERIFIED, FAILED_VERIFICATION}
-    ),
+    ACK_ACCEPTED: frozenset(),
     ACK_REJECTED: frozenset(),
     EXPIRED: frozenset(),
-    EXECUTED: frozenset({ELECTRICAL_VERIFIED, FAILED_VERIFICATION}),
-    ELECTRICAL_VERIFIED: frozenset({THERMAL_VERIFIED, FAILED_VERIFICATION}),
-    THERMAL_VERIFIED: frozenset({VERIFIED, FAILED_VERIFICATION}),
+    EXECUTED: frozenset(),
+    ELECTRICAL_VERIFIED: frozenset(),
+    THERMAL_VERIFIED: frozenset(),
     VERIFIED: frozenset(),
     FAILED_VERIFICATION: frozenset(),
 }
@@ -165,7 +163,10 @@ ALLOWED_TRANSITIONS: dict[str, frozenset[str]] = {
 # States from which a fresh publish attempt may be made (subject to expiry).
 PUBLISHABLE_STATES = frozenset({CREATED, VALIDATED, PUBLISH_FAILED, UNKNOWN})
 # States that own a settled device verdict or expiry; ACKs cannot regress them.
-SETTLED_STATES = frozenset({ACK_ACCEPTED, ACK_REJECTED, EXPIRED, VERIFIED, FAILED_VERIFICATION})
+SETTLED_STATES = frozenset({
+    ACK_ACCEPTED, ACK_REJECTED, EXPIRED, EXECUTED, ELECTRICAL_VERIFIED,
+    THERMAL_VERIFIED, VERIFIED, FAILED_VERIFICATION,
+})
 TERMINAL_STATES = frozenset({ACK_REJECTED, EXPIRED, VERIFIED, FAILED_VERIFICATION})
 
 # Device verdict -> backend lifecycle status.
@@ -201,6 +202,11 @@ class PublishInProgress(CommandError):
 
 def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
+
+
+def lock_command_device(connection: Connection, device_id: str) -> None:
+    """Serialize desired-intent replacement, dispatch and recovery per device."""
+    connection.execute(select(func.pg_advisory_xact_lock(func.hashtext(device_id))))
 
 
 def canonical_command_bytes(command: Command) -> bytes:
@@ -317,7 +323,15 @@ def transition_command(
         raise InvalidTransition(
             f"transition {from_status} -> {to_status} is not allowed for {command_id!r}"
         )
-    stamp = now or _utcnow()
+    return _apply_protocol_transition(connection, current, to_status, reason, now or _utcnow())
+
+
+def _apply_protocol_transition(
+    connection: Connection, current: dict[str, Any], to_status: str,
+    reason: str | None, stamp: datetime,
+) -> dict[str, Any]:
+    """Write a transition already authorized by the protocol under the row lock."""
+    command_id = current["command_id"]
     values: dict[str, Any] = {"status": to_status}
     if to_status == PUBLISHED:
         values["published_at"] = stamp
@@ -328,7 +342,7 @@ def transition_command(
     connection.execute(
         commands.update().where(commands.c.command_id == command_id).values(**values)
     )
-    _record_transition(connection, command_id, from_status, to_status, reason)
+    _record_transition(connection, command_id, current["status"], to_status, reason)
     return get_command(connection, command_id)
 
 
@@ -417,14 +431,17 @@ def expire_due_commands(connection: Connection, *, now: datetime | None = None) 
     ).scalars().all()
     expired: list[str] = []
     for command_id in due:
-        current = _lock_command(connection, command_id)
-        if current["status"] in SETTLED_STATES:
-            continue
-        if current["expires_at"] >= stamp:
-            continue
-        transition_command(connection, command_id, EXPIRED, reason="expiry", now=stamp)
-        expired.append(command_id)
+        if expire_command(connection, command_id, now=stamp):
+            expired.append(command_id)
     return expired
+
+
+def expire_command(connection: Connection, command_id: str, *, now: datetime) -> bool:
+    current = _lock_command(connection, command_id)
+    if current["status"] in SETTLED_STATES or current["expires_at"] >= now:
+        return False
+    _apply_protocol_transition(connection, current, EXPIRED, "expiry", now)
+    return True
 
 
 def _effective_verdict(ack: CommandAck) -> str:
@@ -453,7 +470,6 @@ def record_ack(
     duplicate ACK produces no second effective transition; a conflicting ACK is
     retained as evidence without overwriting a settled verdict.
     """
-    stamp = now or _utcnow()
     fields: dict[str, Any] = {
         "command_id": ack.command_id if ack else None,
         "topic_device_id": topic_device_id,
@@ -496,7 +512,7 @@ def record_ack(
             command_acks.update().where(command_acks.c.id == ack_id).values(validity="UNMATCHED")
         )
         return _result("unmatched")
-    if command["device_id"] != ack.device_id:
+    if command["device_id"] != ack.device_id or topic_device_id != ack.device_id:
         connection.execute(
             command_acks.update().where(command_acks.c.id == ack_id).values(
                 validity="CONFLICT",
@@ -508,6 +524,7 @@ def record_ack(
         return _result("conflict")
 
     locked = _lock_command(connection, ack.command_id)
+    stamp = now or _utcnow()
     verdict = _effective_verdict(ack)
     target = _VERDICT_TO_STATUS.get(verdict)
     if target is None:
@@ -521,7 +538,9 @@ def record_ack(
 
     # Deterministic expiry arbitration: a command past expiry that has not
     # already settled a verdict becomes EXPIRED; the late ACK is evidence only.
-    if locked["expires_at"] < stamp and locked["status"] not in (ACK_ACCEPTED, ACK_REJECTED):
+    if locked["expires_at"] < stamp and (
+        locked["status"] == EXPIRED or locked["status"] not in SETTLED_STATES
+    ):
         if locked["status"] != EXPIRED:
             transition_command(connection, ack.command_id, EXPIRED, reason="expiry_before_ack", now=stamp)
         connection.execute(
@@ -545,7 +564,24 @@ def record_ack(
         )
         return _result("conflict", status=already)
 
-    new = transition_command(connection, ack.command_id, target, reason=ack.reason_code, now=stamp)
+    if locked["status"] != PUBLISHED:
+        eligible_attempt = connection.execute(
+            select(command_attempts.c.id).where(
+                command_attempts.c.command_id == ack.command_id,
+                command_attempts.c.outcome.in_(("PENDING", "PUBACK", "TIMEOUT", "UNKNOWN")),
+                command_attempts.c.payload_sha256 == locked["payload_sha256"],
+                command_attempts.c.attempted_at <= backend_received_at,
+            ).limit(1)
+        ).scalar_one_or_none()
+        if eligible_attempt is None:
+            connection.execute(
+                command_acks.update().where(command_acks.c.id == ack_id).values(
+                    validity="CONFLICT", diagnostics={"code": "ACK_WITHOUT_PUBLISH_ATTEMPT"},
+                )
+            )
+            return _result("conflict", status=locked["status"])
+
+    new = _apply_protocol_transition(connection, locked, target, ack.reason_code, stamp)
     return _result("applied", status=new["status"])
 
 
@@ -564,8 +600,8 @@ def begin_publish_attempt(
     "attempt_id", "command"}`` or ``{"outcome": "expired"|"not_publishable"}``.
     The caller owns the transaction; the MQTT publish happens after commit.
     """
-    stamp = now or _utcnow()
     row = _lock_command(connection, command_id)
+    stamp = now or _utcnow()
     if row["expires_at"] < stamp:
         if row["status"] not in SETTLED_STATES:
             transition_command(connection, command_id, EXPIRED, reason="expiry_before_publish", now=stamp)
@@ -595,17 +631,39 @@ def finish_publish_attempt(
     ambiguous outcome marks UNKNOWN (the device may or may not have applied it).
     A verdict that settled while publishing is never regressed.
     """
+    row = _lock_command(connection, command_id)
+    attempt = get_attempt(connection, attempt_id)
+    if attempt is None or attempt["command_id"] != command_id:
+        raise CommandError("publish attempt does not belong to command")
+    if attempt["outcome"] != "PENDING":
+        return row
     stamp = now or _utcnow()
     complete_attempt(connection, attempt_id, outcome=outcome, broker_reason=broker_reason, mqtt_mid=mqtt_mid)
-    row = _lock_command(connection, command_id)
+    if outcome == "PUBACK" and row["status"] in SETTLED_STATES:
+        connection.execute(
+            commands.update().where(
+                commands.c.command_id == command_id, commands.c.published_at.is_(None)
+            ).values(published_at=stamp)
+        )
+        return get_command(connection, command_id)
     if row["status"] in SETTLED_STATES:
         return row
     if row["status"] not in PUBLISHABLE_STATES:
         return row
     if outcome == "PUBACK":
+        if row["expires_at"] < stamp:
+            _apply_protocol_transition(connection, row, EXPIRED, "expiry_before_puback", stamp)
+            connection.execute(
+                commands.update().where(commands.c.command_id == command_id).values(published_at=stamp)
+            )
+            return get_command(connection, command_id)
         return transition_command(connection, command_id, PUBLISHED, reason="broker_puback", now=stamp)
     if outcome == "FAILED":
+        if row["status"] in (UNKNOWN, PUBLISH_FAILED):
+            return row
         return transition_command(connection, command_id, PUBLISH_FAILED, reason=broker_reason, now=stamp)
+    if row["status"] == UNKNOWN:
+        return row
     return transition_command(connection, command_id, UNKNOWN, reason=broker_reason or "publish_uncertain", now=stamp)
 
 
@@ -619,16 +677,19 @@ def reconcile_pending_attempts(connection: Connection, *, now: datetime | None =
     """
     stamp = now or _utcnow()
     pending = connection.execute(
-        select(command_attempts.c.command_id, command_attempts.c.id).where(
+        select(commands.c.device_id, command_attempts.c.command_id, command_attempts.c.id)
+        .join_from(command_attempts, commands, commands.c.command_id == command_attempts.c.command_id)
+        .where(
             command_attempts.c.outcome == "PENDING"
-        )
+        ).order_by(commands.c.device_id, command_attempts.c.id)
     ).all()
     affected: list[str] = []
-    for command_id, attempt_id in pending:
-        complete_attempt(connection, attempt_id, outcome="UNKNOWN", broker_reason="crash_window_unresolved")
-        row = get_command(connection, command_id)
-        if row is None or row["status"] in SETTLED_STATES:
+    for device_id, command_id, attempt_id in pending:
+        lock_command_device(connection, device_id)
+        row = _lock_command(connection, command_id)
+        if get_attempt(connection, attempt_id)["outcome"] != "PENDING":
             continue
+        complete_attempt(connection, attempt_id, outcome="UNKNOWN", broker_reason="crash_window_unresolved")
         if row["status"] in PUBLISHABLE_STATES:
             transition_command(connection, command_id, UNKNOWN, reason="crash_window_unresolved", now=stamp)
             affected.append(command_id)
