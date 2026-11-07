@@ -23,9 +23,9 @@ A single `PASS` never implies that all five statuses are green.
 | Report schema | coldguard-w05-qa-report-v1 |
 | Package version | 0.1.0 |
 | QA layer version | coldguard-w05-qa-v1 |
-| Analysis code SHA-256 | `7a21b0c59b573c434b1dbe309ed6b73dbf01c8451913b4c87e11a1599012b45b` |
-| Repository revision | ece7c2519aa8405112a75a77b2c27bba977cf013 |
-| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision ece7c2519aa8405112a75a77b2c27bba977cf013 --out reports/W05` |
+| Analysis code SHA-256 | `434983d424936ae93d9a940eafe8f767408762b493b61e5bd95266408ee68fcb` |
+| Repository revision | f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 |
+| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 --out reports/W05` |
 | Output directory | `ml/reports/W05` |
 | A run index | `evidence/A/W09/s1-run-index.json` (SHA-256 `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af`) |
 
@@ -261,8 +261,7 @@ Session `NO_DEVICE_ID::56044b74`: one aligned time domain per panel set. Gaps ar
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision ece7c2519aa8405112a75a77b2c27bba977cf013 --out reports/W05
+uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 --out reports/W05
 ```
 
 Repeated execution on the same source and configuration produces identical analytical numbers and stable serialized report content. The report contains no runtime generation timestamp and no local absolute path.
-
