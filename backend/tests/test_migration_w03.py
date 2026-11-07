@@ -25,8 +25,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W17 added revision 0011 (hypothetical shadow evidence).
-EXPECTED_HEAD = "0011"
+# W18 added revision 0012 (trusted assessments and exact policy approvals).
+EXPECTED_HEAD = "0012"
 
 
 needs_real_db = pytest.mark.skipif(

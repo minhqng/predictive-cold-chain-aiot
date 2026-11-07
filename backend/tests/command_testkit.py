@@ -44,7 +44,7 @@ def make_command(
         "device_id": device_id,
         "created_at": created.isoformat(),
         "expires_at": (created + timedelta(seconds=ttl_s)).isoformat(),
-        "controller_id": "PREDICTIVE",
+        "controller_id": "REACTIVE",
         "policy_version": "policy-test-1",
         "reason_code": "PREDICTED_CRITICAL",
         "action": {"cooling": cooling, "duty": duty},
