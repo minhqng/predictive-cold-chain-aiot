@@ -254,6 +254,7 @@ class WarningEpisode:
     def to_dict(self) -> dict[str, Any]:
         return {
             "event_type": EVENT_WARNING_EPISODE,
+            "event_id": self.episode_id,
             "episode_id": self.episode_id,
             "run_id": self.run_id,
             "source_sha256": self.source_sha256,

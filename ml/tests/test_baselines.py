@@ -909,6 +909,18 @@ def test_w09_cli_real_diagnostic_artifacts_are_consistent(tmp_path):
     assert "NOT physical baseline evidence" in (
         output / "baseline-comparison-W09.svg"
     ).read_text(encoding="utf-8")
+    event_rows = list(
+        csv.DictReader(
+            (output / "baseline-events-W09.csv").open(
+                encoding="utf-8", newline=""
+            )
+        )
+    )
+    assert all(
+        row["event_id"]
+        for row in event_rows
+        if row["record_type"] == "EVENT"
+    )
     rows = list(
         csv.DictReader(
             (output / "false-warning-summary-W09.csv").open(

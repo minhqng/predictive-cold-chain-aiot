@@ -943,7 +943,7 @@ def _false_warning_csv(
                 observation,
                 "",
                 "",
-                0,
+                "",
                 "",
                 "",
                 "",
