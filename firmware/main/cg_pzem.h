@@ -25,6 +25,12 @@ typedef enum {
     CG_PZEM_BAD_LENGTH,
     CG_PZEM_EXCEPTION,
     CG_PZEM_UART_ERR,
+#if defined(CG_FAULT_INJECTION) && CG_FAULT_INJECTION
+    /* Test-only: the RS-485 transport was deliberately disabled by fault
+     * injection. Distinct from TIMEOUT so a suppressed transaction is never
+     * reported as a natural response timeout or a physical link failure. */
+    CG_PZEM_INJECT_DISABLED,
+#endif
 } cg_pzem_status_t;
 
 /* Wire lengths used by the extractor and the poll loop. */

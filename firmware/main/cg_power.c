@@ -81,6 +81,20 @@ static cg_link_result_t link_transaction(const uint8_t *request, size_t request_
     memset(&result, 0, sizeof(result));
     result.status = CG_PZEM_TIMEOUT;
 
+#if CG_FAULT_INJECTION
+    /* A-W21-03: disable the PZEM communication path at the transport boundary.
+     * No request is transmitted and no response is read, so the producer gets a
+     * bounded communication-unavailable result with frame_len==0. It is reported
+     * as INJECT_DISABLED - never as a natural TIMEOUT and never as a physical
+     * link failure - and no stale bytes are left for a later parse. */
+    if (cg_fault_inject_pzem_down()) {
+        cg_rs485_flush_input();
+        result.status = CG_PZEM_INJECT_DISABLED;
+        result.attempts = 0;
+        return result;
+    }
+#endif
+
     for (uint8_t attempt = 1; attempt <= CG_PZEM_MAX_ATTEMPTS; attempt++) {
         result.attempts = attempt;
         result.rx_len = 0;
@@ -212,19 +226,6 @@ static void poll_once(void)
 
     hex_encode(request, request_len, tx_hex, sizeof(tx_hex));
     hex_encode(link.rx, link.rx_len, rx_hex, sizeof(rx_hex));
-
-#if CG_FAULT_INJECTION
-    /* A-W21-03: force the poll to fail so the real missing-data publish path
-     * runs. No synthetic voltage/current/power is produced and no previous
-     * value is carried forward: values_valid stays false, so the snapshot gets
-     * an invalid observation with its own fresh timestamp. crc_ok is cleared so
-     * the log line cannot report a TIMEOUT verdict alongside a passing CRC. */
-    if (cg_fault_inject_pzem_down()) {
-        status = CG_PZEM_TIMEOUT;
-        values_valid = false;
-        crc_ok = false;
-    }
-#endif
 
     s_seq++;
     if (status == CG_PZEM_OK) {
