@@ -184,7 +184,7 @@ def test_duplicate_returns_canonical_without_reactuating() -> None:
     assert result.may_actuate is False
 
 
-def test_duplicate_returns_original_rejection_reason() -> None:
+def test_duplicate_returns_original_rejection_status() -> None:
     processed = {"cmd-ttl-001": AckStatus.SAFETY_BLOCKED}
     result = validate_command(
         _cmd(),

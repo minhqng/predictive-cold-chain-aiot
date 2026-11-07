@@ -8,11 +8,11 @@
 
 Prove transport retry/stale inputs do not produce unsafe physical behavior (05D section 38):
 * Expired command → REJECTED, no actuation;
-* Duplicate command → one logical application, canonical ACK;
+* Duplicate command → one logical application, canonical status in the pure validator; full device ACK still needs integration;
 * Wrong-device → reject;
 * Out-of-range → reject;
 * Invalid-state command → SAFETY_BLOCKED / INVALID_STATE;
-* ACK interpretation → never equates accepted ACK with verified cooling.
+* ACK interpretation → never equates accepted ACK with verified cooling; backend UI/log proof remains open.
 
 ## Deliverables
 
@@ -51,7 +51,7 @@ Expected: `EXPIRED`, `COMMAND_EXPIRED`, `may_actuate=False`
 test_duplicate_returns_canonical_status_without_reactuating()
 test_duplicate_returns_original_rejection_reason()
 ```
-Expected: `DUPLICATE_CANONICAL`, original status preserved, `HOLD` intent
+Expected in unit tests: `DUPLICATE_CANONICAL`, original status preserved, `HOLD` intent. The validator receives only the stored status, so it cannot reconstruct the original reason, applied state, boot ID or ACK time.
 
 ### D-W06-03 Wrong-device
 
@@ -82,7 +82,7 @@ Expected: `INVALID_STATE` or `SAFETY_BLOCKED`, `COMMAND_SAFETY_BLOCKED` or `COMM
 ```python
 test_accepted_decision_does_not_claim_physical_verification()
 ```
-Expected: `detail` includes "physical verification ... outside W03"
+Unit expectation: `detail` states that physical verification is outside this layer. The required backend UI/log interpretation has not been tested.
 
 ## Check order (Doc 02 section 63)
 
@@ -103,7 +103,7 @@ First failing check wins so the returned reason is stable and auditable.
 
 | Situation | Verdict | Why |
 |---|---|---|
-| `now > expires_at` | `EXPIRED` | Absolute expiry is authoritative |
+| `now >= expires_at` | `EXPIRED` | Exact deadline is treated as expired; this is the conservative boundary used by the validator and its tests (Doc 02 §31.1 writes `now > expires_at`) |
 | `now - created_at > command_max_age_s` | `EXPIRED` | Age since issue exceeds bound |
 | `expires_at - created_at > command_max_ttl_s` | `OUT_OF_RANGE` | Validity window too long |
 | Clock unsynchronized | `SAFETY_BLOCKED` | Cannot evaluate expiry |
@@ -112,12 +112,12 @@ First failing check wins so the returned reason is stable and auditable.
 
 | Requirement | Status | Evidence |
 |---|---|---|
-| D-W06-01 Expired command | PASS | `test_expired_command_is_rejected()` |
-| D-W06-02 Duplicate command | PASS | `test_duplicate_*()` tests |
-| D-W06-03 Wrong-device | PASS | `test_wrong_device_is_rejected_before_expiry()` |
-| D-W06-04 Out-of-range | PASS | `test_duty_*_is_out_of_range()` tests |
-| D-W06-05 Invalid-state | PASS | `test_*_blocks_*()` tests |
-| D-W06-06 ACK interpretation | PASS | `test_accepted_decision_does_not_claim_physical_verification()` |
+| D-W06-01 Expired command | UNIT PASS; integration OPEN | `test_expired_command_is_rejected()`; device transport test pending |
+| D-W06-02 Duplicate command | UNIT PASS; integration OPEN | `test_duplicate_*()`; full canonical ACK and physical dedup pending |
+| D-W06-03 Wrong-device | UNIT PASS; integration OPEN | `test_wrong_device_is_rejected_before_expiry()`; device test pending |
+| D-W06-04 Out-of-range | UNIT PASS; integration OPEN | `test_duty_*_is_out_of_range()`; device test pending |
+| D-W06-05 Invalid-state | UNIT PASS; integration OPEN | `test_*_blocks_*()`; device test pending |
+| D-W06-06 ACK interpretation | OPEN | Unit decision text is correct; backend UI/log proof pending |
 
 ## Open items
 
