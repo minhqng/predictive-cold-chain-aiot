@@ -578,22 +578,28 @@ def test_threshold_boundary_is_inclusive_and_configurable():
     samples = [
         _event("b0", EVENT_TELEMETRY_SAMPLE, 1000, seq=1,
                fields={"cooling_current_a": "0.000000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
         _event("b1", EVENT_TELEMETRY_SAMPLE, 1500, seq=2,
                fields={"cooling_current_a": "0.000000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
         _event("p0", EVENT_TELEMETRY_SAMPLE, 2500, seq=3,
                fields={"cooling_current_a": "0.500000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
         _event("p1", EVENT_TELEMETRY_SAMPLE, 3000, seq=4,
                fields={"cooling_current_a": "0.500000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
         _event("p2", EVENT_TELEMETRY_SAMPLE, 3500, seq=5,
                fields={"cooling_current_a": "0.500000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
         _event("p3", EVENT_TELEMETRY_SAMPLE, 4000, seq=6,
                fields={"cooling_current_a": "0.500000",
-                       "quality.electrical": "VALID"}),
+                       "quality.electrical": "VALID"},
+               uncertainty=0.0),
     ]
     policy = ResponsePolicy(
         name="boundary",
@@ -611,6 +617,57 @@ def test_threshold_boundary_is_inclusive_and_configurable():
     result = analyze_response("APPLIED_TO_ELECTRICAL", anchor, samples, policy)
     assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
     assert result.latency_s == pytest.approx(0.5)
+
+
+def test_missing_uncertainty_does_not_report_a_numeric_delay():
+    anchor = _event(
+        "anchor",
+        EVENT_APPLIED_STATE,
+        2000,
+        fields={
+            "applied_to": "ON",
+            "quality.electrical": "VALID",
+            "quality.thermal": "VALID",
+        },
+    )
+    samples = [
+        _event("b0", EVENT_TELEMETRY_SAMPLE, 1000, seq=1,
+               fields={"cooling_current_a": "0.0",
+                       "quality.electrical": "VALID"}),
+        _event("b1", EVENT_TELEMETRY_SAMPLE, 1500, seq=2,
+               fields={"cooling_current_a": "0.0",
+                       "quality.electrical": "VALID"}),
+        _event("p0", EVENT_TELEMETRY_SAMPLE, 2500, seq=3,
+               fields={"cooling_current_a": "0.5",
+                       "quality.electrical": "VALID"}),
+        _event("p1", EVENT_TELEMETRY_SAMPLE, 3000, seq=4,
+               fields={"cooling_current_a": "0.5",
+                       "quality.electrical": "VALID"}),
+        _event("p2", EVENT_TELEMETRY_SAMPLE, 3500, seq=5,
+               fields={"cooling_current_a": "0.5",
+                       "quality.electrical": "VALID"}),
+    ]
+    result = analyze_response(
+        "APPLIED_TO_ELECTRICAL",
+        anchor,
+        samples,
+        ResponsePolicy(
+            name="no-uncertainty",
+            channel="cooling_current_a",
+            physical_role="COOLING_BRANCH_ELECTRICAL",
+            quality_key="electrical",
+            expected_direction="UP",
+            min_change=0.05,
+            baseline_window_s=10.0,
+            max_window_s=10.0,
+            sustained_observations=3,
+            max_gap_s=5.0,
+            max_uncertainty_s=10.0,
+        ),
+    )
+    assert result.state == "NOT_ESTIMABLE_UNCERTAINTY"
+    assert result.latency_s is None
+    assert "UNCERTAINTY_NOT_CARRIED" in result.reason_codes
 
 
 def test_uncertainty_above_the_bound_does_not_report_a_delay():

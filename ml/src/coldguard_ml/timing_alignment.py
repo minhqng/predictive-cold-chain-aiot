@@ -2024,6 +2024,20 @@ def analyze_response(
         latency = round(onset_time - anchor_time, 6)
         uncertainty = _response_uncertainty(anchor, onset_sample, policy)
         evidence_class = _evidence_class(anchor, onset_sample)
+        if uncertainty is None:
+            return _response(
+                relationship,
+                RESPONSE_NOT_ESTIMABLE_UNCERTAINTY,
+                anchor.command_id,
+                anchor.event_id,
+                None,
+                None,
+                evidence_class,
+                len(sustained),
+                baseline_median,
+                policy,
+                ["UNCERTAINTY_NOT_CARRIED"],
+            )
         if latency < 0:
             return _response(
                 relationship,
@@ -2402,6 +2416,12 @@ def command_to_ack(
         else:
             state = RESPONSE_VERIFIED_MEASURED_RESPONSE
             reasons = []
+        uncertainty = _response_uncertainty(
+            command, ack, DEFAULT_ELECTRICAL_POLICY
+        )
+        if uncertainty is None:
+            state = RESPONSE_NOT_ESTIMABLE_UNCERTAINTY
+            reasons = ["UNCERTAINTY_NOT_CARRIED"]
         results.append(
             _response(
                 "COMMAND_TO_ACK",
@@ -2412,7 +2432,7 @@ def command_to_ack(
                     RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
                     RESPONSE_VERIFIED_MEASURED_RESPONSE,
                 ) else None,
-                _response_uncertainty(command, ack, DEFAULT_ELECTRICAL_POLICY),
+                uncertainty,
                 evidence,
                 2,
                 None,
@@ -2614,12 +2634,17 @@ def ack_to_applied(
             continue
         latency = round(end - start, 6)
         evidence = _evidence_class(ack, applied)
+        uncertainty = _response_uncertainty(
+            ack, applied, DEFAULT_ELECTRICAL_POLICY
+        )
         state = (
             RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
             if evidence == "SYNTHETIC_UNIT_TEST"
             else RESPONSE_VERIFIED_MEASURED_RESPONSE
         )
-        if latency < 0:
+        if uncertainty is None:
+            state = RESPONSE_NOT_ESTIMABLE_UNCERTAINTY
+        elif latency < 0:
             state = RESPONSE_CONTRADICTORY_EVIDENCE
         results.append(
             replace(
@@ -2632,7 +2657,7 @@ def ack_to_applied(
                         RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
                         RESPONSE_VERIFIED_MEASURED_RESPONSE,
                     ) else None,
-                    _response_uncertainty(ack, applied, DEFAULT_ELECTRICAL_POLICY),
+                    uncertainty,
                     evidence,
                     2,
                     None,
@@ -2980,6 +3005,11 @@ def _event_index(event: TimelineEvent) -> dict[str, Any]:
         "command_id": event.command_id,
         "ack_seq": event.ack_seq,
         "seq": event.seq,
+        "source_record_index": event.source_record_index,
+        "device_uptime_ms": event.device_uptime_ms,
+        "event_time_utc": event.event_time_utc,
+        "backend_received_at": event.backend_received_at,
+        "persisted_at": event.persisted_at,
         "clock_domain": event.clock_domain,
         "clock_sync": event.clock_sync,
         "measurement_quality": event.measurement_quality,
