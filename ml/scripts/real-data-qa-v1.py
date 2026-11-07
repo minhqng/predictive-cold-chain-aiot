@@ -275,6 +275,33 @@ def _status_rows(
     return rows
 
 
+_VIEW_ONLY = "VIEW ONLY; not the authoritative source verdict"
+_AUTHORITATIVE_SOURCE_STATUS = "EXCLUDED_OR_BLOCKED"
+
+
+def _view_value(value: str, conflicting: bool) -> str:
+    return f"{value} ({_VIEW_ONLY})" if conflicting else value
+
+
+def _conflict_warning_md() -> str:
+    return (
+        "> **DUPLICATE_VIEW_ADMISSION_CONFLICT:** this view-level verdict is "
+        "not the authoritative source verdict. The suite excludes the source "
+        "and reports `NOT_READY`; the authoritative source status is "
+        f"`{_AUTHORITATIVE_SOURCE_STATUS}`."
+    )
+
+
+def _conflict_warning_html() -> str:
+    return (
+        "<blockquote><strong>DUPLICATE_VIEW_ADMISSION_CONFLICT:</strong> this "
+        "view-level verdict is not the authoritative source verdict. The suite "
+        "excludes the source and reports <code>NOT_READY</code>; the "
+        "authoritative source status is "
+        f"<code>{_AUTHORITATIVE_SOURCE_STATUS}</code>.</blockquote>"
+    )
+
+
 def _conflict_view_keys(suite: QASuiteSummary) -> set[tuple[str, str]]:
     keys: set[tuple[str, str]] = set()
     for conflict in suite.conflicts:
@@ -1195,7 +1222,9 @@ def _anomalies_html(analysis: QAAnalysis) -> list[str]:
     ]
 
 
-def _admission_md(analysis: QAAnalysis) -> list[str]:
+def _admission_md(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     admission = analysis.admission
     blockers = [
         (blocker.stage, blocker.code, blocker.detail)
@@ -1204,32 +1233,51 @@ def _admission_md(analysis: QAAnalysis) -> list[str]:
     scenarios = [
         (
             scenario.scenario_id,
-            str(scenario.eligible),
+            _view_value(str(scenario.eligible), conflicting),
             str(scenario.eligible_rows),
             _code_list([blocker.code for blocker in scenario.blockers]),
             _code_list(list(scenario.required_domains)),
         )
         for scenario in admission.scenarios
     ]
+    admission_rows = [
+        ("status", _view_value(admission.status.value, conflicting)),
+        ("highest stage", _view_value(admission.highest_stage.value, conflicting)),
+        ("eligible", _view_value(str(admission.eligible), conflicting)),
+        (
+            "eligible S1 runs",
+            _view_value(str(admission.eligible_s1_runs), conflicting),
+        ),
+        (
+            "eligible S2 runs",
+            _view_value(str(admission.eligible_s2_runs), conflicting),
+        ),
+        (
+            "predictive dataset readiness",
+            _view_value(admission.predictive_dataset_readiness, conflicting),
+        ),
+    ]
+    if conflicting:
+        admission_rows.extend(
+            [
+                ("SOURCE_AUTHORITATIVE_STATUS", _AUTHORITATIVE_SOURCE_STATUS),
+                ("SOURCE_AUTHORITATIVE_READINESS", "NOT_READY"),
+                ("SOURCE_AUTHORITATIVE_ELIGIBLE_S1_RUNS", "0"),
+                ("SOURCE_AUTHORITATIVE_ELIGIBLE_S2_RUNS", "0"),
+            ]
+        )
     lines = [
         "#### W04 admission verdict (unchanged by W05)",
         "",
-        _md_table(
-            ["Admission field", "Value"],
-            [
-                ("status", admission.status.value),
-                ("highest stage", admission.highest_stage.value),
-                ("eligible", str(admission.eligible)),
-                ("eligible S1 runs", str(admission.eligible_s1_runs)),
-                ("eligible S2 runs", str(admission.eligible_s2_runs)),
-                (
-                    "predictive dataset readiness",
-                    admission.predictive_dataset_readiness,
-                ),
-            ],
-        ),
-        "",
     ]
+    if conflicting:
+        lines.extend([_conflict_warning_md(), ""])
+    lines.extend(
+        [
+            _md_table(["Admission field", "Value"], admission_rows),
+            "",
+        ]
+    )
     if blockers:
         lines.extend(
             [
@@ -1256,7 +1304,9 @@ def _admission_md(analysis: QAAnalysis) -> list[str]:
     return lines
 
 
-def _admission_html(analysis: QAAnalysis) -> list[str]:
+def _admission_html(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     admission = analysis.admission
     blockers = [
         (blocker.stage, blocker.code, blocker.detail)
@@ -1265,30 +1315,48 @@ def _admission_html(analysis: QAAnalysis) -> list[str]:
     scenarios = [
         (
             scenario.scenario_id,
-            str(scenario.eligible),
+            _view_value(str(scenario.eligible), conflicting),
             str(scenario.eligible_rows),
             _code_list([blocker.code for blocker in scenario.blockers]),
             _code_list(list(scenario.required_domains)),
         )
         for scenario in admission.scenarios
     ]
-    parts = [
-        "<h4>W04 admission verdict (unchanged by W05)</h4>",
-        _html_table(
-            ("Admission field", "Value"),
-            [
-                ("status", admission.status.value),
-                ("highest stage", admission.highest_stage.value),
-                ("eligible", str(admission.eligible)),
-                ("eligible S1 runs", str(admission.eligible_s1_runs)),
-                ("eligible S2 runs", str(admission.eligible_s2_runs)),
-                (
-                    "predictive dataset readiness",
-                    admission.predictive_dataset_readiness,
-                ),
-            ],
+    admission_rows = [
+        ("status", _view_value(admission.status.value, conflicting)),
+        ("highest stage", _view_value(admission.highest_stage.value, conflicting)),
+        ("eligible", _view_value(str(admission.eligible), conflicting)),
+        (
+            "eligible S1 runs",
+            _view_value(str(admission.eligible_s1_runs), conflicting),
+        ),
+        (
+            "eligible S2 runs",
+            _view_value(str(admission.eligible_s2_runs), conflicting),
+        ),
+        (
+            "predictive dataset readiness",
+            _view_value(admission.predictive_dataset_readiness, conflicting),
         ),
     ]
+    if conflicting:
+        admission_rows.extend(
+            [
+                ("SOURCE_AUTHORITATIVE_STATUS", _AUTHORITATIVE_SOURCE_STATUS),
+                ("SOURCE_AUTHORITATIVE_READINESS", "NOT_READY"),
+                ("SOURCE_AUTHORITATIVE_ELIGIBLE_S1_RUNS", "0"),
+                ("SOURCE_AUTHORITATIVE_ELIGIBLE_S2_RUNS", "0"),
+            ]
+        )
+    parts = ["<h4>W04 admission verdict (unchanged by W05)</h4>"]
+    if conflicting:
+        parts.append(_conflict_warning_html())
+    parts.append(
+        _html_table(
+            ("Admission field", "Value"),
+            admission_rows,
+        )
+    )
     if blockers:
         parts.append(
             _html_table(("Stage", "Blocker", "Detail"), blockers)
@@ -1340,7 +1408,9 @@ def _plots_html(analysis: QAAnalysis, svgs: Sequence[str]) -> list[str]:
     return parts
 
 
-def _limits_md(analysis: QAAnalysis) -> list[str]:
+def _limits_md(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     limits = [
         "Captured-frame completeness is provisional; campaign completeness is NOT_ESTIMABLE without source-carried acquisition boundaries.",
         "Long-gap and stale thresholds are named diagnostic-only configuration, not feature-eligibility limits.",
@@ -1348,7 +1418,15 @@ def _limits_md(analysis: QAAnalysis) -> list[str]:
         "PZEM power/energy values are diagnostic only while the electrical quality domain is not VALID; no validated power, energy, COP or whole-system claim is made.",
         "TEC hot-side temperature is never chamber air and never enters a chamber-air mean or gradient.",
         "Unknown ROM/role, unknown door polarity and UNKNOWN door state remain unknown; none is silently converted.",
-        "The W04 admission verdict is authoritative and unchanged; readable diagnostics never upgrade run validity.",
+        (
+            "This view-level W04 verdict is not the authoritative source verdict; "
+            "conflicting duplicate views are excluded by the suite, whose "
+            "authoritative result is EXCLUDED_OR_BLOCKED / NOT_READY. Readable "
+            "diagnostics never upgrade run validity."
+            if conflicting
+            else "The W04 admission verdict is authoritative and unchanged; "
+            "readable diagnostics never upgrade run validity."
+        ),
         "No interpolation, invented sensor value, cross-boot uptime subtraction or cross-boot absolute-time comparison is performed.",
         "No B-side run manifest exists in this repository; W05 consumes A's run index and reports run/session identity. Run-manifest consistency remains an A/C dependency.",
     ]
@@ -1359,7 +1437,9 @@ def _limits_md(analysis: QAAnalysis) -> list[str]:
     return ["#### Scientific limits", ""] + [f"- {item}" for item in limits] + [""]
 
 
-def _limits_html(analysis: QAAnalysis) -> list[str]:
+def _limits_html(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     items = [
         "Captured-frame completeness is provisional; campaign completeness is NOT_ESTIMABLE without source-carried acquisition boundaries.",
         "Long-gap and stale thresholds are named diagnostic-only configuration, not feature-eligibility limits.",
@@ -1367,7 +1447,15 @@ def _limits_html(analysis: QAAnalysis) -> list[str]:
         "PZEM power/energy values are diagnostic only while the electrical quality domain is not VALID; no validated power, energy, COP or whole-system claim is made.",
         "TEC hot-side temperature is never chamber air and never enters a chamber-air mean or gradient.",
         "Unknown ROM/role, unknown door polarity and UNKNOWN door state remain unknown; none is silently converted.",
-        "The W04 admission verdict is authoritative and unchanged; readable diagnostics never upgrade run validity.",
+        (
+            "This view-level W04 verdict is not the authoritative source verdict; "
+            "conflicting duplicate views are excluded by the suite, whose "
+            "authoritative result is EXCLUDED_OR_BLOCKED / NOT_READY. Readable "
+            "diagnostics never upgrade run validity."
+            if conflicting
+            else "The W04 admission verdict is authoritative and unchanged; "
+            "readable diagnostics never upgrade run validity."
+        ),
         "No interpolation, invented sensor value, cross-boot uptime subtraction or cross-boot absolute-time comparison is performed.",
         "No B-side run manifest exists in this repository; W05 consumes A's run index and reports run/session identity. Run-manifest consistency remains an A/C dependency.",
     ]
@@ -1380,7 +1468,9 @@ def _limits_html(analysis: QAAnalysis) -> list[str]:
     ] + ["</ul>"]
 
 
-def _handoff_md(analysis: QAAnalysis) -> list[str]:
+def _handoff_md(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     timing = []
     for session in analysis.sessions:
         stats = session.interval_stats
@@ -1406,20 +1496,49 @@ def _handoff_md(analysis: QAAnalysis) -> list[str]:
             "",
             "**W08 (dataset readiness) observations only — no W08 implementation:**",
             "",
+        ]
+    )
+    if conflicting:
+        lines.extend([_conflict_warning_md(), ""])
+        lines.extend(
+            [
+                f"- View-level predictive dataset readiness: `{readiness}` "
+                f"({_VIEW_ONLY}); view-level eligible S1 runs "
+                f"{admission.eligible_s1_runs}; eligible S2 runs "
+                f"{admission.eligible_s2_runs}.",
+                "- Authoritative source result: "
+                f"`{_AUTHORITATIVE_SOURCE_STATUS}`; authoritative suite "
+                "readiness `NOT_READY`; authoritative eligible S1/S2 runs 0.",
+            ]
+        )
+    else:
+        lines.append(
             f"- Predictive dataset readiness: `{readiness}`; eligible S1 runs "
             f"{admission.eligible_s1_runs}; eligible S2 runs "
-            f"{admission.eligible_s2_runs}.",
+            f"{admission.eligible_s2_runs}."
+        )
+    lines.extend(
+        [
             f"- Run identity status: `{analysis.capture.run.run_id_status}`; "
             "multiple filenames or row labels were not counted as independent runs.",
-            "- Channel/run validity observations are in `channel-summary.csv`; "
-            "the W04 admission ledger remains authoritative.",
+            (
+                "- Channel/run validity observations are in "
+                "`channel-summary.csv`; this view's verdict is not authoritative "
+                "for the conflicting source."
+                if conflicting
+                else "- Channel/run validity observations are in "
+                "`channel-summary.csv`; the W04 admission ledger remains "
+                "authoritative."
+            ),
             "",
         ]
     )
     return lines
 
 
-def _handoff_html(analysis: QAAnalysis) -> list[str]:
+def _handoff_html(
+    analysis: QAAnalysis, *, conflicting: bool = False
+) -> list[str]:
     timing = []
     for session in analysis.sessions:
         stats = session.interval_stats
@@ -1438,18 +1557,40 @@ def _handoff_html(analysis: QAAnalysis) -> list[str]:
         + [f"<li>{_html.escape(item)}</li>" for item in timing]
         + [
             "</ul><p><strong>W08 (dataset readiness) observations only — no "
-            "W08 implementation:</strong></p><ul>",
-            f"<li>Predictive dataset readiness: "
-            f"<code>{_html.escape(analysis.statuses.predictive_dataset_readiness)}</code>; "
-            f"eligible S1 runs {admission.eligible_s1_runs}; eligible S2 runs "
-            f"{admission.eligible_s2_runs}.</li>",
+            "W08 implementation:</strong></p>",
+        ]
+        + ([_conflict_warning_html()] if conflicting else [])
+        + [
+            "<ul>",
+            (
+                f"<li>View-level predictive dataset readiness: "
+                f"<code>{_html.escape(analysis.statuses.predictive_dataset_readiness)}</code> "
+                f"({_html.escape(_VIEW_ONLY)}); view-level eligible S1 runs "
+                f"{admission.eligible_s1_runs}; eligible S2 runs "
+                f"{admission.eligible_s2_runs}.</li>"
+                "<li>Authoritative source result: "
+                f"<code>{_html.escape(_AUTHORITATIVE_SOURCE_STATUS)}</code>; "
+                "authoritative suite readiness <code>NOT_READY</code>; "
+                "authoritative eligible S1/S2 runs 0.</li>"
+                if conflicting
+                else f"<li>Predictive dataset readiness: "
+                f"<code>{_html.escape(analysis.statuses.predictive_dataset_readiness)}</code>; "
+                f"eligible S1 runs {admission.eligible_s1_runs}; eligible S2 runs "
+                f"{admission.eligible_s2_runs}.</li>"
+            ),
             f"<li>Run identity status: "
             f"<code>{_html.escape(analysis.capture.run.run_id_status)}</code>; "
             "multiple filenames or row labels were not counted as independent "
             "runs.</li>",
-            "<li>Channel/run validity observations are in "
-            "<code>channel-summary.csv</code>; the W04 admission ledger remains "
-            "authoritative.</li>",
+            (
+                "<li>Channel/run validity observations are in "
+                "<code>channel-summary.csv</code>; this view's verdict is not "
+                "authoritative for the conflicting source.</li>"
+                if conflicting
+                else "<li>Channel/run validity observations are in "
+                "<code>channel-summary.csv</code>; the W04 admission ledger "
+                "remains authoritative.</li>"
+            ),
             "</ul>",
         ]
     )
@@ -1817,17 +1958,22 @@ def _render_markdown(
         code_sha256=code_sha256,
         source_index=source_index,
     )
+    conflict_views = _conflict_view_keys(suite)
     lines.extend(["## 3. Per-source QA", ""])
     for index, analysis in enumerate(analyses):
+        conflicting = (
+            analysis.capture.source.path,
+            analysis.capture.source.sha256,
+        ) in conflict_views
         lines.extend(_source_preamble_md(analysis, index))
         lines.extend(_inventory_md(analysis))
         lines.extend(_sampling_md(analysis))
         lines.extend(_channel_md(analysis))
         lines.extend(_plots_md(analysis, plot_names[index]))
         lines.extend(_anomalies_md(analysis))
-        lines.extend(_limits_md(analysis))
-        lines.extend(_handoff_md(analysis))
-        lines.extend(_admission_md(analysis))
+        lines.extend(_limits_md(analysis, conflicting=conflicting))
+        lines.extend(_handoff_md(analysis, conflicting=conflicting))
+        lines.extend(_admission_md(analysis, conflicting=conflicting))
     lines.extend(
         [
             "## 4. Reproduction",
@@ -1904,17 +2050,22 @@ th{background:#f5f5f5}blockquote{border-left:4px solid #d0a000;margin:0.8rem 0;p
             source_index=source_index,
         )
     )
+    conflict_views = _conflict_view_keys(suite)
     parts.append("<h2>3. Per-source QA</h2>")
     for index, analysis in enumerate(analyses):
+        conflicting = (
+            analysis.capture.source.path,
+            analysis.capture.source.sha256,
+        ) in conflict_views
         parts.extend(_source_preamble_html(analysis, index))
         parts.extend(_inventory_html(analysis))
         parts.extend(_sampling_html(analysis))
         parts.extend(_channel_html(analysis))
         parts.extend(_plots_html(analysis, svgs[index]))
         parts.extend(_anomalies_html(analysis))
-        parts.extend(_limits_html(analysis))
-        parts.extend(_handoff_html(analysis))
-        parts.extend(_admission_html(analysis))
+        parts.extend(_limits_html(analysis, conflicting=conflicting))
+        parts.extend(_handoff_html(analysis, conflicting=conflicting))
+        parts.extend(_admission_html(analysis, conflicting=conflicting))
     parts.append(
         "<h2>4. Reproduction</h2><pre><code>cd ml\nuv run --locked "
         "--python 3.12 --extra test python scripts/"

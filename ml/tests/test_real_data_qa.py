@@ -11,6 +11,7 @@ import dataclasses
 import importlib.util
 import io
 import json
+import re
 import subprocess
 import sys
 from pathlib import Path
@@ -950,10 +951,43 @@ def test_conflicting_duplicate_view_report_marks_view_verdict_non_authoritative(
         plot_names=[[] for _ in analyses],
     )
     assert report.count("DUPLICATE_VIEW_ADMISSION_CONFLICT | TRUE") == 2
-    assert report.count("| READY (VIEW ONLY; not the authoritative source verdict)") == 1
     assert "## 5. Duplicate-view admission conflicts" in report
     assert "| Adjudicated status |" in report
     assert report.count("| EXCLUDED_OR_BLOCKED | USABLE_FOR_DIAGNOSTIC_QA |") == 1
+    assert "| SOURCE_AUTHORITATIVE_STATUS | EXCLUDED_OR_BLOCKED |" in report
+    assert "| SOURCE_AUTHORITATIVE_READINESS | NOT_READY |" in report
+
+    positive_lines = [
+        line
+        for line in report.splitlines()
+        if "ELIGIBLE_FOR_PREDICTIVE_DATASET" in line
+        and "PHYSICALLY_QUALIFIED_REQUIRED" not in line
+    ]
+    assert positive_lines
+    for line in positive_lines:
+        assert "VIEW ONLY" in line, line
+    ready_lines = [
+        line
+        for line in report.splitlines()
+        if re.search(r"(?<!NOT_)READY", line)
+    ]
+    assert ready_lines
+    for line in ready_lines:
+        assert "VIEW ONLY" in line, line
+
+    html = _cli_module()._render_html(
+        analyses,
+        suite,
+        revision="test",
+        command="test",
+        output_label="test",
+        code_sha256="0" * 64,
+        source_index=None,
+        svgs=[[] for _ in analyses],
+    )
+    assert html.count("DUPLICATE_VIEW_ADMISSION_CONFLICT:</strong>") == 4
+    assert "SOURCE_AUTHORITATIVE_STATUS" in html
+    assert "VIEW ONLY; not the authoritative source verdict" in html
 
 
 def test_conflicting_views_with_different_export_bytes_still_fail_closed(tmp_path):
