@@ -203,7 +203,7 @@ def test_real_a_csv_report_and_plot_agree_and_are_deterministic():
         assert int(row["impossible_count"]) == channel.impossible_count
         assert row["diagnostic_status"] == channel.diagnostic_status
         assert row["physical_admission_status"] == "EXCLUDED_OR_BLOCKED"
-    assert by_channel["t1"]["flatline_candidate_count"] == "0"
+    assert int(by_channel["t1"]["flatline_candidate_count"]) >= 1
     assert by_channel["t1"]["stale_candidate_count"] == "0"
     assert by_channel["door_state"]["flatline_candidate_count"] == (
         "NOT_APPLICABLE"
@@ -453,6 +453,28 @@ def test_flatline_candidate_versus_repeated_state_value(tmp_path):
     assert door.flatline_candidate_count is None
 
 
+def test_mid_session_plateau_is_a_flatline_candidate(tmp_path):
+    rows = _row_overrides(range(0, 20000, 1000))
+    for index, row in enumerate(rows):
+        row["t1"] = "20.0" if index < 10 else "25.0"
+    analysis = analyze_capture(load_capture(_export(tmp_path, rows)))
+    t1 = _channel(analysis, "t1")
+    assert t1.flatline_candidate_count == 2
+    assert t1.repeated_equal_consecutive_count == 18
+
+
+def test_state_channel_bounds_are_checked(tmp_path):
+    capture = load_capture(_export(tmp_path, _row_overrides([0, 1000])))
+    rows = list(capture.rows)
+    rows[0] = dataclasses.replace(rows[0], requested_duty_permille=2000)
+    modified = dataclasses.replace(capture, rows=tuple(rows))
+    analysis = analyze_capture(modified)
+    requested = _channel(analysis, "requested_duty_permille")
+    assert requested.impossible_count == 1
+    assert "IMPOSSIBLE_VALUE_OUTSIDE_INSTRUMENT_RANGE" in requested.reason_codes
+    assert requested.diagnostic_status == "DIAGNOSTIC_CAUTION"
+
+
 def test_flatline_minimum_span_is_configurable(tmp_path):
     rows = _row_overrides(range(0, 20000, 1000))
     for row in rows:
@@ -542,6 +564,22 @@ def test_pzem_unqualified_power_never_becomes_validated_energy(tmp_path):
     assert "UNQUALIFIED PZEM VALUES" in svg
 
 
+def test_chamber_air_spread_excludes_t2(tmp_path):
+    rows = _row_overrides([0, 1000, 2000])
+    for row in rows:
+        row.update({"t1": "20.0", "t2": "35.0", "t3": "20.1", "t4": "20.2"})
+    analysis = analyze_capture(load_capture(_export(tmp_path, rows)))
+    spread = analysis.sessions[0].chamber_air_spread
+    assert spread is not None
+    assert spread.slots == ("t1", "t3", "t4")
+    assert spread.max_c == pytest.approx(0.2)
+    assert set(spread.max_values) == {
+        ("t1", 20.0),
+        ("t3", 20.1),
+        ("t4", 20.2),
+    }
+
+
 def test_t2_hot_side_is_separate_in_channels_and_plot():
     analysis = analyze_capture(_real_capture())
     assert analysis.capture.chamber_air_slots == ("t1", "t3", "t4")
@@ -578,7 +616,7 @@ def test_qualified_pzem_is_not_marked_unqualified(tmp_path):
     analysis = analyze_capture(load_capture(source, a_run_index=index))
     power = _channel(analysis, "cooling_power_w")
     assert power.quality_valid == power.row_count
-    assert "PZEM_POWER_QUALITY_VALID" in power.reason_codes
+    assert "PZEM_POWER_DOMAIN_VALID" in power.reason_codes
     assert "PZEM_POWER_UNQUALIFIED_DIAGNOSTIC_ONLY" not in power.reason_codes
     assert "PZEM_POWER_UNQUALIFIED" not in {
         anomaly.code for anomaly in analysis.anomalies
@@ -639,6 +677,7 @@ def test_real_run_segments_and_chamber_air_spread():
     assert spread.slots == ("t1", "t3", "t4")
     assert spread.n == 957
     assert spread.min_c <= spread.median_c <= spread.p95_c <= spread.max_c
+    assert spread.max_c == pytest.approx(1.126, abs=1e-6)
     assert {slot for slot, _value in spread.max_values} == {"t1", "t3", "t4"}
     svg = render_physical_state_svg(
         analysis.capture, analysis.admission, session

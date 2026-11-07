@@ -105,11 +105,17 @@ def _repo_root() -> Path:
 
 
 def _analysis_code_sha256() -> str:
-    """SHA-256 over the QA analysis module and this CLI, independent of git."""
-    module_path = Path(_qa_module.__file__).resolve()
-    cli_path = Path(__file__).resolve()
+    """SHA-256 over the QA layer, CLI and the W04 contracts it consumes."""
+    package_dir = Path(_qa_module.__file__).resolve().parent
+    paths = {
+        Path(__file__).resolve(),
+        package_dir / "real_data_qa.py",
+        package_dir / "intake.py",
+        package_dir / "evaluation_contract.py",
+        package_dir / "__init__.py",
+    }
     hasher = hashlib.sha256()
-    for path in sorted({module_path, cli_path}, key=lambda item: item.name):
+    for path in sorted(paths, key=lambda item: item.name):
         hasher.update(path.name.encode("utf-8"))
         hasher.update(b"\0")
         hasher.update(path.read_bytes())
@@ -278,6 +284,12 @@ def _source_preamble_md(analysis: QAAnalysis, index: int) -> list[str]:
                 ("SHA-256", f"`{capture.source.sha256}`"),
                 ("Source format", f"`{capture.source.format}`"),
                 ("Schema namespace", f"`{capture.source.schema_namespace}`"),
+                (
+                    "Companion row-validity CSV SHA-256",
+                    f"`{capture.source.companion_sha256}`"
+                    if capture.source.companion_sha256
+                    else "NONE",
+                ),
                 ("Physical evidence category", _evidence_category(analysis)),
                 ("Producer physical flag", str(capture.source.is_physical_measurement)),
                 ("A validity evidence", "NONE" if capture.a_validity is None else capture.a_validity.status),
@@ -287,6 +299,19 @@ def _source_preamble_md(analysis: QAAnalysis, index: int) -> list[str]:
         ),
         "",
     ]
+    if capture.source.pinned_sources:
+        lines.extend(
+            [
+                _md_table(
+                    ["Pinned L0 source", "SHA-256", "Exists"],
+                    [
+                        (path, digest or "NONE", str(exists))
+                        for path, digest, exists in capture.source.pinned_sources
+                    ],
+                ),
+                "",
+            ]
+        )
     return lines
 
 
@@ -297,6 +322,10 @@ def _source_preamble_html(analysis: QAAnalysis, index: int) -> list[str]:
         ("SHA-256", capture.source.sha256),
         ("Source format", capture.source.format),
         ("Schema namespace", capture.source.schema_namespace),
+        (
+            "Companion row-validity CSV SHA-256",
+            capture.source.companion_sha256 or "NONE",
+        ),
         ("Physical evidence category", _evidence_category(analysis)),
         ("Producer physical flag", str(capture.source.is_physical_measurement)),
         (
@@ -306,10 +335,21 @@ def _source_preamble_html(analysis: QAAnalysis, index: int) -> list[str]:
         ("Rows", str(len(capture.rows))),
         ("Analyzed sessions", str(len(analysis.sessions))),
     ]
-    return [
+    parts = [
         f"<h3>Source {index + 1} — <code>{_html.escape(capture.source.path)}</code></h3>",
         _html_table(("Field", "Value"), rows),
     ]
+    if capture.source.pinned_sources:
+        parts.append(
+            _html_table(
+                ("Pinned L0 source", "SHA-256", "Exists"),
+                [
+                    (path, digest or "NONE", str(exists))
+                    for path, digest, exists in capture.source.pinned_sources
+                ],
+            )
+        )
+    return parts
 
 
 def _run_segments_md(analysis: QAAnalysis) -> str:
@@ -833,20 +873,41 @@ def _sampling_html(analysis: QAAnalysis) -> list[str]:
     ]
 
 
-def _pzem_note_md(analysis: QAAnalysis) -> str:
-    by_name = {channel.channel: channel for channel in analysis.channels}
-    power = by_name.get("cooling_power_w")
-    energy = by_name.get("cooling_energy_counter_wh")
-    if power is None and energy is None:
-        return "**PZEM qualification:** no cooling-branch PZEM channel is carried by this source."
-    qualified = bool(
-        power is not None
-        and power.present_count == power.row_count
-        and power.quality_valid == power.row_count
-        and power.impossible_count == 0
-        and (energy is None or energy.quality_valid == energy.row_count)
+def _pzem_state(analysis: QAAnalysis) -> str:
+    powers = [
+        channel for channel in analysis.channels if channel.channel == "cooling_power_w"
+    ]
+    energies = [
+        channel
+        for channel in analysis.channels
+        if channel.channel == "cooling_energy_counter_wh"
+    ]
+    if not powers and not energies:
+        return "ABSENT"
+    if all(channel.present_count == 0 for channel in powers + energies):
+        return "MISSING"
+    qualified = bool(powers) and all(
+        channel.present_count == channel.row_count
+        and channel.quality_valid == channel.row_count
+        and channel.impossible_count == 0
+        for channel in powers + energies
     )
-    if qualified:
+    return "QUALIFIED" if qualified else "UNQUALIFIED"
+
+
+def _pzem_note_md(analysis: QAAnalysis) -> str:
+    state = _pzem_state(analysis)
+    if state == "ABSENT":
+        return (
+            "**PZEM qualification:** no cooling-branch PZEM channel is carried "
+            "by this source."
+        )
+    if state == "MISSING":
+        return (
+            "**PZEM qualification:** cooling-branch power/energy values are not "
+            "present in this source; no power or energy claim can be made."
+        )
+    if state == "QUALIFIED":
         return (
             "**PZEM qualification:** the cooling-branch electrical domain is "
             "VALID for every row; this report still makes no whole-system or "
@@ -854,29 +915,27 @@ def _pzem_note_md(analysis: QAAnalysis) -> str:
         )
     return (
         "**UNQUALIFIED PZEM:** cooling-branch power/energy are present but the "
-        "electrical quality domain is not VALID for every row. They are plotted "
-        "for diagnostics only and never become validated power, energy, COP or "
+        "electrical quality domain is not VALID for every row, a value is "
+        "missing, or an impossible value is present. They are plotted for "
+        "diagnostics only and never become validated power, energy, COP or "
         "whole-system claims."
     )
 
 
 def _pzem_note_html(analysis: QAAnalysis) -> str:
-    by_name = {channel.channel: channel for channel in analysis.channels}
-    power = by_name.get("cooling_power_w")
-    energy = by_name.get("cooling_energy_counter_wh")
-    if power is None and energy is None:
+    state = _pzem_state(analysis)
+    if state == "ABSENT":
         return (
             "<p><strong>PZEM qualification:</strong> no cooling-branch PZEM "
             "channel is carried by this source.</p>"
         )
-    qualified = bool(
-        power is not None
-        and power.present_count == power.row_count
-        and power.quality_valid == power.row_count
-        and power.impossible_count == 0
-        and (energy is None or energy.quality_valid == energy.row_count)
-    )
-    if qualified:
+    if state == "MISSING":
+        return (
+            "<p><strong>PZEM qualification:</strong> cooling-branch power/energy "
+            "values are not present in this source; no power or energy claim "
+            "can be made.</p>"
+        )
+    if state == "QUALIFIED":
         return (
             "<p><strong>PZEM qualification:</strong> the cooling-branch "
             "electrical domain is VALID for every row; this report still makes "
@@ -885,15 +944,17 @@ def _pzem_note_html(analysis: QAAnalysis) -> str:
         )
     return (
         "<p><strong>UNQUALIFIED PZEM:</strong> cooling-branch power/energy are "
-        "present but the electrical quality domain is not VALID for every row. "
-        "They are plotted for diagnostics only and never become validated "
-        "power, energy, COP or whole-system claims.</p>"
+        "present but the electrical quality domain is not VALID for every row, "
+        "a value is missing, or an impossible value is present. They are "
+        "plotted for diagnostics only and never become validated power, energy, "
+        "COP or whole-system claims.</p>"
     )
 
 
 def _channel_md(analysis: QAAnalysis) -> list[str]:
     rows = [
         (
+            channel.session_id,
             channel.channel,
             channel.family,
             channel.physical_role,
@@ -927,6 +988,7 @@ def _channel_md(analysis: QAAnalysis) -> list[str]:
         "",
         _md_table(
             [
+                "Session",
                 "Channel",
                 "Family",
                 "Physical role",
@@ -957,6 +1019,7 @@ def _channel_md(analysis: QAAnalysis) -> list[str]:
 def _channel_html(analysis: QAAnalysis) -> list[str]:
     rows = [
         (
+            channel.session_id,
             channel.channel,
             channel.family,
             channel.physical_role,
@@ -989,6 +1052,7 @@ def _channel_html(analysis: QAAnalysis) -> list[str]:
         "distinct.</p>",
         _html_table(
             (
+                "Session",
                 "Channel",
                 "Family",
                 "Physical role",

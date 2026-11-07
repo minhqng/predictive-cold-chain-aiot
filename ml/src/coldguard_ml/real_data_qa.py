@@ -1078,7 +1078,7 @@ def _channel_specs(capture: Capture, config: QAConfig) -> list[ChannelSpec]:
                 minimum=BME280_MIN_C,
                 maximum=BME280_MAX_C,
                 flatline_applicable=True,
-                flatline_tolerance=config.flatline_temperature_tolerance_c,
+                flatline_tolerance=BME280_RESOLUTION_C,
             )
         )
     if _carried(capture, "rh_pct", "environment"):
@@ -1351,11 +1351,19 @@ def _flatline_candidates(
             close_span()
             previous_time = time_s
             continue
+        numeric = float(value)
         if previous_time is not None and (time_s - previous_time) > long_gap_s:
+            close_span()
+        if span_values and (
+            abs(numeric - span_values[0]) > tolerance
+            or abs(numeric - span_values[-1]) > tolerance
+        ):
+            # A plateau that later steps away is still a flatline candidate;
+            # do not require a missing/INVALID row to close the span.
             close_span()
         if not span_values:
             span_start = time_s
-        span_values.append(float(value))
+        span_values.append(numeric)
         span_end = time_s
         previous_time = time_s
     close_span()
@@ -1470,6 +1478,19 @@ def analyze_channels(
                     unknown_state = 0
                     missing = len(rows) - present
                 impossible = 0
+                if spec.minimum is not None or spec.maximum is not None:
+                    for value in values:
+                        if isinstance(value, (int, float)) and not isinstance(
+                            value, bool
+                        ):
+                            if spec.minimum is not None and value < spec.minimum:
+                                impossible += 1
+                            elif spec.maximum is not None and value > spec.maximum:
+                                impossible += 1
+                    if impossible:
+                        reasons.append(
+                            "IMPOSSIBLE_VALUE_OUTSIDE_INSTRUMENT_RANGE"
+                        )
                 flatline = None
                 stale = None
                 repeated = None
@@ -1563,13 +1584,13 @@ def analyze_channels(
             )
             if spec.channel == "cooling_power_w" and present:
                 reasons.append(
-                    "PZEM_POWER_QUALITY_VALID"
+                    "PZEM_POWER_DOMAIN_VALID"
                     if electrical_fully_valid
                     else "PZEM_POWER_UNQUALIFIED_DIAGNOSTIC_ONLY"
                 )
             if spec.channel == "cooling_energy_counter_wh" and present:
                 reasons.append(
-                    "PZEM_ENERGY_QUALITY_VALID"
+                    "PZEM_ENERGY_DOMAIN_VALID"
                     if electrical_fully_valid
                     else "PZEM_ENERGY_UNQUALIFIED_DIAGNOSTIC_ONLY"
                 )
@@ -2680,8 +2701,14 @@ def render_physical_state_svg(
     )
     top += _PLOT_PANEL_HEIGHT + _PLOT_PANEL_GAP
     power_rows = [row for row in rows if row.cooling_power_w is not None]
-    electrical_qualified = bool(power_rows) and all(
-        dict(row.quality).get("electrical") == "VALID" for row in power_rows
+    electrical_qualified = (
+        bool(power_rows)
+        and len(power_rows) == len(rows)
+        and all(dict(row.quality).get("electrical") == "VALID" for row in rows)
+        and all(
+            PZEM_POWER_MIN_W <= row.cooling_power_w <= PZEM_POWER_MAX_W
+            for row in power_rows
+        )
     )
     power_series: list[tuple[str, str, Sequence[Any], bool]] = (
         [
