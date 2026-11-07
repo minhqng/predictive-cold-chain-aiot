@@ -287,8 +287,16 @@ class Telemetry(_WireBase):
         return self.schema_version == 2 or self.captured_at is None
 
     @property
-    def has_valid_clock(self) -> bool:
-        """True when the message carries a verified timezone-aware device clock."""
+    def has_event_timestamp(self) -> bool:
+        """True when a timezone-aware device event timestamp is present.
+
+        This is existence/format validation only. A well-formed
+        ``captured_at`` does NOT prove the device clock is synchronized to
+        any trusted time source; synchronization must be established by
+        separate authoritative evidence before cross-clock latency is
+        computed (see :mod:`coldguard_backend.timing`, which fails closed
+        with ``UNVERIFIED_CLOCK``). No UTC is ever derived from uptime.
+        """
         return (
             self.schema_version == 1
             and self.captured_at is not None

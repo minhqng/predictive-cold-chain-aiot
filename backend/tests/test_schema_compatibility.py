@@ -95,12 +95,33 @@ def test_schema1_frozen_shape_and_clock_behavior():
     telemetry = Telemetry.model_validate(payload)
 
     assert telemetry.schema_version == 1
-    assert telemetry.has_valid_clock is True
+    assert telemetry.has_event_timestamp is True
     assert telemetry.is_clockless is False
     assert telemetry.captured_at is not None
     assert telemetry.captured_at.tzinfo is not None
     assert telemetry.message_identity == ("coldguard-001", "boot-w01-fixture-001", 12345)
     assert telemetry.serial_source is None
+
+
+def test_event_timestamp_presence_does_not_claim_clock_synchronization():
+    """A well-formed event timestamp is not proof of a synchronized clock.
+
+    Regression for the misleading ``has_valid_clock`` name: the property
+    only validates existence/format. Cross-clock latency must stay fail-closed
+    (``UNVERIFIED_CLOCK``) until synchronization is independently verified.
+    """
+    from coldguard_backend.timing import compute_timing_metrics
+
+    telemetry = Telemetry.model_validate(_schema1_payload())
+    assert telemetry.has_event_timestamp is True
+    assert not hasattr(telemetry, "has_valid_clock")
+
+    received_at = datetime.now(timezone.utc)
+    metrics = compute_timing_metrics(
+        received_at, telemetry.captured_at, clock_sync_verified=False
+    )
+    assert metrics.status == "UNVERIFIED_CLOCK"
+    assert metrics.latency_ms is None
 
 
 def test_schema2_clockless_shape_and_provenance():
@@ -118,7 +139,7 @@ def test_schema2_clockless_shape_and_provenance():
     telemetry = Telemetry.model_validate(payload)
     assert telemetry.schema_version == 2
     assert telemetry.is_clockless is True
-    assert telemetry.has_valid_clock is False
+    assert telemetry.has_event_timestamp is False
     assert telemetry.captured_at is None
     assert telemetry.serial_source is not None
     assert telemetry.serial_source.clock_quality == "UNAVAILABLE"
