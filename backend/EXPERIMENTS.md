@@ -93,3 +93,26 @@ Reported event time remains separate from backend receipt time. Missing or
 invalid source times are null. A command link resolves only within the same
 run and device. The feed carries reported correlation and prediction IDs
 where available, alongside backend command prediction references.
+
+## Prediction evidence
+
+Revision 0010 adds append-only prediction records and ordered references to
+normalized telemetry. The trusted backend writer records model and feature
+versions and SHA-256 values, the input receipt-time window, horizon and
+risk score. Input IDs must belong to the exact device and run and fall within
+the declared window. Freshness ends at the newest linked input receipt plus
+the configured input age limit. The same prediction ID and payload can be
+retried without changing provenance or refreshing it.
+
+| Route | Purpose |
+|---|---|
+| `GET /api/devices/{device_id}/predictions/current` | Newest prediction scoped to the device and optional `run_id`. Returns `UNAVAILABLE` without evidence and suppresses stale risk. |
+| `GET /api/devices/{device_id}/predictions` | Paginated historical evidence with optional `run_id`, `limit` of 1–100, and bounded `offset`. |
+| `GET /api/devices/{device_id}/predictions/{prediction_id}` | Immutable evidence and ordered telemetry IDs for a single prediction. |
+
+The Twin stores prediction metadata in `derived_state.prediction`. Reading it
+computes age and suppresses stale risk while retaining historical evidence.
+Measured reported state and desired intent keep their independent authorities.
+These read APIs expose evidence and freshness. Model trust and permission to
+act require separate policy checks. A populated prediction schema refuses a
+downgrade that would delete its provenance.
