@@ -4,9 +4,9 @@ Report schema: `coldguard-w08-gate-b-readiness-report-v2` · layer `coldguard-w0
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `02f89a90a9eb92f10efaadd7455874bade7f7fb12bc49809f8c01437084506cb` |
-| Repository revision | `a1071016831eee2b28afc9be43756e10ee8d9440` |
-| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision a1071016831eee2b28afc9be43756e10ee8d9440` |
+| Analysis code SHA-256 | `f677ef4f789546ab5727f4b750c8d028a2a6504fc1505df06ad0724376198931` |
+| Repository revision | `8011346e5812768a5f3c9f86e44aba4da034207d` |
+| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 8011346e5812768a5f3c9f86e44aba4da034207d` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
 | Completeness policy | `coldguard-w08-completeness-policy-draft-v2` |
 | Data origin | **`MEASURED_PHYSICAL_DATA`** |
@@ -69,7 +69,7 @@ Whole-capture completeness never substitutes for event-window completeness; miss
 
 - Observed status: **RED**
 - Population: 1 candidate run(s); 0 eligible
-- Required checks: A_LEDGER_VALID, PHYSICAL_RUN_IDENTITY, HARDWARE_AND_CALIBRATION_VERIFIED, REQUIRED_CHANNELS_QUALIFIED, EVENT_COMPLETENESS_FOR_DECLARED_SCENARIO, RUN_MANIFEST_LINKAGE, INDEPENDENT_RUN_POPULATION, NO_DUPLICATE_VIEW_CONFLICT
+- Required checks: A_LEDGER_VALID, PHYSICAL_RUN_IDENTITY, HARDWARE_AND_CALIBRATION_VERIFIED, REQUIRED_CHANNELS_QUALIFIED, EVENT_COMPLETENESS_FOR_DECLARED_SCENARIO, RUN_MANIFEST_LINKAGE, INDEPENDENT_RUN_POPULATION, NO_DUPLICATE_VIEW_CONFLICT, THRESHOLD_POLICY_BOUND_TO_VALIDATION
 - Evidence paths: evidence/A/W09/exports/CG-S1-H8C-600S.json
 - Evidence SHA-256: f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb
 - Allowed uses: diagnostic QA of structurally valid captures

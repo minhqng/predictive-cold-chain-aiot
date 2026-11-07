@@ -1,9 +1,9 @@
 {
-  "analysis_code_sha256": "02f89a90a9eb92f10efaadd7455874bade7f7fb12bc49809f8c01437084506cb",
+  "analysis_code_sha256": "f677ef4f789546ab5727f4b750c8d028a2a6504fc1505df06ad0724376198931",
   "artifact_sha256": {
     "completeness-policy-W08.md": "72609e4763a43f1a66c9258a0ca6fc8924a1dd4bafc270b89f4467ea0dbd4c59",
     "development-split-plan-W08.md": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab",
-    "gate-b-readiness-W08.md": "7e505dec5e5d53343c40ecce7b29e1de381cdd4fc61090f03b0de336ecb4ea97",
+    "gate-b-readiness-W08.md": "90f7c48394ace0bdab338dd4da4e74bb06c8acdc8b7c1629f3d1bf35f4f7a31d",
     "run-validation-W08.csv": "54228f7a2ef244206a6be119e062fcd2d74be8e3e7c449c510627e8a51a6084e"
   },
   "completeness_policy": {
@@ -127,7 +127,7 @@
   "completeness_policy_version": "coldguard-w08-completeness-policy-draft-v2",
   "data_origin": "MEASURED_PHYSICAL_DATA",
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision a1071016831eee2b28afc9be43756e10ee8d9440",
+  "generation_command": "python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 8011346e5812768a5f3c9f86e44aba4da034207d",
   "layer_version": "coldguard-w08-gate-b-readiness-v2",
   "limitations": [
     "A scientific RED is a successful software result, not a CLI failure.",
@@ -185,7 +185,8 @@
       "EVENT_COMPLETENESS_FOR_DECLARED_SCENARIO",
       "RUN_MANIFEST_LINKAGE",
       "INDEPENDENT_RUN_POPULATION",
-      "NO_DUPLICATE_VIEW_CONFLICT"
+      "NO_DUPLICATE_VIEW_CONFLICT",
+      "THRESHOLD_POLICY_BOUND_TO_VALIDATION"
     ],
     "scenario": "S1",
     "severity": "BLOCKING"
@@ -230,7 +231,7 @@
     "scenario": "S1",
     "severity": "BLOCKING"
   },
-  "repository_revision": "a1071016831eee2b28afc9be43756e10ee8d9440",
+  "repository_revision": "8011346e5812768a5f3c9f86e44aba4da034207d",
   "runs": [
     {
       "a_ledger_reasons": [
