@@ -44,6 +44,7 @@ from coldguard_backend.observability import runtime_metrics
 from coldguard_backend.prediction_store import (
     current_prediction, derived_prediction_view, prediction_details, prediction_history,
 )
+from coldguard_backend.recovery import device_recovery_snapshot, reconcile_command_history
 from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
@@ -103,6 +104,9 @@ async def lifespan(app: FastAPI):
     consumer = None
     ack_consumer = None
     try:
+        app.state.command_recovery = None
+        if os.environ.get("COLDGUARD_RECONCILE_COMMANDS", "").strip().lower() in ("1", "true", "yes"):
+            app.state.command_recovery = _recover_startup(app)
         if _ingest_enabled():
             consumer = _start_consumer()
             log.info("mqtt ingestion consumer started")
@@ -121,15 +125,48 @@ async def lifespan(app: FastAPI):
             if ack_consumer is not None:
                 ack_consumer.stop()
         finally:
-            if consumer is not None:
-                consumer.stop()
-                log.info("mqtt ingestion consumer stopped")
+            try:
+                if consumer is not None:
+                    consumer.stop()
+                    log.info("mqtt ingestion consumer stopped")
+            finally:
+                cached = getattr(app.state, "_cached_engine", None)
+                if cached is not None:
+                    cached.dispose()
+                    app.state._cached_engine = None
 
 
 app = FastAPI(title="ColdGuard Backend", lifespan=lifespan)
 app.state.mqtt_consumer = None
 app.state.ack_consumer = None
 app.state.db_engine = None
+app.state.command_recovery = None
+
+
+def _database_url() -> str:
+    explicit = os.environ.get("DATABASE_URL")
+    if explicit:
+        return explicit
+    from coldguard_backend.config import ColdGuardConfig
+
+    return ColdGuardConfig.load().database_url
+
+
+def _recover_startup(app: FastAPI) -> dict:
+    injected = app.state.db_engine
+    engine = injected if injected is not None else create_engine(
+        _database_url(), connect_args={"connect_timeout": 5},
+    )
+    try:
+        report = reconcile_command_history(engine)
+        log.info(
+            "reconciled command history: uncertain=%d expired=%d",
+            len(report["uncertain_commands"]), len(report["expired_commands"]),
+        )
+        return report
+    finally:
+        if injected is None:
+            engine.dispose()
 
 
 def get_db_engine(request: Request) -> Engine:
@@ -138,16 +175,9 @@ def get_db_engine(request: Request) -> Engine:
     if engine is not None:
         return engine
 
-    db_url = os.environ.get("DATABASE_URL")
-    if not db_url:
-        from coldguard_backend.config import ColdGuardConfig
-
-        config = ColdGuardConfig.load()
-        db_url = config.database_url
-
     cached = getattr(request.app.state, "_cached_engine", None)
     if cached is None:
-        cached = create_engine(db_url)
+        cached = create_engine(_database_url())
         request.app.state._cached_engine = cached
     return cached
 
@@ -160,6 +190,25 @@ def health() -> dict[str, str]:
 @app.get("/api/metrics")
 def read_runtime_metrics() -> dict:
     return runtime_metrics.snapshot()
+
+
+@app.get("/api/runtime/readiness")
+def read_runtime_readiness(request: Request) -> dict:
+    ingest_consumer = request.app.state.mqtt_consumer
+    ack_consumer = request.app.state.ack_consumer
+    telemetry_readiness = ingest_consumer.snapshot() if ingest_consumer else {}
+    return {
+        "telemetry_broker_connected": telemetry_readiness.get("broker_connected", False),
+        "telemetry_subscribed": telemetry_readiness.get("subscribed", False),
+        "ack_subscribed": ack_consumer.snapshot()["subscribed"] if ack_consumer else False,
+        "startup_reconciliation": request.app.state.command_recovery is not None,
+    }
+
+
+@app.get("/api/devices/{device_id}/recovery")
+def read_device_recovery(device_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+        return device_recovery_snapshot(connection, device_id)
 
 
 @app.get("/api/commands/{command_id}/timing")
