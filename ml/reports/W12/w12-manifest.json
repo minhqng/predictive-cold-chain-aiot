@@ -1,14 +1,14 @@
 {
-  "analysis_code_sha256": "7dd252ede73a9cedc67ab18902c1b43ce0a1c99401f6efb2cbc724b02217f71b",
+  "analysis_code_sha256": "e02fe54ddb0fbc868217b1717b0d1700d423688fdd4e10a52a6e4bea3ffc4c49",
   "artifacts": {
     "benchmark-synthesis-W12.md": {
-      "sha256": "df3737707caa06dd34b91cd4c65939600fe2b1ba943f2a92bbc75ef09d3ee1cc"
+      "sha256": "f13735e35eb30c93232ce27ba25cfb7cff31493d8b7f8e849251cdef4c94492e"
     },
     "event-operational-summary-W12.csv": {
-      "sha256": "fd6482cf868bf82085b105f82b144bb22a8b07aebb0cc7cbd269baeaa5a872bf"
+      "sha256": "7836bf6506ff3765c3be27f6ce773cf13765f88c97c77f5b7db19e01c18ab523"
     },
     "ewt-assessment-W12.csv": {
-      "sha256": "909d40d1a7589fbdac3c7193816dfb34e6222e4f305713d83ab1aa6d04e1b8c0"
+      "sha256": "97ce1c40d97642fc0d5f3d546d529ea8deb2b4b508911c18889890018cdfbefa"
     },
     "feature-importance-W12.csv": {
       "sha256": "8bbf37fa4a75a642d8d759926e15a88017a8db99868901cdf6491982508266a5"
@@ -61,6 +61,7 @@
     "synthetic_cases": [
       {
         "case_id": "CASE_A_POSITIVE_EWT",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": 20.0,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -77,6 +78,7 @@
       },
       {
         "case_id": "CASE_B_NEGATIVE_EWT",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": -10.0,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -93,6 +95,7 @@
       },
       {
         "case_id": "CASE_C_ZERO_EWT",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": 0.0,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -109,6 +112,7 @@
       },
       {
         "case_id": "CASE_D_NO_PERSISTENT_WARNING",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": null,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -125,6 +129,7 @@
       },
       {
         "case_id": "CASE_E_NO_REACTIVE_CROSSING",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": null,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -141,6 +146,7 @@
       },
       {
         "case_id": "CASE_F_CROSS_RUN",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": null,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -157,6 +163,7 @@
       },
       {
         "case_id": "CASE_G_CROSS_CLOCK",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": null,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -173,6 +180,7 @@
       },
       {
         "case_id": "CASE_H_INTERVENED",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": null,
         "intervention": true,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -189,6 +197,7 @@
       },
       {
         "case_id": "CASE_I_FIRST_VALID_ONSET",
+        "event_id": "SYNTHETIC-EVENT-1",
         "ewt_s": 20.0,
         "intervention": false,
         "label": "SYNTHETIC_TIMING_CONTRACT_TEST_ONLY",
@@ -5127,32 +5136,32 @@
       },
       "w08_manifest": {
         "exists": true,
-        "path": "ml\\reports\\W08\\gate-b-manifest-W08.json",
+        "path": "ml/reports/W08/gate-b-manifest-W08.json",
         "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6"
       },
       "w08_repository_revision": "b42d2c9414d6fe9e671faf723a02e0fe0097afd1",
       "w09_manifest": {
         "exists": true,
-        "path": "ml\\reports\\W09\\baseline-manifest-W09.json",
+        "path": "ml/reports/W09/baseline-manifest-W09.json",
         "sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45"
       },
       "w09_repository_revision": "01b004696d301c41ff4b09dd341a25343054c2f7",
       "w10_manifest": {
         "exists": true,
-        "path": "ml\\reports\\W10\\feature-manifest-W10.json",
+        "path": "ml/reports/W10/feature-manifest-W10.json",
         "sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2"
       },
       "w10_repository_revision": "1f8feb76be9d7870b73c28b5516ce6dfc1559fb6",
       "w11_manifest": {
         "exists": true,
-        "path": "ml\\reports\\W11\\benchmark-manifest-W11.json",
+        "path": "ml/reports/W11/benchmark-manifest-W11.json",
         "sha256": "7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
       },
       "w11_repository_revision": "c6b28678430ab575902a09be4b32bc327c72afcb"
     }
   },
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/benchmark-g3-W12.py --out reports/W12 --repository-revision 9cfe488ee05948e679339a3150f3f125410d8aa2",
+  "generation_command": "python scripts/benchmark-g3-W12.py --out reports/W12 --repository-revision 45152d7582a2763ffe49956057b9201370f64f70",
   "grouped_synthesis": {
     "checks": [
       "artifact SHA-256 matches actual bytes for every manifest-listed W11 artifact",
@@ -5405,7 +5414,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F1",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B0_THRESHOLD",
         "missed_critical_events": 0,
@@ -5420,6 +5428,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5435,7 +5444,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F2",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B0_THRESHOLD",
         "missed_critical_events": 0,
@@ -5450,6 +5458,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5465,7 +5474,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F3",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B0_THRESHOLD",
         "missed_critical_events": 0,
@@ -5480,6 +5488,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5495,7 +5504,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F4",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B0_THRESHOLD",
         "missed_critical_events": 0,
@@ -5510,6 +5518,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5525,7 +5534,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F1",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B1_HYSTERESIS",
         "missed_critical_events": 0,
@@ -5540,6 +5548,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5555,7 +5564,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F2",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B1_HYSTERESIS",
         "missed_critical_events": 0,
@@ -5570,6 +5578,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5585,7 +5594,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F3",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B1_HYSTERESIS",
         "missed_critical_events": 0,
@@ -5600,6 +5608,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5615,7 +5624,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F4",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "B1_HYSTERESIS",
         "missed_critical_events": 0,
@@ -5630,6 +5638,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5645,7 +5654,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F1",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
         "missed_critical_events": 0,
@@ -5660,6 +5668,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5675,7 +5684,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F2",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
         "missed_critical_events": 0,
@@ -5690,6 +5698,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5705,7 +5714,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F3",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
         "missed_critical_events": 0,
@@ -5720,6 +5728,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5735,7 +5744,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F4",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
         "missed_critical_events": 0,
@@ -5750,6 +5758,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5765,7 +5774,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F1",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_UNWEIGHTED",
         "missed_critical_events": 0,
@@ -5780,6 +5788,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5795,7 +5804,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F2",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_UNWEIGHTED",
         "missed_critical_events": 0,
@@ -5810,6 +5818,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5825,7 +5834,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F3",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_UNWEIGHTED",
         "missed_critical_events": 0,
@@ -5840,6 +5848,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       },
       {
@@ -5855,7 +5864,6 @@
         "first_warning_timestamp": "NOT_AVAILABLE_IN_AGGREGATED_FOLD_VIEW",
         "fold_id": "F4",
         "group_count": 2,
-        "independent_run_count": 4,
         "matched_warning_episodes": 2,
         "method": "XGBOOST_V1_UNWEIGHTED",
         "missed_critical_events": 0,
@@ -5870,6 +5878,7 @@
         "unmatched_warning_episodes": 0,
         "untrusted_events": 0,
         "untrusted_exposure_s": 0.0,
+        "validation_run_count": 4,
         "warning_episodes": 2
       }
     ],
@@ -5877,7 +5886,7 @@
       "AP": "sample/window-level average precision; not event recall",
       "critical_events": "eligible observed critical events only",
       "exposure": "trusted all-channel-VALID hours, not elapsed span",
-      "runs": "independent run groups, never windows",
+      "runs": "validation runs inside paired groups; independence is at group level, not run or window level",
       "warning_episodes": "one contiguous warning interval counted once"
     }
   },
@@ -5924,26 +5933,26 @@
     },
     "w08_manifest": {
       "exists": true,
-      "path": "ml\\reports\\W08\\gate-b-manifest-W08.json",
+      "path": "ml/reports/W08/gate-b-manifest-W08.json",
       "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6"
     },
     "w09_manifest": {
       "exists": true,
-      "path": "ml\\reports\\W09\\baseline-manifest-W09.json",
+      "path": "ml/reports/W09/baseline-manifest-W09.json",
       "sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45"
     },
     "w10_manifest": {
       "exists": true,
-      "path": "ml\\reports\\W10\\feature-manifest-W10.json",
+      "path": "ml/reports/W10/feature-manifest-W10.json",
       "sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2"
     },
     "w11_manifest": {
       "exists": true,
-      "path": "ml\\reports\\W11\\benchmark-manifest-W11.json",
+      "path": "ml/reports/W11/benchmark-manifest-W11.json",
       "sha256": "7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
     }
   },
-  "repository_revision": "9cfe488ee05948e679339a3150f3f125410d8aa2",
+  "repository_revision": "45152d7582a2763ffe49956057b9201370f64f70",
   "schema": "coldguard-w12-manifest-v1",
   "scientific_verdicts": {
     "GATE_G3": "NO-GO / FIX DATA",

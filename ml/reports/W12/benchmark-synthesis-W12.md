@@ -103,7 +103,7 @@ Zero qualified physical events do not create a zero rate; the rate is undefined.
 - `warning_episodes`: one contiguous warning interval counted once.
 - `critical_events`: eligible observed critical events only.
 - `exposure`: trusted all-channel-VALID hours, not elapsed span.
-- `runs`: independent run groups, never windows.
+- `runs`: validation runs inside paired groups; independence is at group level, not run or window level.
 
 ## B-W12-03 EWT assessment
 
