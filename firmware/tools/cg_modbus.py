@@ -74,6 +74,9 @@ class Status(str, enum.Enum):
     BAD_LENGTH = "BAD_LENGTH"
     EXCEPTION = "EXCEPTION"
     UART_ERR = "UART_ERR"
+    # Test-only (CG_FAULT_INJECTION build): the RS-485 transport was deliberately
+    # disabled by injection. Not a natural timeout and not a physical failure.
+    INJECT_DISABLED = "INJECT_DISABLED"
 
 
 class FrameError(ValueError):
