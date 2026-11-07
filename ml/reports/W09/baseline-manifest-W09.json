@@ -5,7 +5,7 @@
     "status": "NOT_ESTIMABLE",
     "synthetic_latency_allowed": false
   },
-  "analysis_code_sha256": "86d6a4d364fb476b3119b501a664bf8314e57aa9dc889517c4b8400149927057",
+  "analysis_code_sha256": "b1c6bef725d7a3be0dc1f1b798b53dff5f9d4fb1152e97f3c1b98b1d50d85fb7",
   "artifact_rows": {
     "baseline-events-W09.csv": 14,
     "false-warning-summary-W09.csv": 4
@@ -13,7 +13,7 @@
   "artifact_sha256": {
     "baseline-comparison-W09.svg": "63071abc1454cbca99286e11e77276275244c9f278cddccd7f15c0ace4ab2c10",
     "baseline-events-W09.csv": "8791a1893e87d4d576b32910c5181cd48889f7cd53aea2c60082d113eff96534",
-    "baseline-report.md": "d90b5730c8d1251db23c7ea326dc4d1b765c743e911d4f0810368a6cc7c8d25f",
+    "baseline-report.md": "e42624dae69b0cc761a50bee5364539d5a56b44d1a91a90855fbb6d6983dd77e",
     "false-warning-summary-W09.csv": "fd375469a8b9a8cd9178eea02aef4ffb062aac95a59be3bfe46506420348532f"
   },
   "authoritative_result": "PARAMETERS_NOT_FROZEN",
@@ -665,7 +665,7 @@
     }
   ],
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision e64ed9e89593a27cb6f6f35e4ee2ca6d3cd2237e",
+  "generation_command": "python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 638d8a3748865c224c4234d3325448ba7e20f453",
   "layer_version": "coldguard-w09-deterministic-baselines-v1",
   "limitations": [
     "A baseline criterion detection is not an actuator command.",
@@ -677,7 +677,7 @@
   ],
   "locked_test_access": "NONE",
   "parameters": null,
-  "repository_revision": "e64ed9e89593a27cb6f6f35e4ee2ca6d3cd2237e",
+  "repository_revision": "638d8a3748865c224c4234d3325448ba7e20f453",
   "schema": "coldguard-w09-baseline-manifest-v1",
   "sensitivity": {
     "association": {
