@@ -65,6 +65,10 @@ SUBSCRIPTIONS: tuple[tuple[str, int], ...] = (
 )
 
 _CONNECT_TIMEOUT_S = 10.0
+# Bound database connect attempts so an outage is observed (and counted)
+# promptly instead of waiting for the platform TCP timeout. Without this, a
+# DB outage can stall the ingest callback for minutes and look like silence.
+_DB_CONNECT_TIMEOUT_S = 5
 
 
 def reason_failed(reason) -> bool:
@@ -122,7 +126,12 @@ class MqttIngestConsumer:
         return cls(config)
 
     def _build_engine(self) -> Engine:
-        return create_engine(self._config.database_url, pool_size=5, max_overflow=5)
+        return create_engine(
+            self._config.database_url,
+            pool_size=5,
+            max_overflow=5,
+            connect_args={"connect_timeout": _DB_CONNECT_TIMEOUT_S},
+        )
 
     # -- lifecycle ----------------------------------------------------
 
