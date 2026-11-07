@@ -77,6 +77,21 @@ representative data for `experiments`, `experiment_transitions`, `telemetry`,
 samples reference the same raw IDs and payload digests. Verify the Alembic
 revision. Keep the source database available until the comparison passes.
 
+For the W12 baseline check, set `COLDGUARD_BACKUP_SOURCE_URL` and
+`COLDGUARD_BACKUP_RESTORE_URL` to distinct disposable loopback PostgreSQL
+databases. Pause writes while making the backup and comparing it with the
+restore. Run the verifier from `backend/`.
+
+```sh
+uv run --locked python scripts/verify_restore.py --output restore-proof.json
+```
+
+The verifier streams ordered rows and records each table's count and SHA-256
+in UTC. It covers raw payload and normalized provenance, run manifests and
+transitions, command attempts, ACKs, and Twin state. A mismatch produces a
+nonzero exit code. Re-export the frozen S1 run set from both databases with the
+same `--created-at` and backend commit, then compare the artifact SHA-256.
+
 ## Gate G2
 
 Software results can verify the transport, storage, and restore path. Gate G2
