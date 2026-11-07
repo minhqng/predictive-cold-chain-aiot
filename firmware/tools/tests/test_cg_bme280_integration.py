@@ -6,6 +6,7 @@ the states a real module can be in. The unit is skipped with an explicit reason
 when no host C compiler is present, never passed vacuously.
 """
 import pathlib
+import re
 import subprocess
 import sys
 import tempfile
@@ -69,11 +70,21 @@ class Bme280IntegrationHarnessTests(unittest.TestCase):
 
     def test_pure_producer_stays_free_of_esp_headers(self):
         """Only cg_bme280_idf.c may reach the I2C driver; that boundary is what
-        lets this file and the decision-logic harness compile on a host."""
+        lets this file and the decision-logic harness compile on a host. The
+        pure producer now includes coldguard_config.h for its trim default, so
+        that header has to stay ESP-IDF-free too - otherwise the host build
+        breaks the day someone adds an ESP include to it."""
         for name in ("cg_bme280.c", "cg_bme280.h"):
             text = (MAIN / name).read_text(encoding="utf-8")
             for banned in ("driver/i2c", "freertos/", "esp_err.h", "esp_log.h", "i2c_master.h"):
                 self.assertNotIn(banned, text, f"{name} must not include {banned}")
+        config = (MAIN / "coldguard_config.h").read_text(encoding="utf-8")
+        includes = re.findall(r"^\s*#\s*include\s*[<\"]([^>\"]+)[>\"]", config, re.MULTILINE)
+        for header in includes:
+            self.assertFalse(
+                header.startswith(("driver/", "freertos/", "esp_", "sdkconfig")),
+                f"coldguard_config.h must stay host-buildable, found #include {header}",
+            )
 
 
 if __name__ == "__main__":

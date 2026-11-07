@@ -20,6 +20,7 @@
 #define SCEN_IM_STUCK 3
 #define SCEN_TIMEOUT 4
 #define SCEN_GARBAGE 5
+#define SCEN_HUM_ZERO 6
 
 static int failures;
 static uint8_t tp[CG_BME280_CALIB_T_BYTES];
@@ -72,6 +73,12 @@ static cg_bme_port_result_t fake_read(void *ctx, uint8_t reg, uint8_t *out, size
         if (scenario == SCEN_GARBAGE) {
             /* saturating raw codes: the only defensible reading is "not physical" */
             memset(out, 0xFF, len);
+        }
+        if (scenario == SCEN_HUM_ZERO) {
+            /* A stuck-low humidity line reads 0, which compensates to 0.0 %RH
+             * and passes every range check: it must be refused as a raw code. */
+            out[CG_BME280_OFF_HUM_MSB] = 0u;
+            out[CG_BME280_OFF_HUM_LSB] = 0u;
         }
     } else {
         return CG_BME_PORT_ERROR;
@@ -431,6 +438,19 @@ int main(void)
     check(cg_bme280_sample(&port, &s, &obs) == CG_BME_READ_OUT_OF_RANGE, "garbage refused");
     check(!obs.valid, "garbage not published");
     check(s.seq == before, "refused sample does not consume a sequence number");
+
+    /* 6b. a zero humidity raw code is as impossible as 0xFFFF and must be
+     * refused before compensation turns it into a plausible 0.0 %RH. */
+    scenario = SCEN_HUM_ZERO;
+    cg_bme280_reset(&s);
+    status_reads = 0;
+    check(cg_bme280_probe(&port, &s) == CG_BME_READ_OK, "probe ok for zero-humidity case");
+    before = s.seq;
+    clock_ms = 3500;
+    check(cg_bme280_sample(&port, &s, &obs) == CG_BME_READ_OUT_OF_RANGE,
+          "zero humidity raw code refused");
+    check(!obs.valid, "zero humidity not published");
+    check(s.seq == before, "zero humidity does not consume a sequence number");
 
     /* 7. transport timeout must not publish and must eventually re-probe */
     scenario = SCEN_TIMEOUT;

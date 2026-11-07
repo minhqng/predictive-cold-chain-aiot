@@ -61,6 +61,7 @@ typedef enum {
     ENV_FRESH_OK,    /* a module answered with a reading inside range          */
     ENV_REFUSED,     /* a module answered but the reading was rejected         */
     ENV_TRIM_GATED,  /* a module answered; board policy refuses the decode     */
+    ENV_TRIM_STALE,  /* the last policy refusal is older than the bound        */
     ENV_STALE        /* a module answered once and has not been heard since    */
 } env_mode_t;
 
@@ -120,6 +121,16 @@ static size_t render(char *line, size_t cap, env_mode_t env_mode)
         case ENV_TRIM_GATED:
             /* The shipped build's trim gate: the module answers, the decode is
              * withheld until someone confirms the layout on hardware. */
+            env_valid = false;
+            cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
+                                    (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED, 0x76U, 14U,
+                                    env_obs_ms);
+            break;
+        case ENV_TRIM_STALE:
+            /* A policy refusal only explains a *fresh* observation. Once the
+             * producer has gone quiet the group must age into INVALID rather
+             * than stay degraded on the strength of an old reason. */
+            env_obs_ms = 1000000U - (uint64_t)CG_TELEM_STALE_ENV_MS - 5000U;
             env_valid = false;
             cg_snapshot_publish_env(true, false, 30.41f, 68.51f, (uint8_t)CG_BME_STATE_READY,
                                     (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED, 0x76U, 14U,
@@ -215,6 +226,10 @@ static bool test_refused_reading_never_reaches_the_line(void)
     CHECK(has(line, "t_ambient_status=INVALID"));
     CHECK(has(line, "t_ambient_c=" CG_INVALID_VALUE_TOKEN));
     CHECK(has(line, "relative_humidity_pct=" CG_INVALID_VALUE_TOKEN));
+    /* A genuine refusal is INVALID at the quality layer too; only a policy
+     * refusal is allowed to be DEGRADED, so this pins the distinction. */
+    CHECK(has(line, "environment_quality=INVALID"));
+    CHECK(has(line, " quality=INVALID"));
     CHECK(!has(line, "30.41"));
     CHECK(!has(line, "68.51"));
     return true;
@@ -236,6 +251,18 @@ static bool test_trim_gate_refusal_degrades_but_never_invents(void)
     CHECK(has(line, "relative_humidity_pct=" CG_INVALID_VALUE_TOKEN));
     CHECK(has(line, "environment_quality=DEGRADED"));
     CHECK(has(line, " quality=DEGRADED"));
+    CHECK(!has(line, "30.41"));
+    return true;
+}
+
+static bool test_stale_policy_refusal_ages_into_invalid(void)
+{
+    char line[CG_TELEMETRY_LINE_MAX];
+
+    CHECK(render(line, sizeof(line), ENV_TRIM_STALE) > 0U);
+    CHECK(has(line, "t_ambient_status=STALE"));
+    CHECK(has(line, "t_ambient_c=" CG_INVALID_VALUE_TOKEN));
+    CHECK(has(line, "environment_quality=INVALID"));
     CHECK(!has(line, "30.41"));
     return true;
 }
@@ -311,6 +338,7 @@ static const test_case_t k_tests[] = {
     {"refused_reading_never_reaches_the_line", test_refused_reading_never_reaches_the_line},
     {"trim_gate_refusal_degrades_but_never_invents",
      test_trim_gate_refusal_degrades_but_never_invents},
+    {"stale_policy_refusal_ages_into_invalid", test_stale_policy_refusal_ages_into_invalid},
     {"stale_ambient_loses_its_number", test_stale_ambient_loses_its_number},
     {"absent_still_advances_the_observation_time", test_absent_still_advances_the_observation_time},
     {"driver_state_names_are_distinct", test_driver_state_names_are_distinct},
