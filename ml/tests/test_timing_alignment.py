@@ -769,6 +769,31 @@ def test_contradictory_duplicate_identity_keeps_both_payloads():
     assert "CONTRADICTORY_IDENTITY" in dedup.reason_codes
 
 
+def test_contradictory_ack_deliveries_keep_distinct_event_ids(tmp_path):
+    fields = (
+        "#CG CMDACK schema=1 event=ACK command_id=CMD-X command_id_form=UUID "
+        "source=NETWORK device_id=dev-1 boot_id=boot-1 uptime_ms=1000 "
+        "ack_seq=7 status={status} reason={reason} desired_cooling=ON "
+        "desired_duty_permille=500 applied_cooling=OFF "
+        "applied_duty_permille=0 reapplied=0 expiry_evaluable=1 "
+        "time_sync_state=SYNCHRONIZED device_mode=OFF"
+    )
+    log = tmp_path / "conflict.log"
+    log.write_text(
+        fields.format(status="ACCEPTED", reason="NONE")
+        + "\n"
+        + fields.format(status="REJECTED", reason="DEVICE_ID_MISMATCH")
+        + "\n",
+        encoding="utf-8",
+    )
+    load = load_a_command_events(log, provenance="HOST_GENERATED_SYNTHETIC")
+    dedup = deduplicate_events(load.events)
+    assert len(dedup.canonical_events) == 0
+    assert len(dedup.contradictory_events) == 2
+    assert dedup.contradictory_identity_count == 1
+    assert len({event.event_id for event in dedup.contradictory_events}) == 2
+
+
 def test_duplicate_canonical_is_not_an_independent_application():
     load = load_a_command_events(
         DEMO_LOG, provenance="HOST_GENERATED_SYNTHETIC"

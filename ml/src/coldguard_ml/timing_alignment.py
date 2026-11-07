@@ -601,6 +601,11 @@ def _provenance_for_capture(capture: Capture) -> tuple[str, str]:
     return PROVENANCE_UNVERIFIED, ELIGIBILITY_UNVERIFIED
 
 
+def _row_discriminator(row: NormalizedRow) -> str:
+    line = row.source_line_index if row.source_line_index is not None else "NO_LINE"
+    return f"{row.seq}:{line}"
+
+
 def _event_id(
     source_sha256: str,
     event_type: str,
@@ -750,7 +755,7 @@ def events_from_capture(capture: Capture) -> tuple[TimelineEvent, ...]:
                     EVENT_TELEMETRY_SAMPLE,
                     device_id,
                     boot_id,
-                    row.seq,
+                    _row_discriminator(row),
                 ),
                 event_type=EVENT_TELEMETRY_SAMPLE,
                 provenance=provenance,
@@ -798,7 +803,7 @@ def events_from_capture(capture: Capture) -> tuple[TimelineEvent, ...]:
                                 EVENT_DOOR_TRANSITION,
                                 device_id,
                                 boot_id,
-                                row.seq,
+                                _row_discriminator(row),
                                 "door",
                             ),
                             event_type=EVENT_DOOR_TRANSITION,
@@ -856,7 +861,7 @@ def events_from_capture(capture: Capture) -> tuple[TimelineEvent, ...]:
                                 EVENT_APPLIED_STATE,
                                 device_id,
                                 boot_id,
-                                row.seq,
+                                _row_discriminator(row),
                                 "applied",
                             ),
                             event_type=EVENT_APPLIED_STATE,
@@ -1043,7 +1048,7 @@ def load_a_command_events(
                     EVENT_DEVICE_ACK,
                     fields["device_id"],
                     fields["boot_id"],
-                    f"{command_id}:{ack_seq}",
+                    f"{command_id}:{ack_seq}:{line_index}",
                 ),
                 event_type=EVENT_DEVICE_ACK,
                 provenance=provenance,
