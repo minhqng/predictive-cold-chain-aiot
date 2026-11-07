@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "681adfc9e7ae19200f78f4ee157436ea73333a2a7a2026f9914b918920031714",
+  "analysis_code_sha256": "43f5ecd07efbfb23a05f1b2e17774e61058fe74ce52b83a8c805a51ed07fc86e",
   "config": {
     "campaign_completeness": "NOT_ESTIMABLE_ACQUISITION_BOUNDARIES_UNVERIFIED",
     "flatline_min_observations": 10,
@@ -16,10 +16,10 @@
     "stale_policy": "DIAGNOSTIC_ASSUMPTION_SOURCE_AGE_NOT_CANONICALLY_THRESHOLDED",
     "stale_scope": "DS18B20_SOURCE_PROVIDED_AGE_MS_ONLY"
   },
-  "generation_command": "real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision b618025fde8b527920b839016bf9a8916966df11 --out reports/W05",
+  "generation_command": "real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 687e15fa221c3b120710f1c43d56b7b095a86822 --out reports/W05",
   "qa_layer_version": "coldguard-w05-qa-v2",
   "report_schema": "coldguard-w05-qa-report-v2",
-  "repository_revision": "b618025fde8b527920b839016bf9a8916966df11",
+  "repository_revision": "687e15fa221c3b120710f1c43d56b7b095a86822",
   "source_index": {
     "blocked_run_ids": [
       {
