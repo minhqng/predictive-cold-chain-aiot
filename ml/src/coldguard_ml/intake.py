@@ -2937,7 +2937,7 @@ def chamber_air_mean(
     return sum(values) / len(values)
 
 
-def _physical_source_key(capture: Capture) -> tuple[Any, ...]:
+def physical_source_key(capture: Capture) -> tuple[Any, ...]:
     """One boot session on one device is one physical source, not one export.
 
     A boot identifier can be reused across unrelated devices, so the carried
@@ -2963,7 +2963,7 @@ def count_independent_runs(captures: Iterable[Capture]) -> IndependentRunCount:
     groups: dict[tuple[Any, ...], list[Capture]] = {}
     detail: list[dict[str, Any]] = []
     for capture in captures:
-        groups.setdefault(_physical_source_key(capture), []).append(capture)
+        groups.setdefault(physical_source_key(capture), []).append(capture)
     duplicate_views = sum(len(items) - 1 for items in groups.values())
     for key, items in sorted(groups.items(), key=lambda item: str(item[0])):
         first = items[0]
@@ -2997,7 +2997,7 @@ _STAGE_ORDER = {
 }
 
 
-def _admission_signature(result: AdmissionResult) -> tuple[Any, ...]:
+def admission_signature(result: AdmissionResult) -> tuple[Any, ...]:
     """Comparable verdict signature for one view of a physical source."""
     return (
         result.eligible,
@@ -3019,7 +3019,7 @@ def _view_sort_key(result: AdmissionResult) -> tuple[Any, ...]:
         result.capture.source.sha256,
         result.status.value,
         _STAGE_ORDER.get(result.highest_stage, -1),
-        _admission_signature(result),
+        admission_signature(result),
     )
 
 
@@ -3029,7 +3029,7 @@ def _summarize_physical_source(
     """One verdict per physical source; contradictory views fail closed."""
     ordered = sorted(items, key=_view_sort_key)
     representative = ordered[0]
-    if len({_admission_signature(item) for item in ordered}) == 1:
+    if len({admission_signature(item) for item in ordered}) == 1:
         if representative.eligible:
             return (
                 representative.eligible_s1_runs,
@@ -3119,7 +3119,7 @@ def summarize_readiness(results: Iterable[AdmissionResult]) -> DatasetReadiness:
     result_list = list(results)
     groups: dict[tuple[Any, ...], list[AdmissionResult]] = {}
     for result in result_list:
-        groups.setdefault(_physical_source_key(result.capture), []).append(result)
+        groups.setdefault(physical_source_key(result.capture), []).append(result)
     eligible_s1 = 0
     eligible_s2 = 0
     exclusions: list[dict[str, Any]] = []

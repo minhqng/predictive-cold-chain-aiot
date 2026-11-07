@@ -14,7 +14,9 @@ legal; W02 makes the data-side rules executable:
 * ``intake`` — source-aware real-schema intake and fail-closed admission
   (B-W04-01 / B-W04-05);
 * ``evaluation_contract`` — EWT/AIW interfaces and the frozen metric
-  hierarchy (B-W04-02 / B-W04-03 / B-W04-04).
+  hierarchy (B-W04-02 / B-W04-03 / B-W04-04);
+* ``real_data_qa`` — diagnostic sampling/channel QA and deterministic
+  physical-state plots over W04 captures (B-W05-01 … B-W05-04).
 
 No model fitting, feature registry, or score computation exists yet.
 """
@@ -99,6 +101,26 @@ from .manifests import (
     parse_run_manifest,
     parse_run_manifests,
     parse_split_manifest,
+)
+from .real_data_qa import (
+    Anomaly,
+    ChannelSummary,
+    DEFAULT_QA_CONFIG,
+    IntervalStatistics,
+    QAAnalysis,
+    QAConfig,
+    QASuiteSummary,
+    QAStatuses,
+    SessionSamplingSummary,
+    analyze_capture,
+    analyze_captures,
+    analyze_sessions,
+    channel_summary_csv,
+    compute_interval_statistics,
+    percentile,
+    qa_manifest,
+    render_physical_state_svg,
+    summarize_qa_suite,
 )
 from .observations import (
     Observation,
@@ -260,4 +282,23 @@ __all__ = [
     "compute_aiw",
     "paired_improvement",
     "assert_allowed_for_selection",
+    # real-data QA (B-W05-01 … B-W05-04)
+    "QAConfig",
+    "DEFAULT_QA_CONFIG",
+    "IntervalStatistics",
+    "SessionSamplingSummary",
+    "ChannelSummary",
+    "Anomaly",
+    "QAStatuses",
+    "QAAnalysis",
+    "QASuiteSummary",
+    "percentile",
+    "compute_interval_statistics",
+    "analyze_capture",
+    "analyze_captures",
+    "analyze_sessions",
+    "summarize_qa_suite",
+    "channel_summary_csv",
+    "qa_manifest",
+    "render_physical_state_svg",
 ]
