@@ -294,6 +294,11 @@ class SessionStore:
         if not stored:
             raise EvidenceError("measurement record has no stored path")
         path = resolve_within(self.root, stored)
+        # A measurement update may only touch the measurements tree; a crafted
+        # record must not clobber session.json or a canonical results/*.json
+        # (which would bypass record_result's archive-on-overwrite).
+        if self.measure_dir.resolve() not in path.parents:
+            raise EvidenceError(f"measurement path outside measurements dir: {stored!r}")
         _write_json_atomic(path, payload)
         record["sha256"] = sha256_file(path)
         record["size"] = path.stat().st_size
