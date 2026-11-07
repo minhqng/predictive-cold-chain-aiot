@@ -2858,6 +2858,8 @@ def event_timeline_csv(events: Sequence[TimelineEvent]) -> str:
         "delivery_count",
         "reason_codes",
         "field_origin",
+        "raw_fields",
+        "normalized_fields",
     )
     writer = csv.DictWriter(buffer, fieldnames=columns, lineterminator="\n")
     writer.writeheader()
@@ -2877,6 +2879,12 @@ def event_timeline_csv(events: Sequence[TimelineEvent]) -> str:
     ):
         payload = event.to_dict()
         payload["reason_codes"] = "|".join(event.reason_codes)
+        payload["raw_fields"] = json.dumps(
+            dict(event.raw_fields), sort_keys=True, separators=(",", ":")
+        )
+        payload["normalized_fields"] = json.dumps(
+            dict(event.normalized_fields), sort_keys=True, separators=(",", ":")
+        )
         writer.writerow({key: payload.get(key) for key in columns})
     return buffer.getvalue()
 
@@ -3022,6 +3030,8 @@ def _event_index(event: TimelineEvent) -> dict[str, Any]:
         "eligibility": event.eligibility,
         "delivery_count": event.delivery_count,
         "reason_codes": list(event.reason_codes),
+        "raw_fields": dict(event.raw_fields),
+        "normalized_fields": dict(event.normalized_fields),
     }
 
 

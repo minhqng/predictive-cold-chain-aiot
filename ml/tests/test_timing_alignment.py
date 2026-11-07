@@ -990,6 +990,36 @@ def test_cli_real_a_c_and_demo_artifacts_are_honest(tmp_path):
     assert "/home/" not in report
 
 
+def test_event_timeline_csv_carries_event_fields(tmp_path):
+    out = tmp_path / "fields"
+    result = _run_cli(
+        [
+            "--source", str(REAL_A_EXPORT),
+            "--a-run-index", str(REAL_A_INDEX),
+            "--out", str(out),
+            "--repository-revision", "test-revision",
+        ]
+    )
+    assert result.returncode == 0, result.stderr
+    rows = list(
+        csv.DictReader(
+            io.StringIO(
+                (out / "event-timeline-W06.csv").read_text(encoding="utf-8")
+            )
+        )
+    )
+    applied = [row for row in rows if row["event_type"] == "APPLIED_STATE"]
+    assert applied
+    applied_fields = json.loads(applied[0]["normalized_fields"])
+    assert "applied_from" in applied_fields
+    assert "applied_to" in applied_fields
+    telemetry = [row for row in rows if row["event_type"] == "TELEMETRY_SAMPLE"]
+    assert any(
+        "chamber_air_mean_c" in json.loads(row["normalized_fields"])
+        for row in telemetry
+    )
+
+
 def test_cli_is_deterministic(tmp_path):
     out = tmp_path / "w06"
     args = [
