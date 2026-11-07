@@ -25,7 +25,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0006"
+# W05 remediation added revision 0007 (reconciliation admission metadata).
+EXPECTED_HEAD = "0007"
 
 
 needs_real_db = pytest.mark.skipif(

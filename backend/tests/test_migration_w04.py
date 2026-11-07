@@ -153,7 +153,7 @@ def test_populated_w04_upgrade_preserves_history_and_fences_clockless_rows():
     old = _ingest(device, json.dumps(old_payload).encode())
     assert old["normalized"]["outcome"] == "inserted"
 
-    _upgrade("head")
+    _upgrade("0005")
     assert _revision() == "0005"
 
     engine = create_engine(_db_url())
@@ -199,7 +199,7 @@ def test_populated_w04_upgrade_preserves_history_and_fences_clockless_rows():
 
 @needs_real_db
 def test_downgrade_refuses_while_clockless_observation_exists():
-    _reset_to("head")
+    _reset_to("0005")
     device = f"mig-w04-down-{uuid4().hex}"
     wire = _clockless_wire(device)
     result = _ingest(device, wire)
@@ -236,5 +236,5 @@ def test_downgrade_refuses_while_clockless_observation_exists():
         engine.dispose()
     assert "ck_telemetry_event_time" not in constraints
 
-    _upgrade("head")
+    _upgrade("0005")
     assert _revision() == "0005"
