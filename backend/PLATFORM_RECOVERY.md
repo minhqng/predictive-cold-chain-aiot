@@ -46,6 +46,27 @@ Consumer snapshots expose `exact_duplicates`, `conflicts`, `out_of_order`,
 and `explicit_replays` as process-local counts. Use the reconciliation script
 or stored raw and normalized rows for durable accounting across restarts.
 
+## Runtime observability
+
+`GET /api/metrics` reports process-local counters and non-cumulative
+duration buckets. Durations use a monotonic timer and measure backend
+processing, including database and broker waits. The final bucket counts
+durations greater than the last listed upper bound. Metrics have no
+per-device labels and reset with the process.
+
+Telemetry ingest, command publish and ACK processing log JSON event bodies
+with available device, run, boot, sequence, command, prediction and evidence
+IDs. The reason field uses a bounded outcome. Log events exclude raw
+payloads and credentials. Set the backend logger to DEBUG for successful
+telemetry receipt details.
+
+`GET /api/commands/{command_id}/timing` reports database creation,
+broker PUBACK recording and device ACK receipt times separately. It
+identifies ACKs that arrived before PUBACK was recorded. Electrical and
+thermal timing require trusted physical evidence and stay null without it.
+Telemetry source clocks retain the existing timing-quality checks. A
+timezone-aware device timestamp alone cannot establish transport latency.
+
 To exercise a real restart, set `COLDGUARD_TEST_DATABASE_URL` to a disposable
 database and `COLDGUARD_TEST_MOSQUITTO_EXE` to the broker executable with
 `mosquitto_passwd` available alongside it. The test provisions an

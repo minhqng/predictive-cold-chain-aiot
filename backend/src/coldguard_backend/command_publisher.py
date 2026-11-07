@@ -33,6 +33,7 @@ import logging
 import threading
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from time import monotonic
 from typing import Any, Callable
 
 import paho.mqtt.client as mqtt
@@ -43,6 +44,7 @@ from sqlalchemy.engine import Engine
 from coldguard_backend import command_store as cs
 from coldguard_backend.command_service import current_desired_command_id
 from coldguard_backend.contracts import Command
+from coldguard_backend.observability import record_event, runtime_metrics
 
 log = logging.getLogger(__name__)
 
@@ -94,10 +96,24 @@ class CommandPublisher:
         self._publish = publish_fn
 
     def publish(self, command_id: str, *, now: datetime | None = None) -> dict[str, Any]:
+        started = monotonic()
+        identifiers: dict[str, Any] = {"command_id": command_id}
+        try:
+            result = self._publish_command(command_id, now, identifiers)
+        except Exception:
+            record_event(log, "command_publish", "workflow_failed", started, level=logging.ERROR, **identifiers)
+            raise
+        record_event(log, "command_publish", result["outcome"], started, level=logging.INFO, **identifiers)
+        return result
+
+    def _publish_command(
+        self, command_id: str, now: datetime | None, identifiers: dict[str, Any],
+    ) -> dict[str, Any]:
         with self._engine.begin() as connection:
             row = cs.get_command(connection, command_id)
             if row is None:
                 raise cs.CommandNotFound(f"command {command_id!r} does not exist")
+            identifiers.update({key: row[key] for key in ("device_id", "run_id", "prediction_id")})
             cs.lock_command_device(connection, row["device_id"])
             stamp = now or datetime.now(timezone.utc)
             if row["expires_at"] < stamp:
@@ -122,6 +138,8 @@ class CommandPublisher:
             cs.lock_command_device(connection, command.device_id)
             row = cs.get_command(connection, command_id)
             attempt = cs.get_attempt(connection, attempt_id)
+            identifiers["attempt_no"] = attempt["attempt_no"]
+            identifiers["event_id"] = f"attempt:{attempt_id}"
             if attempt["outcome"] != "PENDING":
                 return {"outcome": "not_publishable", "status": row["status"]}
             desired_id = current_desired_command_id(connection, command.device_id)
@@ -142,8 +160,9 @@ class CommandPublisher:
             try:
                 result = self._publish(topic, payload, COMMAND_QOS, COMMAND_RETAIN)
             except Exception as exc:  # noqa: BLE001 - transport failure is an outcome
-                log.warning("command publish transport error: command_id=%s (%s)", command_id, exc)
-                result = PublishResult(outcome="UNKNOWN", reason=f"transport_error:{exc}")
+                result = PublishResult(outcome="UNKNOWN", reason=f"transport_error:{type(exc).__name__}")
+            if attempt["attempt_no"] > 1:
+                runtime_metrics.record("command_retry", result.outcome.lower())
             new = cs.finish_publish_attempt(
                 connection, command_id, attempt_id,
                 outcome=result.outcome, broker_reason=result.reason,

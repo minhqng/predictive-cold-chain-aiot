@@ -26,6 +26,7 @@ import json
 import logging
 import threading
 from datetime import datetime, timezone
+from time import monotonic
 
 import paho.mqtt.client as mqtt
 from sqlalchemy import create_engine, select
@@ -34,6 +35,7 @@ from sqlalchemy.engine import Engine
 from coldguard_backend import command_store as cs
 from coldguard_backend.config import ColdGuardConfig
 from coldguard_backend.mqtt_consumer import reason_failed
+from coldguard_backend.observability import record_event
 from coldguard_backend.validation import (
     ack_topic_device_id,
     validate_ack_topic_identity,
@@ -250,14 +252,23 @@ class AckConsumer:
             log.warning("ack consumer disconnected unexpectedly: %s", reason_code)
 
     def _on_message(self, client, userdata, message) -> None:
+        started = monotonic()
         received_at = datetime.now(timezone.utc)
         self.metrics.bump("received")
         engine = self._engine
         if engine is None:
             self.metrics.bump("errors")
+            record_event(log, "device_ack", "engine_unavailable", started, level=logging.ERROR)
             log.error("ack dropped: consumer engine unavailable")
             return
         classified = classify_ack(message.topic, bytes(message.payload))
+        ack = classified["ack"]
+        identifiers = {
+            "device_id": classified["topic_device_id"],
+            "boot_id": ack.boot_id if ack else None,
+            "command_id": ack.command_id if ack else None,
+            "seq": ack.ack_seq if ack else None,
+        }
         if message.retain and classified["validity"] == "VALID":
             classified.update(validity="CONFLICT", diagnostics={"code": "RETAINED_ACK"})
         try:
@@ -274,9 +285,13 @@ class AckConsumer:
                 )
         except Exception:  # noqa: BLE001 - contained, counted, observable
             self.metrics.bump("errors")
-            log.exception("ack persistence failed: topic=%s", message.topic)
+            record_event(log, "device_ack", "persistence_failed", started, level=logging.ERROR, **identifiers)
             return
         outcome = result["outcome"]
+        record_event(
+            log, "device_ack", outcome, started, level=logging.INFO,
+            event_id=f"ack:{result['ack_id']}", **identifiers,
+        )
         metric_for = {
             "applied": "valid", "malformed_json": "malformed_json",
             "invalid_schema": "invalid_schema", "topic_mismatch": "topic_mismatch",

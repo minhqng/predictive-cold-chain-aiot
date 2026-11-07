@@ -28,6 +28,8 @@ from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, Respo
 from sqlalchemy import Engine, create_engine, select
 
 from coldguard_backend import experiment_store as runs
+from coldguard_backend.command_store import CommandNotFound
+from coldguard_backend.command_timing import command_timing
 from coldguard_backend.dataset_export import run_integrity
 from coldguard_backend.event_timeline import s2_timeline_page
 from coldguard_backend.experiment_evidence import (
@@ -38,6 +40,7 @@ from coldguard_backend.normalized_store import (
     query_telemetry,
     telemetry,
 )
+from coldguard_backend.observability import runtime_metrics
 from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
@@ -149,6 +152,20 @@ def get_db_engine(request: Request) -> Engine:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/api/metrics")
+def read_runtime_metrics() -> dict:
+    return runtime_metrics.snapshot()
+
+
+@app.get("/api/commands/{command_id}/timing")
+def read_command_timing(command_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            return command_timing(connection, command_id)
+    except CommandNotFound as exc:
+        raise HTTPException(status_code=404, detail="Command not found") from exc
 
 
 @app.post("/api/runs", status_code=201)

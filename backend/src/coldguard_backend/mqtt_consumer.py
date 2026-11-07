@@ -286,7 +286,7 @@ class MqttIngestConsumer:
                 self.error_count += 1
             # No payload bytes in logs: payloads may carry device data;
             # topic + length is enough for triage.
-            log.exception(
+            log.error(
                 "raw persistence failed: topic=%s bytes=%d; "
                 "db commit absent, failure counted; auto-ack enabled so "
                 "delivery may still be acknowledged after callback "

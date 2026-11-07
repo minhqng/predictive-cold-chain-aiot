@@ -40,12 +40,14 @@ import logging
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from time import monotonic
 from typing import Any
 
 from sqlalchemy import select
 from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend.normalized_store import insert_normalized, map_to_row, telemetry
+from coldguard_backend.observability import record_event
 from coldguard_backend.raw_store import RECEIVED_VALID, store_raw
 from coldguard_backend.twin_store import project_reported
 from coldguard_backend.validation import validate_telemetry_payload
@@ -137,16 +139,24 @@ def ingest_message(
     reported — the committed raw row remains as evidence.
     """
     stamp = received_at or _utcnow()
+    started = monotonic()
     if metrics is not None:
         with metrics._lock:
             metrics.received += 1
     # Step 1: raw evidence commits first (own transaction on Engine).
-    stored = store_raw(engine_or_conn, topic=topic, payload=payload, received_at=stamp)
+    try:
+        stored = store_raw(engine_or_conn, topic=topic, payload=payload, received_at=stamp)
+    except Exception:
+        record_event(log, "telemetry_ingest", "raw_persistence_failed", started, level=logging.ERROR)
+        raise
+    identifiers = {key: stored[key] for key in ("device_id", "run_id", "boot_id", "seq")}
+    identifiers["event_id"] = f"raw:{stored['id']}"
     if metrics is not None:
         with metrics._lock:
             metrics.raw_persisted += 1
     status = stored["ingest_status"]
     if status != RECEIVED_VALID:
+        record_event(log, "telemetry_ingest", status.lower(), started, **identifiers)
         if metrics is not None:
             with metrics._lock:
                 if status in ("RECEIVED_INVALID_SCHEMA", "RECEIVED_MALFORMED_JSON"):
@@ -189,11 +199,7 @@ def ingest_message(
         if metrics is not None:
             with metrics._lock:
                 metrics.normalization_failures += 1
-        log.exception(
-            "normalized/Twin transaction failed: topic=%s raw_id=%s; raw evidence kept",
-            topic,
-            stored["id"],
-        )
+        record_event(log, "telemetry_ingest", "normalization_failed", started, level=logging.ERROR, **identifiers)
         return {"raw_id": stored["id"], "raw_status": status, "normalized": "failed"}
     if metrics is not None:
         with metrics._lock:
@@ -204,14 +210,9 @@ def ingest_message(
                 metrics.exact_duplicates += 1
             else:
                 metrics.conflicts += 1
-    if outcome["outcome"] == "conflict":
-        log.warning(
-            "conflicting replay for identity (%s, %s, %s): raw_id=%s kept as "
-            "evidence; authoritative normalized id=%s NOT overwritten",
-            row["device_id"],
-            row["boot_id"],
-            row["seq"],
-            stored["id"],
-            outcome["id"],
-        )
+    record_event(
+        log, "telemetry_ingest", outcome["outcome"], started,
+        level=logging.WARNING if outcome["outcome"] == "conflict" else logging.DEBUG,
+        **identifiers,
+    )
     return {"raw_id": stored["id"], "raw_status": status, "normalized": outcome}

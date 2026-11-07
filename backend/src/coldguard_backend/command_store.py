@@ -170,7 +170,7 @@ SETTLED_STATES = frozenset({
 TERMINAL_STATES = frozenset({ACK_REJECTED, EXPIRED, VERIFIED, FAILED_VERIFICATION})
 
 # Device verdict -> backend lifecycle status.
-_VERDICT_TO_STATUS = {
+DEVICE_VERDICT_STATUS = {
     "ACCEPTED": ACK_ACCEPTED,
     "REJECTED": ACK_REJECTED,
     "SAFETY_BLOCKED": ACK_REJECTED,
@@ -526,7 +526,7 @@ def record_ack(
     locked = _lock_command(connection, ack.command_id)
     stamp = now or _utcnow()
     verdict = _effective_verdict(ack)
-    target = _VERDICT_TO_STATUS.get(verdict)
+    target = DEVICE_VERDICT_STATUS.get(verdict)
     if target is None:
         connection.execute(
             command_acks.update().where(command_acks.c.id == ack_id).values(
