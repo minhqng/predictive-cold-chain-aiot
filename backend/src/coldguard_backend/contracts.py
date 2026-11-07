@@ -281,6 +281,21 @@ class Telemetry(_WireBase):
         """Logical dedup identity: (device_id, boot_id, seq)."""
         return (self.device_id, self.boot_id, self.seq)
 
+    @property
+    def is_clockless(self) -> bool:
+        """True when the message carries no device event clock."""
+        return self.schema_version == 2 or self.captured_at is None
+
+    @property
+    def has_valid_clock(self) -> bool:
+        """True when the message carries a verified timezone-aware device clock."""
+        return (
+            self.schema_version == 1
+            and self.captured_at is not None
+            and self.captured_at.tzinfo is not None
+        )
+
+
 
 class CommandAction(_WireBase):
     """Requested single-branch action. No second branch exists."""
