@@ -150,6 +150,13 @@ class PipelineSample:
 
 @dataclass(frozen=True)
 class Trajectory:
+    """One physical acquisition domain: a single device, boot and time axis.
+
+    Every contained sample must carry the declared device/boot identity. A
+    mixed-device or mixed-boot input must be partitioned at a trusted adapter
+    boundary; a monotonic timestamp never resolves a conflicting identity.
+    """
+
     run_id: str | None
     boot_id: str
     device_id: str | None
@@ -192,6 +199,19 @@ class Trajectory:
         previous = None
         identities: set[str] = set()
         for sample in self.samples:
+            if sample.boot_id != self.boot_id:
+                raise FeaturePipelineError(
+                    f"sample {sample.identity!r} belongs to boot {sample.boot_id!r}, "
+                    f"not the declared trajectory boot {self.boot_id!r}; partition "
+                    "boots at the adapter boundary"
+                )
+            if sample.device_id != self.device_id:
+                raise FeaturePipelineError(
+                    f"sample {sample.identity!r} device identity "
+                    f"{sample.device_id!r} is inconsistent with the declared "
+                    f"trajectory device {self.device_id!r}; mixed or missing "
+                    "device identity cannot be resolved by event time"
+                )
             if sample.identity in identities:
                 raise FeaturePipelineError(
                     f"duplicate sample identity {sample.identity!r} after adapter dedup"
@@ -655,6 +675,13 @@ def feature_rows(
     When ``split`` is supplied, the trajectory's run must belong to the
     declared partition; an eligible physical trajectory may not be processed
     without a grouped split at all.
+
+    Trust boundary: this function is a lower-level mathematical primitive. It
+    trusts the caller's trajectory identity, ``physical_eligibility`` and split
+    metadata. W10 issues no physical admission: an eligible real run may only
+    be created by the W11 admission gate after a matching W08 validation
+    receipt, A authority and source identity are verified. Direct use of this
+    function on a real capture is diagnostic only.
     """
     if not trajectory.samples:
         return ()

@@ -166,13 +166,104 @@ def _git_revision(root: Path) -> str:
     return completed.stdout.strip() or "UNRECORDED"
 
 
+W08_GATE_STATUSES = frozenset({"GREEN", "YELLOW", "RED"})
+W08_ELIGIBILITY_VALUES = frozenset(
+    {"ELIGIBLE_FOR_DATASET", "DIAGNOSTIC_ONLY", "BLOCKED"}
+)
+W08_REQUIRED_RUN_FIELDS = (
+    "source_sha256",
+    "eligibility",
+    "a_ledger_verdict",
+    "scenario_id",
+)
+
+
 def _load_w08(path: Path) -> dict[str, Any]:
     payload = json.loads(path.read_text(encoding="utf-8"))
-    if "physical_gate" not in payload or "observed_status" not in payload["physical_gate"]:
+    if not isinstance(payload, dict):
+        raise PipelineRefusal("W08 manifest root must be a mapping")
+    gate = payload.get("physical_gate")
+    if not isinstance(gate, dict) or gate.get("observed_status") not in W08_GATE_STATUSES:
         raise PipelineRefusal(
-            "W08 manifest does not declare physical_gate.observed_status"
+            "W08 manifest does not declare a recognised physical_gate.observed_status"
         )
+    evidence = gate.get("evidence_sha256")
+    if (
+        not isinstance(evidence, list)
+        or not evidence
+        or not all(isinstance(item, str) and item.strip() for item in evidence)
+    ):
+        raise PipelineRefusal(
+            "W08 manifest does not declare bound evidence source hashes"
+        )
+    runs = payload.get("runs")
+    if not isinstance(runs, list) or not runs:
+        raise PipelineRefusal("W08 manifest does not declare candidate run receipts")
+    for index, run in enumerate(runs):
+        if not isinstance(run, dict):
+            raise PipelineRefusal(f"W08 run[{index}] is not a mapping")
+        for field in W08_REQUIRED_RUN_FIELDS:
+            if field not in run:
+                raise PipelineRefusal(
+                    f"W08 run[{index}] is missing required field {field!r}"
+                )
+        if not isinstance(run["source_sha256"], str) or not run["source_sha256"].strip():
+            raise PipelineRefusal(
+                f"W08 run[{index}] has an empty source identity"
+            )
+        if run["eligibility"] not in W08_ELIGIBILITY_VALUES:
+            raise PipelineRefusal(
+                f"W08 run[{index}] has an unrecognised eligibility "
+                f"{run['eligibility']!r}"
+            )
+        if not isinstance(run["a_ledger_verdict"], str) or not run[
+            "a_ledger_verdict"
+        ].strip():
+            raise PipelineRefusal(
+                f"W08 run[{index}] has no A ledger verdict"
+            )
+        if not isinstance(run["scenario_id"], str) or not run["scenario_id"].strip():
+            raise PipelineRefusal(f"W08 run[{index}] has no scenario identity")
     return payload
+
+
+def _w08_receipts_for_source(
+    w08: dict[str, Any], source_sha256: str
+) -> tuple[dict[str, Any], ...]:
+    evidence = tuple(w08["physical_gate"]["evidence_sha256"])
+    if source_sha256 not in evidence:
+        raise PipelineRefusal(
+            "W08 manifest evidence does not bind the supplied capture source hash"
+        )
+    receipts = tuple(
+        run for run in w08["runs"] if run["source_sha256"] == source_sha256
+    )
+    if not receipts:
+        raise PipelineRefusal(
+            "W08 manifest has no run-validation receipt for the supplied capture"
+        )
+    return receipts
+
+
+def _eligible_run_counts(
+    receipts: Sequence[dict[str, Any]],
+) -> tuple[int, int]:
+    eligible = [
+        run
+        for run in receipts
+        if run["eligibility"] == "ELIGIBLE_FOR_DATASET"
+    ]
+    eligible_s1 = sum(
+        1
+        for run in eligible
+        if str(run.get("scenario_id", "")).upper().startswith("S1")
+    )
+    eligible_s2 = sum(
+        1
+        for run in eligible
+        if str(run.get("scenario_id", "")).upper().startswith("S2")
+    )
+    return eligible_s1, eligible_s2
 
 
 def _rows_for_partitions(
@@ -398,7 +489,7 @@ def _report_markdown(
         f"| W10 software | {synthetic['software_status']} |",
         "| Independent review | RECORDED_IN_STACKED_PR |",
         f"| Physical Gate B | {w08['physical_gate']} |",
-        "| Eligible real S2 data | NOT_AVAILABLE |",
+        f"| Eligible real S2 data | {real['eligible_s2_runs']} run(s) |",
         f"| Real label pilot | {real_pilot['REAL_S2_LABEL_PILOT']} |",
         "| Feature causality | VERIFIED_BY_TESTS |",
         "| Real predictive benchmark | NOT_ESTABLISHED |",
@@ -636,6 +727,17 @@ def build_artifacts(
         raise PipelineRefusal("causal or deterministic verification failed")
 
     capture = load_capture(capture_path)
+    w08_receipts = _w08_receipts_for_source(w08, capture.source.sha256)
+    eligible_s1_runs, eligible_s2_runs = _eligible_run_counts(w08_receipts)
+    if physical_gate == "GREEN" and eligible_s1_runs + eligible_s2_runs == 0:
+        raise PipelineRefusal(
+            "a GREEN Gate B manifest declares no eligible run receipt for the "
+            "bound source; the gate is not self-consistent"
+        )
+    if physical_gate == "RED" and eligible_s1_runs + eligible_s2_runs:
+        raise PipelineRefusal(
+            "a RED Gate B manifest cannot declare eligible run receipts"
+        )
     real_trajectories = trajectory_from_capture(
         capture,
         physical_eligibility=ELIGIBILITY_BLOCKED,
@@ -655,7 +757,7 @@ def build_artifacts(
     if not real_rows:
         raise PipelineRefusal("the real capture produced no diagnostic feature rows")
     real_pilot = assess_real_pilot(
-        eligible_s2_runs=0,
+        eligible_s2_runs=eligible_s2_runs,
         authoritative_series_present=False,
         gate_b_physical=physical_gate,
     )
@@ -704,8 +806,8 @@ def build_artifacts(
         "door_openings": sum(
             _door_transition_count(trajectory) for trajectory in real_trajectories
         ),
-        "eligible_s1_runs": 0,
-        "eligible_s2_runs": 0,
+        "eligible_s1_runs": eligible_s1_runs,
+        "eligible_s2_runs": eligible_s2_runs,
         "output_classes": {
             OUTPUT_SYNTHETIC: 0,
             OUTPUT_DIAGNOSTIC: len(real_rows),
@@ -787,6 +889,10 @@ def build_artifacts(
                 else "NOT_READY"
             ),
             "gate_preserved": True,
+            "source_hash_bound": True,
+            "receipt_count_for_source": len(w08_receipts),
+            "eligible_s1_runs_for_source": eligible_s1_runs,
+            "eligible_s2_runs_for_source": eligible_s2_runs,
         },
         "verification": {
             "future_perturbation": synthetic["future_perturbation"],

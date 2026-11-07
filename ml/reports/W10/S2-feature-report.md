@@ -9,7 +9,7 @@
 | W10 software | GREEN |
 | Independent review | RECORDED_IN_STACKED_PR |
 | Physical Gate B | RED |
-| Eligible real S2 data | NOT_AVAILABLE |
+| Eligible real S2 data | 0 run(s) |
 | Real label pilot | NOT_EVALUABLE |
 | Feature causality | VERIFIED_BY_TESTS |
 | Real predictive benchmark | NOT_ESTABLISHED |

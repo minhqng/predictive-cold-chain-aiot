@@ -522,3 +522,84 @@ def test_w02_grouped_windows_are_reused_as_w10_anchors():
     assert [row.anchor_t_s for row in rows] == anchors
     assert all(row.split_partition == "train" for row in rows)
     assert all(row.output_class == OUTPUT_SYNTHETIC for row in rows)
+
+
+def _probe_capture_copy(tmp_path: Path) -> Path:
+    import shutil
+
+    exports = tmp_path / "exports"
+    exports.mkdir()
+    payload = json.loads(EVIDENCE.read_text(encoding="utf-8"))
+    payload["probe_marker"] = "DIFFERENT_SOURCE_NOT_IN_W08"
+    capture = exports / "different-capture.json"
+    capture.write_text(json.dumps(payload, indent=2, sort_keys=True), encoding="utf-8")
+    shutil.copy2(
+        EVIDENCE.with_name("CG-S1-H8C-600S.row-validity.csv"),
+        exports / "CG-S1-H8C-600S.row-validity.csv",
+    )
+    return capture
+
+
+def test_cli_refuses_w08_manifest_bound_to_a_different_source(tmp_path: Path):
+    capture = _probe_capture_copy(tmp_path)
+    out = tmp_path / "out"
+    result = _run_cli(
+        out, "--a-capture", str(capture), "--a-w08-manifest", str(W08)
+    )
+    assert result.returncode == 2
+    assert "does not bind the supplied capture source hash" in result.stderr
+    assert not (out / "feature-manifest-W10.json").exists()
+
+
+def test_cli_refuses_self_contradictory_green_gate(tmp_path: Path):
+    payload = json.loads(W08.read_text(encoding="utf-8"))
+    payload["physical_gate"]["observed_status"] = "GREEN"
+    forged = tmp_path / "forged-green-W08.json"
+    forged.write_text(json.dumps(payload), encoding="utf-8")
+    out = tmp_path / "out"
+    result = _run_cli(out, "--a-w08-manifest", str(forged))
+    assert result.returncode == 2
+    assert "no eligible run receipt" in result.stderr
+
+
+def test_cli_refuses_w08_manifest_without_run_receipts(tmp_path: Path):
+    payload = json.loads(W08.read_text(encoding="utf-8"))
+    payload.pop("runs")
+    malformed = tmp_path / "malformed-W08.json"
+    malformed.write_text(json.dumps(payload), encoding="utf-8")
+    out = tmp_path / "out"
+    result = _run_cli(out, "--a-w08-manifest", str(malformed))
+    assert result.returncode == 2
+    assert "candidate run receipts" in result.stderr
+
+
+def test_cli_refuses_red_gate_with_eligible_receipts(tmp_path: Path):
+    payload = json.loads(W08.read_text(encoding="utf-8"))
+    payload["runs"][0]["eligibility"] = "ELIGIBLE_FOR_DATASET"
+    forged = tmp_path / "red-eligible-W08.json"
+    forged.write_text(json.dumps(payload), encoding="utf-8")
+    result = _run_cli(tmp_path / "out", "--a-w08-manifest", str(forged))
+    assert result.returncode == 2
+    assert "RED Gate B manifest cannot declare eligible" in result.stderr
+
+
+def test_cli_refuses_evidence_hash_without_a_matching_run_receipt(tmp_path: Path):
+    payload = json.loads(W08.read_text(encoding="utf-8"))
+    payload["runs"][0]["source_sha256"] = "0" * 64
+    forged = tmp_path / "receipt-mismatch-W08.json"
+    forged.write_text(json.dumps(payload), encoding="utf-8")
+    result = _run_cli(tmp_path / "out", "--a-w08-manifest", str(forged))
+    assert result.returncode == 2
+    assert "no run-validation receipt" in result.stderr
+
+
+def test_cli_manifest_records_the_bound_w08_receipt(tmp_path: Path):
+    result = _run_cli(tmp_path)
+    assert result.returncode == 0, result.stderr
+    manifest = json.loads(
+        (tmp_path / "feature-manifest-W10.json").read_text(encoding="utf-8")
+    )
+    assert manifest["w08"]["source_hash_bound"] is True
+    assert manifest["w08"]["receipt_count_for_source"] == 1
+    assert manifest["w08"]["eligible_s1_runs_for_source"] == 0
+    assert manifest["w08"]["eligible_s2_runs_for_source"] == 0

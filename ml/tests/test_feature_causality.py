@@ -608,3 +608,119 @@ def test_w02_adapter_refuses_non_synthetic_declaration():
             source_type="REAL_A_CAPTURE",
             synthetic_roles={"t1": "CHAMBER_CENTER"},
         )
+
+
+def test_direct_constructor_refuses_mixed_boot_samples():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    trajectory, _ = build_trajectory(
+        "CG-S2-R1-BOOT-001", scenario="S2", seed=601, door_start_s=40.0
+    )
+    samples = list(trajectory.samples)
+    for index in (2, 3):
+        samples[index] = dataclasses.replace(samples[index], boot_id="boot-B")
+    with pytest.raises(FeaturePipelineError, match="belongs to boot"):
+        dataclasses.replace(trajectory, samples=tuple(samples))
+
+
+def test_direct_constructor_refuses_mixed_and_missing_device_samples():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    trajectory, _ = build_trajectory(
+        "CG-S2-R1-DEV-001", scenario="S2", seed=602, door_start_s=40.0
+    )
+    mixed = list(trajectory.samples)
+    mixed[2] = dataclasses.replace(mixed[2], device_id="cg-other-002")
+    with pytest.raises(FeaturePipelineError, match="inconsistent with the declared"):
+        dataclasses.replace(trajectory, samples=tuple(mixed))
+
+    missing = list(trajectory.samples)
+    missing[2] = dataclasses.replace(missing[2], device_id=None)
+    with pytest.raises(FeaturePipelineError, match="inconsistent with the declared"):
+        dataclasses.replace(trajectory, samples=tuple(missing))
+
+
+def test_duplicate_seq_within_one_boot_is_refused():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    trajectory, _ = build_trajectory(
+        "CG-S2-R1-DUP-001", scenario="S2", seed=606, door_start_s=40.0
+    )
+    samples = list(trajectory.samples)
+    samples[2] = dataclasses.replace(samples[2], seq=samples[0].seq)
+    with pytest.raises(FeaturePipelineError, match="duplicate sample identity"):
+        dataclasses.replace(trajectory, samples=tuple(samples))
+
+
+def test_consistent_identity_control_remains_accepted():
+    trajectory, _ = build_trajectory(
+        "CG-S2-R1-OK-001", scenario="S2", seed=603, door_start_s=40.0
+    )
+    row = _at(_rows(trajectory), 60.0)
+    assert _reason(row, "rolling_mean_temperature_60s") == PRESENT
+
+
+def test_same_seq_after_reboot_is_legal_only_in_separate_boot_scopes():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    base, _ = build_trajectory(
+        "CG-S2-R1-REBOOT-001", scenario="S2", seed=604, door_start_s=40.0
+    )
+
+    def with_boot(trajectory, boot_id):
+        return dataclasses.replace(
+            trajectory,
+            boot_id=boot_id,
+            samples=tuple(
+                dataclasses.replace(sample, boot_id=boot_id)
+                for sample in trajectory.samples
+            ),
+            physical_source_key=f"{trajectory.source_sha256}:{boot_id}",
+        )
+
+    boot_a = with_boot(base, "boot-A")
+    boot_b = with_boot(base, "boot-B")
+    assert boot_a.samples[0].seq == boot_b.samples[0].seq == 0
+    assert _rows(boot_a)
+    assert _rows(boot_b)
+
+    with pytest.raises(FeaturePipelineError, match="belongs to boot"):
+        dataclasses.replace(
+            boot_a,
+            samples=boot_a.samples[:61] + boot_b.samples[32:],
+        )
+
+
+def test_w02_adapter_partitions_boots_and_refuses_mixed_device_views():
+    from coldguard_ml.feature_pipeline import FeaturePipelineError
+
+    run = build_synthetic_run(
+        SyntheticRunSpec(run_id="CG-SYN-R1-001", scenario_id="S1", seed=605)
+    )
+    split_at = len(run.observations) // 2
+    rebooted = tuple(
+        dataclasses.replace(observation, boot_id="BOOT-2")
+        if index >= split_at
+        else observation
+        for index, observation in enumerate(run.observations)
+    )
+    trajectories = trajectory_from_observations(
+        rebooted,
+        source_sha256="4" * 64,
+        synthetic_roles={"t1": "CHAMBER_CENTER"},
+    )
+    assert len(trajectories) == 2
+    assert len({trajectory.boot_id for trajectory in trajectories}) == 2
+    assert all(
+        {sample.boot_id for sample in trajectory.samples} == {trajectory.boot_id}
+        for trajectory in trajectories
+    )
+
+    same_boot = list(run.observations)
+    same_boot[5] = dataclasses.replace(same_boot[5], device_id="cg-other-003")
+    with pytest.raises(FeaturePipelineError, match="inconsistent with the declared"):
+        trajectory_from_observations(
+            same_boot,
+            source_sha256="4" * 64,
+            synthetic_roles={"t1": "CHAMBER_CENTER"},
+        )
