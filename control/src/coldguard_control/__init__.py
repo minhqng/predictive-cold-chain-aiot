@@ -93,6 +93,20 @@ from .verification import (
 
 __version__ = "0.1.0"
 
+# W10‑W13 exported symbols
+from .types import VerificationStatus, IncidentAction
+from .faults import (
+    FaultProtocol,
+    InjectionCheckResult,
+    InjectionVerdict,
+    FaultProtocolStatus,
+    FORBIDDEN_TECHNIQUE_IDS,
+    get_protocol,
+    check_injection,
+    assert_protocol_allowed,
+    audit_protocols,
+)
+
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
     "AckStatus",
@@ -151,4 +165,17 @@ __all__ = [
     "VerificationSnapshot",
     "VerificationTracker",
     "start_verification",
+    "VerificationStatus",
+    "CoolingHealthState",
+    "IncidentAction",
+    "FaultProtocol",
+    "InjectionCheckResult",
+    "InjectionVerdict",
+    "FaultProtocolStatus",
+    "check_injection",
+    "assert_protocol_allowed",
+    "audit_protocols",
+    "FORBIDDEN_TECHNIQUE_IDS",
+    "get_protocol",
+
 ]
