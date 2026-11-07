@@ -23,9 +23,9 @@ A single `PASS` never implies that all five statuses are green.
 | Report schema | coldguard-w05-qa-report-v1 |
 | Package version | 0.1.0 |
 | QA layer version | coldguard-w05-qa-v1 |
-| Analysis code SHA-256 | `3c86d50b8d1a238f4d2b8916c3e10788f09a13e360b7ac8d0d53c58fb7ab66ca` |
-| Repository revision | 62d70b9e5c5f291222954118c1f2f2b734a0cae4 |
-| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 62d70b9e5c5f291222954118c1f2f2b734a0cae4 --out reports/W05` |
+| Analysis code SHA-256 | `3c0e4aed64b77b4045522b3eb01e4a4af0c47d50311c63595482d53b4b50cff3` |
+| Repository revision | 0460adc1505baa9fb4368989618d10d6df435871 |
+| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 0460adc1505baa9fb4368989618d10d6df435871 --out reports/W05` |
 | Output directory | `ml/reports/W05` |
 | A run index | `evidence/A/W09/s1-run-index.json` (SHA-256 `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af`) |
 
@@ -216,7 +216,7 @@ Session `NO_DEVICE_ID::56044b74`: one aligned time domain per panel set. Gaps ar
 
 - Captured-frame completeness is provisional; campaign completeness is NOT_ESTIMABLE without source-carried acquisition boundaries.
 - Long-gap and stale thresholds are named diagnostic-only configuration, not feature-eligibility limits.
-- Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row or an interval above the long-gap threshold, not on every gap in the timestamp series.
+- Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row, an interval above the long-gap threshold, or a value leaving the configured tolerance band, not on every gap in the timestamp series.
 - PZEM power/energy values are diagnostic only while the electrical quality domain is not VALID; no validated power, energy, COP or whole-system claim is made.
 - TEC hot-side temperature is never chamber air and never enters a chamber-air mean or gradient.
 - Unknown ROM/role, unknown door polarity and UNKNOWN door state remain unknown; none is silently converted.
@@ -271,7 +271,7 @@ Session `NO_DEVICE_ID::56044b74`: one aligned time domain per panel set. Gaps ar
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 62d70b9e5c5f291222954118c1f2f2b734a0cae4 --out reports/W05
+uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 0460adc1505baa9fb4368989618d10d6df435871 --out reports/W05
 ```
 
 Repeated execution on the same source and configuration produces identical analytical numbers and stable serialized report content. The report contains no runtime generation timestamp and no local absolute path.
