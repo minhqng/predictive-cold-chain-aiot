@@ -43,6 +43,7 @@ from .types import (
     ActuationIntent,
     CoolingState,
     DeviceMode,
+    PhysicalVerificationState,
     PolicyState,
     QualityState,
     ReasonCode,
@@ -102,6 +103,10 @@ class LocalSafetyEvidence:
     fan_available: bool | None
     active_fault: bool = False
     hardware_safety_condition: bool = False
+    # The device may have no synchronized wall clock. Absolute command expiry
+    # is only evaluable when this is explicitly known to be true; absence is
+    # not "probably synchronized" (A-W06 handoff; Doc 02 section 31.1).
+    clock_synchronized: bool = False
 
 
 @dataclass(frozen=True, slots=True)
@@ -189,6 +194,50 @@ def _validate_schema(request: CommandRequest) -> None:
         raise CommandSchemaError("retained commands are not allowed")
 
 
+def _validate_ttl(
+    request: CommandRequest, cfg: PolicyConfig, now_s: float
+) -> tuple[AckStatus, ReasonCode, str] | None:
+    """Apply the optional W04 candidate TTL bounds.
+
+    ``expires_at`` remains authoritative regardless of these bounds. When a
+    bound is configured, it adds two protections against a long-lived remote
+    intent:
+
+    * age since issue time (never since device receipt) must be within
+      ``command_max_age_s``;
+    * the declared validity window must be within ``command_max_ttl_s``.
+
+    ``None`` means the corresponding number has not been characterized yet;
+    the check is skipped and the evidence record must say so. No default value
+    is substituted.
+    """
+    age_s = float(now_s) - float(request.created_at)
+    max_age = cfg.command_max_age_s
+    if max_age is not None and age_s > float(max_age):
+        return (
+            AckStatus.EXPIRED,
+            ReasonCode.COMMAND_EXPIRED,
+            (
+                "command age since created_at exceeds the configured maximum "
+                f"({age_s:.3f} s > {max_age} s); the freshness clock starts at "
+                "issue time, not device receipt"
+            ),
+        )
+
+    window_s = float(request.expires_at) - float(request.created_at)
+    max_ttl = cfg.command_max_ttl_s
+    if max_ttl is not None and window_s > float(max_ttl):
+        return (
+            AckStatus.OUT_OF_RANGE,
+            ReasonCode.COMMAND_OUT_OF_RANGE,
+            (
+                "declared command validity window exceeds the configured TTL "
+                f"({window_s:.3f} s > {max_ttl} s)"
+            ),
+        )
+    return None
+
+
 def _validate_range(
     request: CommandRequest, cfg: PolicyConfig
 ) -> str | None:
@@ -250,7 +299,11 @@ def _evidence_type_problem(evidence: LocalSafetyEvidence) -> str | None:
                 f"got {value!r} ({type(value).__name__})"
             )
 
-    for field_name in ("active_fault", "hardware_safety_condition"):
+    for field_name in (
+        "active_fault",
+        "hardware_safety_condition",
+        "clock_synchronized",
+    ):
         value = getattr(evidence, field_name)
         if not isinstance(value, bool):
             return (
@@ -329,6 +382,21 @@ def validate_command(
     passed.append("device_identity")
 
     # 4. Expiry / clock ----------------------------------------------------
+    # When the device clock is not synchronized, absolute expiry cannot be
+    # evaluated. This is a safety block, not an expiry verdict: the device
+    # cannot prove the command is fresh, so it must not actuate (A-W06 handoff;
+    # Doc 02 section 31.1).
+    if not evidence.clock_synchronized:
+        return _reject(
+            request,
+            status=AckStatus.SAFETY_BLOCKED,
+            reason=ReasonCode.COMMAND_SAFETY_BLOCKED,
+            detail=(
+                "device clock is not synchronized; absolute command expiry "
+                "cannot be evaluated; local protections remain available"
+            ),
+            passed=tuple(passed),
+        )
     if float(request.created_at) > float(now_s) + cfg.command_max_future_skew_s:
         return _reject(
             request,
@@ -343,6 +411,16 @@ def validate_command(
             status=AckStatus.EXPIRED,
             reason=ReasonCode.COMMAND_EXPIRED,
             detail="command expired before validation",
+            passed=tuple(passed),
+        )
+    ttl_result = _validate_ttl(request, cfg, float(now_s))
+    if ttl_result is not None:
+        status, reason, detail = ttl_result
+        return _reject(
+            request,
+            status=status,
+            reason=reason,
+            detail=detail,
             passed=tuple(passed),
         )
     passed.append("expiry")
