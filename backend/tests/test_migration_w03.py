@@ -25,7 +25,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0005"
+EXPECTED_HEAD = "0006"
 
 
 needs_real_db = pytest.mark.skipif(

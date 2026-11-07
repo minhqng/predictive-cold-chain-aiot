@@ -54,7 +54,7 @@ from __future__ import annotations
 
 import hashlib
 from datetime import datetime
-from typing import Any
+from typing import Any, Literal
 
 from sqlalchemy import (
     BigInteger,
@@ -67,6 +67,8 @@ from sqlalchemy import (
     Float,
     Integer,
     ForeignKey,
+    and_,
+    func,
     select,
 )
 from sqlalchemy.dialects.postgresql import JSONB, insert as pg_insert
@@ -302,3 +304,106 @@ def fetch_by_identity(
     else:
         row = engine_or_conn.execute(statement).mappings().first()
     return dict(row) if row is not None else None
+
+
+def query_telemetry(
+    engine_or_conn: Engine | Connection,
+    *,
+    device_id: str | None = None,
+    run_id: str | None = None,
+    start_time: datetime | None = None,
+    end_time: datetime | None = None,
+    clockless_only: bool = False,
+    order: Literal["asc", "desc"] = "desc",
+    limit: int = 100,
+    offset: int = 0,
+) -> list[dict[str, Any]]:
+    """Query normalized telemetry with safe filtering, bounded pagination, and stable ordering.
+
+    Supports:
+    - device_id filter
+    - run_id filter
+    - time-range filter (start_time, end_time)
+    - clockless filter (clockless_only)
+    - stable ordering (by backend_received_at with seq and id tie-breaking)
+    """
+    if limit < 1 or limit > 1000:
+        raise ValueError("limit must be between 1 and 1000")
+    if offset < 0:
+        raise ValueError("offset must be non-negative")
+    if order not in ("asc", "desc"):
+        raise ValueError(f"order must be 'asc' or 'desc', got {order!r}")
+
+    clauses = []
+    if device_id is not None:
+        clauses.append(telemetry.c.device_id == device_id)
+    if run_id is not None:
+        clauses.append(telemetry.c.run_id == run_id)
+    if clockless_only:
+        clauses.append(telemetry.c.time.is_(None))
+    if start_time is not None:
+        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
+        clauses.append(effective_time >= start_time)
+    if end_time is not None:
+        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
+        clauses.append(effective_time <= end_time)
+
+    statement = select(telemetry)
+    if clauses:
+        statement = statement.where(and_(*clauses))
+
+    sort_col = telemetry.c.backend_received_at
+    if order == "desc":
+        statement = statement.order_by(
+            sort_col.desc(), telemetry.c.seq.desc(), telemetry.c.id.desc()
+        )
+    else:
+        statement = statement.order_by(
+            sort_col.asc(), telemetry.c.seq.asc(), telemetry.c.id.asc()
+        )
+
+    statement = statement.limit(limit).offset(offset)
+
+    if isinstance(engine_or_conn, Engine):
+        with engine_or_conn.begin() as connection:
+            rows = connection.execute(statement).mappings().all()
+    else:
+        rows = engine_or_conn.execute(statement).mappings().all()
+
+    return [dict(r) for r in rows]
+
+
+def count_telemetry(
+    engine_or_conn: Engine | Connection,
+    *,
+    device_id: str | None = None,
+    run_id: str | None = None,
+    start_time: datetime | None = None,
+    end_time: datetime | None = None,
+    clockless_only: bool = False,
+) -> int:
+    """Count normalized telemetry matching the specified filters."""
+    clauses = []
+    if device_id is not None:
+        clauses.append(telemetry.c.device_id == device_id)
+    if run_id is not None:
+        clauses.append(telemetry.c.run_id == run_id)
+    if clockless_only:
+        clauses.append(telemetry.c.time.is_(None))
+    if start_time is not None:
+        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
+        clauses.append(effective_time >= start_time)
+    if end_time is not None:
+        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
+        clauses.append(effective_time <= end_time)
+
+    statement = select(func.count(telemetry.c.id))
+    if clauses:
+        statement = statement.where(and_(*clauses))
+
+    if isinstance(engine_or_conn, Engine):
+        with engine_or_conn.begin() as connection:
+            return connection.execute(statement).scalar() or 0
+    else:
+        return engine_or_conn.execute(statement).scalar() or 0
+
