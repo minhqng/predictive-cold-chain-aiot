@@ -328,10 +328,11 @@ def run_checks() -> Checker:
     checker.check("t_ambient_status=%s" in telemetry_stripped
                   and "relative_humidity_status=%s" in telemetry_stripped
                   and "env_status(snap, now_ms)" in telemetry_stripped
-                  and 'strcmp(env_status_text, CG_TELEM_STATUS_OK) == 0' in telemetry_stripped
+                  and telemetry_stripped.count(
+                      "strcmp(env_status_text, CG_TELEM_STATUS_OK) == 0") >= 2
                   and "CG_TELEM_STATUS_NOT_PRESENT" in telemetry_stripped,
-                  "ambient T/RH reach the line only through the producer's own validity "
-                  "gate, and an absent module still reads SENSOR_NOT_PRESENT")
+                  "ambient T and RH each reach the line only through the producer's own "
+                  "validity gate, and an absent module still reads SENSOR_NOT_PRESENT")
     checker.check("fmt_float" in telemetry_stripped,
                   "every numeric field goes through the validity-aware formatter")
     line_max = define_value(config, "CG_TELEMETRY_LINE_MAX")
