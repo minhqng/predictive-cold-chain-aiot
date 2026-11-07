@@ -21,9 +21,9 @@ A software-green W06 with absent real command evidence is an acceptable engineer
 | Package version | 0.1.0 |
 | W06 layer version | coldguard-w06-timing-v1 |
 | Analysis code SHA-256 | `9d75e53110d3619d7cf4dc44452f41003293d3b6418b56f7b9b7f4b36e09840c` |
-| Repository revision | 2c54bd06fa6cc51eb88995bdf6bcaf28a59e44e4 |
+| Repository revision | 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8 |
 | A run index | evidence/A/W09/s1-run-index.json |
-| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 2c54bd06fa6cc51eb88995bdf6bcaf28a59e44e4` |
+| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8` |
 
 ## 2. Source inventory
 
@@ -32,7 +32,7 @@ A software-green W06 with absent real command evidence is an acceptable engineer
 | CAPTURE | evidence/A/W09/exports/CG-S1-H8C-600S.json | f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb | w09-run-export/v2 | PHYSICAL | BOOT_SCOPED_UPTIME | NOT_EVIDENCED | EXCLUDED_OR_BLOCKED | 957 |
 | CAPTURE | backend/fixtures/telemetry_v0.json | 48358561236d062ee63bc3fc8596f341498837063c24aa9b84b5873525a23dab | coldguard.telemetry/v1 | SYNTHETIC | EVENT_UTC | UNVERIFIED_SYNC | EXCLUDED_OR_BLOCKED | 1 |
 | A_COMMAND_LOG | evidence/A/W06/demo-command-capture.log | 9a6a47a0119c9303cb8c24094b878c78e1999b538fd5267a17f0ead281b3ec06 | coldguard.command-ack-serial/v1 | HOST_GENERATED_SYNTHETIC | DEVICE_BOOT_UPTIME | PER_ACK_FIELD | EXCLUDED_OR_BLOCKED | 5 |
-| W06_EVENT_FIXTURE | ml/tests/fixtures/W06/qualified-response.json | c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a | coldguard.w06-event-fixture/v1 | SYNTHETIC_FIXTURE | DECLARED_PER_EVENT | SYNTHETIC_EXACT | EXCLUDED_OR_BLOCKED | 24 |
+| W06_EVENT_FIXTURE | ml/tests/fixtures/W06/qualified-response.json | 183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f | coldguard.w06-event-fixture/v1 | SYNTHETIC_FIXTURE | DECLARED_PER_EVENT | SYNTHETIC_EXACT | EXCLUDED_OR_BLOCKED | 24 |
 
 ## 3. Source-contract ledger
 
@@ -92,7 +92,7 @@ Per-source counts:
 
 | Clock domain | Device | Boot | Events | First time (s) | Last time (s) | Median interval (s) | P95 interval (s) | Monotonic | Seq gaps | Seq dups | Reversals | Uptime resets | Receive conflicts | Max uncertainty (s) | Reason codes |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| DEVICE_BOOT_UPTIME | cg-sim-001 | sim-boot-1 | 24 | 0.500 | 2.500 | 0.100000 | 0.100000 | True | 0 | 0 | 0 | 0 | 0 | 0.050000 | MISSING_CAPTURE_TIME, MISSING_RECEIVE_TIME |
+| DEVICE_BOOT_UPTIME | cg-sim-qualified | sim-boot-qualified | 24 | 0.500 | 2.500 | 0.100000 | 0.100000 | True | 0 | 0 | 0 | 0 | 0 | 0.050000 | MISSING_CAPTURE_TIME, MISSING_RECEIVE_TIME |
 | DEVICE_BOOT_UPTIME | coldguard-001 | abcd0123 | 5 | 123.456 | 123.456 | NOT_ESTIMABLE | NOT_ESTIMABLE | True | 0 | 0 | 0 | 0 | 0 | NOT_ESTIMABLE | MISSING_CAPTURE_TIME, MISSING_RECEIVE_TIME |
 | DEVICE_BOOT_UPTIME | NOT_CARRIED | 56044b74 | 959 | 0.904 | 956.894 | 1.000000 | 1.000000 | True | 0 | 0 | 0 | 0 | 0 | 6.000000 | MISSING_CAPTURE_TIME, MISSING_RECEIVE_TIME, UNCERTAIN_CROSS_STREAM_ASSOCIATION |
 | DEVICE_EVENT_UTC | coldguard-001 | boot-w01-fixture-001 | 1 | 1791961200.000 | 1791961200.000 | NOT_ESTIMABLE | NOT_ESTIMABLE | True | 0 | 0 | 0 | 0 | 0 | NOT_ESTIMABLE | MISSING_RECEIVE_TIME |
@@ -102,7 +102,7 @@ Per-source counts:
 | DEVICE_EVENT_UTC / coldguard-001 / boot-w01-fixture-001 | ORDERED_IN_DOMAIN | CLOCK_SYNC_UNVERIFIED_FOR_ABSOLUTE_LATENCY |
 | DEVICE_BOOT_UPTIME / coldguard-001 / abcd0123 | ORDERED_IN_DOMAIN | NONE |
 | DEVICE_BOOT_UPTIME / NO_DEVICE_ID / 56044b74 | ORDERED_IN_DOMAIN | NONE |
-| DEVICE_BOOT_UPTIME / cg-sim-001 / sim-boot-1 | ORDERED_IN_DOMAIN | NONE |
+| DEVICE_BOOT_UPTIME / cg-sim-qualified / sim-boot-qualified | ORDERED_IN_DOMAIN | NONE |
 
 Uptime is boot-scoped. No host capture time is promoted to device event time, no backend receive time is a source acquisition time, and no cross-boot uptime subtraction is performed.
 
@@ -177,7 +177,7 @@ A numeric latency is emitted only for synthetic unit-test controls or for physic
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 2c54bd06fa6cc51eb88995bdf6bcaf28a59e44e4
+uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8
 ```
 
 Repeated execution on the same inputs and configuration produces identical artifacts. The report contains no runtime timestamp and no local absolute path.

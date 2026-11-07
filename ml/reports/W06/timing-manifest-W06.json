@@ -3,10 +3,10 @@
   "audit": {
     "domains": [
       {
-        "boot_id": "sim-boot-1",
+        "boot_id": "sim-boot-qualified",
         "capture_receive_conflicts": 0,
         "clock_domain": "DEVICE_BOOT_UPTIME",
-        "device_id": "cg-sim-001",
+        "device_id": "cg-sim-qualified",
         "event_count": 24,
         "first_time": 0.5,
         "impossible_negative_intervals": 0,
@@ -1143,7 +1143,7 @@
     ],
     "reboot_identity_resets": 0
   },
-  "generation_command": "event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 2c54bd06fa6cc51eb88995bdf6bcaf28a59e44e4",
+  "generation_command": "event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8",
   "manifest_schema": "coldguard-w06-timing-manifest-v1",
   "ordering": [
     {
@@ -2141,9 +2141,9 @@
       "status": "ORDERED_IN_DOMAIN"
     },
     {
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "event_ids": [
         "telem-0",
         "telem-1",
@@ -2206,7 +2206,7 @@
       "threshold_status": "CONFIGURABLE_ANALYSIS_FLOOR_NOT_A_CONTRACT_THRESHOLD"
     }
   ],
-  "repository_revision": "2c54bd06fa6cc51eb88995bdf6bcaf28a59e44e4",
+  "repository_revision": "33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8",
   "responses": [
     {
       "anchor_event_id": null,
@@ -2997,7 +2997,7 @@
       "run_id": null,
       "run_id_status": "NOT_CARRIED",
       "schema_namespace": "coldguard.w06-event-fixture/v1",
-      "sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "time_domain": "DECLARED_PER_EVENT"
     }
   ],
@@ -28107,12 +28107,12 @@
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-0",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28122,21 +28122,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 100,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-1",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28146,21 +28146,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 101,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-2",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28170,21 +28170,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 102,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-3",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28194,21 +28194,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 103,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-4",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28218,21 +28218,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 104,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-QUALIFIED",
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "cmd-publish",
       "event_type": "COMMAND_CREATED_OR_PUBLISHED",
@@ -28242,21 +28242,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 1,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-5",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28266,21 +28266,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 105,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-6",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28290,21 +28290,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 106,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": 10,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-QUALIFIED",
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "ack-1",
       "event_type": "DEVICE_ACK",
@@ -28314,21 +28314,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 2,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-7",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28338,21 +28338,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 107,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-8",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28362,21 +28362,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 108,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-9",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28386,21 +28386,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 109,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": "CMD-QUALIFIED",
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "applied-1",
       "event_type": "APPLIED_STATE",
@@ -28410,21 +28410,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 3,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-10",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28434,21 +28434,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 110,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-11",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28458,21 +28458,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 111,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-12",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28482,21 +28482,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 112,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-13",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28506,21 +28506,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 113,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-14",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28530,21 +28530,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 114,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-15",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28554,21 +28554,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 115,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-16",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28578,21 +28578,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 116,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-17",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28602,21 +28602,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 117,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-18",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28626,21 +28626,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 118,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-19",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28650,21 +28650,21 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 119,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     },
     {
       "ack_seq": null,
-      "boot_id": "sim-boot-1",
+      "boot_id": "sim-boot-qualified",
       "clock_domain": "DEVICE_BOOT_UPTIME",
       "clock_sync": "SYNTHETIC_EXACT",
       "command_id": null,
       "delivery_count": 1,
-      "device_id": "cg-sim-001",
+      "device_id": "cg-sim-qualified",
       "eligibility": "SYNTHETIC_UNIT_TEST",
       "event_id": "telem-20",
       "event_type": "TELEMETRY_SAMPLE",
@@ -28674,11 +28674,11 @@
       "reason_codes": [
         "SYNTHETIC_UNIT_TEST_FIXTURE"
       ],
-      "run_id": "sim-run-1",
+      "run_id": "sim-run-qualified",
       "seq": 120,
       "source_namespace": "coldguard.w06-event-fixture/v1",
       "source_path": "ml/tests/fixtures/W06/qualified-response.json",
-      "source_sha256": "c7710c2dac63c310a6b1d4a9796fc23939b64235b65d064d0628a9852d1acc9a",
+      "source_sha256": "183f9ae803dee1a4aff83b72017e0b4bb06edf9c16e58eb3a242013f4291ce1f",
       "uncertainty_s": 0.05
     }
   ],
