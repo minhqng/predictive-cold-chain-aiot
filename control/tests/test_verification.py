@@ -85,3 +85,80 @@ def test_unqualified_failure_stays_unknown():
     snap = tracker.tick(3.0)
     assert snap.state is VerificationState.UNKNOWN
     assert snap.health is CoolingHealthState.UNKNOWN
+
+
+def test_late_electrical_sample_cannot_verify_on():
+    tracker = VerificationTracker(
+        make_policy(EnvelopeQualification.QUALIFIED),
+        command_id="cmd-late-current", action=CoolingState.ON, started_s=0.0,
+    )
+    snap = tracker.observe(VerificationObservation(
+        now_s=2.1, current_a=8.0, current_quality=QualityState.VALID,
+    ))
+    assert snap.state is VerificationState.UNKNOWN
+    assert not snap.electrical_response_observed
+
+
+def test_late_thermal_sample_cannot_verify_on():
+    tracker = VerificationTracker(
+        make_policy(EnvelopeQualification.QUALIFIED),
+        command_id="cmd-late-thermal", action=CoolingState.ON, started_s=0.0,
+        baseline_temperature_c=30.0,
+    )
+    tracker.observe(VerificationObservation(
+        now_s=0.5, current_a=8.0, current_quality=QualityState.VALID,
+    ))
+    snap = tracker.observe(VerificationObservation(
+        now_s=5.6, thermal_t_representative_c=28.0,
+        thermal_quality=QualityState.VALID,
+    ))
+    assert snap.state is VerificationState.UNKNOWN
+    assert not snap.thermal_response_observed
+
+
+def test_missing_required_power_is_unknown():
+    policy = VerificationPolicy(
+        policy_version="v0", envelope_id="env-power",
+        qualification=EnvelopeQualification.QUALIFIED,
+        active_current_min_a=7.0, active_current_max_a=10.0,
+        off_current_max_a=0.1, electrical_window_s=2.0,
+        thermal_window_s=5.0, thermal_min_drop_c=1.0,
+        active_power_min_w=50.0, active_power_max_w=100.0,
+        source="test",
+    )
+    tracker = VerificationTracker(
+        policy, command_id="cmd-no-power", action=CoolingState.ON,
+        started_s=0.0,
+    )
+    tracker.observe(VerificationObservation(
+        now_s=0.5, current_a=8.0, current_quality=QualityState.VALID,
+    ))
+    snap = tracker.tick(2.1)
+    assert snap.state is VerificationState.UNKNOWN
+    assert snap.health is CoolingHealthState.UNKNOWN
+
+
+def test_thermal_without_baseline_is_unknown():
+    tracker = VerificationTracker(
+        make_policy(EnvelopeQualification.QUALIFIED),
+        command_id="cmd-no-baseline", action=CoolingState.ON, started_s=0.0,
+    )
+    tracker.observe(VerificationObservation(
+        now_s=0.5, current_a=8.0, current_quality=QualityState.VALID,
+    ))
+    tracker.observe(VerificationObservation(
+        now_s=2.0, thermal_t_representative_c=28.0,
+        thermal_quality=QualityState.VALID,
+    ))
+    snap = tracker.tick(5.6)
+    assert snap.state is VerificationState.UNKNOWN
+
+
+def test_observation_cannot_precede_last_tick():
+    tracker = VerificationTracker(
+        make_policy(EnvelopeQualification.QUALIFIED),
+        command_id="cmd-clock", action=CoolingState.ON, started_s=0.0,
+    )
+    tracker.tick(1.0)
+    with pytest.raises(ValueError, match="backwards"):
+        tracker.observe(VerificationObservation(now_s=0.5))

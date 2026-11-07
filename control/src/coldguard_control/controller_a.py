@@ -121,6 +121,7 @@ class ControllerA:
     def __init__(self, config: ControllerAConfig) -> None:
         self._config = config
         self._applied = CoolingState.OFF
+        self._last_sample_s: float | None = None
         self._last_transition_s: float | None = None
         self._pending_intent: ActuationIntent | None = None
         self._pending_since_s: float | None = None
@@ -132,7 +133,10 @@ class ControllerA:
     def step(self, sample: ControllerASample) -> ControllerADecision:
         """Evaluate one sample. Identical ``(sequence, config)`` is stable."""
         now = _finite_now(sample.now_s)
+        if self._last_sample_s is not None and now < self._last_sample_s:
+            raise ValueError("Controller A sample timestamps must not go backwards")
         policy = evaluate_policy(sample.policy_input, self._config.policy)
+        self._last_sample_s = now
         applied_before = self._applied
         observed_applied = sample.policy_input.applied_cooling
         self._applied = observed_applied

@@ -249,6 +249,7 @@ class VerificationTracker:
         self._electrical_response_observed = False
         self._thermal_response_observed = False
         self._valid_electrical_seen = False
+        self._complete_electrical_seen = False
         self._valid_thermal_seen = False
         self._below_active_seen = False
         self._above_active_seen = False
@@ -278,11 +279,22 @@ class VerificationTracker:
         now = float(observation.now_s)
         if now < self._started_s:
             raise ValueError("observation cannot precede command start")
-        if self._last_observation_s is not None and now < self._last_observation_s:
+        if now < self._now_s:
             raise ValueError("observation timestamps must not go backwards")
         if self._closed:
             return self.snapshot()
         self._now_s = now
+        deadline = (
+            self._thermal_deadline_s
+            if self._state is VerificationState.ELECTRICAL_VERIFIED
+            else self._electrical_deadline_s
+        )
+        if deadline is not None and now > deadline:
+            # A sample collected after the window cannot retroactively prove
+            # a response inside it. Expire the timer without that sample.
+            self._advance(None)
+            if self._closed:
+                return self.snapshot()
         self._last_observation_s = now
         self._last_observation = observation
         self._advance(observation)
@@ -297,8 +309,8 @@ class VerificationTracker:
         now = _finite_value("now_s", now_s)
         if now < self._started_s:
             raise ValueError("tick cannot precede command start")
-        if self._last_observation_s is not None and now < self._last_observation_s:
-            raise ValueError("tick cannot move before the last observation")
+        if now < self._now_s:
+            raise ValueError("tick cannot move backwards")
         if self._closed:
             return self.snapshot()
         self._now_s = now
@@ -412,13 +424,20 @@ class VerificationTracker:
             power_ok = True
             if self._policy.active_power_min_w is not None:
                 assert self._policy.active_power_max_w is not None
-                power_ok = (
+                power_valid = (
                     observation.power_quality is QualityState.VALID
                     and observation.power_w is not None
+                )
+                if power_valid:
+                    self._complete_electrical_seen = True
+                power_ok = (
+                    power_valid
                     and self._policy.active_power_min_w
                     <= observation.power_w
                     <= self._policy.active_power_max_w
                 )
+            else:
+                self._complete_electrical_seen = True
             in_active_envelope = in_current and power_ok
 
         if in_active_envelope:
@@ -463,6 +482,18 @@ class VerificationTracker:
             self._detail = (
                 "no valid electrical evidence inside the electrical window; "
                 "insufficient evidence to classify response"
+            )
+        elif (
+            not self._complete_electrical_seen
+            and not self._below_active_seen
+            and not self._above_active_seen
+        ):
+            self._state = VerificationState.UNKNOWN
+            self._health = CoolingHealthState.UNKNOWN
+            self._reason = None
+            self._detail = (
+                "current was observed, but required power evidence was missing "
+                "inside the electrical window"
             )
         else:
             if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
@@ -540,7 +571,7 @@ class VerificationTracker:
             return
 
         self._closed = True
-        if self._valid_thermal_seen:
+        if self._valid_thermal_seen and self._baseline_t is not None:
             if self._policy.qualification is not EnvelopeQualification.QUALIFIED:
                 self._state = VerificationState.UNKNOWN
                 self._health = CoolingHealthState.UNKNOWN

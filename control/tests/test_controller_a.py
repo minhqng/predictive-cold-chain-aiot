@@ -28,23 +28,6 @@ def make_basic_config() -> PolicyConfig:
         predictive_enabled=False,
     )
 
-def make_basic_input() -> PolicyInput:
-    return PolicyInput(
-        device_mode=DeviceMode.ONLINE_NORMAL,
-        thermal=ThermalView(quality=QualityState.VALID, t_representative_c=9.0, age_s=1.0),
-        applied_cooling=CoolingState.OFF,
-        remote=PolicyInput.__annotations__.get('remote'),  # placeholder, will be replaced below
-        current_state=None,
-        fan_available=True,
-        electrical_quality=QualityState.VALID,
-        door_state="CLOSED",
-        prediction=None,
-        fault_active=False,
-        fault_reason=None,
-        control_electrical_anomaly=False,
-        hardware_safety_condition=False,
-    )
-
 # Helper to create a PolicyInput with a proper RemotePathView using defaults
 from coldguard_control import RemotePathView
 
@@ -99,12 +82,44 @@ def test_controller_a_persistence_blocks():
         min_off_dwell_s=0.0,
         source="test",
     )
-    pi = make_input_with_remote()
-    sample = ControllerASample(now_s=0.0, policy_input=pi)
-    decision = replay_controller_a([sample], cfg)[0]
-    assert decision.intent is ActuationIntent.ON
-    assert not decision.persistence_blocked
-    assert not decision.transitioned
+    recovering = replace(
+        make_input_with_remote(),
+        applied_cooling=CoolingState.ON,
+        thermal=ThermalView(QualityState.VALID, 5.0, 1.0),
+    )
+    first, second = replay_controller_a(
+        [ControllerASample(0.0, recovering), ControllerASample(1.1, recovering)],
+        cfg,
+    )
+    assert first.intent is ActuationIntent.HOLD
+    assert first.persistence_blocked
+    assert second.intent is ActuationIntent.OFF
+    assert not second.persistence_blocked
+
+
+def test_minimum_on_dwell_blocks_ordinary_off_transition():
+    cfg = ControllerAConfig(make_basic_config(), 0.0, 2.0, 0.0, "test")
+    warm = make_input_with_remote()
+    recovering = replace(
+        warm, applied_cooling=CoolingState.ON,
+        thermal=ThermalView(QualityState.VALID, 5.0, 1.0),
+    )
+    _, blocked, allowed = replay_controller_a(
+        [ControllerASample(0.0, warm), ControllerASample(0.5, recovering),
+         ControllerASample(2.6, recovering)], cfg,
+    )
+    assert blocked.intent is ActuationIntent.HOLD
+    assert blocked.dwell_blocked
+    assert allowed.intent is ActuationIntent.OFF
+
+
+def test_controller_a_rejects_backwards_sample_time():
+    cfg = ControllerAConfig(make_basic_config(), 0.0, 0.0, 0.0, "test")
+    with pytest.raises(ValueError, match="backwards"):
+        replay_controller_a(
+            [ControllerASample(1.0, make_input_with_remote()),
+             ControllerASample(0.5, make_input_with_remote())], cfg,
+        )
 
 
 def test_applied_state_changes_only_after_feedback():
