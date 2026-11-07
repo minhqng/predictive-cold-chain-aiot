@@ -4,7 +4,7 @@ For one received MQTT message::
 
     raw INSERT + COMMIT (authoritative source, always first)
     → strict + topic validation (already reflected in the raw status)
-    → normalized INSERT + COMMIT iff raw status is RECEIVED_VALID
+    → normalized INSERT and eligible Twin projection in one transaction
     → duplicate/conflict classification via the UNIQUE constraint
     → metrics update
 
@@ -13,10 +13,9 @@ Transaction strategy (minimal, no distributed machinery):
 * raw and normalized commits are *separate* local transactions when
   called with an Engine (the consumer path). If normalized processing
   fails, the raw evidence row is already committed — the failure stays
-  visible and recoverable instead of silently discarding required
-  rejected evidence (a shared transaction would roll the raw row back
-  on a normalized failure). With a Connection both steps join the
-  caller's transaction instead.
+  visible and recoverable instead of discarding evidence. With a
+  Connection both steps join the caller's transaction; a savepoint
+  protects raw evidence from failures in the normalized/Twin step.
 * a normalized sample never appears without its committed raw source:
   ``telemetry.raw_id`` references the raw row committed in step one,
   and insertion order guarantees the reference exists.
@@ -36,6 +35,7 @@ test reconciles against.
 
 from __future__ import annotations
 
+import json
 import logging
 import threading
 from dataclasses import dataclass, field
@@ -46,6 +46,7 @@ from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend.normalized_store import insert_normalized, map_to_row
 from coldguard_backend.raw_store import RECEIVED_VALID, store_raw
+from coldguard_backend.twin_store import project_reported
 from coldguard_backend.validation import validate_telemetry_payload
 
 log = logging.getLogger(__name__)
@@ -87,6 +88,13 @@ def _utcnow() -> datetime:
     return datetime.now(timezone.utc)
 
 
+def _normalize(connection: Connection, row: dict[str, Any]) -> dict[str, Any]:
+    outcome = insert_normalized(connection, row)
+    if outcome["outcome"] == "inserted" and row["twin_eligible"]:
+        project_reported(connection, outcome["id"])
+    return outcome
+
+
 def ingest_message(
     engine_or_conn: Engine | Connection,
     *,
@@ -94,6 +102,7 @@ def ingest_message(
     payload: bytes,
     received_at: datetime | None = None,
     metrics: IngestMetrics | None = None,
+    retained: bool = False,
 ) -> dict[str, Any]:
     """Ingest one MQTT message: raw commit first, then normalized iff valid.
 
@@ -133,22 +142,29 @@ def ingest_message(
     # with topic agreement already proven at classification time.
     # Re-derive the validated model from the exact received bytes so
     # mapping input equals stored evidence (VALID implies UTF-8 JSON).
-    import json as _json
-
     try:
-        parsed = _json.loads(payload.decode("utf-8"))
+        parsed = json.loads(payload.decode("utf-8"))
         validated, errors = validate_telemetry_payload(parsed)
         if validated is None:  # pragma: no cover - defensive; status says valid
             raise RuntimeError(f"raw row marked valid but revalidation failed: {errors}")
         row = map_to_row(validated, raw_id=stored["id"], received_at=stamp)
-        outcome = insert_normalized(engine_or_conn, row)
+        row["twin_eligible"] = (
+            not retained
+            and parsed.get("synthetic", False) is False
+            and parsed.get("replay", False) is False
+        )
+        if isinstance(engine_or_conn, Engine):
+            with engine_or_conn.begin() as connection:
+                outcome = _normalize(connection, row)
+        else:
+            with engine_or_conn.begin_nested():
+                outcome = _normalize(engine_or_conn, row)
     except Exception:
         if metrics is not None:
             with metrics._lock:
                 metrics.normalization_failures += 1
         log.exception(
-            "normalized persistence failed: topic=%s raw_id=%s; "
-            "raw evidence committed, sample not normalized",
+            "normalized/Twin transaction failed: topic=%s raw_id=%s; raw evidence kept",
             topic,
             stored["id"],
         )

@@ -1574,6 +1574,30 @@ Older seq/boot rules.
 
 Test late old telemetry.
 
+Revision `0004` leaves raw delivery evidence in its own transaction. The
+normalized insert and reported Twin update commit together. Duplicate
+deliveries keep the original normalized row and its admission decision.
+
+Valid, topic-matched live telemetry can initialize reported state and advance
+it by sequence within the current boot. Publishers of historical telemetry
+must set the top-level boolean `replay: true`. The ingest path keeps replay,
+synthetic, and retained deliveries in history and excludes them from reported
+state. A missing marker on an authorized live topic is interpreted as live
+under the publisher contract. Rows from before revision `0004` lack an
+admission decision and remain history.
+
+An unfamiliar boot stays in history until a trusted backend caller verifies
+boot order independently and calls `reconcile_reported_boot` with the
+expected current boot. This operation promotes the highest eligible sequence
+from the verified boot and retires the previous one in the same transaction.
+Receipt time, device time, and the boot ID string carry no boot-order authority.
+
+The reported snapshot carries its normalized and raw row IDs and the original
+event time. `last_reported_at` records when the database updated the projection.
+Connectivity remains `UNKNOWN` until a separate connectivity policy establishes
+it. Desired writes use the whole Twin version, with version zero reserved for
+row creation. They store intent only.
+
 ---
 
 ## C-W04-05 — First real-device integration

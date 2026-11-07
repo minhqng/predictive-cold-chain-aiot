@@ -10,8 +10,8 @@ re-applying upgrade-to-head is safe.
 C-W02 evolution note: the expected head moved 0001 → 0002 and the
 reviewed ``telemetry_raw`` table (revision 0002, C-W02-04) and the
 reviewed normalized ``telemetry`` table (revision 0003, C-W03-03/04)
-are now part
-of the expected schema. The W01 "no domain tables" assertion is
+are part of the expected schema, alongside the revision 0004 Twin tables.
+The W01 "no domain tables" assertion is
 superseded by that reviewed revision; the W01→W02 upgrade path itself
 is proven in ``test_migration_w02.py``.
 
@@ -28,7 +28,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0003"
+EXPECTED_HEAD = "0004"
 
 needs_real_db = pytest.mark.skipif(
     not os.environ.get("COLDGUARD_TEST_DATABASE_URL"),
@@ -60,7 +60,10 @@ def test_baseline_upgrades_from_empty_and_persists_head():
     finally:
         engine.dispose()
     assert head == EXPECTED_HEAD
-    assert tables == {"alembic_version", "telemetry_raw", "telemetry"}
+    assert tables == {
+        "alembic_version", "telemetry_raw", "telemetry",
+        "device_twin", "device_twin_retired_boot",
+    }
 
 
 @needs_real_db

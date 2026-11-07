@@ -1,6 +1,7 @@
 {
   "note": "SYNTHETIC fixture v0 for Member C W01 handoff. Not a physical measurement or calibration result. Wire schema_version is 1 per Doc 02; 'v0' names this development slice. Publish on coldguard/coldguard-001/telemetry (QoS 1, retain=false).",
   "schema_version": 1,
+  "synthetic": true,
   "device_id": "coldguard-001",
   "boot_id": "boot-w01-fixture-001",
   "seq": 12345,

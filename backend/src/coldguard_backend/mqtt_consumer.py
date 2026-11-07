@@ -5,7 +5,7 @@ subscribes through the real broker as the ``backend-ingest`` principal
 and ingests every received message via
 :func:`coldguard_backend.ingest.ingest_message` — raw evidence commits
 first, then (iff strictly valid with topic/device agreement) the
-normalized sample commits under database-arbitrated idempotency.
+normalized sample and any reported Twin update commit together.
 
 Durability boundary, stated honestly:
 
@@ -215,7 +215,10 @@ class MqttIngestConsumer:
             self._connected.set()
             return
         for topic, qos in self._subscriptions:
-            result, _mid = client.subscribe(topic, qos=qos)
+            # A custom wildcard filter can also receive telemetry.
+            result, _mid = client.subscribe(
+                topic, options=mqtt.SubscribeOptions(qos=qos, retainAsPublished=True)
+            )
             if result != mqtt.MQTT_ERR_SUCCESS:
                 log.error("mqtt subscribe failed: topic=%s qos=%s rc=%s", topic, qos, result)
         log.info("mqtt connected; subscribed to %d topic filters", len(self._subscriptions))
@@ -242,6 +245,7 @@ class MqttIngestConsumer:
                 payload=bytes(message.payload),
                 received_at=received_at,
                 metrics=self.metrics,
+                retained=message.retain,
             )
         except Exception:  # noqa: BLE001 - contained, counted, observable
             with self._lock:

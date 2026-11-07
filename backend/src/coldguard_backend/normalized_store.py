@@ -35,9 +35,9 @@ Outcome semantics:
   rows remain visible only in ``telemetry_raw``, whose nullable
   columns exist precisely for that evidence role.
 
-Timestamp rule: ``captured_at`` (stored as ``time``) is event time,
-not identity. Late/out-of-order messages are stored historically;
-no Twin mutation or W04 stale-fencing happens here (W04 owns that).
+Timestamp rule: ``captured_at`` (stored as ``time``) is event time.
+Late and out-of-order messages are stored historically. The Twin
+projection applies its own freshness rules in the ingestion transaction.
 
 Timescale decision (Doc 02 calls the hypertable a *candidate*): this
 slice uses a regular PostgreSQL table with sound indexes. A Timescale
@@ -57,6 +57,7 @@ from typing import Any
 
 from sqlalchemy import (
     BigInteger,
+    Boolean,
     Column,
     DateTime,
     MetaData,
@@ -110,6 +111,8 @@ telemetry = Table(
     # Provenance: the admitted raw row this sample was derived from.
     # First writer wins; conflicting replays keep their own raw rows.
     Column("raw_id", BigInteger, ForeignKey("telemetry_raw.id"), nullable=False),
+    # First delivery's admission decision. A duplicate cannot upgrade it.
+    Column("twin_eligible", Boolean, nullable=False),
 )
 
 # Semantic fields compared for exact-vs-conflicting replay. Identity

@@ -115,6 +115,9 @@ class _Probe:
         event = threading.Event()
         with self._sub_mu:
             self._sub_locks[mid] = event
+            # A loopback broker can reply before subscribe() returns.
+            if mid in self._sub_grants:
+                event.set()
         try:
             assert event.wait(timeout=10), (
                 f"SUBACK never arrived for subscribe mid={mid} topic={topic!r}; "
