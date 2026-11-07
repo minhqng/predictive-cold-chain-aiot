@@ -40,6 +40,7 @@ from sqlalchemy.engine import Engine
 from coldguard_backend import command_store as cs
 from coldguard_backend.config import ColdGuardConfig
 from coldguard_backend.mqtt_consumer import reason_failed
+from coldguard_backend.mqtt_security import configure_mqtt_client
 from coldguard_backend.observability import record_event
 from coldguard_backend.validation import (
     ack_topic_device_id,
@@ -180,7 +181,7 @@ class AckConsumer:
             mqtt.CallbackAPIVersion.VERSION2, client_id=self._client_id, protocol=mqtt.MQTTv5,
             manual_ack=True,
         )
-        client.username_pw_set(self._config.mqtt_username, self._config.mqtt_password)
+        configure_mqtt_client(client, self._config)
         client.on_connect = self._on_connect
         client.on_message = self._on_message
         client.on_disconnect = self._on_disconnect
