@@ -1,0 +1,82 @@
+{
+  "description": "Synthetic mixed-clock control. No absolute command-to-ACK latency.",
+  "events": [
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-1",
+      "clock_domain": "DEVICE_EVENT_UTC",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": "CMD-MIXED",
+      "device_id": "cg-sim-001",
+      "event_id": "cmd-publish",
+      "event_time_utc": "2026-01-01T00:00:00Z",
+      "event_type": "COMMAND_CREATED_OR_PUBLISHED",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "desired_cooling": "ON",
+        "desired_duty_permille": "500",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-1",
+      "seq": 1,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": 10,
+      "boot_id": "sim-boot-1",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": "CMD-MIXED",
+      "device_id": "cg-sim-001",
+      "device_uptime_ms": 1200,
+      "event_id": "ack-1",
+      "event_type": "DEVICE_ACK",
+      "measurement_quality": "NOT_APPLICABLE_PROTOCOL_EVIDENCE",
+      "normalized_fields": {
+        "applied_cooling": "OFF",
+        "applied_duty_permille": "0",
+        "desired_cooling": "ON",
+        "desired_duty_permille": "500",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID",
+        "reapplied": "0",
+        "reason": "NONE",
+        "status": "ACCEPTED"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-1",
+      "seq": 2,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-1",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": "CMD-MIXED",
+      "device_id": "cg-sim-001",
+      "device_uptime_ms": 1500,
+      "event_id": "applied-1",
+      "event_type": "APPLIED_STATE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "applied_cooling": "ON",
+        "applied_duty_permille": "500",
+        "event_subtype": "applied",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-1",
+      "seq": 3,
+      "uncertainty_s": 0.05
+    }
+  ],
+  "fixture_schema": "coldguard-w06-event-fixture-v1",
+  "provenance": "SYNTHETIC_UNIT_TEST_ONLY"
+}

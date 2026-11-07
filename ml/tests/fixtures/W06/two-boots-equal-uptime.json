@@ -1,0 +1,51 @@
+{
+  "description": "Synthetic two-boot control. Equal uptime is not a shared clock axis.",
+  "events": [
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-1",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-001",
+      "device_uptime_ms": 5000,
+      "event_id": "boot-a-1",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "chamber_air_mean_c": "25.000000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-1",
+      "seq": 1,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-2",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-001",
+      "device_uptime_ms": 5000,
+      "event_id": "boot-b-1",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "chamber_air_mean_c": "25.000000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-1",
+      "seq": 1,
+      "uncertainty_s": 0.05
+    }
+  ],
+  "fixture_schema": "coldguard-w06-event-fixture-v1",
+  "provenance": "SYNTHETIC_UNIT_TEST_ONLY"
+}
