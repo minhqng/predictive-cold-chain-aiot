@@ -23,6 +23,7 @@ from typing import Any, Literal
 
 TimingStatus = Literal[
     "SYNCHRONIZED",
+    "UNVERIFIED_CLOCK",
     "UNAVAILABLE",
     "NEGATIVE_LATENCY",
     "FUTURE_TIMESTAMP",
@@ -58,6 +59,7 @@ def compute_timing_metrics(
     backend_received_at: datetime,
     captured_at: datetime | None,
     *,
+    clock_sync_verified: bool = False,
     clock_quality: str | None = None,
     serial_source: Any | None = None,
     is_replay: bool = False,
@@ -66,18 +68,22 @@ def compute_timing_metrics(
     """Compute clock-quality-aware transmission latency.
 
     Rules:
-    1. If captured_at is None, or serial_source is present, or clock_quality
-       is UNAVAILABLE: the device has no wall clock. latency_ms is None.
+    1. If backend_received_at lacks timezone info: status UNTRUSTED_CLOCK.
     2. If is_replay is True: historical replay does not represent live network
        transmission. latency_ms is None with status REPLAY.
-    3. If timezone is missing from either timestamp: clocks cannot be safely
-       compared. latency_ms is None with status UNTRUSTED_CLOCK.
-    4. If captured_at > backend_received_at: device clock claims a time in the
-       future (negative latency). latency_ms is None with status NEGATIVE_LATENCY.
-    5. If latency exceeds max_plausible_latency_ms: latency_ms is None with status
-       EXCESSIVE_SKEW.
-    6. When clocks are compatible and synchronized: latency_ms is computed as
-       (backend_received_at - captured_at) in milliseconds.
+    3. If captured_at is None, or serial_source is present, or clock_quality
+       is UNAVAILABLE: the device has no wall clock. latency_ms is None with status UNAVAILABLE.
+    4. If captured_at lacks timezone info: status UNTRUSTED_CLOCK.
+    5. If clock_sync_verified is False: presence of timezone-aware timestamp does
+       NOT prove clock synchronization (Doc 01 §18, Doc 02 §4). Clocks are unverified;
+       latency_ms is None with status UNVERIFIED_CLOCK.
+    6. When clock synchronization has been authoritatively verified:
+       a. If captured_at > backend_received_at: device clock claims a time in the
+          future (negative latency). latency_ms is None with status NEGATIVE_LATENCY.
+       b. If latency exceeds max_plausible_latency_ms: latency_ms is None with status
+          EXCESSIVE_SKEW.
+       c. Otherwise: latency_ms is computed as (backend_received_at - captured_at)
+          in milliseconds with status SYNCHRONIZED.
     """
     if backend_received_at.tzinfo is None:
         return TimingMetrics(
@@ -124,6 +130,18 @@ def compute_timing_metrics(
             reason="Device captured_at lacks timezone information",
         )
 
+    if not clock_sync_verified:
+        return TimingMetrics(
+            backend_received_at=backend_received_at,
+            captured_at=captured_at,
+            latency_ms=None,
+            status="UNVERIFIED_CLOCK",
+            reason=(
+                "Device captured_at timestamp present but clock synchronization has not "
+                "been verified by an authoritative trusted source. Latency calculation withheld."
+            ),
+        )
+
     delta_seconds = (backend_received_at - captured_at).total_seconds()
     delta_ms = delta_seconds * 1000.0
 
@@ -156,5 +174,5 @@ def compute_timing_metrics(
         captured_at=captured_at,
         latency_ms=round(delta_ms, 3),
         status="SYNCHRONIZED",
-        reason="Clocks are synchronized within plausible bounds",
+        reason="Clocks are verified synchronized within plausible bounds",
     )
