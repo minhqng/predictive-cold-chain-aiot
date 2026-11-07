@@ -23,9 +23,9 @@ A single `PASS` never implies that all five statuses are green.
 | Report schema | coldguard-w05-qa-report-v1 |
 | Package version | 0.1.0 |
 | QA layer version | coldguard-w05-qa-v1 |
-| Analysis code SHA-256 | `434983d424936ae93d9a940eafe8f767408762b493b61e5bd95266408ee68fcb` |
-| Repository revision | f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 |
-| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 --out reports/W05` |
+| Analysis code SHA-256 | `3c86d50b8d1a238f4d2b8916c3e10788f09a13e360b7ac8d0d53c58fb7ab66ca` |
+| Repository revision | 62d70b9e5c5f291222954118c1f2f2b734a0cae4 |
+| Generation command | `real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 62d70b9e5c5f291222954118c1f2f2b734a0cae4 --out reports/W05` |
 | Output directory | `ml/reports/W05` |
 | A run index | `evidence/A/W09/s1-run-index.json` (SHA-256 `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af`) |
 
@@ -74,11 +74,16 @@ A single `PASS` never implies that all five statuses are green.
 | SHA-256 | `f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb` |
 | Source format | `a-w09-run-export-v2` |
 | Schema namespace | `w09-run-export/v2` |
+| Companion row-validity CSV SHA-256 | `da27b2668097c207dd679e563fc18322742d68dfb4eb5a894f64958be35eebaf` |
 | Physical evidence category | REAL MEASURED (producer declares physical) |
 | Producer physical flag | True |
 | A validity evidence | INVALID |
 | Rows | 957 |
 | Analyzed sessions | 1 |
+
+| Pinned L0 source | SHA-256 | Exists |
+|---|---|---|
+| evidence/A/W04/tec-cooling-response-600s.csv | f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d | True |
 
 #### Run / session inventory
 
@@ -144,31 +149,31 @@ Percentile method: `linear`. Long-gap rule: a positive interval strictly greater
 
 Quality columns are `VALID/DEGRADED/INVALID/UNKNOWN` counts from the source's quality domain applicable to the channel; when the source carries no verdict for that domain the row is counted as UNKNOWN and the reason code says so. Missing, measured zero, duplicate identity, flatline candidate and stale candidate remain distinct.
 
-| Channel | Family | Physical role | Unit | Rows | Present | Missing | Missing % | V/D/I/U | Impossible | Flatline candidates | Stale candidates | Duplicate identity | Diagnostic status | Reason codes |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| applied_cooling_state | ACTUATION | APPLIED_COOLING_STATE | state | 957 | 952 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | APPLIED_COOLING_STATE_UNOBSERVED, SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
-| applied_duty_permille | ACTUATION | APPLIED_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
-| cooling_current_a | PZEM-017 | COOLING_BRANCH_CURRENT | A | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
-| cooling_energy_counter_wh | PZEM-017 | COOLING_BRANCH_ENERGY_COUNTER | Wh | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | PZEM_ENERGY_UNQUALIFIED_DIAGNOSTIC_ONLY, SOURCE_QUALITY_UNKNOWN |
-| cooling_power_w | PZEM-017 | COOLING_BRANCH_POWER | W | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | PZEM_POWER_UNQUALIFIED_DIAGNOSTIC_ONLY, SOURCE_QUALITY_UNKNOWN |
-| cooling_voltage_v | PZEM-017 | COOLING_BRANCH_VOLTAGE | V | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
-| device_ms | TIME | BOOT_SCOPED_UPTIME | ms | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| door_polarity | DOOR | DOOR_POLARITY_EVIDENCE | state | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | DOOR_POLARITY_UNCONFIRMED_PRESENT, SOURCE_QUALITY_UNKNOWN |
-| door_state | DOOR | CHAMBER_DOOR | state | 957 | 940 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | DOOR_NO_OPEN_EVENT_IN_CAPTURE, DOOR_STATE_UNKNOWN_PRESENT, SOURCE_QUALITY_UNKNOWN |
-| pressure_hpa | BME280 | ENVIRONMENT_CONTEXT_NOT_P0_FEATURE | hPa | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 0 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
-| readback_duty_permille | ACTUATION | READBACK_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
-| requested_duty_permille | ACTUATION | REQUESTED_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
-| rh_pct | BME280 | ENVIRONMENT_CONTEXT | percent_RH | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 0 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
-| seq | IDENTITY | SEQUENCE | count | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| t1 | DS18B20 | CHAMBER_CENTER | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 0 | 0 | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| t2 | DS18B20 | TEC_HOT_SIDE | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 0 | 0 | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| t3 | DS18B20 | CHAMBER_BOTTOM | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 0 | 0 | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| t4 | DS18B20 | CHAMBER_NEAR_DOOR | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 0 | 0 | 0 | DIAGNOSTIC_QUALIFIED | NONE |
-| t_air_c | BME280 | ENVIRONMENT_CONTEXT | degC | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 0 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
+| Session | Channel | Family | Physical role | Unit | Rows | Present | Missing | Missing % | V/D/I/U | Impossible | Flatline candidates | Stale candidates | Duplicate identity | Diagnostic status | Reason codes |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| NO_DEVICE_ID::56044b74 | applied_cooling_state | ACTUATION | APPLIED_COOLING_STATE | state | 957 | 952 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | APPLIED_COOLING_STATE_UNOBSERVED, SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
+| NO_DEVICE_ID::56044b74 | applied_duty_permille | ACTUATION | APPLIED_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
+| NO_DEVICE_ID::56044b74 | cooling_current_a | PZEM-017 | COOLING_BRANCH_CURRENT | A | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | cooling_energy_counter_wh | PZEM-017 | COOLING_BRANCH_ENERGY_COUNTER | Wh | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | PZEM_ENERGY_UNQUALIFIED_DIAGNOSTIC_ONLY, SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | cooling_power_w | PZEM-017 | COOLING_BRANCH_POWER | W | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | PZEM_POWER_UNQUALIFIED_DIAGNOSTIC_ONLY, SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | cooling_voltage_v | PZEM-017 | COOLING_BRANCH_VOLTAGE | V | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | device_ms | TIME | BOOT_SCOPED_UPTIME | ms | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_QUALIFIED | NONE |
+| NO_DEVICE_ID::56044b74 | door_polarity | DOOR | DOOR_POLARITY_EVIDENCE | state | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | DOOR_POLARITY_UNCONFIRMED_PRESENT, SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | door_state | DOOR | CHAMBER_DOOR | state | 957 | 940 | 0 | 0.000% | 0/0/0/957 | 0 | N/A | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | DOOR_NO_OPEN_EVENT_IN_CAPTURE, DOOR_STATE_UNKNOWN_PRESENT, SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | pressure_hpa | BME280 | ENVIRONMENT_CONTEXT_NOT_P0_FEATURE | hPa | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 0 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | readback_duty_permille | ACTUATION | READBACK_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
+| NO_DEVICE_ID::56044b74 | requested_duty_permille | ACTUATION | REQUESTED_DUTY | permille | 957 | 957 | 0 | 0.000% | 0/940/17/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_CAUTION | SOURCE_QUALITY_DEGRADED, SOURCE_QUALITY_INVALID |
+| NO_DEVICE_ID::56044b74 | rh_pct | BME280 | ENVIRONMENT_CONTEXT | percent_RH | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 0 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | SOURCE_QUALITY_UNKNOWN |
+| NO_DEVICE_ID::56044b74 | seq | IDENTITY | SEQUENCE | count | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | N/A | N/A | 0 | DIAGNOSTIC_QUALIFIED | NONE |
+| NO_DEVICE_ID::56044b74 | t1 | DS18B20 | CHAMBER_CENTER | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 13 | 0 | 0 | DIAGNOSTIC_QUALIFIED | FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY, FLATLINE_FIRST_SPAN_0.000_125.990s |
+| NO_DEVICE_ID::56044b74 | t2 | DS18B20 | TEC_HOT_SIDE | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 13 | 0 | 0 | DIAGNOSTIC_QUALIFIED | FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY, FLATLINE_FIRST_SPAN_0.000_21.990s |
+| NO_DEVICE_ID::56044b74 | t3 | DS18B20 | CHAMBER_BOTTOM | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 15 | 0 | 0 | DIAGNOSTIC_QUALIFIED | FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY, FLATLINE_FIRST_SPAN_0.000_164.990s |
+| NO_DEVICE_ID::56044b74 | t4 | DS18B20 | CHAMBER_NEAR_DOOR | degC | 957 | 957 | 0 | 0.000% | 957/0/0/0 | 0 | 15 | 0 | 0 | DIAGNOSTIC_QUALIFIED | FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY, FLATLINE_FIRST_SPAN_0.000_47.990s |
+| NO_DEVICE_ID::56044b74 | t_air_c | BME280 | ENVIRONMENT_CONTEXT | degC | 957 | 957 | 0 | 0.000% | 0/0/0/957 | 0 | 5 | N/A | 0 | DIAGNOSTIC_READABLE_UNQUALIFIED | FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY, FLATLINE_FIRST_SPAN_21.990_35.990s, SOURCE_QUALITY_UNKNOWN |
 
 The machine-readable equivalent with all required columns is `channel-summary.csv`.
 
-**UNQUALIFIED PZEM:** cooling-branch power/energy are present but the electrical quality domain is not VALID for every row. They are plotted for diagnostics only and never become validated power, energy, COP or whole-system claims.
+**UNQUALIFIED PZEM:** cooling-branch power/energy are present but the electrical quality domain is not VALID for every row, a value is missing, or an impossible value is present. They are plotted for diagnostics only and never become validated power, energy, COP or whole-system claims.
 
 #### Physical-state plots (B-W05-03)
 
@@ -195,6 +200,11 @@ Session `NO_DEVICE_ID::56044b74`: one aligned time domain per panel set. Gaps ar
 | CHANNEL_SOURCE_QUALITY_INVALID | MEDIUM | channel | readback_duty_permille | 17 | source marked observations INVALID; kept visible |
 | CHANNEL_SOURCE_QUALITY_INVALID | MEDIUM | channel | requested_duty_permille | 17 | source marked observations INVALID; kept visible |
 | CHANNEL_SOURCE_QUALITY_UNKNOWN | LOW | channel | rh_pct | 957 | values may exist but are unqualified for evidence |
+| CHANNEL_FLATLINE_CANDIDATE | LOW | channel | t1 | 13 | sustained constant span at measurement resolution; a candidate only, never proof of sensor failure |
+| CHANNEL_FLATLINE_CANDIDATE | LOW | channel | t2 | 13 | sustained constant span at measurement resolution; a candidate only, never proof of sensor failure |
+| CHANNEL_FLATLINE_CANDIDATE | LOW | channel | t3 | 15 | sustained constant span at measurement resolution; a candidate only, never proof of sensor failure |
+| CHANNEL_FLATLINE_CANDIDATE | LOW | channel | t4 | 15 | sustained constant span at measurement resolution; a candidate only, never proof of sensor failure |
+| CHANNEL_FLATLINE_CANDIDATE | LOW | channel | t_air_c | 5 | sustained constant span at measurement resolution; a candidate only, never proof of sensor failure |
 | CHANNEL_SOURCE_QUALITY_UNKNOWN | LOW | channel | t_air_c | 957 | values may exist but are unqualified for evidence |
 | CAMPAIGN_COMPLETENESS_NOT_ESTIMABLE | INFO | session | NONE | N/A | acquisition boundaries and schedule are not carried; filename or label duration is not used as evidence |
 | RUN_ID_UNRESOLVED | MEDIUM | source | NONE | N/A | run_id_status=UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID; multiple filenames or row labels never create independent runs |
@@ -261,7 +271,7 @@ Session `NO_DEVICE_ID::56044b74`: one aligned time domain per panel set. Gaps ar
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 --out reports/W05
+uv run --locked --python 3.12 --extra test python scripts/real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 62d70b9e5c5f291222954118c1f2f2b734a0cae4 --out reports/W05
 ```
 
 Repeated execution on the same source and configuration produces identical analytical numbers and stable serialized report content. The report contains no runtime generation timestamp and no local absolute path.

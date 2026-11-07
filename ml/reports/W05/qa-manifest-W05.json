@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "434983d424936ae93d9a940eafe8f767408762b493b61e5bd95266408ee68fcb",
+  "analysis_code_sha256": "3c86d50b8d1a238f4d2b8916c3e10788f09a13e360b7ac8d0d53c58fb7ab66ca",
   "config": {
     "campaign_completeness": "NOT_ESTIMABLE_ACQUISITION_BOUNDARIES_UNVERIFIED",
     "flatline_min_observations": 10,
@@ -16,10 +16,10 @@
     "stale_policy": "DIAGNOSTIC_ASSUMPTION_SOURCE_AGE_NOT_CANONICALLY_THRESHOLDED",
     "stale_scope": "DS18B20_SOURCE_PROVIDED_AGE_MS_ONLY"
   },
-  "generation_command": "real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0 --out reports/W05",
+  "generation_command": "real-data-qa-v1.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --format both --long-gap-ms 5000 --flatline-min-observations 10 --flatline-min-span-s 0.0 --flatline-temperature-tolerance-c 0.0625 --stale-age-ms 5000 --percentile linear --repository-revision 62d70b9e5c5f291222954118c1f2f2b734a0cae4 --out reports/W05",
   "qa_layer_version": "coldguard-w05-qa-v1",
   "report_schema": "coldguard-w05-qa-report-v1",
-  "repository_revision": "f4a6bfb0faeb7cfd6e8322ca99d0ef82c269f4e0",
+  "repository_revision": "62d70b9e5c5f291222954118c1f2f2b734a0cae4",
   "source_index": {
     "blocked_run_ids": [
       {
@@ -340,6 +340,56 @@
           "code": "CHANNEL_SOURCE_QUALITY_UNKNOWN",
           "count": 957,
           "detail": "values may exist but are unqualified for evidence",
+          "end_s": null,
+          "scope": "channel",
+          "severity": "LOW",
+          "start_s": null
+        },
+        {
+          "channel": "t1",
+          "code": "CHANNEL_FLATLINE_CANDIDATE",
+          "count": 13,
+          "detail": "sustained constant span at measurement resolution; a candidate only, never proof of sensor failure",
+          "end_s": null,
+          "scope": "channel",
+          "severity": "LOW",
+          "start_s": null
+        },
+        {
+          "channel": "t2",
+          "code": "CHANNEL_FLATLINE_CANDIDATE",
+          "count": 13,
+          "detail": "sustained constant span at measurement resolution; a candidate only, never proof of sensor failure",
+          "end_s": null,
+          "scope": "channel",
+          "severity": "LOW",
+          "start_s": null
+        },
+        {
+          "channel": "t3",
+          "code": "CHANNEL_FLATLINE_CANDIDATE",
+          "count": 15,
+          "detail": "sustained constant span at measurement resolution; a candidate only, never proof of sensor failure",
+          "end_s": null,
+          "scope": "channel",
+          "severity": "LOW",
+          "start_s": null
+        },
+        {
+          "channel": "t4",
+          "code": "CHANNEL_FLATLINE_CANDIDATE",
+          "count": 15,
+          "detail": "sustained constant span at measurement resolution; a candidate only, never proof of sensor failure",
+          "end_s": null,
+          "scope": "channel",
+          "severity": "LOW",
+          "start_s": null
+        },
+        {
+          "channel": "t_air_c",
+          "code": "CHANNEL_FLATLINE_CANDIDATE",
+          "count": 5,
+          "detail": "sustained constant span at measurement resolution; a candidate only, never proof of sensor failure",
           "end_s": null,
           "scope": "channel",
           "severity": "LOW",
@@ -911,7 +961,7 @@
           "discontinuity_count": 0,
           "duplicate_identity_count": 0,
           "family": "DS18B20",
-          "flatline_candidate_count": 0,
+          "flatline_candidate_count": 13,
           "impossible_count": 0,
           "missing_count": 0,
           "missing_fraction": 0.0,
@@ -923,7 +973,10 @@
           "quality_UNKNOWN": 0,
           "quality_VALID": 957,
           "quality_domain": "thermal",
-          "reason_codes": [],
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_125.990s"
+          ],
           "repeated_equal_consecutive_count": 626,
           "row_count": 957,
           "run_id": null,
@@ -944,7 +997,7 @@
           "discontinuity_count": 0,
           "duplicate_identity_count": 0,
           "family": "DS18B20",
-          "flatline_candidate_count": 0,
+          "flatline_candidate_count": 13,
           "impossible_count": 0,
           "missing_count": 0,
           "missing_fraction": 0.0,
@@ -956,7 +1009,10 @@
           "quality_UNKNOWN": 0,
           "quality_VALID": 957,
           "quality_domain": "thermal",
-          "reason_codes": [],
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_21.990s"
+          ],
           "repeated_equal_consecutive_count": 548,
           "row_count": 957,
           "run_id": null,
@@ -977,7 +1033,7 @@
           "discontinuity_count": 0,
           "duplicate_identity_count": 0,
           "family": "DS18B20",
-          "flatline_candidate_count": 0,
+          "flatline_candidate_count": 15,
           "impossible_count": 0,
           "missing_count": 0,
           "missing_fraction": 0.0,
@@ -989,7 +1045,10 @@
           "quality_UNKNOWN": 0,
           "quality_VALID": 957,
           "quality_domain": "thermal",
-          "reason_codes": [],
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_164.990s"
+          ],
           "repeated_equal_consecutive_count": 629,
           "row_count": 957,
           "run_id": null,
@@ -1010,7 +1069,7 @@
           "discontinuity_count": 0,
           "duplicate_identity_count": 0,
           "family": "DS18B20",
-          "flatline_candidate_count": 0,
+          "flatline_candidate_count": 15,
           "impossible_count": 0,
           "missing_count": 0,
           "missing_fraction": 0.0,
@@ -1022,7 +1081,10 @@
           "quality_UNKNOWN": 0,
           "quality_VALID": 957,
           "quality_domain": "thermal",
-          "reason_codes": [],
+          "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_0.000_47.990s"
+          ],
           "repeated_equal_consecutive_count": 620,
           "row_count": 957,
           "run_id": null,
@@ -1043,7 +1105,7 @@
           "discontinuity_count": 0,
           "duplicate_identity_count": 0,
           "family": "BME280",
-          "flatline_candidate_count": 0,
+          "flatline_candidate_count": 5,
           "impossible_count": 0,
           "missing_count": 0,
           "missing_fraction": 0.0,
@@ -1056,6 +1118,8 @@
           "quality_VALID": 0,
           "quality_domain": "environment",
           "reason_codes": [
+            "FLATLINE_CANDIDATE_DIAGNOSTIC_ONLY",
+            "FLATLINE_FIRST_SPAN_21.990_35.990s",
             "SOURCE_QUALITY_UNKNOWN"
           ],
           "repeated_equal_consecutive_count": 164,
