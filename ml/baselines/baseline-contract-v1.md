@@ -192,19 +192,31 @@ Versioned, explicit parameters:
   approved;
 - episode termination on recovery, gap, run end or censoring;
 - multiple warnings become multiple episodes;
-- repeated delivery is deduplicated by sample identity;
+- repeated delivery is deduplicated by sample identity only when the canonical
+  warning payload (event time, state, quality) is identical; a contradictory
+  duplicate identity is refused, never resolved by input order;
+- distinct sample identities are never collapsed merely because their
+  timestamps are equal;
 - episodes are isolated per run/source.
 
 ### Association policy
 
 A warning episode matches an observed critical event only when:
 
-- the same eligible run/source is used;
+- the same eligible run/source is used: run identity and source content hash
+  must be equal on both sides, and a missing `run_id` pairs only with another
+  missing run identity from the same source — it is never a wildcard;
 - the event-time domain is compatible;
 - the episode onset lies inside the declared pre/post association window;
 - the critical event is truly observed and trusted;
 - the trajectory is not predictively intervened;
 - matching is one-to-one; extra candidates are recorded as alternatives.
+
+Evidence whose acquisition lineage does not match the evaluation is retained
+with `EXCLUDED_PROVENANCE_MISMATCH` (event) or `PROVENANCE_MISMATCH` (episode)
+and excluded from every denominator; it can never become a true positive or a
+negative-control observation. Time-domain compatibility is established
+upstream and is not representable in the W09 event types.
 
 Unmatched episodes are false-warning burden; unmatched observed events are
 missed events. Zero denominators remain undefined and include a reason. A
