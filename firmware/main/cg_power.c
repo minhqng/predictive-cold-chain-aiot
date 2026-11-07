@@ -14,6 +14,7 @@
 
 #include "coldguard_config.h"
 #include "cg_crc16.h"
+#include "cg_fault_inject.h"
 #include "cg_health.h"
 #include "cg_log.h"
 #include "cg_pzem.h"
@@ -205,12 +206,25 @@ static void poll_once(void)
         }
     }
 
-    const bool crc_ok =
+    bool crc_ok =
         link.frame_len >= 4U &&
         cg_crc16_check(link.rx + link.frame_offset, (size_t)link.frame_len);
 
     hex_encode(request, request_len, tx_hex, sizeof(tx_hex));
     hex_encode(link.rx, link.rx_len, rx_hex, sizeof(rx_hex));
+
+#if CG_FAULT_INJECTION
+    /* A-W21-03: force the poll to fail so the real missing-data publish path
+     * runs. No synthetic voltage/current/power is produced and no previous
+     * value is carried forward: values_valid stays false, so the snapshot gets
+     * an invalid observation with its own fresh timestamp. crc_ok is cleared so
+     * the log line cannot report a TIMEOUT verdict alongside a passing CRC. */
+    if (cg_fault_inject_pzem_down()) {
+        status = CG_PZEM_TIMEOUT;
+        values_valid = false;
+        crc_ok = false;
+    }
+#endif
 
     s_seq++;
     if (status == CG_PZEM_OK) {

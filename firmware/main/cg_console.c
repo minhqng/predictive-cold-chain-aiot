@@ -16,6 +16,7 @@
 
 #include "cg_log.h"
 #include "coldguard_config.h"
+#include "cg_fault_inject.h"
 
 #define CG_CONSOLE_RX_BUFFER 512
 #define CG_CONSOLE_STACK_WORDS 3072
@@ -28,6 +29,18 @@ static void handle_line(const char *line)
 {
     cg_tec_command_t command;
     const char *error = "OK";
+
+#if CG_FAULT_INJECTION
+    /* Test-only local control path. A FAULT line is consumed here and never
+     * reaches the TEC command parser/queue, so it cannot be driven by a network
+     * command. Compiled out entirely when CG_FAULT_INJECTION is 0. */
+    if (cg_fault_inject_console_line(line)) {
+        cg_log_line("%s %s event=FAULT_INJECT_HANDLED line=%s ds_role=%d pzem_down=%d",
+                    CG_LOG_PREFIX, CG_LOG_TEC, line, cg_fault_inject_ds_role(),
+                    cg_fault_inject_pzem_down() ? 1 : 0);
+        return;
+    }
+#endif
 
     if (!cg_tec_command_parse(line, &command, &error)) {
         cg_log_error("console=PARSE_FAIL error=%s", error);
