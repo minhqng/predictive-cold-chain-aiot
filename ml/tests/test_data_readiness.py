@@ -476,6 +476,32 @@ def test_reversed_time_axis_is_not_trusted(tmp_path):
     assert validation.eligibility == ELIGIBILITY_BLOCKED
 
 
+def test_reversed_boot_uptime_axis_is_not_trusted(tmp_path):
+    export = _write_export(
+        tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
+    )
+    index = _write_index(
+        tmp_path / "index.json", [_entry("CG-S1-A-001", "boot-1")], valid_s1=["CG-S1-A-001"]
+    )
+    capture = load_capture(export, a_run_index=index)
+    boot_capture = dataclasses.replace(
+        capture,
+        time=dataclasses.replace(
+            capture.time,
+            domain="BOOT_SCOPED_UPTIME",
+            boot_scoped=True,
+        ),
+    )
+    rows = list(boot_capture.rows)
+    first_ms = rows[0].device_ms
+    second_ms = rows[1].device_ms
+    rows[0] = dataclasses.replace(rows[0], device_ms=second_ms)
+    rows[1] = dataclasses.replace(rows[1], device_ms=first_ms)
+    reversed_capture = dataclasses.replace(boot_capture, rows=tuple(rows))
+    _, axis = w08._capture_time_axis(reversed_capture)
+    assert axis == "UPTIME_NOT_NON_DECREASING"
+
+
 def test_unknown_sensor_role_blocks_eligibility(tmp_path):
     export = _write_export(
         tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
