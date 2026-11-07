@@ -24,9 +24,11 @@ from contextlib import asynccontextmanager
 from datetime import datetime
 from typing import Any, Literal
 
-from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request
+from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, Response
 from sqlalchemy import Engine, create_engine, select
 
+from coldguard_backend import experiment_store as runs
+from coldguard_backend.experiment_evidence import export_run, run_timeline
 from coldguard_backend.normalized_store import (
     count_telemetry,
     query_telemetry,
@@ -143,6 +145,58 @@ def get_db_engine(request: Request) -> Engine:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.post("/api/runs", status_code=201)
+def register_run(run: runs.RunCreate, engine: Engine = Depends(get_db_engine)) -> dict:
+    try:
+        with engine.begin() as connection:
+            return runs.create_run(connection, run)
+    except runs.RunConflict as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@app.post("/api/runs/{run_id}/transitions")
+def change_run(
+    run_id: str, change: runs.RunTransition, engine: Engine = Depends(get_db_engine),
+) -> dict:
+    try:
+        with engine.begin() as connection:
+            return runs.transition_run(connection, run_id, change)
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    except runs.RunConflict as exc:
+        raise HTTPException(status_code=409, detail=str(exc)) from exc
+
+
+@app.get("/api/runs/{run_id}")
+def read_run(run_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            run = runs.get_run(connection, run_id)
+            return {"run": run, "history": runs.run_history(connection, run_id)}
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/export")
+def read_run_export(run_id: str, engine: Engine = Depends(get_db_engine)) -> Response:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            content = export_run(connection, runs.get_run(connection, run_id))
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    return Response(content, media_type="application/json")
+
+
+@app.get("/api/runs/{run_id}/timeline")
+def read_run_timeline(run_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            run = runs.get_run(connection, run_id)
+            return {"run_id": run_id, "items": run_timeline(connection, run)}
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
 
 
 @app.get("/api/devices/{device_id}/state")

@@ -28,8 +28,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W06 added revision 0008 (durable command lifecycle storage).
-EXPECTED_HEAD = "0008"
+# W07 added revision 0009 (experiment registry and lifecycle history).
+EXPECTED_HEAD = "0009"
 
 needs_real_db = pytest.mark.skipif(
     not os.environ.get("COLDGUARD_TEST_DATABASE_URL"),
@@ -66,6 +66,7 @@ def test_baseline_upgrades_from_empty_and_persists_head():
         "device_twin", "device_twin_retired_boot",
         "reconciliation_boundary", "reconciliation_legacy_audit",
         "commands", "command_attempts", "command_acks", "command_transitions",
+        "experiments", "experiment_transitions",
     }
 
 
