@@ -45,6 +45,7 @@ from coldguard_backend.prediction_store import (
     current_prediction, derived_prediction_view, prediction_details, prediction_history,
 )
 from coldguard_backend.recovery import device_recovery_snapshot, reconcile_command_history
+from coldguard_backend.shadow_trace import shadow_trace
 from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
@@ -300,6 +301,20 @@ def read_s2_timeline(
         raise HTTPException(status_code=422, detail=str(exc)) from exc
     headers = {"Content-Disposition": 'attachment; filename="s2-timeline.json"'} if download else None
     return Response(content, media_type="application/json", headers=headers)
+
+
+@app.get("/api/runs/{run_id}/shadow-trace")
+def read_shadow_trace(
+    run_id: str,
+    limit: int = Query(default=20, ge=1, le=50),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            return shadow_trace(connection, runs.get_run(connection, run_id), limit=limit, offset=offset)
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
 
 
 @app.get("/api/runs/{run_id}/{kind}")
