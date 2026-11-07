@@ -13,6 +13,7 @@ from sqlalchemy.exc import IntegrityError
 
 from coldguard_backend import command_store as commands
 from coldguard_backend import experiment_store as runs
+from coldguard_backend.dataset_export import build_s1_export
 from coldguard_backend.ingest import ingest_message
 from coldguard_backend.main import app, get_db_engine
 from coldguard_backend.simulator import build_event, build_telemetry
@@ -183,7 +184,66 @@ def test_export_and_timeline_are_deterministic_and_isolated(db_engine, run_conte
     assert [e["payload"]["event_type"] for e in entries if e["kind"] == "event_receipt"] == ["DOOR_OPENED"]
     assert [e["id"] for e in entries if e["kind"] == "command_intent"] == ["w07-in-scope"]
     assert [e["verdict"] for e in entries if e["kind"] == "ack_receipt"] == ["ACCEPTED"]
+    page = client.get(path + "/telemetry", params={"limit": 1}).json()
+    assert page["next_offset"] == 1
+    assert page["items"][0]["seq"] == 1
+    second = client.get(path + "/telemetry", params={"limit": 1, "offset": page["next_offset"]}).json()
+    assert second["items"][0]["seq"] == 3
+    assert second["next_offset"] is None
+    assert len(client.get(path + "/events").json()["items"]) == 1
+    assert [row["command_id"] for row in client.get(path + "/commands").json()["items"]] == ["w07-in-scope"]
+    assert client.get(path + "/telemetry", params={"limit": 501}).status_code == 422
+    assert client.get(path + "/telemetry", params={"offset": -1}).status_code == 422
     with db_engine.connect() as conn:
         assert conn.execute(select(runs.experiments.c.device_id).where(
             runs.experiments.c.run_id == run_id,
         )).scalar_one() == device
+
+
+def test_s1_export_detects_integrity_anomalies_and_is_reproducible(db_engine, run_context):
+    client, request, other_device = run_context
+    device, run_id = request["device_id"], request["run_id"]
+    request["scenario_id"] = "S1_NORMAL_BASELINE"
+    request["versions"] = {"firmware_version": "declared-fw", "schema_version": 1}
+    path = f"/api/runs/{run_id}"
+    assert client.post("/api/runs", json=request).status_code == 201
+    created_at = utcnow()
+    commit = "a" * 40
+    with db_engine.connect() as conn:
+        with pytest.raises(ValueError, match="must be a valid S1 baseline"):
+            build_s1_export(conn, [run_id], created_at=created_at, backend_commit=commit)
+    for status in ("ARMED", "RUNNING"):
+        assert client.post(path + "/transitions", json={"status": status}).status_code == 200
+    first = build_telemetry(device_id=device, boot_id="software-boot", seq=10, run_id=run_id)
+    second = build_telemetry(device_id=device, boot_id="software-boot", seq=12, run_id=run_id)
+    for sample in (first, first, second, dict(second, device_id=other_device)):
+        ingest_message(
+            db_engine, topic=f"coldguard/{sample['device_id']}/telemetry",
+            payload=json.dumps(sample).encode(),
+        )
+    for status in ("COMPLETED_RAW", "VALIDITY_REVIEW", "VALID"):
+        assert client.post(path + "/transitions", json={
+            "status": status, "reason": "software QA fixture",
+        }).status_code == 200
+    integrity = client.get(path + "/integrity").json()
+    assert integrity["sequence_gaps"] == [
+        {"boot_id": "software-boot", "first_missing": 11, "last_missing": 11},
+    ]
+    assert integrity["duplicate_identities"] == [
+        {"boot_id": "software-boot", "seq": 10, "raw_deliveries": 2},
+    ]
+    assert len(integrity["event_time_outside_run_unverified"]) == 2
+    assert not integrity["receipt_time_outside_run"]
+    assert integrity["quality_counts"]["overall_quality"] == {"VALID": 2}
+    assert {issue["field"] for issue in integrity["version_mismatches"]} == {"firmware_version"}
+    with db_engine.connect().execution_options(isolation_level="REPEATABLE READ") as conn:
+        first_export = build_s1_export(conn, [run_id], created_at=created_at, backend_commit=commit)
+        assert first_export == build_s1_export(conn, [run_id], created_at=created_at, backend_commit=commit)
+    bundle = json.loads(first_export)
+    assert bundle["manifest"]["run_ids"] == [run_id]
+    assert bundle["manifest"]["backend_commit"] == commit
+    assert bundle["manifest"]["flagged_synthetic_samples"] == 2
+    assert bundle["manifest"]["schema_version"] == 1
+    assert bundle["dataset"]["runs"][0]["integrity"]["sample_count"] == 2
+    encoded = json.dumps(bundle["dataset"], sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
+    assert hashlib.sha256(encoded).hexdigest() == bundle["manifest"]["dataset_sha256"]

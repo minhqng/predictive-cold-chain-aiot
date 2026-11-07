@@ -28,7 +28,10 @@ from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, Respo
 from sqlalchemy import Engine, create_engine, select
 
 from coldguard_backend import experiment_store as runs
-from coldguard_backend.experiment_evidence import export_run, run_timeline
+from coldguard_backend.dataset_export import run_integrity
+from coldguard_backend.experiment_evidence import (
+    export_run, run_commands, run_observations, run_samples, run_timeline,
+)
 from coldguard_backend.normalized_store import (
     count_telemetry,
     query_telemetry,
@@ -197,6 +200,39 @@ def read_run_timeline(run_id: str, engine: Engine = Depends(get_db_engine)) -> d
             return {"run_id": run_id, "items": run_timeline(connection, run)}
     except runs.RunNotFound as exc:
         raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/integrity")
+def read_run_integrity(run_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            run = runs.get_run(connection, run_id)
+            return {"run_id": run_id, **run_integrity(connection, run, run_samples(connection, run))}
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/{kind}")
+def read_run_page(
+    run_id: str,
+    kind: Literal["telemetry", "events", "commands"],
+    limit: int = Query(default=100, ge=1, le=500),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> dict:
+    query = {"telemetry": run_samples, "events": run_observations, "commands": run_commands}[kind]
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            run = runs.get_run(connection, run_id)
+            rows = [dict(row) for row in query(connection, run, limit=limit + 1, offset=offset)]
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    next_offset = offset + limit
+    return {
+        "run_id": run_id, "device_id": run["device_id"], "items": rows[:limit],
+        "limit": limit, "offset": offset,
+        "next_offset": next_offset if len(rows) > limit and next_offset <= 100_000 else None,
+    }
 
 
 @app.get("/api/devices/{device_id}/state")

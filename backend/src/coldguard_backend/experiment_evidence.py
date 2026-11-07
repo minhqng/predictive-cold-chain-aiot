@@ -18,9 +18,11 @@ def _belongs_to_run(table, run: dict):
     return (table.c.run_id == run["run_id"]) & (table.c.device_id == run["device_id"])
 
 
-def run_samples(connection: Connection, run: dict) -> list[dict]:
+def run_samples(
+    connection: Connection, run: dict, *, limit: int | None = None, offset: int = 0,
+) -> list[dict]:
     """Use the unique normalized winner and its raw provenance, never overlap."""
-    rows = connection.execute(
+    query = (
         select(
             telemetry, telemetry_raw.c.payload_sha256.label("raw_sha256"),
             telemetry_raw.c.ingest_status.label("raw_status"), telemetry_raw.c.raw_json,
@@ -28,7 +30,10 @@ def run_samples(connection: Connection, run: dict) -> list[dict]:
         .join(telemetry_raw, telemetry_raw.c.id == telemetry.c.raw_id)
         .where(_belongs_to_run(telemetry, run))
         .order_by(telemetry.c.backend_received_at, telemetry.c.id)
-    ).mappings()
+    )
+    if limit is not None:
+        query = query.limit(limit).offset(offset)
+    rows = connection.execute(query).mappings()
     samples = []
     for row in rows:
         sample = dict(row)
@@ -49,7 +54,28 @@ def run_samples(connection: Connection, run: dict) -> list[dict]:
     return samples
 
 
-def _encode(value) -> bytes:
+def run_observations(connection: Connection, run: dict, *, limit=None, offset=0):
+    device = run["device_id"]
+    query = select(telemetry_raw).where(
+        _belongs_to_run(telemetry_raw, run),
+        telemetry_raw.c.ingest_status == RECEIVED_OBSERVED,
+        telemetry_raw.c.topic.in_((f"coldguard/{device}/event", f"coldguard/{device}/state")),
+    ).order_by(telemetry_raw.c.backend_received_at, telemetry_raw.c.id)
+    if limit is not None:
+        query = query.limit(limit).offset(offset)
+    return connection.execute(query).mappings()
+
+
+def run_commands(connection: Connection, run: dict, *, limit=None, offset=0):
+    query = select(commands).where(_belongs_to_run(commands, run)).order_by(
+        commands.c.created_db_at, commands.c.command_id,
+    )
+    if limit is not None:
+        query = query.limit(limit).offset(offset)
+    return connection.execute(query).mappings()
+
+
+def encode_evidence(value) -> bytes:
     def encode_date(stamp):
         if isinstance(stamp, datetime):
             return stamp.astimezone(timezone.utc).isoformat()
@@ -70,10 +96,10 @@ def export_run(connection: Connection, run: dict) -> bytes:
         "device_id": run["device_id"],
         "sample_count": len(samples),
         "clockless_count": sum(row["event_time"] is None for row in samples),
-        "dataset_sha256": hashlib.sha256(_encode(dataset)).hexdigest(),
+        "dataset_sha256": hashlib.sha256(encode_evidence(dataset)).hexdigest(),
         "order": ["backend_received_at", "id"],
     }
-    return _encode({"manifest": manifest, "dataset": dataset})
+    return encode_evidence({"manifest": manifest, "dataset": dataset})
 
 
 def run_timeline(connection: Connection, run: dict) -> list[dict]:
@@ -95,20 +121,12 @@ def run_timeline(connection: Connection, run: dict) -> list[dict]:
             applied_cooling=sample["applied_cooling"], applied_duty=sample["applied_duty"],
             synthetic=sample["synthetic"], is_replay=sample["is_replay"],
         )
-    observations = connection.execute(
-        select(telemetry_raw)
-        .where(
-            _belongs_to_run(telemetry_raw, run),
-            telemetry_raw.c.ingest_status == RECEIVED_OBSERVED,
-            telemetry_raw.c.topic.in_((f"coldguard/{device}/event", f"coldguard/{device}/state")),
-        )
-    ).mappings()
-    for row in observations:
+    for row in run_observations(connection, run):
         add(
             row["topic"].rsplit("/", 1)[-1] + "_receipt", row["id"], row["backend_received_at"],
             validity=row["ingest_status"], payload=row["raw_json"],
         )
-    for row in connection.execute(select(commands).where(command_scope)).mappings():
+    for row in run_commands(connection, run):
         add(
             "command_intent", row["command_id"], row["created_db_at"],
             cooling=row["action_cooling"], duty=row["action_duty"], expires_at=row["expires_at"],

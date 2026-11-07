@@ -10,6 +10,8 @@ within the backend's trusted local deployment boundary.
 | `GET /api/runs/{run_id}` | Read metadata and ordered lifecycle history. |
 | `GET /api/runs/{run_id}/export` | Read one JSON v0 bundle with a manifest, run history, and normalized telemetry with raw provenance. |
 | `GET /api/runs/{run_id}/timeline` | Read command, ACK, device event/state receipt, and telemetry chronology. |
+| `GET /api/runs/{run_id}/integrity` | Check raw duplicates, normalized sequence ranges, time anomalies, quality, and declared versions. |
+| `GET /api/runs/{run_id}/telemetry`, `/events`, `/commands` | Page through evidence for the exact run and device. |
 
 The lifecycle follows Doc 03 §6. Move from `PLANNED` through `ARMED`,
 `RUNNING`, `COMPLETED_RAW`, and `VALIDITY_REVIEW` before recording `VALID`
@@ -35,3 +37,34 @@ receipt carries its ingest classification.
 
 Downgrade from revision 0009 requires empty experiment tables. Preserve the
 database and its history when taking a populated environment out of service.
+
+## S1 dataset handoff
+
+From `backend/`, point `DATABASE_URL` at the approved source database. The
+exporter requires valid, nonempty S1 runs and attributes the export to the
+current backend Git commit. It accepts the scenario IDs `S1`,
+`NORMAL_BASELINE`, and `S1_NORMAL_BASELINE`.
+
+```sh
+uv run --locked python scripts/export_s1.py \
+  --run-id CG-S1-A-001 --created-at 2026-11-07T12:00:00Z --output s1.json
+```
+
+Repeat `--run-id` to export multiple runs. The manifest contains its schema and
+query version, the sorted run IDs, the UTC creation instant, the backend SHA,
+and a content-derived dataset ID. The SHA-256 covers the canonical compact JSON
+`dataset` object. Reuse the creation instant and source snapshot to reproduce
+the full artifact. The exporter refuses to overwrite an existing file.
+
+Integrity entries report sequence gaps per boot, repeated raw receipts for the
+winning logical identity, unverified event-time anomalies, receipt-time
+anomalies, clockless samples, quality counts, and version mismatches. Record
+`firmware_version`, `hardware_config_id`, `calibration_id`, and
+`schema_version` in the run versions when available. A reviewer's lifecycle
+verdict and the integrity report remain distinct. Flagged synthetic sample
+counts and per-sample provenance let Member B identify software fixtures.
+
+Each evidence page accepts a `limit` of 1–500 and an `offset` of 0–100000.
+Receipts sort by backend time and ID. Commands sort by creation time and
+command ID. Follow `next_offset` while the run's evidence snapshot remains
+stable. New arrivals may change the contents of later pages.
