@@ -1,0 +1,3201 @@
+{
+  "analysis_code_sha256": "6ee60412d4e660de6c42bb7813bf7a6c5f545845f4fa371dc0fa02283cd67e6d",
+  "artifacts": {
+    "baseline-comparison-W11.csv": {
+      "sha256": "e6dcd3bbafe8ac8868fe4fe613b9261409f352b5b70071d2b45b7b11a4a10918"
+    },
+    "cv-fold-manifest.yaml": {
+      "sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6"
+    },
+    "fold-metrics-W11.csv": {
+      "sha256": "f475049385183481bbe4341fe590cb00b2be4b6b66e967b4b9882e90a9f3083e"
+    },
+    "leakage-audit-W11.md": {
+      "sha256": "71903c0114d0cdfa70aae1cd508df89ce124c6e119237e31aca05bafa89a36aa"
+    },
+    "model-synthetic-smoke.json": {
+      "sha256": "82e487a99ba93dad4e192000f826dacc6d62377316672ba4f010ba9f1368cebc"
+    },
+    "model-synthetic-smoke.ubj": {
+      "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
+    },
+    "xgb-v1-report.md": {
+      "sha256": "7a020fca5c40eae02ce6c7e7a55c00cff599980b41a86d3a7af46c452a513702"
+    }
+  },
+  "baseline_comparison": [
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F1",
+      "matched_warning_episodes": 2,
+      "method": "B0_THRESHOLD",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "sample_ap": 0.9873537338021915,
+      "sample_comparison": "GT",
+      "sample_f1": 0.9396551724137931,
+      "sample_population_differs": false,
+      "sample_precision": 0.9732142857142857,
+      "sample_recall": 0.9083333333333333,
+      "sample_threshold": 5.5,
+      "sample_undefined_reasons": [],
+      "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "version": "coldguard-w09-b0-threshold-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F1",
+      "matched_warning_episodes": 2,
+      "method": "B1_HYSTERESIS",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "sample_ap": 0.6896734726948631,
+      "sample_comparison": "GE",
+      "sample_f1": 0.8131868131868133,
+      "sample_population_differs": false,
+      "sample_precision": 0.7254901960784313,
+      "sample_recall": 0.925,
+      "sample_threshold": 1.0,
+      "sample_undefined_reasons": [],
+      "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "version": "coldguard-w09-b1-hysteresis-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F2",
+      "matched_warning_episodes": 2,
+      "method": "B0_THRESHOLD",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "sample_ap": 0.9885531289507862,
+      "sample_comparison": "GT",
+      "sample_f1": 0.9531914893617022,
+      "sample_population_differs": false,
+      "sample_precision": 0.9739130434782609,
+      "sample_recall": 0.9333333333333333,
+      "sample_threshold": 5.5,
+      "sample_undefined_reasons": [],
+      "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "version": "coldguard-w09-b0-threshold-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F2",
+      "matched_warning_episodes": 2,
+      "method": "B1_HYSTERESIS",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "sample_ap": 0.6953168044077135,
+      "sample_comparison": "GE",
+      "sample_f1": 0.8175182481751825,
+      "sample_population_differs": false,
+      "sample_precision": 0.7272727272727273,
+      "sample_recall": 0.9333333333333333,
+      "sample_threshold": 1.0,
+      "sample_undefined_reasons": [],
+      "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "version": "coldguard-w09-b1-hysteresis-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F3",
+      "matched_warning_episodes": 2,
+      "method": "B0_THRESHOLD",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "sample_ap": 0.9889339340833572,
+      "sample_comparison": "GT",
+      "sample_f1": 0.9380530973451328,
+      "sample_population_differs": false,
+      "sample_precision": 1.0,
+      "sample_recall": 0.8833333333333333,
+      "sample_threshold": 5.5,
+      "sample_undefined_reasons": [],
+      "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "version": "coldguard-w09-b0-threshold-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F3",
+      "matched_warning_episodes": 2,
+      "method": "B1_HYSTERESIS",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "sample_ap": 0.6840383500072496,
+      "sample_comparison": "GE",
+      "sample_f1": 0.8088235294117647,
+      "sample_population_differs": false,
+      "sample_precision": 0.7236842105263158,
+      "sample_recall": 0.9166666666666666,
+      "sample_threshold": 1.0,
+      "sample_undefined_reasons": [],
+      "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "version": "coldguard-w09-b1-hysteresis-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F4",
+      "matched_warning_episodes": 2,
+      "method": "B0_THRESHOLD",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "sample_ap": 0.9890604309018636,
+      "sample_comparison": "GT",
+      "sample_f1": 0.9655172413793104,
+      "sample_population_differs": false,
+      "sample_precision": 1.0,
+      "sample_recall": 0.9333333333333333,
+      "sample_threshold": 5.5,
+      "sample_undefined_reasons": [],
+      "score_semantics": "representative temperature threshold",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "version": "coldguard-w09-b0-threshold-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "baseline_evaluability": [
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC",
+        "EVALUABLE_DIAGNOSTIC"
+      ],
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F4",
+      "matched_warning_episodes": 2,
+      "method": "B1_HYSTERESIS",
+      "missed_critical_events": 0,
+      "not_evaluable_runs": [],
+      "run_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "sample_ap": 0.6953168044077135,
+      "sample_comparison": "GE",
+      "sample_f1": 0.8175182481751825,
+      "sample_population_differs": false,
+      "sample_precision": 0.7272727272727273,
+      "sample_recall": 0.9333333333333333,
+      "sample_threshold": 1.0,
+      "sample_undefined_reasons": [],
+      "score_semantics": "reactive hysteresis ON state",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "version": "coldguard-w09-b1-hysteresis-v1",
+      "warning_episode_count": 2,
+      "xgb_sample_count": 484
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F1",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_UNWEIGHTED",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F2",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_UNWEIGHTED",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F3",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_UNWEIGHTED",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F4",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_UNWEIGHTED",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F1",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F2",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F3",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    },
+    {
+      "aiw": "NOT_ESTIMABLE",
+      "aiw_reason": "no complete measured command, ACK and thermal response latency chain is available; EWT availability would not establish AIW",
+      "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "censored_event_count": 0,
+      "censored_exclusions": 240,
+      "coverage_trustworthy": true,
+      "eligible_critical_event_count": 2,
+      "eligible_sample_count": 484,
+      "episode_cutoff_policy": "ONSET_BEFORE_CUTOFF_INPUTS_TRUNCATED_V1",
+      "event_precision": 1.0,
+      "event_recall": 1.0,
+      "ewt": "NOT_ESTIMABLE",
+      "ewt_reason": "no authoritative physical, non-intervened trajectory with frozen warning and reactive definitions supplies both anchors in one trusted event-time domain; synthetic benchmark rows are not physical EWT evidence",
+      "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "exclusion_reason_codes": [
+        "CENSORED_LABELS_EXCLUDED"
+      ],
+      "exposure_policy": "ALL_CHANNEL_VALID_V1",
+      "false_warning_episodes_per_hour": 0.0,
+      "false_warning_episodes_per_run": 0.0,
+      "first_trusted_observation_by_run": [
+        0.0,
+        0.0,
+        0.0,
+        0.0
+      ],
+      "fold_id": "F4",
+      "matched_warning_episodes": 2,
+      "method": "XGBOOST_V1_TRAIN_FOLD_CLASS_WEIGHT",
+      "missed_critical_events": 0,
+      "run_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "sample_ap": 1.0,
+      "sample_f1": 1.0,
+      "sample_precision": 1.0,
+      "sample_recall": 1.0,
+      "score_semantics": "risk_score (not calibrated_probability)",
+      "trusted_exposure_s": 480.0,
+      "undefined_reasons": [],
+      "unmatched_warnings": 0,
+      "untrusted_event_count": 0,
+      "untrusted_exclusions": 0,
+      "untrusted_exposure_s": 0.0,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "version": "coldguard-xgb-v1-development-v1",
+      "warning_episode_count": 2
+    }
+  ],
+  "config": {
+    "calibration_status": "NOT_PERFORMED",
+    "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "config_version": "coldguard-xgb-v1-development-v1",
+    "excluded_diagnostic_features": [
+      "T_tec_hot_side_c"
+    ],
+    "feature_allowlist": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "grouped_cv": {
+      "min_train_groups": 1,
+      "min_validation_groups": 1,
+      "n_splits": 4,
+      "seed": 42
+    },
+    "imbalance_strategies": [
+      "UNWEIGHTED",
+      "TRAIN_FOLD_CLASS_WEIGHT"
+    ],
+    "label": {
+      "boundary_c": null,
+      "frozen_at": null,
+      "horizon_s": 60.0,
+      "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+      "spec_version": "coldguard-w11-development-label-v1",
+      "status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+    },
+    "model_params": {
+      "colsample_bytree": 1.0,
+      "learning_rate": 0.05,
+      "max_depth": 3,
+      "n_estimators": 60,
+      "n_jobs": 1,
+      "objective": "binary:logistic",
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 1.0,
+      "subsample": 1.0,
+      "tree_method": "hist"
+    },
+    "primary_metric": "AVERAGE_PRECISION",
+    "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "risk_threshold": 0.5,
+    "schema": "coldguard-xgb-v1-config-v1",
+    "score_semantics": "risk_score",
+    "status": "DEVELOPMENT_CANDIDATE_NOT_SCIENTIFICALLY_SELECTED"
+  },
+  "cv": {
+    "effective_independent_groups": 8,
+    "folds": [
+      {
+        "fold_id": "F1",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-005",
+          "W11-PAIR-006"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006"
+        ]
+      },
+      {
+        "fold_id": "F2",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-007",
+          "W11-PAIR-008"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008"
+        ]
+      },
+      {
+        "fold_id": "F3",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-009"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-009"
+        ]
+      },
+      {
+        "fold_id": "F4",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-010"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-010"
+        ]
+      }
+    ],
+    "grouping_key": "run_id + pair_id (one effective group per pair)",
+    "n_splits": 4,
+    "seed": 42
+  },
+  "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+  "deterministic": true,
+  "feature_ids": [
+    "T_chamber_max_c",
+    "T_chamber_min_c",
+    "T_chamber_mean_c",
+    "T_chamber_spread_c",
+    "T_center_c",
+    "T_bottom_c",
+    "T_near_door_c",
+    "rolling_mean_temperature_60s",
+    "rolling_std_temperature_60s",
+    "rolling_min_temperature_60s",
+    "rolling_max_temperature_60s",
+    "past_only_slope_c_per_min_60s",
+    "past_only_temperature_delta_60s",
+    "past_only_spatial_spread_60s",
+    "door_open",
+    "time_since_open",
+    "duration_so_far",
+    "count_past_60s",
+    "applied_cooling",
+    "applied_duty",
+    "time_since_confirmed_applied_change",
+    "cooling_voltage_v",
+    "cooling_current_a",
+    "cooling_power_w",
+    "energy_counter_wh",
+    "past_integrated_cooling_energy_wh",
+    "ambient_temperature_c",
+    "relative_humidity_pct"
+  ],
+  "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+  "fold_runs": [
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F1",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 1.0,
+      "status": "FIT",
+      "strategy": "UNWEIGHTED",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-004",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-009",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S1-010",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = 1.0"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F2",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 1.0,
+      "status": "FIT",
+      "strategy": "UNWEIGHTED",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-004",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-009",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-009",
+        "CG-W11-S1-010",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-009",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = 1.0"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F3",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 1.0,
+      "status": "FIT",
+      "strategy": "UNWEIGHTED",
+      "train_group_ids": [
+        "W11-PAIR-004",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = 1.0"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F4",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 1.0,
+      "status": "FIT",
+      "strategy": "UNWEIGHTED",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-009"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = 1.0"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F1",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 3.033333333333333,
+      "status": "FIT",
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-004",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-009",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S1-010",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = train_negative / train_positive"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F2",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 3.033333333333333,
+      "status": "FIT",
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-004",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-009",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-009",
+        "CG-W11-S1-010",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-009",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = train_negative / train_positive"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F3",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 3.033333333333333,
+      "status": "FIT",
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT",
+      "train_group_ids": [
+        "W11-PAIR-004",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-010"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-010"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-009"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = train_negative / train_positive"
+    },
+    {
+      "censored_exclusions": 240,
+      "detail": null,
+      "event_metrics": {
+        "censored_event_count": 0,
+        "coverage_trustworthy": true,
+        "eligible_critical_event_count": 2,
+        "event_precision": 1.0,
+        "event_recall": 1.0,
+        "false_warning_episodes_per_hour": 0.0,
+        "false_warning_episodes_per_run": 0.0,
+        "matched_warning_episodes": 2,
+        "missed_critical_events": 0,
+        "per_run_undefined_reasons": [
+          "NO_WARNING_EPISODE_DENOMINATOR",
+          "NO_ELIGIBLE_CRITICAL_EVENT_DENOMINATOR"
+        ],
+        "trusted_exposure_s": 480.0,
+        "undefined_reasons": [],
+        "unmatched_warnings": 0,
+        "untrusted_event_count": 0,
+        "untrusted_exposure_s": 0.0,
+        "warning_episode_count": 2
+      },
+      "fold_id": "F4",
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 364,
+          "tp": 120
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 364,
+        "positive_count": 120,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 484,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "reason": null,
+      "scale_pos_weight": 3.033333333333333,
+      "status": "FIT",
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT",
+      "train_group_ids": [
+        "W11-PAIR-003",
+        "W11-PAIR-005",
+        "W11-PAIR-006",
+        "W11-PAIR-007",
+        "W11-PAIR-008",
+        "W11-PAIR-009"
+      ],
+      "train_negative": 1092,
+      "train_positive": 360,
+      "train_run_ids": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009"
+      ],
+      "train_sample_count": 1452,
+      "untrusted_exclusions": 0,
+      "validation_group_ids": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "validation_negative": 364,
+      "validation_positive": 120,
+      "validation_run_ids": [
+        "CG-W11-S1-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-004",
+        "CG-W11-S2-010"
+      ],
+      "validation_sample_count": 484,
+      "weight_formula": "scale_pos_weight = train_negative / train_positive"
+    }
+  ],
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_command": "python scripts/xgb-benchmark-W11.py --mode synthetic-grouped-cv --out reports/W11 --repository-revision c6b28678430ab575902a09be4b32bc327c72afcb",
+  "label": {
+    "frozen_at": null,
+    "horizon_s": 60.0,
+    "spec_version": "coldguard-w11-development-label-v1",
+    "status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+  },
+  "label_identity": {
+    "boundary_c": null,
+    "frozen_at": null,
+    "horizon_s": 60.0,
+    "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+    "spec_version": "coldguard-w11-development-label-v1"
+  },
+  "labeled_dataset": {
+    "excluded_by_run": {
+      "CG-W11-S1-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-010": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-010": {
+        "CENSORED": 60
+      }
+    },
+    "feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "horizon_s": 60.0,
+    "label_identity": {
+      "boundary_c": null,
+      "frozen_at": null,
+      "horizon_s": 60.0,
+      "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+      "spec_version": "coldguard-w11-development-label-v1"
+    },
+    "negative_count": 1456,
+    "positive_count": 480,
+    "run_ids": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S1-010",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009",
+      "CG-W11-S2-010"
+    ],
+    "sample_count": 1936,
+    "spec_version": "coldguard-w11-development-label-v1",
+    "total_excluded": {
+      "CENSORED": 960
+    }
+  },
+  "layer_version": "coldguard-w11-grouped-xgb-benchmark-v1",
+  "leakage_audit": {
+    "probes": [
+      {
+        "detail": "future observations after 60 s mutated; 61 past anchors unchanged",
+        "probe_id": "future_mutation",
+        "status": "PASS"
+      },
+      {
+        "detail": "an unpartitioned run is refused before any feature window is built",
+        "probe_id": "split_before_windows",
+        "status": "PASS"
+      },
+      {
+        "detail": "4 grouped folds are disjoint and cover every development run once",
+        "probe_id": "grouped_disjoint",
+        "status": "PASS"
+      },
+      {
+        "detail": "every paired S1/S2 arm stays inside one fold side",
+        "probe_id": "pair_preservation",
+        "status": "PASS"
+      },
+      {
+        "detail": "locked-test runs are refused by the run builder and the fold validator",
+        "probe_id": "locked_test",
+        "status": "PASS"
+      },
+      {
+        "detail": "a Controller B interventional trajectory is refused for observational training",
+        "probe_id": "predictive_intervention",
+        "status": "PASS"
+      },
+      {
+        "detail": "two export views of one physical source are refused as independent groups",
+        "probe_id": "duplicate_source",
+        "status": "PASS"
+      },
+      {
+        "detail": "a contradictory duplicate delivery fails closed in episode construction",
+        "probe_id": "duplicate_delivery",
+        "status": "PASS"
+      },
+      {
+        "detail": "a mixed-boot trajectory is refused before feature computation",
+        "probe_id": "boot_boundary",
+        "status": "PASS"
+      },
+      {
+        "detail": "a transform fitted on validation groups identifies and refuses the illegal population",
+        "probe_id": "train_only_transform",
+        "status": "PASS"
+      },
+      {
+        "detail": "a future critical-event field cannot enter the feature allowlist",
+        "probe_id": "label_schema",
+        "status": "PASS"
+      },
+      {
+        "detail": "a missing/UNKNOWN electrical value becomes NaN, never a silent zero",
+        "probe_id": "missing_not_zero",
+        "status": "PASS"
+      },
+      {
+        "detail": "mixed hardware/config lineages are refused as non-comparable",
+        "probe_id": "hardware_identity",
+        "status": "PASS"
+      },
+      {
+        "detail": "AP and every predeclared strategy/fold are reported; no best-fold selection",
+        "probe_id": "metric_predeclared",
+        "status": "PASS"
+      },
+      {
+        "detail": "a forged GREEN manifest without a matching W08 receipt is refused",
+        "probe_id": "gate_b_bypass",
+        "status": "PASS"
+      }
+    ],
+    "records": [
+      {
+        "attack_mechanism": "Rows or windows from one run land in both train and validation.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "The split API accepts runs and effective groups, never rows; train and validation groups must be disjoint.",
+        "regression_tests": "test_grouped_evaluation.py::test_folds_are_group_disjoint_and_deterministic",
+        "residual_limitation": "The audit cannot prove a future caller will not build a row-level dataset outside this API.",
+        "risk_id": "LRK-01",
+        "scientific_consequence": "A row split would overstate AP by memorising one run's thermal history.",
+        "source_api": "grouped_evaluation.make_grouped_folds / validate_folds",
+        "title": "Random row split"
+      },
+      {
+        "attack_mechanism": "Overlapping windows are generated before run partition and leak across folds.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Features and labels are built only for runs whose split partition is development; an unpartitioned run is refused.",
+        "regression_tests": "test_grouped_evaluation.py::test_unpartitioned_run_is_refused",
+        "residual_limitation": "The benchmark trusts the supplied split identity; a forged split is outside this software control.",
+        "risk_id": "LRK-02",
+        "scientific_consequence": "Window-before-split can make empty folds look separable.",
+        "source_api": "xgb_benchmark.build_labeled_dataset / feature_rows(split=...)",
+        "title": "Window before split"
+      },
+      {
+        "attack_mechanism": "A rolling statistic uses samples after the anchor.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Future mutation/truncation probes must leave every past feature byte-identical.",
+        "regression_tests": "test_w11_leakage.py::test_future_mutation_invariance",
+        "residual_limitation": "Covers the registered feature set only.",
+        "risk_id": "LRK-03",
+        "scientific_consequence": "Future leakage would make the model clairvoyant at prediction time.",
+        "source_api": "feature_pipeline.feature_rows",
+        "title": "Future rolling feature"
+      },
+      {
+        "attack_mechanism": "A command, door or electrical state after t enters X_t.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "The same future mutation probe mutates all post-anchor command/state fields.",
+        "regression_tests": "test_w11_leakage.py::test_future_mutation_invariance",
+        "residual_limitation": "Feature definitions are frozen only by the W10 registry identity.",
+        "risk_id": "LRK-04",
+        "scientific_consequence": "A post-intervention state in X cannot be known by Controller A.",
+        "source_api": "feature_pipeline._compute_one",
+        "title": "Future command/state"
+      },
+      {
+        "attack_mechanism": "An imputer or scaler is fitted on the union of training and validation groups.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "The API refuses any fit population that includes a non-training group; XGBoost's native NaN handling makes a global imputer unnecessary.",
+        "regression_tests": "test_grouped_evaluation.py::test_fit_population_must_be_train_only",
+        "residual_limitation": "A caller could implement a transform outside this API.",
+        "risk_id": "LRK-05",
+        "scientific_consequence": "Validation statistics would leak the validation distribution into training.",
+        "source_api": "grouped_evaluation.assert_train_only_fit",
+        "title": "Global imputation/scaling"
+      },
+      {
+        "attack_mechanism": "A calibrator is fitted on the locked test partition.",
+        "observed_audit_result": "NOT_APPLICABLE",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "No calibration is performed; outputs are labelled risk_score and calibration_status is NOT_PERFORMED.",
+        "regression_tests": "test_xgb_benchmark.py::test_outputs_are_risk_scores_not_probabilities",
+        "residual_limitation": "If calibration is added later, it must be fitted on grouped development data only.",
+        "risk_id": "LRK-06",
+        "scientific_consequence": "Uncalibrated scores must not be called physical probabilities.",
+        "source_api": "xgb_benchmark.score_semantics = risk_score",
+        "title": "Test-set calibration"
+      },
+      {
+        "attack_mechanism": "A decision threshold is tuned using locked-test outcomes.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "The operating threshold is predeclared in the config; locked-test runs are refused before prediction.",
+        "regression_tests": "test_w11_leakage.py::test_locked_test_boundary",
+        "residual_limitation": "The numeric 0.5 is an illustrative development operating point, not a tuned test result.",
+        "risk_id": "LRK-07",
+        "scientific_consequence": "Test-tuned thresholds overstate deployable performance.",
+        "source_api": "grouped_evaluation.validate_run_population / risk_threshold",
+        "title": "Test-set threshold selection"
+      },
+      {
+        "attack_mechanism": "A renamed export or second view of one boot is counted as another run.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Each source hash and physical_source_key may belong to exactly one run and one effective group.",
+        "regression_tests": "test_grouped_evaluation.py::test_duplicate_physical_source_is_refused; test_grouped_evaluation.py::test_pair_lineage_never_straddles_folds",
+        "residual_limitation": "Source identity is only as strong as the W04/W08 provenance.",
+        "risk_id": "LRK-08",
+        "scientific_consequence": "Duplicate exports inflate the apparent independent population.",
+        "source_api": "grouped_evaluation.validate_run_population",
+        "title": "Near-duplicate groups"
+      },
+      {
+        "attack_mechanism": "A Controller B interventional trajectory is used as an observational negative.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Predictive controller ids are refused for observational training.",
+        "regression_tests": "test_grouped_evaluation.py::test_predictive_controller_is_refused",
+        "residual_limitation": "Controller id strings are a declared contract, not a hardware attestation.",
+        "risk_id": "LRK-09",
+        "scientific_consequence": "An event prevented by intervention is an unobserved counterfactual, not a negative.",
+        "source_api": "grouped_evaluation.build_evaluation_runs",
+        "title": "Predictive intervention contamination"
+      },
+      {
+        "attack_mechanism": "Critical-event time, y or a post-intervention outcome is inserted into X.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "The explicit allowlist must contain only frozen registry features; provenance/target fields are rejected.",
+        "regression_tests": "test_xgb_benchmark.py::test_identifier_and_label_fields_cannot_enter_x",
+        "residual_limitation": "A caller could bypass the config loader and construct a custom matrix.",
+        "risk_id": "LRK-10",
+        "scientific_consequence": "Label leakage yields a near-perfect but meaningless AP.",
+        "source_api": "xgb_benchmark.FeaturePolicy.assert_safe",
+        "title": "Future label into feature"
+      },
+      {
+        "attack_mechanism": "P3 outcomes are inspected during W11 development.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Locked-test runs are refused by both the run builder and fold validator; the W10 test pair is untouched.",
+        "regression_tests": "test_grouped_evaluation.py::test_locked_test_run_is_refused",
+        "residual_limitation": "No real P3 population exists yet; W12 owns the locked-test boundary.",
+        "risk_id": "LRK-11",
+        "scientific_consequence": "Any test peek invalidates the later Gate G3 report.",
+        "source_api": "grouped_evaluation.build_evaluation_runs / validate_run_population",
+        "title": "Locked test peeking"
+      },
+      {
+        "attack_mechanism": "A repeated sample delivery is treated as a new independent observation.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "Contradictory duplicate identities fail closed; identical duplicates are deduplicated.",
+        "regression_tests": "test_w11_leakage.py::test_contradictory_duplicate_delivery_is_refused",
+        "residual_limitation": "Adapter-level dedup depends on the quality of sample identity.",
+        "risk_id": "LRK-12",
+        "scientific_consequence": "Repeated deliveries can inflate sample counts and apparent warning episodes.",
+        "source_api": "feature_pipeline._dedupe_samples / event_evaluator.build_warning_episodes",
+        "title": "Duplicate delivery"
+      },
+      {
+        "attack_mechanism": "Samples from separate boots are stitched onto one time axis.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "A trajectory is one device/boot acquisition domain; mixed boots are refused and must be partitioned by an adapter.",
+        "regression_tests": "test_feature_causality.py::test_direct_constructor_refuses_mixed_boot_samples",
+        "residual_limitation": "Boot-scoped uptime is not absolute UTC; W11 real admission requires EVENT_UTC.",
+        "risk_id": "LRK-13",
+        "scientific_consequence": "Cross-boot continuity fabricates thermal history that never existed.",
+        "source_api": "feature_pipeline.Trajectory.__post_init__",
+        "title": "Boot/time semantics"
+      },
+      {
+        "attack_mechanism": "UNKNOWN electrical quality is silently filled with 0 W or 0 A.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "None/absent values become NaN; the matrix never substitutes zero.",
+        "regression_tests": "test_xgb_benchmark.py::test_missing_electrical_is_nan_not_zero",
+        "residual_limitation": "The model treats NaN natively; missingness semantics remain an assumption of the fixture.",
+        "risk_id": "LRK-14",
+        "scientific_consequence": "Zero-filling would fabricate a measured no-load state.",
+        "source_api": "xgb_benchmark.feature_matrix",
+        "title": "Missing electrical equals zero"
+      },
+      {
+        "attack_mechanism": "Runs from different hardware or configuration lineages are pooled.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "More than one hardware/config lineage in development is refused.",
+        "regression_tests": "test_grouped_evaluation.py::test_mixed_hardware_lineage_is_refused",
+        "residual_limitation": "The single-rig fixture has no real multi-lineage evidence.",
+        "risk_id": "LRK-15",
+        "scientific_consequence": "Pooled hardware can confound thermal behaviour with model skill.",
+        "source_api": "grouped_evaluation.build_evaluation_runs",
+        "title": "Hardware/config identity"
+      },
+      {
+        "attack_mechanism": "A model learns ambient or day-specific context that is not stable for deployment.",
+        "observed_audit_result": "BLOCKED_BY_MISSING_EVIDENCE",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "No multi-day, A-valid physical population exists to probe drift.",
+        "regression_tests": "none executed",
+        "residual_limitation": "Needs a qualified multi-day physical dataset; synthetic fixtures cannot establish drift.",
+        "risk_id": "LRK-16",
+        "scientific_consequence": "Deployment performance may degrade when ambient conditions change.",
+        "source_api": "W11 real admission gate",
+        "title": "Ambient/day covariate drift"
+      },
+      {
+        "attack_mechanism": "The best-looking fold or metric is selected after seeing outcomes.",
+        "observed_audit_result": "PASS",
+        "owner": "Member B \u2014 AI & Experimental Data",
+        "preventive_check": "AP and all predeclared folds/strategies are reported; no post-hoc best-fold selection.",
+        "regression_tests": "test_xgb_benchmark.py::test_all_folds_and_strategies_are_reported",
+        "residual_limitation": "A human could still selectively quote a favorable fold; the report keeps every fold visible.",
+        "risk_id": "LRK-17",
+        "scientific_consequence": "Selective reporting overstates the benchmark.",
+        "source_api": "xgb_benchmark.primary_metric / imbalance.selection_rule",
+        "title": "Metric/definition shopping"
+      }
+    ],
+    "summary": {
+      "BLOCKED_BY_MISSING_EVIDENCE": 1,
+      "NOT_APPLICABLE": 1,
+      "PASS": 15
+    }
+  },
+  "model_artifact": {
+    "classification": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "files": {
+      "json": {
+        "file": "model-synthetic-smoke.json",
+        "sha256": "82e487a99ba93dad4e192000f826dacc6d62377316672ba4f010ba9f1368cebc"
+      },
+      "ubj": {
+        "file": "model-synthetic-smoke.ubj",
+        "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
+      }
+    },
+    "load_predictions_match": true,
+    "promotable_to_physical_model": false,
+    "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
+  },
+  "oof": {
+    "TRAIN_FOLD_CLASS_WEIGHT": {
+      "fold_ap": {
+        "fold_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "instability_range": 0.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "min": 1.0,
+        "status": "DEFINED",
+        "std": 0.0
+      },
+      "fold_count_fitted": 4,
+      "fold_count_total": 4,
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 1456,
+          "tp": 480
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 1456,
+        "positive_count": 480,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 1936,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "status": "DEFINED"
+    },
+    "UNWEIGHTED": {
+      "fold_ap": {
+        "fold_values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "instability_range": 0.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "min": 1.0,
+        "status": "DEFINED",
+        "std": 0.0
+      },
+      "fold_count_fitted": 4,
+      "fold_count_total": 4,
+      "metrics": {
+        "average_precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "comparison": "GE",
+        "confusion_matrix": {
+          "fn": 0,
+          "fp": 0,
+          "tn": 1456,
+          "tp": 480
+        },
+        "f1": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "negative_count": 1456,
+        "positive_count": 480,
+        "pr_curve_points": 3,
+        "precision": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "recall": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "roc_auc": {
+          "reason": null,
+          "status": "DEFINED",
+          "value": 1.0
+        },
+        "sample_count": 1936,
+        "threshold": 0.5,
+        "undefined_reasons": []
+      },
+      "status": "DEFINED"
+    }
+  },
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "real_development": {
+    "ADMISSION": {
+      "admitted_run_ids": [],
+      "allowed": false,
+      "evidence": {
+        "capture_run_identity": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+        "capture_time_domain": "BOOT_SCOPED_UPTIME",
+        "data_origin": "MEASURED_PHYSICAL_DATA",
+        "eligible_run_count": 0,
+        "physical_gate": "RED",
+        "source_hash_bound": true,
+        "source_receipt_count": 1,
+        "split_feasibility": "NOT_FEASIBLE"
+      },
+      "gate": "RED",
+      "manifest_sha256": "e4275e4086f24356105e1da486997d69a71af0611e40aebd47583120050fb0ae",
+      "mode": "real-development",
+      "reasons": [
+        "PHYSICAL_GATE_RED",
+        "RUN_IDENTITY_UNRESOLVED",
+        "DEVICE_IDENTITY_MISSING",
+        "ABSOLUTE_EVENT_TIME_NOT_EVIDENCED",
+        "REAL_DEVELOPMENT_SPLIT_NOT_FEASIBLE",
+        "NO_ADMITTED_DEVELOPMENT_SPLIT_MEMBERS",
+        "COMPLETENESS_POLICY_NOT_FROZEN",
+        "A_LEDGER_NOT_VALID",
+        "NOT_ELIGIBLE_FOR_PREDICTIVE_DATASET",
+        "ADMISSION_STAGE_BELOW_PREDICTIVE_DATASET",
+        "HARDWARE_CONFIG_NOT_VERIFIED",
+        "CALIBRATION_NOT_VERIFIED",
+        "TIME_DOMAIN_NOT_ABSOLUTE_UTC",
+        "CLOCK_SYNC_NOT_EVIDENCED",
+        "SCENARIO_NOT_CERTIFIED",
+        "BLOCKING_RUN_VALIDATION_FAILURE",
+        "INSUFFICIENT_ADMITTED_REAL_RUNS_FOR_GROUPED_CV"
+      ]
+    },
+    "BENCHMARK_STATUS": "NOT_FEASIBLE",
+    "ELIGIBLE_RUNS": 0,
+    "MODE": "real-development",
+    "PHYSICAL_GATE_B": "RED",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "REAL_AIW_REASON_CODE": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+    "REAL_BASELINE_COMPARISON": "NOT_ESTABLISHED",
+    "REAL_DEVELOPMENT_SPLIT": "NOT_FEASIBLE",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_EWT_REASON_CODE": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+    "REAL_XGBOOST_BENCHMARK": "NOT_ESTABLISHED",
+    "REASONS": [
+      "PHYSICAL_GATE_RED",
+      "RUN_IDENTITY_UNRESOLVED",
+      "DEVICE_IDENTITY_MISSING",
+      "ABSOLUTE_EVENT_TIME_NOT_EVIDENCED",
+      "REAL_DEVELOPMENT_SPLIT_NOT_FEASIBLE",
+      "NO_ADMITTED_DEVELOPMENT_SPLIT_MEMBERS",
+      "COMPLETENESS_POLICY_NOT_FROZEN",
+      "A_LEDGER_NOT_VALID",
+      "NOT_ELIGIBLE_FOR_PREDICTIVE_DATASET",
+      "ADMISSION_STAGE_BELOW_PREDICTIVE_DATASET",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "CALIBRATION_NOT_VERIFIED",
+      "TIME_DOMAIN_NOT_ABSOLUTE_UTC",
+      "CLOCK_SYNC_NOT_EVIDENCED",
+      "SCENARIO_NOT_CERTIFIED",
+      "BLOCKING_RUN_VALIDATION_FAILURE",
+      "INSUFFICIENT_ADMITTED_REAL_RUNS_FOR_GROUPED_CV"
+    ],
+    "TRAINING_EXECUTED": "NO"
+  },
+  "reason_codes": [
+    "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
+  ],
+  "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+  "repository_revision": "c6b28678430ab575902a09be4b32bc327c72afcb",
+  "schema": "coldguard-w11-benchmark-manifest-v1",
+  "scientific_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "scientific_verdicts": {
+    "GROUPED_EVALUATION_FRAMEWORK": "VERIFIED_BY_TESTS",
+    "PHYSICAL_GATE_B": "RED",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "REAL_BASELINE_COMPARISON": "NOT_ESTABLISHED",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_PREDICTIVE_DATASET": "NOT_READY",
+    "REAL_XGBOOST_BENCHMARK": "NOT_ESTABLISHED",
+    "SYNTHETIC_TRAINING": "PASSED",
+    "W11_SOFTWARE": "GREEN"
+  },
+  "split": {
+    "pair_lineage": [
+      {
+        "pair_id": "W11-PAIR-001",
+        "partition": "test",
+        "run_ids": [
+          "CG-W11-S1-001",
+          "CG-W11-S2-001"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-002",
+        "partition": "test",
+        "run_ids": [
+          "CG-W11-S1-002",
+          "CG-W11-S2-002"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-003",
+        "partition": "train",
+        "run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S2-003"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-004",
+        "partition": "train",
+        "run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S2-004"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-005",
+        "partition": "validation",
+        "run_ids": [
+          "CG-W11-S1-005",
+          "CG-W11-S2-005"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-006",
+        "partition": "validation",
+        "run_ids": [
+          "CG-W11-S1-006",
+          "CG-W11-S2-006"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-007",
+        "partition": "validation",
+        "run_ids": [
+          "CG-W11-S1-007",
+          "CG-W11-S2-007"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-008",
+        "partition": "train",
+        "run_ids": [
+          "CG-W11-S1-008",
+          "CG-W11-S2-008"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-009",
+        "partition": "train",
+        "run_ids": [
+          "CG-W11-S1-009",
+          "CG-W11-S2-009"
+        ]
+      },
+      {
+        "pair_id": "W11-PAIR-010",
+        "partition": "validation",
+        "run_ids": [
+          "CG-W11-S1-010",
+          "CG-W11-S2-010"
+        ]
+      }
+    ],
+    "seed": 42,
+    "test_partition_used": false,
+    "test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ],
+    "train_runs": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009"
+    ],
+    "validation_runs": [
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-010",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-010"
+    ]
+  },
+  "verification": {
+    "future_perturbation": "PASS",
+    "gate_b_bypass_refused": "PASS",
+    "grouped_folds_disjoint": "PASS",
+    "locked_test_used": false,
+    "model_load_predictions_match": true,
+    "pair_lineage_preserved": "PASS",
+    "training_only_preprocessing": "XGBoost native NaN handling; no global fit"
+  },
+  "w08_binding": {
+    "data_origin": "MEASURED_PHYSICAL_DATA",
+    "path": "reports/W08/gate-b-manifest-W08.json",
+    "physical_gate": "RED",
+    "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6"
+  },
+  "w09_binding": {
+    "path": "reports/W09/baseline-manifest-W09.json",
+    "sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45",
+    "status": "RECORDED"
+  },
+  "w10_binding": {
+    "fixture_version": "coldguard-w10-synthetic-s2-v1",
+    "path": "reports/W10/feature-manifest-W10.json",
+    "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2",
+    "test_partition_used": false
+  }
+}
