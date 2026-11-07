@@ -20,10 +20,10 @@ A software-green W06 with absent real command evidence is an acceptable engineer
 | Report schema | coldguard-w06-timing-report-v1 |
 | Package version | 0.1.0 |
 | W06 layer version | coldguard-w06-timing-v1 |
-| Analysis code SHA-256 | `9d75e53110d3619d7cf4dc44452f41003293d3b6418b56f7b9b7f4b36e09840c` |
-| Repository revision | 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8 |
+| Analysis code SHA-256 | `7421f68c21a76a7f2e708e073d15be4fb35b9203899217b6ffa151cc651e4c1b` |
+| Repository revision | 388d6cfb6b0d5775c595204d99f9eb919fec29cf |
 | A run index | evidence/A/W09/s1-run-index.json |
-| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8` |
+| Generation command | `event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 388d6cfb6b0d5775c595204d99f9eb919fec29cf` |
 
 ## 2. Source inventory
 
@@ -177,7 +177,7 @@ A numeric latency is emitted only for synthetic unit-test controls or for physic
 
 ```bash
 cd ml
-uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 33df69e9b64d84b8c1dabe521a735e4ca8e6e1a8
+uv run --locked --python 3.12 --extra test python scripts/event-alignment-W06.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --source ../backend/fixtures/telemetry_v0.json --a-run-index ../evidence/A/W09/s1-run-index.json --a-command-log ../evidence/A/W06/demo-command-capture.log --a-command-provenance HOST_GENERATED_SYNTHETIC --event-fixture tests/fixtures/W06/qualified-response.json --out reports/W06 --baseline-window-s 10.0 --electrical-max-window-s 60.0 --thermal-max-window-s 300.0 --max-gap-s 5.0 --sustained-observations 3 --electrical-min-change-a 0.05 --thermal-min-change-c 0.25 --max-uncertainty-s 10.0 --repository-revision 388d6cfb6b0d5775c595204d99f9eb919fec29cf
 ```
 
 Repeated execution on the same inputs and configuration produces identical artifacts. The report contains no runtime timestamp and no local absolute path.
