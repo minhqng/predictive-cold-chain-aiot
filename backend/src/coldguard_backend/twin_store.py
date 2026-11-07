@@ -59,10 +59,12 @@ class TwinBootConflict(Exception):
 def _reported_values(row) -> dict[str, Any]:
     state = {field: row[field] for field in COMPARE_FIELDS if field != "time"}
     state.update(
-        captured_at=row["time"].isoformat(),
+        captured_at=row["time"].isoformat() if row["time"] is not None else None,
         telemetry_id=row["id"],
         raw_id=row["raw_id"],
     )
+    if row["serial_source"] is not None:
+        state["serial_source"] = row["serial_source"]
     return {
         "reported_state": state,
         "last_boot_id": row["boot_id"],

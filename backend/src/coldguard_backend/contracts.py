@@ -33,11 +33,14 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, field_validator, model_validator
+from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, field_validator, model_validator
+
+from coldguard_backend.serial_observation import serial_observation
 
 WIRE_SCHEMA_VERSION = 1
+SERIAL_FRAME_MAX = 3072
 
-Quality = Literal["VALID", "DEGRADED", "INVALID"]
+Quality = Literal["VALID", "DEGRADED", "INVALID", "UNKNOWN"]
 DeviceMode = Literal[
     "BOOT", "SELF_TEST", "ONLINE_NORMAL", "ONLINE_DEGRADED", "SAFE_LOCAL", "FAULT_LOCKOUT"
 ]
@@ -151,14 +154,23 @@ def _values_present(section: BaseModel, *fields: str) -> bool:
     return all(getattr(section, name) is not None for name in fields)
 
 
+class SerialSource(_WireBase):
+    """Provenance for the Member A clockless serial envelope."""
+
+    schema_version: Literal[2, 3]
+    clock_quality: Literal["UNAVAILABLE"]
+    gateway_received_at: AwareDatetime
+    frame: str = Field(max_length=SERIAL_FRAME_MAX, pattern=r"^#CG TELEM [ -~]+$")
+
+
 class Telemetry(_WireBase):
     """One logical device-state snapshot (MQTT telemetry payload)."""
 
-    schema_version: Literal[1]
+    schema_version: Literal[1, 2]
     device_id: str
     boot_id: str
     seq: int
-    captured_at: datetime
+    captured_at: datetime | None
     uptime_ms: int
     run_id: str | None = None
     hardware_config_id: str
@@ -170,6 +182,7 @@ class Telemetry(_WireBase):
     electrical: ElectricalSection
     actuation: ActuationSection
     quality: QualitySection
+    serial_source: SerialSource | None = None
 
     @field_validator("device_id", "boot_id", "hardware_config_id", "firmware_version")
     @classmethod
@@ -182,8 +195,59 @@ class Telemetry(_WireBase):
     @classmethod
     def _counters_non_negative(cls, value: int) -> int:
         if value < 0:
-            raise ValueError("seq and uptime_ms are monotonic counters (>= 0)")
+            raise ValueError("seq and uptime_ms are non-negative counters")
         return value
+
+    @model_validator(mode="after")
+    def _clock_contract(self) -> "Telemetry":
+        if self.schema_version == 1:
+            if self.captured_at is None or self.serial_source is not None:
+                raise ValueError("schema 1 requires device event time and carries no serial source")
+            if "UNKNOWN" in (
+                self.quality.thermal, self.quality.environment,
+                self.quality.electrical, self.quality.overall,
+            ):
+                raise ValueError("UNKNOWN quality requires schema 2")
+        elif self.captured_at is not None or self.serial_source is None:
+            raise ValueError("schema 2 requires null device event time and serial provenance")
+        else:
+            self._verify_serial_identity(self.serial_source)
+        return self
+
+    def _verify_serial_identity(self, source: SerialSource) -> None:
+        fields = {}
+        for token in source.frame.removeprefix("#CG TELEM ").split(" "):
+            key, _, value = token.partition("=")
+            if not key or not value or key in fields:
+                raise ValueError("serial provenance has malformed or repeated fields")
+            fields[key] = value
+        expected = {
+            "schema": str(source.schema_version),
+            "timestamp_utc": "UNAVAILABLE",
+            "timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+            "device_id": self.device_id,
+            "boot_id": self.boot_id,
+            "run_id": "UNSET" if self.run_id is None else self.run_id,
+            "firmware_version": self.firmware_version,
+            "hardware_config_id": self.hardware_config_id,
+            "calibration_id": (
+                "UNRECORDED" if self.calibration_id is None else self.calibration_id
+            ),
+        }
+        if self.run_id == "UNSET" or self.calibration_id == "UNRECORDED" or any(
+            fields.get(key) != value for key, value in expected.items()
+        ):
+            raise ValueError("serial provenance disagrees with envelope identity or clock")
+        for key, value in (("seq", self.seq), ("uptime_ms", self.uptime_ms)):
+            token = fields.get(key, "")
+            if not token.isdecimal() or int(token) != value:
+                raise ValueError(f"serial provenance disagrees with envelope {key}")
+        if not 0 < self.seq < 2**63 or self.uptime_ms >= 2**64:
+            raise ValueError("serial sequence or uptime is outside its storage range")
+        for section, values in serial_observation(fields).items():
+            envelope = getattr(self, section)
+            if any(getattr(envelope, key) != value for key, value in values.items()):
+                raise ValueError(f"serial provenance disagrees with envelope {section}")
 
     @model_validator(mode="after")
     def _missing_values_need_quality(self) -> "Telemetry":

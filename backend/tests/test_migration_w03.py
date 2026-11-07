@@ -3,7 +3,7 @@
 Runs only when COLDGUARD_TEST_DATABASE_URL is set, against a real
 provider (never SQLite). Proves the two required starting states:
 
-* fresh database: base through 0004 reaches the current head with
+* fresh database: base through the current head with
   the expected tables/constraints/indexes;
 * existing W02 database: 0002 + real raw messages + repeated logical
   identities → 0003 succeeds, preserves every historical raw row
@@ -25,7 +25,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0004"
+EXPECTED_HEAD = "0005"
 
 
 needs_real_db = pytest.mark.skipif(

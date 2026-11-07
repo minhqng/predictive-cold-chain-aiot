@@ -44,7 +44,7 @@ from pydantic import ValidationError
 
 from coldguard_backend.contracts import Telemetry
 
-SUPPORTED_SCHEMA_VERSIONS = frozenset({1})
+SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2})
 
 # Canonical telemetry namespace: coldguard/{device_id}/telemetry.
 # The device segment is one non-empty path element; MQTT wildcards and
@@ -83,6 +83,9 @@ _STRING_PATHS = (
     ("quality", "electrical"),
     ("quality", "overall"),
     ("quality", "device_mode"),
+    ("serial_source", "clock_quality"),
+    ("serial_source", "gateway_received_at"),
+    ("serial_source", "frame"),
 )
 
 # Wire fields that must be exact integers (type(x) is int: bool, str and
@@ -91,6 +94,7 @@ _EXACT_INT_PATHS = (
     ("schema_version",),
     ("seq",),
     ("uptime_ms",),
+    ("serial_source", "schema_version"),
 )
 
 
@@ -227,7 +231,7 @@ def validate_telemetry_payload(parsed: Any) -> tuple[Telemetry | None, list[dict
             }
             for err in exc.errors()[:20]
         ]
-    if telemetry.captured_at.tzinfo is None:
+    if telemetry.captured_at is not None and telemetry.captured_at.tzinfo is None:
         return None, [
             {
                 "code": "NAIVE_TIMESTAMP",

@@ -20,7 +20,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0004"
+EXPECTED_HEAD = "0005"
 
 # C-W03 evolution: head moved 0002 -> 0003; the assertions above now
 # cover the normalized telemetry table as well. The W02->W03 upgrade
@@ -81,6 +81,7 @@ EXPECTED_TELEMETRY_COLUMNS = {
     "backend_received_at",
     "raw_id",
     "twin_eligible",
+    "serial_source",
 }
 
 EXPECTED_TELEMETRY_INDEXES = {

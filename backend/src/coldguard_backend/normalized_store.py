@@ -52,6 +52,7 @@ identity trade-off reviewed explicitly.
 
 from __future__ import annotations
 
+import hashlib
 from datetime import datetime
 from typing import Any
 
@@ -68,7 +69,7 @@ from sqlalchemy import (
     ForeignKey,
     select,
 )
-from sqlalchemy.dialects.postgresql import insert as pg_insert
+from sqlalchemy.dialects.postgresql import JSONB, insert as pg_insert
 from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend.contracts import Telemetry
@@ -81,7 +82,7 @@ telemetry = Table(
     Column("id", BigInteger, primary_key=True, autoincrement=True),
     # Event time (device-captured), not identity. Late messages are
     # stored historically; ordering policy belongs to W04 twin logic.
-    Column("time", DateTime(timezone=True), nullable=False),
+    Column("time", DateTime(timezone=True)),
     Column("device_id", Text, nullable=False),
     Column("boot_id", Text, nullable=False),
     Column("seq", BigInteger, nullable=False),
@@ -113,6 +114,7 @@ telemetry = Table(
     Column("raw_id", BigInteger, ForeignKey("telemetry_raw.id"), nullable=False),
     # First delivery's admission decision. A duplicate cannot upgrade it.
     Column("twin_eligible", Boolean, nullable=False),
+    Column("serial_source", JSONB),
 )
 
 # Semantic fields compared for exact-vs-conflicting replay. Identity
@@ -162,7 +164,7 @@ def map_to_row(
     normalized names (``t1`` → ``t1_c``, ``current_a`` →
     ``cooling_current_a``, …). No legacy dual-branch fields exist.
     """
-    return {
+    row = {
         "time": validated.captured_at,
         "device_id": validated.device_id,
         "boot_id": validated.boot_id,
@@ -192,6 +194,15 @@ def map_to_row(
         "backend_received_at": received_at,
         "raw_id": raw_id,
     }
+    if source := validated.serial_source:
+        row["serial_source"] = {
+            "schema_version": source.schema_version,
+            "clock_quality": source.clock_quality,
+            "gateway_received_at": source.gateway_received_at.isoformat(),
+            "uptime_ms": validated.uptime_ms,
+            "frame_sha256": hashlib.sha256(source.frame.encode("ascii")).hexdigest(),
+        }
+    return row
 
 
 def _values_equal(left: Any, right: Any) -> bool:
@@ -214,6 +225,11 @@ def classify_replay(existing: dict[str, Any], incoming: dict[str, Any]) -> str:
     for field in COMPARE_FIELDS:
         if not _values_equal(existing.get(field), incoming.get(field)):
             return "conflict"
+    # Acquisition time changes on replay. The source observation must agree.
+    if (existing.get("serial_source") or {}).get("frame_sha256") != (
+        incoming.get("serial_source") or {}
+    ).get("frame_sha256"):
+        return "conflict"
     return "exact_duplicate"
 
 
