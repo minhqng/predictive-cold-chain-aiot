@@ -512,6 +512,19 @@ def test_real_a_electrical_quality_is_unknown_and_never_certifies():
     assert "BASELINE_QUALITY_NOT_VALID" in result.reason_codes
 
 
+def test_real_a_thermal_diagnostic_is_not_reported_as_a_numeric_delay():
+    capture = _real_capture()
+    canonical = deduplicate_events(events_from_capture(capture)).canonical_events
+    anchor = _by_type(canonical, EVENT_APPLIED_STATE)[0]
+    samples = _by_type(canonical, EVENT_TELEMETRY_SAMPLE)
+    result = analyze_response(
+        "APPLIED_TO_THERMAL", anchor, samples, DEFAULT_THERMAL_POLICY
+    )
+    assert result.state == RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
+    assert result.latency_s is None
+    assert "ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY" in result.reason_codes
+
+
 def test_tec_hot_side_is_never_a_chamber_air_response_channel():
     with pytest.raises(Exception):
         ResponsePolicy(

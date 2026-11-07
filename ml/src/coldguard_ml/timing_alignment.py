@@ -2137,7 +2137,7 @@ def analyze_response(
                 RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
                 anchor.command_id,
                 anchor.event_id,
-                latency,
+                None,
                 uncertainty,
                 evidence_class,
                 len(sustained),
@@ -2647,10 +2647,26 @@ def ack_to_applied(
             if evidence == "SYNTHETIC_UNIT_TEST"
             else RESPONSE_VERIFIED_MEASURED_RESPONSE
         )
+        quality_diagnostic_only = (
+            evidence == "PHYSICAL_MEASURED"
+            and applied.measurement_quality != "VALID"
+        )
+        if quality_diagnostic_only:
+            state = RESPONSE_OBSERVED_DIAGNOSTIC_ONLY
         if uncertainty is None:
             state = RESPONSE_NOT_ESTIMABLE_UNCERTAINTY
         elif latency < 0:
             state = RESPONSE_CONTRADICTORY_EVIDENCE
+        latency_value = (
+            latency
+            if state
+            in (
+                RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
+                RESPONSE_VERIFIED_MEASURED_RESPONSE,
+            )
+            and not quality_diagnostic_only
+            else None
+        )
         results.append(
             replace(
                 _response(
@@ -2658,16 +2674,21 @@ def ack_to_applied(
                     state,
                     command_id,
                     ack.event_id,
-                    latency if state in (
-                        RESPONSE_OBSERVED_DIAGNOSTIC_ONLY,
-                        RESPONSE_VERIFIED_MEASURED_RESPONSE,
-                    ) else None,
+                    latency_value,
                     uncertainty,
                     evidence,
                     2,
                     None,
                     DEFAULT_ELECTRICAL_POLICY,
-                    [] if latency >= 0 else ["NEGATIVE_ACK_TO_APPLIED_INTERVAL"],
+                    (
+                        ["ANCHOR_QUALITY_NOT_VALID_DIAGNOSTIC_ONLY"]
+                        if quality_diagnostic_only
+                        else (
+                            []
+                            if latency >= 0
+                            else ["NEGATIVE_ACK_TO_APPLIED_INTERVAL"]
+                        )
+                    ),
                 ),
                 independent_application=True,
             )
