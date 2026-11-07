@@ -103,7 +103,7 @@ from .faults import (
     FORBIDDEN_TECHNIQUE_IDS,
     get_protocol,
     check_injection,
-    assert_safe_injection,
+    assert_protocol_allowed,
     audit_protocols,
 )
 
@@ -173,7 +173,7 @@ __all__ = [
     "InjectionVerdict",
     "FaultProtocolStatus",
     "check_injection",
-    "assert_safe_injection",
+    "assert_protocol_allowed",
     "audit_protocols",
     "FORBIDDEN_TECHNIQUE_IDS",
     "get_protocol",

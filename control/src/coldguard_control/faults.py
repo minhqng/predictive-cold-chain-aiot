@@ -433,7 +433,7 @@ def get_oracle(fault_id: str) -> FaultOracleRow:
 
 
 class InjectionVerdict(str, Enum):
-    SAFE = "SAFE"
+    PROTOCOL_ALLOWED = "PROTOCOL_ALLOWED"
     FORBIDDEN = "FORBIDDEN"
     NOT_IN_PROTOCOL = "NOT_IN_PROTOCOL"
     PROTOCOL_NOT_APPROVED = "PROTOCOL_NOT_APPROVED"
@@ -506,18 +506,18 @@ def check_injection(protocol_id: str, technique_id: str) -> InjectionCheckResult
     return InjectionCheckResult(
         protocol_id=protocol_id,
         technique_id=technique_id,
-        verdict=InjectionVerdict.SAFE,
+        verdict=InjectionVerdict.PROTOCOL_ALLOWED,
         detail=(
-            "technique allowed by the protocol; physical preconditions and "
-            "owner approval are still required before execution"
+            "technique is listed in the protocol; this is not permission to "
+            "execute. Physical preconditions and owner approval remain unverified"
         ),
     )
 
 
-def assert_safe_injection(protocol_id: str, technique_id: str) -> InjectionCheckResult:
-    """Raise ``UnsafeInjectionError`` unless the request classifies SAFE."""
+def assert_protocol_allowed(protocol_id: str, technique_id: str) -> InjectionCheckResult:
+    """Check protocol membership only; never authorize physical execution."""
     result = check_injection(protocol_id, technique_id)
-    if result.verdict is not InjectionVerdict.SAFE:
+    if result.verdict is not InjectionVerdict.PROTOCOL_ALLOWED:
         raise UnsafeInjectionError(
             f"{protocol_id} / {technique_id}: "
             f"{result.verdict.value} - {result.detail}"

@@ -46,8 +46,8 @@ def test_check_injection_protocol_not_approved():
 def test_check_injection_safe():
     # SENSOR-DEGRADED is DEFINED and allows SENSOR-SAFE-DISCONNECT
     result = check_injection("SENSOR-DEGRADED", "SENSOR-SAFE-DISCONNECT")
-    assert result.verdict == InjectionVerdict.SAFE
-    assert result.detail.startswith("technique allowed")
+    assert result.verdict == InjectionVerdict.PROTOCOL_ALLOWED
+    assert "not permission to execute" in result.detail
 
 
 def test_get_protocol_unknown_raises():
