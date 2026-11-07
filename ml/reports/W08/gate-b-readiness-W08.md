@@ -4,9 +4,9 @@ Report schema: `coldguard-w08-gate-b-readiness-report-v2` · layer `coldguard-w0
 
 | Provenance | Value |
 |---|---|
-| Analysis code SHA-256 | `f677ef4f789546ab5727f4b750c8d028a2a6504fc1505df06ad0724376198931` |
-| Repository revision | `8011346e5812768a5f3c9f86e44aba4da034207d` |
-| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision 8011346e5812768a5f3c9f86e44aba4da034207d` |
+| Analysis code SHA-256 | `022665e5eb3552acb595370646e17c0c19d315c7b515c7eb85b3642e26ac2ed1` |
+| Repository revision | `b42d2c9414d6fe9e671faf723a02e0fe0097afd1` |
+| Generation command | `python scripts/gate-b-readiness-W08.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W08 --min-runs 3 --baseline-window-s 120.0 --event-window-s 60.0 --recovery-horizon-s 900.0 --split-seed 0 --repository-revision b42d2c9414d6fe9e671faf723a02e0fe0097afd1` |
 | A run index SHA-256 | `eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af` |
 | Completeness policy | `coldguard-w08-completeness-policy-draft-v2` |
 | Data origin | **`MEASURED_PHYSICAL_DATA`** |
