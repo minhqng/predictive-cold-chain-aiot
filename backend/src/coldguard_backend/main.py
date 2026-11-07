@@ -29,8 +29,9 @@ from sqlalchemy import Engine, create_engine, select
 
 from coldguard_backend import experiment_store as runs
 from coldguard_backend.dataset_export import run_integrity
+from coldguard_backend.event_timeline import s2_timeline_page
 from coldguard_backend.experiment_evidence import (
-    export_run, run_commands, run_observations, run_samples, run_timeline,
+    encode_evidence, export_run, run_commands, run_observations, run_samples, run_timeline,
 )
 from coldguard_backend.normalized_store import (
     count_telemetry,
@@ -210,6 +211,26 @@ def read_run_integrity(run_id: str, engine: Engine = Depends(get_db_engine)) -> 
             return {"run_id": run_id, **run_integrity(connection, run, run_samples(connection, run))}
     except runs.RunNotFound as exc:
         raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/s2-timeline")
+def read_s2_timeline(
+    run_id: str,
+    limit: int = Query(default=100, ge=1, le=500),
+    cursor: str | None = Query(default=None, max_length=1024),
+    download: bool = False,
+    engine: Engine = Depends(get_db_engine),
+) -> Response:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            run = runs.get_run(connection, run_id)
+            content = encode_evidence(s2_timeline_page(connection, run, limit=limit, cursor=cursor))
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    except ValueError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    headers = {"Content-Disposition": 'attachment; filename="s2-timeline.json"'} if download else None
+    return Response(content, media_type="application/json", headers=headers)
 
 
 @app.get("/api/runs/{run_id}/{kind}")

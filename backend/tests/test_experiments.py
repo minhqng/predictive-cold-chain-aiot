@@ -247,3 +247,85 @@ def test_s1_export_detects_integrity_anomalies_and_is_reproducible(db_engine, ru
     assert bundle["dataset"]["runs"][0]["integrity"]["sample_count"] == 2
     encoded = json.dumps(bundle["dataset"], sort_keys=True, ensure_ascii=False, separators=(",", ":")).encode()
     assert hashlib.sha256(encoded).hexdigest() == bundle["manifest"]["dataset_sha256"]
+
+
+def test_s2_timeline_cursor_correlation_and_export(db_engine, run_context):
+    client, request, other_device = run_context
+    device, run_id = request["device_id"], request["run_id"]
+    path = f"/api/runs/{run_id}/s2-timeline"
+    assert client.post("/api/runs", json=request).status_code == 201
+    assert client.get(path).json()["items"] == []
+    assert client.get(path, params={"cursor": "wrong"}).status_code == 422
+    assert client.get(path, params={"limit": 501}).status_code == 422
+    stamp = utcnow()
+
+    def send(identity, family, payload):
+        ingest_message(
+            db_engine, topic=f"coldguard/{identity}/{family}", received_at=stamp,
+            payload=json.dumps(payload).encode(),
+        )
+
+    send(device, "telemetry", build_telemetry(device_id=device, boot_id="boot-s2", seq=1, run_id=run_id))
+    for cmd_id, identity in (("s2-command", device), ("s2-other", other_device)):
+        with db_engine.begin() as conn:
+            commands.create_command(conn, make_command(
+                cmd_id, device_id=identity, run_id=run_id, prediction_id="prediction-fixture",
+            ))
+            commands.transition_command(conn, cmd_id, commands.PUBLISHED)
+    assert _record_ack(
+        db_engine, make_ack("s2-command", device_id=device), topic_device=device,
+    )["outcome"] == "applied"
+    opened = build_event(device_id=device, boot_id="boot-s2", seq=2, run_id=run_id, event_type="DOOR_OPENED")
+    opened.update(caused_by_command_id="s2-command", correlation_id="corr-s2")
+    send(device, "event", opened)
+    send(device, "event", opened)
+    closed = dict(
+        opened, event_id="closed", event_type="DOOR_CLOSED",
+        caused_by_command_id="s2-other", event_time="bad-clock",
+    )
+    send(device, "event", closed)
+    send(other_device, "event", dict(opened, event_id="mismatch"))
+    send(device, "event", dict(opened, event_id="physical-claim", event_type="THERMAL_VERIFIED"))
+
+    whole = client.get(path)
+    assert whole.status_code == 200, whole.text
+    download = client.get(path, params={"download": True})
+    assert download.content == whole.content
+    assert "attachment" in download.headers["Content-Disposition"]
+    items = whole.json()["items"]
+    assert items
+    page_items = []
+    cursor = None
+    for _ in range(20):
+        params = {"limit": 2}
+        if cursor:
+            params["cursor"] = cursor
+        page = client.get(path, params=params).json()
+        page_items.extend(page["items"])
+        cursor = page["next_cursor"]
+        if not page["has_more"]:
+            break
+    else:
+        pytest.fail("S2 cursor did not reach the end")
+    assert page_items == items
+    assert client.get(path, params={"cursor": cursor}).json()["items"] == []
+    door = [row for row in items if row["kind"] == "device_event"]
+    assert [row["details"]["event_type"] for row in door] == ["DOOR_OPENED", "DOOR_CLOSED"]
+    assert door[0]["details"]["command_id"] == "s2-command"
+    assert door[0]["details"]["correlation_id"] == "corr-s2"
+    assert door[0]["event_time"] != door[0]["backend_at"]
+    assert door[1]["details"]["command_id"] is None
+    assert door[1]["details"]["reported_command_id"] == "s2-other"
+    assert door[1]["event_time"] is None
+    event_types = {row["details"].get("event_type") for row in items}
+    assert {"COMMAND_CREATED", "COMMAND_ACCEPTED"} <= event_types
+    assert "THERMAL_VERIFIED" not in event_types
+    sample = next(row for row in items if row["kind"] == "telemetry")
+    assert sample["details"]["t1_c"] is not None
+    assert sample["details"]["current_a"] is not None
+    next_sample = build_telemetry(device_id=device, boot_id="boot-s2", seq=3, run_id=run_id)
+    ingest_message(
+        db_engine, topic=f"coldguard/{device}/telemetry", payload=json.dumps(next_sample).encode(),
+    )
+    tail = client.get(path, params={"cursor": cursor}).json()
+    assert [row["details"]["seq"] for row in tail["items"]] == [3]

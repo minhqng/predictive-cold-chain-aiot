@@ -12,6 +12,7 @@ within the backend's trusted local deployment boundary.
 | `GET /api/runs/{run_id}/timeline` | Read command, ACK, device event/state receipt, and telemetry chronology. |
 | `GET /api/runs/{run_id}/integrity` | Check raw duplicates, normalized sequence ranges, time anomalies, quality, and declared versions. |
 | `GET /api/runs/{run_id}/telemetry`, `/events`, `/commands` | Page through evidence for the exact run and device. |
+| `GET /api/runs/{run_id}/s2-timeline` | Read a bounded door-disturbance timeline page or download that page as JSON. |
 
 The lifecycle follows Doc 03 §6. Move from `PLANNED` through `ARMED`,
 `RUNNING`, `COMPLETED_RAW`, and `VALIDITY_REVIEW` before recording `VALID`
@@ -68,3 +69,27 @@ Each evidence page accepts a `limit` of 1–500 and an `offset` of 0–100000.
 Receipts sort by backend time and ID. Commands sort by creation time and
 command ID. Follow `next_offset` while the run's evidence snapshot remains
 stable. New arrivals may change the contents of later pages.
+
+## S2 timeline feed
+
+Use the `s2-timeline` endpoint for runs with scenario ID `S2`,
+`DOOR_DISTURBANCE`, or `S2_DOOR_DISTURBANCE`. Pass `limit` (1–500) and
+the preceding page's opaque `next_cursor`. Set `download=true` to export the
+same JSON page. A page exposes stable source row IDs for chart markers and
+sorts by backend time, source kind, and source ID. A client can poll from the
+last cursor to fetch newer entries and periodically refresh the displayed
+window to catch late commits. The feed is a database view of evidence, with
+separate pages reflecting separate snapshots.
+
+Door events come from observed device receipts on the exact topic and retain
+the first receipt of each source event ID within the device and run.
+Telemetry snapshots provide thermal, electrical, and control context. The
+backend projects command creation from its transition history and command
+acceptance only when a matching accepted ACK is present. Verification event
+types are reserved for trusted evidence. Raw device claims of verification
+remain available as receipts through the ordinary run evidence API.
+
+Reported event time remains separate from backend receipt time. Missing or
+invalid source times are null. A command link resolves only within the same
+run and device. The feed carries reported correlation and prediction IDs
+where available, alongside backend command prediction references.
