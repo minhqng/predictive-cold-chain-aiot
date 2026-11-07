@@ -203,7 +203,7 @@ def test_real_a_csv_report_and_plot_agree_and_are_deterministic():
         assert int(row["impossible_count"]) == channel.impossible_count
         assert row["diagnostic_status"] == channel.diagnostic_status
         assert row["physical_admission_status"] == "EXCLUDED_OR_BLOCKED"
-    assert int(by_channel["t1"]["flatline_candidate_count"]) >= 1
+    assert int(by_channel["t1"]["flatline_candidate_count"]) == 13
     assert by_channel["t1"]["stale_candidate_count"] == "0"
     assert by_channel["door_state"]["flatline_candidate_count"] == (
         "NOT_APPLICABLE"
@@ -358,6 +358,9 @@ def test_source_row_order_does_not_change_canonical_results(tmp_path):
 
 
 def test_config_validation_rejects_invalid_thresholds():
+    assert "TOLERANCE_BAND_DEPARTURE" in QAConfig().to_dict()[
+        "flatline_span_policy"
+    ]
     with pytest.raises(ValueError):
         QAConfig(long_gap_ms=0).validate()
     with pytest.raises(ValueError):
@@ -467,10 +470,11 @@ def test_state_channel_bounds_are_checked(tmp_path):
     capture = load_capture(_export(tmp_path, _row_overrides([0, 1000])))
     rows = list(capture.rows)
     rows[0] = dataclasses.replace(rows[0], requested_duty_permille=2000)
+    rows[1] = dataclasses.replace(rows[1], requested_duty_permille=-1)
     modified = dataclasses.replace(capture, rows=tuple(rows))
     analysis = analyze_capture(modified)
     requested = _channel(analysis, "requested_duty_permille")
-    assert requested.impossible_count == 1
+    assert requested.impossible_count == 2
     assert "IMPOSSIBLE_VALUE_OUTSIDE_INSTRUMENT_RANGE" in requested.reason_codes
     assert requested.diagnostic_status == "DIAGNOSTIC_CAUTION"
 
@@ -621,6 +625,10 @@ def test_qualified_pzem_is_not_marked_unqualified(tmp_path):
     assert "PZEM_POWER_UNQUALIFIED" not in {
         anomaly.code for anomaly in analysis.anomalies
     }
+    svg = render_physical_state_svg(
+        analysis.capture, analysis.admission, analysis.sessions[0]
+    )
+    assert "UNQUALIFIED PZEM VALUES" not in svg
     out = tmp_path / "report"
     result = _run_cli(
         [

@@ -145,7 +145,8 @@ class QAConfig:
                 else "nearest rank ceiling"
             ),
             "flatline_span_policy": (
-                "BREAK_ON_MISSING_VALUE_SOURCE_QUALITY_INVALID_OR_LONG_GAP"
+                "BREAK_ON_MISSING_VALUE_SOURCE_QUALITY_INVALID_LONG_GAP_OR_"
+                "TOLERANCE_BAND_DEPARTURE"
             ),
             "flatline_scope": (
                 "DS18B20_AND_BME280_MEASUREMENT_CHANNELS_ONLY; "

@@ -886,13 +886,23 @@ def _pzem_state(analysis: QAAnalysis) -> str:
         return "ABSENT"
     if all(channel.present_count == 0 for channel in powers + energies):
         return "MISSING"
-    qualified = bool(powers) and all(
+    power_qualified = bool(powers) and all(
         channel.present_count == channel.row_count
         and channel.quality_valid == channel.row_count
         and channel.impossible_count == 0
-        for channel in powers + energies
+        for channel in powers
     )
-    return "QUALIFIED" if qualified else "UNQUALIFIED"
+    energy_qualified = bool(energies) and all(
+        channel.present_count == channel.row_count
+        and channel.quality_valid == channel.row_count
+        and channel.impossible_count == 0
+        for channel in energies
+    )
+    if power_qualified and (not energies or energy_qualified):
+        return "QUALIFIED"
+    if power_qualified and energies and not energy_qualified:
+        return "POWER_QUALIFIED_ENERGY_UNQUALIFIED"
+    return "UNQUALIFIED"
 
 
 def _pzem_note_md(analysis: QAAnalysis) -> str:
@@ -912,6 +922,12 @@ def _pzem_note_md(analysis: QAAnalysis) -> str:
             "**PZEM qualification:** the cooling-branch electrical domain is "
             "VALID for every row; this report still makes no whole-system or "
             "COP claim, and the PZEM covers one cooling branch only."
+        )
+    if state == "POWER_QUALIFIED_ENERGY_UNQUALIFIED":
+        return (
+            "**PZEM power/energy qualification:** power is VALID for every row, "
+            "but energy-counter coverage is missing or unqualified. No energy, "
+            "COP or whole-system claim is made from this source."
         )
     return (
         "**UNQUALIFIED PZEM:** cooling-branch power/energy are present but the "
@@ -941,6 +957,13 @@ def _pzem_note_html(analysis: QAAnalysis) -> str:
             "electrical domain is VALID for every row; this report still makes "
             "no whole-system or COP claim, and the PZEM covers one cooling "
             "branch only.</p>"
+        )
+    if state == "POWER_QUALIFIED_ENERGY_UNQUALIFIED":
+        return (
+            "<p><strong>PZEM power/energy qualification:</strong> power is "
+            "VALID for every row, but energy-counter coverage is missing or "
+            "unqualified. No energy, COP or whole-system claim is made from "
+            "this source.</p>"
         )
     return (
         "<p><strong>UNQUALIFIED PZEM:</strong> cooling-branch power/energy are "
@@ -1273,7 +1296,7 @@ def _limits_md(analysis: QAAnalysis) -> list[str]:
     limits = [
         "Captured-frame completeness is provisional; campaign completeness is NOT_ESTIMABLE without source-carried acquisition boundaries.",
         "Long-gap and stale thresholds are named diagnostic-only configuration, not feature-eligibility limits.",
-        "Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row or an interval above the long-gap threshold, not on every gap in the timestamp series.",
+        "Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row, an interval above the long-gap threshold, or a value leaving the configured tolerance band, not on every gap in the timestamp series.",
         "PZEM power/energy values are diagnostic only while the electrical quality domain is not VALID; no validated power, energy, COP or whole-system claim is made.",
         "TEC hot-side temperature is never chamber air and never enters a chamber-air mean or gradient.",
         "Unknown ROM/role, unknown door polarity and UNKNOWN door state remain unknown; none is silently converted.",
@@ -1292,7 +1315,7 @@ def _limits_html(analysis: QAAnalysis) -> list[str]:
     items = [
         "Captured-frame completeness is provisional; campaign completeness is NOT_ESTIMABLE without source-carried acquisition boundaries.",
         "Long-gap and stale thresholds are named diagnostic-only configuration, not feature-eligibility limits.",
-        "Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row or an interval above the long-gap threshold, not on every gap in the timestamp series.",
+        "Flatline results are FLATLINE_CANDIDATE only; repeated equal values do not prove sensor failure, and state/counter channels are not flatline-tested. Spans break on a missing value, a source-quality INVALID row, an interval above the long-gap threshold, or a value leaving the configured tolerance band, not on every gap in the timestamp series.",
         "PZEM power/energy values are diagnostic only while the electrical quality domain is not VALID; no validated power, energy, COP or whole-system claim is made.",
         "TEC hot-side temperature is never chamber air and never enters a chamber-air mean or gradient.",
         "Unknown ROM/role, unknown door polarity and UNKNOWN door state remain unknown; none is silently converted.",
