@@ -52,16 +52,21 @@ failing check; no evidence is rewritten.
 ### Physical configuration
 
 - verified hardware-configuration identity;
+- one authoritative `run_id` per physical source; the same `run_id` on two
+  physical sources is a suite-level contradiction and blocks Gate B;
 - firmware identity and controller identity where the analysis needs it;
 - verified calibration identity;
-- probe ROM identity, positions and chamber-air roles;
+- probe ROM identity, positions and chamber-air roles; at least three
+  distinct chamber-air roles are required for the canonical thermal
+  population (a hot-side-only sensor block cannot pass vacuously);
 - declared physical units for required channels.
 
 ### Measurements
 
 - required thermal/door/electrical channel presence;
 - source-quality states, missing and invalid values counted separately;
-- sequence/timestamp reversals, resets and impossible intervals;
+- sequence/timestamp reversals, resets and impossible intervals; the window
+  axis is event UTC or boot uptime, matching W05, and must be non-decreasing;
 - trusted time domain and clock synchronization for an absolute-time claim;
 - PZEM qualification only where the declared analysis claims electrical
   evidence;

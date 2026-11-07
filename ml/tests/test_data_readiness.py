@@ -59,7 +59,9 @@ from coldguard_ml.data_readiness import (
 from coldguard_ml.intake import AdmissionStage
 from coldguard_ml.real_data_qa import QAConfig
 
-from test_intake_schema import write_a_export
+from test_intake_schema import SENSORS, write_a_export
+
+import coldguard_ml.data_readiness as w08
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 ML_ROOT = REPO_ROOT / "ml"
@@ -125,11 +127,13 @@ def _write_export(
     scenario_key: str = S1_KEY,
     calibration_id: str | None = "CG-CAL-001",
     device_id: str = "cg-test-001",
+    sensors: list[dict] | None = None,
 ) -> Path:
     directory.mkdir(parents=True, exist_ok=True)
     return write_a_export(
         directory,
         rows=rows,
+        sensors=sensors,
         run_id=run_id,
         boot_id=boot_id,
         device_id=device_id,
@@ -408,6 +412,70 @@ def test_missing_calibration_blocks_eligibility(tmp_path):
     }
 
 
+def test_no_chamber_air_roles_blocks_readiness(tmp_path):
+    hot_side_only = [
+        dict(
+            sensor,
+            physical_position="TEC_HOT_SIDE",
+            in_chamber_air_mean=False,
+            raw_role_in_capture=["HOT_SIDE"],
+            exclusion_reason="TEC_HOT_SIDE is not chamber air",
+        )
+        for sensor in SENSORS
+    ]
+    export = _write_export(
+        tmp_path / "source",
+        run_id="CG-S1-A-001",
+        boot_id="boot-1",
+        rows=_rows(),
+        sensors=hot_side_only,
+    )
+    index = _write_index(
+        tmp_path / "index.json", [_entry("CG-S1-A-001", "boot-1")], valid_s1=["CG-S1-A-001"]
+    )
+    capture = load_capture(export, a_run_index=index)
+    assert capture.chamber_air_slots == ()
+    admission = evaluate_admission(capture)
+    validation = validate_run(
+        capture,
+        admission=admission,
+        requirement=default_scenario_requirement("S1"),
+        manifest_linkage=_linkage(capture),
+    )
+    assert "REQUIRED_THERMAL_ROLES_PRESENT" in {
+        check.code for check in validation.blocking_failures
+    }
+    assert "THERMAL_CHAMBER_AIR_ROLES_MISSING" in validation.reason_codes
+    assert validation.eligibility == ELIGIBILITY_BLOCKED
+
+
+def test_reversed_time_axis_is_not_trusted(tmp_path):
+    export = _write_export(
+        tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
+    )
+    index = _write_index(
+        tmp_path / "index.json", [_entry("CG-S1-A-001", "boot-1")], valid_s1=["CG-S1-A-001"]
+    )
+    capture = load_capture(export, a_run_index=index)
+    rows = list(capture.rows)
+    first_stamp = rows[0].event_time_utc
+    second_stamp = rows[1].event_time_utc
+    rows[0] = dataclasses.replace(rows[0], event_time_utc=second_stamp)
+    rows[1] = dataclasses.replace(rows[1], event_time_utc=first_stamp)
+    reversed_capture = dataclasses.replace(capture, rows=tuple(rows))
+    _, axis = w08._capture_time_axis(reversed_capture)
+    assert axis == "EVENT_UTC_NOT_NON_DECREASING"
+    admission = evaluate_admission(reversed_capture)
+    validation = validate_run(
+        reversed_capture,
+        admission=admission,
+        requirement=default_scenario_requirement("S1"),
+        manifest_linkage=_linkage(reversed_capture),
+    )
+    assert "TIME_AXIS_NOT_NON_DECREASING" in validation.reason_codes
+    assert validation.eligibility == ELIGIBILITY_BLOCKED
+
+
 def test_unknown_sensor_role_blocks_eligibility(tmp_path):
     export = _write_export(
         tmp_path / "source", run_id="CG-S1-A-001", boot_id="boot-1", rows=_rows()
@@ -517,6 +585,43 @@ def test_duplicate_view_conflict_fails_closed_at_suite_level(tmp_path):
     )
     assert report.physical_gate.observed_status == "RED"
     assert REASON_DUPLICATE_CONFLICT in report.physical_gate.reason_codes
+
+
+def test_duplicate_run_id_across_physical_sources_is_red(tmp_path):
+    specs = (
+        ("CG-S1-A-001", "boot-1", "first"),
+        ("CG-S1-A-001", "boot-2", "second"),
+        ("CG-S1-A-002", "boot-3", "third"),
+    )
+    validations, admissions = [], []
+    for run_id, boot, name in specs:
+        export = _write_export(
+            tmp_path / name, run_id=run_id, boot_id=boot, rows=_rows()
+        )
+        index = _write_index(
+            tmp_path / f"{name}.json",
+            [_entry(run_id, boot)],
+            valid_s1=[run_id],
+        )
+        capture = load_capture(export, a_run_index=index)
+        admission = evaluate_admission(capture)
+        admissions.append(admission)
+        validations.append(
+            validate_run(
+                capture,
+                admission=admission,
+                requirement=default_scenario_requirement("S1"),
+                manifest_linkage=_linkage(capture),
+            )
+        )
+    report = build_gate_b_report(
+        validations, admissions, default_scenario_requirement("S1")
+    )
+    assert report.physical_gate.observed_status == "RED"
+    assert (
+        "DUPLICATE_RUN_ID_ACROSS_PHYSICAL_SOURCES"
+        in report.physical_gate.reason_codes
+    )
 
 
 def test_same_boot_exports_are_one_physical_source(tmp_path):

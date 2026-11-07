@@ -132,6 +132,11 @@ REASON_MANIFEST_MISSING = "RUN_MANIFEST_LINKAGE_NOT_PROVIDED"
 REASON_MANIFEST_MISMATCH = "RUN_MANIFEST_LINKAGE_MISMATCH"
 REASON_CAPTURE_DURATION = "CAPTURE_DURATION_NOT_DECLARED"
 REASON_CAPTURE_SHORTER = "CAPTURE_SHORTER_THAN_PLANNED_INTERVAL"
+REASON_THERMAL_ROLES = "THERMAL_CHAMBER_AIR_ROLES_MISSING"
+REASON_DUPLICATE_RUN_ID = "DUPLICATE_RUN_ID_ACROSS_PHYSICAL_SOURCES"
+REASON_TIME_AXIS_REVERSED = "TIME_AXIS_NOT_NON_DECREASING"
+
+MIN_CHAMBER_AIR_SLOTS = 3
 REASON_EVENT_ANCHOR_MISSING = "REQUIRED_EVENT_ANCHOR_MISSING"
 REASON_EVENT_UNQUALIFIED = "REQUIRED_EVENT_UNQUALIFIED"
 REASON_EVENT_WINDOW_GAP = "PRIMARY_EVENT_WINDOW_INCOMPLETE"
@@ -855,6 +860,13 @@ def _check(
     )
 
 
+def _non_decreasing(values: Sequence[float]) -> bool:
+    return all(
+        values[index + 1] >= values[index]
+        for index in range(len(values) - 1)
+    )
+
+
 def _capture_time_axis(
     capture: Capture,
 ) -> tuple[tuple[float | None, ...], str]:
@@ -863,24 +875,29 @@ def _capture_time_axis(
     if capture.time.domain == TIME_EVENT_UTC:
         stamps = [row.event_time_utc for row in rows]
         if stamps and all(stamp is not None for stamp in stamps):
-            first = stamps[0]
+            known = [stamp for stamp in stamps if stamp is not None]
+            raw = [stamp.timestamp() for stamp in known]
+            if not _non_decreasing(raw):
+                return tuple(None for _ in rows), "EVENT_UTC_NOT_NON_DECREASING"
+            first = known[0]
             return (
                 tuple(
                     round((stamp - first).total_seconds(), 6)
-                    for stamp in stamps
-                    if stamp is not None
+                    for stamp in known
                 ),
                 TIME_EVENT_UTC,
             )
     if capture.time.domain == TIME_BOOT_SCOPED_UPTIME:
         values = [row.device_ms for row in rows]
         if values and all(value is not None for value in values):
-            first = values[0]
+            known = [value for value in values if value is not None]
+            if not _non_decreasing(known):
+                return tuple(None for _ in rows), "UPTIME_NOT_NON_DECREASING"
+            first = known[0]
             return (
                 tuple(
                     round((value - first) / 1000.0, 9)
-                    for value in values
-                    if value is not None
+                    for value in known
                 ),
                 TIME_BOOT_SCOPED_UPTIME,
             )
@@ -1462,24 +1479,34 @@ def validate_run(
         if planned_start_s is not None and duration_declared
         else None
     )
-    interval_covered = (
-        planned_end_s is not None
-        and observed_times
-        and max(observed_times) >= planned_end_s - (nominal_dt or 0.0)
-    )
+    interval_covered: bool | None
+    if not duration_declared or not observed_times or planned_end_s is None:
+        interval_covered = None
+    else:
+        interval_covered = max(observed_times) >= planned_end_s - (
+            nominal_dt or 0.0
+        )
     checks.append(
         _check(
             "PLANNED_INTERVAL_COVERED",
             STAGE_MEASUREMENTS,
-            interval_covered if duration_declared else None,
+            interval_covered,
             detail=(
                 f"observed capture reaches the planned end {planned_end_s!r} s"
                 if interval_covered
-                else "the capture ends before the declared planned interval; "
-                "missing planned samples cannot be replaced by observed rows "
-                "outside the plan"
+                else "the capture ends before the declared planned interval or "
+                "has no trusted time axis; missing planned samples cannot be "
+                "replaced by observed rows outside the plan"
             ),
-            reason_codes=() if interval_covered else (REASON_CAPTURE_SHORTER,),
+            reason_codes=(
+                (REASON_CAPTURE_SHORTER,)
+                if interval_covered is False
+                else (
+                    (REASON_TIME_AXIS_REVERSED,)
+                    if observed_times == [] and duration_declared
+                    else ()
+                )
+            ),
         )
     )
     checks.append(
@@ -1630,6 +1657,27 @@ def validate_run(
             reason_codes=() if calibration_ok else ("CALIBRATION_UNVERIFIED",),
         )
     )
+    chamber_positions = {
+        capture.sensor(slot).physical_position
+        for slot in capture.chamber_air_slots
+    }
+    chamber_roles_ok = (
+        len(capture.chamber_air_slots) >= MIN_CHAMBER_AIR_SLOTS
+        and len(chamber_positions) >= MIN_CHAMBER_AIR_SLOTS
+    )
+    checks.append(
+        _check(
+            "REQUIRED_THERMAL_ROLES_PRESENT",
+            STAGE_CONFIGURATION,
+            chamber_roles_ok,
+            detail=(
+                f"{len(capture.chamber_air_slots)} chamber-air slot(s) across "
+                f"{len(chamber_positions)} distinct position(s); the canonical "
+                f"thermal population requires at least {MIN_CHAMBER_AIR_SLOTS}"
+            ),
+            reason_codes=() if chamber_roles_ok else (REASON_THERMAL_ROLES,),
+        )
+    )
     checks.append(
         _check(
             "PROBE_ROM_IDENTITY_KNOWN",
@@ -1747,11 +1795,20 @@ def validate_run(
         _check(
             "TIME_DOMAIN_DECLARED",
             STAGE_MEASUREMENTS,
-            capture.time.domain != "NONE",
+            capture.time.domain != "NONE" and time_axis not in (
+                "UNTRUSTED",
+                "EVENT_UTC_NOT_NON_DECREASING",
+                "UPTIME_NOT_NON_DECREASING",
+            ),
             detail=(
                 f"time domain {capture.time.domain!r}; analysis axis "
                 f"{time_axis!r}; event time {capture.time.event_time_status!r}; "
                 f"clock sync {capture.time.clock_sync!r}"
+            ),
+            reason_codes=(
+                (REASON_TIME_AXIS_REVERSED,)
+                if "NOT_NON_DECREASING" in time_axis
+                else ()
             ),
         )
     )
@@ -1863,7 +1920,7 @@ def validate_run(
     completeness: list[CompletenessResult] = []
     expected_whole = (
         _expected_samples(planned_duration, nominal_dt, inclusive=True)
-        if duration_declared and nominal_dt
+        if duration_declared and nominal_dt and planned_start_s is not None
         else None
     )
     rows_in_plan = (
@@ -2393,6 +2450,17 @@ def assess_gate_b(
     independent = {
         tuple(item.physical_source_key) for item in eligible
     }
+    run_sources: dict[str, set[tuple[Any, ...]]] = {}
+    for item in scenario_runs:
+        if item.run_id:
+            run_sources.setdefault(item.run_id, set()).add(
+                tuple(item.physical_source_key)
+            )
+    duplicate_run_ids = sorted(
+        run_id
+        for run_id, sources in run_sources.items()
+        if len(sources) > 1
+    )
     suite = summarize_readiness(admissions) if admissions else None
     conflicts = []
     if suite is not None:
@@ -2430,6 +2498,8 @@ def assess_gate_b(
         reasons.append(REASON_INDEPENDENT_POPULATION)
     if conflicts:
         reasons.append(REASON_DUPLICATE_CONFLICT)
+    if duplicate_run_ids:
+        reasons.append(REASON_DUPLICATE_RUN_ID)
     required_failed = [
         item
         for item in eligible
