@@ -311,6 +311,7 @@ def query_telemetry(
     *,
     device_id: str | None = None,
     run_id: str | None = None,
+    time_basis: Literal["received", "event"] = "received",
     start_time: datetime | None = None,
     end_time: datetime | None = None,
     clockless_only: bool = False,
@@ -323,9 +324,10 @@ def query_telemetry(
     Supports:
     - device_id filter
     - run_id filter
-    - time-range filter (start_time, end_time)
+    - explicit time_basis: 'received' (backend_received_at, default) vs 'event' (time)
+    - safe time-range filter (start_time, end_time) with timezone validation and start <= end
     - clockless filter (clockless_only)
-    - stable ordering (by backend_received_at with seq and id tie-breaking)
+    - stable deterministic ordering (by sort column with seq and id tie-breaking)
     """
     if limit < 1 or limit > 1000:
         raise ValueError("limit must be between 1 and 1000")
@@ -333,6 +335,14 @@ def query_telemetry(
         raise ValueError("offset must be non-negative")
     if order not in ("asc", "desc"):
         raise ValueError(f"order must be 'asc' or 'desc', got {order!r}")
+    if time_basis not in ("received", "event"):
+        raise ValueError(f"time_basis must be 'received' or 'event', got {time_basis!r}")
+    if start_time is not None and start_time.tzinfo is None:
+        raise ValueError("start_time must be timezone-aware")
+    if end_time is not None and end_time.tzinfo is None:
+        raise ValueError("end_time must be timezone-aware")
+    if start_time is not None and end_time is not None and start_time > end_time:
+        raise ValueError("start_time must be less than or equal to end_time")
 
     clauses = []
     if device_id is not None:
@@ -341,18 +351,27 @@ def query_telemetry(
         clauses.append(telemetry.c.run_id == run_id)
     if clockless_only:
         clauses.append(telemetry.c.time.is_(None))
-    if start_time is not None:
-        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
-        clauses.append(effective_time >= start_time)
-    if end_time is not None:
-        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
-        clauses.append(effective_time <= end_time)
+
+    if time_basis == "received":
+        if start_time is not None:
+            clauses.append(telemetry.c.backend_received_at >= start_time)
+        if end_time is not None:
+            clauses.append(telemetry.c.backend_received_at <= end_time)
+    elif time_basis == "event":
+        # Event time basis excludes clockless records (time IS NULL) and filters on event time
+        clauses.append(telemetry.c.time.isnot(None))
+        if start_time is not None:
+            clauses.append(telemetry.c.time >= start_time)
+        if end_time is not None:
+            clauses.append(telemetry.c.time <= end_time)
 
     statement = select(telemetry)
     if clauses:
         statement = statement.where(and_(*clauses))
 
-    sort_col = telemetry.c.backend_received_at
+    sort_col = (
+        telemetry.c.time if time_basis == "event" else telemetry.c.backend_received_at
+    )
     if order == "desc":
         statement = statement.order_by(
             sort_col.desc(), telemetry.c.seq.desc(), telemetry.c.id.desc()
@@ -378,11 +397,21 @@ def count_telemetry(
     *,
     device_id: str | None = None,
     run_id: str | None = None,
+    time_basis: Literal["received", "event"] = "received",
     start_time: datetime | None = None,
     end_time: datetime | None = None,
     clockless_only: bool = False,
 ) -> int:
     """Count normalized telemetry matching the specified filters."""
+    if time_basis not in ("received", "event"):
+        raise ValueError(f"time_basis must be 'received' or 'event', got {time_basis!r}")
+    if start_time is not None and start_time.tzinfo is None:
+        raise ValueError("start_time must be timezone-aware")
+    if end_time is not None and end_time.tzinfo is None:
+        raise ValueError("end_time must be timezone-aware")
+    if start_time is not None and end_time is not None and start_time > end_time:
+        raise ValueError("start_time must be less than or equal to end_time")
+
     clauses = []
     if device_id is not None:
         clauses.append(telemetry.c.device_id == device_id)
@@ -390,12 +419,18 @@ def count_telemetry(
         clauses.append(telemetry.c.run_id == run_id)
     if clockless_only:
         clauses.append(telemetry.c.time.is_(None))
-    if start_time is not None:
-        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
-        clauses.append(effective_time >= start_time)
-    if end_time is not None:
-        effective_time = func.coalesce(telemetry.c.time, telemetry.c.backend_received_at)
-        clauses.append(effective_time <= end_time)
+
+    if time_basis == "received":
+        if start_time is not None:
+            clauses.append(telemetry.c.backend_received_at >= start_time)
+        if end_time is not None:
+            clauses.append(telemetry.c.backend_received_at <= end_time)
+    elif time_basis == "event":
+        clauses.append(telemetry.c.time.isnot(None))
+        if start_time is not None:
+            clauses.append(telemetry.c.time >= start_time)
+        if end_time is not None:
+            clauses.append(telemetry.c.time <= end_time)
 
     statement = select(func.count(telemetry.c.id))
     if clauses:

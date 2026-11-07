@@ -177,6 +177,7 @@ def test_get_device_telemetry_returns_timing_and_provenance():
     # 1st execute: twin check (returns device_id)
     # 2nd execute: query_telemetry rows
     # 3rd execute: count_telemetry
+    # 4th execute: raw_json lookup
     cursor_twin = MagicMock()
     cursor_twin.scalar_one_or_none.return_value = "coldguard-001"
 
@@ -186,7 +187,13 @@ def test_get_device_telemetry_returns_timing_and_provenance():
     cursor_count = MagicMock()
     cursor_count.scalar.return_value = 2
 
-    mock_conn.execute.side_effect = [cursor_twin, cursor_rows, cursor_count]
+    cursor_raw = MagicMock()
+    cursor_raw.mappings.return_value.all.return_value = [
+        {"id": 1001, "raw_json": {"replay": False}},
+        {"id": 1002, "raw_json": {}},
+    ]
+
+    mock_conn.execute.side_effect = [cursor_twin, cursor_rows, cursor_count, cursor_raw]
     mock_engine.begin.return_value.__enter__.return_value = mock_conn
 
     app.state.db_engine = mock_engine
@@ -199,12 +206,13 @@ def test_get_device_telemetry_returns_timing_and_provenance():
         assert data["offset"] == 0
         assert len(data["items"]) == 2
 
-        # Verify Item 1 (Synchronized)
+        # Verify Item 1 (Unverified Clock without authoritative sync evidence - fail closed)
         item1 = data["items"][0]
         assert item1["id"] == 1
         assert item1["time"] is not None
-        assert item1["timing"]["status"] == "SYNCHRONIZED"
-        assert item1["timing"]["latency_ms"] == 150.0
+        assert item1["timing"]["status"] == "UNVERIFIED_CLOCK"
+        assert item1["timing"]["latency_ms"] is None
+        assert "not been verified" in item1["timing"]["reason"].lower()
         assert item1["measurements"]["thermal"]["t1_c"] == 4.2
         assert item1["provenance"]["calibration_id"] == "CAL-01"
 
@@ -219,3 +227,82 @@ def test_get_device_telemetry_returns_timing_and_provenance():
         assert item2["quality"]["environment"] == "UNKNOWN"
     finally:
         app.state.db_engine = None
+
+
+def test_get_device_telemetry_rejects_inverted_time_range_with_422():
+    response = client.get(
+        "/api/devices/coldguard-001/telemetry"
+        "?start_time=2026-11-07T12:00:00Z&end_time=2026-11-07T11:00:00Z"
+    )
+    assert response.status_code == 422
+    assert "start_time must be less than or equal to end_time" in response.json()["detail"]
+
+
+def test_get_device_telemetry_detects_replay_from_raw_provenance():
+    now = datetime.now(timezone.utc)
+    mock_telemetry_rows = [
+        {
+            "id": 1,
+            "device_id": "coldguard-001",
+            "boot_id": "boot-replay",
+            "seq": 99,
+            "run_id": "RUN-001",
+            "time": now,
+            "backend_received_at": now,
+            "t1_c": 4.2,
+            "t2_c": 4.1,
+            "t3_c": 4.3,
+            "t_air_c": 21.0,
+            "rh_pct": 55.0,
+            "door_state": "CLOSED",
+            "cooling_voltage_v": 12.1,
+            "cooling_current_a": 1.2,
+            "cooling_power_w": 14.52,
+            "cooling_energy_counter_wh": 0.5,
+            "applied_cooling": "ON",
+            "applied_duty": 0.75,
+            "thermal_quality": "VALID",
+            "environment_quality": "VALID",
+            "electrical_quality": "VALID",
+            "overall_quality": "VALID",
+            "device_mode": "ONLINE_NORMAL",
+            "hardware_config_id": "CG-HW-001",
+            "firmware_version": "cg-w05-0.1.0",
+            "calibration_id": "CAL-01",
+            "schema_version": 1,
+            "raw_id": 9999,
+            "serial_source": None,
+        }
+    ]
+
+    mock_engine = MagicMock()
+    mock_conn = MagicMock()
+    cursor_twin = MagicMock()
+    cursor_twin.scalar_one_or_none.return_value = "coldguard-001"
+
+    cursor_rows = MagicMock()
+    cursor_rows.mappings.return_value.all.return_value = mock_telemetry_rows
+
+    cursor_count = MagicMock()
+    cursor_count.scalar.return_value = 1
+
+    cursor_raw = MagicMock()
+    cursor_raw.mappings.return_value.all.return_value = [
+        {"id": 9999, "raw_json": {"replay": True}}
+    ]
+
+    mock_conn.execute.side_effect = [cursor_twin, cursor_rows, cursor_count, cursor_raw]
+    mock_engine.begin.return_value.__enter__.return_value = mock_conn
+
+    app.state.db_engine = mock_engine
+    try:
+        response = client.get("/api/devices/coldguard-001/telemetry")
+        assert response.status_code == 200
+        data = response.json()
+        item = data["items"][0]
+        assert item["timing"]["status"] == "REPLAY"
+        assert item["timing"]["latency_ms"] is None
+        assert "replayed" in item["timing"]["reason"].lower()
+    finally:
+        app.state.db_engine = None
+

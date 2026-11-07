@@ -25,6 +25,7 @@ from coldguard_backend.normalized_store import (
     query_telemetry,
     telemetry,
 )
+from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
 
@@ -184,6 +185,10 @@ def get_device_telemetry(
     limit: int = Query(default=100, ge=1, le=1000, description="Bounded page limit"),
     offset: int = Query(default=0, ge=0, description="Pagination offset"),
     run_id: str | None = Query(default=None, description="Filter by experiment/run ID"),
+    time_basis: Literal["received", "event"] = Query(
+        default="received",
+        description="Time basis for filtering ('received' for backend receipt time, 'event' for device captured time)",
+    ),
     start_time: datetime | None = Query(default=None, description="Start timestamp"),
     end_time: datetime | None = Query(default=None, description="End timestamp"),
     order: Literal["asc", "desc"] = Query(default="desc", description="Stable ordering"),
@@ -194,14 +199,20 @@ def get_device_telemetry(
 
     Supports:
     - Bounded pagination (limit 1-1000, non-negative offset)
-    - Safe filtering by run_id, time range, and clockless flag
+    - Safe filtering by run_id, time range, time_basis, and clockless flag
     - Stable ordering
     - Source provenance (serial_source, raw_id)
-    - Clock-quality-aware timing metrics
+    - Clock-quality-aware timing metrics with fail-closed synchronization verification
     """
     cleaned_id = device_id.strip()
     if not cleaned_id:
         raise HTTPException(status_code=404, detail="Device not found")
+
+    if start_time is not None and end_time is not None and start_time > end_time:
+        raise HTTPException(
+            status_code=422,
+            detail="start_time must be less than or equal to end_time",
+        )
 
     with engine.begin() as connection:
         # Verify device existence in either twin or telemetry
@@ -222,6 +233,7 @@ def get_device_telemetry(
             connection,
             device_id=cleaned_id,
             run_id=run_id,
+            time_basis=time_basis,
             start_time=start_time,
             end_time=end_time,
             clockless_only=clockless_only,
@@ -233,17 +245,41 @@ def get_device_telemetry(
             connection,
             device_id=cleaned_id,
             run_id=run_id,
+            time_basis=time_basis,
             start_time=start_time,
             end_time=end_time,
             clockless_only=clockless_only,
         )
 
+        raw_ids = [r["raw_id"] for r in rows if r.get("raw_id")]
+        raw_lookup: dict[int, Any] = {}
+        if raw_ids:
+            try:
+                raw_rows_stmt = select(telemetry_raw.c.id, telemetry_raw.c.raw_json).where(
+                    telemetry_raw.c.id.in_(raw_ids)
+                )
+                raw_lookup = {
+                    row["id"]: row["raw_json"]
+                    for row in connection.execute(raw_rows_stmt).mappings().all()
+                }
+            except Exception:
+                raw_lookup = {}
+
     items = []
     for r in rows:
+        raw_json = raw_lookup.get(r.get("raw_id"))
+        is_replay = False
+        if isinstance(raw_json, dict):
+            is_replay = bool(raw_json.get("replay") or raw_json.get("is_replay"))
+        elif r.get("is_replay"):
+            is_replay = True
+
         timing = compute_timing_metrics(
             r["backend_received_at"],
             r["time"],
+            clock_sync_verified=False,
             serial_source=r.get("serial_source"),
+            is_replay=is_replay,
         )
         items.append(
             {
