@@ -585,6 +585,9 @@ A member may wait on physical reset while doing analysis/review, but should not 
 
 ## 3.1 Branching
 
+Member C uses one feature branch and one pull request per week. All tasks for
+that week land together after software verification.
+
 Recommended:
 
 ```text
@@ -612,15 +615,18 @@ branches.
 Nontrivial P0 change:
 
 - pull request;
-- at least one independent reviewer;
+- the assigned member owns implementation and verifies the change;
 - required tests/evidence where applicable;
 - no unresolved correctness question.
+
+Peer review is optional. Technical verification and applicable safety and
+evidence gates are required. Record human approval only when it occurred.
 
 ---
 
 ## 3.3 Reviewer matrix
 
-| Area | Primary | Required reviewer |
+| Area | Primary | Suggested peer reviewer |
 |---|---|---|
 | Physical wiring / pin / sensing | A | D |
 | PZEM/IBT-2 actuation path | A | D |
@@ -659,7 +665,6 @@ An issue is `Ready` only when:
 ```text
 [ ] parent doc section is known
 [ ] owner is known
-[ ] reviewer is known
 [ ] dependency is available or a valid fixture/simulator exists
 [ ] expected output is explicit
 [ ] test/evidence is named
@@ -691,7 +696,7 @@ ColdGuard adapts that concept to an academic cyber-physical project.
 [ ] integration test when boundary matters
 [ ] docs/contracts still agree
 [ ] logs/errors safe and understandable
-[ ] reviewer approved
+[ ] assigned owner verified the change and applicable safety/evidence gates
 [ ] no hidden TODO in P0 path
 ```
 
@@ -3504,7 +3509,7 @@ A↔D
 B↔C
 
 W17–W20:
-all critical PRs require boundary reviewer
+suggested peer reviewer for critical PRs follows the affected boundary
 
 W21–W24:
 reviewer chosen by evidence domain

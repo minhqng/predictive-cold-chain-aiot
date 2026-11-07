@@ -5,7 +5,7 @@ subscribes through the real broker as the ``backend-ingest`` principal
 and ingests every received message via
 :func:`coldguard_backend.ingest.ingest_message` — raw evidence commits
 first, then (iff strictly valid with topic/device agreement) the
-normalized sample commits under database-arbitrated idempotency.
+normalized sample and any reported Twin update commit together.
 
 Durability boundary, stated honestly:
 
@@ -65,6 +65,10 @@ SUBSCRIPTIONS: tuple[tuple[str, int], ...] = (
 )
 
 _CONNECT_TIMEOUT_S = 10.0
+# Bound database connect attempts so an outage is observed (and counted)
+# promptly instead of waiting for the platform TCP timeout. Without this, a
+# DB outage can stall the ingest callback for minutes and look like silence.
+_DB_CONNECT_TIMEOUT_S = 5
 
 
 def reason_failed(reason) -> bool:
@@ -122,7 +126,12 @@ class MqttIngestConsumer:
         return cls(config)
 
     def _build_engine(self) -> Engine:
-        return create_engine(self._config.database_url, pool_size=5, max_overflow=5)
+        return create_engine(
+            self._config.database_url,
+            pool_size=5,
+            max_overflow=5,
+            connect_args={"connect_timeout": _DB_CONNECT_TIMEOUT_S},
+        )
 
     # -- lifecycle ----------------------------------------------------
 
@@ -215,7 +224,10 @@ class MqttIngestConsumer:
             self._connected.set()
             return
         for topic, qos in self._subscriptions:
-            result, _mid = client.subscribe(topic, qos=qos)
+            # A custom wildcard filter can also receive telemetry.
+            result, _mid = client.subscribe(
+                topic, options=mqtt.SubscribeOptions(qos=qos, retainAsPublished=True)
+            )
             if result != mqtt.MQTT_ERR_SUCCESS:
                 log.error("mqtt subscribe failed: topic=%s qos=%s rc=%s", topic, qos, result)
         log.info("mqtt connected; subscribed to %d topic filters", len(self._subscriptions))
@@ -242,6 +254,7 @@ class MqttIngestConsumer:
                 payload=bytes(message.payload),
                 received_at=received_at,
                 metrics=self.metrics,
+                retained=message.retain,
             )
         except Exception:  # noqa: BLE001 - contained, counted, observable
             with self._lock:

@@ -3,7 +3,7 @@
 Runs only when COLDGUARD_TEST_DATABASE_URL is set, against a real
 provider (never SQLite). Proves the two required starting states:
 
-* fresh database: base → 0001 → 0002 → 0003 reaches the new head with
+* fresh database: base through the current head with
   the expected tables/constraints/indexes;
 * existing W02 database: 0002 + real raw messages + repeated logical
   identities → 0003 succeeds, preserves every historical raw row
@@ -25,7 +25,7 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-EXPECTED_HEAD = "0003"
+EXPECTED_HEAD = "0005"
 
 
 needs_real_db = pytest.mark.skipif(
@@ -84,7 +84,7 @@ def _wire(device_id: str, boot_id: str, seq: int, run_id: str) -> str:
 
 
 @needs_real_db
-def test_fresh_upgrade_reaches_w03_head():
+def test_fresh_upgrade_preserves_w03_tables():
     _downgrade_to_base()
     _alembic("upgrade", "head")
     engine = create_engine(_db_url())
@@ -181,7 +181,7 @@ def test_w02_existing_data_with_duplicates_upgrades_without_loss():
 
 
 @needs_real_db
-def test_repeated_upgrade_to_w03_head_is_safe():
+def test_repeated_upgrade_to_current_head_is_safe():
     _alembic("upgrade", "head")
     _alembic("upgrade", "head")
     engine = create_engine(_db_url())

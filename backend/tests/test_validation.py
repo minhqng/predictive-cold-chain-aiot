@@ -96,7 +96,7 @@ def test_naive_timestamp_rejected():
 
 def test_unsupported_schema_rejected_never_parsed_as_compatible():
     payload = _payload()
-    payload["schema_version"] = 2
+    payload["schema_version"] = 99
     telemetry, errors = validate_telemetry_payload(payload)
     assert telemetry is None
     assert any(err["code"] == "UNSUPPORTED_SCHEMA" for err in errors)

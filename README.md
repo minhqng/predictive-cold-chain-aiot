@@ -26,10 +26,13 @@ a duplicate-heavy Mosquitto→backend→PostgreSQL run (150 deliveries /
 50 identities / 50 samples / 100 exact duplicates, conflict
 preservation, 5 rejection classes;
 `backend/scripts/proof_w03_duplicates.py`) and the still-green
-1,000-message W02 proof (`backend/scripts/proof_1000.py`). No Digital
-Twin, prediction, or control exists yet; those start in W04+.
+1,000-message W02 proof (`backend/scripts/proof_1000.py`).
 
-## Backend Architecture (Member C, W03)
+W04 adds the backend Digital Twin with atomic reported projection and
+versioned desired intent. See [Member C's Digital Twin contract](docs/05C-member-c-iot-backend-digital-twin.md#41-week-04--digital-twin-v0-with-real-a-telemetry)
+for replay and boot reconciliation rules.
+
+## Backend Architecture (Member C, W04)
 
 One deployable modular FastAPI monolith. Real modules today:
 
@@ -40,14 +43,15 @@ backend/src/coldguard_backend/
 ├── contracts.py   # wire contracts: Telemetry / Command validation
 ├── validation.py  # strict runtime validation + topic/device identity
 ├── simulator.py   # synthetic device: deterministic finite-run publisher
-├── mqtt_consumer.py # ingestion: real subscriber → raw + normalized
+├── mqtt_consumer.py # ingestion: real MQTT subscriber
 ├── raw_store.py   # persistence: classification + durable raw writes
 ├── normalized_store.py # normalized telemetry + ON CONFLICT idempotency
-├── ingest.py      # orchestration: raw-before-derived + metrics
-└── migrations/   # Alembic 0001 (baseline) + 0002 (telemetry_raw) + 0003 (telemetry)
+├── ingest.py      # orchestration: raw, normalized, Twin and metrics
+├── twin_store.py  # reported projection, boot reconciliation and desired intent
+└── migrations/   # Alembic revisions 0001 through 0004
 ```
 
-Future logical boundaries (not yet packages; see Doc 05C weeks 02+):
+Backend logical boundaries (see Doc 05C):
 
 ```text
 ingestion → twin → experiments → prediction → policy adapter
@@ -125,7 +129,7 @@ From `backend/` (uses `DATABASE_URL` when set, else validated config):
 
 ```bash
 uv run --locked alembic -c alembic.ini upgrade head
-uv run --locked alembic -c alembic.ini current   # expect: 0003 (head)
+uv run --locked alembic -c alembic.ini current   # expect: 0005 (head)
 ```
 
 Timescale extension ownership stays with
