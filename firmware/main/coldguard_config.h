@@ -559,9 +559,10 @@
 #define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
 
 /* An ambient reading older than this cannot be presented as the current room
- * condition. Same four-periods rule as the door: the BME producer publishes at
- * CG_HEALTH_BME_PERIOD_MS, so one missed cycle is tolerated and a second is not
- * (docs/01 A-W02-06: a stale environmental value must not look fresh). */
+ * condition. Same four-period rule as the door: the BME producer publishes at
+ * CG_HEALTH_BME_PERIOD_MS, so four periods tolerate three missed cycles and
+ * still refuse a channel that has gone quiet (docs/01 A-W02-06: a stale
+ * environmental value must not look fresh). */
 #define CG_TELEM_STALE_ENV_MS (4 * CG_HEALTH_BME_PERIOD_MS)
 
 /* ------------------------------------------------------------------ */

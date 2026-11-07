@@ -9,6 +9,7 @@
 #include <string.h>
 
 #include "cg_quality.h"
+#include "cg_bme280.h"
 #include "coldguard_config.h"
 
 static void append(char **cursor, size_t *left, bool *overflow, const char *fmt, ...)
@@ -242,6 +243,10 @@ size_t cg_telemetry_format(char *buf, size_t cap, const cg_telemetry_frame_t *fr
     quality_in.bme_state = source_state(snap->env_observed, snap->env_obs_ms, now_ms,
                                         CG_TELEM_STALE_ENV_MS, snap->env_valid);
     quality_in.bme_present = snap->env_present;
+    quality_in.bme_refused_by_policy = snap->env_observed && snap->env_present &&
+                                       !snap->env_valid &&
+                                       snap->env_reason ==
+                                           (uint8_t)CG_BME_READ_TRIM_UNCONFIRMED;
     quality_in.bme_age_ms = obs_age_ms(snap->env_obs_ms, now_ms);
     quality_in.bme_age_limit_ms = CG_TELEM_STALE_ENV_MS;
     quality_in.thermal_age_ms = obs_age_ms(snap->thermal_obs_ms, now_ms);

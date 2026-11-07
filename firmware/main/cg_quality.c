@@ -85,6 +85,9 @@ static const char *environment_quality(const cg_quality_input_t *in)
          * from reading VALID while the module is absent. */
         return CG_Q_DEGRADED;
     }
+    if (in->bme_refused_by_policy) {
+        return CG_Q_DEGRADED;
+    }
     return cg_source_quality_name(in->bme_state,
                                   in->bme_age_ms > in->bme_age_limit_ms);
 }

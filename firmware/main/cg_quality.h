@@ -62,6 +62,11 @@ typedef struct {
      * stale observation by labelling it fresh. */
     int door_age_over_limit;
     int bme_present;
+    /* A module answered, but board policy refused the value (the fitted trim
+     * layout has never been confirmed against a reference instrument). That is
+     * a known configuration limitation, not a failed reading, so the group is
+     * DEGRADED rather than INVALID - the same treatment as a declared absence. */
+    int bme_refused_by_policy;
     cg_source_state_t thermal_state;
     cg_source_state_t power_state;
     cg_source_state_t door_state;
