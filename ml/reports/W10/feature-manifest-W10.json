@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "4d2642332b87142c9d0fd4d12bd1be16b1dfcf17da0e664dd554fde3a4c061e7",
+  "analysis_code_sha256": "155aa84330be6e70e340be5d8323b4ac150222ddf64c9544173a4f5494a462e9",
   "artifacts": {
     "S2-feature-report.md": {
       "bytes": 7351,
@@ -29,7 +29,7 @@
     "version": "coldguard-w10-synthetic-s2-v1"
   },
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision 7ed48334375f87ff1e7fafc948f754c3395b057e",
+  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision ff7230d7aae5cff3c55752285fb42bf409de9c8b",
   "layer_version": "coldguard-w10-causal-feature-pipeline-v1",
   "real_a": {
     "boot_id": "56044b74",
@@ -155,7 +155,7 @@
     "window_convention": "(t - lookback_s, t]"
   },
   "report_schema": "coldguard-w10-s2-feature-report-v1",
-  "repository_revision": "7ed48334375f87ff1e7fafc948f754c3395b057e",
+  "repository_revision": "ff7230d7aae5cff3c55752285fb42bf409de9c8b",
   "role_map": {
     "chamber_air_roles": [
       "CHAMBER_CENTER",
