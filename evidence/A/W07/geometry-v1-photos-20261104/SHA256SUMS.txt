@@ -1,0 +1,2 @@
+f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d *geometry-v1-interior-20261104.png
+ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2 *geometry-v1-exterior-20261104.png
