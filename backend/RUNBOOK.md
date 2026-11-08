@@ -36,16 +36,26 @@ Requires a working Docker Compose v2 runtime and pre-staged images. The pinned
 topology is [`infra/compose.yaml`](../infra/compose.yaml); commands below are the
 documented route, **not a claim they ran on this machine**. `$PROJECT` is the
 new owned project name; `infra/.env` is the private per-checkout configuration.
+Run this as one Bash script/block with fail-fast enabled, not as independent
+commands that continue after an error. Inspect the installed Compose help for
+`up --wait/--wait-timeout`; a version without them is a setup blocker.
 
 ```sh
+set -euo pipefail
 docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env config --quiet
 # Images must already exist. Do not pull/build during an offline demo.
-docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env up -d --pull never --no-build postgres mosquitto
+docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env up -d --wait --wait-timeout 60 --pull never --no-build postgres mosquitto
 # Install schema before starting acquisition/backend subscribers.
 docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env run --rm --no-deps backend .venv/bin/alembic -c alembic.ini upgrade head
 docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env up -d --pull never --no-build backend
 docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env ps
 ```
+
+The bounded wait uses the PostgreSQL **TCP** readiness healthcheck, not the
+temporary initialization socket. Any wait or authenticated Alembic failure stops
+the block before backend/subscriber startup. Readiness alone is not credential
+or schema validation; successful migration is still required. This documented
+failure gate is not a substitute for a real clean Compose execution report.
 
 The image includes `alembic.ini`, migration source and operator scripts. Frozen
 export/build commands still run from the clean **host Git checkout**: the runtime
@@ -64,6 +74,7 @@ explicit owned loopback ports. Set `DATABASE_URL` to the dedicated direct
 host/port/ingest credentials from that same owned broker. From `backend/`:
 
 ```sh
+mkdir -p ../evidence-out
 uv sync --offline --locked --extra test
 uv run --offline --locked alembic -c alembic.ini upgrade head
 uv run --offline --locked alembic -c alembic.ini current
@@ -93,6 +104,12 @@ required readiness fields. It returns nonzero for NOT_READY, rejects ambiguous
 origins, ignores proxies and refuses redirects. Existing reports are not
 overwritten. Read-only schema/table checks are not a physical or security
 certification. Use unique report names outside immutable packages.
+Pre-create the owned report directory. Parent-relative operator output roots are
+supported; internal artifact dot-navigation/device/alias names are still refused.
+The host `DATABASE_URL` must identify the same owned DB configured for the selected
+backend: READY tests the explicitly supplied DB, but does not discover or authenticate
+the correspondence automatically. Startup reconciliation is reported separately
+and must be enabled for the recovery scene; it is not a generic READY gate.
 
 ```sh
 docker compose --project-name "$PROJECT" -f infra/compose.yaml --env-file infra/.env logs --no-color --tail 100 backend mosquitto postgres
