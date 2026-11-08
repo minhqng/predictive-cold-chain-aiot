@@ -128,10 +128,12 @@ restore. Run the verifier from `backend/`.
 uv run --locked python scripts/verify_restore.py --output restore-proof.json
 ```
 
-The verifier streams ordered rows and records each table's count and SHA-256
-in UTC. It covers raw payload and normalized provenance, run manifests and
-transitions, command attempts, ACKs, and Twin state. A mismatch produces a
-nonzero exit code. Re-export the frozen S1 run set from both databases with the
+The verifier streams primary-key-ordered rows and records each table's count
+and SHA-256 in UTC. It covers raw payload and normalized provenance, run
+manifests and transitions, command attempts, ACKs, and Twin state. It also
+checks predictions and their inputs, shadow decisions, physical assessments,
+and policy approvals from the revisions that introduce them. A mismatch
+produces a nonzero exit code. Re-export the frozen S1 run set from both databases with the
 same `--created-at` and backend commit, then compare the artifact SHA-256.
 
 ## Gate G2
