@@ -34,10 +34,11 @@ def main() -> int:
         if args.operation == "integrity":
             report = live_integrity(engine, args.campaign)
         else:
-            with engine.begin() as connection:
-                report = register_campaign(connection, CampaignCreate.model_validate(json.loads(args.plan.read_text()))) if args.operation == "register" else close_run(
-                    connection, args.campaign, args.run, reason=args.reason,
-                )
+            with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+                with connection.begin():
+                    report = register_campaign(connection, CampaignCreate.model_validate(json.loads(args.plan.read_text()))) if args.operation == "register" else close_run(
+                        connection, args.campaign, args.run, reason=args.reason,
+                    )
         with args.output.open("xb") as output:
             output.write(encode_evidence(report))
         return 0 if report.get("database_health") != "UNAVAILABLE" else 1
