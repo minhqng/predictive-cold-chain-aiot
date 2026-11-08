@@ -1,0 +1,87 @@
+{
+  "checks": [
+    {
+      "detail": "0.6187499999999986",
+      "failure_reason": "",
+      "name": "cooling_direction",
+      "passed": true
+    },
+    {
+      "detail": "29.875->31.875",
+      "failure_reason": "HOT_SIDE_DIRECTION_WRONG",
+      "name": "hot_side_rises",
+      "passed": true
+    },
+    {
+      "detail": "Operator-confirmed 2026-11-02 (polarity-photo.md \u00a71): cold block inside foam box; hot block+fan outside; T2 28AEBF2200000006 on hot-side metal.",
+      "failure_reason": "",
+      "name": "orientation_recorded",
+      "passed": true
+    },
+    {
+      "detail": "3/1 files (imported=3)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    },
+    {
+      "detail": "2 qualifying photo(s)",
+      "failure_reason": "PHOTO_NOT_PRESENT",
+      "name": "photo",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T04:08:11.609320+00:00",
+  "evidence": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.804+00:00",
+      "sha256": "20f99a27d7c333abdb03ec1fabc77ca1b8f8b511c8a71224045d17af5e641a4c",
+      "size": 18563,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h6-tec-polarity-test-plan.md",
+      "stored": "imports\\A-W04-06\\20f99a27d7c3-h6-tec-polarity-test-plan.md",
+      "test_id": "A-W04-06"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T04:08:11.612+00:00",
+      "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+      "size": 1081314,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-interior-20261104.png",
+      "stored": "imports\\A-W04-06\\f19531a17036-geometry-v1-interior-20261104.png",
+      "test_id": "A-W04-06"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T04:08:11.628+00:00",
+      "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+      "size": 3808646,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-exterior-20261104.png",
+      "stored": "imports\\A-W04-06\\ae96a96fa55f-geometry-v1-exterior-20261104.png",
+      "test_id": "A-W04-06"
+    },
+    {
+      "captured_at": "2026-11-08T04:08:11.658+00:00",
+      "original": "A-W04-06",
+      "path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\measurements\\A-W04-06-20261108T040811649939-7b7e0f.json",
+      "sha256": "7291fade5cca8bec38ffe8ad33eaa395848c4c367a7377050c4dd8690fc6fe5c",
+      "size": 446,
+      "stored": "measurements\\A-W04-06-20261108T040811649939-7b7e0f.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "chamber_drop_c": 0.6187499999999986,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "orientation": "Operator-confirmed 2026-11-02 (polarity-photo.md \u00a71): cold block inside foam box; hot block+fan outside; T2 28AEBF2200000006 on hot-side metal."
+  },
+  "notes": "PASS from existing evidence: polarity-photo.md \u00a71 operator attestation + W07 geometry interior/exterior (hash-verified, assembled) + A-W04-05 HARDWARE measured drop/hot-rise. Disclosures: polarity-photo.md header stale; T2 ROM label not legible in exterior photo (placement operator-attested + firmware t2_role=HOT_SIDE); no wire-colour inference.",
+  "operator": "operator+qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-08T04:08:11.609320+00:00",
+  "test_id": "A-W04-06"
+}

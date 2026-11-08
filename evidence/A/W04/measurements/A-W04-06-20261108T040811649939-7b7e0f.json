@@ -1,0 +1,12 @@
+{
+  "captured_at": "2026-11-08T04:08:11.649+00:00",
+  "measurements": {
+    "chamber_drop_c": 0.6187499999999986,
+    "hot_side_max_c": 31.875,
+    "hot_side_start_c": 29.875,
+    "orientation": "Operator-confirmed 2026-11-02 (polarity-photo.md \u00a71): cold block inside foam box; hot block+fan outside; T2 28AEBF2200000006 on hot-side metal."
+  },
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "test_id": "A-W04-06"
+}
