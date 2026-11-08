@@ -170,6 +170,12 @@ must resolve outside the immutable package, including symlink/junction aliases.
 Backup receipt/archive bytes are read once and validated as one retained pair;
 that exact pair is packaged and used for restore, never a raced second read.
 Every exported raw row is checked, including events and losing retransmissions.
+Package verification retains each anchor-checked file once. Internal dataset and
+backup validation use that same byte snapshot; frozen restore carries its
+receipt/archive bytes and manifest digests into the restore operation **before**
+opening the target database. Later source-path replacement cannot substitute a
+different internally consistent pair. Standalone omit-only legacy receipt
+compatibility remains separate from immutable frozen-package byte authority.
 
 Immutable close records require a `REPEATABLE READ` (or `SERIALIZABLE`) write
 transaction before the first read; the CLI establishes it explicitly. The
