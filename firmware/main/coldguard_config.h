@@ -76,6 +76,15 @@
 #define CG_PIN_BME280_SDA 21
 /* SCL moved from GPIO33 to GPIO34 when the BME280 header was wired. */
 #define CG_PIN_BME280_SCL 34
+#define CG_BME280_I2C_ADDR_EVIDENCED 0x76
+#define CG_BME280_I2C_ADDR_ALT 0x77
+/* Fail closed until the fitted module's trim layout is compared against a
+ * reference; the bus/identity remain observable. The default build keeps 0; a
+ * supervised build may pass -DCG_BME280_TRIM_LAYOUT_CONFIRMED=1 only after the
+ * corrected fitted-module decode has been verified on hardware. */
+#ifndef CG_BME280_TRIM_LAYOUT_CONFIRMED
+#define CG_BME280_TRIM_LAYOUT_CONFIRMED 0
+#endif
 /* MC-38 moved from GPIO34 to GPIO35; GPIO34 now carries BME280 SCL. */
 #define CG_PIN_MC38 35
 /* Naming debt: the as-built RS-485 part is a TTL485-V2.0 auto-direction module
@@ -557,11 +566,6 @@
 #define CG_HEALTH_TELEMETRY_PERIOD_MS CG_TELEMETRY_PERIOD_MS
 #define CG_HEALTH_CONTROL_PERIOD_MS CG_TEC_TICK_MS
 
-/* BME280 is not implemented in this tree (docs/01 A-W02-06 is pending, and the
- * telemetry reports humidity as SENSOR_NOT_PRESENT). Its producer therefore
- * never beats and is reported NEVER, which the quality layer turns into
- * UNKNOWN for the environment group rather than a pass. */
-
 /* A door level older than this cannot be presented as the current door state
  * (docs/01 2237-2249: historical validity is not control freshness). W04 had no
  * door age at all - the door publication carried no timestamp - so this bound
@@ -569,6 +573,13 @@
  * an observation time. Four door periods is 80 ms, far inside any deliberate
  * open interval used for a disturbance test, so it cannot erase a treatment. */
 #define CG_TELEM_STALE_DOOR_MS (4 * CG_HEALTH_DOOR_PERIOD_MS)
+
+/* An ambient reading older than this cannot be presented as the current room
+ * condition. Same four-period rule as the door: the BME producer publishes at
+ * CG_HEALTH_BME_PERIOD_MS, so four periods tolerate three missed cycles and
+ * still refuse a channel that has gone quiet (docs/01 A-W02-06: a stale
+ * environmental value must not look fresh). */
+#define CG_TELEM_STALE_ENV_MS (4 * CG_HEALTH_BME_PERIOD_MS)
 
 /* ------------------------------------------------------------------ */
 /* W06 - command/ACK                                                   */

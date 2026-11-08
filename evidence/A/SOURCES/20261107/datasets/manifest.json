@@ -1,0 +1,471 @@
+{
+  "created_utc": "2026-11-08T10:41:48.918+00:00",
+  "purpose": "ColdGuard Member A real-data handoff: raw + normalized datasets + offline acceptance computations from existing physical evidence",
+  "sensor_positions": {
+    "t1": "CHAMBER_CENTER",
+    "t2": "TEC_HOT_SIDE",
+    "t3": "CHAMBER_BOTTOM",
+    "t4": "CHAMBER_NEAR_DOOR"
+  },
+  "chamber_air_mean": "mean(t1,t3,t4), only when all three temperatures report OK; t2 (hot side) is never included",
+  "store_used": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z",
+  "new_store_passes": [],
+  "totals": {
+    "runs_and_segments": 18,
+    "frames_total": 9293,
+    "frames_by_scenario": {
+      "S2_TIMING": 120,
+      "S2_DOOR": 1200,
+      "S2_OUTSIDE": 346,
+      "S1": 2401,
+      "S1_OUTSIDE": 62,
+      "COOLING_STEP": 957,
+      "COOLING_STEP_1800S": 2915,
+      "W07_PASSIVE_REPEAT": 900,
+      "COOLING_STEP_500PERMILLE": 392
+    }
+  },
+  "inputs": [
+    {
+      "package_path": "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
+      "source_path": "C:\\cgb\\COLDGUARD_MEMBER_A_DATA_HANDOFF_20261108\\original_raw\\H8C_RAW\\monitor-final__telemetry_raw.log",
+      "bytes": 1744913,
+      "sha256": "b570057efdc5ca2ead239766cecaf5531dedaa47e3fb42374dc02022a2c58964"
+    },
+    {
+      "package_path": "raw/h8-e-1800s-100pct/monitor__telemetry_raw.log",
+      "source_path": "C:\\cgb\\COLDGUARD_MEMBER_A_DATA_HANDOFF_20261108\\original_raw\\H8E\\monitor__telemetry_raw.log",
+      "bytes": 5330311,
+      "sha256": "b93f74cc51ed2649647a494788a6b5bc0db8de5ade7780f4dfc0dc6e1b43bad8"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/telemetry_raw.log",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s2\\door-20261107T081539Z\\raw\\telemetry_raw.log",
+      "bytes": 4370853,
+      "sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078"
+    },
+    {
+      "package_path": "raw/s1-trial1-20261107/telemetry_raw.log",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\s1-20261107T063828Z\\raw\\telemetry_raw.log",
+      "bytes": 1572494,
+      "sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\s1-multi-20261107T064902Z\\raw\\telemetry_raw.log",
+      "bytes": 4886616,
+      "sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/commands.log",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\s1-multi-20261107T064902Z\\commands.log",
+      "bytes": 180,
+      "sha256": "d459d362cba29dff0c53594b6c14a2c487fbd4a0040cf19a471c115b28e75ee6"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/s1-summary.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\s1-multi-20261107T064902Z\\s1-summary.json",
+      "bytes": 1418,
+      "sha256": "0ab32b7c70b1bb04100ffcbab825e0e68d80178b00a8f197644939886a09b64d"
+    },
+    {
+      "package_path": "raw/s1-trial1-20261107/trial.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\s1-20261107T063828Z\\trial.json",
+      "bytes": 220,
+      "sha256": "58ac47eb13abd023249c825b895e1885f57db48ae06f93ec453e4ce8904a0efd"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/commands.log",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s2\\door-20261107T081539Z\\commands.log",
+      "bytes": 893,
+      "sha256": "977e00083b0e36626b9fd8694262152404da5edccaf060ec60f6cd8aa1877f00"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/door_report.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s2\\door-20261107T081539Z\\door_report.json",
+      "bytes": 1670,
+      "sha256": "672db9b136c5edfb9dd453471065c989b3e4d8dda2dc29ecded21c843896fe0f"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/door_protocol_record.md",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s2\\door-20261107T081539Z\\door_protocol_record.md",
+      "bytes": 167,
+      "sha256": "bfe09d1e62d178cb7fca01f8ae9de59caea853bd900f685639edfc2ec501c9c9"
+    },
+    {
+      "package_path": "raw/source-results/source-result-A-W09-02.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s1\\source-result-A-W09-02.json",
+      "bytes": 2515,
+      "sha256": "0381497c8e6ba4c73815ca28c206892e779323d2a6b45f7bbc48d5bad5ba5515"
+    },
+    {
+      "package_path": "raw/source-results/source-result-A-W10-03.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_s1-s2-source-local\\evidence\\A\\SOURCES\\20261107\\s2\\source-result-A-W10-03.json",
+      "bytes": 4635,
+      "sha256": "144a5109d53118cbe4e6a37e292f9d76321f110ca19a36aa6fa95c9088e67398"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-1-4b555191.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-02-run-1-4b555191.jsonl",
+      "bytes": 87490,
+      "sha256": "fcb682c5c1cc1a9aa98c10505299c20567de7688f8d50e673e8e950854c63980"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-2-4b555191.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-02-run-2-4b555191.jsonl",
+      "bytes": 88908,
+      "sha256": "31948cd1c46c999115d483bd4253d35e8711168f3b02ccc21dda5556c349b199"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-3-4b555191.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-02-run-3-4b555191.jsonl",
+      "bytes": 89039,
+      "sha256": "d5aed4a2893dc9fb7c87d197ac30361b623e7eeb0f62f550b16445cb59bfb0c6"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-1-20261104T161322334177.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-03-trial-1-20261104T161322334177.json",
+      "bytes": 2082,
+      "sha256": "24723a2d5755d96f5495517d186cba0735ee1b71b8f58494991e3ab302e365cb"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-2-20261104T162942709761.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-03-trial-2-20261104T162942709761.json",
+      "bytes": 2611,
+      "sha256": "02f3a89affae1a8447be34d9ab96b06e48bad518b7651855c6b297fa3cf516d8"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-3-20261104T171503395704.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w07-03-trial-3-20261104T171503395704.json",
+      "bytes": 2689,
+      "sha256": "400bb8e414bfd73a7fb31bd3f1c4a1301d1a9523bb349544cd18279650c9d588"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-2-be89bf4a.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\trials\\a-w07-03-trial-2-be89bf4a.jsonl",
+      "bytes": 482410,
+      "sha256": "592c5487d337b8035442e8ff12c87763e3750b7123af9ac39118ca6ea687c4f4"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-3-f44c9bed.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\trials\\a-w07-03-trial-3-f44c9bed.jsonl",
+      "bytes": 482465,
+      "sha256": "bb2f3efd7ea0ad0d2f178f88eaf0051e5b31c8ee32058e0979c710024b3d9149"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w09-02-run-1-INTERRUPTED-20261105.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\bench-results\\a-w09-02-run-1-INTERRUPTED-20261105.json",
+      "bytes": 568,
+      "sha256": "64a1d34725624834b2c9e0d6ce2c13a5a879d5e49a29f8df6887147fb1dc1cfb"
+    },
+    {
+      "package_path": "raw/session-20261104/telemetry.csv",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\telemetry.csv",
+      "bytes": 57402,
+      "sha256": "bd347591d5c953b491497512d357cd617eff3530a75d3b265c65cc1cabfe303c"
+    },
+    {
+      "package_path": "raw/w07-repeats/cooling-step-runs.jsonl",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_capture-quality-local\\evidence\\A\\W07\\cooling-step-runs.jsonl",
+      "bytes": 2168,
+      "sha256": "ae2bce43238cf9ba2be61c1059c50f4d6d8828198a17001e1d00d67d1b564129"
+    },
+    {
+      "package_path": "datasets/published/tec-cooling-response-600s.csv",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W04\\tec-cooling-response-600s.csv",
+      "bytes": 336832,
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    {
+      "package_path": "datasets/published/response-delay.csv",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W13\\response-delay.csv",
+      "bytes": 434,
+      "sha256": "c4a89329af8386dec36837736429f6b7b7985c628fa3f38b4dc5ed238728a912"
+    },
+    {
+      "package_path": "datasets/published/door-critical.csv",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W13\\door-critical.csv",
+      "bytes": 320,
+      "sha256": "abd4d469f1dde9317a8cdb0539bd6d287f3535bafe3969510cb5d45cd383abe1"
+    },
+    {
+      "package_path": "datasets/published/plant-timing-report.json",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W13\\plant-timing-report.json",
+      "bytes": 9439,
+      "sha256": "2826a71026e7d4b8dc2cf3413efb5e4983785fc59ae760586569b91279fb2169"
+    },
+    {
+      "package_path": "datasets/published/timing-pilot-jitter.csv",
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W05\\timing-pilot-jitter.csv",
+      "bytes": 1470,
+      "sha256": "494013a74b568ec9482c4acc0f4e3e990657d3a8ef1c85bbf3c4fdcbf08121c0"
+    }
+  ],
+  "outputs": [
+    {
+      "package_path": "acceptance-decisions-20261108.md",
+      "bytes": 2396,
+      "sha256": "6b0644ac7c05d0b40dcaeec1273ee3ca8d2908c005faa4cdb7b0417e56ad3b4c"
+    },
+    {
+      "package_path": "datasets/a-w07-02-run-1-4b555191-normalized.csv",
+      "bytes": 46271,
+      "sha256": "2fa3fc0a11abaefc927aff04b8713dafe12f5ab1d101edd689ba1ae3a5d12c7b"
+    },
+    {
+      "package_path": "datasets/a-w07-02-run-2-4b555191-normalized.csv",
+      "bytes": 47689,
+      "sha256": "a7278443c4b742b367f4777846fc12c1db4032f658229874d9e16757460e8912"
+    },
+    {
+      "package_path": "datasets/a-w07-02-run-3-4b555191-normalized.csv",
+      "bytes": 47820,
+      "sha256": "e0ed7e3c2703173eee02b8a83344bf7f794072d066f642eff4693093af092a45"
+    },
+    {
+      "package_path": "datasets/a-w07-03-trial-2-be89bf4a-normalized.csv",
+      "bytes": 56817,
+      "sha256": "becee1c4f704a1fe0ff2d1ed1500ce983e74b55f5d06d3eaa34f12e31b9f61bc"
+    },
+    {
+      "package_path": "datasets/a-w07-03-trial-3-f44c9bed-normalized.csv",
+      "bytes": 56855,
+      "sha256": "a9a9a695fe3b18d64df1ad1f8521d4cc4911b433ea9e533f47553dfeda523d7f"
+    },
+    {
+      "package_path": "datasets/H8-C-600s-TEC-100pct-normalized.csv",
+      "bytes": 229047,
+      "sha256": "483d6fba25a0003d33fb8a1fc0e037ed305d3cdd58a142a9822f73f242e232fb"
+    },
+    {
+      "package_path": "datasets/H8-E-1800s-TEC-100pct-normalized.csv",
+      "bytes": 709092,
+      "sha256": "2af9720ae2fc5c3947f5290bbb482ddcf706975301df414d7cbe04c50cd1b7b7"
+    },
+    {
+      "package_path": "datasets/published/door-critical.csv",
+      "bytes": 320,
+      "sha256": "abd4d469f1dde9317a8cdb0539bd6d287f3535bafe3969510cb5d45cd383abe1"
+    },
+    {
+      "package_path": "datasets/published/plant-timing-report.json",
+      "bytes": 9439,
+      "sha256": "2826a71026e7d4b8dc2cf3413efb5e4983785fc59ae760586569b91279fb2169"
+    },
+    {
+      "package_path": "datasets/published/response-delay.csv",
+      "bytes": 434,
+      "sha256": "c4a89329af8386dec36837736429f6b7b7985c628fa3f38b4dc5ed238728a912"
+    },
+    {
+      "package_path": "datasets/published/tec-cooling-response-600s.csv",
+      "bytes": 336832,
+      "sha256": "f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d"
+    },
+    {
+      "package_path": "datasets/published/timing-pilot-jitter.csv",
+      "bytes": 1470,
+      "sha256": "494013a74b568ec9482c4acc0f4e3e990657d3a8ef1c85bbf3c4fdcbf08121c0"
+    },
+    {
+      "package_path": "datasets/S1-20261107-between-window-normalized.csv",
+      "bytes": 17361,
+      "sha256": "1a798c59749a3b38ab54881ad31e908d3e54016ac537f47d1474ee9c7c3bbfe8"
+    },
+    {
+      "package_path": "datasets/S2-20261107-between-window-normalized.csv",
+      "bytes": 96824,
+      "sha256": "db2b99fffb32c21a216fa6bfa9cb1e33422fe9658e7f6710373c9eb4d3515991"
+    },
+    {
+      "package_path": "datasets/trial1-imported-normalized.csv",
+      "bytes": 160920,
+      "sha256": "3d4703e3da2fa95c5d34e14cda8601a7673ad02a9308b61d6a533e8ee316d0a7"
+    },
+    {
+      "package_path": "datasets/trial2-normalized.csv",
+      "bytes": 155689,
+      "sha256": "0b1466ca24c48b2523cc662b3928061cf070b5d1c3b83039c3f3b38b2ebb9dc4"
+    },
+    {
+      "package_path": "datasets/trial3-normalized.csv",
+      "bytes": 155005,
+      "sha256": "a5360bc2cdf28b7e640543fcd5bb746f017b7363e8ed141a99ab8d2c6b43b263"
+    },
+    {
+      "package_path": "datasets/trial4-normalized.csv",
+      "bytes": 154604,
+      "sha256": "8b4ae4544715d654ae318e652204bcbcf37384d05115933a12a7dc5a600e3062"
+    },
+    {
+      "package_path": "datasets/W10-02-normalized.csv",
+      "bytes": 31649,
+      "sha256": "d15382584ad847836c428713ed3ca2a9a6b44a0b36bd122912e189b29f4ac0ee"
+    },
+    {
+      "package_path": "datasets/W10-03-run1-normalized.csv",
+      "bytes": 80463,
+      "sha256": "96ba65b4c771da5684317972ef3196e1c5929499cff0652df485f6fa186a8a9f"
+    },
+    {
+      "package_path": "datasets/W10-03-run2-normalized.csv",
+      "bytes": 79757,
+      "sha256": "13681cf93e0efb50aac7180aa88b7b95b64129d966b01c6c1335aa9d10d0d521"
+    },
+    {
+      "package_path": "datasets/W10-03-run3-normalized.csv",
+      "bytes": 79857,
+      "sha256": "7c3827839178550c819ed4b21e01e0796445f16cda44460dce21d9f883c67c2d"
+    },
+    {
+      "package_path": "datasets/W10-03-run4-normalized.csv",
+      "bytes": 80653,
+      "sha256": "0bfbd66ac07bea9a8c6c299a8bb6dd5b3473da64f31f5e111729a428a9d55671"
+    },
+    {
+      "package_path": "measurement_summary.csv",
+      "bytes": 4872,
+      "sha256": "a84fdb4c47b8c0752a3839cccbea54564c7eaf3d990ec34222ed51140278edb1"
+    },
+    {
+      "package_path": "pwm-go-no-go.md",
+      "bytes": 1634,
+      "sha256": "fe110b1b77643196c626e834e5feb681ccc48dee4a29923310a423f5d463caa3"
+    },
+    {
+      "package_path": "quality_report.md",
+      "bytes": 4351,
+      "sha256": "0d06c012da46f1ef217a24696d16e73984267f8803de2e1594fe47610e140b29"
+    },
+    {
+      "package_path": "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
+      "bytes": 1744913,
+      "sha256": "b570057efdc5ca2ead239766cecaf5531dedaa47e3fb42374dc02022a2c58964"
+    },
+    {
+      "package_path": "raw/h8-e-1800s-100pct/monitor__telemetry_raw.log",
+      "bytes": 5330311,
+      "sha256": "b93f74cc51ed2649647a494788a6b5bc0db8de5ade7780f4dfc0dc6e1b43bad8"
+    },
+    {
+      "package_path": "raw/s1-trial1-20261107/telemetry_raw.log",
+      "bytes": 1572494,
+      "sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7"
+    },
+    {
+      "package_path": "raw/s1-trial1-20261107/trial.json",
+      "bytes": 220,
+      "sha256": "58ac47eb13abd023249c825b895e1885f57db48ae06f93ec453e4ce8904a0efd"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/commands.log",
+      "bytes": 180,
+      "sha256": "d459d362cba29dff0c53594b6c14a2c487fbd4a0040cf19a471c115b28e75ee6"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/s1-summary.json",
+      "bytes": 1418,
+      "sha256": "0ab32b7c70b1bb04100ffcbab825e0e68d80178b00a8f197644939886a09b64d"
+    },
+    {
+      "package_path": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+      "bytes": 4886616,
+      "sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/commands.log",
+      "bytes": 893,
+      "sha256": "977e00083b0e36626b9fd8694262152404da5edccaf060ec60f6cd8aa1877f00"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/door_protocol_record.md",
+      "bytes": 167,
+      "sha256": "bfe09d1e62d178cb7fca01f8ae9de59caea853bd900f685639edfc2ec501c9c9"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/door_report.json",
+      "bytes": 1670,
+      "sha256": "672db9b136c5edfb9dd453471065c989b3e4d8dda2dc29ecded21c843896fe0f"
+    },
+    {
+      "package_path": "raw/s2-door-20261107/telemetry_raw.log",
+      "bytes": 4370853,
+      "sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078"
+    },
+    {
+      "package_path": "raw/session-20261104/telemetry.csv",
+      "bytes": 57402,
+      "sha256": "bd347591d5c953b491497512d357cd617eff3530a75d3b265c65cc1cabfe303c"
+    },
+    {
+      "package_path": "raw/source-results/source-result-A-W09-02.json",
+      "bytes": 2515,
+      "sha256": "0381497c8e6ba4c73815ca28c206892e779323d2a6b45f7bbc48d5bad5ba5515"
+    },
+    {
+      "package_path": "raw/source-results/source-result-A-W10-03.json",
+      "bytes": 4635,
+      "sha256": "144a5109d53118cbe4e6a37e292f9d76321f110ca19a36aa6fa95c9088e67398"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-1-4b555191.jsonl",
+      "bytes": 87490,
+      "sha256": "fcb682c5c1cc1a9aa98c10505299c20567de7688f8d50e673e8e950854c63980"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-2-4b555191.jsonl",
+      "bytes": 88908,
+      "sha256": "31948cd1c46c999115d483bd4253d35e8711168f3b02ccc21dda5556c349b199"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-02-run-3-4b555191.jsonl",
+      "bytes": 89039,
+      "sha256": "d5aed4a2893dc9fb7c87d197ac30361b623e7eeb0f62f550b16445cb59bfb0c6"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-1-20261104T161322334177.json",
+      "bytes": 2082,
+      "sha256": "24723a2d5755d96f5495517d186cba0735ee1b71b8f58494991e3ab302e365cb"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-2-20261104T162942709761.json",
+      "bytes": 2611,
+      "sha256": "02f3a89affae1a8447be34d9ab96b06e48bad518b7651855c6b297fa3cf516d8"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-2-be89bf4a.jsonl",
+      "bytes": 482410,
+      "sha256": "592c5487d337b8035442e8ff12c87763e3750b7123af9ac39118ca6ea687c4f4"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-3-20261104T171503395704.json",
+      "bytes": 2689,
+      "sha256": "400bb8e414bfd73a7fb31bd3f1c4a1301d1a9523bb349544cd18279650c9d588"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w07-03-trial-3-f44c9bed.jsonl",
+      "bytes": 482465,
+      "sha256": "bb2f3efd7ea0ad0d2f178f88eaf0051e5b31c8ee32058e0979c710024b3d9149"
+    },
+    {
+      "package_path": "raw/w07-repeats/a-w09-02-run-1-INTERRUPTED-20261105.json",
+      "bytes": 568,
+      "sha256": "64a1d34725624834b2c9e0d6ce2c13a5a879d5e49a29f8df6887147fb1dc1cfb"
+    },
+    {
+      "package_path": "raw/w07-repeats/cooling-step-runs.jsonl",
+      "bytes": 2168,
+      "sha256": "ae2bce43238cf9ba2be61c1059c50f4d6d8828198a17001e1d00d67d1b564129"
+    },
+    {
+      "package_path": "remaining-measurements-plan.md",
+      "bytes": 3187,
+      "sha256": "b35ca8e5d35cd1ca7186d23bac10e176d87dcb6dfbef38a5e21a0ab9468b5a0e"
+    },
+    {
+      "package_path": "run_index.csv",
+      "bytes": 7394,
+      "sha256": "8c6fc1ad4ced3b4f067a9bce6bc3a640257221541f172727d7fd26d0fac1b001"
+    }
+  ]
+}

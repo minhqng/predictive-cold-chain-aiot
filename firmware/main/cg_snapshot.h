@@ -64,6 +64,19 @@ typedef struct {
     uint64_t door_obs_ms;
     uint32_t door_transitions;
     uint32_t door_cycles;
+
+    /* Ambient environment (A-W02-06). env_observed becomes true after a
+     * completed producer cycle, including "no module acknowledged". */
+    bool env_observed;
+    bool env_present;
+    bool env_valid;
+    uint64_t env_obs_ms;
+    uint32_t env_seq;
+    float env_temperature_c;
+    float env_humidity_pct;
+    uint8_t env_state;
+    uint8_t env_reason;
+    uint8_t env_i2c_addr;
 } cg_snapshot_t;
 
 void cg_snapshot_init(void);
@@ -74,6 +87,9 @@ void cg_snapshot_publish_power(bool valid, float voltage_v, float current_a, flo
                                float energy_wh, uint32_t seq, uint64_t obs_ms);
 void cg_snapshot_publish_door(bool known, bool open, int raw, uint64_t obs_ms,
                               uint32_t transitions, uint32_t cycles);
+void cg_snapshot_publish_env(bool present, bool valid, float temperature_c,
+                             float humidity_pct, uint8_t state, uint8_t reason,
+                             uint8_t i2c_addr, uint32_t seq, uint64_t obs_ms);
 
 /* Copies the latest snapshot. Every field keeps its own observation time. */
 void cg_snapshot_read(cg_snapshot_t *out);

@@ -1,0 +1,2 @@
+requirement,status,value_s,number_emitted,reason
+A-W13-03,NOT_COMPUTABLE,,false,"no door-open event exists in any committed capture (door_open is only '0' or 'UNKNOWN', door_polarity has no confirmed-open state); a door->critical trajectory distribution requires an actual door-open disturbance that was never recorded"

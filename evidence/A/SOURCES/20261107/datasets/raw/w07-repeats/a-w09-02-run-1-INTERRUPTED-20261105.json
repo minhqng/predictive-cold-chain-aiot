@@ -1,0 +1,22 @@
+{
+ "kind": "interrupted-acquisition",
+ "test_id": "A-W09-02",
+ "run": 1,
+ "phase_at_shutdown": "stabilization (two flat windows observed, capture never started)",
+ "stabilization_observed": [
+  {
+   "slope_c_per_min": -0.00488,
+   "spread_c": 0.0417
+  },
+  {
+   "slope_c_per_min": 0.00634,
+   "spread_c": 0.0417
+  }
+ ],
+ "captured_frames": 0,
+ "counted_as_valid_trial": false,
+ "verdict": "INTERRUPTED",
+ "reason": "operator-ordered safe overnight shutdown 2026-11-05",
+ "boot_id": "74e8a0da",
+ "recorded_utc": "2026-11-04T18:38:54.440874+00:00"
+}

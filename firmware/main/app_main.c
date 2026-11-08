@@ -18,7 +18,8 @@
  *     so the delivered build cannot energize the branch (docs/06).
  *
  * Not implemented on purpose: MQTT/telemetry publishing, cloud commands and
- * cooling actuation. BME280 stays a pending physical test (A-W02-06).
+ * cooling actuation. The BME280 producer is implemented; its physical
+ * mounting/self-heating half of A-W02-06 remains an open bench question.
  */
 #include <stdio.h>
 #include <string.h>
@@ -32,6 +33,8 @@
 #include "nvs_flash.h"
 
 #include "coldguard_config.h"
+#include "cg_bme280.h"
+#include "cg_bme280_idf.h"
 #include "cg_commission.h"
 #include "cg_door.h"
 #include "cg_ds18b20.h"
@@ -69,6 +72,97 @@ static uint32_t boot_count_next(void)
     nvs_close(handle);
 
     return count;
+}
+
+static void bme_task(void *arg)
+{
+    static cg_bme280_t state;
+    static cg_bme280_port_t port;
+    static cg_bme280_obs_t obs;
+    cg_bme_read_result_t result;
+    uint8_t address = 0u;
+    int last_state = -1;
+    int last_reason = -1;
+    uint64_t now_ms;
+
+    (void)arg;
+
+    if (!cg_bme280_idf_open(&port, &address)) {
+        cg_log_error("bme280=BUS_INIT_FAIL sda=%d scl=%d", CG_PIN_BME280_SDA,
+                     CG_PIN_BME280_SCL);
+        vTaskDelete(NULL);
+        return;
+    }
+
+    cg_bme280_reset(&state);
+    cg_log_line("%s %s event=BME280_BUS bus=UP addr=0x%02X sda=%d scl=%d", CG_LOG_PREFIX,
+                CG_LOG_TEC, (unsigned)address, CG_PIN_BME280_SDA, CG_PIN_BME280_SCL);
+
+    /* One-shot fitted-device diagnostic: emit the raw calibration bytes and one
+     * raw measurement context so a host can decode the SAME bytes independently.
+     * It configures the same control registers the producer does and publishes
+     * nothing; the trim gate is untouched. */
+    {
+        cg_bme280_diag_t diag;
+        char tphex[2 * CG_BME280_CALIB_T_BYTES + 1];
+        char hbhex[2 * CG_BME280_CALIB_H_BLOCK + 1];
+        cg_bme_read_result_t dr = cg_bme280_collect_diag(&port, &state, &diag);
+        int i;
+        for (i = 0; i < (int)sizeof(diag.tp); i++) {
+            (void)snprintf(&tphex[i * 2], 3, "%02X", diag.tp[i]);
+        }
+        tphex[sizeof(diag.tp) * 2] = '\0';
+        for (i = 0; i < (int)sizeof(diag.hb); i++) {
+            (void)snprintf(&hbhex[i * 2], 3, "%02X", diag.hb[i]);
+        }
+        hbhex[sizeof(diag.hb) * 2] = '\0';
+        cg_log_line("%s %s event=BME280_DIAG_CAL result=%s chip=0x%02X tp=%s",
+                    CG_LOG_PREFIX, CG_LOG_TEC, cg_bme280_read_result_name(dr),
+                    (unsigned)diag.chip_id, tphex);
+        cg_log_line("%s %s event=BME280_DIAG_TRIM h1=0x%02X hb=%s t1=%u t2=%d t3=%d "
+                    "h1d=%u h2=%d h3=%u h4=%d h5=%d h6=%d",
+                    CG_LOG_PREFIX, CG_LOG_TEC, (unsigned)diag.h1, hbhex,
+                    (unsigned)diag.calib.dig_t1, (int)diag.calib.dig_t2, (int)diag.calib.dig_t3,
+                    (unsigned)diag.calib.dig_h1, (int)diag.calib.dig_h2,
+                    (unsigned)diag.calib.dig_h3, (int)diag.calib.dig_h4,
+                    (int)diag.calib.dig_h5, (int)diag.calib.dig_h6);
+        cg_log_line("%s %s event=BME280_DIAG_OBS result=%s adc_t=%lu adc_h=%lu temp_dc=%ld "
+                    "rh_q2210=%lu",
+                    CG_LOG_PREFIX, CG_LOG_TEC, cg_bme280_read_result_name(dr),
+                    (unsigned long)diag.adc_t, (unsigned long)diag.adc_h,
+                    (long)diag.temp_dc, (unsigned long)diag.hum_q2210);
+    }
+
+    for (;;) {
+        char trim_diag[64];
+        result = cg_bme280_sample(&port, &state, &obs);
+        cg_bme280_trim_gate(&obs, &result, trim_diag, sizeof(trim_diag));
+        now_ms = (uint64_t)(esp_timer_get_time() / 1000);
+        cg_snapshot_publish_env(cg_bme280_is_present(&state), obs.valid, obs.temperature_c,
+                                obs.relative_humidity_pct, (uint8_t)state.state,
+                                (uint8_t)result, address, state.seq, obs.obs_ms);
+        cg_health_registry_beat(CG_PRODUCER_BME, now_ms);
+
+        if ((int)state.state != last_state || (int)result != last_reason) {
+            cg_log_line("%s %s event=BME280_STATE state=%s reason=%s addr=0x%02X seq=%lu "
+                        "t_c=%s rh_pct=%s",
+                        CG_LOG_PREFIX, CG_LOG_TEC, cg_bme280_state_name(state.state),
+                        cg_bme280_read_result_name(result), (unsigned)address,
+                        (unsigned long)state.seq,
+                        obs.valid ? "MEASURED" : CG_INVALID_VALUE_TOKEN,
+                        obs.valid ? "MEASURED" : CG_INVALID_VALUE_TOKEN);
+            last_state = (int)state.state;
+            last_reason = (int)result;
+        }
+        if (trim_diag[0] != '\0') {
+            /* The only place the discarded compensated values may appear: an
+             * explicitly UNVALIDATED diagnostic, never a published field. */
+            cg_log_line("%s %s event=BME280_TRIM_DIAG reason=TRIM_UNCONFIRMED %s",
+                        CG_LOG_PREFIX, CG_LOG_TEC, trim_diag);
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(CG_SAMPLE_PERIOD_MS));
+    }
 }
 
 static void door_task(void *arg)
@@ -279,6 +373,7 @@ void app_main(void)
 
     (void)xTaskCreate(door_task, "cg_door", 3072, NULL, 6, NULL);
     (void)xTaskCreate(sensor_task, "cg_sensor", 4096, NULL, 5, NULL);
+    (void)xTaskCreate(bme_task, "cg_bme", 4096, NULL, 5, NULL);
 
     /* W04: controller + local console + raw telemetry. It starts in OFF and
      * cannot energize anything in this build (output stage compiled out). */

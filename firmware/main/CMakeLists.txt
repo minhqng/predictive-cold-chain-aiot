@@ -5,6 +5,8 @@ idf_component_register(
         "cg_onewire.c"
         "cg_ds18b20.c"
         "cg_fault_inject.c"
+        "cg_bme280.c"
+        "cg_bme280_idf.c"
         "cg_door.c"
         "cg_safety.c"
         "cg_log.c"
@@ -30,8 +32,9 @@ idf_component_register(
     # (driver/uart.h) live in esp_driver_uart on ESP-IDF v6.x: the legacy
     # "driver" meta-component no longer re-exports those headers. Both must
     # be direct requirements of this component. The command console reads the
-    # native USB-Serial/JTAG port when that is the configured console.
-    PRIV_REQUIRES esp_driver_gpio esp_driver_uart esp_driver_usb_serial_jtag
+    # native USB-Serial/JTAG port when that is the configured console. I2C
+    # (driver/i2c_master.h) is used by the BME280 transport only.
+    PRIV_REQUIRES esp_driver_gpio esp_driver_uart esp_driver_usb_serial_jtag esp_driver_i2c
 )
 
 # CG_FAULT_INJECTION is a test-only, auditable build switch (A-W21-02/03). The
@@ -47,4 +50,19 @@ if(CG_FAULT_INJECTION STREQUAL "0" OR CG_FAULT_INJECTION STREQUAL "1")
 elseif(NOT CG_FAULT_INJECTION STREQUAL "")
     message(FATAL_ERROR
             "CG_FAULT_INJECTION must be '', 0 or 1 (got '${CG_FAULT_INJECTION}')")
+endif()
+
+# CG_BME280_TRIM_LAYOUT_CONFIRMED is the fitted-trim verification gate. The
+# default build leaves the header default (0, fail closed). A supervised build
+# passes -CG_BME280_GATE=1 only after the fitted module calibration decode is
+# verified on hardware. (gate name: CG_BME280_TRIM_LAYOUT_CONFIRMED)
+set(CG_BME280_TRIM_LAYOUT_CONFIRMED "" CACHE STRING
+    "1 to publish BME280 ambient after fitted-trim verification ('' keeps the fail-closed default)")
+if(CG_BME280_TRIM_LAYOUT_CONFIRMED STREQUAL "0" OR CG_BME280_TRIM_LAYOUT_CONFIRMED STREQUAL "1")
+    target_compile_definitions(${COMPONENT_LIB} PRIVATE
+        CG_BME280_TRIM_LAYOUT_CONFIRMED=${CG_BME280_TRIM_LAYOUT_CONFIRMED})
+elseif(NOT CG_BME280_TRIM_LAYOUT_CONFIRMED STREQUAL "")
+    message(FATAL_ERROR
+            "CG_BME280_TRIM_LAYOUT_CONFIRMED must be '', 0 or 1 (got '${CG_BME280_TRIM_LAYOUT_CONFIRMED}')")
+
 endif()

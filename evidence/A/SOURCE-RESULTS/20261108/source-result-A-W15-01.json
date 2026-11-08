@@ -1,0 +1,41 @@
+{
+  "checks": [
+    {
+      "detail": " value=8 expected=1",
+      "failure_reason": "",
+      "name": "valid_runs",
+      "passed": true
+    },
+    {
+      "detail": " value=0.9966666666666667 expected=0.9",
+      "failure_reason": "",
+      "name": "valid_rate",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T05:50:00.170+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-08T05:50:00.170+00:00",
+      "original": "A-W15-01",
+      "path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\h8-captures\\capture-20261104T092140Z\\measurements\\A-W15-01-20261108T055000160202-79e6be.json",
+      "sha256": "f9a9f2ba232d0548e2f8b41ef432475dc6acb2019c0bb4f29458efcd15b60446",
+      "size": 263,
+      "stored": "measurements\\A-W15-01-20261108T055000160202-79e6be.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "mean_valid_rate": 0.9991666666666666,
+    "min_valid_rate": 0.9966666666666667,
+    "valid_runs": 8
+  },
+  "notes": "",
+  "operator": "operator+qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-08T05:50:00.099+00:00",
+  "test_id": "A-W15-01"
+}

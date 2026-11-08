@@ -1,0 +1,163 @@
+{
+  "command_to_electrical": {
+    "aggregate": {
+      "distribution_note": "n=1; a single committed console trace yields one command->electrical event, so median=P95=max by construction - this is not yet a distribution",
+      "max_s": 1.094,
+      "max_useful_observed_s": 1.094,
+      "median_s": 1.094,
+      "min_s": 1.094,
+      "p95_s": 1.094
+    },
+    "latency_exclusion_rule": "Onset is the FIRST post-command SAMPLE at or above the current threshold - it is never forced to skip the first sample. A sample is annotated as a stale pre-run PZEM register read ONLY when the record itself carries that evidence (a sub-poll `elapsed_ms`, i.e. the pre-ramp reading documented at evidence/A/W04/h6/41-h6-run-analysis.md:28); such an annotated sample is below threshold in practice, so the annotation never shifts a real onset. CLOCK: the bracket column `host_uptime_s` is the DEVICE LOG UPTIME (seconds since boot in the console line), not a host wall clock. The interval starts at the device's 'START accepted' line, NOT at the operator keystroke (\">>> START\"), so the ~0.156 s operator-to-accept transport/echo segment is EXCLUDED. The reported delay is command-accept -> electrical-onset, quantised to the 1 Hz poll: the true onset lies within +/-1 s (one poll period) of the reported value.",
+    "n_measured": 1,
+    "per_run": [
+      {
+        "boot_continuity": {
+          "boot_id": null,
+          "note": "capture carries no boot_id column; boot continuity is UNVERIFIED",
+          "single_boot": null
+        },
+        "capture": "first-tec-trace.csv",
+        "clock_semantics": "Onset is the FIRST post-command SAMPLE at or above the current threshold - it is never forced to skip the first sample. A sample is annotated as a stale pre-run PZEM register read ONLY when the record itself carries that evidence (a sub-poll `elapsed_ms`, i.e. the pre-ramp reading documented at evidence/A/W04/h6/41-h6-run-analysis.md:28); such an annotated sample is below threshold in practice, so the annotation never shifts a real onset. CLOCK: the bracket column `host_uptime_s` is the DEVICE LOG UPTIME (seconds since boot in the console line), not a host wall clock. The interval starts at the device's 'START accepted' line, NOT at the operator keystroke (\">>> START\"), so the ~0.156 s operator-to-accept transport/echo segment is EXCLUDED. The reported delay is command-accept -> electrical-onset, quantised to the 1 Hz poll: the true onset lies within +/-1 s (one poll period) of the reported value.",
+        "command_anchor": "device 'START accepted' console line (device log uptime clock)",
+        "command_device_uptime_s": 5.235,
+        "command_label": "START",
+        "command_provenance": "local console START (no network command path exists in production firmware)",
+        "delay_s": 1.094,
+        "electrical_onset_current_a": 0.97,
+        "electrical_onset_device_uptime_s": 6.329,
+        "excluded_transport": "operator keystroke ('>>> START') to device START-accept (~0.156 s echo/transport) is NOT in this interval",
+        "latency_exclusion_rule": "Onset is the FIRST post-command SAMPLE at or above the current threshold - it is never forced to skip the first sample. A sample is annotated as a stale pre-run PZEM register read ONLY when the record itself carries that evidence (a sub-poll `elapsed_ms`, i.e. the pre-ramp reading documented at evidence/A/W04/h6/41-h6-run-analysis.md:28); such an annotated sample is below threshold in practice, so the annotation never shifts a real onset. CLOCK: the bracket column `host_uptime_s` is the DEVICE LOG UPTIME (seconds since boot in the console line), not a host wall clock. The interval starts at the device's 'START accepted' line, NOT at the operator keystroke (\">>> START\"), so the ~0.156 s operator-to-accept transport/echo segment is EXCLUDED. The reported delay is command-accept -> electrical-onset, quantised to the 1 Hz poll: the true onset lies within +/-1 s (one poll period) of the reported value.",
+        "onset_rule": "first post-command SAMPLE with |current_a| >= threshold",
+        "poll_quantization_s": 1.0,
+        "prerun_samples_annotated": [
+          {
+            "current_a": 0.0,
+            "evidence": "sub-poll elapsed_ms (pre-ramp reading, 41-h6-run-analysis.md:28)",
+            "host_uptime_s": 5.704
+          }
+        ],
+        "status": "MEASURED"
+      }
+    ],
+    "requirement": "A-W13-01"
+  },
+  "command_to_thermal": {
+    "boot_continuity": {
+      "boot_id": "56044b74",
+      "single_boot": true
+    },
+    "delay_min": 0.85,
+    "delay_s": 51.0,
+    "delta_c": 1.0,
+    "excluded_nonvalid_frames": 0,
+    "method": "raw first-crossing, no filter/smoothing; baseline = mean of first 5 fully-valid driven frames",
+    "note": "anchored on the applied-on frame inside the capture, not a host command; the console command->applied hop is a separate (network) gap",
+    "representation": "mean(T1,T3,T4) - chamber-air trio, TEC_HOT_SIDE excluded",
+    "requirement": "A-W13-02",
+    "status": "MEASURED",
+    "window": "driven block (duty 999), device_ms monotonic clock"
+  },
+  "cooling_tau": {
+    "boot_continuity": {
+      "boot_id": "56044b74",
+      "single_boot": true
+    },
+    "direction": "decrease",
+    "end_value": 21.3127,
+    "excluded_nonvalid_frames": 0,
+    "limitation": "uses the observed endpoints as the swing; a run that has not reached steady state under-estimates tau",
+    "method": "first-order 63.2%-of-observed-swing time constant (proxy, not an ODE fit)",
+    "representation": "mean(T1,T3,T4) - chamber-air trio, TEC_HOT_SIDE excluded",
+    "requirement": "A-W13-04-cooling",
+    "slope_method": "ordinary least squares over the full driven window on the trio mean",
+    "start_value": 30.021,
+    "status": "MEASURED",
+    "target_value": 24.5163,
+    "tau_s": 174.0,
+    "whole_window_slope_c_per_min": -0.8548,
+    "window_s": 599.0
+  },
+  "data_gap_register": [
+    {
+      "ask": "A-W13-03 door->critical time",
+      "closes_with": "supervised S2 door-disturbance capture under the frozen critical definition",
+      "id": "GAP-DOOR-CRITICAL",
+      "owner": "Member A (physical) / Member D (critical definition)",
+      "status": "NOT_COMPUTABLE",
+      "why": "no door-open event in any committed capture"
+    },
+    {
+      "ask": "backend command -> device latency",
+      "closes_with": "a transport decision with Member C and an authorized energized session",
+      "id": "GAP-NETWORK-COMMAND-LATENCY",
+      "owner": "Member C / Member D",
+      "status": "NOT_COMPUTABLE",
+      "why": "production firmware has no network command path (output stage compiled out)"
+    },
+    {
+      "ask": "A-W13-01 median/P95 distribution",
+      "closes_with": "additional clean START traces converted to the H6 schema, then re-run",
+      "id": "GAP-COMMAND-ELECTRICAL-DISTRIBUTION",
+      "owner": "Member A",
+      "status": "SINGLE_OBSERVATION",
+      "why": "one committed console trace yields one command->electrical event; H7 run logs live in a sibling commissioning worktree (read-only), not in this branch"
+    }
+  ],
+  "door_to_critical": {
+    "number_emitted": false,
+    "observed_door_open_values": [
+      "0",
+      "UNKNOWN"
+    ],
+    "observed_door_polarity_values": [
+      "CONFIRMED",
+      "UNCONFIRMED"
+    ],
+    "reason": "no door-open event exists in any committed capture (door_open is only '0' or 'UNKNOWN', door_polarity has no confirmed-open state); a door->critical trajectory distribution requires an actual door-open disturbance that was never recorded",
+    "requirement": "A-W13-03",
+    "status": "NOT_COMPUTABLE",
+    "value_s": null,
+    "what_would_close_it": "a supervised S2 door-disturbance capture under the frozen candidate critical definition (docs/05A A-W13-03) - a physical action, so BLOCKED_HARDWARE from the host"
+  },
+  "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_CAPTURES",
+  "passive_proxy": {
+    "boot_continuity": {
+      "boot_id": "56044b74",
+      "single_boot": true
+    },
+    "excluded_nonvalid_frames": 0,
+    "method": "first-to-last trio delta (near-equilibrium; no tau asserted)",
+    "note": "a passive tau is not reported because the passive signal does not exhibit a first-order swing; inventing one would violate A-W13-04",
+    "passive_drift_c": 0.104,
+    "passive_window_min": 3.633,
+    "representation": "mean(T1,T3,T4) - chamber-air trio, TEC_HOT_SIDE excluded",
+    "requirement": "A-W13-04-passive",
+    "window": "pre-drive stage=NONE frames"
+  },
+  "physical_verified": false,
+  "recovery_tau": {
+    "boot_continuity": {
+      "boot_id": "56044b74",
+      "single_boot": true
+    },
+    "compliance_docs01": "recovery measured after the defined action per section 20.6",
+    "direction": "increase",
+    "end_value": 26.6457,
+    "excluded_nonvalid_frames": 0,
+    "limitation": "uses the observed endpoints as the swing; a run that has not reached steady state under-estimates tau",
+    "method": "first-order 63.2%-of-observed-swing time constant (proxy, not an ODE fit)",
+    "representation": "mean(T1,T3,T4) - chamber-air trio, TEC_HOT_SIDE excluded",
+    "requirement": "A-W13-04-recovery",
+    "rise_c": 5.333,
+    "start_value": 21.3127,
+    "status": "MEASURED",
+    "target_value": 24.6838,
+    "tau_s": 86.0,
+    "window_s": 130.0,
+    "window_start": "first STAGE_DEADLINE frame (action end)"
+  },
+  "tool": "cg_w13_timing.py",
+  "touches_hardware": false,
+  "week": "W13"
+}
