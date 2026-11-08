@@ -1,0 +1,49 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "active_current_range",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "off_envelope",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "sources",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T10:18:07.162+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "compute": "envelope",
+    "healthy_current_max_a": 9.99,
+    "healthy_current_min_a": 4.5378,
+    "healthy_power_max_w": 117.4,
+    "healthy_power_min_w": 53.4884,
+    "notes": "Envelope from stored A-W03-05 OFF capture (0.00 A max), the real H8-C 600 s active cooling capture, and the S1 passive baseline series.",
+    "off_current_max_a": 0.0,
+    "sources": [
+      "A-W03-05",
+      "A-W08-03",
+      "A-W09-02"
+    ],
+    "thermal_baseline_mean_c": 29.8021,
+    "thermal_gradient_mean_c": 0.3789
+  },
+  "notes": "",
+  "operator": "Member A (derived, offline)",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DERIVED",
+  "started_at": "2026-11-08T10:18:07.162+00:00",
+  "test_id": "A-W09-04"
+}

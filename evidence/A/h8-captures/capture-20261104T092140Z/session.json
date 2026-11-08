@@ -1,0 +1,541 @@
+{
+  "app_version": "1.0.0",
+  "config": {
+    "fuse_a": 15.0,
+    "reset_gradient_max_c": 0.05,
+    "reset_tmean_max_c": 30.6,
+    "reset_tmean_min_c": 29.5
+  },
+  "created_at": "2026-11-04T09:21:40.917+00:00",
+  "device_identity": {},
+  "firmware_kind": null,
+  "operator": "operator+qoder-agent",
+  "port": null,
+  "results": {
+    "A-W01-01": {
+      "ended_at": "2026-11-04T09:23:32.157+00:00",
+      "failure_reason": "UNAPPROVED_SUBSTITUTION",
+      "outcome": "FAIL",
+      "source": "DOCUMENTARY"
+    },
+    "A-W01-02": {
+      "ended_at": "2026-11-04T09:23:32.171+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W01-03": {
+      "ended_at": "2026-11-04T09:23:32.178+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W01-04": {
+      "ended_at": "2026-11-04T09:23:32.188+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W01-05": {
+      "ended_at": "2026-11-04T09:23:32.206+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W02-01": {
+      "ended_at": "2026-11-04T09:30:57.248+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W02-02": {
+      "ended_at": "2026-11-04T13:49:51.809+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W02-03": {
+      "ended_at": "2026-11-04T15:14:25.969+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W02-04": {
+      "ended_at": "2026-11-04T13:50:51.839+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W02-05": {
+      "ended_at": "2026-11-04T14:11:08.942+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W02-06": {
+      "ended_at": "2026-11-07T10:26:59.947+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W02-07": {
+      "ended_at": "2026-11-04T17:29:14.128+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W03-01": {
+      "ended_at": "2026-11-04T09:23:32.217+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W03-02": {
+      "ended_at": "2026-11-04T09:23:32.235+00:00",
+      "failure_reason": "vcc_3v3_ABOVE_MAXIMUM",
+      "outcome": "FAIL",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W03-03": {
+      "ended_at": "2026-11-04T14:42:53.266+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W03-04": {
+      "ended_at": "2026-11-04T15:21:43.119+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W03-05": {
+      "ended_at": "2026-11-04T15:13:53.328+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W03-06": {
+      "ended_at": "2026-11-04T09:30:57.256+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W03-07": {
+      "ended_at": "2026-11-04T17:57:15.983+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W04-01": {
+      "ended_at": "2026-11-04T09:30:57.264+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W04-02": {
+      "ended_at": "2026-11-04T09:30:57.271+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W04-03": {
+      "ended_at": "2026-11-04T09:30:57.285+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W04-04": {
+      "ended_at": "2026-11-07T11:12:21.871+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W04-05": {
+      "ended_at": "2026-11-04T15:57:28.004+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W04-06": {
+      "ended_at": "2026-11-08T04:08:11.609320+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W04-07": {
+      "ended_at": "2026-11-04T17:16:00.460+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W05-01": {
+      "ended_at": "2026-11-04T14:43:53.297+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W05-02": {
+      "ended_at": "2026-11-04T14:12:38.973+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W05-03": {
+      "ended_at": "2026-11-04T15:13:53.328+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W05-04": {
+      "ended_at": "2026-11-04T17:09:06.547+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W05-05": {
+      "ended_at": "2026-11-07T10:25:59.920+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W06-01": {
+      "ended_at": "2026-11-07T07:22:26.545+00:00",
+      "failure_reason": "NETWORK_TRANSPORT_UNAVAILABLE: the local source gate precedes field-level validation, so canonical duty/device/expiry checks are unreachable",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W06-02": {
+      "ended_at": "2026-11-04T10:24:26.330+00:00",
+      "failure_reason": "NETWORK_COMMAND_TRANSPORT_UNAVAILABLE: duplicate-canonical requires the docs/02 NETWORK source; the local console source is rejected before the idempotency store, so this cannot be physically executed in this build",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W06-03": {
+      "ended_at": "2026-11-07T11:10:58.610+00:00",
+      "failure_reason": "NO_WALL_CLOCK: the exact expired-command scenario needs an issuer clock; the observed fail-closed refusal is recorded, not a PASS",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W06-04": {
+      "ended_at": "2026-11-04T13:51:21.855+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W06-06": {
+      "ended_at": "2026-11-07T11:10:58.737+00:00",
+      "failure_reason": "NO_ACCEPTED_COMMAND_STATE: the local console record is rejected before the idempotency store; a network transport or accepted command state is required",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W07-01": {
+      "ended_at": "2026-11-04T10:32:32.645+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W07-02": {
+      "ended_at": "2026-11-04T17:56:11.127926+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W07-03": {
+      "ended_at": "2026-11-04T17:14:06.992785+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W07-04": {
+      "ended_at": "2026-11-04T17:56:11.193+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W07-05": {
+      "ended_at": "2026-11-04T18:27:16.045+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W08-01": {
+      "ended_at": "2026-11-04T17:15:29.162+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W08-04": {
+      "ended_at": "2026-11-04T17:30:14.322+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W08-05": {
+      "ended_at": "2026-11-08T05:50:57.235+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W09-01": {
+      "ended_at": "2026-11-04T18:27:16.148+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W09-02": {
+      "ended_at": "2026-11-07T07:21:20.867449+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W09-03": {
+      "ended_at": "2026-11-04T17:16:58.236+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W10-01": {
+      "ended_at": "2026-11-07T08:44:08.866+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W10-02": {
+      "ended_at": "2026-11-07T08:44:08.817945+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W10-03": {
+      "ended_at": "2026-11-07T08:44:08.817945+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W10-04": {
+      "ended_at": "2026-11-07T08:56:38.317+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W10-05": {
+      "ended_at": "2026-11-07T08:56:38.346+00:00",
+      "failure_reason": "NO_DOOR_CRITICAL_SAMPLES: set the frozen critical Tmean threshold in Config and rerun the S2 series",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W11-01": {
+      "ended_at": "2026-11-07T10:42:33.084+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W11-02": {
+      "ended_at": "2026-11-07T11:09:09.007+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W11-04": {
+      "ended_at": "2026-11-07T11:36:32.979+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W12-01": {
+      "ended_at": "2026-11-04T16:49:50.364+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W12-02": {
+      "ended_at": "2026-11-04T16:31:49.669+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W12-03": {
+      "ended_at": "2026-11-07T18:22:20.615884+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W12-04": {
+      "ended_at": "2026-11-04T18:13:51.098+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W12-05": {
+      "ended_at": "2026-11-08T06:40:07.320+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W13-01": {
+      "ended_at": "2026-11-04T17:15:29.190+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W13-02": {
+      "ended_at": "2026-11-04T17:15:29.218+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W13-03": {
+      "ended_at": "2026-11-07T08:44:08.890+00:00",
+      "failure_reason": "NO_DOOR_CRITICAL_SAMPLES: set the frozen critical Tmean threshold in Config and rerun the S2 series",
+      "outcome": "INCOMPLETE",
+      "source": "HARDWARE"
+    },
+    "A-W13-04": {
+      "ended_at": "2026-11-04T17:15:29.246+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W14-01": {
+      "ended_at": "2026-11-04T14:29:19.497+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W14-02": {
+      "ended_at": "2026-11-04T14:30:19.526+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W14-03": {
+      "ended_at": "2026-11-07T08:44:08.921+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W15-01": {
+      "ended_at": "2026-11-08T05:50:00.170+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W15-02": {
+      "ended_at": "2026-11-04T19:18:16.580+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DERIVED"
+    },
+    "A-W15-03": {
+      "ended_at": "2026-11-08T06:02:46.459+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W15-04": {
+      "ended_at": "2026-11-08T10:18:07.167+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W18-01": {
+      "ended_at": "2026-11-04T17:57:26.049+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W18-05": {
+      "ended_at": "2026-11-08T05:13:00.737+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W19-01": {
+      "ended_at": "2026-11-07T07:22:26.686+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W19-03": {
+      "ended_at": "2026-11-08T05:52:00.658+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W19-04": {
+      "ended_at": "2026-11-07T07:31:58.475126+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W21-01": {
+      "ended_at": "2026-11-07T13:27:03.035719+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W21-02": {
+      "ended_at": "2026-11-07T17:12:37.779899+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W21-03": {
+      "ended_at": "2026-11-07T17:12:37.779899+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W21-04": {
+      "ended_at": "2026-11-07T10:39:39.187+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    },
+    "A-W22-01": {
+      "ended_at": "2026-11-04T18:12:36.042+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "OPERATOR_MEASUREMENT"
+    },
+    "A-W22-03": {
+      "ended_at": "2026-11-04T18:12:36.011+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W23-01": {
+      "ended_at": "2026-11-08T05:13:00.783+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W23-02": {
+      "ended_at": "2026-11-07T18:22:20.615884+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W23-03": {
+      "ended_at": "2026-11-08T03:59:59.405666+00:00",
+      "failure_reason": "PHYSICAL_LABELS_NOT_APPLIED (deferred); labeling pending",
+      "outcome": "INCOMPLETE",
+      "source": "DOCUMENTARY"
+    },
+    "A-W23-05": {
+      "ended_at": "2026-11-08T05:50:57.375+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "DOCUMENTARY"
+    },
+    "A-W24-01": {
+      "ended_at": "2026-11-04T17:57:26.016+00:00",
+      "failure_reason": "",
+      "outcome": "PASS",
+      "source": "HARDWARE"
+    }
+  },
+  "schema": 1,
+  "session_id": "20261104T092140Z",
+  "updated_at": "2026-11-08T10:19:43.939+00:00"
+}

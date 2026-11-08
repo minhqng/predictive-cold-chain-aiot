@@ -1,0 +1,58 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "valid_600s_run",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "hot_side_le_55c",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "no_fault",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "response_stable",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-01",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "boot_id": "56044b74",
+    "chamber_drop_c": 8.7083,
+    "current_max_a": 9.99,
+    "current_mean_a": 4.5378,
+    "dataset": "datasets/H8-C-600s-TEC-100pct-normalized.csv",
+    "duration_s": 955.99,
+    "energy_wh_end": 122.0,
+    "firmware_grammar": "#CG H8S bench (BENCH_ENDURANCE, supervised, limits approved)",
+    "frames": 957,
+    "hot_side_max_c": 39.938,
+    "hot_side_mean_c": 35.4198,
+    "notes": "Computed offline from the real 600 s TEC-actuated bench capture (stage H8-C, 600 PWM-on frames, max 9.99 A). No new actuation performed.",
+    "power_max_w": 117.4,
+    "power_mean_w": 53.4884,
+    "raw_sha256": "b570057efdc5ca2ead239766cecaf5531dedaa47e3fb42374dc02022a2c58964",
+    "raw_source": "h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
+    "tmean_air_temp_start_c": null
+  },
+  "notes": "",
+  "operator": "Member A (offline evaluation of stored capture)",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-01 (capture date per W04 session record; device has no wall clock)",
+  "test_id": "A-W08-03"
+}

@@ -1,0 +1,825 @@
+{
+  "schema": 1,
+  "sources": [
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.304+00:00",
+      "sha256": "d6405fe1ff3d22a3c5b805e35ec870abdfbe49697a7c4c3fdf8d8bd6526b1e42",
+      "size": 14243,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\bom-audit.csv",
+      "stored": "imports\\A-W01-01\\d6405fe1ff3d-bom-audit.csv",
+      "test_id": "A-W01-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.313+00:00",
+      "sha256": "a644db8cd956153a0a3a8631a5be1c4ed1f02561369aa4a15f38b3418dc986ba",
+      "size": 8767,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photo-inventory.csv",
+      "stored": "imports\\A-W01-02\\a644db8cd956-photo-inventory.csv",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.321+00:00",
+      "sha256": "7537ff47deea3ba85d86ef21712b6e699054ccf79a681e0d5e2ec43bd71b2983",
+      "size": 202333,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\01-overview-wiring.jpg",
+      "stored": "imports\\A-W01-02\\7537ff47deea-01-overview-wiring.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.329+00:00",
+      "sha256": "b469428a361a3f7d711c669abb231adc2ab7cad1fb62a2e6fbbf194ace6a09b0",
+      "size": 42598,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\02-rs485-front.jpg",
+      "stored": "imports\\A-W01-02\\b469428a361a-02-rs485-front.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.337+00:00",
+      "sha256": "cb74cd8960cbccf8cf1a3c5c21045d462358ce9a13fe8037c7a42605e14db198",
+      "size": 50130,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\03-rs485-back.jpg",
+      "stored": "imports\\A-W01-02\\cb74cd8960cb-03-rs485-back.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.346+00:00",
+      "sha256": "66655403237b04dd949d4308a5f30c592de0fee03ad895ea54afb913e43040a4",
+      "size": 240286,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\04-pzem-shunt.jpg",
+      "stored": "imports\\A-W01-02\\66655403237b-04-pzem-shunt.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.354+00:00",
+      "sha256": "0d60a07a9df9b3f60402d1cfd70556b58d4a771c01ac19afb06f7e88ab2cdbd7",
+      "size": 157360,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\05-pzem-terminals.jpg",
+      "stored": "imports\\A-W01-02\\0d60a07a9df9-05-pzem-terminals.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.361+00:00",
+      "sha256": "20ec7d2ce661f4537e623590db37afb76bf46f1399921ad4b24b35110e1aff25",
+      "size": 80410,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\06-xl4015.jpg",
+      "stored": "imports\\A-W01-02\\20ec7d2ce661-06-xl4015.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.369+00:00",
+      "sha256": "eea0937ecdf19b5fc9c814c565d014d28b65777146ba852400d4e3faae5f5b0b",
+      "size": 110023,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\07-fusebox.jpg",
+      "stored": "imports\\A-W01-02\\eea0937ecdf1-07-fusebox.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.377+00:00",
+      "sha256": "9f0d37d98492c690225ac1cdf169ef2326a8d218df92cbea5d51db91289e76f2",
+      "size": 151984,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\08-terminal-block.jpg",
+      "stored": "imports\\A-W01-02\\9f0d37d98492-08-terminal-block.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.385+00:00",
+      "sha256": "5986dd96bc5bf4036a9d95968bd9b560a130a8ba4f3f183bb3bcbb8b4595f696",
+      "size": 140486,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\09-psu-output.jpg",
+      "stored": "imports\\A-W01-02\\5986dd96bc5b-09-psu-output.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.393+00:00",
+      "sha256": "8f0274056e3fae21958fc7bb75a4406e63a13625fa94ab906cad142a2d1cebf6",
+      "size": 108690,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\10-fan-label.jpg",
+      "stored": "imports\\A-W01-02\\8f0274056e3f-10-fan-label.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.400+00:00",
+      "sha256": "5f6d4dff9e01f013754a7471602e3a540d7ddd2e3997f09de1dabe6746088a15",
+      "size": 229622,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\12-ds18b20-probe-actual.jpg",
+      "stored": "imports\\A-W01-02\\5f6d4dff9e01-12-ds18b20-probe-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.408+00:00",
+      "sha256": "2c7345366ded1f31f2c306a577976c1b8806447341ebee478f6373439b84146a",
+      "size": 270330,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\13-mc38-actual.jpg",
+      "stored": "imports\\A-W01-02\\2c7345366ded-13-mc38-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.415+00:00",
+      "sha256": "f5b93192fc4bc90de35c03869dd0d41fed3ed583a4c41b380db185e3cabc27d8",
+      "size": 110036,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\14-ibt2-actual.jpg",
+      "stored": "imports\\A-W01-02\\f5b93192fc4b-14-ibt2-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.423+00:00",
+      "sha256": "806db5336f7b22afbc9e97d60807d0bcacb69e0dba3bdd1c6c11e8b4833f22c5",
+      "size": 188408,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\15-tec-marking-actual.jpg",
+      "stored": "imports\\A-W01-02\\806db5336f7b-15-tec-marking-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.436+00:00",
+      "sha256": "a518702fb2d15b149d0ab216d1136b33585ab7dd0d3ab718c7b3530d38b41134",
+      "size": 209100,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\16-psu-label-actual.jpg",
+      "stored": "imports\\A-W01-02\\a518702fb2d1-16-psu-label-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.445+00:00",
+      "sha256": "a2e2344ae09c8e66a8dca2052890b455174fce0cfe2c591f7c2c6082562b5a0c",
+      "size": 160758,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\17-v1-kit-actual.jpg",
+      "stored": "imports\\A-W01-02\\a2e2344ae09c-17-v1-kit-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.455+00:00",
+      "sha256": "9991e27915e0851965c5ec0d00238b2cb279547d6408ceb0fc57b51468abbab5",
+      "size": 142870,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\18-shunt-marking-actual.jpg",
+      "stored": "imports\\A-W01-02\\9991e27915e0-18-shunt-marking-actual.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.465+00:00",
+      "sha256": "77b3b1f449945f2856606c360db7b28e3c0606703ec24254a01ffc74b4d1e4e7",
+      "size": 198830,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\20-dual-esp32-actual-back.jpg",
+      "stored": "imports\\A-W01-02\\77b3b1f44994-20-dual-esp32-actual-back.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.476+00:00",
+      "sha256": "df1dd61fd5a8af5fa2a116a2a8e4b8bd96deada8242e5198002b559324bd845a",
+      "size": 534319,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\21-dual-esp32-actual-component-side.jpg",
+      "stored": "imports\\A-W01-02\\df1dd61fd5a8-21-dual-esp32-actual-component-side.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.485+00:00",
+      "sha256": "a440f3d567c28d9d7004085e777c56c6a0796c6f32edcccd8671ae529b1fc3d9",
+      "size": 115955,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\22-pct218-actual-marking.jpg",
+      "stored": "imports\\A-W01-02\\a440f3d567c2-22-pct218-actual-marking.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.494+00:00",
+      "sha256": "a4b3e6f03ee3ebff3a0f089fdead7a55ee4bb8081ab4d015e9721928525e90ff",
+      "size": 124161,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\23-pct218-actual-levers.jpg",
+      "stored": "imports\\A-W01-02\\a4b3e6f03ee3-23-pct218-actual-levers.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.501+00:00",
+      "sha256": "e2c6744a338bed7055b87c5eefcd43e173a5824354eb72a833977bc4244142f0",
+      "size": 116896,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\24-pct218-actual-ports.jpg",
+      "stored": "imports\\A-W01-02\\e2c6744a338b-24-pct218-actual-ports.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.510+00:00",
+      "sha256": "6a654beefb258cfeea1aca72e48e1e4b5172c4444f8f7c28874cb93597cff6f8",
+      "size": 144479,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\25-bme280-actual-component-side.jpg",
+      "stored": "imports\\A-W01-02\\6a654beefb25-25-bme280-actual-component-side.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.517+00:00",
+      "sha256": "0f8e3f12a65fd66314b5746ee9d43bdf88a2ea9aad31736914b826e0af3efc68",
+      "size": 136671,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\26-bme280-actual-silkscreen.jpg",
+      "stored": "imports\\A-W01-02\\0f8e3f12a65f-26-bme280-actual-silkscreen.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.526+00:00",
+      "sha256": "4ec16796c0895defb4b3e678fe47339c511ed0843874905df0edada32db87ded",
+      "size": 169252,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\27-chamber-packaged-user-photo.jpg",
+      "stored": "imports\\A-W01-02\\4ec16796c089-27-chamber-packaged-user-photo.jpg",
+      "test_id": "A-W01-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.533+00:00",
+      "sha256": "aacc53b080cdc601bf1f2aec555946ce7ec0b5a0f5f41a287c1dda958e327d78",
+      "size": 5798,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\pin-candidates-v0.md",
+      "stored": "imports\\A-W01-03\\aacc53b080cd-pin-candidates-v0.md",
+      "test_id": "A-W01-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.542+00:00",
+      "sha256": "626b535a8279cf8ff2d7c9b2497b521108a2047cf1ae13f823cbdc2f213c7483",
+      "size": 5888,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\physical-risk-ledger.md",
+      "stored": "imports\\A-W01-04\\626b535a8279-physical-risk-ledger.md",
+      "test_id": "A-W01-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.551+00:00",
+      "sha256": "038593c457622fcd45fd207d01ff730f8dd55954c9c19c9c548aa077aea9ffde",
+      "size": 4922,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\legacy-assumption-check.md",
+      "stored": "imports\\A-W01-05\\038593c45762-legacy-assumption-check.md",
+      "test_id": "A-W01-05"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.560+00:00",
+      "sha256": "7537ff47deea3ba85d86ef21712b6e699054ccf79a681e0d5e2ec43bd71b2983",
+      "size": 202333,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\01-overview-wiring.jpg",
+      "stored": "imports\\A-W02-01\\7537ff47deea-01-overview-wiring.jpg",
+      "test_id": "A-W02-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.568+00:00",
+      "sha256": "94e9b6294783070656c5136881bcbace2508eb28fdf10decc9da9bb87aec4815",
+      "size": 9527,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\bench-procedure-w02.md",
+      "stored": "imports\\A-W02-01\\94e9b6294783-bench-procedure-w02.md",
+      "test_id": "A-W02-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.575+00:00",
+      "sha256": "50709135f7f00ecae1ef61fb5b300cfbe250ea4ecc4112e4bbc15790b90f28b9",
+      "size": 7812,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\sensor-rom-map.yaml",
+      "stored": "imports\\A-W02-02\\50709135f7f0-sensor-rom-map.yaml",
+      "test_id": "A-W02-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.583+00:00",
+      "sha256": "bb6cbb66a49ecf5f37f54509a34f175f9618d7c1f66c5ceeed8549b20cb31ab9",
+      "size": 5388,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\espidf-run\\reboot-verification.md",
+      "stored": "imports\\A-W02-03\\bb6cbb66a49e-reboot-verification.md",
+      "test_id": "A-W02-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.590+00:00",
+      "sha256": "08dcd97aa88f3be5dc3bc82200eb7dea93f7ecc75425ac5d6cae15eb4815c739",
+      "size": 1018,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\espidf-run\\reboot-verification.json",
+      "stored": "imports\\A-W02-03\\08dcd97aa88f-reboot-verification.json",
+      "test_id": "A-W02-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.597+00:00",
+      "sha256": "ba9693a2d59da10ee8a1e9402290754adf82b8d195b8e4d1260bf3a32b1f6481",
+      "size": 4329,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\espidf-run\\runtime-cadence.md",
+      "stored": "imports\\A-W02-04\\ba9693a2d59d-runtime-cadence.md",
+      "test_id": "A-W02-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.605+00:00",
+      "sha256": "99bdc21cfe1ecbf565b2602a16d7c60871e0efe67f4a2ddb885715b446fefe21",
+      "size": 31533,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\ds18b20\\sensor-consistency.csv",
+      "stored": "imports\\A-W02-05\\99bdc21cfe1e-sensor-consistency.csv",
+      "test_id": "A-W02-05"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.612+00:00",
+      "sha256": "2d53af0983dc5e3035f2ec2e30afdabcf1dce4b0867bdb37b94e9d1cb3b428d7",
+      "size": 1323,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\ds18b20\\sensor-consistency-report.md",
+      "stored": "imports\\A-W02-05\\2d53af0983dc-sensor-consistency-report.md",
+      "test_id": "A-W02-05"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.620+00:00",
+      "sha256": "c587bf6fce926caaa603a04fb7f987d4903e09e64892c3c2643b213fb92d7813",
+      "size": 2519,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\bme280\\bme280-bench-report.md",
+      "stored": "imports\\A-W02-06\\c587bf6fce92-bme280-bench-report.md",
+      "test_id": "A-W02-06"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.627+00:00",
+      "sha256": "5ccddec17820dfda06c552407792dbdf2dde45f8c133d4abb0053ee3665cf43a",
+      "size": 13139,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\bme280\\bme280-bench.csv",
+      "stored": "imports\\A-W02-06\\5ccddec17820-bme280-bench.csv",
+      "test_id": "A-W02-06"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.635+00:00",
+      "sha256": "48d33f5294e86f71fd30dd3da4b2741e09af7f230a2145a3d2e841562cc9392b",
+      "size": 5769,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\mc38\\mc38-bench-report.md",
+      "stored": "imports\\A-W02-07\\48d33f5294e8-mc38-bench-report.md",
+      "test_id": "A-W02-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.642+00:00",
+      "sha256": "27690ac7a05d21dcc673dfa188e256ba5cb8e3c9e74d0d53e328f20929279619",
+      "size": 1994,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W02-sensor-foundation\\evidence\\A\\W02\\mc38\\mc38-bench.csv",
+      "stored": "imports\\A-W02-07\\27690ac7a05d-mc38-bench.csv",
+      "test_id": "A-W02-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.650+00:00",
+      "sha256": "485cfaffeda6b2e39d388089aea3c31734e63f22450864c94fa13d61c1f7ffbf",
+      "size": 4080,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\logic-power-measurement.md",
+      "stored": "imports\\A-W03-01\\485cfaffeda6-logic-power-measurement.md",
+      "test_id": "A-W03-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.657+00:00",
+      "sha256": "4e23f65d1c2377a2a55588547bb8d34962c421b2f75b43f9421a8e5139bbe810",
+      "size": 5000,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\rs485-pin-and-compatibility.md",
+      "stored": "imports\\A-W03-02\\4e23f65d1c23-rs485-pin-and-compatibility.md",
+      "test_id": "A-W03-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.664+00:00",
+      "sha256": "a8bb4dfab846f9ac52c206f4df4cda96243e2a82c0d4e65bf91ec4fa994b1922",
+      "size": 6536,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-2026-10-27\\README.md",
+      "stored": "imports\\A-W03-03\\a8bb4dfab846-README.md",
+      "test_id": "A-W03-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.672+00:00",
+      "sha256": "783d70a9d905655a672a7aa756dd4d55965070362b78c1d9ee746f0064a4c2cb",
+      "size": 4650,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-2026-10-20\\crc-audit.md",
+      "stored": "imports\\A-W03-03\\783d70a9d905-crc-audit.md",
+      "test_id": "A-W03-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.679+00:00",
+      "sha256": "ca6b58183c1e5a99b276dd2e7091043dd64dd1e8615c7b9857e23896bd50f022",
+      "size": 9435,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\pzem-register-readback.txt",
+      "stored": "imports\\A-W03-04\\ca6b58183c1e-pzem-register-readback.txt",
+      "test_id": "A-W03-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.691+00:00",
+      "sha256": "b7301e80b9e008d10c7a078a90edb7a6ff2b12656945960469b51313d699120d",
+      "size": 3604,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-2026-10-27\\test-131-profile-readback.md",
+      "stored": "imports\\A-W03-04\\b7301e80b9e0-test-131-profile-readback.md",
+      "test_id": "A-W03-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.701+00:00",
+      "sha256": "7eac5f80c2d95ebf7b4147251b2c38d65f5da103951b767413972f29a66f81d8",
+      "size": 19157,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-2026-10-27\\raw\\test-132b-off-envelope.csv",
+      "stored": "imports\\A-W03-05\\7eac5f80c2d9-test-132b-off-envelope.csv",
+      "test_id": "A-W03-05"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.711+00:00",
+      "sha256": "fa0e25f36b65ca6768765306246eae8138e21b421a1067fa9750f76859cd7de3",
+      "size": 5753,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-2026-10-27\\shunt-continuity.md",
+      "stored": "imports\\A-W03-06\\fa0e25f36b65-shunt-continuity.md",
+      "test_id": "A-W03-06"
+    },
+    {
+      "category": "photo",
+      "imported_at": "2026-11-04T09:23:30.720+00:00",
+      "sha256": "9991e27915e0851965c5ec0d00238b2cb279547d6408ceb0fc57b51468abbab5",
+      "size": 142870,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W01-hardware-audit\\evidence\\A\\W01\\photos\\18-shunt-marking-actual.jpg",
+      "stored": "imports\\A-W03-06\\9991e27915e0-18-shunt-marking-actual.jpg",
+      "test_id": "A-W03-06"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.730+00:00",
+      "sha256": "4901c0328534c19daae8e16c94b657e25b4cd0ece824e2be1430a06a8cddea91",
+      "size": 8624,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\ibt2-pin-map.md",
+      "stored": "imports\\A-W03-07\\4901c0328534-ibt2-pin-map.md",
+      "test_id": "A-W03-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.738+00:00",
+      "sha256": "e6788a01761234c4f6f7e166b7e2a45ee7954d32340dd6b3255bc943494abbda",
+      "size": 9092,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-deviation-and-safety.md",
+      "stored": "imports\\A-W03-07\\e6788a017612-hardware-deviation-and-safety.md",
+      "test_id": "A-W03-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.745+00:00",
+      "sha256": "de2f24567b4694a7bea94af489183dd7f07ea964a25ad88cb47cd352a722adb5",
+      "size": 34752,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-delivery\\evidence\\A\\W04\\g0-electrical-verification.md",
+      "stored": "imports\\A-W04-01\\de2f24567b46-g0-electrical-verification.md",
+      "test_id": "A-W04-01"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.753+00:00",
+      "sha256": "e6788a01761234c4f6f7e166b7e2a45ee7954d32340dd6b3255bc943494abbda",
+      "size": 9092,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W03-power-pzem-logic\\evidence\\A\\W03\\hardware-deviation-and-safety.md",
+      "stored": "imports\\A-W04-02\\e6788a017612-hardware-deviation-and-safety.md",
+      "test_id": "A-W04-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.760+00:00",
+      "sha256": "de2f24567b4694a7bea94af489183dd7f07ea964a25ad88cb47cd352a722adb5",
+      "size": 34752,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-delivery\\evidence\\A\\W04\\g0-electrical-verification.md",
+      "stored": "imports\\A-W04-02\\de2f24567b46-g0-electrical-verification.md",
+      "test_id": "A-W04-02"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.767+00:00",
+      "sha256": "2342bbbf3b38350267a981e5759f7023b03dbce307bc5b8c6f4e32f19dec322f",
+      "size": 4895,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-delivery\\evidence\\A\\W04\\fuse-commissioning-note.md",
+      "stored": "imports\\A-W04-03\\2342bbbf3b38-fuse-commissioning-note.md",
+      "test_id": "A-W04-03"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.774+00:00",
+      "sha256": "e8e8bd8be658b786cc87ddbafe5c28588602c67052230394b514f60ba0969912",
+      "size": 39007,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-delivery\\evidence\\A\\W04\\boot-default-off.csv",
+      "stored": "imports\\A-W04-04\\e8e8bd8be658-boot-default-off.csv",
+      "test_id": "A-W04-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.782+00:00",
+      "sha256": "c67ed70cc300369282510e089417f68de20719ca38b0cd7dcba8c99b4625bc14",
+      "size": 4849,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-delivery\\evidence\\A\\W04\\boot-default-off-note.md",
+      "stored": "imports\\A-W04-04\\c67ed70cc300-boot-default-off-note.md",
+      "test_id": "A-W04-04"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.789+00:00",
+      "sha256": "52934381e1ffc8d443058c5bd3f9e9a097784be19c190fd2e1b87804bb50264b",
+      "size": 4322,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h6\\41-h6-run-analysis.md",
+      "stored": "imports\\A-W04-05\\52934381e1ff-41-h6-run-analysis.md",
+      "test_id": "A-W04-05"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.797+00:00",
+      "sha256": "10ed81ccd83317fabfda090e8b1e3c782d546ddb83626b542c8ed3f23202c718",
+      "size": 7288,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h7\\90-h7-commissioning-final-report.md",
+      "stored": "imports\\A-W04-05\\10ed81ccd833-90-h7-commissioning-final-report.md",
+      "test_id": "A-W04-05"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.804+00:00",
+      "sha256": "20f99a27d7c333abdb03ec1fabc77ca1b8f8b511c8a71224045d17af5e641a4c",
+      "size": 18563,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h6-tec-polarity-test-plan.md",
+      "stored": "imports\\A-W04-06\\20f99a27d7c3-h6-tec-polarity-test-plan.md",
+      "test_id": "A-W04-06"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.811+00:00",
+      "sha256": "52934381e1ffc8d443058c5bd3f9e9a097784be19c190fd2e1b87804bb50264b",
+      "size": 4322,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h6\\41-h6-run-analysis.md",
+      "stored": "imports\\A-W04-07\\52934381e1ff-41-h6-run-analysis.md",
+      "test_id": "A-W04-07"
+    },
+    {
+      "category": "document",
+      "imported_at": "2026-11-04T09:23:30.819+00:00",
+      "sha256": "10ed81ccd83317fabfda090e8b1e3c782d546ddb83626b542c8ed3f23202c718",
+      "size": 7288,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-W04-tec-commissioning\\evidence\\A\\W04\\h7\\90-h7-commissioning-final-report.md",
+      "stored": "imports\\A-W04-07\\10ed81ccd833-90-h7-commissioning-final-report.md",
+      "test_id": "A-W04-07"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.625+00:00",
+      "sha256": "2873d1d9f501889c679bece0a57cf01ed9b9475ba57d705478156f7bd7f99d72",
+      "size": 5843775,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-spare-fuses.png",
+      "stored": "imports\\A-W23-02\\2873d1d9f501-kit-spare-fuses.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.637+00:00",
+      "sha256": "926f4ae340eec24c5d2dafb5fe8d27dd250011843ecd426b29b7df8bfe593ca4",
+      "size": 1649102,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-jumpers-40p.png",
+      "stored": "imports\\A-W23-02\\926f4ae340ee-kit-jumpers-40p.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.653+00:00",
+      "sha256": "64fe39468bc9dd4187d592e2384a998172a51747e800dcd48ab3790fd334269e",
+      "size": 4205890,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-tools.png",
+      "stored": "imports\\A-W23-02\\64fe39468bc9-kit-tools.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.670+00:00",
+      "sha256": "203fe32ccc96fe7c155ed6f83866b76e0be624e77f61eb8ed96e936a4d776e8a",
+      "size": 5325486,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-spare-wire-fastons.png",
+      "stored": "imports\\A-W23-02\\203fe32ccc96-kit-spare-wire-fastons.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.684+00:00",
+      "sha256": "6d2c4ff9b7882b6c2d56fb0ae63974ead6c8b5d64ea8397b95fd1b5a0ab7ff56",
+      "size": 2889629,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-clamp-meter.png",
+      "stored": "imports\\A-W23-02\\6d2c4ff9b788-kit-clamp-meter.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.693+00:00",
+      "sha256": "10e419d0e46793dba415ac5489afd9b5824a6aec7c0349c2a026a69268a6fc57",
+      "size": 6960,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\runbook-v2.md",
+      "stored": "imports\\A-W23-02\\10e419d0e467-runbook-v2.md",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.707+00:00",
+      "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+      "size": 1081314,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-interior-20261104.png",
+      "stored": "imports\\A-W12-03\\f19531a17036-geometry-v1-interior-20261104.png",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.720+00:00",
+      "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+      "size": 3808646,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-exterior-20261104.png",
+      "stored": "imports\\A-W12-03\\ae96a96fa55f-geometry-v1-exterior-20261104.png",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.729+00:00",
+      "sha256": "9f0d37d98492c690225ac1cdf169ef2326a8d218df92cbea5d51db91289e76f2",
+      "size": 151984,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W01\\photos\\08-terminal-block.jpg",
+      "stored": "imports\\A-W12-03\\9f0d37d98492-08-terminal-block.jpg",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.740+00:00",
+      "sha256": "f9cc1edd180f40de6c6e02fde3d636ffce749fb844e27565e9f6f15420e4b270",
+      "size": 2938042,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\fuse-block-installed.png",
+      "stored": "imports\\A-W12-03\\f9cc1edd180f-fuse-block-installed.png",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.751+00:00",
+      "sha256": "7537ff47deea3ba85d86ef21712b6e699054ccf79a681e0d5e2ec43bd71b2983",
+      "size": 202333,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W01\\photos\\01-overview-wiring.jpg",
+      "stored": "imports\\A-W23-03\\7537ff47deea-01-overview-wiring.jpg",
+      "test_id": "A-W23-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.760+00:00",
+      "sha256": "a518702fb2d15b149d0ab216d1136b33585ab7dd0d3ab718c7b3530d38b41134",
+      "size": 209100,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W01\\photos\\16-psu-label-actual.jpg",
+      "stored": "imports\\A-W23-03\\a518702fb2d1-16-psu-label-actual.jpg",
+      "test_id": "A-W23-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.768+00:00",
+      "sha256": "9991e27915e0851965c5ec0d00238b2cb279547d6408ceb0fc57b51468abbab5",
+      "size": 142870,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W01\\photos\\18-shunt-marking-actual.jpg",
+      "stored": "imports\\A-W23-03\\9991e27915e0-18-shunt-marking-actual.jpg",
+      "test_id": "A-W23-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T04:08:11.612+00:00",
+      "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+      "size": 1081314,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-interior-20261104.png",
+      "stored": "imports\\A-W04-06\\f19531a17036-geometry-v1-interior-20261104.png",
+      "test_id": "A-W04-06"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T04:08:11.628+00:00",
+      "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+      "size": 3808646,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-exterior-20261104.png",
+      "stored": "imports\\A-W04-06\\ae96a96fa55f-geometry-v1-exterior-20261104.png",
+      "test_id": "A-W04-06"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:13:00.700+00:00",
+      "sha256": "c23a3f465ccda52d0d2af991802b6b2095287104cfd8e4dad3ed8ca012efe019",
+      "size": 2332,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W18\\operator-abort-approval-20261108.md",
+      "stored": "imports\\A-W18-05\\c23a3f465ccd-operator-abort-approval-20261108.md",
+      "test_id": "A-W18-05"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:13:00.714+00:00",
+      "sha256": "c3e5695c65ed67f5aa74d10c37b734ca04eac8e18fd85b5929c5a4741181345a",
+      "size": 972,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\evidence\\A\\W18\\abort-criteria.yaml",
+      "stored": "imports\\A-W18-05\\c3e5695c65ed-abort-criteria.yaml",
+      "test_id": "A-W18-05"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:13:00.742+00:00",
+      "sha256": "a59c5d5e597700f10955d8844b1e06b0aa822cd26bcd523412aec284ab557f10",
+      "size": 2175,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-demo-runbook-approval-20261108.md",
+      "stored": "imports\\A-W23-01\\a59c5d5e5977-operator-demo-runbook-approval-20261108.md",
+      "test_id": "A-W23-01"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:13:00.755+00:00",
+      "sha256": "b5771dc28974ae73029d243840c078b65cad7056582c5e48128b96c57e3b57d9",
+      "size": 3197,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\predictive-cold-chain-aiot\\_w23-pr\\evidence\\A\\W23\\demo-runbook.md",
+      "stored": "imports\\A-W23-01\\b5771dc28974-demo-runbook.md",
+      "test_id": "A-W23-01"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:50:57.134+00:00",
+      "sha256": "ee37636c6caf438457ea83594b1d3c86af22f33a0747dbaeff13d3837f93ec39",
+      "size": 1030,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W08\\Gate-A-report-20261108.md",
+      "stored": "imports\\A-W08-05\\ee37636c6caf-Gate-A-report-20261108.md",
+      "test_id": "A-W08-05"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:50:57.247+00:00",
+      "sha256": "e7d10084ae46f375abefdf20d4ad823aac35090e95e70e41ea26f91eb07b2200",
+      "size": 1771,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\member-a-evidence-index-20261108.md",
+      "stored": "imports\\A-W23-05\\e7d10084ae46-member-a-evidence-index-20261108.md",
+      "test_id": "A-W23-05"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:52:00.606+00:00",
+      "sha256": "f4bc86c9179d58291ea1401a054981a2c2f91a87b3f9fab86cf651339b832209",
+      "size": 1569,
+      "source_path": "A-acceptance-app\\evidence\\A\\W19\\invalidation-log-statement-20261108.md",
+      "stored": "imports\\A-W19-03\\f4bc86c9179d-invalidation-log-statement-20261108.md",
+      "test_id": "A-W19-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T05:52:00.617+00:00",
+      "sha256": "0e04b5edba85eee40cd10bbf2caca4d0840db2716e9387534e0c6ee349b6097d",
+      "size": 580,
+      "source_path": "predictive-cold-chain-aiot\\evidence\\A\\W19\\invalid-attempt-taxonomy.json",
+      "stored": "imports\\A-W19-03\\0e04b5edba85-invalid-attempt-taxonomy.json",
+      "test_id": "A-W19-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T06:02:46.412+00:00",
+      "sha256": "5006217c9b4c65aeabc767f31dd94585fd2de35c454fe285e57495dff234bc01",
+      "size": 2108,
+      "source_path": "A-acceptance-app\\evidence\\A\\W15\\pzem-consistency-report-20261108.md",
+      "stored": "imports\\A-W15-03\\5006217c9b4c-pzem-consistency-report-20261108.md",
+      "test_id": "A-W15-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T06:40:07.232+00:00",
+      "sha256": "785ba868251f9adba032af03ccb624897a138416ce7059038655cb71a4d14b60",
+      "size": 4439,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_w12-g3-local\\evidence\\A\\W12\\gate-g3-blockers-20261108.md",
+      "stored": "imports\\A-W12-05\\785ba868251f-gate-g3-blockers-20261108.md",
+      "test_id": "A-W12-05"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T06:40:07.246+00:00",
+      "sha256": "041551f692a6d98468219917bb1a944a06d98cb34307289adbd90e5c8817b7c1",
+      "size": 3233,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_w12-g3-local\\evidence\\A\\W12\\gate-g3-blockers-20261108.json",
+      "stored": "imports\\A-W12-05\\041551f692a6-gate-g3-blockers-20261108.json",
+      "test_id": "A-W12-05"
+    },
+    {
+      "category": "decision",
+      "imported_at": "2026-11-08T10:16:30.147+00:00",
+      "sha256": "fe110b1b77643196c626e834e5feb681ccc48dee4a29923310a423f5d463caa3",
+      "size": 1634,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_local_handoff\\COLDGUARD_REAL_DATA_HANDOFF_20261108T101629Z\\pwm-go-no-go.md",
+      "stored": "imports\\A-W15-04\\fe110b1b7764-pwm-go-no-go.md",
+      "test_id": "A-W15-04"
+    }
+  ],
+  "updated_at": "2026-11-08T10:16:30.147+00:00"
+}

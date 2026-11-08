@@ -1,0 +1,54 @@
+{
+  "checks": [
+    {
+      "detail": "NO-GO",
+      "failure_reason": "",
+      "name": "decision",
+      "passed": true
+    },
+    {
+      "detail": "CG_TEC_REQUEST_DUTY_PERMILLE=0: no established continuous TEC rating; canonical console cannot request a characterized duty",
+      "failure_reason": "",
+      "name": "rationale",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T10:18:07.167+00:00",
+  "evidence": [
+    {
+      "category": "decision",
+      "imported_at": "2026-11-08T10:16:30.147+00:00",
+      "sha256": "fe110b1b77643196c626e834e5feb681ccc48dee4a29923310a423f5d463caa3",
+      "size": 1634,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_local_handoff\\COLDGUARD_REAL_DATA_HANDOFF_20261108T101629Z\\pwm-go-no-go.md",
+      "stored": "imports\\A-W15-04\\fe110b1b7764-pwm-go-no-go.md",
+      "test_id": "A-W15-04"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "command_matrix_refs": "evidence/D/W03/command-matrix.md CM-23..CM-25",
+    "decision": "NO-GO",
+    "firmware_gate": "CG_TEC_REQUEST_DUTY_PERMILLE 0 (coldguard_config.h:475)",
+    "pwm_settings_observed_elsewhere": {
+      "h8_c_600s": "1000/1000 permille, 9.99 A max, hot side 39.94 C max",
+      "h8_e_1800s": "1000/1000 permille, 8.75 A max",
+      "w07_03_trials": "500 permille cap, peak 5.03 A (A-W08-02 basis)"
+    },
+    "tested_duty_points_canonical_console": 0
+  },
+  "notes": "",
+  "operator": "Member A (decision record, NO-GO, no hardware action)",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-08T10:18:07.167+00:00",
+  "test_id": "A-W15-04"
+}

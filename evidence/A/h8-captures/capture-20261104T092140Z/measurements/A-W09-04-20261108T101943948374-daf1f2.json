@@ -1,0 +1,18 @@
+{
+  "computed": {
+    "boot_id": "56044b74",
+    "chamber_drop_c": 8.7083,
+    "current_max_a": 9.99,
+    "current_mean_a": 4.5378,
+    "duration_s": 955.99,
+    "fault_frames": 0,
+    "frames": 957,
+    "hot_side_max_c": 39.938,
+    "power_max_w": null
+  },
+  "kind": "OFFLINE_EVALUATION_ONLY_NO_VERDICT",
+  "note": "Healthy-response envelope computation retained as data only; A-W09-04 stays NOT_RUN because its active source A-W08-03 requires a supervised stage-enabled W06 session (see A-W08-03 rejection grounds).",
+  "raw_sha256": "see handoff manifest.json raw/h8-c-600s-tec-cooling",
+  "recorded_at": "2026-11-08T10:19:43.940+00:00",
+  "test_id": "A-W09-04"
+}
