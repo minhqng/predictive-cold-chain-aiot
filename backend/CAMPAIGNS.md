@@ -199,3 +199,12 @@ When a receipt supplies `run_issues`, restore compares its canonical summary wit
 the restored inventory and rejects altered issue arrays. Legacy receipts that
 omit only this optional summary remain compatible; supplied provenance and
 qualification fields are still checked.
+
+## Final B-ready JSON input
+
+See [the W22 frozen-source package contract](FINAL_DATA_PACKAGE.md) for the
+single-command final audit/hash/run-list/claim-index package and its separate
+trusted verification anchor. It preserves the original freeze bytes and records
+the current builder separately, without computing Member B's statistics.
+Primary S2 retains the existing complete door timeline; legal non-S2 supporting
+runs use the existing generic timeline without changing their protocol.
