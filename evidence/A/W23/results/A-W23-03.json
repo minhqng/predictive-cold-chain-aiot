@@ -1,0 +1,55 @@
+{
+  "checks": [
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:12 V label",
+      "passed": false
+    },
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:5 V label",
+      "passed": false
+    },
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:Sensor bus label",
+      "passed": false
+    },
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:RS-485 label",
+      "passed": false
+    },
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:TEC branch label",
+      "passed": false
+    },
+    {
+      "detail": "not applied (deferred)",
+      "failure_reason": "PHYSICAL_LABEL_NOT_APPLIED",
+      "name": "item:Shunt label",
+      "passed": false
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T03:59:59.405666+00:00",
+  "evidence": [],
+  "failure_reason": "PHYSICAL_LABELS_NOT_APPLIED (deferred); labeling pending",
+  "measurements": {
+    "labels_applied": false,
+    "markings_and_runbook_identification": true
+  },
+  "notes": "INCOMPLETE: physical branch labeling deferred by operator 2026-11-08 (not a hardware fault). System identified via existing component markings + W23 runbook v2 schematic. Labeling pending; criterion unchanged. Prior FAIL attempt archived. Not a PASS.",
+  "operator": "operator+qoder-agent",
+  "outcome": "INCOMPLETE",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-08T03:59:59.405666+00:00",
+  "test_id": "A-W23-03"
+}
