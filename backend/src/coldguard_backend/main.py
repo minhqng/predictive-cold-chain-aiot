@@ -29,6 +29,7 @@ from fastapi.responses import HTMLResponse
 from sqlalchemy import Engine, create_engine, select
 
 from coldguard_backend import experiment_store as runs
+from coldguard_backend.campaign_api import campaign_router
 from coldguard_backend.command_store import CommandNotFound
 from coldguard_backend.command_timing import command_timing
 from coldguard_backend.controller_b_trace import controller_b_trace
@@ -638,3 +639,6 @@ def get_device_telemetry(
         "offset": offset,
         "device_id": cleaned_id,
     }
+
+
+app.include_router(campaign_router(get_db_engine))
