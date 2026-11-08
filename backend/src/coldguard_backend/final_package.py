@@ -28,7 +28,7 @@ def _labels(labels):
 
 def _root(path: Path):
     for part in path.parts:
-        if part != path.anchor:
+        if part not in {path.anchor, ".", ".."}:
             portable_component(part)
     require(not path.is_symlink() and not (hasattr(path, "is_junction") and path.is_junction()), "package root must not be an alias")
     return path.resolve()
