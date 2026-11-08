@@ -43,6 +43,9 @@ from .faults import (
     InjectionCheckResult, InjectionVerdict, assert_protocol_allowed,
     audit_protocols, check_injection, get_protocol,
 )
+from .incident import (
+    CANDIDATE_MAP_VERSION, IncidentRecommendation, recommend_incident_actions,
+)
 from .policy import (
     PolicyDecision,
     PolicyInput,
@@ -75,6 +78,7 @@ from .types import (
     ControllerId,
     CoolingState,
     CoolingHealthState,
+    IncidentAction,
     DeviceMode,
     EnvelopeQualification,
     FailureDisposition,
@@ -111,6 +115,7 @@ __all__ = [
     "ControllerId",
     "CoolingState",
     "CoolingHealthState",
+    "CANDIDATE_MAP_VERSION",
     "DeviceMode",
     "EnvelopeQualification",
     "DeviceSafetyInputError",
@@ -122,6 +127,8 @@ __all__ = [
     "LocalSafetyEvidence",
     "InjectionCheckResult",
     "InjectionVerdict",
+    "IncidentAction",
+    "IncidentRecommendation",
     "ModelHealth",
     "PhysicalVerificationState",
     "PolicyConfig",
@@ -154,6 +161,7 @@ __all__ = [
     "get_protocol",
     "safe_local_exit_status",
     "replay_controller_a",
+    "recommend_incident_actions",
     "validate_command",
     "VerificationObservation",
     "VerificationPolicy",
