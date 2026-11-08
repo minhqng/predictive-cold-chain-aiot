@@ -210,21 +210,28 @@ def test_valid_ack_correlates_and_transitions(db_engine, device_publisher):
 
 
 @needs_providers
-def test_malformed_ack_retained_without_transition(db_engine, device_publisher):
+@pytest.mark.parametrize(
+    "payload",
+    [b"{not json", b"[" * 5000 + b"0" + b"]" * 5000, b"9" * 4500],
+    ids=["syntax", "nesting-limit", "integer-limit"],
+)
+def test_malformed_ack_retained_without_transition(db_engine, device_publisher, payload):
     cleanup_commands(db_engine)
     consumer = _backend_consumer()
     consumer.start()
     assert consumer.wait_subscribed(10)
     try:
         _prepare_published_command(db_engine, "cmd-bad-json")
-        _publish_ack(device_publisher, b"{not json")
+        _publish_ack(device_publisher, payload)
         assert wait_for(lambda: consumer.metrics.snapshot()["malformed_json"] >= 1, timeout_s=10)
         assert _command_status(db_engine, "cmd-bad-json") == cs.PUBLISHED
         with db_engine.begin() as conn:
             rows = conn.execute(
                 cs.command_acks.select().where(cs.command_acks.c.validity == "MALFORMED_JSON")
             ).mappings().all()
-        assert len(rows) >= 1
+        assert any(row["raw_payload"] == payload.decode("utf-8") for row in rows)
+        _publish_ack(device_publisher, ack_bytes(make_ack("cmd-bad-json", "ACCEPTED")))
+        assert wait_for(lambda: _command_status(db_engine, "cmd-bad-json") == cs.ACK_ACCEPTED, timeout_s=10)
     finally:
         consumer.stop()
         cleanup_commands(db_engine)

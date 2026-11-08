@@ -91,7 +91,7 @@ def classify_ack(topic: str, payload: bytes) -> dict:
                 "diagnostics": [{"code": "NOT_UTF8", "message": str(exc)[:200]}]}
     try:
         parsed = json.loads(text)
-    except json.JSONDecodeError as exc:
+    except (ValueError, RecursionError) as exc:
         return {"validity": "MALFORMED_JSON", "ack": None, "raw_payload": text,
                 "payload_sha256": sha, "topic_device_id": topic_device,
                 "diagnostics": [{"code": "JSON_DECODE_ERROR", "message": str(exc)[:200]}]}
