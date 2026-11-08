@@ -1,37 +1,15 @@
 """Compare ColdGuard evidence across two disposable PostgreSQL snapshots."""
 
 import argparse
-import hashlib
 import json
 import os
 from pathlib import Path
 
-from sqlalchemy import create_engine, text
+from sqlalchemy import create_engine
 from sqlalchemy.engine import make_url
 from sqlalchemy.exc import SQLAlchemyError
 
-TABLE_KEYS = {
-    "alembic_version": "version_num",
-    "experiments": "run_id",
-    "experiment_transitions": "id",
-    "telemetry_raw": "id",
-    "telemetry": "id",
-    "commands": "command_id",
-    "command_attempts": "id",
-    "command_acks": "id",
-    "command_transitions": "id",
-    "device_twin": "device_id",
-    "device_twin_retired_boot": "device_id, boot_id",
-    "reconciliation_boundary": "id",
-    "reconciliation_legacy_audit": "raw_id",
-}
-EVIDENCE_ADDITIONS = {
-    "0009": {},
-    "0010": {"predictions": "prediction_id", "prediction_inputs": "prediction_id, ordinal"},
-    "0011": {"shadow_decisions": "decision_id"},
-    "0012": {"physical_assessments": "assessment_id", "policy_approvals": "command_id"},
-}
-
+from coldguard_backend.evidence_tables import EVIDENCE_ADDITIONS, TABLE_KEYS, fingerprint_connection
 
 def fingerprint(url) -> dict:
     engine = create_engine(url, connect_args={"connect_timeout": 5})
@@ -39,27 +17,7 @@ def fingerprint(url) -> dict:
         with engine.connect().execution_options(
             isolation_level="REPEATABLE READ", postgresql_readonly=True,
         ) as connection:
-            connection.execute(text("SET LOCAL TIME ZONE 'UTC'"))
-            revisions = list(connection.scalars(text("SELECT version_num FROM public.alembic_version ORDER BY 1")))
-            if len(revisions) != 1 or revisions[0] not in EVIDENCE_ADDITIONS:
-                raise ValueError("unsupported Alembic revision for evidence verification")
-            keys = TABLE_KEYS.copy()
-            for revision, additions in EVIDENCE_ADDITIONS.items():
-                keys.update(additions)
-                if revision == revisions[0]:
-                    break
-            report = {"revisions": revisions, "tables": {}}
-            for table, key in keys.items():
-                digest = hashlib.sha256()
-                count = 0
-                # Table names and keys are exclusively from the static map.
-                query = text(f"SELECT to_jsonb(evidence_row)::text FROM public.{table} evidence_row ORDER BY {key}")
-                with connection.execution_options(yield_per=1000).execute(query) as result:
-                    for serialized in result.scalars():
-                        digest.update(serialized.encode("utf-8") + b"\n")
-                        count += 1
-                report["tables"][table] = {"rows": count, "sha256": digest.hexdigest()}
-            return report
+            return fingerprint_connection(connection)
     finally:
         engine.dispose()
 

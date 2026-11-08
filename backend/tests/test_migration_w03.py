@@ -25,8 +25,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W18 added revision 0012 (trusted assessments and exact policy approvals).
-EXPECTED_HEAD = "0012"
+# Campaign namespace and versioned closure evidence are reviewed in revision 0013.
+EXPECTED_HEAD = "0013"
 
 
 needs_real_db = pytest.mark.skipif(
