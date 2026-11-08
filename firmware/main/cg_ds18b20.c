@@ -6,6 +6,7 @@
 #include <string.h>
 
 #include "coldguard_config.h"
+#include "cg_fault_inject.h"
 #include "cg_log.h"
 #include "cg_onewire.h"
 
@@ -182,6 +183,21 @@ void cg_ds18b20_read_all(cg_thermal_snapshot_t *snap)
         const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
         cg_ds18b20_read_probe(entry->role, &snap->probe[entry->role]);
     }
+
+#if CG_FAULT_INJECTION
+    /* A-W21-02: force exactly one selected ROM to report unavailable, at the
+     * per-probe result boundary, after the real shared conversion. The role map
+     * and every other probe are untouched, and the selected probe's celsius is
+     * marked invalid so no value reaches the snapshot as a fresh measurement. */
+    for (size_t i = 0; i < cg_rom_map_size(); i++) {
+        const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];
+        if (cg_fault_inject_ds_active((int)entry->role)) {
+            snap->probe[entry->role].present = false;
+            snap->probe[entry->role].valid = false;
+            snap->probe[entry->role].status = CG_READ_NO_PRESENCE;
+        }
+    }
+#endif
 
     for (size_t i = 0; i < cg_rom_map_size(); i++) {
         const cg_rom_entry_t *entry = &cg_rom_map_entries()[i];

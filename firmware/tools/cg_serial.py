@@ -797,6 +797,7 @@ PZEM_STATUS_TOKENS = (
     "BAD_LENGTH",
     "EXCEPTION",
     "UART_ERR",
+    "INJECT_DISABLED",
 )
 
 

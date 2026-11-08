@@ -1,0 +1,89 @@
+{
+  "checks": [
+    {
+      "detail": "24",
+      "failure_reason": "PZEM_LOSS_NOT_EXPLICIT",
+      "name": "explicit_electrical_degradation",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "CURRENT_VALUE_INVENTED",
+      "name": "missing_current_not_carried_forward",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "ACTUATION_WITHOUT_POWER_OBSERVABILITY",
+      "name": "no_blind_actuation",
+      "passed": true
+    },
+    {
+      "detail": "24",
+      "failure_reason": "PZEM_DID_NOT_RECOVER",
+      "name": "recovery_observed",
+      "passed": true
+    }
+  ],
+  "device_identity": {
+    "boot_count": "181",
+    "boot_id": "4cf9be5f",
+    "device_id": "coldguard-001",
+    "firmware_version": "cg-w06-0.1.0",
+    "hardware_config_id": "CG-HW-001",
+    "spare_rom": "283BE5C9000000A9",
+    "t1_rom": "287088CA00000051",
+    "t2_rom": "28AEBF2200000006",
+    "t3_rom": "28CBE9CA00000072"
+  },
+  "ended_at": "2026-11-07T17:12:37.779899+00:00",
+  "evidence": [
+    {
+      "captured_at": "2026-11-07T17:12:37.788+00:00",
+      "original": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W21\\fault-injection-session-20261108\\raw.log",
+      "sha256": "faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa",
+      "size": 371291,
+      "stored": "attachments\\A-W21-03\\faf008eb6c7e-raw.log"
+    },
+    {
+      "captured_at": "2026-11-07T17:12:37.790+00:00",
+      "original": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W21\\fault-injection-session-20261108\\manifest.json",
+      "sha256": "1f37024afd676a42970d68ca12250fa37f04836bb4d3b2b77a09e73e1cf514ca",
+      "size": 1865,
+      "stored": "attachments\\A-W21-03\\1f37024afd67-manifest.json"
+    },
+    {
+      "captured_at": "2026-11-07T17:12:37.791+00:00",
+      "original": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W21\\fault-injection-session-20261108\\events.json",
+      "sha256": "57494aa95d21dc31dd38fd5d372caa4addeb8734aaf635b3663c66408024ce3b",
+      "size": 656,
+      "stored": "attachments\\A-W21-03\\57494aa95d21-events.json"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {
+    "cooling_on_frames": 0,
+    "current_none_frames": 24,
+    "electrical_invalid_frames": 24,
+    "electrical_quality": {
+      "INVALID": 24,
+      "VALID": 1
+    },
+    "evidence_mode": "ON_DEVICE_SOFTWARE_INJECTION",
+    "frames": 25,
+    "quality_counts": {
+      "INVALID": 24,
+      "UNKNOWN": 1
+    },
+    "recovery_frames": 25,
+    "recovery_valid_frames": 24,
+    "transport_disabled_proven": true
+  },
+  "notes": "ON_DEVICE_SOFTWARE_INJECTION; firmware e1073935168c01be029c23a87f6f012d852016deac0afb672437f234a269206b (feat/a-w21-transport-fault a54ba24); boot 4cf9be5f; raw.log sha256 faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa; TEC OFF, output stage compiled out, fuse OUT (0 A is not proof of enabled-actuator fail-safe); no physical disconnection.",
+  "operator": "qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "HARDWARE",
+  "started_at": "2026-11-07T17:08:08.938815+00:00",
+  "test_id": "A-W21-03"
+}

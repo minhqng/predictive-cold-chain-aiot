@@ -1,0 +1,56 @@
+{
+  "session": "W21-02_W21-03_combined",
+  "evidence_mode": "ON_DEVICE_SOFTWARE_INJECTION",
+  "started_utc": "2026-11-07T17:08:08.938815+00:00",
+  "port": "COM4",
+  "baud": 115200,
+  "firmware_binary_sha256": "e1073935168c01be029c23a87f6f012d852016deac0afb672437f234a269206b",
+  "firmware_branch": "feat/a-w21-transport-fault",
+  "firmware_head": "a54ba24",
+  "identity": {
+    "boot_id": "4cf9be5f",
+    "boot_count": "181",
+    "firmware_version": "cg-w06-0.1.0",
+    "hardware_config_id": "CG-HW-001",
+    "device_id": "coldguard-001",
+    "t1_rom": "287088CA00000051",
+    "t2_rom": "28AEBF2200000006",
+    "t3_rom": "28CBE9CA00000072",
+    "spare_rom": "283BE5C9000000A9"
+  },
+  "raw_log_sha256": "faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa",
+  "raw_log_bytes": 371291,
+  "phase_line_counts": {
+    "A_baseline": 75,
+    "B_ds_t1_on": 78,
+    "B_ds_t1_off": 78,
+    "C_pzem_baseline": 36,
+    "C_pzem_on": 77,
+    "C_pzem_off": 76,
+    "D_clear": 38
+  },
+  "injection_events": [
+    {
+      "phase": "B_ds_t1_on",
+      "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT DS T1 ON ds_role=0 pzem_down=0"
+    },
+    {
+      "phase": "B_ds_t1_off",
+      "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT DS T1 OFF ds_role=-1 pzem_down=0"
+    },
+    {
+      "phase": "C_pzem_on",
+      "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT PZEM ON ds_role=-1 pzem_down=1"
+    },
+    {
+      "phase": "C_pzem_off",
+      "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT PZEM OFF ds_role=-1 pzem_down=0"
+    },
+    {
+      "phase": "D_clear",
+      "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT CLEAR ds_role=-1 pzem_down=0"
+    }
+  ],
+  "tec_actuation": "NONE (output stage compiled out, fuse OUT)",
+  "physical_disconnection": "NONE (software injection only)"
+}

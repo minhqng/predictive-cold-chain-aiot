@@ -203,6 +203,10 @@ const char *cg_pzem_status_name(cg_pzem_status_t status)
         return "BAD_LENGTH";
     case CG_PZEM_EXCEPTION:
         return "EXCEPTION";
+#if defined(CG_FAULT_INJECTION) && CG_FAULT_INJECTION
+    case CG_PZEM_INJECT_DISABLED:
+        return "INJECT_DISABLED";
+#endif
     case CG_PZEM_UART_ERR:
     default:
         return "UART_ERR";

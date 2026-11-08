@@ -11,11 +11,18 @@
 
 #include <string.h>
 
+#include "sdkconfig.h"
 #include "driver/uart.h"
+#include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+
+#ifdef CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG
+#include "driver/usb_serial_jtag.h"
+#endif
 
 #include "cg_log.h"
 #include "coldguard_config.h"
+#include "cg_fault_inject.h"
 
 #define CG_CONSOLE_RX_BUFFER 512
 #define CG_CONSOLE_STACK_WORDS 3072
@@ -28,6 +35,18 @@ static void handle_line(const char *line)
 {
     cg_tec_command_t command;
     const char *error = "OK";
+
+#if CG_FAULT_INJECTION
+    /* Test-only local control path. A FAULT line is consumed here and never
+     * reaches the TEC command parser/queue, so it cannot be driven by a network
+     * command. Compiled out entirely when CG_FAULT_INJECTION is 0. */
+    if (cg_fault_inject_console_line(line)) {
+        cg_log_line("%s %s event=FAULT_INJECT_HANDLED line=%s ds_role=%d pzem_down=%d",
+                    CG_LOG_PREFIX, CG_LOG_TEC, line, cg_fault_inject_ds_role(),
+                    cg_fault_inject_pzem_down() ? 1 : 0);
+        return;
+    }
+#endif
 
     if (!cg_tec_command_parse(line, &command, &error)) {
         cg_log_error("console=PARSE_FAIL error=%s", error);
@@ -48,7 +67,15 @@ static void console_task(void *arg)
     (void)arg;
 
     for (;;) {
+#ifdef CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG
+        /* The primary console is the native USB-Serial/JTAG port (COM4). UART0
+         * is not connected to USB (CONFIG_ESP_CONSOLE_UART_NUM=-1), so reading
+         * UART0 would never see operator input. Read the USB peripheral. */
+        const int received = usb_serial_jtag_read_bytes(chunk, sizeof(chunk),
+                                                        pdMS_TO_TICKS(50));
+#else
         const int received = uart_read_bytes(UART_NUM_0, chunk, sizeof(chunk), pdMS_TO_TICKS(50));
+#endif
         if (received <= 0) {
             continue;
         }
@@ -90,6 +117,22 @@ static void console_task(void *arg)
 bool cg_console_start(QueueHandle_t command_queue)
 {
 #if CG_CONSOLE_ENABLED == 1
+    if (command_queue == NULL) {
+        return false;
+    }
+    s_queue = command_queue;
+#ifdef CONFIG_ESP_CONSOLE_USB_SERIAL_JTAG
+    /* Install the USB-Serial/JTAG driver so RX bytes from COM4 are buffered and
+     * readable. stdout (the log stream) shares the same peripheral. If the VFS
+     * console already installed it, accept that state rather than failing. */
+    usb_serial_jtag_driver_config_t usj_config = USB_SERIAL_JTAG_DRIVER_CONFIG_DEFAULT();
+    esp_err_t usj_err = usb_serial_jtag_driver_install(&usj_config);
+    if (usj_err != ESP_OK && usj_err != ESP_ERR_INVALID_STATE) {
+        cg_log_error("console=USJ_INSTALL_FAIL commands=disabled err=%s",
+                     esp_err_to_name(usj_err));
+        return false;
+    }
+#else
     uart_config_t config = {
         .baud_rate = CG_CONSOLE_BAUD,
         .data_bits = UART_DATA_8_BITS,
@@ -98,11 +141,6 @@ bool cg_console_start(QueueHandle_t command_queue)
         .flow_ctrl = UART_HW_FLOWCTRL_DISABLE,
         .source_clk = UART_SCLK_DEFAULT,
     };
-
-    if (command_queue == NULL) {
-        return false;
-    }
-    s_queue = command_queue;
     if (uart_driver_install(UART_NUM_0, CG_CONSOLE_RX_BUFFER, 0, 0, NULL, 0) != ESP_OK) {
         cg_log_error("console=UART_INSTALL_FAIL commands=disabled");
         return false;
@@ -111,6 +149,7 @@ bool cg_console_start(QueueHandle_t command_queue)
         cg_log_error("console=UART_CONFIG_FAIL commands=disabled");
         return false;
     }
+#endif
     s_available = true;
     (void)xTaskCreate(console_task, "cg_console", CG_CONSOLE_STACK_WORDS, NULL,
                       CG_CONSOLE_TASK_PRIORITY, NULL);

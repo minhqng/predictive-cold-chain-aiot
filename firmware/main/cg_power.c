@@ -14,6 +14,7 @@
 
 #include "coldguard_config.h"
 #include "cg_crc16.h"
+#include "cg_fault_inject.h"
 #include "cg_health.h"
 #include "cg_log.h"
 #include "cg_pzem.h"
@@ -79,6 +80,20 @@ static cg_link_result_t link_transaction(const uint8_t *request, size_t request_
 
     memset(&result, 0, sizeof(result));
     result.status = CG_PZEM_TIMEOUT;
+
+#if CG_FAULT_INJECTION
+    /* A-W21-03: disable the PZEM communication path at the transport boundary.
+     * No request is transmitted and no response is read, so the producer gets a
+     * bounded communication-unavailable result with frame_len==0. It is reported
+     * as INJECT_DISABLED - never as a natural TIMEOUT and never as a physical
+     * link failure - and no stale bytes are left for a later parse. */
+    if (cg_fault_inject_pzem_down()) {
+        cg_rs485_flush_input();
+        result.status = CG_PZEM_INJECT_DISABLED;
+        result.attempts = 0;
+        return result;
+    }
+#endif
 
     for (uint8_t attempt = 1; attempt <= CG_PZEM_MAX_ATTEMPTS; attempt++) {
         result.attempts = attempt;
@@ -205,7 +220,7 @@ static void poll_once(void)
         }
     }
 
-    const bool crc_ok =
+    bool crc_ok =
         link.frame_len >= 4U &&
         cg_crc16_check(link.rx + link.frame_offset, (size_t)link.frame_len);
 
