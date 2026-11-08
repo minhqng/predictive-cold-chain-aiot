@@ -51,7 +51,7 @@ def publish_package(destination: Path, files: dict[str, bytes], *, format: str, 
     return {"manifest_sha256": digest(manifest_bytes), "manifest": manifest}
 
 
-def verify_package(directory: Path, *, expected_manifest_sha256: str, format: str) -> dict:
+def read_verified_package(directory: Path, *, expected_manifest_sha256: str, format: str) -> tuple[dict, dict[str, bytes]]:
     if not isinstance(expected_manifest_sha256, str) or re.fullmatch(r"[0-9a-f]{64}", expected_manifest_sha256) is None:
         raise ValueError("a trusted manifest SHA-256 is required")
     content = package_path(directory, "manifest.json").read_bytes()
@@ -64,7 +64,15 @@ def verify_package(directory: Path, *, expected_manifest_sha256: str, format: st
     actual = {path.relative_to(directory).as_posix() for path in directory.rglob("*") if path.is_file()}
     if actual != {"manifest.json", *files}:
         raise ValueError("evidence package has missing or unexpected artifacts")
+    snapshot = {"manifest.json": content}
     for name, checksum in files.items():
-        if not isinstance(checksum, str) or re.fullmatch(r"[0-9a-f]{64}", checksum) is None or digest(package_path(directory, name).read_bytes()) != checksum:
+        data = package_path(directory, name).read_bytes()
+        if not isinstance(checksum, str) or re.fullmatch(r"[0-9a-f]{64}", checksum) is None or digest(data) != checksum:
             raise ValueError("evidence artifact checksum differs: " + str(name))
+        snapshot[name] = data
+    return manifest, snapshot
+
+
+def verify_package(directory: Path, *, expected_manifest_sha256: str, format: str) -> dict:
+    manifest, _ = read_verified_package(directory, expected_manifest_sha256=expected_manifest_sha256, format=format)
     return manifest

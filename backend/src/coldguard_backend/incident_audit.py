@@ -14,14 +14,14 @@ from coldguard_backend.campaign_freeze import Digest, FileName
 from coldguard_backend.campaign_integrity import _raw_evidence, campaign_integrity
 from coldguard_backend.campaign_store import get_campaign, verify_membership
 from coldguard_backend.command_store import command_acks, command_attempts, command_transitions, commands
-from coldguard_backend.evidence_package import digest, publish_package, verify_package
+from coldguard_backend.evidence_package import digest, publish_package, read_verified_package
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence, run_timeline
 from coldguard_backend.experiment_store import DeviceIdentifier, Identifier, Reason
 
 FORMAT = "coldguard-incident-package-v1"
 EventType = Literal["MQTT_CONNECT_DENIED", "MQTT_PUBLISH_DENIED", "MQTT_PUBLISH_ACCEPTED", "BROKER_DISCONNECTED",
-                    "BROKER_RECONNECTED", "BACKEND_RESTARTED", "DATABASE_UNAVAILABLE", "COMMAND_DISPATCH_BLOCKED",
+                    "BROKER_RECONNECTED", "BACKEND_STARTED", "BACKEND_RESTARTED", "DATABASE_UNAVAILABLE", "COMMAND_DISPATCH_BLOCKED",
                     "DUPLICATE_REORDER_OBSERVED", "REPLAY_IGNORED"]
 
 
@@ -102,15 +102,15 @@ def build_incident_audit(connection: Connection, journal: IncidentJournal, *, cr
             raise ValueError("incident observation is outside the campaign run scope")
         if observation.device_id is not None and any(runs[run_id]["device_id"] != observation.device_id for run_id in selected):
             raise ValueError("incident observation has conflicting device scope")
-        raw_ids = {row["id"] for run_id in selected for row in raw[run_id]}
-        command_ids = {row["command_id"] for row in command_rows if row["run_id"] in selected}
-        if not set(observation.raw_ids) <= raw_ids or not set(observation.command_ids) <= command_ids:
+        scoped_raw_ids = {row["id"] for run_id in selected for row in raw[run_id]}
+        scoped_command_ids = {row["command_id"] for row in command_rows if row["run_id"] in selected}
+        if not set(observation.raw_ids) <= scoped_raw_ids or not set(observation.command_ids) <= scoped_command_ids:
             raise ValueError("incident source references are missing or outside its exact run scope")
-    command_ids = [row["command_id"] for row in command_rows]
+    campaign_command_ids = [row["command_id"] for row in command_rows]
     command_evidence = {"commands": command_rows}
     for table in (command_attempts, command_transitions, command_acks):
         command_evidence[table.name] = [dict(row) for row in connection.execute(
-            select(table).where(table.c.command_id.in_(command_ids)).order_by(*table.primary_key.columns)
+            select(table).where(table.c.command_id.in_(campaign_command_ids)).order_by(*table.primary_key.columns)
         ).mappings()]
     journal_document = journal.model_dump()
     journal_document["observations"].sort(key=lambda row: (row["observed_at"], row["event_id"]))
@@ -133,14 +133,22 @@ def create_incident_package(engine: Engine, journal: IncidentJournal, *, artifac
                                  "audit_sha256": digest(content), "physical_acceptance": "BLOCKED_EXTERNAL"})
 
 
-def verify_incident_package(directory: Path, *, expected_manifest_sha256: str) -> dict:
-    manifest = verify_package(directory, expected_manifest_sha256=expected_manifest_sha256, format=FORMAT)
-    content = (directory / "incident-audit.json").read_bytes()
+def read_verified_incident_package(directory: Path, *, expected_manifest_sha256: str) -> tuple[dict, dict[str, bytes]]:
+    manifest, files = read_verified_package(directory, expected_manifest_sha256=expected_manifest_sha256, format=FORMAT)
+    content = files["incident-audit.json"]
     audit = json.loads(content)
     if digest(content) != manifest["audit_sha256"] or any(audit[key] != manifest[key] for key in ("campaign_id", "data_class", "physical_acceptance")):
         raise ValueError("incident audit identity differs from its anchored manifest")
     journal = IncidentJournal.model_validate_json(encode_evidence(audit["journal"]))
     if journal.campaign_id != audit["campaign_id"] or journal.data_class != audit["data_class"]:
         raise ValueError("incident journal identity differs from the audit")
-    journal_sources(directory / "sources", journal)
+    for row in journal.observations:
+        content = files.get("sources/" + row.source_name)
+        if content is None or digest(content) != row.source_sha256:
+            raise ValueError("incident source checksum differs from the anchored journal")
+    return manifest, files
+
+
+def verify_incident_package(directory: Path, *, expected_manifest_sha256: str) -> dict:
+    manifest, _ = read_verified_incident_package(directory, expected_manifest_sha256=expected_manifest_sha256)
     return manifest
