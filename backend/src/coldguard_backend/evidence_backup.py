@@ -66,16 +66,23 @@ def backup_campaign(engine: Engine, campaign_id: str, destination: Path, *, pg_d
     return receipt
 
 
-def verify_backup(directory: Path) -> dict:
-    receipt = json.loads((directory / "receipt.json").read_bytes())
+def read_verified_backup(directory: Path) -> tuple[dict, bytes, bytes]:
+    receipt_bytes = (directory / "receipt.json").read_bytes()
+    archive_bytes = (directory / "database.dump").read_bytes()
+    receipt = json.loads(receipt_bytes)
     if (receipt.get("format") != "coldguard-backup-v1" or receipt.get("archive") != "database.dump"
-        or hashlib.sha256((directory / "database.dump").read_bytes()).hexdigest() != receipt.get("archive_sha256")):
+        or hashlib.sha256(archive_bytes).hexdigest() != receipt.get("archive_sha256")):
         raise ValueError("backup checksum or format differs")
+    return receipt, receipt_bytes, archive_bytes
+
+
+def verify_backup(directory: Path) -> dict:
+    receipt, _, _ = read_verified_backup(directory)
     return receipt
 
 
 def restore_backup(directory: Path, restore_url, *, pg_restore: str = "pg_restore") -> dict:
-    receipt = verify_backup(directory)
+    receipt, _, archive_bytes = read_verified_backup(directory)
     url = local_database_url(restore_url)
     engine = create_engine(url, connect_args={"connect_timeout": 5})
     try:
@@ -84,7 +91,11 @@ def restore_backup(directory: Path, restore_url, *, pg_restore: str = "pg_restor
                 raise ValueError("restore target must have no application tables")
             if connection.scalar(text("SELECT EXISTS (SELECT 1 FROM pg_extension WHERE extname='timescaledb')")):
                 connection.execute(text("SELECT timescaledb_pre_restore()"))
-        _postgres_command(pg_restore, url, "--exit-on-error", "--no-owner", "--no-acl", str(directory / "database.dump"))
+        # pg_restore consumes exactly the verified bytes, not a raced second read of the source.
+        with tempfile.TemporaryDirectory(prefix="coldguard-verified-restore-") as temporary:
+            archive = Path(temporary) / "database.dump"
+            archive.write_bytes(archive_bytes)
+            _postgres_command(pg_restore, url, "--exit-on-error", "--no-owner", "--no-acl", str(archive))
         with engine.begin() as connection:
             connection.execute(text("SELECT timescaledb_post_restore()"))
         with engine.connect().execution_options(isolation_level="REPEATABLE READ", postgresql_readonly=True) as connection:
