@@ -20,8 +20,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# Campaign namespace and versioned closure evidence are reviewed in revision 0013.
-EXPECTED_HEAD = "0013"
+# Campaign namespace, closure and immutable freeze evidence are reviewed through 0014.
+EXPECTED_HEAD = "0014"
 
 # C-W03 evolution: head moved 0002 -> 0003; the assertions above now
 # cover the normalized telemetry table as well. The W02->W03 upgrade
@@ -162,6 +162,7 @@ def _assert_expected_schema() -> None:
         "predictions", "prediction_inputs", "shadow_decisions", "physical_assessments",
         "policy_approvals",
         "campaigns", "campaign_runs", "campaign_run_closures",
+        "campaign_freezes",
     }, tables
     assert columns == EXPECTED_COLUMNS, columns - EXPECTED_COLUMNS or EXPECTED_COLUMNS - columns
     assert EXPECTED_INDEXES <= indexes, EXPECTED_INDEXES - indexes

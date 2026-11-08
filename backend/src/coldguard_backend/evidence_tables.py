@@ -18,6 +18,7 @@ EVIDENCE_ADDITIONS = {
     "0011": {"shadow_decisions": "decision_id"},
     "0012": {"physical_assessments": "assessment_id", "policy_approvals": "command_id"},
     "0013": {"campaigns": "campaign_id", "campaign_runs": "run_id", "campaign_run_closures": "closure_id"},
+    "0014": {"campaign_freezes": "freeze_id"},
 }
 
 
