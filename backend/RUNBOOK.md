@@ -70,12 +70,43 @@ Do not install or reconfigure system services without authorization.
 
 Use operator-provisioned PostgreSQL/TimescaleDB and authenticated Mosquitto on
 explicit owned loopback ports. Set `DATABASE_URL` to the dedicated direct
-`127.0.0.1` psycopg SQLAlchemy URL via the private environment. Set backend MQTT
-host/port/ingest credentials from that same owned broker. From `backend/`:
+`127.0.0.1` psycopg SQLAlchemy URL via the private environment. **Also set all five
+`POSTGRES_*` keys — `POSTGRES_HOST`, `POSTGRES_PORT`, `POSTGRES_DB`, `POSTGRES_USER`
+and `POSTGRES_PASSWORD` — to that same owned database.** HTTP, startup recovery
+and migrations prefer `DATABASE_URL`; the MQTT and ACK workers use `ColdGuardConfig.database_url`,
+derived from `POSTGRES_*`. Setting only `DATABASE_URL` leaves those workers on
+their defaults, potentially a different server. Never rely on `localhost:5432`
+fallback or change/adopt an unrelated provider to make startup pass.
+
+Set backend MQTT host/port/ingest credentials from the same owned broker. The
+configuration check below compares the API/worker URLs **without connecting**;
+it does not establish provider ownership, which must already be verified. Run
+the native block as one fail-fast Bash script/block. From `backend/`:
 
 ```sh
+set -euo pipefail
 mkdir -p ../evidence-out
 uv sync --offline --locked --extra test
+uv run --offline --locked python - <<'PY'
+import os
+from sqlalchemy.engine import make_url
+from coldguard_backend.config import ColdGuardConfig
+from coldguard_backend.main import _database_url
+
+keys = ("DATABASE_URL", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD")
+if any(not os.environ.get(name, "").strip() for name in keys):
+    raise SystemExit("Set explicit DATABASE_URL and all POSTGRES_* bindings before network access")
+try:
+    api = make_url(_database_url())
+    workers = make_url(ColdGuardConfig.load().database_url)
+except ValueError:
+    raise SystemExit("Invalid database configuration; stop before network access") from None
+if api.drivername != "postgresql+psycopg" or api.host != "127.0.0.1" or not api.port or not api.database or api.query:
+    raise SystemExit("Select the explicit owned direct-loopback database before network access")
+if api != make_url(os.environ["DATABASE_URL"]) or api != workers:
+    raise SystemExit("API/migration and MQTT/ACK databases differ; stop before network access")
+print("Database configuration correspondence checked (credentials not displayed)")
+PY
 uv run --offline --locked alembic -c alembic.ini upgrade head
 uv run --offline --locked alembic -c alembic.ini current
 uv run --offline --locked python scripts/check_stack.py --database-only --output ../evidence-out/schema-readiness.json
@@ -106,9 +137,9 @@ overwritten. Read-only schema/table checks are not a physical or security
 certification. Use unique report names outside immutable packages.
 Pre-create the owned report directory. Parent-relative operator output roots are
 supported; internal artifact dot-navigation/device/alias names are still refused.
-The host `DATABASE_URL` must identify the same owned DB configured for the selected
-backend: READY tests the explicitly supplied DB, but does not discover or authenticate
-the correspondence automatically. Startup reconciliation is reported separately
+The host `DATABASE_URL` and backend's `DATABASE_URL`/`POSTGRES_*` must identify the
+same owned DB: READY tests the explicitly supplied DB, but does not discover or
+authenticate the correspondence automatically. Startup reconciliation is reported separately
 and must be enabled for the recovery scene; it is not a generic READY gate.
 
 ```sh
