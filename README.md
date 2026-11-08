@@ -15,6 +15,9 @@ See [the local digital-stack runbook](backend/RUNBOOK.md) for owned startup,
 offline rehearsal, readiness, auth/TLS, logs and clean restore. The
 [frozen final JSON package](backend/FINAL_DATA_PACKAGE.md) is the reproducible
 data/claim handover route; software evidence does not imply physical acceptance.
+The [digital handover contract](backend/HANDOVER.md) indexes the delivered
+interfaces, populated preservation gate and receiving-member drill. Use the
+current runbook rather than the historical startup examples below.
 
 ## Historical foundation (W01–W04)
 
