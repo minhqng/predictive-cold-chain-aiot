@@ -15,7 +15,7 @@ from sqlalchemy.engine import Engine
 
 from coldguard_backend.campaign_export import build_campaign_export
 from coldguard_backend.campaign_store import campaigns, get_campaign
-from coldguard_backend.evidence_backup import read_verified_backup, restore_backup, verify_backup
+from coldguard_backend.evidence_backup import read_verified_backup, restore_backup_bytes, verify_backup_bytes
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence
 from coldguard_backend.experiment_store import Identifier
@@ -109,10 +109,10 @@ def _safe_package_path(root: Path, name: str) -> Path:
     return path
 
 
-def verify_frozen_package(directory: Path, *, expected_manifest_sha256: str) -> dict:
+def read_verified_frozen_package(directory: Path, *, expected_manifest_sha256: str) -> tuple[dict, dict[str, bytes]]:
     if re.fullmatch(r"[0-9a-f]{64}", expected_manifest_sha256) is None:
         raise ValueError("a trusted immutable manifest SHA-256 is required")
-    content = (directory / "manifest.json").read_bytes()
+    content = _safe_package_path(directory, "manifest.json").read_bytes()
     if _digest(content) != expected_manifest_sha256:
         raise ValueError("frozen manifest checksum differs from its immutable anchor")
     manifest = json.loads(content)
@@ -122,15 +122,23 @@ def verify_frozen_package(directory: Path, *, expected_manifest_sha256: str) -> 
     actual = {path.relative_to(directory).as_posix() for path in directory.rglob("*") if path.is_file()}
     if actual != expected_files:
         raise ValueError("frozen package has missing or unexpected artifacts")
-    for name, digest in manifest["files"].items():
-        if _digest(_safe_package_path(directory, name).read_bytes()) != digest:
+    files = {}
+    for name, checksum in manifest["files"].items():
+        data = _safe_package_path(directory, name).read_bytes()
+        if _digest(data) != checksum:
             raise ValueError("frozen artifact checksum differs: " + name)
-    bundle = json.loads((directory / "campaign-export.json").read_bytes())
+        files[name] = data
+    bundle = json.loads(files["campaign-export.json"])
     if _digest(encode_evidence(bundle["dataset"])) != bundle["manifest"]["dataset_sha256"] or bundle["manifest"]["dataset_id"] != manifest["dataset_id"]:
         raise ValueError("frozen dataset checksum or identity differs")
-    backup = verify_backup(directory / "backup")
+    backup = verify_backup_bytes(files["backup/receipt.json"], files["backup/database.dump"])
     if backup["source_fingerprints"] != manifest["source_fingerprints"]:
         raise ValueError("frozen backup source fingerprints differ from its anchored manifest")
+    return manifest, files
+
+
+def verify_frozen_package(directory: Path, *, expected_manifest_sha256: str) -> dict:
+    manifest, _ = read_verified_frozen_package(directory, expected_manifest_sha256=expected_manifest_sha256)
     return manifest
 
 
@@ -216,8 +224,12 @@ def freeze_campaign(engine: Engine, draft: FreezeDraft, *, artifact_root: Path, 
 
 
 def verify_frozen_restore(directory: Path, record: dict, restore_url, *, pg_restore="pg_restore") -> dict:
-    verify_frozen_package(directory, expected_manifest_sha256=record["manifest_sha256"])
-    report = restore_backup(directory / "backup", restore_url, pg_restore=pg_restore)
+    manifest, files = read_verified_frozen_package(directory, expected_manifest_sha256=record["manifest_sha256"])
+    if (any(record[key] != manifest[key] for key in ("freeze_id", "campaign_id", "dataset_id"))
+        or record["export_bytes"] != files["campaign-export.json"] or record["export_sha256"] != _digest(files["campaign-export.json"])):
+        raise ValueError("freeze record differs from the anchored package snapshot")
+    report = restore_backup_bytes(files["backup/receipt.json"], files["backup/database.dump"], restore_url, pg_restore=pg_restore,
+        expected_receipt_sha256=manifest["files"]["backup/receipt.json"], expected_archive_sha256=manifest["files"]["backup/database.dump"])
     from sqlalchemy import create_engine
     engine = create_engine(restore_url, connect_args={"connect_timeout": 5})
     try:
