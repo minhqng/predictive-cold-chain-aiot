@@ -3,9 +3,13 @@
 import json
 import secrets
 import socket
+import subprocess
+import sys
 import threading
+from contextlib import contextmanager
 from datetime import timedelta
 
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
@@ -16,6 +20,8 @@ from coldguard_backend.command_authorization import AuthorizedCommandGateway, Co
 from coldguard_backend.command_publisher import PahoCommandTransport, PublishResult, command_topic
 from coldguard_backend.command_service import create_command_intent
 from coldguard_backend.main import app
+from coldguard_backend.normalized_store import telemetry as telemetry_table
+from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.recovery import device_recovery_snapshot
 from tests.command_testkit import ack_bytes, ack_topic, cleanup_commands, make_ack, make_command, utcnow
 from tests.mqtt_testkit import has_test_mqtt, mqtt_params, wait_for
@@ -30,6 +36,53 @@ def _gateway(engine, transport, ready, token):
         engine, transport, backend_token=token, allowed_devices=frozenset({"coldguard-001"}),
         policy_allows=lambda _command: True, transport_ready=ready,
     )
+
+
+@contextmanager
+def _backend_process(log_path, pids):
+    with socket.socket() as reservation:
+        reservation.bind(("127.0.0.1", 0))
+        port = reservation.getsockname()[1]
+    runner = """
+import sys
+from threading import Thread
+from uvicorn import Config, Server
+
+server = Server(Config("coldguard_backend.main:app", host="127.0.0.1", port=int(sys.argv[1])))
+
+def stop_on_parent_close():
+    sys.stdin.read()
+    server.should_exit = True
+
+Thread(target=stop_on_parent_close, daemon=True).start()
+server.run()
+"""
+    with log_path.open("wb") as output:
+        process = subprocess.Popen(
+            [sys.executable, "-c", runner, str(port)],
+            stdin=subprocess.PIPE, stdout=output, stderr=subprocess.STDOUT,
+            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
+        )
+        pids.append(process.pid)
+        try:
+            with httpx.Client(base_url=f"http://127.0.0.1:{port}", timeout=2, trust_env=False) as client:
+                def ready():
+                    assert process.poll() is None, log_path.read_text(encoding="utf-8", errors="replace")
+                    try:
+                        return client.get("/health").status_code == 200
+                    except httpx.TransportError:
+                        return False
+
+                assert wait_for(ready, timeout_s=15)
+                yield client
+        finally:
+            process.stdin.close()
+            try:
+                assert process.wait(timeout=10) == 0, log_path.read_text(encoding="utf-8", errors="replace")
+            except subprocess.TimeoutExpired:
+                process.kill()
+                process.wait(timeout=5)
+                raise
 
 
 def test_broker_outage_blocks_dispatch_and_never_fabricates_state(db_engine, restartable_broker):
@@ -87,22 +140,36 @@ def test_database_connection_outage_prevents_creation_and_transmission(db_engine
 
 
 @pytest.mark.skipif(not has_test_mqtt(), reason="requires disposable Mosquitto")
-def test_backend_restart_resolves_pending_expiry_and_recovers_subscription(db_engine, monkeypatch):
+@pytest.mark.parametrize("process_restart", [False, True], ids=["lifespan", "process"])
+def test_backend_restart_resolves_pending_expiry_and_recovers_subscription(
+    db_engine, monkeypatch, tmp_path, process_restart,
+):
+    params = mqtt_params()
+    if process_restart and (params["host"] != "127.0.0.1" or db_engine.url.host != "127.0.0.1"):
+        pytest.skip("process restart proof requires direct loopback providers")
     cleanup_commands(db_engine)
     _enable_app_ack(monkeypatch)
     monkeypatch.setenv("COLDGUARD_MQTT_INGEST", "true")
     monkeypatch.setenv("COLDGUARD_RECONCILE_COMMANDS", "true")
     monkeypatch.setattr(app.state, "db_engine", db_engine)
-    params = mqtt_params()
+    if process_restart:
+        monkeypatch.setenv("DATABASE_URL", db_engine.url.render_as_string(hide_password=False))
+        monkeypatch.delenv("MQTT_TLS_CA", raising=False)
+    pids = []
+
+    def backend(label):
+        if process_restart:
+            return _backend_process(tmp_path / f"{label}.log", pids)
+        return TestClient(app)
+
     device = "coldguard-001"
     device_client = _connect(params["device_user"], params["device_password"], "w16-restart-device")
     subscribed, command_received = threading.Event(), threading.Event()
     device_client.on_subscribe = lambda *_: subscribed.set()
     device_client.on_message = lambda *_: command_received.set()
-    device_client.subscribe(command_topic(device), qos=1)
-    assert subscribed.wait(5)
     path = f"/api/devices/{device}/recovery"
     command_id = "w16-unresolved-expired"
+    boot_id = f"w16-software-{secrets.token_hex(6)}"
 
     def send(topic, payload):
         delivery = device_client.publish(topic, payload, qos=1, retain=False)
@@ -110,11 +177,13 @@ def test_backend_restart_resolves_pending_expiry_and_recovers_subscription(db_en
         assert delivery.is_published()
 
     def telemetry(seq, **kwargs):
-        payload = _payload(device, seq, boot_id="w16-software-boot", run_id="w16-software", **kwargs)
+        payload = _payload(device, seq, boot_id=boot_id, run_id=boot_id, **kwargs)
         send(f"coldguard/{device}/telemetry", json.dumps(payload).encode())
 
     try:
-        with TestClient(app) as first:
+        device_client.subscribe(command_topic(device), qos=1)
+        assert subscribed.wait(5)
+        with backend("first") as first:
             assert first.get("/api/runtime/readiness").json()["telemetry_subscribed"]
             telemetry(1)
             assert wait_for(lambda: first.get(path).json()["reported_seq"] == 1, timeout_s=5)
@@ -126,13 +195,14 @@ def test_backend_restart_resolves_pending_expiry_and_recovers_subscription(db_en
                     conn, command_id, payload_sha256=result["command"]["payload_sha256"], now=created,
                 )
             assert first.get(path).json()["pending_attempts"] == 1
-        with TestClient(app) as second:
+        with backend("second") as second:
             readiness = second.get("/api/runtime/readiness").json()
             assert all(readiness.values())
-            assert app.state.command_recovery["uncertain_commands"] == [command_id]
-            assert app.state.command_recovery["expired_commands"] == [command_id]
+            if not process_restart:
+                assert app.state.command_recovery["uncertain_commands"] == [command_id]
+                assert app.state.command_recovery["expired_commands"] == [command_id]
             recovery = second.get(path).json()
-            assert recovery["reported_boot_id"] == "w16-software-boot"
+            assert recovery["reported_boot_id"] == boot_id
             assert recovery["reported_seq"] == 1
             assert recovery["desired"]["expired"]
             assert recovery["desired"]["status"] == commands.EXPIRED
@@ -152,7 +222,12 @@ def test_backend_restart_resolves_pending_expiry_and_recovers_subscription(db_en
             telemetry(2)
             assert wait_for(lambda: second.get(path).json()["reported_seq"] == 2, timeout_s=5)
             assert not command_received.is_set()
+        if process_restart:
+            assert len(set(pids)) == 2
     finally:
         device_client.disconnect()
         device_client.loop_stop()
         cleanup_commands(db_engine)
+        with db_engine.begin() as conn:
+            conn.execute(telemetry_table.delete().where(telemetry_table.c.run_id == boot_id))
+            conn.execute(telemetry_raw.delete().where(telemetry_raw.c.run_id == boot_id))
