@@ -81,6 +81,9 @@ Command claims distinguish intent, PUBACK and accepted device ACK from physical
 effect. Stored policy/assessment records are indexed, not reauthenticated or
 converted into official Member D/A approval. Positive software storage fixtures
 remain fixtures even when their protocol/assessment record has a positive stage.
+Before a VALID ACK can support an acceptance claim, the strict ACK wire contract
+and all stored identity/verdict/interpretability projections must agree. Late,
+conflicting and invalid receipts remain evidence, not accepted protocol claims.
 
 ## Verification, failure and restore
 
@@ -94,6 +97,10 @@ source anchor, then recomputes the audit/run list/checksum/claim-index bytes fro
 the retained source. Missing, corrupt, extra, aliased or internally inconsistent
 input is refused. Names are portable; input/output directories must not overlap;
 operational reports must be new files outside every immutable package.
+Explicit operator roots may use `.`/`..` navigation, resolved under the root
+overlap/alias policy. That is not permission for internal artifact traversal:
+reserved names, trailing dots/spaces and dot-navigation artifact components
+remain rejected before filesystem access.
 Publication is exclusive and staged. Interrupted writes may retain diagnostic
 `.evidence-staging-*` files, but do not publish a ready destination. Retry with a
 new destination/report; never delete or overwrite historical evidence to retry.
