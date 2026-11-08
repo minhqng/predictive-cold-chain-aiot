@@ -11,7 +11,16 @@ decisions, recorded verbatim in intent; they are NOT agent-fabricated confirmati
 - Recorded as: operator-accepted deviation. Evidence = existing component-marking
   photos (W01 overview / PSU label / fan label / shunt marking / TEC marking) and
   the exposed as-built layout (W07 geometry). NOT applied-branch-label photos.
-- Acceptance: PASS with deviation note (operator authority).
+- Acceptance: INCOMPLETE — physical branch labeling deferred by operator
+  (2026-11-08); not a hardware fault. The canonical applied-label criterion
+  (6 labels) is not met and remains unchanged. The operator-accepted deviation
+  above is recorded as provenance, NOT a PASS: no waiver clause exists in the
+  governing procedure to convert an operator-accepted deviation into PASS.
+- Evaluation history: an earlier "PASS with deviation note (operator authority)"
+  conclusion was incorrect and is superseded by this line; a FAIL attempt was
+  archived in the results store, then corrected to INCOMPLETE once labeling was
+  confirmed as deferred work. See results/A-W23-03.json (outcome INCOMPLETE,
+  "Prior FAIL attempt archived. Not a PASS."). Labeling pending.
 
 ## A-W12-03 (mechanical inspection, fuse item) — OPERATOR ACCEPTANCE
 - Operator decision (2026-11-08): fuse ratings read by ATO color code
