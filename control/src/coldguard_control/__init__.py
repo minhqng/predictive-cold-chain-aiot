@@ -56,6 +56,7 @@ from .quality import (
     QualityInputError,
     assess_quality,
 )
+from .safe_local import SafeLocalSession, SafeLocalStep
 from .taxonomy import (
     FailureRule,
     UnknownFailureError,
@@ -116,6 +117,8 @@ __all__ = [
     "QualityInputError",
     "QualityState",
     "ReasonCode",
+    "SafeLocalSession",
+    "SafeLocalStep",
     "RemotePathView",
     "ThermalView",
     "UnknownFailureError",
