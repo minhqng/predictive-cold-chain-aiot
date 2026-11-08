@@ -1,4 +1,4 @@
-# ColdGuard Member A - real data handoff (20261108T102646Z)
+# ColdGuard Member A - real data handoff (20261108T104147Z)
 
 Export pipeline: `_local_handoff/coldguard_real_data_export.py` (rerunnable, stdlib only).
 

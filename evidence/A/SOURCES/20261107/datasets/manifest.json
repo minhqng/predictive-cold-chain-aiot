@@ -1,5 +1,5 @@
 {
-  "created_utc": "2026-11-08T10:26:48.374+00:00",
+  "created_utc": "2026-11-08T10:41:48.918+00:00",
   "purpose": "ColdGuard Member A real-data handoff: raw + normalized datasets + offline acceptance computations from existing physical evidence",
   "sensor_positions": {
     "t1": "CHAMBER_CENTER",
@@ -335,7 +335,7 @@
     {
       "package_path": "quality_report.md",
       "bytes": 4351,
-      "sha256": "287a8d2618395d3cf810440c947974dea992848f02a595066da448eb7d87b6c4"
+      "sha256": "0d06c012da46f1ef217a24696d16e73984267f8803de2e1594fe47610e140b29"
     },
     {
       "package_path": "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
@@ -464,8 +464,8 @@
     },
     {
       "package_path": "run_index.csv",
-      "bytes": 7209,
-      "sha256": "4e7d2b01bb837a6f5ee0e2c41a0578148e83ae510fc9a0fa9c71e7fdd3ac2239"
+      "bytes": 7394,
+      "sha256": "8c6fc1ad4ced3b4f067a9bce6bc3a640257221541f172727d7fd26d0fac1b001"
     }
   ]
 }

@@ -540,17 +540,32 @@ def main():
                               "warning": "SOURCE_NOT_FOUND"})
 
     # ----- 2. parse and split runs ---------------------------------------
+    # Parse the packaged raw copies (byte-verified by manifest) so the whole
+    # handoff is reproducible from its own raw/ tree, not from local-only paths.
+    def packaged(rel: str, original: Path) -> Path:
+        cand = raw_dir / rel
+        return cand if cand.is_file() else original
+
+    PKG_RAW = {
+        "h8c": packaged("h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log", h8c_raw),
+        "h8e": packaged("h8-e-1800s-100pct/monitor__telemetry_raw.log", h8e_raw),
+        "s2": packaged("s2-door-20261107/telemetry_raw.log", s2_raw),
+        "s1t1": packaged("s1-trial1-20261107/telemetry_raw.log", s1_t1_raw),
+        "s1t234": packaged("s1-trials-2-3-4-20261107/telemetry_raw.log", s1_t234_raw),
+        "s2cmd": packaged("s2-door-20261107/commands.log", SRC_STORE / "SOURCES" / "20261107" / "s2" / "door-20261107T081539Z" / "commands.log"),
+        "s1cmd": packaged("s1-trials-2-3-4-20261107/commands.log", SRC_STORE / "SOURCES" / "20261107" / "s1" / "s1-multi-20261107T064902Z" / "commands.log"),
+        "w07reps": packaged("w07-repeats", None),  # directory
+    }
     runs = []  # (scenario, label, rows, source_raw_label, extra_meta)
 
-    h8c_frames = parse_log(h8c_raw)
-    h8e_frames = parse_log(h8e_raw)
-    s2_frames = parse_log(s2_raw)
-    s1t1_frames = parse_log(s1_t1_raw)
-    s1t234_frames = parse_log(s1_t234_raw)
+    h8c_frames = parse_log(PKG_RAW["h8c"])
+    h8e_frames = parse_log(PKG_RAW["h8e"])
+    s2_frames = parse_log(PKG_RAW["s2"])
+    s1t1_frames = parse_log(PKG_RAW["s1t1"])
+    s1t234_frames = parse_log(PKG_RAW["s1t234"])
 
     # S2: windows anchored on the capture's own commands.log end stamps
-    s2_windows = parse_capture_windows(SRC_STORE / "SOURCES" / "20261107" / "s2" /
-                                       "door-20261107T081539Z" / "commands.log")
+    s2_windows = parse_capture_windows(PKG_RAW["s2cmd"])
     s2_win, s2_outside = windowed_split(s2_frames, s2_windows)
     for wlabel, seg in s2_win:
         scen = "S2_TIMING" if wlabel.upper().startswith("W10-02") else "S2_DOOR"
@@ -559,8 +574,7 @@ def main():
         runs.append(("S2_OUTSIDE", "S2-20261107-between-window", s2_outside, "s2-door-20261107"))
 
     # S1: trial1 standalone; trials 2/3/4 anchored on their commands.log end stamps
-    s1_windows = parse_capture_windows(SRC_STORE / "SOURCES" / "20261107" / "s1" /
-                                       "s1-multi-20261107T064902Z" / "commands.log")
+    s1_windows = parse_capture_windows(PKG_RAW["s1cmd"])
     s1_win, s1_outside = windowed_split(s1t234_frames, s1_windows)
     for wlabel, seg in s1_win:
         runs.append(("S1", wlabel, seg, "s1-trials-2-3-4-20261107"))
@@ -574,6 +588,9 @@ def main():
     # ----- 2b. W07 physical run retentions from the capture session -------
     bench_dir = STORE_ROOT / "bench-results"
     trials_dir = STORE_ROOT / "trials"
+    pkg_w07 = raw_dir / "w07-repeats"
+    bench_pkg = pkg_w07 if pkg_w07.is_dir() else bench_dir
+    trials_pkg = pkg_w07 if pkg_w07.is_dir() else trials_dir
     for src, rel in [
         *[(p, f"w07-repeats/{p.name}") for p in sorted(bench_dir.glob("a-w07-02-run-*.jsonl"))],
         *[(p, f"w07-repeats/{p.name}") for p in sorted(bench_dir.glob("a-w07-03-trial-*.json"))],
@@ -589,10 +606,23 @@ def main():
             published.append({"package_path": f"raw/{rel}", "source_path": str(src),
                               "sha256": None, "warning": "SOURCE_NOT_FOUND"})
 
+    EXACT_RAW_SOURCE = {
+        "W10-02": "raw/s2-door-20261107/telemetry_raw.log",
+        "S2-20261107-between-window": "raw/s2-door-20261107/telemetry_raw.log",
+        "S1-20261107-between-window": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial1-imported": "raw/s1-trial1-20261107/telemetry_raw.log",
+        "H8-C-600s-TEC-100pct": "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
+        "H8-E-1800s-TEC-100pct": "raw/h8-e-1800s-100pct/monitor__telemetry_raw.log",
+        "trial2": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial3": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial4": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+    }
+    for wl in ("W10-03-run1", "W10-03-run2", "W10-03-run3", "W10-03-run4"):
+        EXACT_RAW_SOURCE[wl] = "raw/s2-door-20261107/telemetry_raw.log"
     w07_rows_out = []
 
     # W07-02 passive repetitions (compact capture records, no device raw line)
-    for f in sorted(bench_dir.glob("a-w07-02-run-*.jsonl")):
+    for f in sorted(bench_pkg.glob("a-w07-02-run-*.jsonl")):
         recs = [json.loads(x) for x in f.read_text(encoding="utf-8", errors="replace").splitlines() if x.strip()]
         rows = [{
             "run_tag": f.stem.split("-be89bf4a")[0], "grammar": "COMPACT_CAPTURE",
@@ -607,14 +637,15 @@ def main():
             "tmean_reported_c": r.get("tmean_c"), "gradient_reported_c": r.get("gradient_c"),
         } for r in recs]
         w07_rows_out.append(("W07_PASSIVE_REPEAT", f.stem, rows, f"raw/w07-repeats/{f.name}",
-                             {"prebuilt_rows": True,
+                             {"prebuilt_rows": True, "exact_raw_source": True,
                               "records_note": "compact capture records; T1-slot and T2-slot values as recorded, no full 4-probe row"}))
 
     # W07-03 bench cooling trials (full canonical raw line per record)
-    for f in sorted(trials_dir.glob("a-w07-03-trial-*.jsonl")):
+    for f in sorted(trials_pkg.glob("a-w07-03-trial-*.jsonl")):
         frames, _ = ingest_jsonl_run(f, "COOLING_STEP", f.stem)
         w07_rows_out.append(("COOLING_STEP_500PERMILLE", f.stem, frames_to_rows(frames, f.stem),
-                             f"raw/w07-repeats/{f.name}", {"prebuilt_rows": True}))
+                             f"raw/w07-repeats/{f.name}",
+                             {"prebuilt_rows": True, "exact_raw_source": True}))
 
     for p in sorted((bench_dir).glob("a-w07-03-trial-*.json")):
         pass  # summary JSONs already copied to raw/
@@ -669,7 +700,8 @@ def main():
             cls = "WARMUP_SEGMENT_OR_OUTSIDE_WINDOW"
         run_rows.append({
             "run_tag": label, "scenario": scen, "classification": cls,
-            "raw_source": f"raw/{src_label}/*.log",
+            "raw_source": (src_label if meta.get("exact_raw_source")
+                           else EXACT_RAW_SOURCE.get(label, f"raw/{src_label}")),
             "boot_id": boot,
             "device_run_id": rows[0].get("device_run_id"),
             "firmware_version": rows[0].get("firmware_version"),

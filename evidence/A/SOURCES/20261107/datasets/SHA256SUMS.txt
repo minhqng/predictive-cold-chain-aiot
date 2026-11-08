@@ -1,4 +1,4 @@
-63fd8596561de38d8aa65054d80522547aa346c92c1ceb7787af04542ac8e079 *./README.md
+684e1c4c473c1e6ae8080e2ee409735529e00fb5113aa0b7829a57492dfe7c93 *./README.md
 6b0644ac7c05d0b40dcaeec1273ee3ca8d2908c005faa4cdb7b0417e56ad3b4c *./acceptance-decisions-20261108.md
 483d6fba25a0003d33fb8a1fc0e037ed305d3cdd58a142a9822f73f242e232fb *./datasets/H8-C-600s-TEC-100pct-normalized.csv
 2af9720ae2fc5c3947f5290bbb482ddcf706975301df414d7cbe04c50cd1b7b7 *./datasets/H8-E-1800s-TEC-100pct-normalized.csv
@@ -23,11 +23,11 @@ f8716b5136f34542225b366c238be4e65ce309e78593e8bad90d578af9a7c14d *./datasets/pub
 0b1466ca24c48b2523cc662b3928061cf070b5d1c3b83039c3f3b38b2ebb9dc4 *./datasets/trial2-normalized.csv
 a5360bc2cdf28b7e640543fcd5bb746f017b7363e8ed141a99ab8d2c6b43b263 *./datasets/trial3-normalized.csv
 8b4ae4544715d654ae318e652204bcbcf37384d05115933a12a7dc5a600e3062 *./datasets/trial4-normalized.csv
-c994750ccb7fa001ff1eac27661c03d39a1489a568e84e2da57855cec2a040f0 *./export_pipeline.py
-414137807d347bf948f09f6fd8c6b0008899724210dbadf9a51abb76355e1dc2 *./manifest.json
+d48541e1334d549e87d0a9fdd67f28a690176a664e0425201ed5806a0297aa03 *./export_pipeline.py
+76d6b9bec62401aa90c85726098218efab31081d44c9bec5b75e877116f78dc6 *./manifest.json
 a84fdb4c47b8c0752a3839cccbea54564c7eaf3d990ec34222ed51140278edb1 *./measurement_summary.csv
 fe110b1b77643196c626e834e5feb681ccc48dee4a29923310a423f5d463caa3 *./pwm-go-no-go.md
-287a8d2618395d3cf810440c947974dea992848f02a595066da448eb7d87b6c4 *./quality_report.md
+0d06c012da46f1ef217a24696d16e73984267f8803de2e1594fe47610e140b29 *./quality_report.md
 b570057efdc5ca2ead239766cecaf5531dedaa47e3fb42374dc02022a2c58964 *./raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log
 b93f74cc51ed2649647a494788a6b5bc0db8de5ade7780f4dfc0dc6e1b43bad8 *./raw/h8-e-1800s-100pct/monitor__telemetry_raw.log
 2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7 *./raw/s1-trial1-20261107/telemetry_raw.log
@@ -53,4 +53,4 @@ bb2f3efd7ea0ad0d2f178f88eaf0051e5b31c8ee32058e0979c710024b3d9149 *./raw/w07-repe
 64a1d34725624834b2c9e0d6ce2c13a5a879d5e49a29f8df6887147fb1dc1cfb *./raw/w07-repeats/a-w09-02-run-1-INTERRUPTED-20261105.json
 ae2bce43238cf9ba2be61c1059c50f4d6d8828198a17001e1d00d67d1b564129 *./raw/w07-repeats/cooling-step-runs.jsonl
 b35ca8e5d35cd1ca7186d23bac10e176d87dcb6dfbef38a5e21a0ab9468b5a0e *./remaining-measurements-plan.md
-4e7d2b01bb837a6f5ee0e2c41a0578148e83ae510fc9a0fa9c71e7fdd3ac2239 *./run_index.csv
+8c6fc1ad4ced3b4f067a9bce6bc3a640257221541f172727d7fd26d0fac1b001 *./run_index.csv
