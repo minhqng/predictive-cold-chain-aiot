@@ -66,14 +66,18 @@ def backup_campaign(engine: Engine, campaign_id: str, destination: Path, *, pg_d
     return receipt
 
 
+def verify_backup_bytes(receipt_bytes: bytes, archive_bytes: bytes) -> dict:
+    receipt = json.loads(receipt_bytes)
+    if (not isinstance(receipt, dict) or receipt.get("format") != "coldguard-backup-v1" or receipt.get("archive") != "database.dump"
+        or hashlib.sha256(archive_bytes).hexdigest() != receipt.get("archive_sha256")):
+        raise ValueError("backup checksum or format differs")
+    return receipt
+
+
 def read_verified_backup(directory: Path) -> tuple[dict, bytes, bytes]:
     receipt_bytes = (directory / "receipt.json").read_bytes()
     archive_bytes = (directory / "database.dump").read_bytes()
-    receipt = json.loads(receipt_bytes)
-    if (receipt.get("format") != "coldguard-backup-v1" or receipt.get("archive") != "database.dump"
-        or hashlib.sha256(archive_bytes).hexdigest() != receipt.get("archive_sha256")):
-        raise ValueError("backup checksum or format differs")
-    return receipt, receipt_bytes, archive_bytes
+    return verify_backup_bytes(receipt_bytes, archive_bytes), receipt_bytes, archive_bytes
 
 
 def verify_backup(directory: Path) -> dict:
@@ -82,7 +86,19 @@ def verify_backup(directory: Path) -> dict:
 
 
 def restore_backup(directory: Path, restore_url, *, pg_restore: str = "pg_restore") -> dict:
-    receipt, _, archive_bytes = read_verified_backup(directory)
+    _, receipt_bytes, archive_bytes = read_verified_backup(directory)
+    return restore_backup_bytes(receipt_bytes, archive_bytes, restore_url, pg_restore=pg_restore)
+
+
+def restore_backup_bytes(receipt_bytes: bytes, archive_bytes: bytes, restore_url, *, pg_restore: str = "pg_restore",
+                         expected_receipt_sha256: str | None = None, expected_archive_sha256: str | None = None) -> dict:
+    """Restore retained bytes; supplied immutable anchors are checked before target operations."""
+    if not isinstance(receipt_bytes, bytes) or not isinstance(archive_bytes, bytes):
+        raise ValueError("restore requires an immutable byte snapshot")
+    for content, expected in ((receipt_bytes, expected_receipt_sha256), (archive_bytes, expected_archive_sha256)):
+        if expected is not None and hashlib.sha256(content).hexdigest() != expected:
+            raise ValueError("restore bytes differ from their immutable anchor")
+    receipt = verify_backup_bytes(receipt_bytes, archive_bytes)
     url = local_database_url(restore_url)
     engine = create_engine(url, connect_args={"connect_timeout": 5})
     try:
