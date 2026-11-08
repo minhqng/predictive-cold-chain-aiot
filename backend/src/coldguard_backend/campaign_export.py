@@ -10,8 +10,8 @@ from coldguard_backend.campaign_integrity import _raw_evidence, _raw_source_erro
 from coldguard_backend.campaign_store import get_campaign, verify_membership
 from coldguard_backend.command_store import command_acks, command_attempts, command_transitions, commands
 from coldguard_backend.controller_b import policy_approvals
-from coldguard_backend.event_timeline import s2_timeline_page
-from coldguard_backend.experiment_evidence import encode_evidence, run_samples
+from coldguard_backend.event_timeline import S2_SCENARIOS, s2_timeline_page
+from coldguard_backend.experiment_evidence import encode_evidence, run_samples, run_timeline
 from coldguard_backend.experiment_store import experiment_transitions, experiments
 from coldguard_backend.physical_verification import physical_assessments
 from coldguard_backend.prediction_store import prediction_inputs, predictions
@@ -25,6 +25,8 @@ def _rows(connection: Connection, table, predicate) -> list[dict]:
 
 
 def complete_timeline(connection: Connection, run: dict) -> list[dict]:
+    if run["scenario_id"] not in S2_SCENARIOS:
+        return run_timeline(connection, run)
     result, cursor = [], None
     while True:
         page = s2_timeline_page(connection, run, limit=500, cursor=cursor)
