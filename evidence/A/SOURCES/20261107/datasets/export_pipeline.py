@@ -1332,7 +1332,9 @@ def main_package(base: Path):
                      "bytes": p.stat().st_size, "sha256": sha256(p)}
                     for p in sorted(base.rglob("*")) if p.is_file()],
     }
-    (base / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    # never overwrite the committed manifest.json: the standalone
+    # regeneration writes its own provenance file beside it
+    (base / "manifest.regeneration.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
     return {"runs": len(summary_rows),
             "frames_total": sum(r["frames"] for r in summary_rows), "out": str(base)}
 

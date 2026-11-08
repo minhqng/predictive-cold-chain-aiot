@@ -26,3 +26,15 @@ WARMUP_SEGMENT moments are kept and flagged; nothing measured was discarded.
 ## Acceptance updates written to the authoritative store this session
 See the final report. Writes used the app's own SessionStore API with automatic
 history preservation (results/history/).
+
+## Repregenerate from a clean clone
+
+```
+py -3 evidence/A/SOURCES/20261107/datasets/export_pipeline.py --standalone evidence/A/SOURCES/20261107/datasets
+```
+
+Regenerates run_index.csv, measurement_summary.csv and datasets/*.csv
+in place from the package's own raw/ bytes and writes the regeneration
+provenance to manifest.regeneration.json. The committed manifest.json
+is never modified. A bare clone reproduces every dataset byte-for-byte
+(verified 2026-11-08, 18 runs/segments, 9,293 rows).
