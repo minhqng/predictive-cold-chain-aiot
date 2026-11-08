@@ -279,12 +279,18 @@ def test_s2_timeline_cursor_correlation_and_export(db_engine, run_context):
     opened.update(caused_by_command_id="s2-command", correlation_id="corr-s2")
     send(device, "event", opened)
     send(device, "event", opened)
+    send(device, "event", dict(reversed(list(opened.items()))))
+    send(device, "event", dict(opened, event_type="DOOR_CLOSED"))
+    send(device, "event", dict(opened, event_type="DOOR_CLOSED"))
+    send(device, "event", dict(opened, boot_id="boot-s2-restarted"))
     closed = dict(
         opened, event_id="closed", event_type="DOOR_CLOSED",
         caused_by_command_id="s2-other", event_time="bad-clock",
     )
     send(device, "event", closed)
     send(other_device, "event", dict(opened, event_id="mismatch"))
+    send(other_device, "event", dict(opened, device_id=other_device))
+    send(device, "event", dict(opened, run_id="different-run"))
     send(device, "event", dict(opened, event_id="physical-claim", event_type="THERMAL_VERIFIED"))
 
     whole = client.get(path)
@@ -310,22 +316,33 @@ def test_s2_timeline_cursor_correlation_and_export(db_engine, run_context):
     assert page_items == items
     assert client.get(path, params={"cursor": cursor}).json()["items"] == []
     door = [row for row in items if row["kind"] == "device_event"]
-    assert [row["details"]["event_type"] for row in door] == ["DOOR_OPENED", "DOOR_CLOSED"]
+    assert [row["details"]["event_type"] for row in door] == [
+        "DOOR_OPENED", "DOOR_CLOSED", "DOOR_OPENED", "DOOR_CLOSED",
+    ]
+    assert [row["details"]["event_id_conflict"] for row in door] == [False, True, True, False]
+    assert door[2]["details"]["boot_id"] == "boot-s2-restarted"
     assert door[0]["details"]["command_id"] == "s2-command"
     assert door[0]["details"]["correlation_id"] == "corr-s2"
     assert door[0]["event_time"] != door[0]["backend_at"]
-    assert door[1]["details"]["command_id"] is None
-    assert door[1]["details"]["reported_command_id"] == "s2-other"
-    assert door[1]["event_time"] is None
+    assert door[3]["details"]["command_id"] is None
+    assert door[3]["details"]["reported_command_id"] == "s2-other"
+    assert door[3]["event_time"] is None
     event_types = {row["details"].get("event_type") for row in items}
     assert {"COMMAND_CREATED", "COMMAND_ACCEPTED"} <= event_types
     assert "THERMAL_VERIFIED" not in event_types
     sample = next(row for row in items if row["kind"] == "telemetry")
     assert sample["details"]["t1_c"] is not None
     assert sample["details"]["current_a"] is not None
+    for payload in (opened, dict(opened, correlation_id="late-conflict")):
+        ingest_message(
+            db_engine, topic=f"coldguard/{device}/event", payload=json.dumps(payload).encode(),
+        )
     next_sample = build_telemetry(device_id=device, boot_id="boot-s2", seq=3, run_id=run_id)
     ingest_message(
         db_engine, topic=f"coldguard/{device}/telemetry", payload=json.dumps(next_sample).encode(),
     )
     tail = client.get(path, params={"cursor": cursor}).json()
-    assert [row["details"]["seq"] for row in tail["items"]] == [3]
+    assert [row["kind"] for row in tail["items"]] == ["device_event", "telemetry"]
+    assert tail["items"][0]["details"]["event_id_conflict"]
+    assert tail["items"][0]["details"]["correlation_id"] == "late-conflict"
+    assert tail["items"][1]["details"]["seq"] == 3
