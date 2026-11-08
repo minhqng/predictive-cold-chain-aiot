@@ -1,0 +1,22 @@
+[
+  {
+    "phase": "B_ds_t1_on",
+    "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT DS T1 ON ds_role=0 pzem_down=0"
+  },
+  {
+    "phase": "B_ds_t1_off",
+    "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT DS T1 OFF ds_role=-1 pzem_down=0"
+  },
+  {
+    "phase": "C_pzem_on",
+    "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT PZEM ON ds_role=-1 pzem_down=1"
+  },
+  {
+    "phase": "C_pzem_off",
+    "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT PZEM OFF ds_role=-1 pzem_down=0"
+  },
+  {
+    "phase": "D_clear",
+    "line": "#CG TEC event=FAULT_INJECT_HANDLED line=FAULT CLEAR ds_role=-1 pzem_down=0"
+  }
+]
