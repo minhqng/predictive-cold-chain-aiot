@@ -11,6 +11,7 @@ from sqlalchemy import Engine, create_engine, inspect, text
 from sqlalchemy.engine import make_url
 
 from coldguard_backend.campaign_integrity import campaign_integrity
+from coldguard_backend.campaign_store import CampaignNotFound, get_campaign
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence
 
@@ -44,7 +45,7 @@ def backup_campaign(engine: Engine, campaign_id: str, destination: Path, *, pg_d
     with engine.connect().execution_options(isolation_level="REPEATABLE READ", postgresql_readonly=True) as connection:
         readiness = campaign_integrity(connection, campaign_id)
         if not readiness["backup_ready"]:
-            raise ValueError("campaign backup readiness failed: incomplete evidence or current closures")
+            raise ValueError("campaign backup readiness failed: incomplete evidence inventory or current closures")
         fingerprints = fingerprint_connection(connection)
         exported_snapshot = connection.scalar(text("SELECT pg_export_snapshot()"))
         archive = stage / "database.dump"
@@ -54,6 +55,9 @@ def backup_campaign(engine: Engine, campaign_id: str, destination: Path, *, pg_d
                "data_class": readiness["data_class"], "namespace_sha256": readiness["namespace_sha256"],
                "archive": "database.dump", "archive_sha256": hashlib.sha256(archive.read_bytes()).hexdigest(),
                "source_fingerprints": fingerprints, "restore_verified": False,
+               "integrity_clear": readiness["integrity_clear"], "freeze_ready": readiness["freeze_ready"],
+               "run_status_counts": readiness["run_status_counts"], "known_generated_input": readiness["known_generated_input"],
+               "run_issues": {row["run_id"]: row["issues"] for row in readiness["runs"]},
                "snapshot_consistency": "pg_export_snapshot", "physical_acceptance": "BLOCKED_EXTERNAL"}
     (stage / "receipt.json").write_bytes(encode_evidence(receipt))
     if destination.exists():
@@ -85,9 +89,20 @@ def restore_backup(directory: Path, restore_url, *, pg_restore: str = "pg_restor
             connection.execute(text("SELECT timescaledb_post_restore()"))
         with engine.connect().execution_options(isolation_level="REPEATABLE READ", postgresql_readonly=True) as connection:
             restored = fingerprint_connection(connection)
+            try:
+                campaign = get_campaign(connection, receipt["campaign_id"])
+            except (CampaignNotFound, KeyError) as exc:
+                raise ValueError("backup receipt does not identify the restored campaign") from exc
+            if any(receipt.get(key) != campaign[key] for key in ("campaign_id", "namespace_sha256", "data_class")):
+                raise ValueError("backup receipt provenance differs from the restored campaign")
+            inventory = campaign_integrity(connection, campaign["campaign_id"])
+            for key in ("integrity_clear", "freeze_ready", "run_status_counts", "known_generated_input"):
+                if key in receipt and receipt[key] != inventory[key]:
+                    raise ValueError("backup receipt assessment differs from the restored campaign")
         if restored != receipt["source_fingerprints"]:
             raise ValueError("restored evidence differs from the archive's consistent source snapshot")
         return {"match": True, "archive_sha256": receipt["archive_sha256"], "restored": restored,
-                "data_class": receipt["data_class"], "physical_acceptance": "BLOCKED_EXTERNAL"}
+                "data_class": campaign["data_class"], "known_generated_input": inventory["known_generated_input"],
+                "physical_acceptance": "BLOCKED_EXTERNAL"}
     finally:
         engine.dispose()

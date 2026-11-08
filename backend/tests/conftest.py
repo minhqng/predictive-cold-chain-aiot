@@ -25,6 +25,8 @@ def isolate_destructive_legacy_migrations(request, monkeypatch):
     target = make_url(value)
     suite = make_url(os.environ["COLDGUARD_TEST_DATABASE_URL"])
     if (target.drivername != "postgresql+psycopg" or target.host != "127.0.0.1" or target.query
+        or suite.drivername != "postgresql+psycopg" or suite.host != "127.0.0.1" or suite.query
+        or suite.database in {None, "postgres", "template0", "template1"}
         or target.database in {None, "postgres", "template0", "template1"}
         or (target.host, target.port or 5432, target.database) == (suite.host, suite.port or 5432, suite.database)):
         raise ValueError("destructive migration database must be a separate direct loopback disposable database")
