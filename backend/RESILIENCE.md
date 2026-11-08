@@ -47,6 +47,11 @@ manifest. Publication is staged, exclusive and non-overwriting; a failed write
 may leave a diagnostic `.evidence-staging-*` directory but no ready destination.
 Reports must resolve outside the immutable package. Verification retains each
 anchor-checked file once and uses those same bytes for internal source checks.
+Artifact names and every nested package component must be portable: trailing
+dots/spaces, Windows device names and invalid characters are rejected, never
+trimmed or renamed. The same pure check applies to direct journal sources and
+shared freeze artifact names before filesystem resolution or publication; no
+serial/printer/device path is opened by these validations.
 
 `RECORDED_NOT_INDEPENDENTLY_ACCEPTED` is intentional: the package proves retained
 bytes and DB/artifact associations, not that an observer's prose is official
