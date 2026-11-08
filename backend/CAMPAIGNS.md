@@ -99,3 +99,63 @@ fails on any PostgreSQL error, and compares every reviewed public evidence table
 for the installed revision. No clean/drop operation is implicit. The corrected
 `scripts/verify_restore.py` also works for a separately prepared pair of local
 databases and refuses missing/extra tables or unsupported revisions.
+
+## Deterministic evidence freeze
+
+Install revision `0014` before registering the final campaign. No migration is
+performed by a freeze operation. All local proofs use new disposable databases;
+they do not change an actual locked physical campaign. During a real final
+campaign, an emergency correctness change requires stopping/restarting and
+documenting comparability under Doc 03.
+
+`FreezeDraft` names an exact freeze ID, campaign ID, aware creation timestamp,
+clean backend Git SHA and SHA-256-tagged artifact references. Required roles are
+model metadata, policy metadata, broker config and backend config, plus a model
+or policy reference for every applicable declared version. Metadata must name
+the frozen version collection and the reference content hash. Keep credential
+values out of shareable config artifacts; retain actual secrets separately in
+restricted operator storage. Generated reference blobs are explicitly
+`SOFTWARE_SIMULATION`, not official artifacts or executable controller code.
+
+```sh
+# Set DATABASE_URL to the source local DB; finish validity review and close both arms.
+python scripts/freeze_campaign.py freeze --spec freeze-spec.json --artifact-root frozen-inputs --backup ../evidence-out/wave2 --directory ../evidence-out/freeze-v1 --report freeze-report.json
+python scripts/freeze_campaign.py verify --freeze-id SOFTWARE-FREEZE --directory ../evidence-out/freeze-v1 --report freeze-verify.json
+# Set COLDGUARD_BACKUP_RESTORE_URL to a different empty, provisioned local DB.
+python scripts/freeze_campaign.py restore --freeze-id SOFTWARE-FREEZE --directory ../evidence-out/freeze-v1 --report freeze-restore.json
+```
+
+The exporter refuses a dirty backend, absent/conflicting versions, unavailable
+required measurements, missing/currently-invalid runs, stale close reports,
+or a backup that differs from the current evidence snapshot. Commands must
+reference their exact run/controller/policy and any referenced prediction must
+exist with scoped inputs. A physically labelled export cannot relabel synthetic
+measurements; predictive physical records also need their existing signed policy
+and assessment evidence. This still does **not** confer G5 or official acceptance.
+
+`campaign-export.json` contains the full paired list, raw/normalized rows,
+experiment transitions, events/timelines, predictions/inputs, commands/attempts/
+ACKs/transitions, shadow decisions, existing policy approvals/physical assessments
+and all immutable run-close versions. The dataset ID is derived from canonical
+dataset bytes, with a distinct `coldguard-software_simulation-...` namespace.
+Repeated export with the same snapshot/timestamp/provenance is byte-identical.
+
+The freeze directory contains the export, source DB archive/receipt, model/policy
+metadata/references, config references and a file checksum manifest. Its manifest
+SHA-256 and exact export bytes are anchored in an append-only `campaign_freezes`
+record. Verify against that DB record (or its trusted handover SHA), not only
+against checksums supplied by the package itself. Missing, changed or unexpected
+files are refused, including a silently changed manifest.
+
+The source archive precedes its own freeze record: self-referential freeze rows
+are excluded only from that input comparison. After freezing, take another
+final-ish/final backup to include `campaign_freezes` along with every other table.
+The original frozen source can be restored without its record and still
+reconstruct the exact paired export; the record is backed up separately by the
+later final backup and its manifest anchor is handed over explicitly.
+
+Partial file writes roll back the DB transaction. A commit failure moves the
+published directory back to its staging name; an unregistered/staged package is
+never trusted. Staging files are preserved for diagnosis. Reusing a freeze ID
+requires identical immutable inputs and intact original artifacts. Changes
+require a new explicit version/ID, never an overwritten freeze.
