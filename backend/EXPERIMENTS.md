@@ -81,8 +81,10 @@ last cursor to fetch newer entries and periodically refresh the displayed
 window to catch late commits. The feed is a database view of evidence, with
 separate pages reflecting separate snapshots.
 
-Door events come from observed device receipts on the exact topic and retain
-the first receipt of each source event ID within the device and run.
+Door events come from observed device receipts on the exact topic. The feed
+keeps the first receipt for each distinct JSON payload under a source event
+ID within the device and run. Later conflicting variants carry
+`event_id_conflict: true` and retain their boot provenance for review.
 Telemetry snapshots provide thermal, electrical, and control context. The
 backend projects command creation from its transition history and command
 acceptance only when a matching accepted ACK is present. Verification event
