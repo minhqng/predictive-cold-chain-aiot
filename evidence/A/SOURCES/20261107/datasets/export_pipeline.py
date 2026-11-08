@@ -668,13 +668,14 @@ def main():
         last = (dt.datetime.fromisoformat(rows[-1]["host_time_utc"])
                 if rows[-1]["host_time_utc"] else None)
         capture_date = {"h8-c-600s-tec-cooling": "2026-11-01 (W04 session record; device has no wall clock)",
-                        "h8-e-1800s-100pct": "2026-10-31 (H8_E result record; device has no wall clock)"}.get(src_label, "")
+                        "h8-e-1800s-100pct": "2026-10-31 (H8_E result record; device has no wall clock)"}.get(
+            src_label.rsplit("/", 2)[-2] if ("/" in src_label) else src_label, "")
         # scenario refinement by content (door count) for S2 timing window
         scen = scenario
         out = ds_dir / f"{label}-normalized.csv"
         fields = list(rows[0].keys())
         with out.open("w", encoding="utf-8", newline="") as fh:
-            w = csv.DictWriter(fh, fieldnames=fields)
+            w = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
             w.writeheader()
             w.writerows(rows)
         qc = quality_counts(rows)
@@ -684,7 +685,7 @@ def main():
         # classification
         if scen in ("S1_OUTSIDE", "S2_OUTSIDE"):
             cls = "REAL_FRAMES_OUTSIDE_TIMED_WINDOWS"
-        if scen == "S1":
+        elif scen == "S1":
             cls = "DATASET_ACCEPTED_S1"
         elif scen == "S2_DOOR":
             cls = "DATASET_ACCEPTED_S2"
@@ -1152,9 +1153,200 @@ def selftest():
           "chamber_air (2 controls), windowed_split (1 negative)")
 
 
+
+
+def main_package(base: Path):
+    """Standalone mode: regenerate the derived datasets purely from a package's
+    own raw/ tree (no local-only capture directories, no acceptance store).
+    Usage: py -3 export_pipeline.py --standalone [package_dir]"""
+    raw_dir = base / "raw"
+    h8c_raw = raw_dir / "h8-c-600s-tec-cooling" / "monitor-final__telemetry_raw.log"
+    h8e_raw = raw_dir / "h8-e-1800s-100pct" / "monitor__telemetry_raw.log"
+    s2_raw = raw_dir / "s2-door-20261107" / "telemetry_raw.log"
+    s2_cmd = raw_dir / "s2-door-20261107" / "commands.log"
+    s1_t1_raw = raw_dir / "s1-trial1-20261107" / "telemetry_raw.log"
+    s1_t234_raw = raw_dir / "s1-trials-2-3-4-20261107" / "telemetry_raw.log"
+    s1_cmd = raw_dir / "s1-trials-2-3-4-20261107" / "commands.log"
+    for p in (h8c_raw, h8e_raw, s2_raw, s2_cmd, s1_t1_raw, s1_t234_raw, s1_cmd):
+        if not p.is_file():
+            raise SystemExit(f"standalone input missing: {p}")
+
+    runs = []
+    h8c_frames = parse_log(h8c_raw)
+    h8e_frames = parse_log(h8e_raw)
+    s2_frames = parse_log(s2_raw)
+    s1t1_frames = parse_log(s1_t1_raw)
+    s1t234_frames = parse_log(s1_t234_raw)
+
+    s2_split = windowed_split(s2_frames, parse_capture_windows(s2_cmd))
+    for wlabel, seg in s2_split[0]:
+        runs.append(("S2_TIMING" if wlabel.upper().startswith("W10-02") else "S2_DOOR",
+                     wlabel, seg, "raw/s2-door-20261107/telemetry_raw.log"))
+    if s2_split[1]:
+        runs.append(("S2_OUTSIDE", "S2-20261107-between-window", s2_split[1],
+                     "raw/s2-door-20261107/telemetry_raw.log"))
+    s1_split = windowed_split(s1t234_frames, parse_capture_windows(s1_cmd))
+    for wlabel, seg in s1_split[0]:
+        runs.append(("S1", wlabel, seg, "raw/s1-trials-2-3-4-20261107/telemetry_raw.log"))
+    if s1_split[1]:
+        runs.append(("S1_OUTSIDE", "S1-20261107-between-window", s1_split[1],
+                     "raw/s1-trials-2-3-4-20261107/telemetry_raw.log"))
+    runs.append(("S1", "trial1-imported", s1t1_frames, "raw/s1-trial1-20261107/telemetry_raw.log"))
+    runs.append(("COOLING_STEP", "H8-C-600s-TEC-100pct", h8c_frames,
+                 "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log"))
+    runs.append(("COOLING_STEP_1800S", "H8-E-1800s-TEC-100pct", h8e_frames,
+                 "raw/h8-e-1800s-100pct/monitor__telemetry_raw.log"))
+
+    EXACT = {
+        "W10-02": "raw/s2-door-20261107/telemetry_raw.log",
+        "S2-20261107-between-window": "raw/s2-door-20261107/telemetry_raw.log",
+        "S1-20261107-between-window": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial1-imported": "raw/s1-trial1-20261107/telemetry_raw.log",
+        "H8-C-600s-TEC-100pct": "raw/h8-c-600s-tec-cooling/monitor-final__telemetry_raw.log",
+        "H8-E-1800s-TEC-100pct": "raw/h8-e-1800s-100pct/monitor__telemetry_raw.log",
+        "trial2": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial3": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+        "trial4": "raw/s1-trials-2-3-4-20261107/telemetry_raw.log",
+    }
+    for wl in ("W10-03-run1", "W10-03-run2", "W10-03-run3", "W10-03-run4"):
+        EXACT[wl] = "raw/s2-door-20261107/telemetry_raw.log"
+
+    w07 = []
+    pw07 = raw_dir / "w07-repeats"
+    for f in sorted(pw07.glob("a-w07-02-run-*.jsonl")):
+        recs = [json.loads(x) for x in f.read_text(encoding="utf-8", errors="replace").splitlines() if x.strip()]
+        rows = [{
+            "run_tag": f.stem.split("-be89bf4a")[0], "grammar": "COMPACT_CAPTURE",
+            "host_time_utc": r.get("host_time", ""), "seq": r.get("seq"),
+            "uptime_ms": None, "boot_id": r.get("boot_id"),
+            "chamber_c_t1_slot": r.get("chamber_c"), "hot_side_c_t2": r.get("hot_side_c"),
+            "voltage_v": r.get("voltage_v"), "current_a": r.get("current_a"),
+            "power_w": r.get("power_w"), "state": r.get("state"),
+            "door_open": (1 if r.get("door_open") else 0) if isinstance(r.get("door_open"), bool)
+            else r.get("door_open"), "door_raw": r.get("door_raw"),
+            "fault": r.get("fault"),
+            "tmean_reported_c": r.get("tmean_c"), "gradient_reported_c": r.get("gradient_c"),
+        } for r in recs]
+        w07.append(("W07_PASSIVE_REPEAT", f.stem, rows, f"raw/w07-repeats/{f.name}",
+                    {"prebuilt_rows": True, "exact_raw_source": True,
+                     "records_note": "compact capture records; T1-slot and T2-slot values as recorded, no full 4-probe row"}))
+    for f in sorted(pw07.glob("a-w07-03-trial-*.jsonl")):
+        frames, _ = ingest_jsonl_run(f, "COOLING_STEP", f.stem)
+        w07.append(("COOLING_STEP_500PERMILLE", f.stem, frames_to_rows(frames, f.stem),
+                    f"raw/w07-repeats/{f.name}", {"prebuilt_rows": True, "exact_raw_source": True}))
+
+    run_rows, summary_rows = [], []
+    for entry in runs + w07:
+        scenario, label, payload, src_label = entry[0], entry[1], entry[2], entry[3]
+        meta = entry[4] if len(entry) > 4 else {}
+        rows = payload if meta.get("prebuilt_rows") else frames_to_rows(payload, label)
+        if not rows:
+            continue
+        boot = rows[0]["boot_id"] or ""
+        first = (dt.datetime.fromisoformat(rows[0]["host_time_utc"])
+                 if rows[0]["host_time_utc"] else None)
+        last = (dt.datetime.fromisoformat(rows[-1]["host_time_utc"])
+                if rows[-1]["host_time_utc"] else None)
+        capture_date = {"h8-c-600s-tec-cooling": "2026-11-01 (W04 session record; device has no wall clock)",
+                        "h8-e-1800s-100pct": "2026-10-31 (H8_E result record; device has no wall clock)"}.get(
+            src_label.rsplit("/", 2)[-2] if ("/" in src_label) else src_label, "")
+        scen = scenario
+        out_csv = base / "datasets" / f"{label}-normalized.csv"
+        fields = list(rows[0].keys())
+        with out_csv.open("w", encoding="utf-8", newline="") as fh:
+            w = csv.DictWriter(fh, fieldnames=fields, lineterminator="\n")
+            w.writeheader()
+            w.writerows(rows)
+        qc = quality_counts(rows)
+        stats = run_stats(rows, {"S2_DOOR": "S2", "S2_TIMING": "S2",
+                                 "COOLING_STEP_500PERMILLE": "COOLING_STEP"}.get(scen, scen))
+        if scen in ("S1_OUTSIDE", "S2_OUTSIDE"):
+            cls = "REAL_FRAMES_OUTSIDE_TIMED_WINDOWS"
+        elif scen == "S1":
+            cls = "DATASET_ACCEPTED_S1"
+        elif scen in ("S2_DOOR", "S2_TIMING"):
+            cls = "DATASET_ACCEPTED_S2"
+        elif scen in ("COOLING_STEP", "COOLING_STEP_500PERMILLE", "COOLING_STEP_1800S"):
+            cls = "REAL_PHYSICAL_RAW_COOLING / NOT_SCENARIO_QUALIFIED"
+        elif scen == "W07_PASSIVE_REPEAT":
+            cls = "REAL_PHYSICAL_REPEATS / INDEPENDENCE_CAVEAT"
+        else:
+            cls = "WARMUP_SEGMENT_OR_OUTSIDE_WINDOW"
+        run_rows.append({
+            "run_tag": label, "scenario": scen, "classification": cls,
+            "raw_source": (src_label if meta.get("exact_raw_source")
+                           else EXACT.get(label, src_label)),
+            "boot_id": boot,
+            "device_run_id": rows[0].get("device_run_id"),
+            "firmware_version": rows[0].get("firmware_version"),
+            "hardware_config_id": rows[0].get("hardware_config_id"),
+            "started_utc": first.isoformat() if first else "",
+            "ended_utc": last.isoformat() if last else "",
+            "capture_date_record": capture_date,
+            "timebase": "HOST_STAMP" if first else ("DEVICE_MS" if rows[0].get("uptime_ms") is not None else "SEQ"),
+            "frames": len(rows),
+            "host_time_source": "MONITOR_LOG_HOST_STAMP",
+            "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+            "dataset_path": f"datasets/{label}-normalized.csv",
+            "dataset_sha256": sha256(out_csv),
+            **meta,
+        })
+        summary_rows.append({
+            "run_tag": label, "scenario": scen, "classification": cls,
+            "boot_id": boot, **stats,
+            "quality_thermal_ok": qc["thermal_OK"], "quality_thermal_not_ok": qc["thermal_not_OK"],
+            "quality_electrical_ok": qc["electrical_OK"],
+            "quality_electrical_not_ok": qc["electrical_not_OK"],
+            "quality_door_unverified": qc["door_UNVERIFIED"],
+            "quality_faults": json.dumps(qc["faults"]),
+            "mean_sample_interval_s": qc["mean_sample_interval_s"],
+            "max_gap_s": qc.get("max_gap_s"),
+        })
+
+    with (base / "run_index.csv").open("w", encoding="utf-8", newline="") as fh:
+        all_keys: list[str] = []
+        for r in run_rows:
+            for k in r:
+                if k not in all_keys:
+                    all_keys.append(k)
+        w = csv.DictWriter(fh, fieldnames=all_keys, lineterminator="\n")
+        w.writeheader()
+        w.writerows(run_rows)
+    mkeys: list[str] = []
+    for r in summary_rows:
+        for k in r:
+            if k not in mkeys:
+                mkeys.append(k)
+    with (base / "measurement_summary.csv").open("w", encoding="utf-8", newline="") as fh:
+        w = csv.DictWriter(fh, fieldnames=mkeys, lineterminator="\n")
+        w.writeheader()
+        w.writerows(summary_rows)
+
+    manifest = {
+        "created_utc": now_iso(),
+        "purpose": "ColdGuard Member A real-data handoff (standalone regeneration)",
+        "mode": "STANDALONE_FROM_PACKAGE",
+        "totals": {"runs_and_segments": len(summary_rows),
+                   "frames_total": sum(r["frames"] for r in summary_rows)},
+        "outputs": [{"package_path": str(p.relative_to(base)).replace("\\", "/"),
+                     "bytes": p.stat().st_size, "sha256": sha256(p)}
+                    for p in sorted(base.rglob("*")) if p.is_file()],
+    }
+    (base / "manifest.json").write_text(json.dumps(manifest, indent=2), encoding="utf-8")
+    return {"runs": len(summary_rows),
+            "frames_total": sum(r["frames"] for r in summary_rows), "out": str(base)}
+
+
 if __name__ == "__main__":
     if "--selftest" in sys.argv:
         selftest()
+        sys.exit(0)
+    if "--standalone" in sys.argv:
+        idx = sys.argv.index("--standalone")
+        pkg = Path(sys.argv[idx + 1]) if (len(sys.argv) > idx + 1
+                                          and not sys.argv[idx + 1].startswith("-")) else Path.cwd()
+        import pprint
+        pprint.pprint(main_package(pkg))
         sys.exit(0)
     import pprint
     pprint.pprint({k: v for k, v in main().items() if k != "summary_rows"})

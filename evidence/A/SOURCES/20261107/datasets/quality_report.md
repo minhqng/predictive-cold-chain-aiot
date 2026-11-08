@@ -1,6 +1,6 @@
 # ColdGuard real-data quality report
 
-Generated: 2026-11-08T10:41:48.235+00:00
+Generated: 2026-11-08T11:02:46.027+00:00
 
 Interpretation rules: Tmean air = mean(T1,T3,T4) only when all three report OK; T2 is hot-side and never enters the air mean; nan means missing; quality from the frame's own *_status tokens. Host wall-clock stamps come from the monitor log (host-side), while the device reports timestamp_utc=UNAVAILABLE (no wall clock).
 
