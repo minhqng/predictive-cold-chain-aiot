@@ -100,8 +100,11 @@ def _observed_schema_errors(document: dict, *, event: bool) -> tuple[list[str], 
         return [], False
     if any(not isinstance(document.get(key), str) or not document[key].strip() for key in ("event_id", "event_type", "device_id", "boot_id", "run_id")):
         return ["EVENT_IDENTITY_MISSING"], False
+    event_time = document.get("event_time")
+    if not isinstance(event_time, str):
+        return ["EVENT_TIME_UNAVAILABLE"], False
     try:
-        if datetime.fromisoformat(document["event_time"].replace("Z", "+00:00")).utcoffset() is None:
+        if datetime.fromisoformat(event_time.replace("Z", "+00:00")).utcoffset() is None:
             raise ValueError("unverified event time")
     except (KeyError, TypeError, ValueError):
         return ["EVENT_TIME_UNAVAILABLE"], False
@@ -137,6 +140,7 @@ def assess_run(connection: Connection, campaign: dict, run_id: str) -> dict:
     identity_conflicts, wrong_associations, raw_only_valid, errors, schema = [], [], [], [], []
     events, event_ids = Counter(), set()
     provenance_errors, generated_raw_ids, replay_raw_ids = [], [], []
+    observed_message_errors = []
     for sample, source in measurement_rows(connection, [row["id"] for row in samples]):
         codes = validate_winner(sample, source)
         if source["backend_received_at"] != sample["backend_received_at"]:
@@ -177,6 +181,7 @@ def assess_run(connection: Connection, campaign: dict, run_id: str) -> dict:
             observed_errors, schema_mismatch = _observed_schema_errors(document, event=event_receipt)
             if observed_errors:
                 errors.append(row["id"])
+                observed_message_errors.append({"raw_id": row["id"], "codes": observed_errors})
             if schema_mismatch:
                 schema.append(row["id"])
         if event_receipt and isinstance(document.get("event_id"), str) and document["event_id"].strip():
@@ -212,7 +217,7 @@ def assess_run(connection: Connection, campaign: dict, run_id: str) -> dict:
     if campaign["data_class"] == "PHYSICAL" and replay_raw_ids:
         issues.append({"code": "REPLAY_REQUIRES_PHYSICAL_VALIDITY_REVIEW", "evidence": replay_raw_ids})
     return {
-        "schema_version": 1, "assessment_recipe": "campaign-integrity-v2", "campaign_id": campaign["campaign_id"], "namespace_sha256": campaign["namespace_sha256"],
+        "schema_version": 1, "assessment_recipe": "campaign-integrity-v3", "campaign_id": campaign["campaign_id"], "namespace_sha256": campaign["namespace_sha256"],
         "run_id": run_id, "pair_id": run["pair_id"], "controller_id": run["controller_id"], "run_status": run["status"],
         "data_class": campaign["data_class"], "raw_count": len(raw), "normalized_count": len(samples),
         "raw_telemetry_count": sum(row["topic"].endswith("/telemetry") for row in raw),
@@ -220,6 +225,7 @@ def assess_run(connection: Connection, campaign: dict, run_id: str) -> dict:
         "source_sha256": hashlib.sha256(encode_evidence({"raw": raw, "samples": samples})).hexdigest(),
         "integrity": basic, "event_counts": dict(events), "missing_events": missing_events,
         "global_event_conflicts": global_conflicts, "message_error_raw_ids": errors, "schema_mismatch_raw_ids": schema,
+        "observed_message_errors": observed_message_errors,
         "known_generated_input": bool(generated_raw_ids), "synthetic_raw_count": len(generated_raw_ids), "replay_raw_count": len(replay_raw_ids),
         "observed_origin": "KNOWN_SOFTWARE_SIMULATION" if generated_raw_ids else "PHYSICAL_ORIGIN_UNPROVEN",
         "critical_windows": critical, "issues": issues,

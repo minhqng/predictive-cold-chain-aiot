@@ -110,6 +110,10 @@ def restore_backup(directory: Path, restore_url, *, pg_restore: str = "pg_restor
             for key in ("integrity_clear", "freeze_ready", "run_status_counts", "known_generated_input"):
                 if key in receipt and receipt[key] != inventory[key]:
                     raise ValueError("backup receipt assessment differs from the restored campaign")
+            if "run_issues" in receipt and encode_evidence(receipt["run_issues"]) != encode_evidence(
+                {row["run_id"]: row["issues"] for row in inventory["runs"]}
+            ):
+                raise ValueError("backup receipt issue summary differs from the restored campaign")
         if restored != receipt["source_fingerprints"]:
             raise ValueError("restored evidence differs from the archive's consistent source snapshot")
         return {"match": True, "archive_sha256": receipt["archive_sha256"], "restored": restored,
