@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Annotated, Literal
 
-from pydantic import AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints, model_validator
+from pydantic import AfterValidator, AwareDatetime, BaseModel, ConfigDict, Field, StringConstraints, model_validator
 from sqlalchemy import Column, DateTime, LargeBinary, MetaData, Table, Text, func, select
 from sqlalchemy.dialects.postgresql import JSONB, insert
 from sqlalchemy.engine import Engine
@@ -16,6 +16,7 @@ from sqlalchemy.engine import Engine
 from coldguard_backend.campaign_export import build_campaign_export
 from coldguard_backend.campaign_store import campaigns, get_campaign
 from coldguard_backend.evidence_backup import read_verified_backup, restore_backup_bytes, verify_backup_bytes
+from coldguard_backend.evidence_paths import portable_component
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence
 from coldguard_backend.experiment_store import Identifier
@@ -29,7 +30,7 @@ campaign_freezes = Table(
     Column("recorded_at", DateTime(timezone=True)),
 )
 Digest = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
-FileName = Annotated[str, StringConstraints(min_length=1, max_length=120, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]*$")]
+FileName = Annotated[str, StringConstraints(min_length=1, max_length=120, pattern=r"^[A-Za-z0-9][A-Za-z0-9_.-]*$"), AfterValidator(portable_component)]
 
 
 class ArtifactReference(BaseModel):

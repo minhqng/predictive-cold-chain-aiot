@@ -6,6 +6,7 @@ import re
 import tempfile
 from pathlib import Path, PurePosixPath
 
+from coldguard_backend.evidence_paths import portable_component
 from coldguard_backend.experiment_evidence import encode_evidence
 
 
@@ -17,6 +18,8 @@ def package_path(root: Path, name: str) -> Path:
     parts = PurePosixPath(name).parts if isinstance(name, str) else ()
     if not parts or name != "/".join(parts) or any(part in {".", ".."} or "\\" in part or ":" in part for part in parts):
         raise ValueError("package artifact requires a normalized relative path")
+    for part in parts:
+        portable_component(part)
     path = root.joinpath(*parts)
     if root.resolve() not in path.resolve().parents or any(
         item.is_symlink() or (hasattr(item, "is_junction") and item.is_junction())

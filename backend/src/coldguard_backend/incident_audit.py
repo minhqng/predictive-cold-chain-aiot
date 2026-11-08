@@ -15,6 +15,7 @@ from coldguard_backend.campaign_integrity import _raw_evidence, campaign_integri
 from coldguard_backend.campaign_store import get_campaign, verify_membership
 from coldguard_backend.command_store import command_acks, command_attempts, command_transitions, commands
 from coldguard_backend.evidence_package import digest, publish_package, read_verified_package
+from coldguard_backend.evidence_paths import portable_component
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence, run_timeline
 from coldguard_backend.experiment_store import DeviceIdentifier, Identifier, Reason
@@ -64,6 +65,7 @@ class IncidentJournal(BaseModel):
 def journal_sources(root: Path, journal: IncidentJournal) -> dict[str, bytes]:
     result = {}
     for row in journal.observations:
+        portable_component(row.source_name)
         if row.source_name in result:
             continue
         path = root / row.source_name

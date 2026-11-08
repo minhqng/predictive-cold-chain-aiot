@@ -373,3 +373,41 @@ def test_real_backend_restart_and_expiry_have_retained_logs_and_command_history(
     journal = journal_fixture(context, root, sources=sources, observations=entries)
     record = capture(context, journal, root, tmp_path / "backend-restart-package")
     verify_incident_package(tmp_path / "backend-restart-package", expected_manifest_sha256=record["manifest_sha256"])
+
+
+@pytest.mark.parametrize("name", ["observer.json.", "observer.json.."])
+def test_trailing_dot_source_alias_cannot_publish_a_ready_incident(db_engine, tmp_path, name):
+    context = ready_campaign(db_engine)
+    root = tmp_path / "sources"
+    journal = journal_fixture(context, root)
+    if os.name != "nt":
+        (root / name).write_bytes((root / "observer.json").read_bytes())
+    changed = journal.model_copy(update={"observations": [journal.observations[0].model_copy(update={"source_name": name})]})
+    destination = tmp_path / "refused-alias"
+    with pytest.raises(ValueError, match="portable|filename|alias"):
+        capture(context, changed, root, destination)
+    assert not destination.exists()
+
+
+@pytest.mark.parametrize("name", ["sources./observer.json", "sources /observer.json", "observer.json "])
+def test_nonportable_intermediate_and_leaf_components_refused_before_publication(tmp_path, name):
+    destination = tmp_path / "refused-path"
+    with pytest.raises(ValueError, match="portable|filename|alias"):
+        publish_package(destination, {name: b"SOFTWARE_SIMULATION"}, format="software-path-test", metadata={})
+    assert not destination.exists()
+
+
+@pytest.mark.parametrize("name", ["NUL", "NUL.json", "CON", "con.txt", "COM1.txt", "LPT9"])
+def test_shared_artifact_name_model_refuses_reserved_devices_without_io(name):
+    from coldguard_backend.campaign_freeze import ArtifactReference
+    with pytest.raises(ValueError):
+        ArtifactReference.model_validate({"name": name, "kind": "model_reference", "sha256": "a" * 64})
+
+
+@pytest.mark.parametrize("name", ["COM1", "LPT2.txt", "COM\u00b9"])
+def test_reserved_component_rejected_before_any_filesystem_resolution(tmp_path, monkeypatch, name):
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("reserved filename reached filesystem resolution; no device/hardware access is permitted")
+    monkeypatch.setattr(Path, "resolve", forbidden)
+    with pytest.raises(ValueError, match="portable|filename|reserved"):
+        package_path(tmp_path, name)
