@@ -1,0 +1,125 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Spare fuses from the purchased set",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Jumper set",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Header set",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Tools",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Documentation",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:No unapproved core hardware",
+      "passed": true
+    },
+    {
+      "detail": "6/6 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "6/1 files (imported=6)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-07T18:22:20.615884+00:00",
+  "evidence": [
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.625+00:00",
+      "sha256": "2873d1d9f501889c679bece0a57cf01ed9b9475ba57d705478156f7bd7f99d72",
+      "size": 5843775,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-spare-fuses.png",
+      "stored": "imports\\A-W23-02\\2873d1d9f501-kit-spare-fuses.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.637+00:00",
+      "sha256": "926f4ae340eec24c5d2dafb5fe8d27dd250011843ecd426b29b7df8bfe593ca4",
+      "size": 1649102,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-jumpers-40p.png",
+      "stored": "imports\\A-W23-02\\926f4ae340ee-kit-jumpers-40p.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.653+00:00",
+      "sha256": "64fe39468bc9dd4187d592e2384a998172a51747e800dcd48ab3790fd334269e",
+      "size": 4205890,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-tools.png",
+      "stored": "imports\\A-W23-02\\64fe39468bc9-kit-tools.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.670+00:00",
+      "sha256": "203fe32ccc96fe7c155ed6f83866b76e0be624e77f61eb8ed96e936a4d776e8a",
+      "size": 5325486,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-spare-wire-fastons.png",
+      "stored": "imports\\A-W23-02\\203fe32ccc96-kit-spare-wire-fastons.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.684+00:00",
+      "sha256": "6d2c4ff9b7882b6c2d56fb0ae63974ead6c8b5d64ea8397b95fd1b5a0ab7ff56",
+      "size": 2889629,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\kit-clamp-meter.png",
+      "stored": "imports\\A-W23-02\\6d2c4ff9b788-kit-clamp-meter.png",
+      "test_id": "A-W23-02"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.693+00:00",
+      "sha256": "10e419d0e46793dba415ac5489afd9b5824a6aec7c0349c2a026a69268a6fc57",
+      "size": 6960,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\runbook-v2.md",
+      "stored": "imports\\A-W23-02\\10e419d0e467-runbook-v2.md",
+      "test_id": "A-W23-02"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "Kit du phong du 6 muc: cau chi du phong (vang/20A, xanh la/30A, do/10A), jumper 40P, dung cu, day+faston, dong ho kep, tai lieu runbook v2. Operator confirmed 2026-11-08. Anh that tai W23/operator-submission-20261108.",
+  "operator": "operator+qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-07T18:22:20.615884+00:00",
+  "test_id": "A-W23-02"
+}
