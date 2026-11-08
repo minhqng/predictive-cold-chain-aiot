@@ -203,3 +203,82 @@ def test_later_backup_restores_freeze_record_and_original_manifest_anchor(db_eng
             assert hashlib.sha256(content).hexdigest() == copy["export_sha256"]
     finally:
         engine.dispose()
+
+
+def _replace_package_pair_after_anchored_reads(context, monkeypatch, replacement):
+    directory = context["destination"]
+    original = Path.read_bytes
+    receipt_bytes = original(directory / "backup/receipt.json")
+    archive_bytes = original(directory / "backup/database.dump")
+    counts, changed = {}, []
+    def raced(path):
+        content = original(path)
+        if directory in path.parents:
+            name = path.relative_to(directory).as_posix()
+            counts[name] = counts.get(name, 0) + 1
+            if name == "campaign-export.json" and not changed:
+                assert counts.get("backup/receipt.json") == 1 and counts.get("backup/database.dump") == 1
+                receipt = json.loads(receipt_bytes)
+                receipt.pop("run_issues", None)  # Standalone omit-only legacy compatibility must not be removed.
+                receipt["replacement_note"] = "SOFTWARE_SIMULATION after anchor reads"
+                if replacement == "archive_pair":
+                    different_archive = archive_bytes + b"SOFTWARE_SIMULATION internally consistent replacement pair"
+                    (directory / "backup/database.dump").write_bytes(different_archive)
+                    receipt["archive_sha256"] = hashlib.sha256(different_archive).hexdigest()
+                (directory / "backup/receipt.json").write_text(json.dumps(receipt))
+                changed.append(True)
+        return content
+    monkeypatch.setattr(Path, "read_bytes", raced)
+    return archive_bytes, counts, changed
+
+
+@pytest.mark.parametrize("replacement", ["receipt", "archive_pair"])
+def test_package_verification_uses_only_its_anchor_checked_byte_snapshot(db_engine, tmp_path, monkeypatch, replacement):
+    context = freeze_context(db_engine, tmp_path)
+    record = freeze(context)
+    _, counts, changed = _replace_package_pair_after_anchored_reads(context, monkeypatch, replacement)
+    verify_frozen_package(context["destination"], expected_manifest_sha256=record["manifest_sha256"])
+    assert changed and counts["backup/receipt.json"] == counts["backup/database.dump"] == counts["campaign-export.json"] == 1
+    # The raced on-disk pair is internally consistent, but it is not the immutable anchored pair.
+    verify_backup(context["destination"] / "backup")
+    with pytest.raises(ValueError, match="checksum"):
+        verify_frozen_package(context["destination"], expected_manifest_sha256=record["manifest_sha256"])
+
+
+@pytest.mark.parametrize("replacement,environment", [
+    ("receipt", "COLDGUARD_TEST_ANCHORED_RECEIPT_RESTORE_URL"),
+    ("archive_pair", "COLDGUARD_TEST_ANCHORED_ARCHIVE_RESTORE_URL"),
+])
+def test_actual_frozen_restore_consumes_the_original_anchor_checked_pair(db_engine, tmp_path, monkeypatch, replacement, environment):
+    from coldguard_backend import evidence_backup as backup_module
+    from coldguard_backend.campaign_freeze import verify_frozen_restore
+    if not os.environ.get(environment):
+        pytest.skip("requires its own empty anchored-byte restore DB")
+    context = freeze_context(db_engine, tmp_path)
+    record = freeze(context)
+    archive_bytes, counts, changed = _replace_package_pair_after_anchored_reads(context, monkeypatch, replacement)
+    original = backup_module._postgres_command
+    consumed = []
+    def inspected(executable, url, *arguments):
+        content = Path(arguments[-1]).read_bytes()
+        assert content == archive_bytes, "restore consumed replacement bytes outside the immutable anchor"
+        consumed.append(hashlib.sha256(content).hexdigest())
+        return original(executable, url, *arguments)
+    monkeypatch.setattr(backup_module, "_postgres_command", inspected)
+    report = verify_frozen_restore(context["destination"], record, os.environ[environment], pg_restore=os.environ["COLDGUARD_TEST_PG_RESTORE"])
+    assert report["match"] and report["export_match"] and changed
+    assert consumed == [hashlib.sha256(archive_bytes).hexdigest()]
+    assert counts["backup/receipt.json"] == counts["backup/database.dump"] == counts["campaign-export.json"] == 1
+
+
+@pytest.mark.parametrize("operation", ["freeze", "verify", "restore"])
+def test_all_cli_operations_refuse_internal_report_before_engine_creation(tmp_path, monkeypatch, operation):
+    from scripts import freeze_campaign as cli
+    calls = []
+    monkeypatch.setattr(cli, "create_engine", lambda *_args, **_kwargs: calls.append(True))
+    directory = tmp_path / "package"
+    monkeypatch.setattr("sys.argv", ["freeze_campaign.py", operation, "--directory", str(directory),
+                                    "--report", str(directory / "operation.json")])
+    with pytest.raises(SystemExit):
+        cli.main()
+    assert not calls and not directory.exists()
