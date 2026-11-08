@@ -1,0 +1,11 @@
+{
+ "kind": "PASSIVE_S1_TRIAL",
+ "duration_requested_s": 600.0,
+ "elapsed_s": 600.2,
+ "frames": 600,
+ "door_closed_confirmed": true,
+ "boot_id": "c20d17f6",
+ "actuation": "NONE",
+ "fuse": "OUT",
+ "psu": "ON"
+}

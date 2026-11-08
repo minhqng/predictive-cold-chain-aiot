@@ -1,0 +1,38 @@
+{
+  "checks": [
+    {
+      "detail": "",
+      "failure_reason": "CONSISTENCY_STATEMENT_MISSING",
+      "name": "consistency_statement_recorded",
+      "passed": true
+    },
+    {
+      "detail": "1/1 files (imported=1)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-08T06:02:46.459+00:00",
+  "evidence": [
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-08T06:02:46.412+00:00",
+      "sha256": "5006217c9b4c65aeabc767f31dd94585fd2de35c454fe285e57495dff234bc01",
+      "size": 2108,
+      "source_path": "A-acceptance-app\\evidence\\A\\W15\\pzem-consistency-report-20261108.md",
+      "stored": "imports\\A-W15-03\\5006217c9b4c-pzem-consistency-report-20261108.md",
+      "test_id": "A-W15-03"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "No trusted independent reference meter available (operator confirmed 2026-11-08). This is a plausibility/consistency characterization, NOT certified calibration. Basis: A-W15-01 valid_runs=8, min_valid_rate=0.9967, mean_valid_rate=0.9992; S1 electrical_valid_rate 0.9967-1.0 repeatable across 4 runs; PZEM ~12 V bus plausible and P~VxI consistent with the TEC load. Absolute bias and repeatability vs a traceable standard are NOT established. See pzem-consistency-report-20261108.md.",
+  "operator": "operator+qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "OPERATOR_MEASUREMENT",
+  "started_at": "2026-11-08T06:02:46.438+00:00",
+  "test_id": "A-W15-03"
+}
