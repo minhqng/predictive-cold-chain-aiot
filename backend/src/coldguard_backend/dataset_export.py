@@ -39,7 +39,8 @@ def _duplicate_identities(connection: Connection, run: dict) -> list[dict]:
     return [dict(row) for row in connection.execute(query).mappings()]
 
 
-def run_integrity(connection: Connection, run: dict, samples: list[dict]) -> dict:
+def sample_integrity(run: dict, samples: list[dict], *, duplicate_identities: list[dict]) -> dict:
+    """Pure sample diagnostics, shared by live exports and frozen-input audit."""
     by_boot = defaultdict(list)
     event_times = []
     received_times = []
@@ -81,7 +82,7 @@ def run_integrity(connection: Connection, run: dict, samples: list[dict]) -> dic
     return {
         "sample_count": len(samples),
         "sequence_gaps": gaps,
-        "duplicate_identities": _duplicate_identities(connection, run),
+        "duplicate_identities": duplicate_identities,
         "event_time_range_unverified": [min(event_times), max(event_times)] if event_times else None,
         "receipt_time_range": [min(received_times), max(received_times)] if received_times else None,
         "event_time_outside_run_unverified": event_outside,
@@ -92,6 +93,10 @@ def run_integrity(connection: Connection, run: dict, samples: list[dict]) -> dic
         "mixed_version_fields": [field for field, values in versions.items() if len(values) > 1],
         "missing_version_refs": [field for field in VERSION_FIELDS if run["versions"].get(field) is None],
     }
+
+
+def run_integrity(connection: Connection, run: dict, samples: list[dict]) -> dict:
+    return sample_integrity(run, samples, duplicate_identities=_duplicate_identities(connection, run))
 
 
 def build_s1_export(
