@@ -1,0 +1,6 @@
+item,check,status,observed,closes_with
+sensor_fixtures,"all four DS18B20 fixtures seated at frozen positions (T1 center, T2 hot side, T3 bottom, T4 near door)",Confirmed,"operator-confirmed 2026-11-08; W07 geometry interior/exterior (canonical ../W07/geometry-v1-photos-20261104/)",operator confirmation + geometry photos
+v1_mounting,"TEC cold/hot V1 mounting unchanged since H8",Confirmed,"operator-confirmed 2026-11-08; W07 geometry interior/exterior",operator confirmation + geometry photos
+terminals,"branch terminals and fastons secure (no discoloration/looseness)",Confirmed,"operator-confirmed 2026-11-08; W07 geometry + W01 08-terminal-block.jpg (on main)",operator confirmation + geometry + terminal-block photo
+fuse,"installed branch fuse rating identification and holder unchanged",Confirmed,"operator-asserted ATO color code cam 5A/1A/15A/1A (runbook v2); holder unchanged per W23 fuse-block-installed.png (PR #75). Ampacity NOT certified - open deviation cross-ref A-W01-01/A-W03-02; two 1A slots not independently corroborated",operator color-code assertion + fuse-block photo; ampacity remains open
+cable_positions,"probe and power cable routing unchanged from frozen geometry",Confirmed,"operator-confirmed 2026-11-08; W07 geometry interior/exterior",operator confirmation + geometry photos

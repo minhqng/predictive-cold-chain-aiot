@@ -1,0 +1,101 @@
+{
+  "checks": [
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Sensor fixtures unchanged",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:V1 mounting unchanged",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:All terminals secure",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Fuse and holder unchanged",
+      "passed": true
+    },
+    {
+      "detail": "Confirmed",
+      "failure_reason": "",
+      "name": "item:Cable positions unchanged",
+      "passed": true
+    },
+    {
+      "detail": "5/5 confirmed, 0 unknown",
+      "failure_reason": "CHECKLIST_ITEM_NOT_CONFIRMED",
+      "name": "all_checklist_items_confirmed",
+      "passed": true
+    },
+    {
+      "detail": "",
+      "failure_reason": "NOTES_EMPTY",
+      "name": "notes_recorded",
+      "passed": true
+    },
+    {
+      "detail": "4/1 files (imported=4)",
+      "failure_reason": "REQUIRED_EVIDENCE_MISSING",
+      "name": "evidence_attached",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-07T18:22:20.615884+00:00",
+  "evidence": [
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.707+00:00",
+      "sha256": "f19531a1703604c8c5bcd0aee78f6347d67c024c9d8962520d816e030f8cfe7d",
+      "size": 1081314,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-interior-20261104.png",
+      "stored": "../W07/geometry-v1-photos-20261104/geometry-v1-interior-20261104.png",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.720+00:00",
+      "sha256": "ae96a96fa55fb4b92a4bf0cdc7754d74fcac5caa8ce3f2fc4d0dac015cf54ab2",
+      "size": 3808646,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W07\\geometry-v1-photos-20261104\\geometry-v1-exterior-20261104.png",
+      "stored": "../W07/geometry-v1-photos-20261104/geometry-v1-exterior-20261104.png",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.729+00:00",
+      "sha256": "9f0d37d98492c690225ac1cdf169ef2326a8d218df92cbea5d51db91289e76f2",
+      "size": 151984,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W01\\photos\\08-terminal-block.jpg",
+      "stored": "../W01/photos/08-terminal-block.jpg",
+      "test_id": "A-W12-03"
+    },
+    {
+      "category": "documentary",
+      "imported_at": "2026-11-07T18:22:20.740+00:00",
+      "sha256": "f9cc1edd180f40de6c6e02fde3d636ffce749fb844e27565e9f6f15420e4b270",
+      "size": 2938042,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-acceptance-app\\evidence\\A\\W23\\operator-submission-20261108\\fuse-block-installed.png",
+      "stored": "../W23/operator-submission-20261108/fuse-block-installed.png",
+      "test_id": "A-W12-03"
+    }
+  ],
+  "failure_reason": "",
+  "measurements": {},
+  "notes": "PASS mechanical-inspection scope: fixtures/V1/terminals/cable photo-supported vs geometry-v1. Fuse rating operator-asserted by ATO color code; installed-photo colors do not corroborate the two 1A slots (open verification). Fuse-to-conductor ampacity NOT certified; open, cross-ref A-W01-01/A-W03-02. Evidence published by canonical reference (geometry W07, terminal-block W01 on main, fuse-block W23 PR #75); no per-requirement copies. Fuse-block photo resolves once PR #75 merges (explicit dependency).",
+  "operator": "operator+qoder-agent",
+  "outcome": "PASS",
+  "repetitions": [],
+  "source": "DOCUMENTARY",
+  "started_at": "2026-11-07T18:22:20.615884+00:00",
+  "test_id": "A-W12-03"
+}
