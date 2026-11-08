@@ -4,6 +4,7 @@ import hashlib
 import logging
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from html import escape
 from time import monotonic
 from typing import Annotated, Callable, Mapping
 
@@ -201,3 +202,34 @@ def shadow_trace(connection: Connection, run: dict, *, limit: int, offset: int) 
         "controller_a_commands": [dict(row) for row in commands_a],
         "physical_response": {"status": "UNAVAILABLE", "reason": "NO_TRUSTED_PHYSICAL_EVIDENCE"},
     }
+
+
+def render_shadow_audit(trace: dict) -> str:
+    """Render a read-only view of recorded inference and hypothetical policy timing."""
+    rows = []
+    for item in trace["predictions"]:
+        prediction = item["prediction"]
+        policy = item["shadow_policy"] or {}
+        values = (
+            prediction["prediction_id"], prediction["created_at"].isoformat(),
+            prediction["recorded_at"].isoformat(),
+            policy["evaluated_at"].isoformat() if policy else "Unavailable",
+            policy.get("policy_duration_ms", "Unavailable"),
+            policy.get("status", "No decision"),
+        )
+        cells = "".join(f"<td>{escape(str(value))}</td>" for value in values)
+        rows.append(f"<tr>{cells}</tr>")
+    if not rows:
+        rows.append('<tr><td colspan="6">No recorded predictions</td></tr>')
+    return (
+        '<!doctype html><html lang="en"><head><meta charset="utf-8">'
+        '<meta name="viewport" content="width=device-width, initial-scale=1">'
+        '<title>Shadow policy audit</title></head><body><main>'
+        f'<h1>Shadow policy audit for {escape(trace["run_id"])}</h1>'
+        '<p>Policy decisions are hypothetical. Physical response evidence is unavailable.</p>'
+        '<table><caption>Prediction and policy timing</caption><thead><tr>'
+        '<th scope="col">Prediction</th><th scope="col">Prediction created</th>'
+        '<th scope="col">Prediction recorded</th><th scope="col">Policy evaluated</th>'
+        '<th scope="col">Policy duration (ms)</th><th scope="col">Policy status</th>'
+        f'</tr></thead><tbody>{"".join(rows)}</tbody></table></main></body></html>'
+    )

@@ -132,5 +132,8 @@ the hypothetical decision and its timing, and independent Controller A
 command records for the same device and run. Limits are 1–50 per section.
 The query preserves missing decisions and explicitly reports unavailable
 physical response evidence. Member B can rerun the model on the exported
-ordered feature vector. Official online model/features and actual physical
+ordered feature vector. Open `/audit/runs/{run_id}/shadow` in a browser for
+the recorded prediction times, policy evaluation time and duration. The view
+is read-only and accepts the same bounded `limit` and `offset` parameters.
+Official online model/features and actual physical
 run evidence remain separate acceptance items.
