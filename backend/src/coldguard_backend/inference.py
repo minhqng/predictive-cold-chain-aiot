@@ -2,13 +2,14 @@
 
 import hashlib
 import math
+from contextlib import nullcontext
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
 from typing import Annotated, Callable, Mapping
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
-from sqlalchemy.engine import Engine
+from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend.experiment_store import Identifier
 from coldguard_backend.prediction_store import Digest, PredictionDraft, current_prediction, record_prediction
@@ -107,11 +108,12 @@ def load_frozen_model(
 
 
 def infer_and_record(
-    engine: Engine, model: FrozenModel, *, prediction_id: str, device_id: str,
+    engine: Engine | Connection, model: FrozenModel, *, prediction_id: str, device_id: str,
     run_id: str | None, features: Mapping[str, float], input_ids: list[int],
     input_window_start: datetime, input_window_end: datetime, created_at: datetime,
     max_input_age_sec: int,
 ) -> dict:
+    """Persist an inference, joining the caller's transaction when given a connection."""
     risk = model.score(features)
     draft = PredictionDraft(
         prediction_id=prediction_id, device_id=device_id, run_id=run_id,
@@ -121,7 +123,8 @@ def infer_and_record(
         created_at=created_at, input_window_start=input_window_start,
         input_window_end=input_window_end, input_telemetry_ids=input_ids, risk_score=risk,
     )
-    with engine.begin() as connection:
+    transaction = nullcontext(engine) if isinstance(engine, Connection) else engine.begin()
+    with transaction as connection:
         saved = record_prediction(connection, draft)
         current = current_prediction(connection, device_id, None)
         is_current = current["status"] == "FRESH" and current["prediction"]["prediction_id"] == prediction_id

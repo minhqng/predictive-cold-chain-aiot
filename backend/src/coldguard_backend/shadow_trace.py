@@ -114,41 +114,41 @@ def run_shadow(
         samples = _online_samples(connection, run, input_window_start, input_window_end)
     device = run["device_id"]
     features = feature_adapter.build(samples)
-    result = infer_and_record(
-        engine, model, prediction_id=prediction_id, device_id=device, run_id=run_id,
-        features=features, input_ids=[row["id"] for row in samples], input_window_start=input_window_start,
-        input_window_end=input_window_end, created_at=created_at, max_input_age_sec=max_input_age_sec,
-    )
-    names, values = list(features), list(features.values())
-    with engine.connect() as connection:
-        existing = _existing_shadow(connection, decision_id, prediction_id)
-    if existing is not None:
-        if (
-            existing["decision_id"] != decision_id or existing["prediction_id"] != prediction_id
-            or existing["policy_version"] != policy_version or existing["feature_names"] != names
-            or existing["feature_values"] != values
-        ):
-            raise InferenceUnavailable("shadow identity already has different evidence")
-        return dict(existing)
-    started = monotonic()
-    if result["status"] == "FRESH":
-        verdict = evaluate_policy(result, samples)
-        if verdict.policy_version != policy_version:
-            raise InferenceUnavailable("shadow policy version is not approved")
-        status = "EVALUATED"
-    else:
-        verdict = ShadowVerdict(
-            policy_version=policy_version, would_command=None, reason_code="STALE_PREDICTION",
-            reason_detail="Prediction was stale or superseded before shadow evaluation.",
-        )
-        status = "SKIPPED_STALE"
-    data = {
-        **verdict.model_dump(mode="json"),
-        "decision_id": decision_id, "prediction_id": prediction_id, "status": status,
-        "feature_names": names, "feature_values": values,
-    }
-    digest = hashlib.sha256(encode_evidence(data)).hexdigest()
+    # The prediction, derived Twin, and shadow decision commit together.
     with engine.begin() as connection:
+        result = infer_and_record(
+            connection, model, prediction_id=prediction_id, device_id=device, run_id=run_id,
+            features=features, input_ids=[row["id"] for row in samples], input_window_start=input_window_start,
+            input_window_end=input_window_end, created_at=created_at, max_input_age_sec=max_input_age_sec,
+        )
+        names, values = list(features), list(features.values())
+        existing = _existing_shadow(connection, decision_id, prediction_id)
+        if existing is not None:
+            if (
+                existing["decision_id"] != decision_id or existing["prediction_id"] != prediction_id
+                or existing["policy_version"] != policy_version or existing["feature_names"] != names
+                or existing["feature_values"] != values
+            ):
+                raise InferenceUnavailable("shadow identity already has different evidence")
+            return dict(existing)
+        started = monotonic()
+        if result["status"] == "FRESH":
+            verdict = evaluate_policy(result, samples)
+            if verdict.policy_version != policy_version:
+                raise InferenceUnavailable("shadow policy version is not approved")
+            status = "EVALUATED"
+        else:
+            verdict = ShadowVerdict(
+                policy_version=policy_version, would_command=None, reason_code="STALE_PREDICTION",
+                reason_detail="Prediction was stale or superseded before shadow evaluation.",
+            )
+            status = "SKIPPED_STALE"
+        data = {
+            **verdict.model_dump(mode="json"),
+            "decision_id": decision_id, "prediction_id": prediction_id, "status": status,
+            "feature_names": names, "feature_values": values,
+        }
+        digest = hashlib.sha256(encode_evidence(data)).hexdigest()
         row = connection.execute(
             insert(shadow_decisions).values(
                 **data, payload_sha256=digest, evaluated_at=datetime.now(timezone.utc),
