@@ -75,7 +75,11 @@ removed to improve the campaign result.
 
 The local `pg_dump`/`pg_restore` binaries must match the database major version.
 Set `COLDGUARD_PG_DUMP` / `COLDGUARD_PG_RESTORE` if they are not on PATH. Current
-closures and clear integrity are required for a ready campaign archive.
+closures and a fully inventoried completed/invalid/aborted block are required
+for an archive. `backup_ready` means preservation is possible, not acceptance.
+`integrity_clear` and `freeze_ready` remain separate, stricter qualifications.
+Issue-bearing failed attempts are backed up under their own campaign identity,
+with statuses, issues and known generated-input flags retained in the receipt.
 
 ```sh
 python scripts/backup_campaign.py backup --directory ../evidence-out/wave1 --campaign SOFTWARE-CAMPAIGN --report ../evidence-out/wave1-report.json
@@ -99,3 +103,16 @@ fails on any PostgreSQL error, and compares every reviewed public evidence table
 for the installed revision. No clean/drop operation is implicit. The corrected
 `scripts/verify_restore.py` also works for a separately prepared pair of local
 databases and refuses missing/extra tables or unsupported revisions.
+
+Immutable close records require a `REPEATABLE READ` (or `SERIALIZABLE`) write
+transaction before the first read; the CLI establishes it explicitly. The
+assessment recipe is versioned (`campaign-integrity-v2`). It revalidates raw
+bytes/hashes/projections, extracted identity and normalized winners without
+repairing any row. Global event IDs are checked across runs/devices, allowing
+only exact semantic retransmission. Observed/unvalidated families keep their
+original raw status but expose unsupported schema/message diagnostics.
+
+Declared `PHYSICAL` is not proof of physical origin. Known synthetic/replay
+records are flagged; absence of such a flag leaves physical origin unproven.
+Restore binds receipt campaign/class/namespace and assessment headers to the
+actual restored records, not only to matching table hashes.

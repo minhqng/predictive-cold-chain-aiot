@@ -19,7 +19,7 @@ from coldguard_backend.ingest import ingest_message
 from coldguard_backend.main import app, get_db_engine
 from coldguard_backend.normalized_store import telemetry
 from coldguard_backend.raw_store import telemetry_raw
-from tests.campaign_testkit import campaign_draft, complete_run, finish_run, register_fixture, send_sample, start_run
+from tests.campaign_testkit import campaign_draft, complete_run, finish_run, register_fixture, send_sample, snapshot_transaction, start_run
 from tests.command_testkit import utcnow
 
 
@@ -95,7 +95,7 @@ def test_valid_synthetic_campaign_closes_without_automatic_validity_approval(db_
     campaign_id = context["draft"]["campaign_id"]
     for arm in ("A", "B"):
         run = complete_run(context, arm)
-        with db_engine.begin() as connection:
+        with snapshot_transaction(db_engine) as connection:
             closed = close_run(connection, campaign_id, run["run_id"], reason="SOFTWARE_SIMULATION block close")
             assert closed["report"]["normalized_count"] == 4
             assert closed["report"]["raw_count"] == 6
@@ -111,7 +111,7 @@ def test_valid_synthetic_campaign_closes_without_automatic_validity_approval(db_
 def test_missing_primary_window_and_events_are_preserved_for_doc03_review(db_engine):
     context = register_fixture(db_engine)
     run = complete_run(context, sequences=(1, 4), events=False, final_status="INVALID")
-    with db_engine.begin() as connection:
+    with snapshot_transaction(db_engine) as connection:
         closed = close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="Doc03 telemetry gap covers primary event")
         report = closed["report"]
         assert report["normalized_count"] == 2
@@ -164,7 +164,7 @@ def test_interrupted_normalization_leaves_raw_evidence_and_refuses_ready_backup(
     _, result = send_sample(context, run, 1)
     assert result["normalized"] == "failed"
     finish_run(context, run, final_status="INVALID")
-    with db_engine.begin() as connection:
+    with snapshot_transaction(db_engine) as connection:
         report = close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="interrupted ingestion")
         assert report["report"]["raw_count"] == 1 and report["report"]["normalized_count"] == 0
         assert "NORMALIZATION_INCOMPLETE" in {issue["code"] for issue in report["report"]["issues"]}
@@ -175,13 +175,13 @@ def test_running_close_is_rejected_and_late_evidence_creates_new_immutable_repor
     context = register_fixture(db_engine)
     run_id = context["draft"]["runs"][0]["run"]["run_id"]
     with pytest.raises(RunConflict, match="completed raw"):
-        with db_engine.begin() as connection:
+        with snapshot_transaction(db_engine) as connection:
             close_run(connection, context["draft"]["campaign_id"], run_id, reason="too early")
     run = complete_run(context)
-    with db_engine.begin() as connection:
+    with snapshot_transaction(db_engine) as connection:
         first = close_run(connection, context["draft"]["campaign_id"], run_id, reason="first close")
     send_sample(context, run, 3)
-    with db_engine.begin() as connection:
+    with snapshot_transaction(db_engine) as connection:
         second = close_run(connection, context["draft"]["campaign_id"], run_id, reason="explicit late receipt assessment")
         assert second["closure_id"] != first["closure_id"]
         assert connection.scalar(select(func.count()).select_from(run_closures).where(run_closures.c.run_id == run_id)) == 2
@@ -252,7 +252,7 @@ def test_live_campaign_ingestion_over_real_mqtt_and_stopped_consumer(db_engine):
                 return assess_run(connection, context["campaign"], run["run_id"])["raw_count"] == 6
         assert wait_for(fully_ingested, timeout_s=10)
         finish_run(context, run)
-        with db_engine.begin() as connection:
+        with snapshot_transaction(db_engine) as connection:
             assert close_run(connection, draft["campaign_id"], run["run_id"], reason="SOFTWARE_SIMULATION real MQTT ingestion")["report"]["assessment"] == "SOFTWARE_INTEGRITY_CLEAR"
         report = live_integrity(db_engine, draft["campaign_id"], ingestion=consumer.snapshot())
         assert report["ingestion"]["broker_connected"] is True and report["ingestion"]["subscribed"] is True

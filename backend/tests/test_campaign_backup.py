@@ -7,14 +7,14 @@ from sqlalchemy import create_engine
 
 from coldguard_backend.campaign_integrity import close_run
 from coldguard_backend.evidence_backup import backup_campaign, restore_backup, verify_backup
-from tests.campaign_testkit import complete_run, register_fixture
+from tests.campaign_testkit import complete_run, register_fixture, snapshot_transaction
 
 
 def ready_campaign(engine):
     context = register_fixture(engine)
     for arm in ("A", "B"):
         run = complete_run(context, arm)
-        with engine.begin() as connection:
+        with snapshot_transaction(engine) as connection:
             close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="SOFTWARE_SIMULATION wave block")
     return context
 

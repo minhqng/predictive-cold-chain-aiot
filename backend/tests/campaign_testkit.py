@@ -1,6 +1,7 @@
 """Explicit SOFTWARE_SIMULATION paired fixtures; not real campaign measurements."""
 
 import json
+from contextlib import contextmanager
 from datetime import timedelta
 from uuid import uuid4
 
@@ -9,6 +10,13 @@ from coldguard_backend.experiment_store import RunCreate, RunTransition, create_
 from coldguard_backend.ingest import ingest_message
 from coldguard_backend.simulator import build_event, build_telemetry
 from tests.command_testkit import utcnow
+
+
+@contextmanager
+def snapshot_transaction(engine):
+    with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+        with connection.begin():
+            yield connection
 
 
 def campaign_draft(suffix=None) -> dict:
