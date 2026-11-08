@@ -40,7 +40,7 @@ def test_registered_s1_pair_can_export_complete_non_door_timelines(db_engine):
     assert all({row["kind"] for row in trace["timeline"]} == {"telemetry", "event_receipt"} for trace in bundle["dataset"]["traces"])
 
 
-def final_context(engine, root, *, commands=False):
+def final_context(engine, root, *, commands=False, ack_status="ACCEPTED", canonical_status=None):
     from coldguard_backend import command_store as cs
     from coldguard_backend.evidence_backup import backup_campaign
     from tests.command_testkit import ack_bytes, make_ack, make_command
@@ -56,7 +56,8 @@ def final_context(engine, root, *, commands=False):
             pending = cs.begin_publish_attempt(connection, command.command_id, payload_sha256=cs.command_payload_sha256(command))
             cs.finish_publish_attempt(connection, command.command_id, pending["attempt_id"], outcome="PUBACK",
                                       broker_reason="SOFTWARE_SIMULATION protocol storage fixture; no broker publish")
-            ack = make_ack(command.command_id, device_id=run["device_id"], applied={"cooling": "OFF", "duty": None})
+            extra = {"canonical_status": canonical_status} if canonical_status is not None else {}
+            ack = make_ack(command.command_id, status=ack_status, device_id=run["device_id"], applied={"cooling": "OFF", "duty": None}, **extra)
             content = ack_bytes(ack)
             cs.record_ack(connection, topic_device_id=run["device_id"], raw_payload=content.decode(), payload_sha256=digest(content),
                           backend_received_at=utcnow(), ack=ack, validity="VALID")
