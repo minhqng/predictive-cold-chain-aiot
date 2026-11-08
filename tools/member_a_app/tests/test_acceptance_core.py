@@ -9,7 +9,9 @@ from __future__ import annotations
 import dataclasses
 import hashlib
 import json
+import os
 import pathlib
+import subprocess
 import sys
 import tempfile
 import unittest
@@ -50,11 +52,25 @@ class CoreImportTests(unittest.TestCase):
 
     def test_core_has_no_live_hardware_dependency(self):
         # Importing the core must not pull in the serial driver or downstream
-        # runner/evaluator/GUI modules.
-        self.assertNotIn("serial", sys.modules)
-        for bad in ("member_a_app.device", "member_a_app.runner",
-                    "member_a_app.evaluators", "member_a_app.gui"):
-            self.assertNotIn(bad, sys.modules)
+        # runner/evaluator/GUI modules. Verify in a fresh interpreter so other
+        # tests in this process (which legitimately import device/runner/
+        # evaluators) cannot pollute sys.modules and mask the real invariant.
+        code = (
+            "import sys\n"
+            "import member_a_app.model, member_a_app.protocol\n"
+            "import member_a_app.analysis, member_a_app.evidence\n"
+            "bad = [m for m in ('serial', 'member_a_app.device', "
+            "'member_a_app.runner', 'member_a_app.evaluators', 'member_a_app.gui') "
+            "if m in sys.modules]\n"
+            "print(','.join(bad))\n"
+            "sys.exit(1 if bad else 0)\n"
+        )
+        env = dict(os.environ, PYTHONPATH=str(TOOLS))
+        proc = subprocess.run([sys.executable, "-c", code], capture_output=True,
+                              text=True, env=env)
+        self.assertEqual(proc.returncode, 0,
+                         "core pulled hardware/downstream modules: "
+                         f"{proc.stdout.strip()} {proc.stderr.strip()}")
 
 
 class ModelTests(unittest.TestCase):
