@@ -1,0 +1,240 @@
+{
+  "schema": 1,
+  "date": "2026-11-08",
+  "new_physical_run": false,
+  "new_acceptance_evaluation": false,
+  "contains_all_attempts": false,
+  "scope": "existing supporting S1/S2 inputs only; other attempts retained at source",
+  "artifacts": [
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-20261107T063828Z/raw/telemetry_raw.log",
+      "source_path": "<local-capture-root>/s1-20261107T063828Z/raw/telemetry_raw.log",
+      "source_sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7",
+      "published_sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7",
+      "size": 1572494,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-20261107T063828Z/commands.log",
+      "source_path": "<local-capture-root>/s1-20261107T063828Z/commands.log",
+      "source_sha256": "0db2e1e7e6aff9182b4f076e11cb42566884fcf16941b30f4849f749a0820a5b",
+      "published_sha256": "0db2e1e7e6aff9182b4f076e11cb42566884fcf16941b30f4849f749a0820a5b",
+      "size": 69,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-20261107T063828Z/trial.json",
+      "source_path": "<local-capture-root>/s1-20261107T063828Z/trial.json",
+      "source_sha256": "58ac47eb13abd023249c825b895e1885f57db48ae06f93ec453e4ce8904a0efd",
+      "published_sha256": "58ac47eb13abd023249c825b895e1885f57db48ae06f93ec453e4ce8904a0efd",
+      "size": 220,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "source_path": "<local-capture-root>/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "source_sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b",
+      "published_sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b",
+      "size": 4886616,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/commands.log",
+      "source_path": "<local-capture-root>/s1-multi-20261107T064902Z/commands.log",
+      "source_sha256": "d459d362cba29dff0c53594b6c14a2c487fbd4a0040cf19a471c115b28e75ee6",
+      "published_sha256": "d459d362cba29dff0c53594b6c14a2c487fbd4a0040cf19a471c115b28e75ee6",
+      "size": 180,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/s1-summary.json",
+      "source_path": "<local-capture-root>/s1-multi-20261107T064902Z/s1-summary.json",
+      "source_sha256": "0ab32b7c70b1bb04100ffcbab825e0e68d80178b00a8f197644939886a09b64d",
+      "published_sha256": "0ab32b7c70b1bb04100ffcbab825e0e68d80178b00a8f197644939886a09b64d",
+      "size": 1418,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/SHA256SUMS.txt",
+      "source_path": "<local-capture-root>/s1-multi-20261107T064902Z/SHA256SUMS.txt",
+      "source_sha256": "5ca3df807e9715e61a51dbb5e34b78f0b826646819734192c102a1ca61c56e28",
+      "published_sha256": "5ca3df807e9715e61a51dbb5e34b78f0b826646819734192c102a1ca61c56e28",
+      "size": 333,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/raw/telemetry_raw.log",
+      "source_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "published_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "size": 4370853,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/commands.log",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/commands.log",
+      "source_sha256": "977e00083b0e36626b9fd8694262152404da5edccaf060ec60f6cd8aa1877f00",
+      "published_sha256": "977e00083b0e36626b9fd8694262152404da5edccaf060ec60f6cd8aa1877f00",
+      "size": 893,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/door_report.json",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/door_report.json",
+      "source_sha256": "672db9b136c5edfb9dd453471065c989b3e4d8dda2dc29ecded21c843896fe0f",
+      "published_sha256": "672db9b136c5edfb9dd453471065c989b3e4d8dda2dc29ecded21c843896fe0f",
+      "size": 1670,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/door_protocol_record.md",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/door_protocol_record.md",
+      "source_sha256": "bfe09d1e62d178cb7fca01f8ae9de59caea853bd900f685639edfc2ec501c9c9",
+      "published_sha256": "bfe09d1e62d178cb7fca01f8ae9de59caea853bd900f685639edfc2ec501c9c9",
+      "size": 167,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/w10_02_metrics.json",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/w10_02_metrics.json",
+      "source_sha256": "d42b5012a4fef9b78f1ddb22aeb7b95b2b7e50f69dcfc48c7775c0cded2f6a7b",
+      "published_sha256": "d42b5012a4fef9b78f1ddb22aeb7b95b2b7e50f69dcfc48c7775c0cded2f6a7b",
+      "size": 323,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/SHA256SUMS.txt",
+      "source_path": "<local-capture-root>/door-20261107T081539Z/SHA256SUMS.txt",
+      "source_sha256": "9ddd870dc37b80e2c8e40a08deafff8cfc41cd555927000b0e9d7c0ccc9fca48",
+      "published_sha256": "9ddd870dc37b80e2c8e40a08deafff8cfc41cd555927000b0e9d7c0ccc9fca48",
+      "size": 431,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCE-RESULTS/20261108/source-result-A-W15-01.json",
+      "source_path": "<acceptance-capture>/results/A-W15-01.json",
+      "source_sha256": "2042e823b48b1562c5cb935448e103e5960912a3d484a84a9156e4a5d60948ba",
+      "published_sha256": "2042e823b48b1562c5cb935448e103e5960912a3d484a84a9156e4a5d60948ba",
+      "size": 1241,
+      "transformation": "NONE"
+    },
+    {
+      "path": "evidence/A/SOURCE-RESULTS/20261108/source-result-A-W15-03.json",
+      "source_path": "<acceptance-capture>/results/A-W15-03.json",
+      "source_sha256": "25b73a2c24306371c55982d3e3a58b863746e684db8c5771370a1b0fe2f8fac6",
+      "published_sha256": "25b73a2c24306371c55982d3e3a58b863746e684db8c5771370a1b0fe2f8fac6",
+      "size": 1623,
+      "transformation": "NONE"
+    }
+  ],
+  "input_results": [
+    {
+      "test_id": "A-W09-02",
+      "path": "evidence/A/SOURCES/20261107/s1/source-result-A-W09-02.json",
+      "source_capture_path": "results/A-W09-02.json",
+      "source_sha256": "0381497c8e6ba4c73815ca28c206892e779323d2a6b45f7bbc48d5bad5ba5515",
+      "published_sha256": "0381497c8e6ba4c73815ca28c206892e779323d2a6b45f7bbc48d5bad5ba5515",
+      "size": 2515,
+      "transformation": "NONE"
+    },
+    {
+      "test_id": "A-W10-03",
+      "path": "evidence/A/SOURCES/20261107/s2/source-result-A-W10-03.json",
+      "source_capture_path": "results/A-W10-03.json",
+      "source_sha256": "144a5109d53118cbe4e6a37e292f9d76321f110ca19a36aa6fa95c9088e67398",
+      "published_sha256": "144a5109d53118cbe4e6a37e292f9d76321f110ca19a36aa6fa95c9088e67398",
+      "size": 4635,
+      "transformation": "NONE"
+    }
+  ],
+  "windows": [
+    {
+      "test_id": "A-W09-02",
+      "repetition_index": 0,
+      "scenario": "S1",
+      "raw_path": "evidence/A/SOURCES/20261107/s1/s1-20261107T063828Z/raw/telemetry_raw.log",
+      "raw_sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7",
+      "boot_id": "c20d17f6",
+      "seq_first": 1,
+      "seq_last": 600,
+      "frames": 600
+    },
+    {
+      "test_id": "A-W09-02",
+      "repetition_index": 1,
+      "scenario": "S1",
+      "raw_path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "raw_sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b",
+      "boot_id": "4a21a645",
+      "seq_first": 63,
+      "seq_last": 662,
+      "frames": 600
+    },
+    {
+      "test_id": "A-W09-02",
+      "repetition_index": 2,
+      "scenario": "S1",
+      "raw_path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "raw_sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b",
+      "boot_id": "4a21a645",
+      "seq_first": 663,
+      "seq_last": 1262,
+      "frames": 600
+    },
+    {
+      "test_id": "A-W09-02",
+      "repetition_index": 3,
+      "scenario": "S1",
+      "raw_path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "raw_sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b",
+      "boot_id": "4a21a645",
+      "seq_first": 1263,
+      "seq_last": 1863,
+      "frames": 601
+    },
+    {
+      "test_id": "A-W10-03",
+      "repetition_index": 0,
+      "scenario": "S2",
+      "raw_path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "raw_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "boot_id": "73311d0c",
+      "seq_first": 261,
+      "seq_last": 560,
+      "frames": 300
+    },
+    {
+      "test_id": "A-W10-03",
+      "repetition_index": 1,
+      "scenario": "S2",
+      "raw_path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "raw_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "boot_id": "73311d0c",
+      "seq_first": 630,
+      "seq_last": 929,
+      "frames": 300
+    },
+    {
+      "test_id": "A-W10-03",
+      "repetition_index": 2,
+      "scenario": "S2",
+      "raw_path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "raw_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "boot_id": "73311d0c",
+      "seq_first": 998,
+      "seq_last": 1297,
+      "frames": 300
+    },
+    {
+      "test_id": "A-W10-03",
+      "repetition_index": 3,
+      "scenario": "S2",
+      "raw_path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "raw_sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078",
+      "boot_id": "73311d0c",
+      "seq_first": 1367,
+      "seq_last": 1666,
+      "frames": 300
+    }
+  ]
+}

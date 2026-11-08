@@ -1,0 +1,83 @@
+{
+ "A-W10-02": {
+  "door": {
+   "transitions": 2,
+   "cycles": 1,
+   "open_durations_s": [
+    13.980000000000004
+   ],
+   "unverified_frames": 0
+  },
+  "cue_events": [
+   [
+    "OPEN",
+    0.0,
+    "2026-11-07T08:16:52.924679+00:00"
+   ],
+   [
+    "CLOSE",
+    15.15,
+    "2026-11-07T08:17:09.563688+00:00"
+   ]
+  ],
+  "frames": 120
+ },
+ "A-W10-03": [
+  {
+   "run": 1,
+   "valid": true,
+   "reason": "",
+   "frames": 300,
+   "open_durations_s": [
+    12.95999999999998
+   ],
+   "baseline_mean_c": 29.81382275132275,
+   "rise_c": 0.04034391534391801,
+   "recovery_c": 0.04166666666666785,
+   "gradient_peak_c": 0.4375,
+   "gate": "canonical reset criterion"
+  },
+  {
+   "run": 2,
+   "valid": true,
+   "reason": "",
+   "frames": 300,
+   "open_durations_s": [
+    13.979999999999905
+   ],
+   "baseline_mean_c": 29.842405913978496,
+   "rise_c": 0.0534274193548363,
+   "recovery_c": 0.0,
+   "gradient_peak_c": 0.4375,
+   "gate": "canonical reset criterion"
+  },
+  {
+   "run": 3,
+   "valid": true,
+   "reason": "",
+   "frames": 300,
+   "open_durations_s": [
+    14.080000000000155
+   ],
+   "baseline_mean_c": 29.92791005291005,
+   "rise_c": 0.030423280423281795,
+   "recovery_c": 0.02083333333333215,
+   "gradient_peak_c": 0.4375,
+   "gate": "canonical reset criterion"
+  },
+  {
+   "run": 4,
+   "valid": true,
+   "reason": "",
+   "frames": 300,
+   "open_durations_s": [
+    14.080000000000155
+   ],
+   "baseline_mean_c": 29.978841145833336,
+   "rise_c": 0.021158854166664298,
+   "recovery_c": 0.02083333333333215,
+   "gradient_peak_c": 0.4375,
+   "gate": "canonical reset criterion"
+  }
+ ]
+}

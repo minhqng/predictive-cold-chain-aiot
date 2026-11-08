@@ -1,0 +1,67 @@
+{
+ "kind": "PASSIVE_S1_BASELINE",
+ "class": "passive thermal/electrical-idle (NOT cooling/energy)",
+ "valid_runs": 4,
+ "required": 4,
+ "runs": [
+  {
+   "label": "trial1-imported",
+   "valid": true,
+   "reason": "",
+   "frames": 600,
+   "metrics": {
+    "coverage": 0.9983333333333333,
+    "thermal_valid_rate": 0.9983333333333333,
+    "electrical_valid_rate": 0.9966666666666667,
+    "boot_changes": 0,
+    "mean_temperature_c": null,
+    "gradient_mean_c": null
+   }
+  },
+  {
+   "label": "trial2",
+   "valid": true,
+   "reason": "",
+   "frames": 600,
+   "metrics": {
+    "coverage": 1.0,
+    "thermal_valid_rate": 1.0,
+    "electrical_valid_rate": 1.0,
+    "boot_changes": 0,
+    "mean_temperature_c": null,
+    "gradient_mean_c": null
+   }
+  },
+  {
+   "label": "trial3",
+   "valid": true,
+   "reason": "",
+   "frames": 600,
+   "metrics": {
+    "coverage": 1.0,
+    "thermal_valid_rate": 1.0,
+    "electrical_valid_rate": 1.0,
+    "boot_changes": 0,
+    "mean_temperature_c": null,
+    "gradient_mean_c": null
+   }
+  },
+  {
+   "label": "trial4",
+   "valid": true,
+   "reason": "",
+   "frames": 601,
+   "metrics": {
+    "coverage": 1.0,
+    "thermal_valid_rate": 1.0,
+    "electrical_valid_rate": 1.0,
+    "boot_changes": 0,
+    "mean_temperature_c": null,
+    "gradient_mean_c": null
+   }
+  }
+ ],
+ "fuse": "OUT",
+ "psu": "ON",
+ "actuation": "NONE"
+}

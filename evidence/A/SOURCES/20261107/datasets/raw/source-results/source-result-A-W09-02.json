@@ -1,0 +1,106 @@
+{
+  "checks": [
+    {
+      "detail": "trial1-imported",
+      "failure_reason": "",
+      "name": "run_1_valid",
+      "passed": true
+    },
+    {
+      "detail": "trial2",
+      "failure_reason": "",
+      "name": "run_2_valid",
+      "passed": true
+    },
+    {
+      "detail": "trial3",
+      "failure_reason": "",
+      "name": "run_3_valid",
+      "passed": true
+    },
+    {
+      "detail": "trial4",
+      "failure_reason": "",
+      "name": "run_4_valid",
+      "passed": true
+    },
+    {
+      "detail": "passive thermal/electrical-idle (NOT cooling/energy)",
+      "failure_reason": "",
+      "name": "summary_computed",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-07T07:21:20.867449+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "class": "passive thermal/electrical-idle (NOT cooling/energy)",
+    "valid_runs": 4
+  },
+  "notes": "",
+  "operator": "",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "frames": 600,
+      "label": "trial1-imported",
+      "metrics": {
+        "boot_changes": 0,
+        "coverage": 0.9983333333333333,
+        "electrical_valid_rate": 0.9966666666666667,
+        "gradient_mean_c": null,
+        "mean_temperature_c": null,
+        "thermal_valid_rate": 0.9983333333333333
+      },
+      "reason": "",
+      "valid": true
+    },
+    {
+      "frames": 600,
+      "label": "trial2",
+      "metrics": {
+        "boot_changes": 0,
+        "coverage": 1.0,
+        "electrical_valid_rate": 1.0,
+        "gradient_mean_c": null,
+        "mean_temperature_c": null,
+        "thermal_valid_rate": 1.0
+      },
+      "reason": "",
+      "valid": true
+    },
+    {
+      "frames": 600,
+      "label": "trial3",
+      "metrics": {
+        "boot_changes": 0,
+        "coverage": 1.0,
+        "electrical_valid_rate": 1.0,
+        "gradient_mean_c": null,
+        "mean_temperature_c": null,
+        "thermal_valid_rate": 1.0
+      },
+      "reason": "",
+      "valid": true
+    },
+    {
+      "frames": 601,
+      "label": "trial4",
+      "metrics": {
+        "boot_changes": 0,
+        "coverage": 1.0,
+        "electrical_valid_rate": 1.0,
+        "gradient_mean_c": null,
+        "mean_temperature_c": null,
+        "thermal_valid_rate": 1.0
+      },
+      "reason": "",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-07T07:21:20.867449+00:00",
+  "test_id": "A-W09-02"
+}

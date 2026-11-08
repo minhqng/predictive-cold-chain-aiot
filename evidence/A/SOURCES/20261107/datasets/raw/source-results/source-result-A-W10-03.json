@@ -1,0 +1,190 @@
+{
+  "checks": [
+    {
+      "detail": "door run 1",
+      "failure_reason": "",
+      "name": "run_1_valid",
+      "passed": true
+    },
+    {
+      "detail": "door run 2",
+      "failure_reason": "",
+      "name": "run_2_valid",
+      "passed": true
+    },
+    {
+      "detail": "door run 3",
+      "failure_reason": "",
+      "name": "run_3_valid",
+      "passed": true
+    },
+    {
+      "detail": "door run 4",
+      "failure_reason": "",
+      "name": "run_4_valid",
+      "passed": true
+    },
+    {
+      "detail": "door durations/rise/recovery/gradient",
+      "failure_reason": "",
+      "name": "summary_computed",
+      "passed": true
+    }
+  ],
+  "device_identity": {},
+  "ended_at": "2026-11-07T08:44:08.817945+00:00",
+  "evidence": [],
+  "failure_reason": "",
+  "measurements": {
+    "gradient_max_c": 0.4375,
+    "gradient_mean_c": 0.4375,
+    "n": 4,
+    "runs": [
+      {
+        "label": "door run 1",
+        "metrics": {
+          "baseline_mean_c": 29.81382275132275,
+          "gradient_peak_c": 0.4375,
+          "open_durations_s": [
+            12.95999999999998
+          ],
+          "recovery_c": 0.04166666666666785,
+          "rise_c": 0.04034391534391801
+        },
+        "open_durations_s": [
+          12.95999999999998
+        ],
+        "reason": "",
+        "valid": true
+      },
+      {
+        "label": "door run 2",
+        "metrics": {
+          "baseline_mean_c": 29.842405913978496,
+          "gradient_peak_c": 0.4375,
+          "open_durations_s": [
+            13.979999999999905
+          ],
+          "recovery_c": 0.0,
+          "rise_c": 0.0534274193548363
+        },
+        "open_durations_s": [
+          13.979999999999905
+        ],
+        "reason": "",
+        "valid": true
+      },
+      {
+        "label": "door run 3",
+        "metrics": {
+          "baseline_mean_c": 29.92791005291005,
+          "gradient_peak_c": 0.4375,
+          "open_durations_s": [
+            14.080000000000155
+          ],
+          "recovery_c": 0.02083333333333215,
+          "rise_c": 0.030423280423281795
+        },
+        "open_durations_s": [
+          14.080000000000155
+        ],
+        "reason": "",
+        "valid": true
+      },
+      {
+        "label": "door run 4",
+        "metrics": {
+          "baseline_mean_c": 29.978841145833336,
+          "gradient_peak_c": 0.4375,
+          "open_durations_s": [
+            14.080000000000155
+          ],
+          "recovery_c": 0.02083333333333215,
+          "rise_c": 0.021158854166664298
+        },
+        "open_durations_s": [
+          14.080000000000155
+        ],
+        "reason": "",
+        "valid": true
+      }
+    ],
+    "valid_runs": 4
+  },
+  "notes": "",
+  "operator": "",
+  "outcome": "PASS",
+  "repetitions": [
+    {
+      "label": "door run 1",
+      "metrics": {
+        "baseline_mean_c": 29.81382275132275,
+        "gradient_peak_c": 0.4375,
+        "open_durations_s": [
+          12.95999999999998
+        ],
+        "recovery_c": 0.04166666666666785,
+        "rise_c": 0.04034391534391801
+      },
+      "open_durations_s": [
+        12.95999999999998
+      ],
+      "reason": "",
+      "valid": true
+    },
+    {
+      "label": "door run 2",
+      "metrics": {
+        "baseline_mean_c": 29.842405913978496,
+        "gradient_peak_c": 0.4375,
+        "open_durations_s": [
+          13.979999999999905
+        ],
+        "recovery_c": 0.0,
+        "rise_c": 0.0534274193548363
+      },
+      "open_durations_s": [
+        13.979999999999905
+      ],
+      "reason": "",
+      "valid": true
+    },
+    {
+      "label": "door run 3",
+      "metrics": {
+        "baseline_mean_c": 29.92791005291005,
+        "gradient_peak_c": 0.4375,
+        "open_durations_s": [
+          14.080000000000155
+        ],
+        "recovery_c": 0.02083333333333215,
+        "rise_c": 0.030423280423281795
+      },
+      "open_durations_s": [
+        14.080000000000155
+      ],
+      "reason": "",
+      "valid": true
+    },
+    {
+      "label": "door run 4",
+      "metrics": {
+        "baseline_mean_c": 29.978841145833336,
+        "gradient_peak_c": 0.4375,
+        "open_durations_s": [
+          14.080000000000155
+        ],
+        "recovery_c": 0.02083333333333215,
+        "rise_c": 0.021158854166664298
+      },
+      "open_durations_s": [
+        14.080000000000155
+      ],
+      "reason": "",
+      "valid": true
+    }
+  ],
+  "source": "HARDWARE",
+  "started_at": "2026-11-07T08:44:08.817945+00:00",
+  "test_id": "A-W10-03"
+}
