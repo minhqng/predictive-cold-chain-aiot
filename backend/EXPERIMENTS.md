@@ -122,6 +122,8 @@ downgrade that would delete its provenance.
 ## Shadow policy trace
 
 Revision 0011 stores hypothetical decisions separately from commands.
+The prediction and its shadow decision commit together. A rejected decision
+identity cannot leave a new prediction or derived Twin update behind.
 The trusted runner reads a bounded receipt-time window from the registered
 device's active boot. It excludes replay and future inputs, checks the
 feature adapter against the approved frozen model, and records ordered

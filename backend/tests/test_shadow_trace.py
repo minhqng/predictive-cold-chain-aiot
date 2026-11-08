@@ -1,8 +1,10 @@
 """Exercise shadow inference, existing pure policy and audit without dispatch."""
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from datetime import timedelta
 from pathlib import Path
+from threading import Barrier
 
 import paho.mqtt.client as mqtt
 import pytest
@@ -11,8 +13,9 @@ from sqlalchemy import select
 from coldguard_backend import command_store as commands
 from coldguard_backend.inference import InferenceUnavailable, load_frozen_model
 from coldguard_backend.ingest import ingest_message
-from coldguard_backend.prediction_store import predictions
+from coldguard_backend.prediction_store import current_prediction, prediction_inputs, predictions
 from coldguard_backend.shadow_trace import OnlineFeatureAdapter, ShadowVerdict, run_shadow, shadow_decisions
+from coldguard_backend.twin_store import device_twin
 from tests.command_testkit import make_command, utcnow
 from tests.test_experiments import run_context  # noqa: F401
 from tests.test_inference import model_fixture  # noqa: F401
@@ -185,3 +188,79 @@ def test_stale_shadow_records_no_policy_command_and_rejects_unapproved_adapter(
     assert result["would_command"] is None
     assert result["reason_code"] == "STALE_PREDICTION"
     assert client.get(f"/api/runs/{run_id}/shadow-trace").json()["physical_response"]["status"] == "UNAVAILABLE"
+
+
+@pytest.mark.parametrize("concurrent", [False, True])
+def test_shadow_identity_conflict_rolls_back_prediction(
+    db_engine, shadow_case, model_fixture, monkeypatch, concurrent,
+):
+    client, device, run_id, _ = shadow_case
+    model, adapter = _software_model(model_fixture)
+    version, policy = _member_d_policy(monkeypatch)
+    now = utcnow()
+    sample_id = _live_sample(db_engine, device, run_id, 1, now - timedelta(seconds=1))
+    args = {
+        "run_id": run_id, "decision_id": "same-decision", "model": model,
+        "policy_version": version, "evaluate_policy": policy,
+        "input_window_start": now - timedelta(seconds=5), "input_window_end": now,
+        "created_at": now, "max_input_age_sec": 30,
+    }
+    barrier = Barrier(2)
+    monkeypatch.setattr(mqtt.Client, "publish", lambda *_a, **_k: pytest.fail("shadow published a command"))
+
+    def synchronized_features(rows):
+        barrier.wait(timeout=10)
+        return adapter.build(rows)
+
+    def attempt(prediction_id):
+        try:
+            return run_shadow(
+                db_engine, prediction_id=prediction_id,
+                feature_adapter=OnlineFeatureAdapter(
+                    adapter.feature_version, adapter.feature_schema_sha256,
+                    synchronized_features if concurrent else adapter.build,
+                ),
+                **args,
+            )
+        except InferenceUnavailable as exc:
+            assert str(exc) == "shadow identity already has different evidence"
+            return None
+
+    identities = ("shadow-first", "shadow-second")
+    if concurrent:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            results = list(pool.map(attempt, identities))
+    else:
+        def fail_policy(*_args):
+            raise RuntimeError("policy unavailable")
+
+        with pytest.raises(RuntimeError, match="policy unavailable"):
+            run_shadow(
+                db_engine, prediction_id="shadow-failed-policy", feature_adapter=adapter,
+                **{**args, "evaluate_policy": fail_policy},
+            )
+        with db_engine.connect() as conn:
+            derived = conn.scalar(select(device_twin.c.derived_state).where(device_twin.c.device_id == device))
+            assert not derived.get("prediction")
+        results = list(map(attempt, identities))
+    winners = [result for result in results if result is not None]
+    assert len(winners) == 1
+    winner = winners[0]["prediction_id"]
+    with db_engine.begin() as conn:
+        assert conn.execute(
+            select(predictions.c.prediction_id).where(predictions.c.run_id == run_id)
+        ).scalars().all() == [winner]
+        assert conn.execute(
+            select(prediction_inputs.c.prediction_id, prediction_inputs.c.telemetry_id)
+            .where(prediction_inputs.c.prediction_id.in_(identities))
+        ).all() == [(winner, sample_id)]
+        assert current_prediction(conn, device, run_id)["prediction"]["prediction_id"] == winner
+        derived = conn.scalar(select(device_twin.c.derived_state).where(device_twin.c.device_id == device))
+        assert derived["prediction"]["prediction_id"] == winner
+        assert conn.execute(select(commands.commands.c.command_id).where(
+            commands.commands.c.run_id == run_id,
+        )).first() is None
+    trace = client.get(f"/api/runs/{run_id}/shadow-trace").json()
+    assert trace["predictions"][0]["shadow_policy"]["prediction_id"] == winner
+    args["evaluate_policy"] = lambda *_: pytest.fail("identical retry evaluated policy")
+    assert run_shadow(db_engine, prediction_id=winner, feature_adapter=adapter, **args) == winners[0]
