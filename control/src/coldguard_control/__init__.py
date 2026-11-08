@@ -69,13 +69,19 @@ from .types import (
     ActuationIntent,
     ControllerId,
     CoolingState,
+    CoolingHealthState,
     DeviceMode,
+    EnvelopeQualification,
     FailureDisposition,
     ModelHealth,
     PhysicalVerificationState,
     PolicyState,
     QualityState,
     ReasonCode,
+)
+from .verification import (
+    VerificationObservation, VerificationPolicy, VerificationSnapshot,
+    VerificationTracker, start_verification,
 )
 
 __version__ = "0.1.0"
@@ -98,7 +104,9 @@ __all__ = [
     "ControllerASample",
     "ControllerId",
     "CoolingState",
+    "CoolingHealthState",
     "DeviceMode",
+    "EnvelopeQualification",
     "DeviceSafetyInputError",
     "FailureDisposition",
     "FailureRule",
@@ -131,4 +139,9 @@ __all__ = [
     "safe_local_exit_status",
     "replay_controller_a",
     "validate_command",
+    "VerificationObservation",
+    "VerificationPolicy",
+    "VerificationSnapshot",
+    "VerificationTracker",
+    "start_verification",
 ]
