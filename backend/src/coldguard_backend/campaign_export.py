@@ -6,7 +6,7 @@ import re
 from sqlalchemy import select
 from sqlalchemy.engine import Connection
 
-from coldguard_backend.campaign_integrity import _raw_evidence, campaign_integrity, run_closures
+from coldguard_backend.campaign_integrity import _raw_evidence, _raw_source_errors, campaign_integrity, run_closures
 from coldguard_backend.campaign_store import get_campaign, verify_membership
 from coldguard_backend.command_store import command_acks, command_attempts, command_transitions, commands
 from coldguard_backend.controller_b import policy_approvals
@@ -38,7 +38,7 @@ def campaign_dataset(connection: Connection, campaign_id: str) -> dict:
     """Refuse incomplete/invalid campaigns; retain raw retransmissions and traces."""
     campaign = get_campaign(connection, campaign_id)
     integrity = campaign_integrity(connection, campaign_id)
-    if not integrity["backup_ready"] or any(row["run_status"] != "VALID" for row in integrity["runs"]):
+    if not integrity["freeze_ready"]:
         raise ValueError("campaign freeze requires every frozen run VALID, clear integrity and a current closure")
     namespace = campaign["namespace"]
     runs = [verify_membership(connection, campaign, plan["run"]["run_id"]) for plan in namespace["runs"]]
@@ -77,6 +77,10 @@ def _validate_associations(runs: list[dict], tables: dict) -> None:
     predictions_by_id = {row["prediction_id"]: row for row in tables["predictions"]}
     samples = {row["id"]: row for row in tables["telemetry"]}
     raw = {row["id"]: row for row in tables["telemetry_raw"]}
+    for source in raw.values():
+        errors, _ = _raw_source_errors(source)
+        if errors:
+            raise ValueError("exported raw evidence has inconsistent wire/hash/projection provenance")
     for row in tables["telemetry"]:
         source = raw.get(row["raw_id"])
         if source is None or source["payload_sha256"] != row["raw_sha256"]:

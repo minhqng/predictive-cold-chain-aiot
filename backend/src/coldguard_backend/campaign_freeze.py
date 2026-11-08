@@ -15,7 +15,7 @@ from sqlalchemy.engine import Engine
 
 from coldguard_backend.campaign_export import build_campaign_export
 from coldguard_backend.campaign_store import campaigns, get_campaign
-from coldguard_backend.evidence_backup import restore_backup, verify_backup
+from coldguard_backend.evidence_backup import read_verified_backup, restore_backup, verify_backup
 from coldguard_backend.evidence_tables import fingerprint_connection
 from coldguard_backend.experiment_evidence import encode_evidence
 from coldguard_backend.experiment_store import Identifier
@@ -128,6 +128,9 @@ def verify_frozen_package(directory: Path, *, expected_manifest_sha256: str) -> 
     bundle = json.loads((directory / "campaign-export.json").read_bytes())
     if _digest(encode_evidence(bundle["dataset"])) != bundle["manifest"]["dataset_sha256"] or bundle["manifest"]["dataset_id"] != manifest["dataset_id"]:
         raise ValueError("frozen dataset checksum or identity differs")
+    backup = verify_backup(directory / "backup")
+    if backup["source_fingerprints"] != manifest["source_fingerprints"]:
+        raise ValueError("frozen backup source fingerprints differ from its anchored manifest")
     return manifest
 
 
@@ -141,9 +144,7 @@ def freeze_campaign(engine: Engine, draft: FreezeDraft, *, artifact_root: Path, 
     if draft.created_at > datetime.now(timezone.utc):
         raise ValueError("freeze timestamp cannot be in the future")
     references = {item.kind: _artifact_bytes(artifact_root, item) for item in draft.artifacts}
-    receipt = verify_backup(backup_directory)
-    backup_receipt = (backup_directory / "receipt.json").read_bytes()
-    archive = (backup_directory / "database.dump").read_bytes()
+    receipt, backup_receipt, archive = read_verified_backup(backup_directory)
     request = {**draft.model_dump(mode="json"), "backup_receipt_sha256": _digest(backup_receipt), "archive_sha256": _digest(archive)}
     request["artifacts"].sort(key=lambda item: item["kind"])
     request_sha = _digest(encode_evidence(request))

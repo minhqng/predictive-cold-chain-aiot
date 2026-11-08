@@ -1,7 +1,6 @@
 """Freeze/verify/restore a campaign with immutable local artifact references."""
 
 import argparse
-import json
 import os
 from pathlib import Path
 import sys
@@ -26,12 +25,18 @@ def main() -> int:
     parser.add_argument("--freeze-id")
     parser.add_argument("--report", type=Path, required=True)
     args = parser.parse_args()
+    root = args.directory.resolve()
+    report = args.report.resolve()
+    if report == root or root in report.parents:
+        parser.error("operational --report must be outside the immutable package directory")
+    if args.report.exists():
+        parser.error("report path already exists; refuse before changing a freeze")
     engine = create_engine(local_database_url(os.environ["DATABASE_URL"]), connect_args={"connect_timeout": 5})
     try:
         if args.operation == "freeze":
             if not all((args.spec, args.artifact_root, args.backup)):
                 parser.error("freeze needs --spec, --artifact-root and --backup")
-            draft = FreezeDraft.model_validate(json.loads(args.spec.read_bytes()))
+            draft = FreezeDraft.model_validate_json(args.spec.read_bytes())
             if clean_backend_commit(Path(__file__).resolve().parents[2]) != draft.backend_commit:
                 parser.error("freeze exporter provenance must be the current clean backend commit")
             record = freeze_campaign(engine, draft, artifact_root=args.artifact_root, backup_directory=args.backup, destination=args.directory)

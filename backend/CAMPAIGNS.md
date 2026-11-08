@@ -164,6 +164,13 @@ never trusted. Staging files are preserved for diagnosis. Reusing a freeze ID
 requires identical immutable inputs and intact original artifacts. Changes
 require a new explicit version/ID, never an overwritten freeze.
 
+The JSON CLI uses strict JSON-mode datetime validation; aware ISO strings are
+accepted, while naive/malformed timestamps are refused. Operational report paths
+must resolve outside the immutable package, including symlink/junction aliases.
+Backup receipt/archive bytes are read once and validated as one retained pair;
+that exact pair is packaged and used for restore, never a raced second read.
+Every exported raw row is checked, including events and losing retransmissions.
+
 Immutable close records require a `REPEATABLE READ` (or `SERIALIZABLE`) write
 transaction before the first read; the CLI establishes it explicitly. The
 assessment recipe is versioned (`campaign-integrity-v2`). It revalidates raw

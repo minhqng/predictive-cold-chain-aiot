@@ -16,7 +16,7 @@ from coldguard_backend.campaign_integrity import close_run
 from coldguard_backend.experiment_store import experiments
 from coldguard_backend import command_store
 from coldguard_backend.normalized_store import telemetry
-from tests.campaign_testkit import campaign_draft, complete_run, register_fixture, send_sample
+from tests.campaign_testkit import campaign_draft, complete_run, register_fixture, send_sample, snapshot_transaction
 from tests.freeze_testkit import freeze_context
 from tests.test_command_migration import ENV, _downgrade, _revision, _upgrade
 from tests.command_testkit import make_command
@@ -50,10 +50,10 @@ def test_physical_freeze_cannot_relabel_synthetic_measurements(db_engine):
     context = register_fixture(db_engine, draft)
     for arm in ("A", "B"):
         run = complete_run(context, arm)
-        with db_engine.begin() as connection:
+        with snapshot_transaction(db_engine) as connection:
             close_run(connection, draft["campaign_id"], run["run_id"], reason="negative SOFTWARE_SIMULATION relabel test; no physical proof")
     with db_engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
-        with pytest.raises(ValueError, match="cannot freeze synthetic"):
+        with pytest.raises(ValueError, match="clear integrity|cannot freeze synthetic"):
             build_campaign_export(connection, draft["campaign_id"], created_at=utcnow(), backend_commit="a" * 40)
 
 
@@ -97,7 +97,7 @@ def test_incomplete_or_conflicting_freeze_refused_with_no_record(db_engine, tmp_
         (context["artifact_root"] / "model-reference.bin").write_bytes(b"changed")
     else:
         send_sample(context, run, 1)
-        with db_engine.begin() as connection:
+        with snapshot_transaction(db_engine) as connection:
             close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="explicit receipt after backup")
     with pytest.raises((ValueError, FileNotFoundError)):
         freeze(context)
