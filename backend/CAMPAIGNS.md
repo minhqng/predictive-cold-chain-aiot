@@ -173,13 +173,23 @@ Every exported raw row is checked, including events and losing retransmissions.
 
 Immutable close records require a `REPEATABLE READ` (or `SERIALIZABLE`) write
 transaction before the first read; the CLI establishes it explicitly. The
-assessment recipe is versioned (`campaign-integrity-v2`). It revalidates raw
+assessment recipe is versioned (`campaign-integrity-v3`). It revalidates raw
 bytes/hashes/projections, extracted identity and normalized winners without
 repairing any row. Global event IDs are checked across runs/devices, allowing
 only exact semantic retransmission. Observed/unvalidated families keep their
 original raw status but expose unsupported schema/message diagnostics.
+Event times must be genuine offset-aware timestamp strings. Null, numeric,
+boolean, array, object, malformed or naive values produce `EVENT_TIME_UNAVAILABLE`
+in `observed_message_errors`; they do not count as complete required events.
+Issue-bearing explicit closures and archives remain available without repairing
+wire bytes or inventing timestamps. Re-close under the current recipe when an
+assessment changes; previous closure records remain immutable.
 
 Declared `PHYSICAL` is not proof of physical origin. Known synthetic/replay
 records are flagged; absence of such a flag leaves physical origin unproven.
 Restore binds receipt campaign/class/namespace and assessment headers to the
 actual restored records, not only to matching table hashes.
+When a receipt supplies `run_issues`, restore compares its canonical summary with
+the restored inventory and rejects altered issue arrays. Legacy receipts that
+omit only this optional summary remain compatible; supplied provenance and
+qualification fields are still checked.
