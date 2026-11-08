@@ -106,7 +106,7 @@ def test_shadow_trace_persists_exact_features_and_never_publishes(
     emitted = []
     monkeypatch.setattr(mqtt.Client, "publish", lambda *args, **kw: emitted.append((args, kw)))
     args = {
-        "run_id": run_id, "decision_id": "w17-shadow", "prediction_id": "w17-prediction",
+        "run_id": run_id, "decision_id": "w17-shadow", "prediction_id": "w17-prediction<proof>",
         "model": model, "feature_adapter": adapter, "policy_version": version,
         "input_window_start": now - timedelta(seconds=5), "input_window_end": now,
         "created_at": utcnow(), "max_input_age_sec": 30,
@@ -144,6 +144,19 @@ def test_shadow_trace_persists_exact_features_and_never_publishes(
     assert [row["command_id"] for row in trace["controller_a_commands"]] == ["w17-reactive"]
     assert trace["physical_response"]["status"] == "UNAVAILABLE"
     assert client.get(path, params={"limit": 51}).status_code == 422
+
+    audit = client.get(f"/audit/runs/{run_id}/shadow", params={"limit": 1})
+    assert audit.status_code == 200
+    assert audit.headers["content-type"].startswith("text/html")
+    assert "w17-prediction&lt;proof&gt;" in audit.text
+    assert "Prediction created" in audit.text
+    assert "Policy evaluated" in audit.text
+    assert "Policy duration (ms)" in audit.text
+    assert item["prediction"]["recorded_at"].replace("Z", "+00:00") in audit.text
+    assert shadow["evaluated_at"].replace("Z", "+00:00") in audit.text
+    assert "Policy decisions are hypothetical" in audit.text
+    assert client.get(f"/audit/runs/{run_id}/shadow", params={"limit": 51}).status_code == 422
+    assert not emitted
 
 
 def test_stale_shadow_records_no_policy_command_and_rejects_unapproved_adapter(
