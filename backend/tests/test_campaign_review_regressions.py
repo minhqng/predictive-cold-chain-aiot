@@ -7,9 +7,9 @@ from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
-from sqlalchemy import select
+from sqlalchemy import create_engine, select
 
-from coldguard_backend.campaign_integrity import assess_run, campaign_integrity, close_run, live_integrity
+from coldguard_backend.campaign_integrity import _observed_schema_errors, assess_run, campaign_integrity, close_run, live_integrity
 from coldguard_backend.evidence_backup import backup_campaign, restore_backup
 from coldguard_backend.experiment_store import RunTransition, transition_run
 from coldguard_backend.ingest import ingest_message
@@ -192,3 +192,114 @@ def test_operator_close_cli_uses_a_repeatable_write_snapshot(db_engine, tmp_path
                                     "--run", run["run_id"], "--reason", "SOFTWARE_SIMULATION explicit operator close"])
     assert cli.main() == 0 and observed == ["REPEATABLE READ"]
     assert json.loads(target.read_bytes())["report"]["normalized_count"] == 4
+
+
+@pytest.mark.parametrize("event_time", [None, 123, True, [], {}, "", "not-a-time", "2026-11-08T00:00:00"])
+def test_observed_event_requires_a_real_aware_timestamp_string(event_time):
+    document = {"schema_version": 1, **{key: "software-test" for key in
+                ("event_id", "event_type", "device_id", "boot_id", "run_id")}, "event_time": event_time}
+    assert _observed_schema_errors(document, event=True) == (["EVENT_TIME_UNAVAILABLE"], False)
+
+
+@pytest.mark.parametrize("event_time", ["2026-11-08T00:00:00Z", "2026-11-08T07:00:00+07:00"])
+def test_observed_event_aware_string_control(event_time):
+    document = {"schema_version": 1, **{key: "software-test" for key in
+                ("event_id", "event_type", "device_id", "boot_id", "run_id")}, "event_time": event_time}
+    assert _observed_schema_errors(document, event=True) == ([], False)
+
+
+@pytest.mark.parametrize("event_time", [None, 123, True, [], {}])
+def test_bad_event_time_is_retained_and_close_remains_issue_bearing(db_engine, event_time):
+    context = register_fixture(db_engine)
+    run = complete_run(context, events=False, final_status="INVALID")
+    event = build_event(device_id=run["device_id"], boot_id="software-boot-" + run["run_id"], seq=2,
+                        run_id=run["run_id"], event_type="DOOR_OPENED", base_time=context["started"])
+    event["event_time"] = event_time
+    payload = json.dumps(event).encode()
+    result = ingest_message(db_engine, topic=f"coldguard/{run['device_id']}/event", payload=payload)
+    assert result["raw_status"] == "RECEIVED_OBSERVED"
+    report = live_integrity(db_engine, context["draft"]["campaign_id"])
+    assessment = next(row for row in report["runs"] if row["run_id"] == run["run_id"])
+    assert report["database_health"] == "HEALTHY"
+    assert assessment["message_errors"] == 1 and assessment["schema_mismatches"] == 0
+    assert assessment["observed_message_errors"] == [{"raw_id": result["raw_id"], "codes": ["EVENT_TIME_UNAVAILABLE"]}]
+    assert "DOOR_OPENED" not in assessment["event_counts"]
+    assert "DOOR_OPENED" in assessment["missing_events"]
+    with snapshot_transaction(db_engine) as connection:
+        closed = close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="SOFTWARE_SIMULATION malformed event QA")
+        assert closed["report"]["assessment"] == "ISSUES_REQUIRING_VALIDITY_REVIEW"
+        assert closed["report"]["run_status"] == "INVALID"
+        assert closed["report"]["automatic_validity_approval"] is False
+        source = dict(connection.execute(select(telemetry_raw).where(telemetry_raw.c.id == result["raw_id"])).mappings().one())
+        assert source["raw_payload"].encode() == payload and source["raw_json"]["event_time"] == event_time
+        assert source["captured_at"] is None and source["ingest_status"] == "RECEIVED_OBSERVED"
+        assert len(connection.execute(select(telemetry).where(telemetry.c.run_id == run["run_id"])).all()) == 4
+
+
+def _closed_issue_block(engine):
+    context = register_fixture(engine)
+    a = complete_run(context, events=False, final_status="INVALID")
+    b = context["draft"]["runs"][1]["run"]
+    with engine.begin() as connection:
+        transition_run(connection, b["run_id"], RunTransition(status="ABORTED", reason="SOFTWARE_SIMULATION no acquisition"))
+    with snapshot_transaction(engine) as connection:
+        for run in (a, b):
+            close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="SOFTWARE_SIMULATION issue inventory")
+    return context
+
+
+@pytest.mark.skipif(not os.environ.get("COLDGUARD_TEST_ISSUE_SUMMARY_RESTORE_URL"), reason="requires separate empty issue-summary restore DB")
+def test_receipt_issue_summary_mutation_is_rejected_after_actual_restore(db_engine, tmp_path):
+    context = _closed_issue_block(db_engine)
+    directory = tmp_path / "issue-summary"
+    receipt = backup_campaign(db_engine, context["draft"]["campaign_id"], directory, pg_dump=os.environ["COLDGUARD_TEST_PG_DUMP"])
+    assert all(receipt["run_issues"].values())
+    archive_hash = hashlib.sha256((directory / "database.dump").read_bytes()).hexdigest()
+    receipt["run_issues"] = {run_id: [] for run_id in receipt["run_issues"]}
+    (directory / "receipt.json").write_text(json.dumps(receipt))
+    with pytest.raises(ValueError, match="issue summary.*restored campaign"):
+        restore_backup(directory, os.environ["COLDGUARD_TEST_ISSUE_SUMMARY_RESTORE_URL"], pg_restore=os.environ["COLDGUARD_TEST_PG_RESTORE"])
+    assert hashlib.sha256((directory / "database.dump").read_bytes()).hexdigest() == archive_hash
+
+
+@pytest.mark.skipif(not os.environ.get("COLDGUARD_TEST_LEGACY_RECEIPT_RESTORE_URL"), reason="requires separate empty legacy-receipt restore DB")
+def test_legacy_receipt_without_issue_summary_remains_compatible(db_engine, tmp_path):
+    context = _closed_issue_block(db_engine)
+    directory = tmp_path / "legacy-receipt"
+    receipt = backup_campaign(db_engine, context["draft"]["campaign_id"], directory, pg_dump=os.environ["COLDGUARD_TEST_PG_DUMP"])
+    del receipt["run_issues"]
+    (directory / "receipt.json").write_text(json.dumps(receipt))
+    restored = restore_backup(directory, os.environ["COLDGUARD_TEST_LEGACY_RECEIPT_RESTORE_URL"], pg_restore=os.environ["COLDGUARD_TEST_PG_RESTORE"])
+    assert restored["match"] is True and restored["physical_acceptance"] == "BLOCKED_EXTERNAL"
+
+
+@pytest.mark.skipif(not os.environ.get("COLDGUARD_TEST_BAD_EVENT_RESTORE_URL"), reason="requires separate empty malformed-event restore DB")
+def test_null_time_event_block_archives_and_restores_without_timestamp_repair(db_engine, tmp_path):
+    context = register_fixture(db_engine)
+    a = complete_run(context, events=False, final_status="INVALID")
+    b = complete_run(context, "B")
+    event = build_event(device_id=a["device_id"], boot_id="software-boot-" + a["run_id"], seq=2,
+                        run_id=a["run_id"], event_type="DOOR_OPENED", base_time=context["started"])
+    event["event_time"] = None
+    payload = json.dumps(event).encode()
+    raw_id = ingest_message(db_engine, topic=f"coldguard/{a['device_id']}/event", payload=payload)["raw_id"]
+    with snapshot_transaction(db_engine) as connection:
+        for run in (a, b):
+            close_run(connection, context["draft"]["campaign_id"], run["run_id"], reason="SOFTWARE_SIMULATION issue-bearing event archive")
+        inventory = campaign_integrity(connection, context["draft"]["campaign_id"])
+        assert inventory["backup_ready"] is True and inventory["freeze_ready"] is False
+    directory = tmp_path / "null-event-block"
+    backup_campaign(db_engine, context["draft"]["campaign_id"], directory, pg_dump=os.environ["COLDGUARD_TEST_PG_DUMP"])
+    restored = restore_backup(directory, os.environ["COLDGUARD_TEST_BAD_EVENT_RESTORE_URL"], pg_restore=os.environ["COLDGUARD_TEST_PG_RESTORE"])
+    assert restored["match"] is True
+    engine = create_engine(os.environ["COLDGUARD_TEST_BAD_EVENT_RESTORE_URL"])
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            source = dict(connection.execute(select(telemetry_raw).where(telemetry_raw.c.id == raw_id)).mappings().one())
+            assert source["raw_payload"].encode() == payload and source["raw_json"]["event_time"] is None
+            inventory = campaign_integrity(connection, context["draft"]["campaign_id"])
+            assessment = next(row for row in inventory["runs"] if row["run_id"] == a["run_id"])
+            assert assessment["observed_message_errors"] == [{"raw_id": raw_id, "codes": ["EVENT_TIME_UNAVAILABLE"]}]
+            assert assessment["run_status"] == "INVALID" and inventory["freeze_ready"] is False
+    finally:
+        engine.dispose()
