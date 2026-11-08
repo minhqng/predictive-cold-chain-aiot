@@ -14,7 +14,7 @@ services:
       - coldguard_pgdata:/var/lib/postgresql/data
       - ./postgres/init:/docker-entrypoint-initdb.d:ro,z
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER:-coldguard} -d $${POSTGRES_DB:-coldguard}"]
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -p 5432 -U $${POSTGRES_USER:-coldguard} -d $${POSTGRES_DB:-coldguard}"]
       interval: 10s
       timeout: 5s
       retries: 5

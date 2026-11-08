@@ -92,7 +92,7 @@ def main() -> int:
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     for part in args.output.parts:
-        if part != args.output.anchor:
+        if part not in {args.output.anchor, ".", ".."}:
             portable_component(part)
     if args.output.exists() or args.output.is_symlink():
         parser.error("readiness output already exists; never overwrite evidence")

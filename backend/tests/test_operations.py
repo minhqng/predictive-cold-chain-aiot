@@ -106,3 +106,35 @@ def test_readiness_cli_rejects_existing_report_before_opening_database(tmp_path,
     with pytest.raises(SystemExit):
         cli.main()
     assert not calls and output.read_bytes() == b"SOFTWARE_SIMULATION preserve evidence"
+
+
+@pytest.mark.parametrize("name", ["schema-readiness.json", "runtime-readiness.json"])
+def test_documented_parent_relative_output_is_admitted_by_real_cli(db_engine, tmp_path, monkeypatch, name):
+    import json
+    import scripts.check_stack as cli
+    working = tmp_path / "backend"
+    working.mkdir()
+    evidence = tmp_path / "evidence-out"
+    evidence.mkdir()
+    monkeypatch.chdir(working)
+    monkeypatch.setenv("DATABASE_URL", db_engine.url.render_as_string(hide_password=False))
+    # Database-only isolates output admission; the clean native drill tests required live subscribers.
+    monkeypatch.setattr("sys.argv", ["check_stack.py", "--database-only", "--output", "../evidence-out/" + name])
+    assert cli.main() == 0
+    assert json.loads((evidence / name).read_bytes())["status"] == "READY"
+
+
+def test_compose_runbook_waits_and_stops_on_migration_failure():
+    root = Path(__file__).resolve().parents[1]
+    route = (root / "RUNBOOK.md").read_text().split("```sh", 1)[1].split("```", 1)[0]
+    assert "set -euo pipefail" in route
+    lines = route.splitlines()
+    wait = next(index for index, line in enumerate(lines) if "up -d" in line and "postgres mosquitto" in line)
+    migrate = next(index for index, line in enumerate(lines) if "alembic -c alembic.ini upgrade head" in line)
+    start = next(index for index, line in enumerate(lines) if "up -d" in line and line.endswith(" backend"))
+    assert "--wait" in lines[wait] and "--wait-timeout 60" in lines[wait] and wait < migrate < start
+
+
+def test_compose_database_readiness_probes_tcp_not_temporary_init_socket():
+    compose = (Path(__file__).resolve().parents[2] / "infra/compose.yaml").read_text()
+    assert "pg_isready -h 127.0.0.1 -p 5432" in compose
