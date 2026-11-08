@@ -9,7 +9,14 @@ thermal-risk warnings, a safety-bounded policy may trigger thermoelectric
 intervention, and every intervention is to be verified against independent
 electrical and thermal evidence.
 
-## Current Status
+## Member C operations
+
+See [the local digital-stack runbook](backend/RUNBOOK.md) for owned startup,
+offline rehearsal, readiness, auth/TLS, logs and clean restore. The
+[frozen final JSON package](backend/FINAL_DATA_PACKAGE.md) is the reproducible
+data/claim handover route; software evidence does not imply physical acceptance.
+
+## Historical foundation (W01–W04)
 
 `C-W03 — validated and idempotent telemetry ingestion` (Member C).
 What actually runs: the W02 authenticated stack, plus strict runtime

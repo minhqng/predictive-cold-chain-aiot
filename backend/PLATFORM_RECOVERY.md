@@ -1,5 +1,8 @@
 # Platform soak and recovery
 
+See [the local runbook](RUNBOOK.md) for the current startup/readiness/stop route;
+the failure and evidence contracts below remain the recovery authority.
+
 Use explicitly provisioned local test providers for the software proof.
 Confirm PostgreSQL and Mosquitto are bound to loopback and belong to the test
 before starting. Apply migrations to the dedicated PostgreSQL database.
