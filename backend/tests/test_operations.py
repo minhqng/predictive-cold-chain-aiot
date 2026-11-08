@@ -138,3 +138,45 @@ def test_compose_runbook_waits_and_stops_on_migration_failure():
 def test_compose_database_readiness_probes_tcp_not_temporary_init_socket():
     compose = (Path(__file__).resolve().parents[2] / "infra/compose.yaml").read_text()
     assert "pg_isready -h 127.0.0.1 -p 5432" in compose
+
+
+@pytest.mark.parametrize("case", ["matching", "url_only", "wrong_worker_port", "wrong_worker_db", "nonlocal"])
+def test_documented_native_preflight_checks_api_worker_binding_before_network(case, monkeypatch, capsys):
+    from sqlalchemy.engine import make_url
+
+    runbook = (Path(__file__).resolve().parents[1] / "RUNBOOK.md").read_text()
+    native = runbook.split("## Start: provisioned native/offline route", 1)[1].split("## Health and logs", 1)[0]
+    route = native.split("```sh", 1)[1].split("```", 1)[0]
+    assert "uv run --offline --locked python - <<'PY'" in route, "native route lacks a pre-network database binding check"
+    assert "set -euo pipefail" in route
+    assert route.index("<<'PY'") < route.index("alembic -c alembic.ini upgrade head") < route.index("uvicorn coldguard_backend.main:app")
+    code = route.split("<<'PY'\n", 1)[1].split("\nPY", 1)[0]
+    values = {"DATABASE_URL": "postgresql+psycopg://software_fixture:software_fixture_only@127.0.0.1:6543/software_preflight",
+        "POSTGRES_HOST": "127.0.0.1", "POSTGRES_PORT": "6543", "POSTGRES_DB": "software_preflight",
+        "POSTGRES_USER": "software_fixture", "POSTGRES_PASSWORD": "software_fixture_only"}
+    if case == "url_only":
+        values = {"DATABASE_URL": values["DATABASE_URL"]}
+    elif case == "wrong_worker_port":
+        values["POSTGRES_PORT"] = "6544"
+    elif case == "wrong_worker_db":
+        values["POSTGRES_DB"] = "wrong_software_fixture"
+    elif case == "nonlocal":
+        values["POSTGRES_HOST"] = "localhost"
+        values["DATABASE_URL"] = make_url(values["DATABASE_URL"]).set(host="localhost").render_as_string(hide_password=False)
+    for name in ("DATABASE_URL", "POSTGRES_HOST", "POSTGRES_PORT", "POSTGRES_DB", "POSTGRES_USER", "POSTGRES_PASSWORD"):
+        monkeypatch.delenv(name, raising=False)
+    for name, value in values.items():
+        monkeypatch.setenv(name, value)
+    def forbidden(*_args, **_kwargs):
+        pytest.fail("pure configuration preflight attempted network/database access")
+    monkeypatch.setattr(socket, "create_connection", forbidden)
+    monkeypatch.setattr("sqlalchemy.create_engine", forbidden)
+    if case == "matching":
+        exec(compile(code, "RUNBOOK-native-preflight", "exec"), {})
+    else:
+        with pytest.raises(SystemExit, match="before network access"):
+            exec(compile(code, "RUNBOOK-native-preflight", "exec"), {})
+    output = capsys.readouterr().out
+    if case == "matching":
+        assert "correspondence checked" in output
+    assert "software_fixture_only" not in output
