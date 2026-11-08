@@ -27,6 +27,10 @@ from .commands import (
     validate_command,
 )
 from .config import ConfigError, PolicyConfig
+from .controller_a import (
+    ControllerA, ControllerAConfig, ControllerADecision,
+    ControllerASample, replay_controller_a,
+)
 from .device_safety import (
     ActuatorSafetyDecision,
     ActuatorSafetyFinding,
@@ -87,6 +91,10 @@ __all__ = [
     "CommandRequest",
     "CommandSchemaError",
     "ConfigError",
+    "ControllerA",
+    "ControllerAConfig",
+    "ControllerADecision",
+    "ControllerASample",
     "ControllerId",
     "CoolingState",
     "DeviceMode",
@@ -118,5 +126,6 @@ __all__ = [
     "evaluate_policy",
     "failures_with_disposition",
     "safe_local_exit_status",
+    "replay_controller_a",
     "validate_command",
 ]
