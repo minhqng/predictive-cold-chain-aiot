@@ -18,7 +18,7 @@ from coldguard_backend.normalized_store import classify_replay, map_to_row
 from coldguard_backend.raw_store import RECEIVED_OBSERVED, RECEIVED_VALID
 from coldguard_backend.reconciliation import validate_winner
 from coldguard_backend.timing import compute_timing_metrics
-from coldguard_backend.validation import validate_telemetry_payload
+from coldguard_backend.validation import validate_command_ack, validate_telemetry_payload
 
 EXPORT_TABLES = (
     "experiments", "experiment_transitions", "telemetry", "telemetry_raw", "commands",
@@ -158,6 +158,17 @@ def _child_audit(runs, tables):
     for row in tables["command_acks"]:
         require(digest(row["raw_payload"].encode("utf-8")) == row["payload_sha256"], "ACK wire checksum differs")
         if row["validity"] == "VALID":
+            ack, _errors = validate_command_ack(document(row["raw_payload"].encode("utf-8")))
+            require(ack is not None, "valid ACK wire fails the strict protocol contract")
+            projected = {"command_id": ack.command_id, "payload_device_id": ack.device_id,
+                         "boot_id": ack.boot_id, "ack_seq": ack.ack_seq, "device_status": ack.status,
+                         "reason_code": ack.reason_code, "applied_cooling": ack.applied.cooling if ack.applied else None,
+                         "applied_duty": ack.applied.duty if ack.applied else None, "device_mode": ack.device_mode,
+                         "uptime_ms": ack.uptime_ms, "ack_time": ack.ack_time, "time_sync_state": ack.time_sync_state,
+                         "expiry_evaluable": ack.expiry_evaluable, "output_stage": ack.output_stage,
+                         "fault_code": ack.fault_code, "reapplied": ack.reapplied, "canonical_status": ack.canonical_status}
+            require(encode_evidence({key: row[key] for key in projected}) == encode_evidence(projected),
+                    "ACK wire identity/verdict/interpretability projection differs")
             require(row["topic_device_id"] == row["payload_device_id"] == commands[row["command_id"]]["device_id"], "valid ACK device association differs")
     for row in predictions.values():
         inputs = [item for item in tables["prediction_inputs"] if item["prediction_id"] == row["prediction_id"]]

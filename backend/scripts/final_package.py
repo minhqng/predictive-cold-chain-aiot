@@ -29,7 +29,7 @@ class IncidentInput(BaseModel):
 
 def _portable(path: Path):
     for part in path.parts:
-        if part != path.anchor:
+        if part not in {path.anchor, ".", ".."}:
             portable_component(part)
 
 
