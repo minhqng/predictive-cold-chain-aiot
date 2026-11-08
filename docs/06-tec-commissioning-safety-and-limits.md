@@ -324,9 +324,10 @@ Bốn quy tắc phải giữ:
 - **Cũ ≠ không hoạt động.** `cooling_evidence=UNOBSERVED_STALE`/`UNOBSERVED_NO_DATA`
   phân biệt "không thể biết" với `MEASURED_IDLE_AND_ZERO` "biết, và dòng bằng 0".
   `MEASURED_CONTRADICTS_APPLIED` nêu trường hợp đầu ra và đo đạc mâu thuẫn.
-- **Cổng BME280 chưa triển khai** nên `environment_quality=DEGRADED` và
-  `quality` không thể đạt `VALID` trong build này. Đó là trạng thái trung thực,
-  không phải lỗi cần che bằng cách bỏ qua nhóm environment.
+- **Cổng BME280**: producer đã có trong firmware, nhưng cổng trim còn đóng mặc
+  định (`CG_BME280_TRIM_LAYOUT_CONFIRMED=0`) nên `environment_quality=DEGRADED`
+  và `quality` không thể đạt `VALID` trong build này. Đó là trạng thái trung
+  thực, không phải lỗi cần che bằng cách bỏ qua nhóm environment.
 
 Ngân sách dòng: worst case **dựng sẵn** (seq 10 chữ số, age 20 chữ số, token dài
 nhất, run_id 32 ký tự) đo được **2098 byte** trên ngân sách `CG_TELEMETRY_LINE_MAX
