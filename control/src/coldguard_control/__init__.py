@@ -27,24 +27,12 @@ from .commands import (
     validate_command,
 )
 from .config import ConfigError, PolicyConfig
-from .controller_a import (
-    ControllerA, ControllerAConfig, ControllerADecision,
-    ControllerASample, replay_controller_a,
-)
 from .device_safety import (
     ActuatorSafetyDecision,
     ActuatorSafetyFinding,
     ActuatorSafetyState,
     DeviceSafetyInputError,
     check_actuator_safety,
-)
-from .faults import (
-    FORBIDDEN_TECHNIQUE_IDS, FaultProtocol, FaultProtocolStatus,
-    InjectionCheckResult, InjectionVerdict, assert_protocol_allowed,
-    audit_protocols, check_injection, get_protocol,
-)
-from .incident import (
-    CANDIDATE_MAP_VERSION, IncidentRecommendation, recommend_incident_actions,
 )
 from .policy import (
     PolicyDecision,
@@ -64,7 +52,6 @@ from .quality import (
     QualityInputError,
     assess_quality,
 )
-from .safe_local import SafeLocalSession, SafeLocalStep
 from .taxonomy import (
     FailureRule,
     UnknownFailureError,
@@ -77,24 +64,54 @@ from .types import (
     ActuationIntent,
     ControllerId,
     CoolingState,
-    CoolingHealthState,
-    IncidentAction,
     DeviceMode,
-    EnvelopeQualification,
     FailureDisposition,
     ModelHealth,
     PhysicalVerificationState,
     PolicyState,
     QualityState,
+    CoolingHealthState,
     ReasonCode,
-    VerificationStatus,
+    EnvelopeQualification,
 )
+# New modules
+from .controller_a import (
+    ControllerAConfig,
+    ControllerASample,
+    ControllerADecision,
+    ControllerA,
+    replay_controller_a,
+)
+from .safe_local import SafeLocalSession, SafeLocalStep
 from .verification import (
-    VerificationObservation, VerificationPolicy, VerificationSnapshot,
-    VerificationTracker, start_verification,
+    VerificationPolicy,
+    VerificationObservation,
+    VerificationSnapshot,
+    VerificationTracker,
+    start_verification,
 )
 
 __version__ = "0.1.0"
+
+# W10‑W13 exported symbols
+from .types import VerificationStatus, IncidentAction
+from .faults import (
+    FaultProtocol,
+    InjectionCheckResult,
+    InjectionVerdict,
+    FaultProtocolStatus,
+    FORBIDDEN_TECHNIQUE_IDS,
+    get_protocol,
+    check_injection,
+    assert_protocol_allowed,
+    audit_protocols,
+)
+from .incident import (
+    CANDIDATE_MAP_VERSION,
+    IncidentRecommendation,
+    recommend_incident_actions,
+)
+from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -108,27 +125,13 @@ __all__ = [
     "CommandRequest",
     "CommandSchemaError",
     "ConfigError",
-    "ControllerA",
-    "ControllerAConfig",
-    "ControllerADecision",
-    "ControllerASample",
     "ControllerId",
     "CoolingState",
-    "CoolingHealthState",
-    "CANDIDATE_MAP_VERSION",
     "DeviceMode",
-    "EnvelopeQualification",
     "DeviceSafetyInputError",
     "FailureDisposition",
     "FailureRule",
-    "FaultProtocol",
-    "FaultProtocolStatus",
-    "FORBIDDEN_TECHNIQUE_IDS",
     "LocalSafetyEvidence",
-    "InjectionCheckResult",
-    "InjectionVerdict",
-    "IncidentAction",
-    "IncidentRecommendation",
     "ModelHealth",
     "PhysicalVerificationState",
     "PolicyConfig",
@@ -143,29 +146,50 @@ __all__ = [
     "QualityInputError",
     "QualityState",
     "ReasonCode",
-    "VerificationStatus",
-    "SafeLocalSession",
-    "SafeLocalStep",
+    "EnvelopeQualification",
+    "CoolingHealthState",
     "RemotePathView",
     "ThermalView",
     "UnknownFailureError",
     "all_failure_rules",
-    "assert_protocol_allowed",
-    "audit_protocols",
     "assess_quality",
     "check_actuator_safety",
-    "check_injection",
     "classify_failure",
     "evaluate_policy",
     "failures_with_disposition",
-    "get_protocol",
     "safe_local_exit_status",
-    "replay_controller_a",
-    "recommend_incident_actions",
     "validate_command",
-    "VerificationObservation",
+    "ControllerAConfig",
+    "ControllerASample",
+    "ControllerADecision",
+    "ControllerA",
+    "replay_controller_a",
+    "SafeLocalSession",
+    "SafeLocalStep",
     "VerificationPolicy",
+    "VerificationObservation",
     "VerificationSnapshot",
     "VerificationTracker",
     "start_verification",
+    "VerificationStatus",
+    "CoolingHealthState",
+    "IncidentAction",
+    "FaultProtocol",
+    "InjectionCheckResult",
+    "InjectionVerdict",
+    "FaultProtocolStatus",
+    "check_injection",
+    "assert_protocol_allowed",
+    "audit_protocols",
+    "FORBIDDEN_TECHNIQUE_IDS",
+    "get_protocol",
+    "CANDIDATE_MAP_VERSION",
+    "IncidentRecommendation",
+    "recommend_incident_actions",
+    "AIWInput",
+    "AIWResult",
+    "AIWStatus",
+    "TimingEvidence",
+    "assess_aiw",
+
 ]
