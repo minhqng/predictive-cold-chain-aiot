@@ -47,47 +47,41 @@ def _require_finite(name: str, value: object) -> float:
 class PolicyConfig:
     """Explicit, versioned policy parameters.
 
-    All values are mandatory (no defaults) so a caller cannot silently inherit
-    an invented threshold. ``policy_version`` must identify the frozen
-    configuration used in a run (Doc 02 section 60.7).
+    Operating values are mandatory (no numeric defaults) so a caller cannot
+    silently inherit an invented threshold. The few ``None`` defaults are for
+    characterization-dependent bounds that have not been frozen yet; ``None``
+    never means "safe" and is handled fail-closed by the consumer.
+    ``policy_version`` must identify the frozen configuration used in a run
+    (Doc 02 section 60.7).
     """
 
+    # Mandatory fields (no defaults)
     policy_version: str
-
-    # Doc 01 sections 20.5/37: which temperature representation is control
-    # truth must be an explicit, versioned policy choice (e.g. "TMAX").
     representative_source: str
-
-    # Controller A boundary and hysteresis (Doc 02 sections 24.1, 25.3).
     upper_on_c: float
     lower_off_c: float
-
-    # Control freshness for physical state (Doc 01 section 18.4,
-    # Doc 02 section 67).
     thermal_max_age_s: float
-
-    # Command timestamps must not be accepted from the far future. A command
-    # created "later" than local time by more than this window is treated as a
-    # schema/clock problem rather than as a valid future command (Doc 02
-    # section 31.2 expiry semantics; the exact bound is frozen by Member A/C
-    # during command-v0 integration).
     command_max_future_skew_s: float
-
-    # SAFE_LOCAL entry timing (Doc 02 sections 37.1, 38).
     broker_offline_grace_s: float
     backend_state_max_age_s: float
     safe_local_exit_min_stable_s: float
-
-    # Predictive path. Disabled unless Member B's frozen warning contract
-    # exists (Doc 04 section 10.6, Doc 02 sections 21.1, 52.4).
     predictive_enabled: bool
+
+    # Optional freshness bounds for other channels (W05)
+    electrical_max_age_s: float | None = None
+    door_max_age_s: float | None = None
+
+    # Candidate command TTL bounds (W04)
+    command_max_ttl_s: float | None = None
+    command_max_age_s: float | None = None
+
+    # Predictive path thresholds (optional, required when predictive_enabled)
     watch_threshold: float | None = None
     preemptive_threshold: float | None = None
     persistence_required_s: float | None = None
     prediction_max_age_s: float | None = None
 
-    # Conditional PWM support (Doc 01 section 24.3). W03 core defaults to
-    # OFF/ON only; enabling this requires a characterized duty range.
+    # Conditional PWM support (W03 core defaults to OFF/ON only)
     allow_pwm_duty: bool = False
     allowed_duty_min: float | None = None
     allowed_duty_max: float | None = None
@@ -132,6 +126,10 @@ class PolicyConfig:
             ("prediction_max_age_s", self.prediction_max_age_s),
             ("allowed_duty_min", self.allowed_duty_min),
             ("allowed_duty_max", self.allowed_duty_max),
+            ("command_max_ttl_s", self.command_max_ttl_s),
+            ("command_max_age_s", self.command_max_age_s),
+            ("electrical_max_age_s", self.electrical_max_age_s),
+            ("door_max_age_s", self.door_max_age_s),
         ):
             if value is not None:
                 _require_finite(name, value)
@@ -142,6 +140,14 @@ class PolicyConfig:
             raise ConfigError("thermal_max_age_s must be positive")
         if self.command_max_future_skew_s < 0:
             raise ConfigError("command_max_future_skew_s cannot be negative")
+        for name, value in (
+            ("command_max_ttl_s", self.command_max_ttl_s),
+            ("command_max_age_s", self.command_max_age_s),
+            ("electrical_max_age_s", self.electrical_max_age_s),
+            ("door_max_age_s", self.door_max_age_s),
+        ):
+            if value is not None and value <= 0:
+                raise ConfigError(f"{name} must be positive when supplied")
         if self.broker_offline_grace_s < 0:
             raise ConfigError("broker_offline_grace_s cannot be negative")
         if self.backend_state_max_age_s <= 0:
