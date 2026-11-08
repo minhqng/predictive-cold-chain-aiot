@@ -302,3 +302,74 @@ def test_database_unavailability_is_retained_without_fabricated_inventory(db_eng
     journal = journal_fixture(context, root, sources={"database.json": source}, observations=[
         observation(run, "db-unavailable", "DATABASE_UNAVAILABLE", "database.json", source)])
     capture(context, journal, root, tmp_path / "database-package")
+
+
+def test_incident_verification_retains_each_anchor_checked_file_once(db_engine, tmp_path, monkeypatch):
+    context = ready_campaign(db_engine)
+    root = tmp_path / "sources"
+    journal = journal_fixture(context, root)
+    directory = tmp_path / "package"
+    record = capture(context, journal, root, directory)
+    original = Path.read_bytes
+    counts, changed = {}, []
+    def raced(path):
+        content = original(path)
+        if directory in path.parents:
+            name = path.relative_to(directory).as_posix()
+            counts[name] = counts.get(name, 0) + 1
+            if name == "sources/observer.json" and not changed:
+                path.write_bytes(content + b"SOFTWARE_SIMULATION changed after anchor read")
+                changed.append(True)
+        return content
+    monkeypatch.setattr(Path, "read_bytes", raced)
+    verify_incident_package(directory, expected_manifest_sha256=record["manifest_sha256"])
+    assert changed and all(count == 1 for count in counts.values())
+    with pytest.raises(ValueError, match="checksum"):
+        verify_incident_package(directory, expected_manifest_sha256=record["manifest_sha256"])
+
+
+@pytest.mark.skipif(not has_test_mqtt(), reason="requires real owned MQTT/backend process providers")
+def test_real_backend_restart_and_expiry_have_retained_logs_and_command_history(db_engine, tmp_path, monkeypatch):
+    from tests.test_ack_consumer import _enable_app_ack
+    from tests.test_outage_recovery import _backend_process
+    context = ready_campaign(db_engine)
+    run = context["draft"]["runs"][0]["run"]
+    _enable_app_ack(monkeypatch)
+    monkeypatch.setenv("DATABASE_URL", db_engine.url.render_as_string(hide_password=False))
+    monkeypatch.setenv("COLDGUARD_MQTT_INGEST", "true")
+    monkeypatch.setenv("COLDGUARD_RECONCILE_COMMANDS", "true")
+    monkeypatch.delenv("MQTT_TLS_CA", raising=False)
+    pids = []
+    created = utcnow() - timedelta(minutes=3)
+    command = make_command("software-restart-" + secrets.token_hex(8), device_id=run["device_id"], run_id=run["run_id"],
+        created_at=created, ttl_s=5, cooling="OFF", duty=None, policy_version=run["versions"]["policy_version"])
+    endpoint = f"/api/devices/{run['device_id']}/recovery"
+    with _backend_process(tmp_path / "before.log", pids) as first:
+        assert all(first.get("/api/runtime/readiness").json().values())
+        first_observed = utcnow()
+        intent = create_command_intent(db_engine, command, now=created)
+        with db_engine.begin() as connection:
+            attempt = commands.begin_publish_attempt(connection, command.command_id,
+                payload_sha256=intent["command"]["payload_sha256"], now=created)
+        before = first.get(endpoint).json()
+        assert before["pending_attempts"] == 1
+    with _backend_process(tmp_path / "after.log", pids) as second:
+        assert all(second.get("/api/runtime/readiness").json().values())
+        second_observed = utcnow()
+        after = second.get(endpoint).json()
+        assert after["pending_attempts"] == 0 and after["desired"]["status"] == commands.EXPIRED
+    assert len(set(pids)) == 2
+    with db_engine.connect() as connection:
+        assert commands.get_attempt(connection, attempt["attempt_id"])["outcome"] == "UNKNOWN"
+    receipt = encode_evidence({"data_class": "SOFTWARE_SIMULATION", "process_pids": pids, "before": before, "after": after,
+        "hardware": "NOT_USED", "note": "generated expired pending intent; real process restart and DB reconciliation"})
+    root = tmp_path / "sources"
+    sources = {"before.log": (tmp_path / "before.log").read_bytes(), "after.log": (tmp_path / "after.log").read_bytes(), "recovery.json": receipt}
+    entries = [observation(run, "backend-started", "BACKEND_STARTED", "before.log", sources["before.log"]),
+               observation(run, "backend-restarted", "BACKEND_RESTARTED", "after.log", sources["after.log"]),
+               observation(run, "expired-no-replay", "COMMAND_DISPATCH_BLOCKED", "recovery.json", receipt, command_ids=[command.command_id])]
+    entries[0].update(source_kind="backend_log", observed_at=first_observed)
+    entries[1].update(source_kind="backend_log", observed_at=second_observed)
+    journal = journal_fixture(context, root, sources=sources, observations=entries)
+    record = capture(context, journal, root, tmp_path / "backend-restart-package")
+    verify_incident_package(tmp_path / "backend-restart-package", expected_manifest_sha256=record["manifest_sha256"])
