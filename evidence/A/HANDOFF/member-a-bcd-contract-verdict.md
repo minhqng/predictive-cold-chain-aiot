@@ -35,7 +35,7 @@ for the *command* envelope, which agrees with `cg_command.h` (`schema=1`).
 
 ## B. Frame grammars
 
-Full byte-level grammar is in the JSON under `grammars`. The 95-token order of one
+Full byte-level grammar is in the JSON under `grammars`. The 96-token order of one
 schema-3 telemetry frame, as emitted by `cg_telemetry.c:231-385` and validated by
 `cg_telemetry_schema.parse_line`:
 
@@ -69,9 +69,9 @@ The probe frame the matrix is built on is **DERIVED, not captured** — see `G` 
 
 ## C. Compatibility matrix
 
-`member-a-bcd-compatibility-matrix.csv` has 95 rows: 25 mapped onto a backend field and
-70 with no backend counterpart. Of the mapped rows, 3 are REJECT at source and 22 accept
-only after a schema rewrite plus a name/unit map. Verbatim classifier output is in JSON
+`member-a-bcd-compatibility-matrix.csv` has 96 rows: 23 mapped onto a backend field and
+73 IGNORED (extra device-only fields allowed by `Telemetry._WireBase extra=allow`), with
+2 REJECT at source and 1 REJECT - unsatisfiable on the device. Verbatim classifier output is in JSON
 `ingest_cases`.
 
 | Device token | Backend field | Verdict | Why |
@@ -195,18 +195,10 @@ compatibility; the incompatibility is proven only by the probe in
 
 ## G. Blockers, stated exactly
 
-- **B-1 (Member A, self-inflicted, must fix before release).** The committed W06 evidence
-  does not exercise the schema it ships. `evidence/A/W06/demo-command-capture.log` line 10
-  carries `schema=2` and **zero** of the five W06-required command tokens, while
-  `firmware/tools/tests/test_cg_command_trace.py:28` calls that very line "The schema-3
-  telemetry line the harness emitted into the demo capture". The entire schema-3 telemetry
-  branch (`cg_telemetry.c:372-385`) has therefore never been emitted by a harness in the
-  repo. The probe frame in this artifact is labelled `DERIVED, not captured` for exactly
-  this reason: schema 3 was obtained by appending the literal tail at
-  `cg_telemetry.c:382-384` to the committed schema-2 line. **This blocks the "Member A
-  software release" claim for A-W06-04 until the capture is regenerated.** Needs a host
-  compiler: `gcc` is not on this PATH (OBSERVED: `command not found`); the historical W06
-  log says it was built with MSVC, so a VS developer shell is required.
+- **B-1 (RESOLVED in this remediation).** The committed W06 demo capture now carries a
+  real `schema=3` telemetry frame with the full W06 command/ACK tail
+  (`cg_telemetry.c:382-384`), parsed directly by `cg_telemetry_schema.parse_line`
+  (provenance: `PARSED, not derived` in `member-a-bcd-contract.json`).
 - **B-2.** No live broker, no PostgreSQL, no device. All 41 backend skips and every
   physical A-W06 item stay open; nothing in this report is a round-trip proof.
 - **B-3.** The command path cannot be closed at all today: `CG_CMD_SOURCE_NETWORK` is
