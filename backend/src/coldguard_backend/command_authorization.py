@@ -14,18 +14,24 @@ class CommandAccessDenied(PermissionError):
     pass
 
 
+class CommandDispatchUnavailable(RuntimeError):
+    pass
+
+
 class AuthorizedCommandGateway:
     """Internal backend entrypoint. The application exposes no HTTP dispatch route."""
 
     def __init__(
         self, engine: Engine, transport: PublishFn, *, backend_token: str,
         allowed_devices: frozenset[str], policy_allows: Callable[[Command], bool],
+        transport_ready: Callable[[], bool],
     ) -> None:
         if len(backend_token) < 32 or not allowed_devices:
             raise ValueError("a provisioned backend token and explicit device scope are required")
         self._token = backend_token.encode("utf-8")
         self._allowed_devices = frozenset(allowed_devices)
         self._policy_allows = policy_allows
+        self._transport_ready = transport_ready
         self._engine = engine
         self._publisher = CommandPublisher(engine, transport)
 
@@ -37,5 +43,7 @@ class AuthorizedCommandGateway:
             raise CommandAccessDenied("device is outside the authenticated scope")
         if self._policy_allows(command) is not True:
             raise CommandAccessDenied("policy did not authorize this command")
+        if self._transport_ready() is not True:
+            raise CommandDispatchUnavailable("command transport is unavailable")
         create_command_intent(self._engine, command)
         return self._publisher.publish(command.command_id)

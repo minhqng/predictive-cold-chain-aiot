@@ -196,9 +196,12 @@ class PahoCommandTransport:
     def _on_publish(self, client, userdata, mid, reason_code, properties) -> None:
         self._puback = (mid, reason_code)
 
+    def is_ready(self) -> bool:
+        return not self._retired and self._client.is_connected()
+
     def __call__(self, topic: str, payload: bytes, qos: int, retain: bool) -> PublishResult:
         with self._lock:
-            if self._retired or not self._client.is_connected():
+            if not self.is_ready():
                 return PublishResult("FAILED", reason="mqtt_not_connected")
             self._puback = None
             expiry = datetime.fromisoformat(json.loads(payload)["expires_at"])
