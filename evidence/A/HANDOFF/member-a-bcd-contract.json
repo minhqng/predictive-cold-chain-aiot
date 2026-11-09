@@ -1,6 +1,6 @@
 {
   "artifact": "member-a-bcd-contract",
-  "generated_at_utc": "2026-11-09T04:12:27.032916+00:00",
+  "generated_at_utc": "2026-11-09T04:24:45.923014+00:00",
   "generated_by": "evidence/A/HANDOFF/contract_probe.py",
   "worktree": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local",
   "claim_class_legend": {
@@ -242,7 +242,7 @@
     }
   },
   "device_parser_type_gaps": {
-    "note": "cg_telemetry_schema._coerce leaves any token not listed in FLOAT_FIELDS/INTEGER_FIELDS as a raw string; these mapped wire numbers are therefore untyped by Member A's own parser and a gateway must cast them itself.",
+    "note": "Member A's parser coerced every mapped wire number in the probe frame to float|int; no numeric field crossed as text.",
     "untyped_numeric_fields": []
   },
   "compatibility_matrix": [

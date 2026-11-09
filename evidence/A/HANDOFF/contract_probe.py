@@ -92,17 +92,38 @@ W06_NO_COMMAND_TAIL = (
     " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
     " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED"
 )
+# The no-command-received frame the shipped formatter emits (cg_telemetry.c:382-385).
+W06_NO_COMMAND_TAIL = (
+    " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
+    " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED"
+)
 # The committed capture line already carries the full no-command tail on every
 # schema=3 frame (cg_telemetry.c:382-385), so upgrade a historical schema=2
 # line only; appending the tail to a schema=3 line would duplicate five fields
 # and be rejected by parse_line.
 if committed_schema == 3:
     schema3_line = committed_line
+elif committed_schema == 2:
+    replaced = committed_line.replace("schema=2 ", "schema=3 ", 1)
+    if replaced == committed_line:
+        raise SystemExit(
+            "committed capture claims schema=2 but carries no schema=2 token")
+    schema3_line = replaced + W06_NO_COMMAND_TAIL
 else:
-    schema3_line = committed_line.replace("schema=2 ", "schema=3 ", 1) + W06_NO_COMMAND_TAIL
+    raise SystemExit(
+        f"unsupported committed capture schema {committed_schema!r}: "
+        "the probe supports schema 2 (upgrade) and schema 3 (direct parse) only"
+    )
 frame3 = telem.parse_line(schema3_line, 1)
 device_raw = dict(frame3.raw_fields)
 device_fields = dict(frame3.fields)
+
+# Numeric-looking tokens the parser left as strings: the real type-gap report,
+# recomputed from the parsed probe frame on every run (never a static claim).
+untyped_numeric_fields = sorted(
+    k for k, v in device_fields.items()
+    if isinstance(v, str) and re.match(r"^-?\d+(\.\d+)?$", v)
+)
 
 # ---------------------------------------------------------------- (C) translation
 # Field-name/unit mapping a Member C gateway would have to perform to turn one
@@ -590,14 +611,15 @@ out = {
         "fields": device_raw,
     },
     "device_parser_type_gaps": {
-        "note": ("cg_telemetry_schema._coerce leaves any token not listed in "
-                 "FLOAT_FIELDS/INTEGER_FIELDS as a raw string; these mapped wire "
-                 "numbers are therefore untyped by Member A's own parser and a "
-                 "gateway must cast them itself."),
-        "untyped_numeric_fields": sorted(
-            k for k, v in device_fields.items()
-            if isinstance(v, str) and re.match(r"^-?\d+(\.\d+)?$", v)
+        "note": (
+            "Member A's parser coerced every mapped wire number in the probe "
+            "frame to float|int; no numeric field crossed as text."
+            if not untyped_numeric_fields else
+            "cg_telemetry_schema._coerce left these numeric-looking tokens as "
+            f"raw strings: {', '.join(untyped_numeric_fields)}. A gateway must "
+            "cast them itself."
         ),
+        "untyped_numeric_fields": untyped_numeric_fields,
     },
     "compatibility_matrix": rows,
     "backend_hard_gaps": gaps,
