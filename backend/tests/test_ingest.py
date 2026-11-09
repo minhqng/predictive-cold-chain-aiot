@@ -12,12 +12,45 @@ normalized step to raise — the raw row must survive).
 """
 
 import json
+import os
 import uuid
+from pathlib import Path
 
 import pytest
+from alembic import command
+from alembic.config import Config
 from sqlalchemy import create_engine, text
 
 from coldguard_backend.ingest import IngestMetrics, ingest_message
+
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _migrated_suite_schema():
+    """Give the disposable suite database the current schema before tests run.
+
+    The owned runners create the suite database empty and nothing in this
+    module's scope ever migrated it, so these real-provider proofs only
+    passed when an alphabetically-earlier module had already done so. The
+    alembic upgrade is idempotent when the schema already exists.
+    """
+    if not os.environ.get("COLDGUARD_TEST_DATABASE_URL"):
+        return
+    cfg = Config(str(BACKEND_DIR / "alembic.ini"))
+    cfg.set_main_option(
+        "script_location", str(BACKEND_DIR / "src/coldguard_backend/migrations")
+    )
+    previous = os.environ.get("DATABASE_URL")
+    os.environ["DATABASE_URL"] = os.environ["COLDGUARD_TEST_DATABASE_URL"]
+    try:
+        command.upgrade(cfg, "head")
+    finally:
+        if previous is None:
+            os.environ.pop("DATABASE_URL", None)
+        else:
+            os.environ["DATABASE_URL"] = previous
 
 needs_real_db = pytest.mark.skipif(
     not __import__("os").environ.get("COLDGUARD_TEST_DATABASE_URL"),
