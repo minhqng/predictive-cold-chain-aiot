@@ -171,6 +171,10 @@ OPTIONAL_SOURCE_FIELDS = ("t_hot_side_src",)
 NANABLE_INT_FIELDS = ("desired_duty_permille",)
 
 FLOAT_FIELDS = {
+    "raw_t1_c",
+    "raw_t2_c",
+    "raw_t3_c",
+    "raw_spare_c",
     "t_inside_c",
     "t_cold_side_c",
     "t_hot_side_c",
