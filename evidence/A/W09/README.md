@@ -218,3 +218,11 @@ into one row per session.
 * **Host tests are not physical verification.** The 175 W09 host tests named in
   §4.2 check the rules; they do not measure the plant, and no verdict here may
   be reported as a physical confirmation.
+
+## CURRENT HANDOFF (2026-11-07)
+
+The accepted real S1/S2 dataset is published at `evidence/A/SOURCES/20261107/datasets/`
+(18 runs, 9,293 measured frames, manifest + SHA256SUMS + standalone regeneration).
+Earlier sections of this document are historical snapshots of the weeks when this
+dataset did not yet exist; verdicts above describe those snapshots, not the current
+package. Consumers: read `README.md` + `manifest.json` in that directory first.

@@ -42,3 +42,11 @@ canonical rule as a Member A opinion.
 Every physical quantity quoted in this directory was recomputed from committed files, not
 carried over from a report. Where a number exists only in local, uncommitted bench data it is
 marked as such, and untracked files are never cited as proof for a published claim.
+
+## CURRENT HANDOFF (2026-11-07)
+
+The accepted real S1/S2 dataset is published at `evidence/A/SOURCES/20261107/datasets/`
+(18 runs, 9,293 measured frames, manifest + SHA256SUMS + standalone regeneration).
+Earlier sections of this document are historical snapshots of the weeks when this
+dataset did not yet exist; verdicts above describe those snapshots, not the current
+package. Consumers: read `README.md` + `manifest.json` in that directory first.
