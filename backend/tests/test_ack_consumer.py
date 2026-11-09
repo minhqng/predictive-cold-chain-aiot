@@ -330,3 +330,132 @@ def test_refused_credentials_raise_connection_error():
     with pytest.raises(ConnectionError):
         consumer.start()
     consumer.stop()
+
+
+class _RecordingPahoClient:
+    """Test double recording manual acknowledgements (never a real socket)."""
+
+    def __init__(self):
+        self.acked = []
+
+    def ack(self, mid, qos):
+        self.acked.append((mid, qos))
+
+
+class _StubEngine:
+    """Engine double whose transaction always opens and never touches a DB."""
+
+    def begin(self):
+        return self
+
+    def __enter__(self):
+        return object()
+
+    def __exit__(self, exc_type, exc, tb):
+        return False
+
+
+def _unit_config() -> "ColdGuardConfig":
+    from coldguard_backend.config import ColdGuardConfig
+
+    return ColdGuardConfig.load(
+        env={
+            "COLDGUARD_PROFILE": "integration",
+            "POSTGRES_HOST": "127.0.0.1", "POSTGRES_PORT": "5432",
+            "POSTGRES_DB": "unavailable", "POSTGRES_USER": "n", "POSTGRES_PASSWORD": "n",
+            "MQTT_HOST": "127.0.0.1", "MQTT_PORT": "1",
+            "MQTT_USERNAME": "u", "MQTT_PASSWORD": "p",
+        }
+    )
+
+
+def _unit_message(mid: int = 11):
+    from types import SimpleNamespace
+
+    return SimpleNamespace(
+        mid=mid, qos=1, retain=False,
+        topic=ack_topic(), payload=ack_bytes(make_ack("cmd-ack-unit")),
+    )
+
+
+def test_on_message_does_not_release_broker_when_evidence_commit_fails(monkeypatch):
+    """Regression (W06): PUBACK must never precede the evidence transaction."""
+    consumer = AckConsumer(_unit_config())
+    consumer._engine = _StubEngine()
+    client = _RecordingPahoClient()
+
+    def failing(*args, **kwargs):
+        raise RuntimeError("synthetic evidence outage")
+
+    monkeypatch.setattr(cs, "record_ack", failing)
+    consumer._on_message(client, None, _unit_message())
+    snapshot = consumer.snapshot()
+    assert client.acked == []  # absent before the fix: auto-PUBACK lost the evidence
+    assert snapshot["errors"] == 1 and snapshot["received"] == 1
+
+
+def test_on_message_releases_broker_once_after_evidence_commit(monkeypatch):
+    consumer = AckConsumer(_unit_config())
+    consumer._engine = _StubEngine()
+    client = _RecordingPahoClient()
+    monkeypatch.setattr(cs, "record_ack", lambda *args, **kwargs: {"outcome": "applied", "ack_id": 123})
+    consumer._on_message(client, None, _unit_message(mid=11))
+    assert client.acked == [(11, 1)]  # QoS 1 released exactly once, after the commit
+    assert consumer.snapshot()["valid"] == 1
+
+
+def test_on_message_counts_unknown_outcomes_as_errors_not_valid(monkeypatch):
+    consumer = AckConsumer(_unit_config())
+    consumer._engine = _StubEngine()
+    client = _RecordingPahoClient()
+    monkeypatch.setattr(cs, "record_ack", lambda *args, **kwargs: {"outcome": "brand-new", "ack_id": 1})
+    consumer._on_message(client, None, _unit_message())
+    snapshot = consumer.snapshot()
+    assert snapshot["errors"] == 1 and snapshot["valid"] == 0
+    assert client.acked == [(11, 1)]  # the evidence did commit, so the broker is released
+
+
+@needs_providers
+def test_ack_evidence_survives_db_outage_via_broker_redelivery(
+    db_engine, device_publisher, monkeypatch
+):
+    """W06 durability contract: a DB outage during a valid ACK never loses evidence.
+
+    With manual acknowledgement the failed delivery stays unacknowledged in the
+    broker session; after the outage the consumer is restarted and the broker
+    redelivers, persisting exactly one evidence row for the original bytes.
+    """
+    import hashlib
+
+    cleanup_commands(db_engine)
+    try:
+        _prepare_published_command(db_engine, "cmd-ack-durable")
+        payload = ack_bytes(make_ack("cmd-ack-durable"))
+        digest = hashlib.sha256(payload).hexdigest()
+        real_record_ack = cs.record_ack
+
+        def failing(*args, **kwargs):
+            raise RuntimeError("synthetic evidence outage")
+
+        monkeypatch.setattr(cs, "record_ack", failing)
+        consumer = _backend_consumer()
+        consumer.start()
+        try:
+            _publish_ack(device_publisher, payload)
+            assert wait_for(lambda: consumer.snapshot()["errors"] >= 1, timeout_s=10)
+            assert _evidence(db_engine, "cmd-ack-durable") == []  # evidence not yet durable
+        finally:
+            consumer.stop()
+        monkeypatch.setattr(cs, "record_ack", real_record_ack)
+        consumer.start()  # broker resumes the session and redelivers the unacked QoS 1 ACK
+        try:
+            assert wait_for(
+                lambda: _command_status(db_engine, "cmd-ack-durable") == cs.ACK_ACCEPTED,
+                timeout_s=15,
+            )
+            rows = _evidence(db_engine, "cmd-ack-durable")
+            assert [row["payload_sha256"] for row in rows] == [digest]
+        finally:
+            consumer.stop()
+    finally:
+        cleanup_commands(db_engine)
