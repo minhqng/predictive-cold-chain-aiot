@@ -819,7 +819,43 @@
       "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_local_handoff\\COLDGUARD_REAL_DATA_HANDOFF_20261108T101629Z\\pwm-go-no-go.md",
       "stored": "imports\\A-W15-04\\fe110b1b7764-pwm-go-no-go.md",
       "test_id": "A-W15-04"
+    },
+    {
+      "category": "trial_record",
+      "imported_at": "2026-11-09T08:27:28.788+00:00",
+      "sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14",
+      "size": 948,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-integrity-local\\evidence\\A\\SOURCES\\20261109\\s1\\s1-20261109T081304Z\\trial.json",
+      "stored": "imports\\A-W11-03\\f028441d10af-trial.json",
+      "test_id": "A-W11-03"
+    },
+    {
+      "category": "host_validation",
+      "imported_at": "2026-11-09T08:27:28.798+00:00",
+      "sha256": "b6a24aea926aee4d37e1e80a9ea475857f74a04641682cf11c5771df8ff85c5b",
+      "size": 2549,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-integrity-local\\evidence\\A\\SOURCES\\20261109\\s1\\s1-20261109T081304Z\\host-summary\\acceptance-verification.json",
+      "stored": "imports\\A-W11-03\\b6a24aea926a-acceptance-verification.json",
+      "test_id": "A-W11-03"
+    },
+    {
+      "category": "raw_capture",
+      "imported_at": "2026-11-09T08:27:28.811+00:00",
+      "sha256": "96b89c1642d45a4c4520ed7b57e39d2b977506803dda92fbea0346ea2e01d3c2",
+      "size": 1479948,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-integrity-local\\evidence\\A\\SOURCES\\20261109\\s1\\s1-20261109T081304Z\\raw\\telemetry_raw.log",
+      "stored": "imports\\A-W11-03\\96b89c1642d4-telemetry_raw.log",
+      "test_id": "A-W11-03"
+    },
+    {
+      "category": "integrity",
+      "imported_at": "2026-11-09T08:27:28.829+00:00",
+      "sha256": "b57c991e1fe6ac49bd624533f486624bd1a8332d61470bd57353c8c79dba0d1e",
+      "size": 462,
+      "source_path": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-integrity-local\\evidence\\A\\SOURCES\\20261109\\s1\\s1-20261109T081304Z\\SHA256SUMS.txt",
+      "stored": "imports\\A-W11-03\\b57c991e1fe6-SHA256SUMS.txt",
+      "test_id": "A-W11-03"
     }
   ],
-  "updated_at": "2026-11-08T10:16:30.147+00:00"
+  "updated_at": "2026-11-09T08:27:28.829+00:00"
 }

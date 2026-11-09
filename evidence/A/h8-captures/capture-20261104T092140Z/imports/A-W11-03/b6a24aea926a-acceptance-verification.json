@@ -1,0 +1,105 @@
+{
+  "capture_log": "C:\\cgb\\mistral-member-a-physical-acceptance\\captures\\s1-trial-20261109T0814Z.log",
+  "capture_header": "# READ_ONLY_CAPTURE port=COM4 baud=115200 host_start_utc=2026-11-09T08:13:04.705739+00:00 seconds=600.0 dtr=False rts=False writes_to_port=NONE",
+  "lines_total": 1835,
+  "telemetry_frames": 600,
+  "non_telem_cg_kinds": [
+    "AUTH",
+    "BOOT",
+    "DOOR_POLARITY",
+    "ERR",
+    "LOG",
+    "PZEM",
+    "PZEM_CFG",
+    "PZEM_RANGE",
+    "ROM",
+    "ROMS",
+    "SAFETY",
+    "SAMPLE",
+    "TEC",
+    "TEC_LIMIT"
+  ],
+  "frames_parsed": 600,
+  "first_frame_host_time": "2026-11-09T08:13:05.217534+00:00",
+  "last_frame_host_time": "2026-11-09T08:23:04.023532+00:00",
+  "metrics": {
+    "frames": 600,
+    "duration_s": 599.0029999999999,
+    "boot_ids": [
+      "c0e43470"
+    ],
+    "boot_ids_complete": true,
+    "boot_changes": 0,
+    "thermal_valid_rate": 0.9983333333333333,
+    "coverage": 0.9983333333333333,
+    "electrical_valid_rate": 0.9966666666666667,
+    "fault_bits_complete": true,
+    "fault_bits_max": 0,
+    "hot_side_max_c": 26.625,
+    "current_max_a": 0.0,
+    "quality_counts": {
+      "UNKNOWN": 599,
+      "INVALID": 1
+    },
+    "state_counts": {
+      "OFF": 600
+    }
+  },
+  "criteria": [
+    {
+      "name": "zero_bytes_written",
+      "passed": true,
+      "detail": "bytes_written=0 writes=NONE",
+      "failure_reason": ""
+    },
+    {
+      "name": "min_frames",
+      "passed": true,
+      "detail": "frames=600 min=180",
+      "failure_reason": ""
+    },
+    {
+      "name": "coverage",
+      "passed": true,
+      "detail": "coverage=0.9983 min=0.85",
+      "failure_reason": ""
+    },
+    {
+      "name": "thermal_valid_rate",
+      "passed": true,
+      "detail": "thermal_valid_rate=0.9983",
+      "failure_reason": ""
+    },
+    {
+      "name": "electrical_valid_rate",
+      "passed": true,
+      "detail": "electrical_valid_rate=0.9967",
+      "failure_reason": ""
+    },
+    {
+      "name": "boot_changes_none",
+      "passed": true,
+      "detail": "boot_ids=['c0e43470'] boot_changes=0",
+      "failure_reason": ""
+    },
+    {
+      "name": "duration_600s",
+      "passed": true,
+      "detail": "last_frame_elapsed_s=599.0029999999999",
+      "failure_reason": ""
+    },
+    {
+      "name": "no_fault_bits",
+      "passed": true,
+      "detail": "fault_bits_max=0",
+      "failure_reason": ""
+    },
+    {
+      "name": "door_switch_closed_raw",
+      "passed": true,
+      "detail": "door_raw_counts={'0': 600}",
+      "failure_reason": ""
+    }
+  ],
+  "outcome": "PASS"
+}

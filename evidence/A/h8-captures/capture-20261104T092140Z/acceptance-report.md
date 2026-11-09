@@ -1,22 +1,22 @@
 # ColdGuard Member A acceptance report
 
 - Session: `20261104T092140Z`
-- Generated: 2026-11-08T10:21:03.149+00:00
+- Generated: 2026-11-09T08:27:29.004+00:00
 - App version: 1.0.0
 - Operator: operator+qoder-agent
 - Firmware kind: UNRECORDED
 - Hardware: `UNRECORDED`
-- Session digest: `ba8f047b348daccc9bb2a44f51ef2cacd74b78fdb22a200e043c65f4b210addf`
+- Session digest: `cbd9fdd7aaf7fbf1b4ec5adcaa66026ed0dc53280c6125308079a4a3a2080db7`
 - Evidence integrity: OK
 
 ## Summary
 
 | Outcome | Count |
 |---|---:|
-| PASS | 79 |
+| PASS | 80 |
 | FAIL | 2 |
 | INCOMPLETE | 7 |
-| NOT_RUN | 26 |
+| NOT_RUN | 25 |
 | **Total** | **114** |
 
 ## Requirement results
@@ -81,7 +81,7 @@
 | A-W10-05 | 10 | Horizon support | INCOMPLETE | 0/0 | 0 | 1 | NO_DOOR_CRITICAL_SAMPLES: set the frozen critical Tmean threshold in Config and rerun the S2 series |
 | A-W11-01 | 11 | S4 method | PASS | 3/3 | 2 | 2 |  |
 | A-W11-02 | 11 | S4 evidence | PASS | 4/4 | 1 | 3 |  |
-| A-W11-03 | 11 | Dataset expansion | NOT_RUN | 0/0 | 0 | 0 |  |
+| A-W11-03 | 11 | Dataset expansion | PASS | 9/9 | 3 | 1 |  |
 | A-W11-04 | 11 | Conditional S3 feasibility | PASS | 3/3 | 2 | 2 |  |
 | A-W12-01 | 12 | Sensor consistency recheck | PASS | 2/2 | 3 | 4 |  |
 | A-W12-02 | 12 | PZEM zero/active check | PASS | 3/3 | 1 | 1 |  |

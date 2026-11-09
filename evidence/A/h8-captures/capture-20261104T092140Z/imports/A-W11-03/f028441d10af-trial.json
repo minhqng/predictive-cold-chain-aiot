@@ -1,0 +1,23 @@
+{
+ "kind": "PASSIVE_S1_TRIAL",
+ "duration_requested_s": 600.0,
+ "elapsed_s": 598.8,
+ "frames": 600,
+ "telemetry_frames": 600,
+ "door_closed_confirmed": true,
+ "door_closed_evidence": "operator-confirmed closed before start; door_raw=0 in 600/600 schema-3 frames; door_status stayed UNVERIFIED because no commands were sent (read-only trial)",
+ "boot_id": "c0e43470",
+ "actuation": "NONE",
+ "fuse": "OUT",
+ "psu": "ON",
+ "device_id": "coldguard-001",
+ "firmware_version": "cg-w06-0.1.0",
+ "telemetry_schema": 3,
+ "capture_tool": "tools/acceptance/read_only_capture.py --port COM4 --baud 115200 --seconds 600 (zero-write, DTR/RTS de-asserted)",
+ "commands_sent": 0,
+ "bytes_written": 0,
+ "writes_to_port": "NONE",
+ "first_frame_host_utc": "2026-11-09T08:13:05.217534+00:00",
+ "last_frame_host_utc": "2026-11-09T08:23:04.023532+00:00",
+ "operator_support": "operator switched the 12 V PSU ON and confirmed door closed before the trial (2026-11-09)"
+}
