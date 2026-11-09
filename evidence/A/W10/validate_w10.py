@@ -128,7 +128,7 @@ def main() -> int:
         path = DOSSIER / name
         if not path.is_file():
             failures.append(f"{name} is not on disk")
-        elif path.read_text(encoding="utf-8", newline="\n") != text:
+        elif path.open(encoding="utf-8", newline="\n").read() != text:
             failures.append(f"{name} does not reproduce from the delivered tooling")
 
     # --- re-derive the door claim from the source, not from the artifact -------
