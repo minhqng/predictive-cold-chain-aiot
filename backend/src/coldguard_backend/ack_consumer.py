@@ -16,7 +16,11 @@ For each receipt the consumer:
 
 An ACK may report an applied output; it is never treated as measured thermal
 success (Doc 02 §32.2). Database commit, not MQTT PUBACK, is the durability
-authority (automatic acknowledgement is the W02 boundary, unchanged here).
+authority: acknowledgement is explicit (``manual_ack``), so a QoS 1 delivery
+is released to the broker only after its evidence transaction commits. A
+failed write leaves the delivery unacknowledged, and the persistent session
+(stable client id with a nonzero session expiry) makes the broker redeliver
+on reconnect instead of silently discarding ACK evidence.
 """
 
 from __future__ import annotations
@@ -28,6 +32,7 @@ import threading
 from datetime import datetime, timezone
 
 import paho.mqtt.client as mqtt
+from paho.mqtt.packettypes import PacketTypes
 from sqlalchemy import create_engine, select
 from sqlalchemy.engine import Engine
 
@@ -46,6 +51,10 @@ CLIENT_ID = "coldguard-backend-ack"
 SUBSCRIPTIONS: tuple[tuple[str, int], ...] = (("coldguard/+/command_ack", 1),)
 _CONNECT_TIMEOUT_S = 10.0
 _DB_CONNECT_TIMEOUT_S = 5
+# Broker keeps the session (and any unacknowledged QoS 1 evidence) for this
+# many seconds after a disconnect so a restarted consumer receives a redelivery
+# instead of losing ACKs that failed to persist.
+_SESSION_EXPIRY_S = 300
 
 
 class AckMetrics:
@@ -167,6 +176,7 @@ class AckConsumer:
             connection.execute(select(cs.command_acks.c.id).limit(0))
         client = mqtt.Client(
             mqtt.CallbackAPIVersion.VERSION2, client_id=self._client_id, protocol=mqtt.MQTTv5,
+            manual_ack=True,
         )
         client.username_pw_set(self._config.mqtt_username, self._config.mqtt_password)
         client.on_connect = self._on_connect
@@ -174,8 +184,13 @@ class AckConsumer:
         client.on_disconnect = self._on_disconnect
         client.on_subscribe = self._on_subscribe
         self._client = client
+        connect_properties = mqtt.Properties(PacketTypes.CONNECT)
+        connect_properties.SessionExpiryInterval = _SESSION_EXPIRY_S
         try:
-            client.connect(self._config.mqtt_host, self._config.mqtt_port, keepalive=30)
+            client.connect(
+                self._config.mqtt_host, self._config.mqtt_port, keepalive=30,
+                clean_start=False, properties=connect_properties,
+            )
         except OSError as exc:
             raise TimeoutError(
                 f"mqtt broker unreachable at {self._config.mqtt_host}:{self._config.mqtt_port}: {exc}"
@@ -283,7 +298,13 @@ class AckConsumer:
             "unmatched": "unmatched", "conflict": "conflict",
             "duplicate": "duplicate", "late_expired": "late",
         }
-        self.metrics.bump(metric_for.get(outcome, "valid"))
+        self.metrics.bump(metric_for.get(outcome, "errors"))
+        # Manual acknowledgement: the broker is released only now that the
+        # evidence transaction has committed. Every failure path above returns
+        # without acknowledging, so the broker redelivers on reconnect instead
+        # of losing the ACK.
+        if message.qos:
+            client.ack(message.mid, message.qos)
 
     def snapshot(self) -> dict:
         with self._lock:
