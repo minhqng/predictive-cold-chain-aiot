@@ -168,3 +168,83 @@ on shutdown.
   publish, ACK consumer correlation, end-to-end intent→publish→ACK→desired.
 - **PHYSICAL NOT AUTHORIZED:** real ESP32-S3 command delivery, electrical and
   thermal verification, Member D authorization, real-device acceptance.
+
+## Controller B integration (W18, revision 0012)
+
+`ControllerBDispatch` is a server-side software entrypoint, not an HTTP command
+route. It is disabled unless the operator independently provisions both a
+`DPolicyAuthority` for the approved policy and a trusted `FrozenModelSpec`.
+Backend authentication and an explicit device allowlist remain required. An
+HMAC-SHA-256 approval covers the **entire canonical command**, including run,
+prediction, action, expiry and expected Twin version. No test key, generated
+model reference or example signature constitutes real Member D approval.
+
+Before creating intent, the dispatch path checks the running predictive run,
+declared versions, current prediction, exact model/feature hashes and horizon,
+active boot, measurement provenance, quality and acquisition freshness. Delayed
+receipt must not renew an old acquisition's freshness budget. Intent creation
+enforces the signed expected Twin version. The final dispatch transaction
+rechecks and fences the prediction, run, Twin and linked measurements through
+the bounded transport handoff. A newer report, replacement prediction, closed
+run, superseding intent or expiry can revoke the reservation before sending.
+
+Revision `0012` adds:
+
+- `policy_approvals`: the provisioned-key fingerprint, exact command digest,
+  signature digest, approved model specification and its digest, and approval
+  receipt time. The receipt commits with the reserved attempt **before** any
+  broker traffic. Keys and reusable signatures are not exported.
+- `physical_assessments`: independently authenticated assessment evidence,
+  scoped to a command/device/run, commissioned envelope and calibration, with
+  acquisition windows, exact telemetry IDs and raw SHA-256 values.
+- UPDATE guards for command provenance and both evidence tables, and the
+  `EXECUTED` verification status. Downgrade refuses existing execution,
+  assessment or approval evidence; it never deletes history to make rollback
+  succeed.
+
+Generic `CommandPublisher` calls cannot bypass predictive approval with an
+arbitrary callback. A predictive `UNKNOWN` outcome requires investigation and
+new authorized context; `ControllerBDispatch` refuses retry of that envelope.
+Lost device ACK or subscriber reconnect does not make a published command
+publishable again. Device-side deduplication, absolute expiry, SAFE_LOCAL and
+physical safety remain Member A/D responsibilities; backend fencing is not an
+exactly-once physical-actuation guarantee.
+
+### Independent verification stages
+
+The ordinary transition API and raw MQTT event receipts cannot certify physical
+success. Only the separately provisioned `PhysicalAuthority` entrypoint may
+record the following supported sequence:
+
+```text
+ACK_ACCEPTED → EXECUTED → ELECTRICAL_VERIFIED → THERMAL_VERIFIED → VERIFIED
+                     \→ FAILED_VERIFICATION (from any supported assessment stage)
+```
+
+Assessment checks retain the accepted ACK's boot and chronology, exact raw
+bytes/projection/normalized content and receipt/acquisition consistency,
+commanded applied state, calibration and measurement scope. Thermal assessment
+requires a trajectory, not a single sample. A trusted assessor owns the actual
+electrical/thermal interpretation and commissioned thresholds; these storage
+checks do not implement or certify those physical criteria. Generated fixtures,
+even when deliberately PHYSICAL-labelled to attack a gate, prove software
+authority plumbing only. ACK remains a protocol verdict and late ACKs cannot
+regress the assessment chain.
+
+### Trace query
+
+`GET /api/runs/{run_id}/controller-b-trace` returns predictive commands with
+prediction/input provenance, policy approval receipts, attempts, ACKs,
+transitions and independent assessments for the exact run and device. It accepts
+`limit` 1–25, bounded `offset`, and `download=true`. Repeating a page against an
+unchanged database snapshot produces the same canonical JSON bytes; dynamic
+prediction ages are excluded. Missing physical evidence is explicitly
+`UNAVAILABLE`, not manufactured from delivery or reported ON/OFF state.
+
+W18 tests cover exact signed envelopes, model/measurement rejection, final
+revocation and lock contention on real PostgreSQL, migration preservation and
+rollback refusal, and real loopback Mosquitto software-peer lost-ACK,
+disconnect/reconnect and delayed-telemetry windows. Injected transport tests
+are distinct from actual broker tests. All are standalone software evidence;
+official B artifacts, A/D integration, commissioning and physical campaigns
+remain external acceptance items.

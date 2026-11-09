@@ -162,11 +162,11 @@ ALLOWED_TRANSITIONS: dict[str, frozenset[str]] = {
 
 # States from which a fresh publish attempt may be made (subject to expiry).
 PUBLISHABLE_STATES = frozenset({CREATED, VALIDATED, PUBLISH_FAILED, UNKNOWN})
-# States that own a settled device verdict or expiry; ACKs cannot regress them.
-SETTLED_STATES = frozenset({
-    ACK_ACCEPTED, ACK_REJECTED, EXPIRED, EXECUTED, ELECTRICAL_VERIFIED,
-    THERMAL_VERIFIED, VERIFIED, FAILED_VERIFICATION,
+PHYSICAL_STATES = frozenset({
+    EXECUTED, ELECTRICAL_VERIFIED, THERMAL_VERIFIED, VERIFIED, FAILED_VERIFICATION,
 })
+# States that own a settled device verdict or expiry; ACKs cannot regress them.
+SETTLED_STATES = frozenset({ACK_ACCEPTED, ACK_REJECTED, EXPIRED}) | PHYSICAL_STATES
 TERMINAL_STATES = frozenset({ACK_REJECTED, EXPIRED, VERIFIED, FAILED_VERIFICATION})
 
 # Device verdict -> backend lifecycle status.
@@ -210,9 +210,19 @@ def lock_command_device(connection: Connection, device_id: str) -> None:
 
 
 def canonical_command_bytes(command: Command) -> bytes:
-    """Deterministic envelope bytes used for conflict detection and publishing."""
+    """Deterministic UTC envelope bytes for approval, storage and publishing.
+
+    PostgreSQL stores timestamp instants, not their original UTC offsets. UTC
+    normalization keeps a database session's time zone out of the signed bytes.
+    Existing stored hashes are never rewritten; a legacy envelope that cannot
+    be reproduced exactly is refused by the publisher's payload fence.
+    """
+    canonical = command.model_copy(update={
+        "created_at": command.created_at.astimezone(timezone.utc),
+        "expires_at": command.expires_at.astimezone(timezone.utc),
+    })
     return json.dumps(
-        command.model_dump(mode="json"), sort_keys=True, separators=(",", ":")
+        canonical.model_dump(mode="json"), sort_keys=True, separators=(",", ":")
     ).encode("utf-8")
 
 
@@ -550,7 +560,8 @@ def record_ack(
 
     if locked["status"] in SETTLED_STATES:
         already = locked["status"]
-        if already == target:
+        protocol_status = ACK_ACCEPTED if already in PHYSICAL_STATES and locked["ack_at"] else already
+        if protocol_status == target:
             connection.execute(
                 command_acks.update().where(command_acks.c.id == ack_id).values(validity="DUPLICATE")
             )

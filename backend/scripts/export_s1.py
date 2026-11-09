@@ -13,17 +13,33 @@ from coldguard_backend.dataset_export import build_s1_export
 from coldguard_backend.experiment_store import RunNotFound
 
 
+def clean_backend_commit(repo: Path) -> str:
+    git = ["git", "-C", str(repo)]
+    try:
+        commit = subprocess.check_output(
+            [*git, "rev-parse", "--verify", "HEAD^{commit}"], stderr=subprocess.PIPE, text=True,
+        ).strip()
+        changes = subprocess.check_output([
+            *git, "status", "--porcelain=v1", "-z", "--untracked-files=all",
+            "--ignore-submodules=none", "--", "backend",
+        ], stderr=subprocess.PIPE)
+    except (OSError, subprocess.CalledProcessError) as exc:
+        raise ValueError("cannot verify backend Git provenance") from exc
+    if changes:
+        raise ValueError("commit backend changes before attributing an export to HEAD")
+    return commit
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--run-id", action="append", required=True)
     parser.add_argument("--created-at", required=True, help="timezone-aware ISO timestamp")
     parser.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
-    repo = Path(__file__).resolve().parents[2]
-    git = ["git", "-C", str(repo)]
-    if subprocess.run([*git, "diff", "--quiet", "HEAD", "--", "backend"]).returncode != 0:
-        parser.error("commit backend changes before attributing an export to HEAD")
-    commit = subprocess.check_output([*git, "rev-parse", "HEAD"], text=True).strip()
+    try:
+        commit = clean_backend_commit(Path(__file__).resolve().parents[2])
+    except ValueError as exc:
+        parser.error(str(exc))
     engine = create_engine(os.environ.get("DATABASE_URL") or ColdGuardConfig.load().database_url)
     try:
         with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:

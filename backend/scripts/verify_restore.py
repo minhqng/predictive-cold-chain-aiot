@@ -8,6 +8,7 @@ from pathlib import Path
 
 from sqlalchemy import create_engine, text
 from sqlalchemy.engine import make_url
+from sqlalchemy.exc import SQLAlchemyError
 
 TABLE_KEYS = {
     "alembic_version": "version_num",
@@ -24,6 +25,12 @@ TABLE_KEYS = {
     "reconciliation_boundary": "id",
     "reconciliation_legacy_audit": "raw_id",
 }
+EVIDENCE_ADDITIONS = {
+    "0009": {},
+    "0010": {"predictions": "prediction_id", "prediction_inputs": "prediction_id, ordinal"},
+    "0011": {"shadow_decisions": "decision_id"},
+    "0012": {"physical_assessments": "assessment_id", "policy_approvals": "command_id"},
+}
 
 
 def fingerprint(url) -> dict:
@@ -33,15 +40,20 @@ def fingerprint(url) -> dict:
             isolation_level="REPEATABLE READ", postgresql_readonly=True,
         ) as connection:
             connection.execute(text("SET LOCAL TIME ZONE 'UTC'"))
-            report = {
-                "revisions": list(connection.scalars(text("SELECT version_num FROM alembic_version ORDER BY 1"))),
-                "tables": {},
-            }
-            for table, key in TABLE_KEYS.items():
+            revisions = list(connection.scalars(text("SELECT version_num FROM public.alembic_version ORDER BY 1")))
+            if len(revisions) != 1 or revisions[0] not in EVIDENCE_ADDITIONS:
+                raise ValueError("unsupported Alembic revision for evidence verification")
+            keys = TABLE_KEYS.copy()
+            for revision, additions in EVIDENCE_ADDITIONS.items():
+                keys.update(additions)
+                if revision == revisions[0]:
+                    break
+            report = {"revisions": revisions, "tables": {}}
+            for table, key in keys.items():
                 digest = hashlib.sha256()
                 count = 0
                 # Table names and keys are exclusively from the static map.
-                query = text(f"SELECT to_jsonb(evidence_row)::text FROM {table} evidence_row ORDER BY {key}")
+                query = text(f"SELECT to_jsonb(evidence_row)::text FROM public.{table} evidence_row ORDER BY {key}")
                 with connection.execution_options(yield_per=1000).execute(query) as result:
                     for serialized in result.scalars():
                         digest.update(serialized.encode("utf-8") + b"\n")
@@ -66,7 +78,12 @@ def main() -> int:
         urls.append(url)
     if (urls[0].port or 5432, urls[0].database) == (urls[1].port or 5432, urls[1].database):
         parser.error("source and restore must be distinct databases")
-    source, restored = map(fingerprint, urls)
+    try:
+        source, restored = map(fingerprint, urls)
+    except ValueError as exc:
+        parser.error(str(exc))
+    except SQLAlchemyError:
+        parser.error("cannot read the required evidence tables for the installed schema")
     identical = source == restored
     with args.output.open("x", encoding="utf-8") as output:
         json.dump({"match": identical, "source": source, "restored": restored}, output, indent=2)

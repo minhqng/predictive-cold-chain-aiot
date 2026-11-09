@@ -93,6 +93,17 @@ def test_companion_builders_carry_run_provenance():
     assert health["boot_id"] == BOOT and health["status"] == "ONLINE"
 
 
+def test_event_ids_are_stable_and_distinct_across_devices_runs_and_boots():
+    event = build_event(boot_id=BOOT, seq=0, run_id=RUN)
+    assert build_event(boot_id=BOOT, seq=0, run_id=RUN)["event_id"] == event["event_id"]
+    variants = (
+        build_event(boot_id="other-boot", seq=0, run_id=RUN),
+        build_event(boot_id=BOOT, seq=0, run_id="other-run"),
+        build_event(boot_id=BOOT, seq=0, run_id=RUN, device_id="other-device"),
+    )
+    assert len({event["event_id"], *(variant["event_id"] for variant in variants)}) == 4
+
+
 def test_run_simulation_rejects_empty_run_without_broker():
     with pytest.raises(ValueError, match="count must be"):
         run_simulation(

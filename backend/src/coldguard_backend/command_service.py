@@ -27,7 +27,7 @@ from sqlalchemy.engine import Connection, Engine
 
 from coldguard_backend import command_store as cs
 from coldguard_backend.contracts import Command
-from coldguard_backend.twin_store import device_twin, update_desired
+from coldguard_backend.twin_store import TwinVersionConflict, device_twin, update_desired
 
 # Statuses whose intent can still have executable meaning (subject to expiry).
 EXECUTABLE_STATES = frozenset(
@@ -82,6 +82,8 @@ def create_command_intent(
             )
         ).scalar_one_or_none()
         expected_version = int(twin) if twin is not None else 0
+        if command.expected_twin_version is not None and command.expected_twin_version != expected_version:
+            raise TwinVersionConflict("command expected a different Twin version")
         desired = desired_state_for(command)
         new_version = update_desired(
             connection,
