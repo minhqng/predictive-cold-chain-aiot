@@ -3,6 +3,79 @@
 Canonical source: `docs/05A` §16-§25, with the handover list in §5 and the interfaces in
 §6.1 (A→B), §6.2 (A→C), §6.3 (A→D). 44 assigned items.
 
+## Current audit (2026-11-09 — authoritative)
+
+Statuses: `COMPLETE` requirement satisfied with committed evidence · `SOFTWARE_COMPLETE`
+software/method deliverable satisfied, physical acceptance pending by design ·
+`BLOCKED_PHYSICAL` needs a supervised hardware session · `BLOCKED_DEPENDENCY` an input is
+owned by B/C/D or the operator. Store verdicts are the authoritative acceptance outcomes
+(`evidence/A/h8-captures/capture-20261104T092140Z`, branch `feat/a-acceptance-app`,
+recounted 2026-11-09: 114 items = 80 PASS / 2 FAIL / 7 INCOMPLETE / 25 NOT_RUN).
+Every row below names the committed artifact that backs it.
+
+| ID | Ask (short) | Status | Backing artifact / verdict |
+|---|---|---|---|
+| A-W07-01 | Geometry freeze | **COMPLETE** | store PASS; `evidence/A/W07/geometry-v1.md` frozen as-built + W23 photo cross-checks (fuse block, wiring, kit) |
+| A-W07-02 | ≥3 passive warm-up reps | **COMPLETE** | store PASS; warm-up/recovery segments in the accepted dataset `evidence/A/SOURCES/20261107/datasets/` |
+| A-W07-03 | ≥3 cooling-step reps | **COMPLETE** | store PASS; W07 repeats + H8 C/D/E cooling segments in the same dataset |
+| A-W07-04 | Repeatability summary | **COMPLETE** | store PASS; repeatability numbers restated from real runs |
+| A-W07-05 | Reset criterion | **COMPLETE** | store PASS; reset criterion evaluated on the 1 Hz campaign phase |
+| A-W08-01 | Safe operating envelope | **COMPLETE (observed, not a rating)** | store PASS; envelope-from-observations published (`evidence/A/W08/`), one-session/limited-session basis stated |
+| A-W08-02 | Fuse finalization | **COMPLETE (with recorded limitation)** | store PASS (2026-11-05): 15 A vs measured bases 5.03 A / 9.35 A peaks; conductor ampacity NOT certified; body marking unobtainable (operator statement of record) |
+| A-W08-03 | Hot-side sustainability | **BLOCKED_PHYSICAL + BLOCKED_DEPENDENCY** | store NOT_RUN; needs D's six-limit freeze, stage-enabled W06 flash consent, slot-3 fuse insertion, supervised ARM/START; H8-C 600 s data is bench-grammar, excluded by the evaluator |
+| A-W08-04 | SAFE_LOCAL support | **COMPLETE** | store PASS; D owns mode rules (team dependency documented) |
+| A-W08-05 | Gate A package | **COMPLETE** | store PASS; Gate-A report with the high-current anomaly kept visible |
+| A-W09-01 | Run checklist | **COMPLETE** | store PASS; `evidence/A/W09/run-protocol-v1.md` gates host-verified |
+| A-W09-02 | S1 baseline (≥4 valid runs) | **COMPLETE** | store PASS; 4 accepted S1 runs (dataset gates coverage ≥ 0.85; trial2-4 1.0000, trial1-imported 0.9983) |
+| A-W09-03 | Physical invalidation logging | **COMPLETE** | store PASS; invalidation rules + retained invalid attempts |
+| A-W09-04 | Healthy response reference | **BLOCKED_DEPENDENCY** | store NOT_RUN; prereq A-W08-03 |
+| A-W10-01 | Door protocol | **COMPLETE** | store PASS; S2 protocol anchored to committed captures |
+| A-W10-02 | Timing methodology | **COMPLETE** | store PASS; MC-38-authoritative method |
+| A-W10-03 | Repeated S2 pilot | **COMPLETE** | store PASS; 4 door runs + 1 timing window in the accepted dataset |
+| A-W10-04 | Pairing tolerance evidence | **COMPLETE (evidence); freeze is B's** | store PASS; `pairing-physics` evidence delivered |
+| A-W10-05 | Prediction horizon support | **BLOCKED_DEPENDENCY** | store INCOMPLETE `NO_DOOR_CRITICAL_SAMPLES`; D's frozen critical-Tmean threshold, then offline rerun (0 new captures) |
+| A-W11-01 | S4 method | **COMPLETE** | store PASS; `firmware/tools/cg_w11_s4.py` + `S4-protocol.md` (no unsafe method) |
+| A-W11-02 | S4 refusal evidence | **COMPLETE (refusal-state); 0 publishable S4 run sessions claimed** | store PASS; handler refusal verified (start refused, 0.0 A applied-current proof of state, no claim of physical S4 campaign) |
+| A-W11-03 | Dataset expansion | **COMPLETE** | store PASS (2026-11-09); genuine additional 600 s S1 trial at `evidence/A/SOURCES/20261109/s1/s1-20261109T081304Z/` |
+| A-W11-04 | S3 feasibility decision | **COMPLETE (NO-GO)** | store PASS; `S3-go-no-go.md` with instrumentation basis |
+| A-W12-01 | Sensor consistency recheck | **COMPLETE** | store PASS; drift re-evaluated per-image honestly |
+| A-W12-02 | PZEM zero/active validation | **COMPLETE** | store PASS; zero-vs-absent rule + status-coverage artifacts |
+| A-W12-03 | Mechanical audit | **COMPLETE** | store PASS; photo-supported audit vs geometry-v1 (2026-11-05) |
+| A-W12-04 | HW config signoff | **COMPLETE (A's half)** | store PASS; team signoff remains a joint record |
+| A-W12-05 | Gate G3 input | **COMPLETE (A input only)** | store PASS; G3 gate itself not declared GREEN by Member A |
+| A-W13-01 | Command→electrical delay | **COMPLETE** | store PASS; response-delay stats from real campaign captures |
+| A-W13-02 | Command→thermal response | **COMPLETE** | store PASS; per-session labelling intact |
+| A-W13-03 | Door→critical time | **BLOCKED_DEPENDENCY** | store INCOMPLETE; same D threshold input as A-W10-05 |
+| A-W13-04 | Time-constant proxies | **COMPLETE** | store PASS; labelled proxies from real runs |
+| A-W14-01 | Sensor-position QA | **COMPLETE** | store PASS; spatial QA against frozen geometry |
+| A-W14-02 | Logical ablation support | **COMPLETE** | store PASS; logical-only ablation (no probe unplugging) |
+| A-W14-03 | Spatial statistics | **COMPLETE** | store PASS; agreement stats from real runs |
+| A-W14-04 | Pairing criterion refinement | **BLOCKED_DEPENDENCY** | store NOT_RUN; B's freeze with A's evidence |
+| A-W15-01 | Electrical feature integrity | **COMPLETE** | store PASS |
+| A-W15-02 | A3 dataset support | **COMPLETE** | store PASS; provenance rows carry caveats |
+| A-W15-03 | PZEM reference check | **COMPLETE (self-consistency; absolute accuracy explicitly NOT claimed)** | store PASS; external meter gap documented |
+| A-W15-04 | PWM Go/No-Go | **COMPLETE (NO-GO)** | store PASS; decision NO-GO recorded (no characterized canonical duty ladder) |
+| A-W16-01 | Re-run short characterization | **BLOCKED_PHYSICAL** | store NOT_RUN; prereq A-W08-03; stage-enabled image + session |
+| A-W16-02 | W07/W08 vs W16 comparison | **BLOCKED_PHYSICAL** | store NOT_RUN; needs A-W16-01 captures |
+| A-W16-03 | Final pair tolerances | **BLOCKED_DEPENDENCY + PHYSICAL** | store NOT_RUN; S-2/S-3 outputs + B's freeze |
+| A-W16-04 | Controller B physical readiness | **BLOCKED_DEPENDENCY** | store NOT_RUN; B's freeze; A contributes the physical half, verdict `NO_FREEZE` recorded |
+
+W07–W16 tally against the 44 assigned items: **35 COMPLETE** (each backed by a store PASS
+verdict; several carry explicit recorded limitations — envelope ≠ rating, no certified
+ampacity, refusal-state ≠ physical S4 campaign, PWM NO-GO), 2 INCOMPLETE (W10-05, W13-03 —
+one D input each), 7 NOT_RUN (W08-03, W09-04, W14-04, W16-01..04 — one physical gate chain
+plus B's freeze): 35 + 2 + 7 = 44. Outside W07–W16 the store also holds 2 FAIL (operator hardware: A-W01-01, A-W03-02), 5 INCOMPLETE (A-W06-01/02/03/06
+Member C contracts; A-W23-03 physical labels) and 18 further NOT_RUN items (W17–W24
+shadow/campaign scope) — listed here so the 80 PASS count is never misread as
+"everything is done".
+
+## Historical snapshot (pre-dataset era — retained for traceability)
+
+The tables below were written before the accepted 2026-11-07 dataset and before the
+authoritative store verdicts were recorded. They are retained unchanged for history; every
+"zero valid runs", "NOT_ESTABLISHED", "IN FLIGHT"/"FIX"/"DATA" statement in them describes
+the situation at that time and is superseded by the audit above where the two disagree.
+
 Delivery states used here — they are deliberately not the same thing as "done":
 `HOST` tooling exists and passes host checks · `PR` published as an open pull request
 (not merged) · `FIX` reviewed, defects confirmed, repair in progress on a task branch ·

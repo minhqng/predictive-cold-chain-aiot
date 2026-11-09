@@ -43,10 +43,75 @@ Every physical quantity quoted in this directory was recomputed from committed f
 carried over from a report. Where a number exists only in local, uncommitted bench data it is
 marked as such, and untracked files are never cited as proof for a published claim.
 
-## CURRENT HANDOFF (2026-11-07)
+## CURRENT HANDOFF (2026-11-09 — read this first)
 
-The accepted real S1/S2 dataset is published at `evidence/A/SOURCES/20261107/datasets/`
-(18 runs, 9,293 measured frames, manifest + SHA256SUMS + standalone regeneration).
-Earlier sections of this document are historical snapshots of the weeks when this
-dataset did not yet exist; verdicts above describe those snapshots, not the current
-package. Consumers: read `README.md` + `manifest.json` in that directory first.
+This section is the current state and supersedes the historical snapshots below it wherever
+they disagree. The lines above it in "Read-this-first summary" describe the pre-dataset era;
+treat every "zero valid runs" / "NOT_ESTABLISHED" statement there as historical.
+
+### What is published on this branch (PR #95)
+
+- **Accepted real S1/S2 dataset**: `evidence/A/SOURCES/20261107/datasets/` — 18 runs/segments,
+  9,293 measured frames, manifest + SHA256SUMS + standalone regeneration. Read its
+  `README.md` + `manifest.json` first. It backs A-W09-02 (S1 baseline) and A-W10-03
+  (S2 pilot) PASS verdicts in the authoritative acceptance store.
+- **Additional independent S1 baseline run (A-W11-03)**:
+  `evidence/A/SOURCES/20261109/s1/s1-20261109T081304Z/` — a genuine 600 s read-only
+  passive S1 trial captured 2026-11-09T08:13Z (600/600 schema-3 frames, single boot
+  `c0e43470`, coverage 0.99833, thermal_valid_rate 0.99833, electrical_valid_rate 0.99667,
+  fault bits 0, cooling OFF in every frame, zero bytes written to the port, zero commands,
+  fuse slot-3 OUT, PSU ON after operator action, door operator-confirmed closed with
+  `door_raw=0` in 600/600 frames). Every file is hash-pinned in its `SHA256SUMS.txt`;
+  the acceptance store recorded `A-W11-03: PASS` (source HARDWARE) with this evidence
+  imported and manifest-verified. Its exact admissibility levels are in
+  [`a-to-bcd-fields.md`](a-to-bcd-fields.md) §"New 2026-11-09 S1 trial".
+- **Acceptance integrity tooling repaired on this branch**: Python 3.12 artifact
+  reproducibility, schema-3 telemetry classification in the read-only collector, tolerating
+  ISO host stamps with fractional seconds/offsets, schema-aware fail-closed Phase E gates,
+  and fully reconciled evidence pins (dossier validators W05–W16 all OK).
+
+### Authoritative acceptance ledger (recounted live 2026-11-09 from the store)
+
+`114 items: 80 PASS / 2 FAIL / 7 INCOMPLETE / 25 NOT_RUN` (store:
+`evidence/A/h8-captures/capture-20261104T092140Z` on branch `feat/a-acceptance-app`).
+The earlier `79 PASS` figure (PR #95's historical description) predates the A-W11-03
+physical trial. FAILs (operator hardware items): A-W01-01 unapproved BOM substitution,
+A-W03-02 vcc_3v3 above maximum. INCOMPLETEs: A-W06-01/02/03/06 (Member C merged transport/
+command contracts), A-W10-05 + A-W13-03 (Member D frozen critical-Tmean threshold; offline
+rerun closes them with zero new captures), A-W23-03 (physical labels). The W07–W16 audit
+with per-item status is in [`coverage-matrix.md`](coverage-matrix.md) §"Current audit".
+
+### What each member can consume
+
+- **B (ML/data)**: the accepted dataset package (18 runs: 4 S1, 5 S2 windows, cooling/recovery
+  segments, W07 repeats) plus the supplementary 2026-11-09 S1 trial — with the field
+  availability and eligibility rules in [`a-to-bcd-fields.md`](a-to-bcd-fields.md) §6.1.
+  B owns: horizon choice (A-W10-05), pairing tolerance freeze (A-W14-04/A-W16-03).
+- **C (backend/device contract)**: schema-3 frame grammar + parser
+  (`firmware/tools/cg_telemetry_schema.py`), read-only capture behaviour
+  (`tools/acceptance/read_only_capture.py`), the acceptance runner gates and the console
+  grammar documentation — see §6.2 in the fields file. The typed command/ACK integration
+  (A-W06-01..03, A-W06-06) waits on Member C's merged contracts, not on Member A.
+- **D (safety)**: the physical evidence chain (observed envelope, fuse decision + its
+  documented limitations, anomaly status, TEC limits policy) — see §6.3 plus
+  [`supervised-session-plan.md`](supervised-session-plan.md). D owns: the six TEC operating
+  limit freezes (gate A) and the critical-Tmean threshold.
+
+### Physical blockers that stay explicit
+
+1. A-W08-03 supervised loaded COOLING_STEP: requires Member D's TEC limit freeze, a
+   stage-enabled W06 build + flash (operator-gated, restore/backup recipe in
+   `tools/acceptance/README.md`), slot-3 fuse insertion at the session, and live ARM/START
+   consent. The 7.15 A zero-duty anomaly remains a candidate
+   CONTROL_ELECTRICAL_ANOMALY until independently resolved.
+2. A-W16-01..04 depend on that session (prereq chain) and on B's freeze.
+3. A-W08-02 fuse rating is recorded as PASS-with-limitation: 15 A against measured bases;
+   certified ampacity does not exist and the installed body carries no legible marking —
+   do not read it as an ampacity certification.
+
+### Recommended reading order for B/C/D
+
+1. This file → 2. `coverage-matrix.md` (current audit) → 3. `a-to-bcd-fields.md`
+(current sections) → 4. `evidence/A/SOURCES/20261107/datasets/README.md` + `manifest.json`
+→ 5. your own §6.x subsection → 6. `supervised-session-plan.md` (only when planning a
+physical session).
