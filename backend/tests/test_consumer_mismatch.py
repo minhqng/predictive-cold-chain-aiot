@@ -11,10 +11,14 @@ is condition-driven polling, never sleep-and-assume.
 
 import hashlib
 import json
+import os
 import uuid
+from pathlib import Path
 
 import paho.mqtt.client as mqtt
 import pytest
+from alembic import command
+from alembic.config import Config
 from sqlalchemy import create_engine, text
 
 from coldguard_backend.mqtt_consumer import MqttIngestConsumer
@@ -26,6 +30,34 @@ from tests.mqtt_testkit import (
     mqtt_params,
     wait_for,
 )
+
+BACKEND_DIR = Path(__file__).resolve().parent.parent
+
+
+@pytest.fixture(scope="module", autouse=True)
+def _migrated_suite_schema():
+    """Give the disposable suite database the current schema before tests run.
+
+    The owned runners create the suite database empty and nothing in this
+    module's scope ever migrated it, so these real-provider proofs only
+    passed when an alphabetically-earlier module had already done so. The
+    alembic upgrade is idempotent when the schema already exists.
+    """
+    if not os.environ.get("COLDGUARD_TEST_DATABASE_URL"):
+        return
+    cfg = Config(str(BACKEND_DIR / "alembic.ini"))
+    cfg.set_main_option(
+        "script_location", str(BACKEND_DIR / "src/coldguard_backend/migrations")
+    )
+    previous = os.environ.get("DATABASE_URL")
+    os.environ["DATABASE_URL"] = os.environ["COLDGUARD_TEST_DATABASE_URL"]
+    try:
+        command.upgrade(cfg, "head")
+    finally:
+        if previous is None:
+            os.environ.pop("DATABASE_URL", None)
+        else:
+            os.environ["DATABASE_URL"] = previous
 
 needs_real_providers = pytest.mark.skipif(
     not (has_test_db() and has_test_mqtt()),
