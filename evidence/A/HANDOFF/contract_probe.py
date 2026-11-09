@@ -92,8 +92,15 @@ W06_NO_COMMAND_TAIL = (
     " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
     " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED"
 )
-derived_schema3 = committed_line.replace("schema=2 ", "schema=3 ", 1) + W06_NO_COMMAND_TAIL
-frame3 = telem.parse_line(derived_schema3, 1)
+# The committed capture line already carries the full no-command tail on every
+# schema=3 frame (cg_telemetry.c:382-385), so upgrade a historical schema=2
+# line only; appending the tail to a schema=3 line would duplicate five fields
+# and be rejected by parse_line.
+if committed_schema == 3:
+    schema3_line = committed_line
+else:
+    schema3_line = committed_line.replace("schema=2 ", "schema=3 ", 1) + W06_NO_COMMAND_TAIL
+frame3 = telem.parse_line(schema3_line, 1)
 device_raw = dict(frame3.raw_fields)
 device_fields = dict(frame3.fields)
 
