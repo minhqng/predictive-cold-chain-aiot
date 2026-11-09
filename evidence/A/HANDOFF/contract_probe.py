@@ -506,20 +506,18 @@ defects = [
      "verdict": "Gateway must re-encode; Member A's refusal of unknown fields is "
                 "intentional and must not be relaxed."},
     {"id": "R-07", "severity": "P1", "owner": "Member A",
-     "claim": "Member A's own W06 evidence does not exercise the schema-3 telemetry "
-              "branch it claims to deliver.",
-     "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=2 and "
-                 "zero command tokens, while its test's docstring at "
-                 "firmware/tools/tests/test_cg_command_trace.py:28 calls it 'The schema-3 "
-                 "telemetry line the harness emitted into the demo capture'",
-     "verdict": "MEMBER A MUST FIX: regenerate the capture from the shipped schema-3 "
-                "formatter."},
+     "claim": "Member A's own W06 evidence exercises the schema-3 telemetry branch.",
+     "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=3 and "
+                 "the full W06 command/ACK tail",
+     "verdict": "RESOLVED: the committed demo capture is a real schema=3 frame with "
+                "the no-command-received tail; test_cg_command_trace.py pins it."},
     {"id": "R-08", "severity": "P2", "owner": "Member A",
-     "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are not typed by the Member A "
-              "parser, so they cross the wire as text.",
-     "evidence": "firmware/tools/cg_telemetry_schema.py:309-345 (_coerce falls through "
-                 "to the token); the probe's untyped_numeric_fields list",
-     "verdict": "Add these to FLOAT_FIELDS in Member A's own tool."},
+     "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are typed by the Member A "
+              "parser (fixed in this remediation).",
+     "evidence": "firmware/tools/cg_telemetry_schema.py FLOAT_FIELDS now contains the "
+                 "four raw temperature tokens; parsed as float|None",
+     "verdict": "RESOLVED: the four raw temperature tokens are in FLOAT_FIELDS and "
+                "parse as float|None; the regression pins the coercion."},
 ]
 
 ack_vs_execution = {
@@ -578,10 +576,14 @@ out = {
         "committed_capture_schema": committed_schema,
         "derived_frame_schema": frame3.fields["schema"],
         "derived_frame_provenance": (
-            "DERIVED, not captured: the committed W06 demo capture carries schema="
-            f"{committed_schema} and no command tokens; the five schema-3 tokens were "
-            "appended exactly as firmware/main/cg_telemetry.c:382-384 emits them for the "
-            "no-command-received case."
+            "PARSED, not derived: the committed W06 demo capture carries schema=3 "
+            "with the full W06 command/ACK tail already in the frame; it was parsed "
+            "directly with no token appended."
+            if committed_schema == 3 else
+            "DERIVED, not captured: the committed W06 demo capture carries "
+            f"schema={committed_schema}; schema=3 was reached by replacing the "
+            "schema token and appending the five no-command-received tokens "
+            "exactly as firmware/main/cg_telemetry.c:382-384 emits them."
         ),
         "parsed_field_count": len(device_fields),
         "frame_token_order": list(device_raw.keys()),
