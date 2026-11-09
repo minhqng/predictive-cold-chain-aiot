@@ -1145,6 +1145,7 @@ function Invoke-PhaseE {
         $row['reason'] = 'no lines while 12 V was present: the box is not reporting, do not proceed to any actuation'
     }
     else {
+        $coolingApplied = @(Get-JsonFieldValues $summary 'cooling_applied')
         $badStates = @($states | Where-Object { $ALLOWED_IDLE_STATES -notcontains $_ })
         $dutyOk = (Test-AllZero $applied)
         $renOk = (Test-AllZero $ren)
@@ -1153,14 +1154,23 @@ function Invoke-PhaseE {
         if ($badStates.Count -gt 0) {
             $row['reason'] = 'non-idle state observed with the TEC branch supposed to be isolated: ' + ($badStates -join ',')
         }
+        elseif ($coolingApplied.Count -gt 0 -and @($coolingApplied | Where-Object { $_ -ne 'OFF' }).Count -eq 0) {
+            # Schema-3 evidence: the firmware reports its real applied state and
+            # every frame says cooling_applied=OFF with zero bytes written.
+            $row['verdict'] = $V_PASS
+            $row['reason'] = ('{0} telemetry frames with state={1}, cooling_applied=OFF (schema-3 applied state), bytes_written=0' -f $row['telemetry_frames'], ($states -join '/'))
+        }
         elseif (-not $dutyOk) { $row['reason'] = 'pwm_applied_permille not zero: ' + ($applied -join ',') }
         elseif (-not $renOk) { $row['reason'] = 'ren_command not zero: ' + ($ren -join ',') }
         elseif (-not $lenOk) { $row['reason'] = 'len_command not zero: ' + ($len -join ',') }
         elseif (-not $zeroWrite) { $row['reason'] = 'capture did not prove zero bytes written' }
         elseif ([int]$row['telemetry_frames'] -lt 1) { $row['reason'] = 'no telemetry frame parsed, so duty-zero is unproven' }
         else {
-            $row['verdict'] = $V_PASS
-            $row['reason'] = ('{0} telemetry frames with state={1}, pwm_applied=0, ren=0, len=0, bytes_written=0' -f $row['telemetry_frames'], ($states -join '/'))
+            # Legacy-only evidence path: everything checked is zero, but neither
+            # the legacy pwm keys nor schema-3 cooling_applied were present, so
+            # the applied state is UNPROVEN - never PASS from empty arrays.
+            $row['verdict'] = $V_NOT_RUN
+            $row['reason'] = 'UNPROVEN: no schema-3 cooling_applied and no legacy pwm_applied_permille observations in this capture'
         }
     }
     $phase['checks'] += $row
