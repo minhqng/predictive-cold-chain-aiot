@@ -1,0 +1,1320 @@
+{
+  "adversarial_controls": {
+    "monitor_probe_count": 16,
+    "monitor_probes": [
+      {
+        "expected_verdict": "REFUSED_MODEL_IDENTITY",
+        "observed_verdict": "REFUSED_MODEL_IDENTITY",
+        "passed": true,
+        "probe": "wrong_model_sha",
+        "refusal_reasons": [
+          "MODEL_SHA256_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_MODEL_IDENTITY",
+        "observed_verdict": "REFUSED_MODEL_IDENTITY",
+        "passed": true,
+        "probe": "wrong_config_binding",
+        "refusal_reasons": [
+          "MODEL_CONFIG_SHA256_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_MODEL_IDENTITY",
+        "observed_verdict": "REFUSED_MODEL_IDENTITY",
+        "passed": true,
+        "probe": "wrong_library_version",
+        "refusal_reasons": [
+          "MODEL_LIBRARY_VERSION_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_MODEL_IDENTITY",
+        "observed_verdict": "REFUSED_MODEL_IDENTITY",
+        "passed": true,
+        "probe": "missing_model_identity",
+        "refusal_reasons": [
+          "MODEL_ARTIFACT_ID_MISMATCH",
+          "MODEL_SHA256_MISSING",
+          "MODEL_LIBRARY_VERSION_MISMATCH",
+          "RELEASE_ELIGIBILITY_MISMATCH",
+          "EVIDENCE_CLASS_CLAIM_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_FEATURE_IDENTITY",
+        "observed_verdict": "REFUSED_FEATURE_IDENTITY",
+        "passed": true,
+        "probe": "wrong_ordered_feature_hash",
+        "refusal_reasons": [
+          "ORDERED_FEATURE_IDS_HASH_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_FEATURE_IDENTITY",
+        "observed_verdict": "REFUSED_FEATURE_IDENTITY",
+        "passed": true,
+        "probe": "feature_vector_tamper",
+        "refusal_reasons": [
+          "FEATURE_VECTOR_HASH_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_FEATURE_IDENTITY",
+        "observed_verdict": "REFUSED_FEATURE_IDENTITY",
+        "passed": true,
+        "probe": "missing_value_zero_filled",
+        "refusal_reasons": [
+          "FEATURE_VECTOR_HASH_MISMATCH",
+          "MISSINGNESS_SEMANTICS_BROKEN"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "observed_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "passed": true,
+        "probe": "release_authorization_claim",
+        "refusal_reasons": [
+          "RELEASE_AUTHORIZATION_CLAIMED"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "observed_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "passed": true,
+        "probe": "release_eligibility_claim",
+        "refusal_reasons": [
+          "RELEASE_AUTHORIZATION_CLAIMED",
+          "RELEASE_ELIGIBILITY_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_EVIDENCE_CLASS",
+        "observed_verdict": "REFUSED_EVIDENCE_CLASS",
+        "passed": true,
+        "probe": "physical_evidence_class_claim",
+        "refusal_reasons": [
+          "EVIDENCE_CLASS_CLAIM_MISMATCH"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_POLICY_UNFROZEN",
+        "observed_verdict": "REFUSED_POLICY_UNFROZEN",
+        "passed": true,
+        "probe": "threshold_claimed_frozen",
+        "refusal_reasons": [
+          "POLICY_FREEZE_OR_PROVENANCE_CLAIM"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "observed_verdict": "REFUSED_RELEASE_AUTHORIZATION",
+        "passed": true,
+        "probe": "dispatchable_policy_claim",
+        "refusal_reasons": [
+          "POLICY_PRESENTED_AS_AUTHORIZED_CONTROL"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_STALE_INPUT",
+        "observed_verdict": "REFUSED_STALE_INPUT",
+        "passed": true,
+        "probe": "stale_input_with_score",
+        "refusal_reasons": [
+          "SCORE_PRODUCED_FOR_REFUSED_INPUT"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_PREDICTION_SEMANTICS",
+        "observed_verdict": "REFUSED_PREDICTION_SEMANTICS",
+        "passed": true,
+        "probe": "fresh_input_without_score",
+        "refusal_reasons": [
+          "MISSING_SCORE_FOR_FRESH_INPUT"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_TEMPORAL_ORDER",
+        "observed_verdict": "REFUSED_TEMPORAL_ORDER",
+        "passed": true,
+        "probe": "future_observation_in_prediction",
+        "refusal_reasons": [
+          "FUTURE_OBSERVATION_IN_PREDICTION"
+        ]
+      },
+      {
+        "expected_verdict": "REFUSED_TEMPORAL_ORDER",
+        "observed_verdict": "REFUSED_TEMPORAL_ORDER",
+        "passed": true,
+        "probe": "missing_event_time_provenance",
+        "refusal_reasons": [
+          "MISSING_EVENT_TIME_PROVENANCE"
+        ]
+      }
+    ],
+    "monitor_probes_passed": 16,
+    "trace_probe_count": 18,
+    "trace_probes": [
+      {
+        "expected_outcome": "TRACE_PARTIAL_MISSING_EVIDENCE",
+        "observed_outcome": "TRACE_PARTIAL_MISSING_EVIDENCE",
+        "passed": true,
+        "probe": "missing_downstream_stages",
+        "refusal_reasons": []
+      },
+      {
+        "expected_outcome": "TRACE_PARTIAL_MISSING_EVIDENCE",
+        "observed_outcome": "TRACE_PARTIAL_MISSING_EVIDENCE",
+        "passed": true,
+        "probe": "missing_applied_state",
+        "refusal_reasons": []
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "command_prediction_mismatch",
+        "refusal_reasons": [
+          "CROSS_STAGE_IDENTITY_MISMATCH"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "policy_run_mismatch",
+        "refusal_reasons": [
+          "CROSS_STAGE_IDENTITY_MISMATCH"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_TEMPORAL_CONTRADICTION",
+        "observed_outcome": "TRACE_TEMPORAL_CONTRADICTION",
+        "passed": true,
+        "probe": "ack_before_command",
+        "refusal_reasons": [
+          "CAUSAL_ORDER_VIOLATION"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "success_without_physical_verification",
+        "refusal_reasons": [
+          "ACK_IS_NOT_PHYSICAL_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "fixture_claims_physical_success",
+        "refusal_reasons": [
+          "FIXTURE_LABEL_OR_CLAIM_INVALID"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_NOT_AUTHORIZED",
+        "observed_outcome": "TRACE_NOT_AUTHORIZED",
+        "passed": true,
+        "probe": "hypothetical_command_unmarked",
+        "refusal_reasons": [
+          "COMMAND_WITHOUT_AUTHORIZATION_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "thermal_verification_missing",
+        "refusal_reasons": [
+          "PHYSICAL_EVIDENCE_INCOMPLETE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "parent_class_only_physical",
+        "refusal_reasons": [
+          "PHYSICAL_EVIDENCE_INCOMPLETE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "electrical_quality_unknown",
+        "refusal_reasons": [
+          "PHYSICAL_EVIDENCE_INCOMPLETE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "claimed_success_without_command",
+        "refusal_reasons": [
+          "ACK_IS_NOT_PHYSICAL_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "observed_outcome": "TRACE_PHYSICAL_UNVERIFIED",
+        "passed": true,
+        "probe": "applied_state_without_physical",
+        "refusal_reasons": [
+          "ACK_IS_NOT_PHYSICAL_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_NOT_AUTHORIZED",
+        "observed_outcome": "TRACE_NOT_AUTHORIZED",
+        "passed": true,
+        "probe": "physical_without_command",
+        "refusal_reasons": [
+          "COMMAND_WITHOUT_AUTHORIZATION_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "synthetic_fixture_mislabeled",
+        "refusal_reasons": [
+          "SYNTHETIC_FIXTURE_MISLABELED_AS_REAL",
+          "PHYSICAL_EVIDENCE_INCOMPLETE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_NOT_AUTHORIZED",
+        "observed_outcome": "TRACE_NOT_AUTHORIZED",
+        "passed": true,
+        "probe": "authorized_without_evidence",
+        "refusal_reasons": [
+          "COMMAND_WITHOUT_AUTHORIZATION_EVIDENCE"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "terminal_status_contradiction",
+        "refusal_reasons": [
+          "TERMINAL_STATUS_CONTRADICTION"
+        ]
+      },
+      {
+        "expected_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "observed_outcome": "TRACE_INCONSISTENT_IDENTITY",
+        "passed": true,
+        "probe": "physical_attribution_cross_boot",
+        "refusal_reasons": [
+          "PHYSICAL_ATTRIBUTION_ACROSS_RUNS"
+        ]
+      }
+    ],
+    "trace_probes_passed": 18
+  },
+  "analysis_code_sha256": "81b5b65ca39ca6b5198638521ce713acea2390e246592b3034d6f15a03937c30",
+  "capabilities": {
+    "actuator_client": false,
+    "broker_connection": false,
+    "command_transport": false,
+    "model_registered": false,
+    "network": false,
+    "online_tuning": false,
+    "physical_control": false
+  },
+  "expected_runtime_identity": {
+    "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+    "calibration_status": "RISK_SCORE_ONLY",
+    "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "feature_count": 28,
+    "feature_schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "feature_version": "CG-FEAT-1.0",
+    "horizon_s": 60.0,
+    "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "model_library_version": "3.4.1",
+    "operating_threshold": 0.5,
+    "operating_threshold_status": "ILLUSTRATIVE_NOT_FROZEN",
+    "ordered_feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+    "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+    "score_semantics": "risk_score",
+    "target_spec_version": "coldguard-w11-development-label-v1",
+    "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+    "warning_persistence_status": "NOT_FROZEN"
+  },
+  "external_dependency_semantics": "INTERFACE_AUDIT_SNAPSHOT_AT_IMPLEMENTATION",
+  "external_dependency_states": {
+    "gate_g4": "NOT_READY",
+    "member_a_w18_physical_dry_runs": "ZERO_DRY_RUNS_RECORDED_SOFTWARE_READY_ONLY",
+    "member_a_w18_signoff": "BLOCKED_ON_PREREQUISITES",
+    "member_c_pr_73_shadow_trace": "OPEN_UNMERGED_NOT_INTEGRATION_ACCEPTANCE",
+    "member_c_pr_74_controller_b_lifecycle": "OPEN_UNMERGED_NOT_FROZEN_API",
+    "member_d_physical_verification_interface": "UNMERGED_STACKED_BRANCH",
+    "member_d_predictive_policy": "NOT_FROZEN",
+    "model_release_candidate": "NOT_ISSUED",
+    "runtime_freshness_policy": "PENDING_C_D",
+    "team_lead_cross_member_acceptance": "NOT_ESTABLISHED",
+    "w16_holdout": "NOT_OPENED"
+  },
+  "fixture_trace_assessment": {
+    "authorized_control": false,
+    "controller_b_acceptance": false,
+    "evidence_class": "TEST_ONLY_SYNTHETIC_FIXTURE",
+    "fixture": true,
+    "invariants": [
+      {
+        "canonical_ref": "05B \u00a746; 02 \u00a760.5",
+        "invariant_id": "TR-02",
+        "observed": "prediction_id=pred-w18-test-0001, model=25a8ef7a71817d4d, schema=1d36d338f35dd448",
+        "reason_code": null,
+        "requirement": "The prediction stage must carry its own identity and risk_score semantics.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "02 \u00a74.2; 05B \u00a746",
+        "invariant_id": "TR-01",
+        "observed": "all present stages agree",
+        "reason_code": null,
+        "requirement": "Run/device/boot lineage and command/prediction/policy/ACK identities must agree.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "01 \u00a71.7; 05B \u00a746",
+        "invariant_id": "TR-08",
+        "observed": "physical attribution matches the trace identity",
+        "reason_code": null,
+        "requirement": "Physical evidence may not be attributed across runs, devices or boots.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "02 \u00a71.6; 01 \u00a71.4",
+        "invariant_id": "TR-07",
+        "observed": "terminal states are consistent",
+        "reason_code": null,
+        "requirement": "Terminal command/ACK/applied/physical states must not contradict each other.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "02 \u00a75; 01 \u00a71.5-1.6",
+        "invariant_id": "TR-05",
+        "observed": "chronology is coherent",
+        "reason_code": null,
+        "requirement": "Prediction, warning, policy, command, ACK, electrical and thermal times must follow causal order.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "02 \u00a71.6; 05B \u00a746; 04 \u00a733",
+        "invariant_id": "TR-11",
+        "observed": "policy status HYPOTHETICAL",
+        "reason_code": null,
+        "requirement": "A command-bearing trace must carry an explicit authorized decision; hypothetical records stay non-dispatchable.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "01 \u00a71.5-1.7; 03 \u00a71.3",
+        "invariant_id": "TR-06",
+        "observed": "structurally complete synthetic fixture evidence",
+        "reason_code": null,
+        "requirement": "Physical verification requires qualified electrical and thermal evidence with provenance.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "05B \u00a746",
+        "invariant_id": "TR-10",
+        "observed": "missing stages: none",
+        "reason_code": null,
+        "requirement": "Every absent stage must be reported explicitly, never silently treated as PASS.",
+        "status": "PASS"
+      },
+      {
+        "canonical_ref": "05B \u00a746 fixture hygiene",
+        "invariant_id": "TR-12",
+        "observed": "fixture=True, evidence_class=TEST_ONLY_SYNTHETIC_FIXTURE, physical_evidence_class=SYNTHETIC_TEST_FIXTURE_NOT_PHYSICAL_EVIDENCE, claimed_physical_success=False",
+        "reason_code": null,
+        "requirement": "A fixture must be explicitly labeled TEST_ONLY and must not claim a real intervention.",
+        "status": "PASS"
+      }
+    ],
+    "missing_stages": [],
+    "outcome": "TRACE_COMPLETE_SOFTWARE_FIXTURE",
+    "physical_evidence_class": "SYNTHETIC_TEST_FIXTURE_NOT_PHYSICAL_EVIDENCE",
+    "physical_verified": false,
+    "real_intervention": false,
+    "refusal_reasons": [],
+    "stage_status": [
+      {
+        "stage": "prediction",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "warning",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "policy",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "command",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "ack",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "applied_state",
+        "status": "PRESENT"
+      },
+      {
+        "stage": "physical_verification",
+        "status": "PRESENT"
+      }
+    ],
+    "trace_id": "trace-w18-test-only-0001"
+  },
+  "freeze_audit": {
+    "approved_release_freeze_status": "MISSING_FREEZE_RECORD",
+    "baseline": {
+      "approved_freeze_record": null,
+      "approved_freeze_status": "MISSING_FREEZE_RECORD",
+      "development_only": true,
+      "manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "model_file_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "values": {
+        "calibration_semantics": {
+          "config_status": "NOT_PERFORMED",
+          "score_semantics": "risk_score",
+          "status": "RISK_SCORE_ONLY"
+        },
+        "critical_target": {
+          "boundary_c": null,
+          "config_target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+          "target_spec_version": "coldguard-w11-development-label-v1",
+          "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+        },
+        "event_matching_policy": {
+          "association_status": "SYNTHETIC_ILLUSTRATIVE",
+          "episode_status": "SYNTHETIC_ILLUSTRATIVE"
+        },
+        "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+        "feature_version": "CG-FEAT-1.0",
+        "model_artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+        "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+        "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+        "model_library_version": "3.4.1",
+        "operating_threshold": {
+          "config_value": 0.5,
+          "status": "ILLUSTRATIVE_NOT_FROZEN",
+          "value": 0.5
+        },
+        "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+        "primary_horizon": {
+          "config_horizon_s": 60.0,
+          "horizon_s": 60.0,
+          "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN"
+        },
+        "w15_model_manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+        "warning_persistence": {
+          "k": null,
+          "status": "NOT_FROZEN"
+        }
+      }
+    },
+    "change_control": {
+      "locked_test_rule": "After locked-test exposure a new model requires new independent data; prior locked-test acceptance cannot be reused.",
+      "required_fields": [
+        "artifact_id",
+        "model_artifact_sha256",
+        "model_config_sha256",
+        "feature_schema_hash",
+        "ordered_feature_ids_sha256",
+        "reason",
+        "owner",
+        "affected_evidence",
+        "evaluation_implications",
+        "review_gate"
+      ],
+      "sample_decision": {
+        "approval_effect": "NONE_B_W18_READ_ONLY_ASSESSMENT",
+        "decision": "CHANGE_ACCEPTED_REQUIRES_NEW_INDEPENDENT_EVALUATION",
+        "refusal_reasons": [],
+        "required_followups": [
+          "new independent evaluation population",
+          "new freeze and release authorization"
+        ]
+      }
+    },
+    "comparison": {
+      "approved_status": "MISSING_FREEZE_RECORD",
+      "development_status": "DEVELOPMENT_BASELINE_UNCHANGED",
+      "development_unchanged_implies_release_freeze": false,
+      "drift_detected": false,
+      "drift_fields": [],
+      "field_rows": [
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "coldguard-w15-synthetic-xgb-candidate-v1",
+          "canonical_ref": "03 \u00a792; 05B \u00a746",
+          "development_only": true,
+          "field_id": "model_artifact_id",
+          "observed_value": "coldguard-w15-synthetic-xgb-candidate-v1",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+          "canonical_ref": "03 \u00a792",
+          "development_only": true,
+          "field_id": "model_artifact_sha256",
+          "observed_value": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+          "canonical_ref": "03 \u00a792",
+          "development_only": true,
+          "field_id": "model_config_sha256",
+          "observed_value": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "CG-FEAT-1.0",
+          "canonical_ref": "03 \u00a792; 05B \u00a79",
+          "development_only": true,
+          "field_id": "feature_version",
+          "observed_value": "CG-FEAT-1.0",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+          "canonical_ref": "03 \u00a792",
+          "development_only": true,
+          "field_id": "feature_schema_hash",
+          "observed_value": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+          "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+          "development_only": true,
+          "field_id": "ordered_feature_ids_sha256",
+          "observed_value": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "config_horizon_s": 60.0,
+            "horizon_s": 60.0,
+            "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN"
+          },
+          "canonical_ref": "03 \u00a744, \u00a792",
+          "development_only": true,
+          "field_id": "primary_horizon",
+          "observed_value": {
+            "config_horizon_s": 60.0,
+            "horizon_s": 60.0,
+            "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN"
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "boundary_c": null,
+            "config_target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+            "target_spec_version": "coldguard-w11-development-label-v1",
+            "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+          },
+          "canonical_ref": "03 \u00a742-43, \u00a792",
+          "development_only": true,
+          "field_id": "critical_target",
+          "observed_value": {
+            "boundary_c": null,
+            "config_target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+            "target_spec_version": "coldguard-w11-development-label-v1",
+            "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "config_value": 0.5,
+            "status": "ILLUSTRATIVE_NOT_FROZEN",
+            "value": 0.5
+          },
+          "canonical_ref": "03 \u00a787, \u00a792",
+          "development_only": true,
+          "field_id": "operating_threshold",
+          "observed_value": {
+            "config_value": 0.5,
+            "status": "ILLUSTRATIVE_NOT_FROZEN",
+            "value": 0.5
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "k": null,
+            "status": "NOT_FROZEN"
+          },
+          "canonical_ref": "03 \u00a788, \u00a792",
+          "development_only": true,
+          "field_id": "warning_persistence",
+          "observed_value": {
+            "k": null,
+            "status": "NOT_FROZEN"
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "config_status": "NOT_PERFORMED",
+            "score_semantics": "risk_score",
+            "status": "RISK_SCORE_ONLY"
+          },
+          "canonical_ref": "03 \u00a758-60, \u00a792",
+          "development_only": true,
+          "field_id": "calibration_semantics",
+          "observed_value": {
+            "config_status": "NOT_PERFORMED",
+            "score_semantics": "risk_score",
+            "status": "RISK_SCORE_ONLY"
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": {
+            "association_status": "SYNTHETIC_ILLUSTRATIVE",
+            "episode_status": "SYNTHETIC_ILLUSTRATIVE"
+          },
+          "canonical_ref": "03 \u00a789-90",
+          "development_only": true,
+          "field_id": "event_matching_policy",
+          "observed_value": {
+            "association_status": "SYNTHETIC_ILLUSTRATIVE",
+            "episode_status": "SYNTHETIC_ILLUSTRATIVE"
+          },
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "3.4.1",
+          "canonical_ref": "03 \u00a792",
+          "development_only": true,
+          "field_id": "model_library_version",
+          "observed_value": "3.4.1",
+          "status": "UNCHANGED"
+        },
+        {
+          "approved_freeze_status": "MISSING_FREEZE_RECORD",
+          "approved_value": null,
+          "baseline_value": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+          "canonical_ref": "05B \u00a746; 03 \u00a792",
+          "development_only": true,
+          "field_id": "w15_model_manifest_sha256",
+          "observed_value": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+          "status": "UNCHANGED"
+        }
+      ],
+      "identity_reused": false,
+      "issues": []
+    },
+    "development_only_statement": "The development baseline is stable but no approved release freeze exists; this audit does not convert one into the other.",
+    "model_file_binding": {
+      "expected_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "matches": true,
+      "observed_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "reason_code": null
+    }
+  },
+  "generation_inputs": {
+    "feature_registry": {
+      "feature_count": 31,
+      "feature_version": "CG-FEAT-1.0",
+      "file_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "model_feature_count": 28,
+      "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+      "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
+    },
+    "freeze_baseline": {
+      "path": "ml/reports/W18/freeze-baseline-W18.json",
+      "sha256": "d1bcc8ff26ed28ed998fb2c43d7fa57ab928d6c4d90c1af801289016dd446581"
+    },
+    "member_a_w18": {
+      "cross_team_prerequisites": [
+        "g4_gate_passed",
+        "controller_b_model_frozen",
+        "controller_d_policy_frozen"
+      ],
+      "dry_runs_recorded": 0,
+      "enablement_verdict": "BLOCKED_ON_PREREQUISITES",
+      "files": {
+        "SHA256SUMS.txt": {
+          "present": true,
+          "sha256": "0fafeda85dd73370174a188b036dea8270adb5ae96efa58edd9566e670c359cc"
+        },
+        "abort-criteria.yaml": {
+          "present": true,
+          "sha256": "c3e5695c65ed67f5aa74d10c37b734ca04eac8e18fd85b5929c5a4741181345a"
+        },
+        "controller-B-dry-run-index.json": {
+          "present": true,
+          "sha256": "e464dde22922554d34e9e7514115f7688b31f8c33f9aabd24b1b7f3a80dd25cb"
+        },
+        "pre-run-safety-checklist.json": {
+          "present": true,
+          "sha256": "aced25b66b0359ca8cc8030e398c8d44ccff2243e14ca08b43a2571dc762e648"
+        },
+        "readiness-signoff.md": {
+          "present": true,
+          "sha256": "5233a1f8800f837cfa4770fa6b2a56525f5f8e90dc8f5e19a4e626998e75f151"
+        },
+        "registry/A-W18-01.json": {
+          "present": true,
+          "sha256": "fadf11ee54a668e1dd096f43a98c6be3701fac14238ef615376d791203a217e0"
+        },
+        "registry/publication-index.json": {
+          "present": true,
+          "sha256": "147c453cfad195d8bf515f0597d7607bd7404cad7999e25363b4bb0c9744e236"
+        },
+        "validate_w18.py": {
+          "present": true,
+          "sha256": "b68ce4387ac3c833012275ef961403b5b5a09251ec0d40ff3cfcfd9314fa8514"
+        }
+      },
+      "index_status": "SOFTWARE_READY",
+      "observed": "dry_runs_recorded=0; enablement=BLOCKED_ON_PREREQUISITES; physical_state=PENDING_BENCH_EXECUTION",
+      "physical_state": "PENDING_BENCH_EXECUTION"
+    },
+    "member_c": {
+      "interface_semantics": "UNMERGED_INTERFACE_NAMES_ARE_NOT_A_FROZEN_API",
+      "pr_73": {
+        "base": "feat/c-w16-outage-resynchronization",
+        "head": "fb71b3c87bf140732cc85c520baf630d38ae18cb",
+        "state": "OPEN",
+        "title": "Member C W17 shadow trace and timing audit"
+      },
+      "pr_74": {
+        "base": "feat/c-w17-shadow-trace",
+        "head": "27c654be0eaaa477d7fc92576f1d3c355e2d06c0",
+        "state": "OPEN",
+        "title": "Member C W18 approved dispatch and verification"
+      }
+    },
+    "member_d": {
+      "authority": "D owns policy authorization and control authority",
+      "merged_policy_contract": "control/src/coldguard_control/policy.py (origin/main)",
+      "physical_verification_interface": "feat/d-w10-w13-diagnosis-predictive-stacked@7e9aad6 UNMERGED",
+      "predictive_policy_status": "NOT_FROZEN"
+    },
+    "model_config": {
+      "file_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+      "version": "coldguard-xgb-v1-development-v1"
+    },
+    "w15_model": {
+      "manifest_path": "ml/reports/W15/model/model-manifest-W15.json",
+      "manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "model_path": "ml/reports/W15/model/model.ubj",
+      "model_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+    },
+    "w16_readiness": {
+      "holdout_opened": false,
+      "locked_evaluation": "NOT_EXECUTED_PREREQUISITES_UNMET",
+      "manifest_path": "ml/reports/W16/locked-test-manifest-W16.json",
+      "manifest_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+      "model_release_candidate": "NOT_ISSUED",
+      "readiness_decision": "REFUSED_PREREQUISITES_UNMET"
+    },
+    "w17_shadow": {
+      "freshness_software_verified": true,
+      "live_shadow": "LIVE_SHADOW_NOT_ESTABLISHED",
+      "manifest_path": "ml/reports/W17/w17-manifest.json",
+      "manifest_sha256": "8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+      "record_count": 783,
+      "report_sha256": {
+        "feature-freshness-W17.md": "4dd4566a906997a0ddc2ca888e0a081c0fa2b077f3a3be83390de074c6c6f867",
+        "online-offline-parity-W17.md": "0771bebcaf09c5eb009d3152c3ad3a62829f018f0da17d3ba0d780059fe1910d",
+        "shadow-readiness-W17.md": "80abc84ca37bee107bf12dd2e334d91a61a5a77268df48179394f4f093050749"
+      },
+      "runtime_freshness_policy": "RUNTIME_FRESHNESS_POLICY_PENDING_C_D",
+      "trace_file_sha256": "b94822dea729cbf8953fe95b254a80689daa1c6c5bdd4a7fa442be0964eeb023",
+      "trace_internal_sha256": "fc9dd80efa418aea651c80342dd0fc3d9b9d353af3b7e794ceee6c61e97a03e4",
+      "trace_path": "ml/reports/W17/shadow-trace-W17.json"
+    }
+  },
+  "layer_version": "coldguard-w18-runtime-monitoring-v1",
+  "limitations": [
+    "synthetic software controls only; no live inference or physical run",
+    "W17 replay has no authorized policy, command, ACK or physical stage",
+    "the TEST_ONLY fixture proves parsing and refusals, not physical execution",
+    "runtime freshness policy, horizon, threshold and persistence remain unfrozen",
+    "C/D interfaces are open and unmerged; field names are not a frozen API",
+    "Member A W18 dossier records zero physical dry runs",
+    "approval records are shape-checked only; B cannot verify external signatures",
+    "a measured physical trace class is scheduled debt before authorized operation",
+    "no model release, no G4 readiness and no Controller B signoff is issued"
+  ],
+  "next_member_b_action": "Prepare only W19 pair-ledger software scaffolding; do not authorize or start the final paired campaign while Gate G4 remains NOT_READY.",
+  "physical_authorization_status": "CONTROLLER_B_NOT_AUTHORIZED",
+  "readiness": {
+    "approval_effect": "NONE_SOFTWARE_ASSESSMENT_ONLY",
+    "blockers": [
+      "prediction_freshness",
+      "policy_freeze",
+      "approved_model_candidate",
+      "locked_predictive_evaluation",
+      "c_inference_trace_integration",
+      "d_policy_safety_authorization",
+      "a_physical_response_verification",
+      "g4_evidence"
+    ],
+    "dimensions": [
+      {
+        "canonical_ref": "05B \u00a746; 03 \u00a792",
+        "dimension_id": "model_identity",
+        "evidence": "W15 model manifest 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+        "observed": "783/783 runtime records match the declared model identity",
+        "owner": "B",
+        "requirement": "Correct model identity (artifact ID, SHA-256, config binding, library).",
+        "status": "READY"
+      },
+      {
+        "canonical_ref": "05B \u00a746; 03 \u00a792",
+        "dimension_id": "feature_schema_compatibility",
+        "evidence": "W10 registry; W15 manifest 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+        "observed": "28 ordered features; schema 1d36d338f35dd448",
+        "owner": "B",
+        "requirement": "Feature/schema compatibility (version, order, schema hash).",
+        "status": "READY"
+      },
+      {
+        "canonical_ref": "05B \u00a746; 02 \u00a75",
+        "dimension_id": "prediction_freshness",
+        "evidence": "W17 manifest 8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+        "observed": "SOFTWARE_FRESHNESS_VERIFIED; RUNTIME_FRESHNESS_POLICY_PENDING_C_D",
+        "owner": "C/D",
+        "requirement": "Prediction freshness under a defined runtime policy.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "03 \u00a758-60",
+        "dimension_id": "risk_score_semantics",
+        "evidence": "W17 manifest 8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+        "observed": "risk_score semantics in every monitored record; no probability wording",
+        "owner": "B",
+        "requirement": "Risk-score semantics (never calibrated probability).",
+        "status": "READY"
+      },
+      {
+        "canonical_ref": "03 \u00a744, \u00a787-88; 04 \u00a711.4",
+        "dimension_id": "policy_freeze",
+        "evidence": "W15 manifest 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+        "observed": "target=DEVELOPMENT_CANDIDATE_NOT_FROZEN; horizon=ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN; threshold=ILLUSTRATIVE_NOT_FROZEN; persistence=NOT_FROZEN",
+        "owner": "B/D/TEAM_LEAD",
+        "requirement": "Horizon, threshold and persistence frozen by their authorities.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "05B \u00a745; 03 \u00a71.2",
+        "dimension_id": "offline_parity",
+        "evidence": "W17 manifest 8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+        "observed": "feature=OFFLINE_FEATURE_PARITY_VERIFIED; prediction=OFFLINE_PREDICTION_PARITY_VERIFIED",
+        "owner": "B",
+        "requirement": "Offline feature and prediction parity evidence.",
+        "status": "READY"
+      },
+      {
+        "canonical_ref": "03 \u00a792-93",
+        "dimension_id": "approved_model_candidate",
+        "evidence": "W16 manifest 6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+        "observed": "model_release_candidate=NOT_ISSUED",
+        "owner": "TEAM_LEAD",
+        "requirement": "Approved real-model release candidate.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+        "dimension_id": "locked_predictive_evaluation",
+        "evidence": "W16 manifest 6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+        "observed": "locked_evaluation=NOT_EXECUTED_PREREQUISITES_UNMET",
+        "owner": "B/TEAM_LEAD",
+        "requirement": "Authorized frozen-model locked predictive evaluation.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "05B \u00a746; C W17/W18",
+        "dimension_id": "c_inference_trace_integration",
+        "evidence": "Member C PR #73 / #74 interface audit",
+        "observed": "PR_73_OPEN_UNMERGED; PR_74_OPEN_UNMERGED; NO_REAL_INFERENCE_RECORD",
+        "owner": "C",
+        "requirement": "Actual C inference/trace integration.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "02 \u00a71.6; 04 \u00a733",
+        "dimension_id": "d_policy_safety_authorization",
+        "evidence": "Member D control interfaces; PR #74 open",
+        "observed": "D_PREDICTIVE_POLICY_NOT_FROZEN; COMMAND_AUTHORITY_NOT_ESTABLISHED",
+        "owner": "D",
+        "requirement": "D policy and safety authorization.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "01 \u00a71.5-1.7; 03 \u00a7137",
+        "dimension_id": "a_physical_response_verification",
+        "evidence": "evidence/A/W18 dry-run index and pre-run checklist",
+        "observed": "dry_runs_recorded=0; enablement=BLOCKED_ON_PREREQUISITES; physical_state=PENDING_BENCH_EXECUTION",
+        "owner": "A",
+        "requirement": "A independently verified electrical and thermal response.",
+        "status": "BLOCKED"
+      },
+      {
+        "canonical_ref": "04 \u00a731",
+        "dimension_id": "g4_evidence",
+        "evidence": "W16 manifest 6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+        "observed": "W16 readiness decision=REFUSED_PREREQUISITES_UNMET",
+        "owner": "TEAM",
+        "requirement": "Complete Gate G4 evidence.",
+        "status": "BLOCKED"
+      }
+    ],
+    "fake_approval_detected": false,
+    "gate_g4": "NOT_READY",
+    "human_authority_note": "Project lead and responsible A/C/D owners control final acceptance; this software assessment cannot issue a physical signoff, approve a model release, or authorize Controller B. Approval records are shape-checked only; B cannot verify external signatures offline.",
+    "model_release": "NOT_ISSUED",
+    "physical_intervention_trace": "NOT_ESTABLISHED",
+    "readiness_status": "BLOCKED",
+    "signoff": "WITHHELD",
+    "signoff_withheld": true,
+    "software_monitoring": "VERIFIED",
+    "trace_validator": "VERIFIED"
+  },
+  "reports": {
+    "controller-b-readiness-W18.md": "62a0388ee073f12d18adbb9a82c1ebe4fdb2bf3d8ff0bb0197ada21c60096ad9",
+    "no-online-tuning-W18.md": "850b02fdce6deb0582e739ad099ff24e5c04c35f3c07f4a4c939a69b1fe9b4d3",
+    "predictive-trace-W18.md": "330d778918b999d748e29ef30d065b0efeee85219e63535ae6101021c8e85601",
+    "runtime-monitor-W18.md": "aae7f4c89666c7f4bfc73a443275fa95a274a3d4dc4e1bb2a08b2580374e88d6"
+  },
+  "revision_semantics": "W17_STACK_HEAD_BASE_NOT_W18_DELIVERY_COMMIT",
+  "runtime_monitor": {
+    "control_claim_count": 0,
+    "identity_match_all": true,
+    "physical_authorization": false,
+    "reason_counts": {},
+    "record_count": 783,
+    "release_claim_count": 0,
+    "representative_dimensions": [
+      [
+        "MODEL_IDENTITY",
+        7,
+        7,
+        0,
+        0
+      ],
+      [
+        "FEATURE_IDENTITY",
+        6,
+        6,
+        0,
+        0
+      ],
+      [
+        "PREDICTION_SEMANTICS",
+        4,
+        4,
+        0,
+        0
+      ],
+      [
+        "FRESHNESS",
+        6,
+        6,
+        0,
+        0
+      ]
+    ],
+    "representative_record": "CG-W11-S1-003/CG-W11-S1-003-BOOT-1/pred-w17-eeb47c72a8174e8a5d86532a22a78bf4",
+    "scientific_release_eligibility": false,
+    "sequence": {
+      "group_count": 16,
+      "groups": [
+        {
+          "boot_id": "CG-W11-S1-003-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-003"
+        },
+        {
+          "boot_id": "CG-W11-S1-004-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-004"
+        },
+        {
+          "boot_id": "CG-W11-S1-005-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-005"
+        },
+        {
+          "boot_id": "CG-W11-S1-006-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-006"
+        },
+        {
+          "boot_id": "CG-W11-S1-007-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-007"
+        },
+        {
+          "boot_id": "CG-W11-S1-008-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-008"
+        },
+        {
+          "boot_id": "CG-W11-S1-009-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-009"
+        },
+        {
+          "boot_id": "CG-W11-S1-010-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S1-010"
+        },
+        {
+          "boot_id": "CG-W11-S2-003-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 48,
+          "run_id": "CG-W11-S2-003"
+        },
+        {
+          "boot_id": "CG-W11-S2-004-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-004"
+        },
+        {
+          "boot_id": "CG-W11-S2-005-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-005"
+        },
+        {
+          "boot_id": "CG-W11-S2-006-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-006"
+        },
+        {
+          "boot_id": "CG-W11-S2-007-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-007"
+        },
+        {
+          "boot_id": "CG-W11-S2-008-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-008"
+        },
+        {
+          "boot_id": "CG-W11-S2-009-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-009"
+        },
+        {
+          "boot_id": "CG-W11-S2-010-BOOT-1",
+          "chronological": true,
+          "first_seq": 0,
+          "last_seq": 180,
+          "monotonic": true,
+          "record_count": 49,
+          "run_id": "CG-W11-S2-010"
+        }
+      ],
+      "issues": [],
+      "passed": true,
+      "record_count": 783
+    },
+    "verdict_counts": {
+      "MONITOR_SOFTWARE_VALID": 783
+    },
+    "w17_record_count": 783
+  },
+  "schema": "coldguard-w18-runtime-readiness-v1",
+  "scientific_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "source_revision": "d3de0716f9694b37a6da50fd3935534bfe14038c",
+  "unfinished_physical_requirements": [
+    "frozen approved model release candidate",
+    "frozen primary horizon, threshold and warning persistence",
+    "locked predictive evaluation by its authorized owner",
+    "live C inference and trace integration",
+    "D policy and safety authorization",
+    "A electrical and thermal physical response verification",
+    "complete Gate G4 evidence",
+    "Controller B physical dry runs and human signoff"
+  ],
+  "verdicts": {
+    "B_W18_01_MODEL_MONITORING": "SOFTWARE_VERIFIED",
+    "B_W18_02_TRACE_VALIDATION": "SOFTWARE_VERIFIED",
+    "B_W18_03_NO_ONLINE_TUNING": "SOFTWARE_VERIFIED",
+    "B_W18_04_CONTROLLER_B_READINESS": "SIGNOFF_WITHHELD",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "G4": "NOT_READY",
+    "MODEL_RC": "NOT_ISSUED",
+    "PHYSICAL_INTERVENTION_TRACE": "NOT_ESTABLISHED",
+    "SOFTWARE": "COMPLETE_PERMITTED_W18_SCOPE",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W17_LIVE_SHADOW": "LIVE_SHADOW_NOT_ESTABLISHED"
+  },
+  "w17_trace_assessment": {
+    "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "freshness_verdict_counts": {
+      "FRESH": 783
+    },
+    "missing_stages": [
+      "command",
+      "ack",
+      "applied_state",
+      "physical_verification"
+    ],
+    "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "outcome": "TRACE_PARTIAL_MISSING_EVIDENCE",
+    "physical_chain_status": "PHYSICAL_CHAIN_UNAVAILABLE_NO_AUTHORIZED_POLICY_COMMAND_STAGE",
+    "physical_control_capability": false,
+    "policy_status_counts": {
+      "NOT_EVALUATED": 783
+    },
+    "policy_violation_count": 0,
+    "record_count": 783,
+    "records_copied": false,
+    "stage_status": {
+      "ack": "ABSENT",
+      "applied_state": "ABSENT",
+      "command": "ABSENT",
+      "physical_verification": "ABSENT",
+      "policy": "HYPOTHETICAL_ONLY_NOT_EVALUATED",
+      "prediction": "PRESENT",
+      "warning": "PRESENT_SYNTHETIC_ILLUSTRATIVE"
+    },
+    "trace_schema": "coldguard-w17-shadow-trace-v1",
+    "trace_sha256": "fc9dd80efa418aea651c80342dd0fc3d9b9d353af3b7e794ceee6c61e97a03e4",
+    "trace_sha256_valid": true,
+    "warning_status_counts": {
+      "NOT_TRIGGERED_SYNTHETIC_ILLUSTRATIVE": 623,
+      "TRIGGERED_SYNTHETIC_ILLUSTRATIVE": 160
+    }
+  }
+}
