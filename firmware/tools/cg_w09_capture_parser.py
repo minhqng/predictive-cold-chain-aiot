@@ -203,7 +203,7 @@ CSV_COLUMN_ALIASES = {
 }
 CSV_COLUMNS_REMOVED_IN_NORMALIZATION = ("session", "stage_elapsed_s")
 
-HOST_TIME_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z)\s+")
+HOST_TIME_RE = re.compile(r"^(\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d+)?(?:Z|[+-]\d{2}:\d{2}))\s+")
 TOKEN_RE = re.compile(r"^[A-Za-z0-9_]+=")
 
 
@@ -362,10 +362,16 @@ def strip_host_capture_time(line: str) -> tuple[str | None, str]:
 
 
 def host_time_is_iso_z(value: str) -> bool:
-    try:
-        datetime.datetime.strptime(value, "%Y-%m-%dT%H:%M:%SZ")
-    except ValueError:
-        return False
+    """True for any host ISO stamp the collector can emit (Z or offset, with
+    or without fractional seconds) - the transcript prefix grammar."""
+    for fmt in ("%Y-%m-%dT%H:%M:%SZ", "%Y-%m-%dT%H:%M:%S%z",
+                "%Y-%m-%dT%H:%M:%S.%fZ", "%Y-%m-%dT%H:%M:%S.%f%z"):
+        try:
+            datetime.datetime.strptime(value, fmt)
+        except ValueError:
+            continue
+        return True
+    return False
     return True
 
 

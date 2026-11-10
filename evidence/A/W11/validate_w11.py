@@ -233,7 +233,7 @@ def main() -> int:
         path = DOSSIER / name
         if not path.is_file():
             failures.append(f"{name} is not on disk")
-        elif path.read_text(encoding="utf-8", newline="\n") != text:
+        elif path.open(encoding="utf-8", newline="\n").read() != text:
             failures.append(f"{name} does not reproduce from the delivered tooling")
 
     frames, _ = cp.read_csv_capture(builder.W04_CSV, builder.RUN_LABEL)

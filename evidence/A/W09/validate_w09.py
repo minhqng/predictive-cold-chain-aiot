@@ -381,7 +381,7 @@ def main() -> int:
         path = DOSSIER / name
         if not path.is_file():
             failures.append(f"{name} is not a derived artifact on disk")
-        elif path.read_text(encoding="utf-8", newline="\n") != text:
+        elif path.open(encoding="utf-8", newline="\n").read() != text:
             failures.append(f"{name} does not reproduce from the delivered tooling")
 
     export = read_json(f"exports/{builder.EXPORT_RUN_ID}.json")

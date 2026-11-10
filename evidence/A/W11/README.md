@@ -105,3 +105,11 @@ py evidence/A/W11/validate_w11.py
   candidate and `additional_s1_or_s2_runs_available` stays 0.
 * The W11 host tests in `firmware/tools/tests/test_cg_w11_s4.py` prove the rules;
   they are not physical verification, and their count is not part of the evidence.
+
+## CURRENT HANDOFF (2026-11-07)
+
+The accepted real S1/S2 dataset is published at `evidence/A/SOURCES/20261107/datasets/`
+(18 runs, 9,293 measured frames, manifest + SHA256SUMS + standalone regeneration).
+Earlier sections of this document are historical snapshots of the weeks when this
+dataset did not yet exist; verdicts above describe those snapshots, not the current
+package. Consumers: read `README.md` + `manifest.json` in that directory first.

@@ -180,7 +180,7 @@ def main(argv: list[str] | None = None) -> int:
             path = EVIDENCE / name
             if not path.is_file():
                 drifted.append(f"{name}: missing")
-            elif path.read_text(encoding="utf-8", newline="\n") != text:
+            elif path.open(encoding="utf-8", newline="\n").read() != text:
                 drifted.append(f"{name}: differs from a fresh derivation")
         if drifted:
             print("W15 ARTIFACT CHECK: DRIFTED")

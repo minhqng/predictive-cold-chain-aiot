@@ -1,9 +1,70 @@
 # Member A — supervised session plan and physical acceptance queue
 
+## SESSION STATUS LEDGER (2026-11-09 — read this first)
+
+The S-0..S-4 sessions below were planned when the repository held a single 957-row capture.
+Most of them HAVE SINCE RUN as part of the 2026-11-07 dataset campaign; the detailed recipes
+below are retained for procedural traceability. Current execution state:
+
+| Planned session | Current state | Evidence |
+|---|---|---|
+| S-0 unpowered inspection | **DONE** (photo-supported): W12-03 mechanical audit PASS 2026-11-05 (holder photo, wiring set, terminals), W23 kit/photo submission 2026-11-08 (fuse block installed, spare fuses 10/20/30 A, spare wire + fastons, tools, runbook v2) — all SHA256-verified | store A-W12-03 PASS; `attachments/A-W08-02/`, `evidence/A/W23/operator-submission-20261108/` |
+| S-1 passive warm-up reps | **DONE**: warm-up/recovery segments + 4 accepted S1 trials (2026-11-07) + 1 additional independent S1 trial (2026-11-09, `boot_id c0e43470`, 600/600 frames) | accepted dataset run 1-4; `evidence/A/SOURCES/20261109/s1/`; store A-W07-02, A-W09-02, A-W11-03 PASS |
+| S-2 cooling-step repeats | **DONE** (within the already-demonstrated envelope): W07 repeats + H8 C/D/E segments at 999 permille, ≤600 s, hot-side ≤ 39.94 C observed; store A-W07-03 PASS | accepted dataset `raw/w07-repeats/`, H8 sessions; label: observed envelope, not a rating |
+| S-3 S2 door disturbances | **DONE**: 4 door runs + 1 timing window (MC-38 authoritative), 2026-11-07 | accepted dataset `raw/s2-door-20261107/`; store A-W10-03 PASS |
+| S-4 S4 refusal evidence | **DONE at the refusal-state level** (handler refuses: LIMITS_UNRESOLVED, 0.0 A, no thermal response despite refusal); 0 publishable S4 physical-run sessions claimed | store A-W11-02 PASS |
+| Loaded TEC session (A-W08-03, **outside** the S-1..S-4 list) | **NOT RUN — the one remaining gated physical session** | see the gate chain below |
+| Short re-characterization (A-W16-01..03) | NOT RUN; prereq A-W08-03 + B freeze | coverage-matrix current audit |
+
+### The remaining gated session (the only planned executable hardware work left for W07–W16)
+
+**Objective:** one supervised 600 s COOLING_STEP on the stage-enabled canonical image with
+the fused TEC branch — closes A-W08-03, then offline A-W09-04 and A-W16-02 (computable,
+no extra power), then A-W16-01 (OFF envelope 120 s + ON step 120 s + S2 180 s) in the same
+or a follow-up session.
+
+**Preconditions (each is a hard gate, in order):**
+1. Member D freezes the hot-side limit and the six TEC operating limits in the delivered
+   firmware (55 C default is PROVISIONAL; the six are `UNRESOLVED` and START fails closed —
+   correct behaviour, not a defect).
+2. Member A rebuilds the stage-enabled W06 image from the frozen limits (rebuild authorized
+   only after the freeze), operator consents to flash with the recorded backup-first recipe
+   (`tools/acceptance/README.md` — read-flash backup, -text-pinned restore images).
+3. Post-flash boot proof observed read-only: `output_stage=ENABLED`, six TEC_LIMIT RESOLVED,
+   canonical `firmware_version`, stable `boot_id`.
+4. Operator verifies the slot-3 15 A blade and inserts it (the A-W08-02 PASS selection;
+   certified ampacity remains explicitly uncertified and no other rating may be improvised).
+5. Classify or explicitly accept the 7.15 A zero-duty anomaly as a known open risk before
+   energising (it is NOT resolved by the 2026-11-09 passive trial — the branch was open).
+
+**Operator actions at the session:** seat the fuse, sit at the PSU, give live
+SUPERVISE→ARM→START consent for the single 600 s step, abort on the recorded stop rules
+(zero/abnormal current vs commanded ON, any probe INVALID, branch heating/smell/
+discoloration, verify-fail repeat), STOP, safe shutdown (TEC OFF, PSU OFF, final state logged).
+
+**Safety restrictions:** duty capped at the already-demonstrated 999 permille; duration ≤ the
+observed ~600 s + the W16 needs; abort rules A-W18-05; no limit-raising, no rewiring, no
+fuse substitution, no duty ladder invention (PWM is NO-GO until characterized).
+
+**Evidence to collect:** raw capture + host summary (zero-write tools), live ARM/START/STOP
+ACK trace, qualified electrical status per frame, thermal sustainability CSV + hot-side
+trace, terminal/IBT-2 touch-free temperature observation, invalidation log (retain invalid
+attempts, never delete), final seal manifest with SHA-256.
+
+**Acceptance criteria (store authoritative):** ≥180 frames/600 s, coverage ≥ 0.85,
+applied-state ON frames > 0, current ≥ 0.1 A, hot-side max ≤ D-frozen limit, fault bits 0,
+stop acknowledged, single boot. Closes: A-W08-03 (→ A-W16-01, A-W16-02, A-W09-04 offline).
+
+**Independent-run note:** one boot, one run; phases inside one boot are segments, not runs.
+
+## Historical plan (pre-dataset era — retained for traceability)
+
 Status: **Member A input only.** Nothing here authorises energisation. Each powered
 session requires the operator's explicit case-by-case GO, and the safety gate in §1
 must be closed first. The conductor/fuse reasoning this plan rests on is recorded in
-`evidence/A/W04/fuse-commissioning-note.md` §3-§4 on this branch.
+`evidence/A/W04/fuse-commissioning-note.md` §3-§4 on this branch. The sessions S-0..S-4
+in this historical section have corresponding execution evidence per the ledger above;
+where a recipe below and the ledger disagree on current state, the ledger wins.
 
 ## 1. GO / NO-GO — read this before any powered session
 
