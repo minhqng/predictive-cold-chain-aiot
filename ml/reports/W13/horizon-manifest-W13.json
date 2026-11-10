@@ -1,0 +1,1766 @@
+{
+  "analysis_code_sha256": "24f06d04770a6af7fc21cae2d82b75927b4351a7d9b4ad501f86ebc93b24121f",
+  "artifacts": {
+    "horizon-metrics.csv": {
+      "file": "horizon-metrics.csv",
+      "sha256": "a086364bff69a91495c8c35ba76c5e5447704d7bb4f8adb3b0f136f7b68691cb"
+    },
+    "horizon-study.md": {
+      "file": "horizon-study.md",
+      "sha256": "7f754417e23f354225a7fa8bc72e57d61aedcb86c2fbd727408c077e2527d368"
+    },
+    "primary-horizon-decision.md": {
+      "file": "primary-horizon-decision.md",
+      "sha256": "f3b263fca4ed494d5ae279fc39ea16d2c66d861718b29a316bcc878b0234c90b"
+    }
+  },
+  "candidate_screenings": [
+    {
+      "aiw_upper_bound_s": -21.0,
+      "caveats": [
+        "thermal proxy is a raw first-crossing on one boot, anchored on the applied-on frame, not on a warning",
+        "tau proxies under-estimate tau by window truncation",
+        "command->electrical is n=1 on a console path, not a backend-command distribution",
+        "T_system is unmeasured (network command path absent); the bound assumes only T_system >= 0"
+      ],
+      "cooling_tau_ratio": 0.1724137931034483,
+      "horizon_s": 30.0,
+      "rationale": "H=30s does not exceed the measured applied-on->1 degC thermal response proxy (51s); AIW <= -21s even with zero system latency, so this horizon is deprioritized as a primary candidate and retained for sensitivity only",
+      "screen": "DEPRIORITIZED_PHYSICS_PROXY",
+      "status": "DERIVED_PROXY_SCREENING_NOT_A_MEASURED_VERDICT"
+    },
+    {
+      "aiw_upper_bound_s": 9.0,
+      "caveats": [
+        "thermal proxy is a raw first-crossing on one boot, anchored on the applied-on frame, not on a warning",
+        "tau proxies under-estimate tau by window truncation",
+        "command->electrical is n=1 on a console path, not a backend-command distribution",
+        "T_system is unmeasured (network command path absent); the bound assumes only T_system >= 0"
+      ],
+      "cooling_tau_ratio": 0.3448275862068966,
+      "horizon_s": 60.0,
+      "rationale": "H=60s leaves at most 9s of AIW headroom before the unknown system latency; actionability is not established and the horizon stays provisional",
+      "screen": "PROVISIONAL_PENDING_EVIDENCE",
+      "status": "DERIVED_PROXY_SCREENING_NOT_A_MEASURED_VERDICT"
+    },
+    {
+      "aiw_upper_bound_s": 69.0,
+      "caveats": [
+        "thermal proxy is a raw first-crossing on one boot, anchored on the applied-on frame, not on a warning",
+        "tau proxies under-estimate tau by window truncation",
+        "command->electrical is n=1 on a console path, not a backend-command distribution",
+        "T_system is unmeasured (network command path absent); the bound assumes only T_system >= 0"
+      ],
+      "cooling_tau_ratio": 0.6896551724137931,
+      "horizon_s": 120.0,
+      "rationale": "H=120s leaves at most 69s of AIW headroom before the unknown system latency; actionability is not established and the horizon stays provisional",
+      "screen": "PROVISIONAL_PENDING_EVIDENCE",
+      "status": "DERIVED_PROXY_SCREENING_NOT_A_MEASURED_VERDICT"
+    },
+    {
+      "aiw_upper_bound_s": 249.0,
+      "caveats": [
+        "thermal proxy is a raw first-crossing on one boot, anchored on the applied-on frame, not on a warning",
+        "tau proxies under-estimate tau by window truncation",
+        "command->electrical is n=1 on a console path, not a backend-command distribution",
+        "T_system is unmeasured (network command path absent); the bound assumes only T_system >= 0"
+      ],
+      "cooling_tau_ratio": 1.7241379310344827,
+      "horizon_s": 300.0,
+      "rationale": "H=300s leaves at most 249s of AIW headroom before the unknown system latency; actionability is not established and the horizon stays provisional",
+      "screen": "PROVISIONAL_PENDING_EVIDENCE",
+      "status": "DERIVED_PROXY_SCREENING_NOT_A_MEASURED_VERDICT"
+    }
+  ],
+  "decision": {
+    "blockers": [
+      "real_eligible_predictive_runs",
+      "critical_criterion_frozen",
+      "door_to_critical_measured",
+      "measured_latency_chain",
+      "selection_rule_frozen_before_outcomes"
+    ],
+    "category": "PROVISIONAL_CANDIDATE_ONLY",
+    "deprioritized_s": [
+      30.0
+    ],
+    "display_category": "PROVISIONAL_CANDIDATE_ONLY",
+    "freeze_status": "NOT_FROZEN",
+    "primary_horizon_s": null,
+    "provisional_candidates_s": [
+      60.0,
+      120.0,
+      300.0
+    ],
+    "rationale": [
+      "candidate set comes from the canonical 30/60/120/300 s exploratory horizons for the fast six-litre plant; no longer horizon is invented because the measured tau proxies are truncation-biased",
+      "physics screening deprioritizes horizons at or below the measured applied-on->thermal response proxy (AIW upper bound <= 0 even with zero system latency); the screening is DERIVED, not a measured verdict",
+      "synthetic per-horizon AP is a software control; the highest synthetic AP never selects a primary horizon",
+      "real predictive eligibility is refused (0 eligible runs); real prevalence, AP, event recall, false warnings, EWT and AIW are NOT_ESTIMABLE, not zero",
+      "T_critical, representative temperature and the primary horizon remain unfrozen ledger items; D's critical-Tmean threshold freeze and A's offline door->critical rerun are outstanding"
+    ],
+    "selection_preconditions": {
+      "critical_criterion_frozen": false,
+      "door_to_critical_measured": false,
+      "locked_test_untouched": true,
+      "measured_latency_chain": false,
+      "real_eligible_predictive_runs": false,
+      "selection_rule_frozen_before_outcomes": false
+    }
+  },
+  "deterministic": true,
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_command": "python scripts/horizon-study-W13.py --a-dataset-dir <A_DATASET_EXPORT>/evidence/A/SOURCES/20261107/datasets --out reports/W13 --repository-revision a27eeede5ab920dcb7e06a8cce6c8618cabdd8cf",
+  "hard_boundaries": [
+    "18 exported rows/segments are never 18 independent runs; the independence ceiling is the distinct boot count and shared-boot windows carry A's independence caveat",
+    "A scenario acceptance (A-W09-02 / A-W10-03 PASS) is not B predictive eligibility; the W04 admission ladder refuses every real run here",
+    "synthetic per-horizon AP is a software control; the highest synthetic AP never selects a primary horizon",
+    "missing timing inputs stay NOT_ESTIMABLE; they are never zero",
+    "the locked test partition is never read and no horizon is frozen",
+    "PR #95 is OPEN/unmerged: cited with a verified pin, never consumed as canonical evidence",
+    "no W04-W12 defect is fixed inside W13; the B stack is not rebased; A/C/D source evidence is preserved byte-for-byte"
+  ],
+  "layer_version": "coldguard-w13-horizon-engineering-v1",
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "plant_timing": {
+    "command_to_electrical_s": 1.094,
+    "command_to_thermal_s": 51.0,
+    "cooling_tau_s": 174.0,
+    "door_to_critical_s": null,
+    "door_to_critical_status": "NOT_COMPUTABLE",
+    "electrical_n_measured": 1,
+    "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_CAPTURES",
+    "gaps": [
+      {
+        "ask": "A-W13-03 door->critical time",
+        "closes_with": "supervised S2 door-disturbance capture under the frozen critical definition",
+        "id": "GAP-DOOR-CRITICAL",
+        "owner": "Member A (physical) / Member D (critical definition)",
+        "status": "NOT_COMPUTABLE",
+        "why": "no door-open event in any committed capture"
+      },
+      {
+        "ask": "backend command -> device latency",
+        "closes_with": "a transport decision with Member C and an authorized energized session",
+        "id": "GAP-NETWORK-COMMAND-LATENCY",
+        "owner": "Member C / Member D",
+        "status": "NOT_COMPUTABLE",
+        "why": "production firmware has no network command path (output stage compiled out)"
+      },
+      {
+        "ask": "A-W13-01 median/P95 distribution",
+        "closes_with": "additional clean START traces converted to the H6 schema, then re-run",
+        "id": "GAP-COMMAND-ELECTRICAL-DISTRIBUTION",
+        "owner": "Member A",
+        "status": "SINGLE_OBSERVATION",
+        "why": "one committed console trace yields one command->electrical event; H7 run logs live in a sibling commissioning worktree (read-only), not in this branch"
+      }
+    ],
+    "passive_drift_c": 0.104,
+    "passive_window_min": 3.633,
+    "physical_verified": false,
+    "recovery_tau_s": 86.0,
+    "tau_limitation": "uses the observed endpoints as the swing; a run that has not reached steady state under-estimates tau",
+    "thermal_delta_c": 1.0
+  },
+  "reconciliation": {
+    "accepted_s1_windows": 4,
+    "accepted_s2_windows": 5,
+    "distinct_boots": 8,
+    "frames_total": 9293,
+    "independence_statement": "18 exported rows/segments span 8 distinct boots; rows are never counted as independent runs",
+    "manifest_sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d",
+    "pr95_supplement": {
+      "classification": "NOT_VERIFIED_FOR_CANONICAL_USE",
+      "consumed_as_canonical_evidence": false,
+      "head_revision": "815387d19a3898e6b33ccb65758a554dd0c589e1",
+      "merge_status": "OPEN_UNMERGED",
+      "pr": 95,
+      "summary": "2026-11-09 passive S1 trial: capture PASS, VALID passive baseline, NOT ADMITTED to the frozen 18-row/segment export; door_status=UNVERIFIED, calibration_id=UNRECORDED, 2 PZEM timeout frames; supplementary material only, pending merge and its restrictions a-g",
+      "trial_json_sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14"
+    },
+    "predictive_eligible_runs": 0,
+    "refusal_reasons": [
+      "EVENT_UTC_UNAVAILABLE_DEVICE_HAS_NO_WALL_CLOCK",
+      "HOST_RECEIPT_TIME_IS_NOT_PHYSICAL_EVENT_TIME",
+      "CLOCK_SYNC_NOT_EVIDENCED_IN_PACKAGE",
+      "RUN_IDENTITY_UNRESOLVED_FOR_CG_RUN_PATTERN",
+      "CALIBRATION_TRACEABILITY_ABSENT_FROM_PACKAGE_SCHEMA",
+      "SEGMENTS_SHARE_BOOTS_ROWS_ARE_NOT_INDEPENDENT_RUNS",
+      "CRITICAL_CRITERION_AND_REPRESENTATIVE_T_NOT_FROZEN"
+    ],
+    "row_count": 18,
+    "run_index_sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4",
+    "s2_door_scenario_rows": 5,
+    "source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+    "sources": [
+      {
+        "a_classification": "DATASET_ACCEPTED_S2",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/W10-02-normalized.csv",
+        "dataset_sha256": "36bddca2ecfc4f741512018102508cf8a441d96fb3b50efe8bafb4f2740f53d8",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 120,
+        "permitted_use": "SCENARIO_QA_AND_DOOR_DISTURBANCE_CHARACTERIZATION",
+        "run_tag": "W10-02",
+        "scenario": "S2_TIMING",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S2",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/W10-03-run1-normalized.csv",
+        "dataset_sha256": "06f93c3c851e6815b9a4c8c9e24898c173790b2eba149c257af6d5a3cf006335",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "SCENARIO_QA_AND_DOOR_DISTURBANCE_CHARACTERIZATION",
+        "run_tag": "W10-03-run1",
+        "scenario": "S2_DOOR",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S2",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/W10-03-run2-normalized.csv",
+        "dataset_sha256": "37101f71252d0a8df092176b821b09143b7e8d73526f10162937bb4916314b10",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "SCENARIO_QA_AND_DOOR_DISTURBANCE_CHARACTERIZATION",
+        "run_tag": "W10-03-run2",
+        "scenario": "S2_DOOR",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S2",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/W10-03-run3-normalized.csv",
+        "dataset_sha256": "994606017b9615a139f98b988031199271927772287b79bee902f76725d84803",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "SCENARIO_QA_AND_DOOR_DISTURBANCE_CHARACTERIZATION",
+        "run_tag": "W10-03-run3",
+        "scenario": "S2_DOOR",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S2",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/W10-03-run4-normalized.csv",
+        "dataset_sha256": "d55c94575b07930db78c9cf8ea08a9dd73e2b776e03512363bb0c10268d3d456",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "SCENARIO_QA_AND_DOOR_DISTURBANCE_CHARACTERIZATION",
+        "run_tag": "W10-03-run4",
+        "scenario": "S2_DOOR",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_FRAMES_OUTSIDE_TIMED_WINDOWS",
+        "b_classification": "DIAGNOSTIC_ONLY",
+        "boot_id": "73311d0c",
+        "dataset_path": "datasets/S2-20261107-between-window-normalized.csv",
+        "dataset_sha256": "42a71969f31412482195b88e54849c23a87eba375ff4edfc7779ac1acc069087",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 346,
+        "permitted_use": "NEVER_COUNTED_AS_AN_INDEPENDENT_RUN",
+        "run_tag": "S2-20261107-between-window",
+        "scenario": "S2_OUTSIDE",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S1",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4a21a645",
+        "dataset_path": "datasets/trial2-normalized.csv",
+        "dataset_sha256": "ee0562a481466dcbac568d89063f062af3a241afdae88299559c49154267d199",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 600,
+        "permitted_use": "SCENARIO_QA_AND_BASELINE_CHARACTERIZATION",
+        "run_tag": "trial2",
+        "scenario": "S1",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S1",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4a21a645",
+        "dataset_path": "datasets/trial3-normalized.csv",
+        "dataset_sha256": "3d90f92c630c1ce46becbc85882fcf1d578f41fcaee0985bc024acf1f9dd4848",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 600,
+        "permitted_use": "SCENARIO_QA_AND_BASELINE_CHARACTERIZATION",
+        "run_tag": "trial3",
+        "scenario": "S1",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S1",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4a21a645",
+        "dataset_path": "datasets/trial4-normalized.csv",
+        "dataset_sha256": "29c6e0b1e55552350de54584cf4f4159df94fb72b217cec19a46f3981638d6f9",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 601,
+        "permitted_use": "SCENARIO_QA_AND_BASELINE_CHARACTERIZATION",
+        "run_tag": "trial4",
+        "scenario": "S1",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_FRAMES_OUTSIDE_TIMED_WINDOWS",
+        "b_classification": "DIAGNOSTIC_ONLY",
+        "boot_id": "4a21a645",
+        "dataset_path": "datasets/S1-20261107-between-window-normalized.csv",
+        "dataset_sha256": "623eb5c8029fae17fb3cb9a9f1f61acbf34dcaffc379f7dd0484adacc43217e1",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 62,
+        "permitted_use": "NEVER_COUNTED_AS_AN_INDEPENDENT_RUN",
+        "run_tag": "S1-20261107-between-window",
+        "scenario": "S1_OUTSIDE",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "DATASET_ACCEPTED_S1",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "c20d17f6",
+        "dataset_path": "datasets/trial1-imported-normalized.csv",
+        "dataset_sha256": "414e182fa1546ae34237d5d7daf6208da20e36b555138ec501b31f73b39c33a8",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 600,
+        "permitted_use": "SCENARIO_QA_AND_BASELINE_CHARACTERIZATION",
+        "run_tag": "trial1-imported",
+        "scenario": "S1",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_RAW_COOLING / NOT_SCENARIO_QUALIFIED",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "56044b74",
+        "dataset_path": "datasets/H8-C-600s-TEC-100pct-normalized.csv",
+        "dataset_sha256": "ca6c4cb03d8d3f7ccdbcf6c1c47c1948f61996a80892423a1e897c0923b649e2",
+        "device_run_id": "run-00000000",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 957,
+        "permitted_use": "PLANT_TIMING_ANALYSIS_ONLY",
+        "run_tag": "H8-C-600s-TEC-100pct",
+        "scenario": "COOLING_STEP",
+        "timebase": "DEVICE_MS"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_RAW_COOLING / NOT_SCENARIO_QUALIFIED",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "c4ff0ab3",
+        "dataset_path": "datasets/H8-E-1800s-TEC-100pct-normalized.csv",
+        "dataset_sha256": "0db8ffe30c69f49faa26dfaf7a2448fbfa83e8439d7ed95828c6eca7ba52ec9c",
+        "device_run_id": "run-00000000",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 2915,
+        "permitted_use": "PLANT_TIMING_ANALYSIS_ONLY",
+        "run_tag": "H8-E-1800s-TEC-100pct",
+        "scenario": "COOLING_STEP_1800S",
+        "timebase": "DEVICE_MS"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_REPEATS / INDEPENDENCE_CAVEAT",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4b555191",
+        "dataset_path": "datasets/a-w07-02-run-1-4b555191-normalized.csv",
+        "dataset_sha256": "aee3cc8cfaf3604b9e4ddca55299f9c38873cd6ad3a18704f2784697dbf94ea0",
+        "device_run_id": "",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "DIAGNOSTIC_CONTINUITY_ONLY_NO_FULL_PROBE_ROWS",
+        "run_tag": "a-w07-02-run-1-4b555191",
+        "scenario": "W07_PASSIVE_REPEAT",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_REPEATS / INDEPENDENCE_CAVEAT",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4b555191",
+        "dataset_path": "datasets/a-w07-02-run-2-4b555191-normalized.csv",
+        "dataset_sha256": "1064f36ecfb4fab8ae77f5f4bd522b80c8f87eed903c47f48b760bf2c22ef870",
+        "device_run_id": "",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "DIAGNOSTIC_CONTINUITY_ONLY_NO_FULL_PROBE_ROWS",
+        "run_tag": "a-w07-02-run-2-4b555191",
+        "scenario": "W07_PASSIVE_REPEAT",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_REPEATS / INDEPENDENCE_CAVEAT",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "4b555191",
+        "dataset_path": "datasets/a-w07-02-run-3-4b555191-normalized.csv",
+        "dataset_sha256": "ee5ea52311df6faa21634a23f821ab856fc8bbc96c45f066777f25ee98c85c35",
+        "device_run_id": "",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 300,
+        "permitted_use": "DIAGNOSTIC_CONTINUITY_ONLY_NO_FULL_PROBE_ROWS",
+        "run_tag": "a-w07-02-run-3-4b555191",
+        "scenario": "W07_PASSIVE_REPEAT",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_RAW_COOLING / NOT_SCENARIO_QUALIFIED",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "be89bf4a",
+        "dataset_path": "datasets/a-w07-03-trial-2-be89bf4a-normalized.csv",
+        "dataset_sha256": "c3967dcb01da85964c0189ab4d7a89ad167e2282b1fd48d4a1977464c868a14c",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 196,
+        "permitted_use": "PLANT_TIMING_ANALYSIS_ONLY",
+        "run_tag": "a-w07-03-trial-2-be89bf4a",
+        "scenario": "COOLING_STEP_500PERMILLE",
+        "timebase": "HOST_STAMP"
+      },
+      {
+        "a_classification": "REAL_PHYSICAL_RAW_COOLING / NOT_SCENARIO_QUALIFIED",
+        "b_classification": "PHYSICAL_BUT_NOT_ELIGIBLE",
+        "boot_id": "f44c9bed",
+        "dataset_path": "datasets/a-w07-03-trial-3-f44c9bed-normalized.csv",
+        "dataset_sha256": "d22055c854e497d21cea2b2e4d33e664e27d4d53c5c4d7f21dd079ff122adbb6",
+        "device_run_id": "UNSET",
+        "device_timestamp_utc_source": "DEVICE_HAS_NO_WALL_CLOCK",
+        "frames": 196,
+        "permitted_use": "PLANT_TIMING_ANALYSIS_ONLY",
+        "run_tag": "a-w07-03-trial-3-f44c9bed",
+        "scenario": "COOLING_STEP_500PERMILLE",
+        "timebase": "HOST_STAMP"
+      }
+    ],
+    "superseded_evidence_notes": [
+      "evidence/A/W09/run-registry.json and evidence/A/W11/additional-valid-run-list.json record zero valid S1/S2 runs; those historical verdicts predate the merged 20261107 package and are superseded for scenario validity by A-W09-02 / A-W10-03 PASS (4 S1 windows, 4 S2 door runs). They are not rewritten, and scenario acceptance still does not grant B predictive eligibility.",
+      "evidence/A/W13/plant-timing-report.json refuses door->critical with the reason 'no door-open event exists in any committed capture'; that reason is stale because the merged package carries 5 S2 door/timing windows. The NOT_COMPUTABLE value itself stands: the critical definition is unfrozen (D threshold pending; A-W10-05 / A-W13-03 INCOMPLETE, offline rerun once frozen)."
+    ],
+    "verdict": "NO_RUN_ELIGIBLE_FOR_PREDICTIVE_DATASET"
+  },
+  "repository_inputs": {
+    "a_20261107_package": {
+      "consumption": "READ_ONLY_GIT_ARCHIVE_EXPORT_NEVER_REBASE",
+      "dataset_csv_sha256": {
+        "H8-C-600s-TEC-100pct-normalized.csv": "ca6c4cb03d8d3f7ccdbcf6c1c47c1948f61996a80892423a1e897c0923b649e2",
+        "H8-E-1800s-TEC-100pct-normalized.csv": "0db8ffe30c69f49faa26dfaf7a2448fbfa83e8439d7ed95828c6eca7ba52ec9c",
+        "S1-20261107-between-window-normalized.csv": "623eb5c8029fae17fb3cb9a9f1f61acbf34dcaffc379f7dd0484adacc43217e1",
+        "S2-20261107-between-window-normalized.csv": "42a71969f31412482195b88e54849c23a87eba375ff4edfc7779ac1acc069087",
+        "W10-02-normalized.csv": "36bddca2ecfc4f741512018102508cf8a441d96fb3b50efe8bafb4f2740f53d8",
+        "W10-03-run1-normalized.csv": "06f93c3c851e6815b9a4c8c9e24898c173790b2eba149c257af6d5a3cf006335",
+        "W10-03-run2-normalized.csv": "37101f71252d0a8df092176b821b09143b7e8d73526f10162937bb4916314b10",
+        "W10-03-run3-normalized.csv": "994606017b9615a139f98b988031199271927772287b79bee902f76725d84803",
+        "W10-03-run4-normalized.csv": "d55c94575b07930db78c9cf8ea08a9dd73e2b776e03512363bb0c10268d3d456",
+        "a-w07-02-run-1-4b555191-normalized.csv": "aee3cc8cfaf3604b9e4ddca55299f9c38873cd6ad3a18704f2784697dbf94ea0",
+        "a-w07-02-run-2-4b555191-normalized.csv": "1064f36ecfb4fab8ae77f5f4bd522b80c8f87eed903c47f48b760bf2c22ef870",
+        "a-w07-02-run-3-4b555191-normalized.csv": "ee5ea52311df6faa21634a23f821ab856fc8bbc96c45f066777f25ee98c85c35",
+        "a-w07-03-trial-2-be89bf4a-normalized.csv": "c3967dcb01da85964c0189ab4d7a89ad167e2282b1fd48d4a1977464c868a14c",
+        "a-w07-03-trial-3-f44c9bed-normalized.csv": "d22055c854e497d21cea2b2e4d33e664e27d4d53c5c4d7f21dd079ff122adbb6",
+        "trial1-imported-normalized.csv": "414e182fa1546ae34237d5d7daf6208da20e36b555138ec501b31f73b39c33a8",
+        "trial2-normalized.csv": "ee0562a481466dcbac568d89063f062af3a241afdae88299559c49154267d199",
+        "trial3-normalized.csv": "3d90f92c630c1ce46becbc85882fcf1d578f41fcaee0985bc024acf1f9dd4848",
+        "trial4-normalized.csv": "29c6e0b1e55552350de54584cf4f4159df94fb72b217cec19a46f3981638d6f9"
+      },
+      "export_command": "git archive d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85 evidence/A/SOURCES/20261107/datasets | tar -x -C <export-dir>",
+      "manifest_sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d",
+      "merge_provenance": "origin/main PR #91 (merged canonical)",
+      "run_index_sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4",
+      "source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85"
+    },
+    "a_timing_report": {
+      "path": "evidence/A/W13/plant-timing-report.json",
+      "sha256": "2826a71026e7d4b8dc2cf3413efb5e4983785fc59ae760586569b91279fb2169",
+      "source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85"
+    },
+    "pr95_supplement": {
+      "classification": "NOT_VERIFIED_FOR_CANONICAL_USE",
+      "consumed_as_canonical_evidence": false,
+      "head_revision": "815387d19a3898e6b33ccb65758a554dd0c589e1",
+      "merge_status": "OPEN_UNMERGED",
+      "pr": 95,
+      "summary": "2026-11-09 passive S1 trial: capture PASS, VALID passive baseline, NOT ADMITTED to the frozen 18-row/segment export; door_status=UNVERIFIED, calibration_id=UNRECORDED, 2 PZEM timeout frames; supplementary material only, pending merge and its restrictions a-g",
+      "trial_json_sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14"
+    }
+  },
+  "repository_revision": "a27eeede5ab920dcb7e06a8cce6c8618cabdd8cf",
+  "schema": "coldguard-w13-horizon-manifest-v1",
+  "scientific_verdicts": {
+    "HORIZON_DECISION": "PROVISIONAL_CANDIDATE_ONLY",
+    "HORIZON_EVALUATION_COMPLETENESS": "PARTIAL_3_OF_4_HORIZONS",
+    "LOCKED_TEST": "UNTOUCHED",
+    "PRIMARY_HORIZON_FROZEN": "NOT_FROZEN",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_PREDICTIVE_ADMISSION": "REFUSED_NO_ELIGIBLE_RUNS",
+    "SYNTHETIC_HORIZON_STUDY": "SOFTWARE_CONTROL_ONLY",
+    "W11_PIPELINE_DEFECT": "OPEN_EMPTY_RUN_POPULATION_MAX_ERROR_NOT_FIXED_IN_W13",
+    "W13_SOFTWARE": "GREEN"
+  },
+  "study": {
+    "base_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "fixture_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "horizons": [
+      {
+        "aggregate_ap": {
+          "B0_THRESHOLD": {
+            "fold_values": [
+              0.4057788028561846,
+              0.40594627287199814,
+              0.4061734952402616,
+              0.40703289078546895
+            ],
+            "instability_range": 0.001254087929284331,
+            "max": 0.40703289078546895,
+            "mean": 0.4062328654384783,
+            "min": 0.4057788028561846,
+            "status": "DEFINED",
+            "std": 0.00048266797699471765
+          },
+          "B1_HYSTERESIS": {
+            "fold_values": [
+              0.31746031746031744,
+              0.29850746268656714,
+              0.35294117647058826,
+              0.30927835051546393
+            ],
+            "instability_range": 0.05443371378402112,
+            "max": 0.35294117647058826,
+            "mean": 0.3195468267832342,
+            "min": 0.29850746268656714,
+            "status": "DEFINED",
+            "std": 0.02041832852273777
+          },
+          "TRAIN_FOLD_CLASS_WEIGHT": {
+            "fold_values": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "instability_range": 0.0,
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "status": "DEFINED",
+            "std": 0.0
+          },
+          "UNWEIGHTED": {
+            "fold_values": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "instability_range": 0.0,
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "status": "DEFINED",
+            "std": 0.0
+          }
+        },
+        "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+        "aiw_status": "NOT_ESTIMABLE",
+        "censored_exclusions": 480,
+        "evaluable_samples": 2416,
+        "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+        "ewt_status": "NOT_ESTIMABLE",
+        "horizon_s": 30.0,
+        "label_identity": {
+          "boundary_c": null,
+          "frozen_at": null,
+          "horizon_s": 30.0,
+          "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+          "spec_version": "coldguard-w13-horizon-sensitivity-v1"
+        },
+        "leakage_audit_status": "PASS",
+        "leakage_probes": {
+          "boot_boundary": "PASS",
+          "duplicate_delivery": "PASS",
+          "duplicate_source": "PASS",
+          "future_mutation": "PASS",
+          "gate_b_bypass": "PASS",
+          "grouped_disjoint": "PASS",
+          "hardware_identity": "PASS",
+          "label_schema": "PASS",
+          "locked_test": "PASS",
+          "metric_predeclared": "PASS",
+          "missing_not_zero": "PASS",
+          "pair_preservation": "PASS",
+          "predictive_intervention": "PASS",
+          "split_before_windows": "PASS",
+          "train_only_transform": "PASS"
+        },
+        "method_folds": [
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.4057788028561846
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.31746031746031744
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.40594627287199814
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.29850746268656714
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.4061734952402616
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.35294117647058826
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.40703289078546895
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.30927835051546393
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          }
+        ],
+        "model_artifact_hashes": {
+          "H30/json": "3adea5dc9e6144de9cd5a3c82c776734adacde55f18307936df28e32bacc574a",
+          "H30/ubj": "fdecbfd58a1743eeca7d31683c9b11515be425fe4a891759a99a47b26d3cfaec"
+        },
+        "negative_count": 2176,
+        "oof_status": {
+          "TRAIN_FOLD_CLASS_WEIGHT": "DEFINED",
+          "UNWEIGHTED": "DEFINED"
+        },
+        "population": "SYNTHETIC_DEVELOPMENT",
+        "positive_count": 240,
+        "positive_prevalence": 0.09933774834437085,
+        "refusal_reason": null,
+        "scientific_claim_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "untrusted_exclusions": 0
+      },
+      {
+        "aggregate_ap": {
+          "B0_THRESHOLD": {
+            "fold_values": [
+              0.9873537338021915,
+              0.9885531289507862,
+              0.9889339340833572,
+              0.9890604309018636
+            ],
+            "instability_range": 0.0017066970996720832,
+            "max": 0.9890604309018636,
+            "mean": 0.9884753069345495,
+            "min": 0.9873537338021915,
+            "status": "DEFINED",
+            "std": 0.0006739234890155022
+          },
+          "B1_HYSTERESIS": {
+            "fold_values": [
+              0.6896734726948631,
+              0.6953168044077135,
+              0.6840383500072496,
+              0.6953168044077135
+            ],
+            "instability_range": 0.011278454400463933,
+            "max": 0.6953168044077135,
+            "mean": 0.6910863578793849,
+            "min": 0.6840383500072496,
+            "status": "DEFINED",
+            "std": 0.004676109899489579
+          },
+          "TRAIN_FOLD_CLASS_WEIGHT": {
+            "fold_values": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "instability_range": 0.0,
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "status": "DEFINED",
+            "std": 0.0
+          },
+          "UNWEIGHTED": {
+            "fold_values": [
+              1.0,
+              1.0,
+              1.0,
+              1.0
+            ],
+            "instability_range": 0.0,
+            "max": 1.0,
+            "mean": 1.0,
+            "min": 1.0,
+            "status": "DEFINED",
+            "std": 0.0
+          }
+        },
+        "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+        "aiw_status": "NOT_ESTIMABLE",
+        "censored_exclusions": 960,
+        "evaluable_samples": 1936,
+        "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+        "ewt_status": "NOT_ESTIMABLE",
+        "horizon_s": 60.0,
+        "label_identity": {
+          "boundary_c": null,
+          "frozen_at": null,
+          "horizon_s": 60.0,
+          "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+          "spec_version": "coldguard-w13-horizon-sensitivity-v1"
+        },
+        "leakage_audit_status": "PASS",
+        "leakage_probes": {
+          "boot_boundary": "PASS",
+          "duplicate_delivery": "PASS",
+          "duplicate_source": "PASS",
+          "future_mutation": "PASS",
+          "gate_b_bypass": "PASS",
+          "grouped_disjoint": "PASS",
+          "hardware_identity": "PASS",
+          "label_schema": "PASS",
+          "locked_test": "PASS",
+          "metric_predeclared": "PASS",
+          "missing_not_zero": "PASS",
+          "pair_preservation": "PASS",
+          "predictive_intervention": "PASS",
+          "split_before_windows": "PASS",
+          "train_only_transform": "PASS"
+        },
+        "method_folds": [
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9873537338021915
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.6896734726948631
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9885531289507862
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.6953168044077135
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9889339340833572
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.6840383500072496
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9890604309018636
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.6953168044077135
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 1.0
+            },
+            "event_recall": 1.0,
+            "false_warning_episodes_per_hour": 0.0,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [],
+            "unmatched_warnings": 0
+          }
+        ],
+        "model_artifact_hashes": {
+          "H60/json": "82e487a99ba93dad4e192000f826dacc6d62377316672ba4f010ba9f1368cebc",
+          "H60/ubj": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
+        },
+        "negative_count": 1456,
+        "oof_status": {
+          "TRAIN_FOLD_CLASS_WEIGHT": "DEFINED",
+          "UNWEIGHTED": "DEFINED"
+        },
+        "population": "SYNTHETIC_DEVELOPMENT",
+        "positive_count": 480,
+        "positive_prevalence": 0.24793388429752067,
+        "refusal_reason": null,
+        "scientific_claim_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "untrusted_exclusions": 0
+      },
+      {
+        "aggregate_ap": {
+          "B0_THRESHOLD": {
+            "fold_values": [
+              0.9433766728168205,
+              0.9341312189092313,
+              0.8594594916011251,
+              0.8595331868505174
+            ],
+            "instability_range": 0.08391718121569536,
+            "max": 0.9433766728168205,
+            "mean": 0.8991251425444236,
+            "min": 0.8594594916011251,
+            "status": "DEFINED",
+            "std": 0.0397633943921147
+          },
+          "B1_HYSTERESIS": {
+            "fold_values": [
+              0.8313975155279503,
+              0.8332919254658385,
+              0.8295031055900621,
+              0.8332919254658385
+            ],
+            "instability_range": 0.0037888198757763947,
+            "max": 0.8332919254658385,
+            "mean": 0.8318711180124223,
+            "min": 0.8295031055900621,
+            "status": "DEFINED",
+            "std": 0.0015707617407739113
+          },
+          "TRAIN_FOLD_CLASS_WEIGHT": {
+            "fold_values": [
+              0.9046518284044316,
+              0.9022402631785451,
+              0.8776706757809121,
+              0.885109424647602
+            ],
+            "instability_range": 0.026981152623519522,
+            "max": 0.9046518284044316,
+            "mean": 0.8924180480028727,
+            "min": 0.8776706757809121,
+            "status": "DEFINED",
+            "std": 0.011369281602997616
+          },
+          "UNWEIGHTED": {
+            "fold_values": [
+              0.9046518284044316,
+              0.9022402631785451,
+              0.8776706757809121,
+              0.885109424647602
+            ],
+            "instability_range": 0.026981152623519522,
+            "max": 0.9046518284044316,
+            "mean": 0.8924180480028727,
+            "min": 0.8776706757809121,
+            "status": "DEFINED",
+            "std": 0.011369281602997616
+          }
+        },
+        "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+        "aiw_status": "NOT_ESTIMABLE",
+        "censored_exclusions": 1608,
+        "evaluable_samples": 1288,
+        "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+        "ewt_status": "NOT_ESTIMABLE",
+        "horizon_s": 120.0,
+        "label_identity": {
+          "boundary_c": null,
+          "frozen_at": null,
+          "horizon_s": 120.0,
+          "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+          "spec_version": "coldguard-w13-horizon-sensitivity-v1"
+        },
+        "leakage_audit_status": "PASS",
+        "leakage_probes": {
+          "boot_boundary": "PASS",
+          "duplicate_delivery": "PASS",
+          "duplicate_source": "PASS",
+          "future_mutation": "PASS",
+          "gate_b_bypass": "PASS",
+          "grouped_disjoint": "PASS",
+          "hardware_identity": "PASS",
+          "label_schema": "PASS",
+          "locked_test": "PASS",
+          "metric_predeclared": "PASS",
+          "missing_not_zero": "PASS",
+          "pair_preservation": "PASS",
+          "predictive_intervention": "PASS",
+          "split_before_windows": "PASS",
+          "train_only_transform": "PASS"
+        },
+        "method_folds": [
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9433766728168205
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8313975155279503
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F1",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9341312189092313
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8332919254658385
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F2",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8594594916011251
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8295031055900621
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F3",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8595331868505174
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B0_THRESHOLD",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8332919254658385
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "BASELINE_REPLAY",
+            "fold_id": "F4",
+            "method": "B1_HYSTERESIS",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9046518284044316
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 45.283018867924525,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 4
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9022402631785451
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 33.9622641509434,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 3
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8776706757809121
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 67.9245283018868,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 6
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.885109424647602
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 56.60377358490566,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "UNWEIGHTED",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 5
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9046518284044316
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 45.283018867924525,
+            "fit_status": "FIT",
+            "fold_id": "F1",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 4
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.9022402631785451
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 33.9622641509434,
+            "fit_status": "FIT",
+            "fold_id": "F2",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 3
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.8776706757809121
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 22.641509433962263,
+            "fit_status": "FIT",
+            "fold_id": "F3",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 2
+          },
+          {
+            "average_precision": {
+              "reason": null,
+              "status": "DEFINED",
+              "value": 0.885109424647602
+            },
+            "event_recall": null,
+            "false_warning_episodes_per_hour": 45.283018867924525,
+            "fit_status": "FIT",
+            "fold_id": "F4",
+            "method": "TRAIN_FOLD_CLASS_WEIGHT",
+            "missed_critical_events": 0,
+            "undefined_reasons": [
+              "NO_ELIGIBLE_CRITICAL_EVENTS"
+            ],
+            "unmatched_warnings": 4
+          }
+        ],
+        "model_artifact_hashes": {
+          "H120/json": "13885bc439ec8472f0a9d09d53d42750112cebc8599794af2e5e607deef86ee2",
+          "H120/ubj": "4f26a4782326ff0595fe01ba8ccf53471b6f1607c249976443ba311bb8684a9c"
+        },
+        "negative_count": 488,
+        "oof_status": {
+          "TRAIN_FOLD_CLASS_WEIGHT": "DEFINED",
+          "UNWEIGHTED": "DEFINED"
+        },
+        "population": "SYNTHETIC_DEVELOPMENT",
+        "positive_count": 800,
+        "positive_prevalence": 0.6211180124223602,
+        "refusal_reason": null,
+        "scientific_claim_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "untrusted_exclusions": 0
+      },
+      {
+        "aggregate_ap": {},
+        "aiw_reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+        "aiw_status": "NOT_ESTIMABLE",
+        "censored_exclusions": 2096,
+        "evaluable_samples": 800,
+        "ewt_reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+        "ewt_status": "NOT_ESTIMABLE",
+        "horizon_s": 300.0,
+        "label_identity": {
+          "boundary_c": null,
+          "frozen_at": null,
+          "horizon_s": 300.0,
+          "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+          "spec_version": "coldguard-w13-horizon-sensitivity-v1"
+        },
+        "leakage_audit_status": "NOT_RUN_HORIZON_REFUSED",
+        "leakage_probes": {},
+        "method_folds": [],
+        "model_artifact_hashes": {},
+        "negative_count": 0,
+        "oof_status": {},
+        "population": "SYNTHETIC_DEVELOPMENT",
+        "positive_count": 800,
+        "positive_prevalence": 1.0,
+        "refusal_reason": "W13_HORIZON_NOT_ESTIMABLE: the label configuration leaves 8 of 16 runs with zero evaluable anchors (all anchors CENSORED), and the remaining evaluable population is single-class (800 positive, 0 negative), so AP and event metrics would stay undefined even without the downstream failure; the W11 grouped pipeline also raises on a zero-sample run (xgb_benchmark.py evaluation_end_by_run max over an empty population), and W13 does not patch the W11 layer \u2014 the defect stays open for its owning week",
+        "scientific_claim_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "untrusted_exclusions": 0
+      }
+    ],
+    "layer_version": "coldguard-w13-horizon-engineering-v1",
+    "limitations": [
+      "synthetic development population only; no real physical run is eligible for the predictive dataset under the W04 ladder",
+      "the synthetic data-generating process does not approximate the six-litre plant; AP values are software controls",
+      "EWT and AIW are NOT_ESTIMABLE: no measured non-overlapping latency chain and no eligible non-intervened real pair exist",
+      "censored horizons are excluded, never labeled negative",
+      "the locked synthetic test pair and any locked physical test partition remain untouched",
+      "a horizon whose label configuration leaves a run with zero evaluable anchors is recorded as NOT_ESTIMABLE: the W11 grouped pipeline raises on the empty population and W13 does not patch the W11 layer; the defect is reported, not fixed here"
+    ],
+    "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "spec_version": "coldguard-w13-horizon-sensitivity-v1",
+    "split_identity": {
+      "pair_lineage": [
+        {
+          "pair_id": "W11-PAIR-001",
+          "partition": "test",
+          "run_ids": [
+            "CG-W11-S1-001",
+            "CG-W11-S2-001"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-002",
+          "partition": "test",
+          "run_ids": [
+            "CG-W11-S1-002",
+            "CG-W11-S2-002"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-003",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-003",
+            "CG-W11-S2-003"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-004",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-004",
+            "CG-W11-S2-004"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-005",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-005",
+            "CG-W11-S2-005"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-006",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-006",
+            "CG-W11-S2-006"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-007",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-007",
+            "CG-W11-S2-007"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-008",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-008",
+            "CG-W11-S2-008"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-009",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-010",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-010",
+            "CG-W11-S2-010"
+          ]
+        }
+      ],
+      "seed": 42,
+      "test_partition_used": false,
+      "test_runs": [
+        "CG-W11-S1-001",
+        "CG-W11-S1-002",
+        "CG-W11-S2-001",
+        "CG-W11-S2-002"
+      ],
+      "train_runs": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009"
+      ],
+      "validation_runs": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-010",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-010"
+      ]
+    }
+  },
+  "validations": [
+    "A timing report, run_index and manifest SHA-256 pins verified",
+    "every consumed normalized dataset CSV hashed against the manifest output pin",
+    "manifest totals reconciled with run_index rows and frame sum",
+    "leakage audits passed on every evaluated horizon; the refused horizon's audit was not run and is marked NOT_RUN_HORIZON_REFUSED",
+    "single-class and censored populations reported as undefined / excluded, never imputed",
+    "decision derived from preconditions, never from synthetic AP"
+  ]
+}
