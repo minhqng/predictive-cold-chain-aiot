@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+  "analysis_code_sha256": "8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839",
   "artifact_hashes": [
     {
       "declared_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
@@ -218,14 +218,14 @@
     },
     {
       "authority": "B",
-      "authority_evidence": "ml/scripts/w16-preflight-W16.py (registered analysis_code_sha256 1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf)",
+      "authority_evidence": "ml/scripts/w16-preflight-W16.py (registered analysis_code_sha256 8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839)",
       "blocking_effect": "analysis code identity is frozen by this pre-registration",
       "canonical_ref": "03 \u00a792, \u00a7133, \u00a7158",
       "field_id": "analysis_code_version",
       "source": "ml/scripts/w16-preflight-W16.py",
-      "source_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+      "source_sha256": "8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839",
       "status": "FROZEN_APPROVED",
-      "value": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf"
+      "value": "8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839"
     },
     {
       "authority": "A",
@@ -384,7 +384,7 @@
   ],
   "manifest_kind": "PRE_REGISTRATION_ONLY",
   "model_inference_identity": {
-    "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+    "analysis_code_sha256": "8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839",
     "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
     "calibration_status": "RISK_SCORE_ONLY",
     "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
@@ -701,7 +701,7 @@
     ]
   },
   "registration": {
-    "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+    "analysis_code_sha256": "8d5404790705c00ec5b0b93bb4daad123b2296af7033131451588a08d5108839",
     "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
     "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
     "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
@@ -717,7 +717,7 @@
       "CG-W11-S2-002"
     ]
   },
-  "repository_revision": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+  "repository_revision": "daf85e09e6f1bdd3cbdcfab4e8664b1f7fef13fc",
   "required_approvals": [
     {
       "approval_id": "approval.methodological_freeze",
@@ -1084,7 +1084,7 @@
     {
       "canonical_ref": "03 \u00a792, \u00a7133, \u00a7158",
       "evidence_scope": "PROCESS",
-      "observed": "registered=1eec1c4d6445c32c, current=1eec1c4d6445c32c",
+      "observed": "registered=8d5404790705c00e, current=8d5404790705c00e",
       "reason_code": null,
       "requirement": "The analysis/preflight code identity must be registered and unchanged.",
       "requirement_id": "W16-MD-16",

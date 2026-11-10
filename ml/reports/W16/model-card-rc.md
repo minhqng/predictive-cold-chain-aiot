@@ -5,7 +5,7 @@
 > **MODEL_RELEASE_ELIGIBILITY = `BLOCKED`**
 > **Canonical output `model-rc/` is deliberately withheld.**
 > **Pre-registration manifest:** `ml/reports/W16/locked-test-manifest-W16.json`
-> **Manifest SHA-256:** `80442242dd5025f20a3f8b0d3ea9f757579830bddba8e0e04c8b394b693709e2`
+> **Manifest SHA-256:** `6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165`
 
 ## 1. Statement
 
