@@ -1,0 +1,83 @@
+{
+  "schema": "coldguard-w20-campaign-metadata-v1",
+  "campaign_id": "CG-W20-FINAL-AB-2026",
+  "evidence_class": "METADATA_RECORD_ONLY",
+  "fixture_markers": [],
+  "campaign_manifest": null,
+  "authorization": null,
+  "controller_b_enablement": null,
+  "analysis_execution_authorization": {
+    "status": "NOT_ISSUED",
+    "verification_status": "NOT_VERIFIED_EXTERNALLY",
+    "authority_id": null,
+    "canonical_ref": null
+  },
+  "pair_target": null,
+  "target_history": [],
+  "target_freeze_stage": "NOT_FROZEN",
+  "campaign_freeze": null,
+  "statistical_freeze": null,
+  "outcome_definition_freeze": null,
+  "pair_ledger": null,
+  "selection_policy": {
+    "rule": "ALL_PREDECLARED",
+    "exclusions": []
+  },
+  "rematch_history": [],
+  "n_inflation_claims": [],
+  "export": null,
+  "physical_verification": null,
+  "changes": [],
+  "external_links": {
+    "a_w19_wave1": {
+      "status": "SOFTWARE_READY_PENDING_OPERATOR_RUN",
+      "completed_physical_runs": 0,
+      "target_pairs": 0,
+      "invalid_attempts": 0,
+      "source_path": "evidence/A/W19/wave1-status.md",
+      "source_revision": "3b27b7e",
+      "note": "Member A reports zero completed physical wave-1 runs; bench execution is pending."
+    },
+    "a_w20_dossier": {
+      "status": "SOFTWARE_READY_PENDING_PHYSICAL_RUNS",
+      "completed_physical_runs": 0,
+      "target_pairs": 0,
+      "completed_pairs": 0,
+      "operator_signature": "PENDING_OPERATOR_PHYSICAL_SIGNATURE",
+      "source_path": "evidence/A/W20/campaign-wave2-index.json",
+      "source_revision": "3b27b7e",
+      "note": "The wave-2 index declares zero runs and zero target pairs; the frozen campaign manifest specification is not an executed campaign."
+    },
+    "c_w20_export": {
+      "status": "UNMERGED_EXTERNAL_DEPENDENCY",
+      "pr": 97,
+      "branch": "feat/c-w20-evidence-freeze",
+      "branch_head": "659512f91c41deadef036da71544ffa8b6245d93",
+      "final_export_manifest_in_this_stack": false,
+      "backup_receipt_in_this_stack": false,
+      "note": "Member C W20 deterministic evidence freeze, archive and restore tooling is not merged into the Member B stack; no final export manifest is available here."
+    },
+    "d_policy_freeze": {
+      "status": "NOT_FROZEN",
+      "safety_limits_version": null,
+      "reactive_threshold_version": null,
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "note": "Member D W13 AIW readiness is unmerged; no frozen final controller policy or safety envelope is present in this stack."
+    },
+    "leader_authorization": {
+      "status": "NOT_ISSUED",
+      "campaign_authorization": "NOT_ISSUED",
+      "pair_target_freeze": "NOT_ISSUED",
+      "statistical_freeze": "NOT_ACCEPTED",
+      "analysis_execution_authorization": "NOT_ISSUED",
+      "g4": "NOT_READY",
+      "controller_b_signoff": "WITHHELD",
+      "source_path": "ml/reports/W18/w18-manifest.json",
+      "note": "W18 readiness reports Gate G4 NOT_READY and Controller B signoff WITHHELD."
+    },
+    "w16_holdout": {
+      "status": "NOT_OPENED"
+    }
+  },
+  "pinned_baseline": null
+}
