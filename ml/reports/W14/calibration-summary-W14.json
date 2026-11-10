@@ -1,0 +1,478 @@
+{
+  "all_folds_group_disjoint": true,
+  "all_folds_pair_disjoint": true,
+  "brier_definition": {
+    "positive_class": "y=1 (critical event within the reference horizon)",
+    "scale": "[0, 1] mean squared difference (binary, pos_label=1)"
+  },
+  "brier_estimable": true,
+  "candidate_family": [
+    "sigmoid"
+  ],
+  "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+  "discrimination_estimable": true,
+  "feature_ids": [
+    "T_chamber_max_c",
+    "T_chamber_min_c",
+    "T_chamber_mean_c",
+    "T_chamber_spread_c",
+    "T_center_c",
+    "T_bottom_c",
+    "T_near_door_c",
+    "rolling_mean_temperature_60s",
+    "rolling_std_temperature_60s",
+    "rolling_min_temperature_60s",
+    "rolling_max_temperature_60s",
+    "past_only_slope_c_per_min_60s",
+    "past_only_temperature_delta_60s",
+    "past_only_spatial_spread_60s",
+    "door_open",
+    "time_since_open",
+    "duration_so_far",
+    "count_past_60s",
+    "applied_cooling",
+    "applied_duty",
+    "time_since_confirmed_applied_change",
+    "cooling_voltage_v",
+    "cooling_current_a",
+    "cooling_power_w",
+    "energy_counter_wh",
+    "past_integrated_cooling_energy_wh",
+    "ambient_temperature_c",
+    "relative_humidity_pct"
+  ],
+  "folds": [
+    {
+      "ap_reason": null,
+      "brier_delta": -0.0005218186009243136,
+      "calibrated_ap": 1.0,
+      "calibrated_brier": 2.2303981520886367e-05,
+      "calibration_curve_prob_pred": [
+        0.002732460208713183,
+        0.9917956415364835
+      ],
+      "calibration_curve_prob_true": [
+        0.0,
+        1.0
+      ],
+      "calibration_groups": [
+        "W11-PAIR-008",
+        "W11-PAIR-009"
+      ],
+      "calibration_negative": 364,
+      "calibration_positive": 120,
+      "calibration_runs": [
+        "CG-W11-S1-008",
+        "CG-W11-S2-008",
+        "CG-W11-S1-009",
+        "CG-W11-S2-009"
+      ],
+      "calibration_samples": 484,
+      "detail": null,
+      "empty_bin_count": 3,
+      "evaluation_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-006"
+      ],
+      "evaluation_negative": 364,
+      "evaluation_positive": 120,
+      "evaluation_runs": [
+        "CG-W11-S1-005",
+        "CG-W11-S2-005",
+        "CG-W11-S1-006",
+        "CG-W11-S2-006"
+      ],
+      "evaluation_samples": 484,
+      "fold_id": "F1",
+      "model_fit_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-007",
+        "W11-PAIR-010",
+        "W11-PAIR-004"
+      ],
+      "model_fit_runs": [
+        "CG-W11-S1-003",
+        "CG-W11-S2-003",
+        "CG-W11-S1-007",
+        "CG-W11-S2-007",
+        "CG-W11-S1-010",
+        "CG-W11-S2-010",
+        "CG-W11-S1-004",
+        "CG-W11-S2-004"
+      ],
+      "model_fit_samples": 968,
+      "perfect_separation": true,
+      "raw_ap": 1.0,
+      "raw_brier": 0.0005441225824452,
+      "reason": null,
+      "reliability_bins": [
+        {
+          "bin_index": 0,
+          "count": 364,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.0,
+          "mean_score": 0.0027324602087131647,
+          "negative": 364,
+          "observed_positive_fraction": 0.0,
+          "positive": 0,
+          "reason": null,
+          "upper": 0.2
+        },
+        {
+          "bin_index": 4,
+          "count": 120,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.8,
+          "mean_score": 0.9917956415364823,
+          "negative": 0,
+          "observed_positive_fraction": 1.0,
+          "positive": 120,
+          "reason": null,
+          "upper": 1.0
+        }
+      ],
+      "status": "FIT"
+    },
+    {
+      "ap_reason": null,
+      "brier_delta": -0.0005218186009243136,
+      "calibrated_ap": 1.0,
+      "calibrated_brier": 2.2303981520886367e-05,
+      "calibration_curve_prob_pred": [
+        0.002732460208713183,
+        0.9917956415364835
+      ],
+      "calibration_curve_prob_true": [
+        0.0,
+        1.0
+      ],
+      "calibration_groups": [
+        "W11-PAIR-006",
+        "W11-PAIR-003"
+      ],
+      "calibration_negative": 364,
+      "calibration_positive": 120,
+      "calibration_runs": [
+        "CG-W11-S1-006",
+        "CG-W11-S2-006",
+        "CG-W11-S1-003",
+        "CG-W11-S2-003"
+      ],
+      "calibration_samples": 484,
+      "detail": null,
+      "empty_bin_count": 3,
+      "evaluation_groups": [
+        "W11-PAIR-007",
+        "W11-PAIR-008"
+      ],
+      "evaluation_negative": 364,
+      "evaluation_positive": 120,
+      "evaluation_runs": [
+        "CG-W11-S1-007",
+        "CG-W11-S2-007",
+        "CG-W11-S1-008",
+        "CG-W11-S2-008"
+      ],
+      "evaluation_samples": 484,
+      "fold_id": "F2",
+      "model_fit_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010",
+        "W11-PAIR-005",
+        "W11-PAIR-009"
+      ],
+      "model_fit_runs": [
+        "CG-W11-S1-004",
+        "CG-W11-S2-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-010",
+        "CG-W11-S1-005",
+        "CG-W11-S2-005",
+        "CG-W11-S1-009",
+        "CG-W11-S2-009"
+      ],
+      "model_fit_samples": 968,
+      "perfect_separation": true,
+      "raw_ap": 1.0,
+      "raw_brier": 0.0005441225824452,
+      "reason": null,
+      "reliability_bins": [
+        {
+          "bin_index": 0,
+          "count": 364,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.0,
+          "mean_score": 0.0027324602087131647,
+          "negative": 364,
+          "observed_positive_fraction": 0.0,
+          "positive": 0,
+          "reason": null,
+          "upper": 0.2
+        },
+        {
+          "bin_index": 4,
+          "count": 120,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.8,
+          "mean_score": 0.9917956415364823,
+          "negative": 0,
+          "observed_positive_fraction": 1.0,
+          "positive": 120,
+          "reason": null,
+          "upper": 1.0
+        }
+      ],
+      "status": "FIT"
+    },
+    {
+      "ap_reason": null,
+      "brier_delta": -0.0005218186009243136,
+      "calibrated_ap": 1.0,
+      "calibrated_brier": 2.2303981520886367e-05,
+      "calibration_curve_prob_pred": [
+        0.002732460208713183,
+        0.9917956415364835
+      ],
+      "calibration_curve_prob_true": [
+        0.0,
+        1.0
+      ],
+      "calibration_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "calibration_negative": 364,
+      "calibration_positive": 120,
+      "calibration_runs": [
+        "CG-W11-S1-004",
+        "CG-W11-S2-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-010"
+      ],
+      "calibration_samples": 484,
+      "detail": null,
+      "empty_bin_count": 3,
+      "evaluation_groups": [
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "evaluation_negative": 364,
+      "evaluation_positive": 120,
+      "evaluation_runs": [
+        "CG-W11-S1-003",
+        "CG-W11-S2-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-009"
+      ],
+      "evaluation_samples": 484,
+      "fold_id": "F3",
+      "model_fit_groups": [
+        "W11-PAIR-008",
+        "W11-PAIR-007",
+        "W11-PAIR-006",
+        "W11-PAIR-005"
+      ],
+      "model_fit_runs": [
+        "CG-W11-S1-008",
+        "CG-W11-S2-008",
+        "CG-W11-S1-007",
+        "CG-W11-S2-007",
+        "CG-W11-S1-006",
+        "CG-W11-S2-006",
+        "CG-W11-S1-005",
+        "CG-W11-S2-005"
+      ],
+      "model_fit_samples": 968,
+      "perfect_separation": true,
+      "raw_ap": 1.0,
+      "raw_brier": 0.0005441225824452,
+      "reason": null,
+      "reliability_bins": [
+        {
+          "bin_index": 0,
+          "count": 364,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.0,
+          "mean_score": 0.0027324602087131647,
+          "negative": 364,
+          "observed_positive_fraction": 0.0,
+          "positive": 0,
+          "reason": null,
+          "upper": 0.2
+        },
+        {
+          "bin_index": 4,
+          "count": 120,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.8,
+          "mean_score": 0.9917956415364823,
+          "negative": 0,
+          "observed_positive_fraction": 1.0,
+          "positive": 120,
+          "reason": null,
+          "upper": 1.0
+        }
+      ],
+      "status": "FIT"
+    },
+    {
+      "ap_reason": null,
+      "brier_delta": -0.0005218186009243136,
+      "calibrated_ap": 1.0,
+      "calibrated_brier": 2.2303981520886367e-05,
+      "calibration_curve_prob_pred": [
+        0.002732460208713183,
+        0.9917956415364835
+      ],
+      "calibration_curve_prob_true": [
+        0.0,
+        1.0
+      ],
+      "calibration_groups": [
+        "W11-PAIR-008",
+        "W11-PAIR-006"
+      ],
+      "calibration_negative": 364,
+      "calibration_positive": 120,
+      "calibration_runs": [
+        "CG-W11-S1-008",
+        "CG-W11-S2-008",
+        "CG-W11-S1-006",
+        "CG-W11-S2-006"
+      ],
+      "calibration_samples": 484,
+      "detail": null,
+      "empty_bin_count": 3,
+      "evaluation_groups": [
+        "W11-PAIR-004",
+        "W11-PAIR-010"
+      ],
+      "evaluation_negative": 364,
+      "evaluation_positive": 120,
+      "evaluation_runs": [
+        "CG-W11-S1-004",
+        "CG-W11-S2-004",
+        "CG-W11-S1-010",
+        "CG-W11-S2-010"
+      ],
+      "evaluation_samples": 484,
+      "fold_id": "F4",
+      "model_fit_groups": [
+        "W11-PAIR-005",
+        "W11-PAIR-007",
+        "W11-PAIR-003",
+        "W11-PAIR-009"
+      ],
+      "model_fit_runs": [
+        "CG-W11-S1-005",
+        "CG-W11-S2-005",
+        "CG-W11-S1-007",
+        "CG-W11-S2-007",
+        "CG-W11-S1-003",
+        "CG-W11-S2-003",
+        "CG-W11-S1-009",
+        "CG-W11-S2-009"
+      ],
+      "model_fit_samples": 968,
+      "perfect_separation": true,
+      "raw_ap": 1.0,
+      "raw_brier": 0.0005441225824452,
+      "reason": null,
+      "reliability_bins": [
+        {
+          "bin_index": 0,
+          "count": 364,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.0,
+          "mean_score": 0.0027324602087131647,
+          "negative": 364,
+          "observed_positive_fraction": 0.0,
+          "positive": 0,
+          "reason": null,
+          "upper": 0.2
+        },
+        {
+          "bin_index": 4,
+          "count": 120,
+          "group_count": 2,
+          "interpretable": true,
+          "lower": 0.8,
+          "mean_score": 0.9917956415364823,
+          "negative": 0,
+          "observed_positive_fraction": 1.0,
+          "positive": 120,
+          "reason": null,
+          "upper": 1.0
+        }
+      ],
+      "status": "FIT"
+    }
+  ],
+  "isotonic_refusal": "CALIBRATION_ISOTONIC_REFUSED_INSUFFICIENT_CALIBRATION_SAMPLES",
+  "layer_version": "coldguard-w14-group-safe-calibration-v1",
+  "limitations": [
+    "synthetic development population only; never physical probability evidence",
+    "the synthetic fixture is perfectly separable on its scenario-identifying door/thermal pattern; perfect AP is not a plant result",
+    "reliability bins with one independent group are not interpretable",
+    "four outer folds reuse correlated development groups; no significance claim",
+    "the calibrator is fitted on development groups disjoint from model fit and evaluation, but the whole experiment remains a software control",
+    "CalibratedClassifierCV's default cv is not used; group isolation is explicit",
+    "isotonic calibration is refused below the official ~1000-sample caveat"
+  ],
+  "perfect_separation": true,
+  "pooled_calibrated_ap": 1.0,
+  "pooled_calibrated_brier": 2.2303981520886367e-05,
+  "pooled_empty_bin_count": 3,
+  "pooled_group_count": 8,
+  "pooled_raw_ap": 1.0,
+  "pooled_raw_brier": 0.0005441225824452001,
+  "pooled_reliability_bins": [
+    {
+      "bin_index": 0,
+      "count": 1456,
+      "group_count": 8,
+      "interpretable": true,
+      "lower": 0.0,
+      "mean_score": 0.002732460208713165,
+      "negative": 1456,
+      "observed_positive_fraction": 0.0,
+      "positive": 0,
+      "reason": null,
+      "upper": 0.2
+    },
+    {
+      "bin_index": 4,
+      "count": 480,
+      "group_count": 8,
+      "interpretable": true,
+      "lower": 0.8,
+      "mean_score": 0.9917956415364823,
+      "negative": 0,
+      "observed_positive_fraction": 1.0,
+      "positive": 480,
+      "reason": null,
+      "upper": 1.0
+    }
+  ],
+  "reference_horizon_s": 60.0,
+  "reference_horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+  "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+  "reliability_interpretable": false,
+  "schema": "coldguard-w14-calibration-diagnostics-v1",
+  "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "view_id": "coldguard-w14-a1b-three-chamber-air-v1"
+}
