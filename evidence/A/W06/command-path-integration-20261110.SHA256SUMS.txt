@@ -1,0 +1,17 @@
+# Owner sidecar hashes — W06 command-path integration (Phase 2, 2026-11-10)
+
+Additive owner evidence only; the frozen `SHA256SUMS.txt` in this directory is untouched.
+
+```
+3687436c1cc940cfbe624237e97650f95d965e9468c861155cb7e296911f37d2  command-path-integration-20261110-ack-only.json
+6f6e450d726dae08ca96c8659df19ad164a2b3f06d03b360baba4b136c03b784  command-path-integration-20261110-traced.json
+```
+
+Provenance: produced by `backend/src/coldguard_backend/command_path_runner.py`
+(`python -m coldguard_backend.command_path_runner [--applied-frames] --json ...`)
+in the `_owner-w01-w13` worktree on branch `integration/w01-w13-owner-20261110`.
+The ack-only report is honestly blocked at `APPLIED_STATE` with an ACCEPTED
+acknowledgment (Doc 02 §32.2/§33); the traced report reaches
+`THERMAL_VERIFIED` through Member A's `cg_command_trace` stage promotion on
+synthetic applied frames templated from `demo-command-capture.log`. The device
+boundary is Member A's committed `ack-fixture.json`; no firmware was executed.

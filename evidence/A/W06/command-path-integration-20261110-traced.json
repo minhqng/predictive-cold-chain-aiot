@@ -1,0 +1,132 @@
+{
+  "accepted": {
+    "accepted": true,
+    "actuation_intent": "ON",
+    "checks_passed": [
+      "schema",
+      "authorization",
+      "device_identity",
+      "expiry",
+      "duplicate",
+      "range",
+      "safety",
+      "state_freshness"
+    ],
+    "command_id": "00000000-0000-4000-8000-00000000000b",
+    "detail": "all command checks passed at this layer; physical verification and ACK reporting remain outside W03",
+    "outcome": "COMMAND_ACCEPTED",
+    "reason_code": "OK",
+    "status": "ACCEPTED",
+    "validated_at": "2026-11-10T12:00:00+00:00"
+  },
+  "ack_envelope": {
+    "ack_seq": 42,
+    "applied": {
+      "cooling": "OFF",
+      "duty": 0.0
+    },
+    "boot_id": "abcd0123",
+    "command_id": "00000000-0000-4000-8000-00000000000b",
+    "desired": {
+      "cooling": "ON",
+      "duty": 0.25
+    },
+    "device_id": "coldguard-001",
+    "device_mode": "OFF",
+    "expiry_evaluable": true,
+    "fault_code": "0x00000000",
+    "output_stage": "ENABLED",
+    "reapplied": false,
+    "reason_code": "NONE",
+    "schema_version": 1,
+    "status": "ACCEPTED",
+    "time_sync_state": "SYNCHRONIZED",
+    "uptime_ms": 123456
+  },
+  "blocked_at": null,
+  "claims_note": "desired (D policy) is not accepted (D matrix); accepted is not an ACK; an ACK is not an applied state; applied/electrical/thermal stages come from Member A's cg_command_trace promotion, never assumed",
+  "desired": {
+    "actuation_intent": "ON",
+    "controller_id": "REACTIVE",
+    "degraded_sensing": false,
+    "detail": "reactive critical boundary reached; Controller A protection dominates any predictive advice",
+    "device_mode": "ONLINE_NORMAL",
+    "notes": [
+      "Doc 02 23.4; 05D D-W13-04 and section 7 safety gate"
+    ],
+    "policy_state": "CRITICAL_PROTECTION",
+    "policy_version": "policy-v1",
+    "predictive_blocked": false,
+    "reason_code": "THRESHOLD_HIGH"
+  },
+  "device_provenance": {
+    "firmware_executed": false,
+    "kind": "fixture_ack_device",
+    "scenario": "synchronized-accepted",
+    "source": "evidence\\A\\W06\\ack-fixture.json"
+  },
+  "dispatched_record": "schema_version=1 command_id=00000000-0000-4000-8000-00000000000b device_id=coldguard-001 created_at_ms=1794312000000 expires_at_ms=1794312120000 controller_id=REACTIVE policy_version=policy-v1 reason_code=THRESHOLD_HIGH action_cooling=ON action_duty_permille=0",
+  "lifecycle": {
+    "commands": [
+      {
+        "ack_reasons": [
+          "NONE"
+        ],
+        "ack_statuses": [
+          "ACCEPTED"
+        ],
+        "applied_cooling_at_ack": "OFF",
+        "blocked_at": null,
+        "boot_id": "abcd0123",
+        "command_id": "00000000-0000-4000-8000-00000000000b",
+        "command_id_form": "UUID",
+        "desired_cooling": "ON",
+        "desired_duty_permille": "250",
+        "expiry_evaluable": "1",
+        "notes": [
+          "t_inside moved -0.5000 C across attributed frames"
+        ],
+        "reapplied_flags": [
+          "0"
+        ],
+        "source": "NETWORK",
+        "stages": [
+          "COMMAND_SEEN",
+          "DEVICE_ACK",
+          "APPLIED_STATE",
+          "ELECTRICAL_VERIFIED",
+          "THERMAL_VERIFIED"
+        ]
+      }
+    ],
+    "stages": [
+      "COMMAND_SEEN",
+      "DEVICE_ACK",
+      "APPLIED_STATE",
+      "ELECTRICAL_VERIFIED",
+      "THERMAL_VERIFIED"
+    ],
+    "summary": {
+      "ack_lines": 1,
+      "blocked_at": {
+        "APPLIED_STATE": 0,
+        "COMMAND_SEEN": 0,
+        "DEVICE_ACK": 0,
+        "ELECTRICAL_VERIFIED": 0,
+        "THERMAL_VERIFIED": 0
+      },
+      "commands_observed": 1,
+      "not_applied": 0,
+      "reached": {
+        "APPLIED_STATE": 1,
+        "COMMAND_SEEN": 1,
+        "DEVICE_ACK": 1,
+        "ELECTRICAL_VERIFIED": 1,
+        "THERMAL_VERIFIED": 1
+      },
+      "verdict": "TRACED"
+    }
+  },
+  "outcome_status": "OBSERVED_TRACE_COMPLETE",
+  "post_ack_frame_provenance": "synthetic template from evidence/A/W06/demo-command-capture.log"
+}
