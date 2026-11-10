@@ -11,13 +11,15 @@ Phase 8.2 documentation commit:
   `git diff e90335e HEAD` returned 0 files.
 - `git merge-base --is-ancestor` PASS 5/5.
 
-Recorded again immediately after the final Phase 8.2 documentation commit:
+Recorded again after the Phase 8.2 documentation commits (the terminal Git
+state is pinned by the terminal docs commit of the audit trail; earlier
+measured states stay valid):
 
-- **DOC_HEAD**: `edabbb936e9848cff618e124c43b903364636a4c`
-- **DOC_TREE**: `1efea1bd98151c388f40f50bd516177e7001d8b5`
-- `git diff e90335e HEAD --name-status` returns 8 doc-only entries
-  (7 added `phase8-2-*` documents + 1 modified SHA256SUMS) and
-  **zero source/test/runtime/data/evidence changes**.
+- **DOC_HEAD**: `edabbb936e9848cff618e124c43b903364636a4c` + the final
+  verification-verdict docs commit(s).
+- `git diff e90335e HEAD --name-status` returns only doc entries
+  (7 added `phase8-2-*` documents + SHA256SUMS updates) — **zero
+  source/test/runtime/data/evidence changes**.
 - The member-ancestry results and frozen-file `MATCH = 14 / DIFF = 0`
   result were re-measured from the doc-commit state unchanged.
 
