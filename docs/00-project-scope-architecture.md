@@ -1590,7 +1590,7 @@ coldguard/{deviceId}/telemetry
 coldguard/{deviceId}/event
 coldguard/{deviceId}/state
 coldguard/{deviceId}/command
-coldguard/{deviceId}/ack
+coldguard/{deviceId}/command_ack
 ```
 
 Exact versioning, QoS and retain semantics belong to Doc 02.
