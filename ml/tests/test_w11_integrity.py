@@ -9,17 +9,24 @@ import pytest
 
 from coldguard_ml.evaluation_contract import EWTProvenance, compute_ewt
 from coldguard_ml.event_evaluator import WARNING, WarningSample
-from coldguard_ml.feature_fixtures import build_trajectory
+from coldguard_ml.feature_fixtures import SYNTHETIC_CONTROLLER, build_trajectory
 from coldguard_ml.feature_registry import load_registry
 from coldguard_ml.labels import CriticalEvent, CriticalEventSeries
+from coldguard_ml.splitting import RunInfo, SplitConfig, SplitProportions, split_runs
 from coldguard_ml.xgb_benchmark import (
     AIW_REASON_MISSING_LATENCY_CHAIN,
     EWT_REASON_NO_COMMON_TRAJECTORY,
     HARDWARE_W11,
+    NON_ESTIMABLE_RUN_REASON,
+    BenchmarkError,
+    BenchmarkFixture,
+    NonEstimableRunError,
     _censor_after_cutoff,
     _critical_event_inputs,
     _event_result,
     _prepare_baseline_run,
+    build_expanded_w11_fixture,
+    build_labeled_dataset,
     build_w10_compatibility_fixture,
     load_benchmark_config,
     run_grouped_benchmark,
@@ -508,3 +515,164 @@ def test_censor_after_cutoff_preserves_exact_boundary():
     assert at.observed is True
     assert after.observed is False
     assert after.censored is True
+
+
+# ---------------------------------------------------------------------------
+# Zero-evaluable-run refusal (W11 evaluation_end_by_run empty-population fix)
+# ---------------------------------------------------------------------------
+
+
+def _probe_variant(config, horizon_s):
+    return replace(
+        config,
+        label=replace(
+            config.label,
+            horizon_s=float(horizon_s),
+            spec_version="w11-empty-run-probe",
+        ),
+    )
+
+
+def _scenario_only_fixture(scenario: str) -> BenchmarkFixture:
+    source = build_expanded_w11_fixture()
+    trajectories = tuple(
+        trajectory
+        for trajectory in source.development_trajectories
+        if trajectory.run_id.startswith(f"CG-W11-{scenario}-")
+    )
+    run_infos = [
+        RunInfo(
+            run_id=trajectory.run_id,
+            scenario_id=scenario,
+            controller_id=SYNTHETIC_CONTROLLER,
+            pair_id=f"SOLO-{trajectory.run_id}",
+            hardware_config_id=HARDWARE_W11,
+        )
+        for trajectory in trajectories
+    ]
+    split = split_runs(
+        run_infos,
+        SplitConfig(
+            proportions=SplitProportions(0.4, 0.4, 0.2),
+            seed=42,
+            controller_context="all-reactive-or-observational",
+            min_groups_per_partition=1,
+            hardware_lineage=HARDWARE_W11,
+        ),
+    )
+    return BenchmarkFixture(
+        dataset_id=f"W11_PROBE_{scenario}_ONLY",
+        fixture_version=source.fixture_version,
+        status=source.status,
+        provenance=source.provenance,
+        trajectories=trajectories,
+        series_by_run={
+            trajectory.run_id: source.series_by_run[trajectory.run_id]
+            for trajectory in trajectories
+        },
+        split=split,
+        hardware_config_by_run={
+            trajectory.run_id: HARDWARE_W11 for trajectory in trajectories
+        },
+        limitations=("probe fixture",),
+    )
+
+
+def _censor_run_coverage(fixture: BenchmarkFixture, run_id: str) -> BenchmarkFixture:
+    trajectory = next(
+        item for item in fixture.trajectories if item.run_id == run_id
+    )
+    origin = _dt.datetime.fromisoformat(
+        trajectory.origin_utc.replace("Z", "+00:00")
+    )
+    return replace(
+        fixture,
+        series_by_run={
+            **fixture.series_by_run,
+            run_id: replace(fixture.series_by_run[run_id], coverage_end=origin),
+        },
+    )
+
+
+def test_horizon_with_zero_evaluable_runs_is_refused_not_a_raw_max(tmp_path):
+    registry = load_registry(REGISTRY_PATH)
+    config = load_benchmark_config(CONFIG_PATH, registry)
+    fixture = build_expanded_w11_fixture()
+    with pytest.raises(NonEstimableRunError) as caught:
+        run_grouped_benchmark(
+            fixture,
+            registry,
+            _probe_variant(config, 300.0),
+            out_dir=tmp_path,
+        )
+    error = caught.value
+    assert error.reason_code == NON_ESTIMABLE_RUN_REASON
+    assert len(error.runs) == 8
+    assert all(run_id.startswith("CG-W11-S1-") for run_id, _ in error.runs)
+    assert all(reasons.get("CENSORED", 0) > 0 for _, reasons in error.runs)
+    assert "zero evaluable label anchors" in str(error)
+
+
+def test_one_fully_censored_run_refuses_the_declared_population(tmp_path):
+    registry = load_registry(REGISTRY_PATH)
+    config = load_benchmark_config(CONFIG_PATH, registry)
+    fixture = build_expanded_w11_fixture()
+    victim = next(
+        trajectory.run_id
+        for trajectory in fixture.development_trajectories
+        if trajectory.run_id.startswith("CG-W11-S1-")
+    )
+    censored = _censor_run_coverage(fixture, victim)
+    labeled = build_labeled_dataset(censored, registry, _probe_variant(config, 60.0))
+    assert victim in labeled.run_ids
+    assert victim not in {sample.run_id for sample in labeled.samples}
+    assert labeled.positive_count > 0
+    assert labeled.negative_count > 0
+    with pytest.raises(NonEstimableRunError) as caught:
+        run_grouped_benchmark(
+            censored,
+            registry,
+            _probe_variant(config, 60.0),
+            out_dir=tmp_path,
+        )
+    assert [run_id for run_id, _ in caught.value.runs] == [victim]
+
+
+def test_fully_ineligible_population_is_refused_at_the_label_contract(tmp_path):
+    registry = load_registry(REGISTRY_PATH)
+    config = load_benchmark_config(CONFIG_PATH, registry)
+    fixture = _scenario_only_fixture("S1")
+    for run_id in (item.run_id for item in fixture.trajectories):
+        fixture = _censor_run_coverage(fixture, run_id)
+    with pytest.raises(BenchmarkError, match="no evaluable development labels") as caught:
+        run_grouped_benchmark(
+            fixture,
+            registry,
+            _probe_variant(config, 60.0),
+            out_dir=tmp_path,
+        )
+    assert not isinstance(caught.value, NonEstimableRunError)
+
+
+def test_single_class_population_never_yields_a_defined_ap(tmp_path):
+    registry = load_registry(REGISTRY_PATH)
+    config = load_benchmark_config(CONFIG_PATH, registry)
+    fixture = _scenario_only_fixture("S2")
+    result, models = run_grouped_benchmark(
+        fixture,
+        registry,
+        _probe_variant(config, 300.0),
+        out_dir=tmp_path,
+        n_splits_override=4,
+    )
+    assert result.labeled.positive_count > 0
+    assert result.labeled.negative_count == 0
+    assert result.fold_runs
+    assert all(run.status == "REFUSED" for run in result.fold_runs)
+    assert all(run.reason == "SINGLE_CLASS_TRAINING_FOLD" for run in result.fold_runs)
+    assert all(payload["status"] == "UNDEFINED" for payload in result.oof.values())
+    assert "OOF_AP_UNDEFINED" in result.reason_codes
+    assert result.model_artifact is None
+    assert not models
+    for row in result.baseline_rows:
+        assert row["sample_ap"] is None

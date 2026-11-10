@@ -112,6 +112,7 @@ FIT_STATUS_FIT = "FIT"
 FIT_STATUS_REFUSED = "REFUSED"
 OOF_DEFINED = "DEFINED"
 OOF_UNDEFINED = "UNDEFINED"
+NON_ESTIMABLE_RUN_REASON = "DEV_RUN_WITHOUT_EVALUABLE_ANCHORS"
 
 STRATEGY_UNWEIGHTED = "UNWEIGHTED"
 STRATEGY_TRAIN_FOLD_CLASS_WEIGHT = "TRAIN_FOLD_CLASS_WEIGHT"
@@ -161,6 +162,30 @@ class ModelFitRefusal(BenchmarkError):
         super().__init__(detail or reason)
         self.reason = reason
         self.detail = detail or reason
+
+
+class NonEstimableRunError(BenchmarkError):
+    """A declared development run has zero evaluable label anchors.
+
+    Refuse the whole benchmark rather than drop the run or invent an
+    evaluation endpoint.
+    """
+
+    reason_code = NON_ESTIMABLE_RUN_REASON
+
+    def __init__(self, runs: Sequence[tuple[str, Mapping[str, int]]]):
+        self.runs = tuple((run_id, dict(reasons)) for run_id, reasons in runs)
+        detail = ", ".join(
+            f"{run_id} (CENSORED={reasons.get('CENSORED', 0)}, "
+            f"UNTRUSTED_INFO={reasons.get('UNTRUSTED_INFO', 0)})"
+            for run_id, reasons in self.runs
+        )
+        super().__init__(
+            f"{NON_ESTIMABLE_RUN_REASON}: {len(self.runs)} development run(s) "
+            f"have zero evaluable label anchors: {detail}; the grouped benchmark "
+            "is refused rather than dropping a declared run or inventing an "
+            "evaluation endpoint"
+        )
 
 
 def _sha256(payload: bytes) -> str:
@@ -1634,6 +1659,14 @@ def run_grouped_benchmark(
                 "to omit it silently"
             )
     labeled = build_labeled_dataset(fixture, registry, config)
+    runs_with_evaluable_labels = {sample.run_id for sample in labeled.samples}
+    non_estimable_runs = [
+        (run_id, labeled.excluded_by_run.get(run_id, {}))
+        for run_id in labeled.run_ids
+        if run_id not in runs_with_evaluable_labels
+    ]
+    if non_estimable_runs:
+        raise NonEstimableRunError(non_estimable_runs)
     evaluation_end_by_run = {
         run_id: max(
             sample.anchor_t_s
