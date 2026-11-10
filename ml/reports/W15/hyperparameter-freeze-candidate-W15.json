@@ -1,0 +1,138 @@
+{
+  "calibration_status": "RISK_SCORE_ONLY",
+  "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+  "config_version": "coldguard-xgb-v1-development-v1",
+  "development_identity": {
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "development_runs": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009",
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-010",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-010"
+    ],
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "locked_test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ],
+    "n_splits": 4,
+    "split_seed": 42
+  },
+  "explicitly_not": [
+    "PHYSICALLY_VALIDATED_MODEL",
+    "APPROVED_RELEASE_MODEL",
+    "W16_LOCKED_TEST_READY"
+  ],
+  "feature_identity": {
+    "arm": "A3B",
+    "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "feature_version": "CG-FEAT-1.0",
+    "order_rule": "frozen W11 allowlist order; A3a is the same order minus the delta",
+    "ordered_feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ]
+  },
+  "imbalance": {
+    "artifact_strategy": "UNWEIGHTED",
+    "predeclared_strategies": [
+      "UNWEIGHTED",
+      "TRAIN_FOLD_CLASS_WEIGHT"
+    ],
+    "selection_rule": "PREDECLARED_AP_ALL_FOLDS_REPORTED"
+  },
+  "library_version": "3.4.1",
+  "model_family": "XGBoost",
+  "operating_threshold": {
+    "status": "ILLUSTRATIVE_NOT_FROZEN",
+    "value": 0.5
+  },
+  "output_semantics": "risk_score",
+  "parameter_sources": {
+    "colsample_bytree": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "learning_rate": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "max_depth": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "n_estimators": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "n_jobs": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "objective": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "random_state": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "reg_alpha": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "reg_lambda": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "risk_threshold": "pre-existing W11 illustrative threshold 0.5; W15 does not freeze an operating threshold",
+    "scale_pos_weight": "UNWEIGHTED artifact strategy fixes scale_pos_weight = 1.0; the weighted strategy remains a predeclared W11 comparison arm",
+    "subsample": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test",
+    "tree_method": "pre-existing W11 xgb-v1-config.yaml engineering default; not tuned on real physical data and not selected using the locked test"
+  },
+  "parameters": {
+    "colsample_bytree": 1.0,
+    "learning_rate": 0.05,
+    "max_depth": 3,
+    "n_estimators": 60,
+    "n_jobs": 1,
+    "objective": "binary:logistic",
+    "random_state": 42,
+    "reg_alpha": 0.0,
+    "reg_lambda": 1.0,
+    "scale_pos_weight": 1.0,
+    "subsample": 1.0,
+    "tree_method": "hist"
+  },
+  "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "reference_horizon": {
+    "primary_horizon_frozen": false,
+    "status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "value_s": 60.0
+  },
+  "schema": "coldguard-w15-hyperparameter-candidate-v1",
+  "search_performed_in_w15": false,
+  "status": "DEVELOPMENT_CONFIG_CANDIDATE",
+  "target": {
+    "boundary_c": null,
+    "frozen_at": null,
+    "spec_version": "coldguard-w11-development-label-v1",
+    "status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+  },
+  "warning_persistence": {
+    "status": "NOT_FROZEN"
+  }
+}

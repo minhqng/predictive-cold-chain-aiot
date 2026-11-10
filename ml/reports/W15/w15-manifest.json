@@ -1,0 +1,2274 @@
+{
+  "analysis_code_sha256": "452d48caa27daa55c11ed5c1f70e6b96aab1004c0fec3f10afaa531b84d538a5",
+  "arms": {
+    "A3A": {
+      "arm_id": "A3A",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 20,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+        "UNWEIGHTED": 1.0
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w15-a3a-thermal-context-v1"
+    },
+    "A3B": {
+      "arm_id": "A3B",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 28,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+        "UNWEIGHTED": 1.0
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w15-a3b-thermal-context-electrical-v1"
+    }
+  },
+  "artifacts": {
+    "A3-adversarial-probes-W15.json": {
+      "sha256": "de8c056060cb0df072d81a8c363392b31098146a70ef278142280f4164275264"
+    },
+    "A3-arm-summary-W15.csv": {
+      "sha256": "b0b2e09eba31dc6d12572fe253b31bb42496d2888f138d32a394bd805bc74bee"
+    },
+    "A3-electrical-audit-W15.csv": {
+      "sha256": "db5f7ce69c92246ebe17a7a5d100d478bec830493fbaafb6e3522b428069c6b8"
+    },
+    "A3-electrical-diagnostics-W15.csv": {
+      "sha256": "308ca66e2ec8a69c9bd4b0c62b9d3fef4e95db7fc45e771888c3096027c5121b"
+    },
+    "A3-feature-provenance-W15.csv": {
+      "sha256": "3fdc0668b0938bcddd2f11b7ae23064775f4ca28e361e60fff3e8ee0f04807c4"
+    },
+    "A3-fold-metrics-W15.csv": {
+      "sha256": "35dc1307a7cb4ce0d607c10fc3e0e59e90d61b3e3f5748e9c54d20d463754a78"
+    },
+    "A3-model-inspection-W15.json": {
+      "sha256": "ec6746d0155597f6233f436284acb0cf0a218a6e2a96dd44455f53fd070363a6"
+    },
+    "A3-paired-folds-W15.csv": {
+      "sha256": "728f0b7a9d52c703d535a13d520536d284e27fa539acf8c7e802ab2c20c04f86"
+    },
+    "A3-support-W15.csv": {
+      "sha256": "8dc6ff0d37f92dc4eebf91e436eee781f1b7b6224ae7834321bb53a908e4058f"
+    },
+    "hyperparameter-freeze-candidate-W15.json": {
+      "sha256": "07d6b6d1efe119e9b33937c44850486382ec5b89adb0008b093bbe380b4a0aa6"
+    }
+  },
+  "deep_model_decision": {
+    "decision": "NO-GO",
+    "reasons": [
+      "zero predictive-eligible real runs",
+      "no documented structured temporal failure of XGBoost",
+      "no concrete incremental deep-model question",
+      "insufficient independent development groups",
+      "no time/infrastructure justification in W15"
+    ],
+    "reopening_conditions": [
+      "admissible real grouped development population",
+      "XGBoost demonstrably fails a structured temporal behavior",
+      "a concrete incremental scientific question with a fair, leakage-safe protocol",
+      "defensible dataset sufficiency and implementation time"
+    ]
+  },
+  "delivery_commit": "NOT_RECORDED_AT_GENERATION",
+  "deterministic": true,
+  "electrical_audit": {
+    "adversarial_probes": {
+      "applied_transition_after_anchor_isolated": {
+        "A3A": true,
+        "A3B": true
+      },
+      "counter_reset_refused": {
+        "counter_missing_after_reset": true,
+        "counter_present_before_reset": true,
+        "no_negative_counter_value": true,
+        "reset_reason_recorded": true
+      },
+      "electrical_block_run_invariance": {
+        "anchors_compared": 2715,
+        "electrical_block_run_invariant": true,
+        "interpretation": "fixture property only: the synthetic electrical block is identical across runs, so it cannot carry scenario/controller identity",
+        "mismatch_count": 0,
+        "runs_compared": 16
+      },
+      "future_power_and_applied_mutation_isolated": {
+        "A3A": true,
+        "A3B": true
+      },
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "unknown_electrical_never_zero_or_valid": {
+        "anchors_checked": 121,
+        "applied_state_still_observed": true,
+        "pzem_features_missing_after_unknown": true,
+        "pzem_never_zero_or_valid": true
+      }
+    },
+    "diagnostics": [
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "applied_cooling",
+        "label_auc_diagnostic": 0.6648351648351649,
+        "max": 1.0,
+        "mean": 0.7520661157024794,
+        "min": 0.0,
+        "missing": 0,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1936,
+        "present_fraction": 1.0,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 0.747948012570524
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "applied_duty",
+        "label_auc_diagnostic": 0.5,
+        "max": 0.7,
+        "mean": 0.7,
+        "min": 0.7,
+        "missing": 480,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1456,
+        "present_fraction": 0.7520661157024794,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": null
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "time_since_confirmed_applied_change",
+        "label_auc_diagnostic": 0.4098360655737705,
+        "max": 90.0,
+        "mean": 45.0,
+        "min": 0.0,
+        "missing": 480,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1456,
+        "present_fraction": 0.7520661157024794,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 1.0
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "cooling_voltage_v",
+        "label_auc_diagnostic": 0.4536630036630037,
+        "max": 12.049994193084705,
+        "mean": 12.001183548521594,
+        "min": 11.950000489672465,
+        "missing": 0,
+        "monotonic_nondecreasing_within_runs": false,
+        "present": 1936,
+        "present_fraction": 1.0,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": -0.2932664950548706
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "cooling_current_a",
+        "label_auc_diagnostic": 0.6648351648351649,
+        "max": 5.6,
+        "mean": 4.251239669421487,
+        "min": 0.16,
+        "missing": 0,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1936,
+        "present_fraction": 1.0,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 0.747948012570524
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "cooling_power_w",
+        "label_auc_diagnostic": 0.7009157509157509,
+        "max": 60.731846482517426,
+        "mean": 45.88311502697102,
+        "min": 1.7274200959211228,
+        "missing": 0,
+        "monotonic_nondecreasing_within_runs": false,
+        "present": 1936,
+        "present_fraction": 1.0,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 0.6122070180192386
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "energy_counter_wh",
+        "label_auc_diagnostic": 0.6043956043956044,
+        "max": 1.542182477,
+        "mean": 0.5933880386115703,
+        "min": 0.00048,
+        "missing": 0,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1936,
+        "present_fraction": 1.0,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 1.0
+      },
+      {
+        "diagnostic_only": true,
+        "evaluable_samples": 1936,
+        "feature_id": "past_integrated_cooling_energy_wh",
+        "label_auc_diagnostic": 0.6,
+        "max": 1.5253339006879947,
+        "mean": 0.585481418251453,
+        "min": 0.00048,
+        "missing": 16,
+        "monotonic_nondecreasing_within_runs": true,
+        "present": 1920,
+        "present_fraction": 0.9917355371900827,
+        "scenario_auc": 0.5,
+        "spearman_with_anchor_time": 1.0
+      }
+    ],
+    "provenance": [
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "applied state observed at or before t",
+        "family": "actuation_context",
+        "feature_id": "applied_cooling",
+        "intended_role": "predictive input candidate and applied-state observability",
+        "leakage_or_shortcut_risk": "CONTROLLER_ACTION_PROXY: the controller may already have reacted to the same thermal excursion; a classifier can recognize an intervention instead of predicting the event",
+        "lookback_rule": "instantaneous_at_anchor",
+        "missingness_behavior": "missing when the applied state is absent",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "POWER_PATH controller applied state as present in the telemetry row",
+        "physical_source_meaning": "Cooling state actually driven at the edge, not an ACK and not electrical proof.",
+        "quality_requirement": "applied state present at the anchor",
+        "sensor_role": "POWER_PATH",
+        "source_field": "applied_cooling",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: an applied command is not proof that current flowed"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "duty observed at or before t",
+        "family": "actuation_context",
+        "feature_id": "applied_duty",
+        "intended_role": "predictive input candidate and applied-state observability",
+        "leakage_or_shortcut_risk": "CONTROLLER_ACTION_PROXY: duty is chosen by the controller/policy and may encode the intervention policy rather than plant state",
+        "lookback_rule": "instantaneous_at_anchor",
+        "missingness_behavior": "missing when duty is absent; a missing duty is never zero",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "POWER_PATH controller applied duty as present in the telemetry row",
+        "physical_source_meaning": "Edge-applied PWM duty ratio at the anchor.",
+        "quality_requirement": "applied duty present at the anchor",
+        "sensor_role": "POWER_PATH",
+        "source_field": "applied_duty",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: duty is an applied setting, not a measured response"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "change observed at or before t",
+        "family": "actuation_context",
+        "feature_id": "time_since_confirmed_applied_change",
+        "intended_role": "predictive input candidate and intervention-recency diagnostic",
+        "leakage_or_shortcut_risk": "CONTROLLER_ACTION_PROXY: a recent transition is a controller event; the feature is causal at t but not a plant-state measurement",
+        "lookback_rule": "since last observed applied change, same boot only",
+        "missingness_behavior": "missing when no applied change has been observed in this boot or the current state is absent",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "past-only elapsed time since the last observed applied (state, duty) change",
+        "physical_source_meaning": "Elapsed time since the last observed change of the (applied_cooling, applied_duty) pair in the same boot.",
+        "quality_requirement": "both applied state and duty present at the change and at the anchor",
+        "sensor_role": "POWER_PATH",
+        "source_field": "applied_cooling;applied_duty",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: an observed transition is not verified cooling"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "value observed at or before t",
+        "family": "electrical_context",
+        "feature_id": "cooling_voltage_v",
+        "intended_role": "electrical response observability and predictive candidate",
+        "leakage_or_shortcut_risk": "DOWNSTREAM_RESPONSE: voltage is a branch response that may follow the controller action rather than precede the thermal event",
+        "lookback_rule": "instantaneous_at_anchor",
+        "missingness_behavior": "missing unless electrical quality is VALID; numeric UNKNOWN values are never promoted",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "PZEM-017 cooling-branch voltage (branch observation, not whole-device power)",
+        "physical_source_meaning": "PZEM cooling-branch voltage; never a total-system quantity.",
+        "quality_requirement": "electrical quality VALID at the anchor",
+        "sensor_role": "PZEM_COOLING_BRANCH",
+        "source_field": "cooling_voltage_v",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: electrical observation only; voltage does not verify actuation or thermal response"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "value observed at or before t",
+        "family": "electrical_context",
+        "feature_id": "cooling_current_a",
+        "intended_role": "electrical response observability and predictive candidate",
+        "leakage_or_shortcut_risk": "DOWNSTREAM_RESPONSE: current is a response to the applied command; it is not proof of successful thermal cooling",
+        "lookback_rule": "instantaneous_at_anchor",
+        "missingness_behavior": "missing unless electrical quality is VALID",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "PZEM-017 cooling-branch current through the branch shunt",
+        "physical_source_meaning": "PZEM cooling-branch current; never a total-system quantity.",
+        "quality_requirement": "electrical quality VALID at the anchor",
+        "sensor_role": "PZEM_COOLING_BRANCH",
+        "source_field": "cooling_current_a",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: electrical observation only; current is not proof of thermal cooling"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "value observed at or before t",
+        "family": "electrical_context",
+        "feature_id": "cooling_power_w",
+        "intended_role": "electrical response observability and predictive candidate",
+        "leakage_or_shortcut_risk": "DOWNSTREAM_RESPONSE + PWM_SAMPLING: sampled power on a PWM branch is a meter-dependent observation; branch power is not whole-system energy",
+        "lookback_rule": "instantaneous_at_anchor",
+        "missingness_behavior": "missing unless electrical quality is VALID; absent PZEM is not zero",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "PZEM-017 cooling-branch power (voltage x current x meter convention)",
+        "physical_source_meaning": "PZEM cooling-branch power; not whole-system energy.",
+        "quality_requirement": "electrical quality VALID at the anchor",
+        "sensor_role": "PZEM_COOLING_BRANCH",
+        "source_field": "cooling_power_w",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: electrical observation only; power is not proof of thermal response"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "counter observed at or before t",
+        "family": "electrical_context",
+        "feature_id": "energy_counter_wh",
+        "intended_role": "diagnostic energy provenance; predictive candidate only with caution",
+        "leakage_or_shortcut_risk": "RUN_AGE_OR_SCENARIO_IDENTIFIER: a cumulative counter grows with time and can act as a run-age/scenario shortcut; a reset or rollover must never be read as negative consumption",
+        "lookback_rule": "instantaneous_at_anchor with reset detection",
+        "missingness_behavior": "missing unless VALID and not below the previous VALID counter in the same boot",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "PZEM-017 cooling-branch energy register value with reset refusal",
+        "physical_source_meaning": "Cooling-branch PZEM energy register value; reset/rollover is reported as missing, never silently integrated.",
+        "quality_requirement": "electrical quality VALID and non-decreasing counter within the boot",
+        "sensor_role": "PZEM_COOLING_BRANCH",
+        "source_field": "cooling_energy_counter_wh",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: an energy register is not a thermal-response proof"
+      },
+      {
+        "arm_membership": "A3B_ONLY",
+        "available_at_prediction_time": "all power samples from integration start through t",
+        "family": "electrical_context",
+        "feature_id": "past_integrated_cooling_energy_wh",
+        "intended_role": "diagnostic energy provenance; predictive candidate only with caution",
+        "leakage_or_shortcut_risk": "RUN_AGE_OR_SCENARIO_IDENTIFIER + DOWNSTREAM_RESPONSE: cumulative energy grows with elapsed run time and integrates the controller response",
+        "lookback_rule": "since first VALID electrical sample, same boot only",
+        "missingness_behavior": "missing when any contributing interval is non-VALID or longer than max_gap_s; never bridged",
+        "online_real_availability": "NOT_ESTABLISHED_FOR_PREDICTIVE_USE: zero predictive-eligible real runs and no qualified real electrical development population",
+        "origin": "past-only left-rectangle integral of VALID cooling-branch power",
+        "physical_source_meaning": "Left-rectangle integral of VALID cooling-branch power since the first VALID electrical sample of the boot.",
+        "quality_requirement": "every interval since integration start is VALID with a gap no longer than max_gap_s",
+        "sensor_role": "PZEM_COOLING_BRANCH",
+        "source_field": "cooling_power_w",
+        "source_timestamp_domain": "source_declared",
+        "verified_actuation": "NO: integrated branch energy is not verified cooling"
+      }
+    ],
+    "run_invariance": {
+      "anchors_compared": 2715,
+      "electrical_block_run_invariant": true,
+      "interpretation": "fixture property only: the synthetic electrical block is identical across runs, so it cannot carry scenario/controller identity",
+      "mismatch_count": 0,
+      "runs_compared": 16
+    }
+  },
+  "fold_identity": {
+    "effective_independent_groups": 8,
+    "folds": [
+      {
+        "fold_id": "F1",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-005",
+          "W11-PAIR-006"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006"
+        ]
+      },
+      {
+        "fold_id": "F2",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-007",
+          "W11-PAIR-008"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008"
+        ]
+      },
+      {
+        "fold_id": "F3",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-009"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-009"
+        ]
+      },
+      {
+        "fold_id": "F4",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-010"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-010"
+        ]
+      }
+    ],
+    "grouping_key": "run_id + pair_id (one effective group per pair)",
+    "n_splits": 4,
+    "seed": 42
+  },
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_base_revision": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+  "generation_command": "uv run --locked --python 3.12 python scripts/w15-electrical-ablation-W15.py",
+  "hard_boundaries": [
+    "No W16 locked-test access.",
+    "No final predictive model approval.",
+    "No physical model release.",
+    "No Controller B actuation.",
+    "No online shadow deployment.",
+    "No network or hardware commands.",
+    "No invented qualified PZEM evidence.",
+    "No promotion of synthetic AP to physical evidence.",
+    "No known future-feature or controller-action leakage; causal probes are audited, but model-level shortcut attribution is not established.",
+    "No probability wording without real calibration support.",
+    "No arbitrary hyperparameter sweep.",
+    "No deep-model implementation without a justified GO.",
+    "No W10 registry mutation.",
+    "No W11-W14 history rewriting.",
+    "No modifications to A/C/D code or evidence.",
+    "No canonical-document rewrites.",
+    "No new infrastructure or model-registry service.",
+    "No AGENTS.md, .opencode files or agent-session reports in the repository.",
+    "No merge or signoff actions."
+  ],
+  "hyperparameter_candidate": {
+    "artifact": "hyperparameter-freeze-candidate-W15.json",
+    "sha256": "07d6b6d1efe119e9b33937c44850486382ec5b89adb0008b093bbe380b4a0aa6",
+    "status": "DEVELOPMENT_CONFIG_CANDIDATE"
+  },
+  "inputs": {
+    "feature_registry": {
+      "file_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "path": "feature-registry-v1.yaml",
+      "schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
+    },
+    "fixture_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "fixture_generator": {
+      "file_sha256": "711bf4a0acd9913207c430a6188640afb2e9ff25feb156743de58a241ec6e837",
+      "path": "src/coldguard_ml/feature_fixtures.py"
+    },
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "model_config": {
+      "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+      "file_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "path": "xgb-v1-config.yaml"
+    },
+    "model_family": "XGBoost",
+    "model_params": {
+      "colsample_bytree": 1.0,
+      "learning_rate": 0.05,
+      "max_depth": 3,
+      "n_estimators": 60,
+      "n_jobs": 1,
+      "objective": "binary:logistic",
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 1.0,
+      "subsample": 1.0,
+      "tree_method": "hist"
+    },
+    "risk_threshold": 0.5,
+    "score_semantics": "risk_score",
+    "w12_manifest": {
+      "gate_g3": "NO-GO / FIX DATA",
+      "path": "reports/W12/w12-manifest.json",
+      "sha256": "ef06f9712203b39c01351ad89a17368574e98a0db6436f842e926b68418073a7"
+    },
+    "w13_manifest": {
+      "path": "reports/W13/horizon-manifest-W13.json",
+      "predictive_eligible_runs": 0,
+      "primary_horizon_frozen": "NOT_FROZEN",
+      "sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404"
+    },
+    "w14_manifest": {
+      "calibration_decision": "RISK_SCORE_ONLY",
+      "path": "reports/W14/w14-manifest.json",
+      "sha256": "e4a0263ead067a10df8d23ffc2bb10d6e750c88e515153fd6f637c733077357d"
+    }
+  },
+  "layer_version": "coldguard-w15-electrical-ablation-v1",
+  "model_artifact": {
+    "files": {
+      "json": {
+        "bytes": 32683,
+        "path": "reports/W15/model/model.json",
+        "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd"
+      },
+      "ubj": {
+        "bytes": 46433,
+        "path": "reports/W15/model/model.ubj",
+        "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+      }
+    },
+    "fresh_process_reload": {
+      "fresh_process_reload_parity": true,
+      "fresh_process_xgboost": "3.4.1",
+      "max_abs_diff": 0.0,
+      "model_features": 28,
+      "tolerance_abs": 1e-12
+    },
+    "manifest": {
+      "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+      "calibration_status": "RISK_SCORE_ONLY",
+      "canonical_required_metadata_fields": [
+        "model_artifact_sha256",
+        "model_format",
+        "model_library_version",
+        "training_dataset_id",
+        "data_evidence_class",
+        "feature_schema_hash",
+        "ordered_feature_ids",
+        "target_spec_version",
+        "horizon_status",
+        "model_config_hash",
+        "calibration_status",
+        "operating_threshold_status",
+        "warning_persistence_status",
+        "training_code_revision",
+        "validation_evidence",
+        "release_eligibility"
+      ],
+      "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+      "feature_version": "CG-FEAT-1.0",
+      "files": {
+        "json": {
+          "bytes": 32683,
+          "file": "model.json",
+          "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd"
+        },
+        "ubj": {
+          "bytes": 46433,
+          "file": "model.ubj",
+          "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+        }
+      },
+      "guarded_interface_required": true,
+      "horizon_s": 60.0,
+      "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+      "intended_use": [
+        "offline software-control experiments on the W11 synthetic fixture",
+        "risk_score semantics only",
+        "future shadow-inference candidate only after all release gates"
+      ],
+      "limitations": [
+        "trained on a deterministic synthetic fixture; not physical evidence",
+        "eight development groups only; 4 correlated grouped folds are not 4 physical experiments",
+        "primary horizon and critical target are not frozen",
+        "no real calibration population; output is a risk score only",
+        "electrical block is run-invariant in the synthetic fixture",
+        "operating threshold and warning persistence are not frozen"
+      ],
+      "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "model_bytes_deterministic_in_process": true,
+      "model_config_calibration_status": "NOT_PERFORMED",
+      "model_config_hash": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+      "model_config_version": "coldguard-xgb-v1-development-v1",
+      "model_family": "XGBoost",
+      "model_format": "ubj",
+      "model_inspection": {
+        "diagnostic_only": true,
+        "dominant_feature": {
+          "feature_id": "time_since_open",
+          "feature_index": 15,
+          "split_count": 60,
+          "total_gain": 21460.123186
+        },
+        "dominant_feature_split_thresholds": [
+          60.0
+        ],
+        "feature_count": 28,
+        "features": [
+          {
+            "feature_id": "T_chamber_max_c",
+            "feature_index": 0,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_chamber_min_c",
+            "feature_index": 1,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_chamber_mean_c",
+            "feature_index": 2,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_chamber_spread_c",
+            "feature_index": 3,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_center_c",
+            "feature_index": 4,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_bottom_c",
+            "feature_index": 5,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "T_near_door_c",
+            "feature_index": 6,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "rolling_mean_temperature_60s",
+            "feature_index": 7,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "rolling_std_temperature_60s",
+            "feature_index": 8,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "rolling_min_temperature_60s",
+            "feature_index": 9,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "rolling_max_temperature_60s",
+            "feature_index": 10,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "past_only_slope_c_per_min_60s",
+            "feature_index": 11,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "past_only_temperature_delta_60s",
+            "feature_index": 12,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "past_only_spatial_spread_60s",
+            "feature_index": 13,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "door_open",
+            "feature_index": 14,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "time_since_open",
+            "feature_index": 15,
+            "split_count": 60,
+            "total_gain": 21460.123186
+          },
+          {
+            "feature_id": "duration_so_far",
+            "feature_index": 16,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "count_past_60s",
+            "feature_index": 17,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "applied_cooling",
+            "feature_index": 18,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "applied_duty",
+            "feature_index": 19,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "time_since_confirmed_applied_change",
+            "feature_index": 20,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "cooling_voltage_v",
+            "feature_index": 21,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "cooling_current_a",
+            "feature_index": 22,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "cooling_power_w",
+            "feature_index": 23,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "energy_counter_wh",
+            "feature_index": 24,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "past_integrated_cooling_energy_wh",
+            "feature_index": 25,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "ambient_temperature_c",
+            "feature_index": 26,
+            "split_count": 0,
+            "total_gain": 0.0
+          },
+          {
+            "feature_id": "relative_humidity_pct",
+            "feature_index": 27,
+            "split_count": 0,
+            "total_gain": 0.0
+          }
+        ],
+        "interpretation_note": "split usage is a native model diagnostic, not causal feature importance and not evidence of physical predictive value",
+        "total_split_count": 60,
+        "tree_count": 60,
+        "unused_feature_count": 27,
+        "unused_feature_ids": [
+          "T_chamber_max_c",
+          "T_chamber_min_c",
+          "T_chamber_mean_c",
+          "T_chamber_spread_c",
+          "T_center_c",
+          "T_bottom_c",
+          "T_near_door_c",
+          "rolling_mean_temperature_60s",
+          "rolling_std_temperature_60s",
+          "rolling_min_temperature_60s",
+          "rolling_max_temperature_60s",
+          "past_only_slope_c_per_min_60s",
+          "past_only_temperature_delta_60s",
+          "past_only_spatial_spread_60s",
+          "door_open",
+          "duration_so_far",
+          "count_past_60s",
+          "applied_cooling",
+          "applied_duty",
+          "time_since_confirmed_applied_change",
+          "cooling_voltage_v",
+          "cooling_current_a",
+          "cooling_power_w",
+          "energy_counter_wh",
+          "past_integrated_cooling_energy_wh",
+          "ambient_temperature_c",
+          "relative_humidity_pct"
+        ],
+        "used_feature_count": 1,
+        "used_feature_ids": [
+          "time_since_open"
+        ]
+      },
+      "model_library": "xgboost",
+      "model_library_version": "3.4.1",
+      "model_secondary_format": "json",
+      "operating_threshold": 0.5,
+      "operating_threshold_status": "ILLUSTRATIVE_NOT_FROZEN",
+      "ordered_feature_ids": [
+        "T_chamber_max_c",
+        "T_chamber_min_c",
+        "T_chamber_mean_c",
+        "T_chamber_spread_c",
+        "T_center_c",
+        "T_bottom_c",
+        "T_near_door_c",
+        "rolling_mean_temperature_60s",
+        "rolling_std_temperature_60s",
+        "rolling_min_temperature_60s",
+        "rolling_max_temperature_60s",
+        "past_only_slope_c_per_min_60s",
+        "past_only_temperature_delta_60s",
+        "past_only_spatial_spread_60s",
+        "door_open",
+        "time_since_open",
+        "duration_so_far",
+        "count_past_60s",
+        "applied_cooling",
+        "applied_duty",
+        "time_since_confirmed_applied_change",
+        "cooling_voltage_v",
+        "cooling_current_a",
+        "cooling_power_w",
+        "energy_counter_wh",
+        "past_integrated_cooling_energy_wh",
+        "ambient_temperature_c",
+        "relative_humidity_pct"
+      ],
+      "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+      "probe_parity": {
+        "files": {
+          "json": {
+            "bytes": 32683,
+            "file": "model.json",
+            "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd"
+          },
+          "ubj": {
+            "bytes": 46433,
+            "file": "model.ubj",
+            "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+          }
+        },
+        "fresh_process_reload_parity": true,
+        "fresh_process_xgboost": "3.4.1",
+        "max_abs_diff": 0.0,
+        "model_features": 28,
+        "probe_max_abs_diff": 0.0,
+        "probe_rows": 5,
+        "probe_tolerance_abs": 1e-12,
+        "reload_parity": true,
+        "tolerance_abs": 1e-12
+      },
+      "prohibited_use": [
+        "physical Controller B actuation",
+        "calibrated-probability or percentage-risk wording",
+        "public reliability or early-warning superiority claims",
+        "final A/B comparison",
+        "deployment or registration in C's backend"
+      ],
+      "raw_native_load_prohibited": true,
+      "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+      "schema": "coldguard-w15-model-artifact-v1",
+      "score_semantics": "risk_score",
+      "target_spec_version": "coldguard-w11-development-label-v1",
+      "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+      "training_code_revision": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+      "training_code_revision_semantics": "GENERATION_BASE_NOT_DELIVERY_COMMIT",
+      "training_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+      "training_population": {
+        "development_only": true,
+        "locked_test_used": false,
+        "negative": 1456,
+        "positive": 480,
+        "run_count": 16,
+        "sample_count": 1936
+      },
+      "validation_evidence": {
+        "event_summary": {
+          "fit_folds": 8,
+          "mean_event_recall": 1.0,
+          "mean_false_warning_episodes_per_hour": 0.0,
+          "total_missed_critical_events": 0
+        },
+        "fold_ap": {
+          "TRAIN_FOLD_CLASS_WEIGHT": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ],
+          "UNWEIGHTED": [
+            1.0,
+            1.0,
+            1.0,
+            1.0
+          ]
+        },
+        "not_physical_evidence": true,
+        "oof_ap": {
+          "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+          "UNWEIGHTED": 1.0
+        },
+        "protocol": "W11 grouped CV, 4 folds, seed 42, A3B arm",
+        "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
+      },
+      "warning_persistence_status": "NOT_FROZEN"
+    },
+    "manifest_path": "reports/W15/model/model-manifest-W15.json",
+    "manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+    "model_bytes_deterministic_in_process": true,
+    "primary_format": "ubj",
+    "probe_tolerance_abs": 1e-12,
+    "release_eligibility": "NON_DEPLOYABLE_CANDIDATE"
+  },
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "paired_folds": [
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F1",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F1",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "UNWEIGHTED"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F2",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F2",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "UNWEIGHTED"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F3",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F3",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "UNWEIGHTED"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F4",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+    },
+    {
+      "ap_a": 1.0,
+      "ap_b": 1.0,
+      "delta_ap_b_minus_a": 0.0,
+      "event_recall_a": 1.0,
+      "event_recall_b": 1.0,
+      "false_warnings_a": 0.0,
+      "false_warnings_b": 0.0,
+      "fold_id": "F4",
+      "missed_events_a": 0,
+      "missed_events_b": 0,
+      "strategy": "UNWEIGHTED"
+    }
+  ],
+  "population": {
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "development_groups": [
+      "W11-PAIR-003",
+      "W11-PAIR-004",
+      "W11-PAIR-005",
+      "W11-PAIR-006",
+      "W11-PAIR-007",
+      "W11-PAIR-008",
+      "W11-PAIR-009",
+      "W11-PAIR-010"
+    ],
+    "development_runs": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009",
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-010",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-010"
+    ],
+    "evaluable_samples": 1936,
+    "excluded": {
+      "CENSORED": 960
+    },
+    "excluded_by_run": {
+      "CG-W11-S1-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-010": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-010": {
+        "CENSORED": 60
+      }
+    },
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "locked_test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ],
+    "negative": 1456,
+    "positive": 480,
+    "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "sample_identity_sha256": "6d6d265d03bd664bd808652789c48af3c79a508c01625bc445f5c5c427f4f889",
+    "test_partition_used": false
+  },
+  "prediction_vs_diagnosis": {
+    "classification": "SOFTWARE_ONLY_EVIDENCE",
+    "diagnosis_value": "SOFTWARE_ONLY",
+    "prediction_value": "NOT_ESTABLISHED",
+    "track_d_evidence": "contract-level applied-state vs branch-power consistency interface and software probes only; no empirical real fault labels or detector accuracy",
+    "track_p_evidence": "synthetic grouped A3 on the W11 fixture only; zero predictive-eligible real runs; no real impending-critical labels; no physical claim"
+  },
+  "reference_horizon": {
+    "label_identity": {
+      "boundary_c": null,
+      "frozen_at": null,
+      "horizon_s": 60.0,
+      "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+      "spec_version": "coldguard-w11-development-label-v1",
+      "status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+    },
+    "primary_horizon_frozen": false,
+    "source": "pre-existing W11 development label candidate; not selected by W15",
+    "status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "value_s": 60.0
+  },
+  "revision_semantics": "GENERATION_BASE_NOT_DELIVERY_COMMIT",
+  "schema": "coldguard-w15-manifest-v1",
+  "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "scientific_verdicts": {
+    "A3": "SOFTWARE_VERIFIED",
+    "CALIBRATION": "RISK_SCORE_ONLY",
+    "DEEP_MODEL": "NO-GO",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "DIAGNOSIS_VALUE": "SOFTWARE_ONLY",
+    "HYPERPARAMETER_CANDIDATE": "DECLARED",
+    "MODEL_ARTIFACT": "SYNTHETIC_NON_DEPLOYABLE",
+    "PREDICTION_VALUE": "NOT_ESTABLISHED",
+    "SOFTWARE": "COMPLETE"
+  },
+  "verification": {
+    "a3a_is_a3b_minus_exact_delta": true,
+    "a3b_reproduces_w11_allowlist": true,
+    "counter_reset_refused": true,
+    "electrical_future_isolation": true,
+    "electrical_unknown_never_zero": true,
+    "fresh_process_reload": true,
+    "grouped_folds_disjoint_computed": true,
+    "locked_test_untouched": true,
+    "model_bytes_deterministic_in_process": true,
+    "model_inspection_dominant_feature": "time_since_open",
+    "model_inspection_used_feature_count": 1,
+    "model_native_round_trip": true,
+    "prior_gate_g3_declared": "NO-GO / FIX DATA",
+    "requested_and_readback_cooling_excluded": true,
+    "sample_population_identity_sha256": "6d6d265d03bd664bd808652789c48af3c79a508c01625bc445f5c5c427f4f889",
+    "tec_hot_side_excluded": true,
+    "test_partition_used": false,
+    "w10_registry_schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "w13_horizon_decision": "PROVISIONAL_CANDIDATE_ONLY",
+    "w13_primary_horizon_frozen": "NOT_FROZEN",
+    "w14_calibration_decision": "RISK_SCORE_ONLY"
+  },
+  "views": {
+    "A3A": {
+      "arm_id": "A3A",
+      "component": "A3",
+      "description": "Thermal/context arm: the 14 frozen chamber-air thermal features, the 4 authorized MC-38 door features, ambient temperature and relative humidity.  No electrical or applied-state input.",
+      "excluded_features": [
+        {
+          "feature_id": "applied_cooling",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "applied_duty",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "time_since_confirmed_applied_change",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "cooling_voltage_v",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "cooling_current_a",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "cooling_power_w",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "energy_counter_wh",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "past_integrated_cooling_energy_wh",
+          "reason": "authorized electrical/actuation delta; present only in A3b"
+        },
+        {
+          "feature_id": "requested_cooling",
+          "reason": "controller request is not proof of applied action and was not a W11 model input"
+        },
+        {
+          "feature_id": "readback_cooling",
+          "reason": "readback is not a verified electrical/thermal response and was not a W11 model input"
+        },
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is a diagnostic observation, not chamber air"
+        }
+      ],
+      "feature_count": 20,
+      "features": [
+        {
+          "base_feature_id": "T_chamber_max_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_max_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_min_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_min_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_mean_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_mean_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_spread_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_spread_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_bottom_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_bottom_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_BOTTOM"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_near_door_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_near_door_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_spatial_spread_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_spatial_spread_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "door_open",
+          "family": "door_context",
+          "feature_id": "door_open",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "time_since_open",
+          "family": "door_context",
+          "feature_id": "time_since_open",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "duration_so_far",
+          "family": "door_context",
+          "feature_id": "duration_so_far",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "count_past_60s",
+          "family": "door_context",
+          "feature_id": "count_past_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "ambient_temperature_c",
+          "family": "environmental_context",
+          "feature_id": "ambient_temperature_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "relative_humidity_pct",
+          "family": "environmental_context",
+          "feature_id": "relative_humidity_pct",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w15-a3a-thermal-context-v1"
+    },
+    "A3B": {
+      "arm_id": "A3B",
+      "component": "A3",
+      "description": "The identical A3a thermal/context set plus exactly the eight pre-existing W11 electrical/applied-state model inputs.",
+      "excluded_features": [
+        {
+          "feature_id": "requested_cooling",
+          "reason": "controller request is not proof of applied action and was not a W11 model input"
+        },
+        {
+          "feature_id": "readback_cooling",
+          "reason": "readback is not a verified electrical/thermal response and was not a W11 model input"
+        },
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is a diagnostic observation, not chamber air"
+        }
+      ],
+      "feature_count": 28,
+      "features": [
+        {
+          "base_feature_id": "T_chamber_max_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_max_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_min_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_min_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_mean_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_mean_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_spread_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_spread_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_bottom_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_bottom_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_BOTTOM"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_near_door_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_near_door_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_spatial_spread_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_spatial_spread_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "door_open",
+          "family": "door_context",
+          "feature_id": "door_open",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "time_since_open",
+          "family": "door_context",
+          "feature_id": "time_since_open",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "duration_so_far",
+          "family": "door_context",
+          "feature_id": "duration_so_far",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "count_past_60s",
+          "family": "door_context",
+          "feature_id": "count_past_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "applied_cooling",
+          "family": "actuation_context",
+          "feature_id": "applied_cooling",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "applied_duty",
+          "family": "actuation_context",
+          "feature_id": "applied_duty",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "time_since_confirmed_applied_change",
+          "family": "actuation_context",
+          "feature_id": "time_since_confirmed_applied_change",
+          "lookback_s": null,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_voltage_v",
+          "family": "electrical_context",
+          "feature_id": "cooling_voltage_v",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_current_a",
+          "family": "electrical_context",
+          "feature_id": "cooling_current_a",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_power_w",
+          "family": "electrical_context",
+          "feature_id": "cooling_power_w",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "energy_counter_wh",
+          "family": "electrical_context",
+          "feature_id": "energy_counter_wh",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_integrated_cooling_energy_wh",
+          "family": "electrical_context",
+          "feature_id": "past_integrated_cooling_energy_wh",
+          "lookback_s": null,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "ambient_temperature_c",
+          "family": "environmental_context",
+          "feature_id": "ambient_temperature_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "relative_humidity_pct",
+          "family": "environmental_context",
+          "feature_id": "relative_humidity_pct",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w15-a3b-thermal-context-electrical-v1"
+    }
+  }
+}

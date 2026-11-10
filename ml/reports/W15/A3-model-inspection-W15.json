@@ -1,0 +1,220 @@
+{
+  "diagnostic_only": true,
+  "dominant_feature": {
+    "feature_id": "time_since_open",
+    "feature_index": 15,
+    "split_count": 60,
+    "total_gain": 21460.123186
+  },
+  "dominant_feature_split_thresholds": [
+    60.0
+  ],
+  "feature_count": 28,
+  "features": [
+    {
+      "feature_id": "T_chamber_max_c",
+      "feature_index": 0,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_chamber_min_c",
+      "feature_index": 1,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_chamber_mean_c",
+      "feature_index": 2,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_chamber_spread_c",
+      "feature_index": 3,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_center_c",
+      "feature_index": 4,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_bottom_c",
+      "feature_index": 5,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "T_near_door_c",
+      "feature_index": 6,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "rolling_mean_temperature_60s",
+      "feature_index": 7,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "rolling_std_temperature_60s",
+      "feature_index": 8,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "rolling_min_temperature_60s",
+      "feature_index": 9,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "rolling_max_temperature_60s",
+      "feature_index": 10,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "past_only_slope_c_per_min_60s",
+      "feature_index": 11,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "past_only_temperature_delta_60s",
+      "feature_index": 12,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "past_only_spatial_spread_60s",
+      "feature_index": 13,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "door_open",
+      "feature_index": 14,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "time_since_open",
+      "feature_index": 15,
+      "split_count": 60,
+      "total_gain": 21460.123186
+    },
+    {
+      "feature_id": "duration_so_far",
+      "feature_index": 16,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "count_past_60s",
+      "feature_index": 17,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "applied_cooling",
+      "feature_index": 18,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "applied_duty",
+      "feature_index": 19,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "time_since_confirmed_applied_change",
+      "feature_index": 20,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "cooling_voltage_v",
+      "feature_index": 21,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "cooling_current_a",
+      "feature_index": 22,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "cooling_power_w",
+      "feature_index": 23,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "energy_counter_wh",
+      "feature_index": 24,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "past_integrated_cooling_energy_wh",
+      "feature_index": 25,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "ambient_temperature_c",
+      "feature_index": 26,
+      "split_count": 0,
+      "total_gain": 0.0
+    },
+    {
+      "feature_id": "relative_humidity_pct",
+      "feature_index": 27,
+      "split_count": 0,
+      "total_gain": 0.0
+    }
+  ],
+  "interpretation_note": "split usage is a native model diagnostic, not causal feature importance and not evidence of physical predictive value",
+  "total_split_count": 60,
+  "tree_count": 60,
+  "unused_feature_count": 27,
+  "unused_feature_ids": [
+    "T_chamber_max_c",
+    "T_chamber_min_c",
+    "T_chamber_mean_c",
+    "T_chamber_spread_c",
+    "T_center_c",
+    "T_bottom_c",
+    "T_near_door_c",
+    "rolling_mean_temperature_60s",
+    "rolling_std_temperature_60s",
+    "rolling_min_temperature_60s",
+    "rolling_max_temperature_60s",
+    "past_only_slope_c_per_min_60s",
+    "past_only_temperature_delta_60s",
+    "past_only_spatial_spread_60s",
+    "door_open",
+    "duration_so_far",
+    "count_past_60s",
+    "applied_cooling",
+    "applied_duty",
+    "time_since_confirmed_applied_change",
+    "cooling_voltage_v",
+    "cooling_current_a",
+    "cooling_power_w",
+    "energy_counter_wh",
+    "past_integrated_cooling_energy_wh",
+    "ambient_temperature_c",
+    "relative_humidity_pct"
+  ],
+  "used_feature_count": 1,
+  "used_feature_ids": [
+    "time_since_open"
+  ]
+}

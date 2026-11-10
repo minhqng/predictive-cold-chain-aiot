@@ -1,0 +1,30 @@
+{
+  "applied_transition_after_anchor_isolated": {
+    "A3A": true,
+    "A3B": true
+  },
+  "counter_reset_refused": {
+    "counter_missing_after_reset": true,
+    "counter_present_before_reset": true,
+    "no_negative_counter_value": true,
+    "reset_reason_recorded": true
+  },
+  "electrical_block_run_invariance": {
+    "anchors_compared": 2715,
+    "electrical_block_run_invariant": true,
+    "interpretation": "fixture property only: the synthetic electrical block is identical across runs, so it cannot carry scenario/controller identity",
+    "mismatch_count": 0,
+    "runs_compared": 16
+  },
+  "future_power_and_applied_mutation_isolated": {
+    "A3A": true,
+    "A3B": true
+  },
+  "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "unknown_electrical_never_zero_or_valid": {
+    "anchors_checked": 121,
+    "applied_state_still_observed": true,
+    "pzem_features_missing_after_unknown": true,
+    "pzem_never_zero_or_valid": true
+  }
+}
