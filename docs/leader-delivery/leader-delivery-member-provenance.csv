@@ -1,0 +1,6 @@
+path,member,pr,week_or_req,original_sha,original_author,author_date,integration_commit,final_file_paths,owner_fixes,regression_tests
+telemetry,member A,#94,W06/W08,ae23a36fe98fcf1bf6005dd9fcd79b95fb796570,member A,verified on GitHub,240b393,7 files (telemetry schema + HANDOFF regen),none required beyond owner integration layer,evidence/A/W01 validators PASS
+acceptance integrity,member A,#95,W9 reproducibility + pins,815387d19a3898e6b33ccb65758a554dd0c589e1,member A,verified on GitHub,2cd8023,44 files (incl. 6 in evidence/A/SOURCES/20261109/s1/s1-20261109T081304Z/),none,W09 reproducibility validator PASS on upstream A#95
+observability stack,member C,#69,W04..W12,361e73246a3a6746a39a7e2769dffdfb7b1ce486,member C,verified on GitHub,98dc386,59 files,none; owner adapters not changed,backend suite 237/408 PASS
+AIW/verification,member D,#90,W04..W12 (clock/TTL/AIW),da821094985006945d0306dd7b16be576378bc18,member D,verified on GitHub,5f4c859,53 files,owner tests aligned to D#90 matrix (e53f5f2),control suite 428 PASS
+W13 horizon engineering,member B,#102,W11+W13,824a5389c29ade0e56ecef7ef21eb35c2a379a7b,member B,verified on GitHub,ce9661a,122 files,none; B tree tests on exact B#102 source,ml 832 + horizon 32 PASS
