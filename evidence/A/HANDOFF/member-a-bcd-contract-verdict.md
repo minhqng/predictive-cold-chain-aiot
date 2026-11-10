@@ -35,7 +35,7 @@ for the *command* envelope, which agrees with `cg_command.h` (`schema=1`).
 
 ## B. Frame grammars
 
-Full byte-level grammar is in the JSON under `grammars`. The 95-token order of one
+Full byte-level grammar is in the JSON under `grammars`. The 96-token order of one
 schema-3 telemetry frame, as emitted by `cg_telemetry.c:231-385` and validated by
 `cg_telemetry_schema.parse_line`:
 
@@ -65,13 +65,16 @@ age fields saturate at `2^64-1` on clock rewind (`cg_telemetry.c:67-73`);
 (`cg_telemetry.h:93-99`). A frame is **refused, never truncated** (`cg_telemetry.c:33-39`,
 `cg_log.c:70-92`, budget `CG_TELEMETRY_LINE_MAX=3072` at `coldguard_config.h:474`).
 
-The probe frame the matrix is built on is **DERIVED, not captured** — see `G` below.
+The probe frame the matrix is built on is **PARSED, not derived**: the committed W06
+**host demo capture** carries a real `schema=3` frame with the full command/ACK tail;
+no new physical run was performed for this artifact (see `G`, B-1).
 
 ## C. Compatibility matrix
 
-`member-a-bcd-compatibility-matrix.csv` has 95 rows: 25 mapped onto a backend field and
-70 with no backend counterpart. Of the mapped rows, 3 are REJECT at source and 22 accept
-only after a schema rewrite plus a name/unit map. Verbatim classifier output is in JSON
+`member-a-bcd-compatibility-matrix.csv` has 96 rows: 25 mapped onto a backend field (23
+accept only after a schema rewrite plus a name/unit map, 2 REJECT at source) and 71
+IGNORED (extra device-only fields allowed by `Telemetry._WireBase extra=allow`), with
+1 REJECT - unsatisfiable on the device. Verbatim classifier output is in JSON
 `ingest_cases`.
 
 | Device token | Backend field | Verdict | Why |
@@ -81,13 +84,13 @@ only after a schema rewrite plus a name/unit map. Verbatim classifier output is 
 | `quality` (value `UNKNOWN`) | `quality.overall` | **REJECT** | `contracts.py:40` `Quality = Literal["VALID","DEGRADED","INVALID"]`; device vocabulary is four states (`cg_telemetry_schema.py:216`); Member D **does** model `UNKNOWN` (`control/.../types.py:25-35`) |
 | `pwm_duty=0` (permille int) | `actuation.duty` | **UNIT CLASH** | `contracts.py:132-137` bounds `[0.0, 1.0]`; raw `250` fails, `0.25` only after scaling |
 | `door_open`/`door_status` | `door.state` | **TRANSLATION REQUIRED** | `contracts.py:44,107` wants `OPEN|CLOSED|UNKNOWN`; the TELEM line never emits those tokens (`cg_telemetry.c:275-281`) |
-| `raw_t1_c`/`raw_t2_c`/`raw_t3_c` | `thermal.t1/t2/t3` | **name + type** | `_coerce` leaves them as text (`cg_telemetry_schema.py:309-345`); backend demands JSON number or null (`validation.py:57-68`) |
+| `raw_t1_c`/`raw_t2_c`/`raw_t3_c` | `thermal.t1/t2/t3` | name map only | `_coerce` now types them `float|NaN` via `FLOAT_FIELDS` (fixed in this remediation); `nan` parses as null |
 | `t_ambient_c`,`relative_humidity_pct` | `environment.t_air`,`environment.rh` | name map only | values already numeric |
 | `voltage_v`,`current_a`,`power_w`,`energy_wh` | `electrical.*` | **ACCEPT** | names identical — the only clean group |
 | `cooling_applied` | `actuation.cooling` | name map only | same `ON/OFF` vocabulary |
 | `thermal_quality`,`environment_quality`,`electrical_quality` | `quality.*` | name map, `UNKNOWN` risk | as row 3 |
 | `device_id`,`boot_id`,`seq`,`uptime_ms`,`run_id`,`hardware_config_id`,`firmware_version`,`calibration_id` | same names | **ACCEPT** | direct pass-through |
-| 70 remaining tokens (`test_phase`, `fault_code`, `fault_reason`, `health*`, `*_age_ms`, `*_beats`, `rom`, `tec_state`, `command_id`, `desired_cooling`, `last_ack_status`, `last_ack_reason`, …) | `<none>` | **IGNORED** | `contracts.py:84` `extra="allow"` accepts and drops them; none is a column in `normalized_store.telemetry` |
+| 71 remaining tokens (`test_phase`, `fault_code`, `fault_reason`, `health*`, `*_age_ms`, `*_beats`, `rom`, `tec_state`, `command_id`, `desired_cooling`, `last_ack_status`, `last_ack_reason`, …) | `<none>` | **IGNORED** | `contracts.py:84` `extra="allow"` accepts and drops them; none is a column in `normalized_store.telemetry` |
 
 **Command path mismatches (OBSERVED, named verbatim):**
 
@@ -190,23 +193,16 @@ compatibility; the incompatibility is proven only by the probe in
    `expires_at` ISO datetime vs `*_at_ms`; nested `action.*` vs flat `action_*`; and the
    fact that the device refuses unknown command fields (`cg_command.c:780`) while the
    backend accepts them — that asymmetry is deliberate and must not be relaxed.
-4. **Member A owns two fixes** (defect `R-07`, `R-08` in the JSON register) and they do
-   not require touching B/C/D code.
+4. **Member A has closed its two defects** (`R-07`: the committed demo capture is a real
+   schema=3 frame; `R-08`: raw temperature fields are typed `float|NaN` in `FLOAT_FIELDS`).
+   Both are marked RESOLVED in the generated JSON register.
 
 ## G. Blockers, stated exactly
 
-- **B-1 (Member A, self-inflicted, must fix before release).** The committed W06 evidence
-  does not exercise the schema it ships. `evidence/A/W06/demo-command-capture.log` line 10
-  carries `schema=2` and **zero** of the five W06-required command tokens, while
-  `firmware/tools/tests/test_cg_command_trace.py:28` calls that very line "The schema-3
-  telemetry line the harness emitted into the demo capture". The entire schema-3 telemetry
-  branch (`cg_telemetry.c:372-385`) has therefore never been emitted by a harness in the
-  repo. The probe frame in this artifact is labelled `DERIVED, not captured` for exactly
-  this reason: schema 3 was obtained by appending the literal tail at
-  `cg_telemetry.c:382-384` to the committed schema-2 line. **This blocks the "Member A
-  software release" claim for A-W06-04 until the capture is regenerated.** Needs a host
-  compiler: `gcc` is not on this PATH (OBSERVED: `command not found`); the historical W06
-  log says it was built with MSVC, so a VS developer shell is required.
+- **B-1 (RESOLVED in this remediation).** The committed W06 demo capture now carries a
+  real `schema=3` telemetry frame with the full W06 command/ACK tail
+  (`cg_telemetry.c:382-384`), parsed directly by `cg_telemetry_schema.parse_line`
+  (provenance: `PARSED, not derived` in `member-a-bcd-contract.json`).
 - **B-2.** No live broker, no PostgreSQL, no device. All 41 backend skips and every
   physical A-W06 item stay open; nothing in this report is a round-trip proof.
 - **B-3.** The command path cannot be closed at all today: `CG_CMD_SOURCE_NETWORK` is
