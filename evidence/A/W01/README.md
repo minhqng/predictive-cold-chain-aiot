@@ -5,6 +5,7 @@
 ## Scope and authority
 
 - Thứ tự thẩm quyền: `docs/00` → `docs/01` → `docs/02` → `docs/03` → `docs/04` → `docs/05A`, cụ thể `docs/04 §16` và `docs/05A §2, §10`.
+- **Bản đồ chân hiệu lực (map v2, 2026-10-28):** `evidence/A/as-built-pinmap-2026-10-27.md` trên nhánh W02. W01 không tự chốt GPIO (`pin-candidates-v0.md` là candidate lịch sử, đã có ghi chú superseded).
 - Dùng **BOM 24 mục đã freeze**; **không** tự ý viết lại Docs 00–01.
 - Bộ chứng cứ này tổng hợp **kết quả do người dùng báo và ảnh người dùng tải lên**, không phải một cuộc kiểm kê vật lý đầy đủ do agent chứng kiến. Mọi nhãn `reported` nghĩa là *được báo cáo*, không phải *đã được chứng nhận độc lập*.
 - **Bộ ảnh hiện hành là gói 25 ảnh** (`ColdGuard_W01_All_25_Real_Photos_OpenCode.zip`, 2026-10-18, 4.126.980 bytes, SHA-256 `9EB77E77CC1C1436B927E4307B0B14738C4A8EE2F4D7959D0C66A144212986CB`); 10 ảnh trước đó là tập con byte-identical của gói này — claim này đã được xác minh cục bộ bằng so khớp SHA-256 từng file khi hợp nhất, nhưng **không thể** tái kiểm chỉ từ nội dung repo (repo không chứa ZIP gốc). Ảnh chỉ chứng minh **sự hiện diện** của linh kiện; ảnh **không** chứng minh số lượng, định mức hay chất lượng lắp đặt, trừ khi `photo-inventory.csv` ghi rõ là có.
@@ -24,6 +25,7 @@ Cột `inspection_status` trong `bom-audit.csv` chỉ dùng các giá trị sau:
 | `PRESENT_REPORTED_TEST_REPORTED` | Người dùng báo có linh kiện và có kết quả bench; chưa có ảnh |
 | `PARTIAL_QUANTITY` | Số lượng thấp hơn yêu cầu đã freeze |
 | `UNAPPROVED_SUBSTITUTION` | Khác linh kiện đã freeze; **cần** change review |
+| `APPROVED_SUBSTITUTION` | Khác linh kiện đã freeze nhưng **thay thế đã được phê duyệt và ghi trong `freeze-deviation-review.md`** (decision log); các mục xác minh còn lại nằm trong `next_action` |
 | `UNVERIFIED` | Chưa xác minh được bằng chứng hiện có |
 
 Trong `pin-candidates-v0.md`, phân loại dùng đúng bốn mức canonical `known` / `likely` / `unknown` / `must test`.
@@ -38,7 +40,7 @@ Quy ước cột `photo_ref`: ảnh được liệt kê ở đây có thể là 
 | `photo-inventory.csv`, `photos/` | 25 ảnh người dùng tải lên kèm giới hạn của từng ảnh, tên file nguồn (`source_upload_filename`) và nhãn `cropped`. Tên file trong repo là tên tất định `NN-mo-ta.jpg` |
 | `pin-candidates-v0.md` | Đường UART/logic/1-Wire/GPIO candidate; **không** đóng băng GPIO |
 | `physical-risk-ledger.md` | Rủi ro điện/cơ và biện pháp kiềm chế bắt buộc |
-| `freeze-deviation-review.md` | Bốn sai lệch so với BOM đã freeze, chờ leader + D quyết định |
+| `freeze-deviation-review.md` | Bốn sai lệch so với BOM đã freeze; **CR-A-W01-01/02 đã được project owner phê duyệt 2026-11-09** (decision log trong file); CR-A-W01-03/04 (số lượng) vẫn chờ leader + D |
 | `legacy-assumption-check.md` | Loại bỏ kiến trúc cũ và phạm vi rà soát |
 | `hardware-audit-w01.md` | Tóm tắt, sai lệch, khoảng trống danh tính, kết luận |
 | `acceptance.md` | Checklist W01, blocker, chủ sở hữu hành động (nguồn duy nhất cho trạng thái) |

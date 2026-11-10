@@ -7,7 +7,7 @@ Bảng này là **nguồn duy nhất** cho trạng thái nghiệm thu W01 của 
 | Tiêu chí canonical | Trạng thái | Bằng chứng / phần còn thiếu |
 |---|---|---|
 | 24-item list reconciled | **PARTIAL** | `bom-audit.csv` có đủ 24 dòng HW-01..HW-24; nhiều dòng vẫn là `reported` hoặc có khoảng trống xác minh |
-| no unexplained core item substitution | **FAIL / BLOCKED** | Có 2 thay thế linh kiện chưa được duyệt (HW-07, HW-17); xem `freeze-deviation-review.md` CR-A-W01-01 và CR-A-W01-02 |
+| no unexplained core item substitution | **APPROVED — chờ ghi nhận lại bởi evaluator** | Hai thay thế (HW-07 TTL485-V2.0, HW-17 TB4506) đã được **project owner phê duyệt 2026-11-09**; `bom-audit.csv` cập nhật `APPROVED_SUBSTITUTION`, decision log trong `freeze-deviation-review.md`; kết quả FAIL cũ (UNAPPROVED_SUBSTITUTION) trong store là snapshot trước phê duyệt |
 | no old architecture carried forward | **PASS (phạm vi repo)** | `legacy-assumption-check.md`: không còn INA226 / IRLB3813 / 2 TEC / 20 L / 40 A PSU trong kiến trúc hoạt động; ghi chú ngoài repo chưa rà hết |
 | uncertain module facts explicitly marked unknown | **PASS** | Mọi mục chưa xác minh được ghi rõ `UNKNOWN` / `UNVERIFIED` / `reported` trong `bom-audit.csv` và `pin-candidates-v0.md` |
 
@@ -49,7 +49,7 @@ Ghi chú phạm vi: HW-19 (dây công suất), HW-22 (header), HW-24 (keo tản 
 
 ## Blocker W01 (canonical — phải xử lý trước khi W01 có thể PASS)
 
-- [ ] Leader + D phê duyệt hoặc bác bỏ CR-A-W01-01 (HW-07) và CR-A-W01-02 (HW-17).
+- [x] CR-A-W01-01 (HW-07) và CR-A-W01-02 (HW-17): **project owner phê duyệt 2026-11-09**; ghi trong decision log `freeze-deviation-review.md`; dòng BOM chuyển `APPROVED_SUBSTITUTION`. CR-A-W01-03/04 (số lượng) vẫn chờ leader.
 - [ ] Leader xác nhận sai lệch số lượng CR-A-W01-03 (PCT-218 ×4) và CR-A-W01-04 (DS18B20 ×4).
 - [ ] HW-07: marking chip chưa đọc được trong bất kỳ ảnh nào → cần ảnh cận/datasheet nhà bán (hạng mục canonical 7 còn PARTIAL).
 - [ ] Xác minh `>=2 × 5 A` (HW-16 — canonical yêu cầu `≥2`, hiện mới 1 × 5 A) và tiết diện `2 × 2.5 mm²` (HW-19) bằng ảnh/đo, **không** suy diễn.

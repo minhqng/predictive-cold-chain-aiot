@@ -276,9 +276,53 @@ def handler_door_cycles(ctx: TestContext) -> None:
 
 def handler_max3485(ctx: TestContext) -> None:
     ctx.source = "OPERATOR_MEASUREMENT"
-    vcc = ctx.ask_number("Measured VCC at the RS-485 module (V)", "V", 0.0, 12.0)
-    ctx.check_closed("vcc_3v3", vcc, 3.2, 3.4, detail="V")
-    ctx.measurements["vcc_v"] = vcc
+    variant = ctx.ask_choice(
+        "Installed RS-485 module configuration:",
+        ["MAX3485 3.3 V (frozen BOM)",
+         "TTL485-V2.0 5 V (W01 approved substitution)"])
+    if variant.startswith("MAX3485"):
+        # Original frozen configuration: the MAX3485 is a 3.3 V module and its
+        # module VCC must stay within the frozen 3.3 V class. Unchanged.
+        ctx.measurements["variant"] = "MAX3485_3V3_FROZEN"
+        vcc = ctx.ask_number("Measured VCC at the RS-485 module (V)", "V", 0.0, 12.0)
+        ctx.check_closed("vcc_3v3", vcc, 3.2, 3.4, detail="V")
+        ctx.measurements["vcc_v"] = vcc
+    else:
+        # Approved substitution (CR-A-W01-01, project owner 2026-11-09): the
+        # TTL485-V2.0 is a 5 V module; its 5 V supply is intentional and must
+        # NOT be held to the 3.3 V module-VCC requirement of the frozen part.
+        # The ESP32 input level is validated separately, behind the divider.
+        ctx.measurements["variant"] = "TTL485_V2_0_5V_OWNER_APPROVED"
+        vcc = ctx.ask_number("Measured VCC at the 5 V RS-485 module (V)", "V", 0.0, 12.0)
+        # 5 V-class module supply: nominal 5 V rail, +/- 10 %.
+        ctx.check_closed("vcc_5v_module_supply", vcc, 4.5, 5.5, detail="V")
+        ctx.measurements["vcc_v"] = vcc
+        approved = ctx.ask_confirm(
+            "The installed 5 V module is the W01 project-owner-approved substitution "
+            "(CR-A-W01-01, 2026-11-09; evidence/A/W01/freeze-deviation-review.md; "
+            "bom-audit.csv HW-07 APPROVED_SUBSTITUTION)")
+        ctx.check("approved_substitution_provenance", approved,
+                  failure_reason="SUBSTITUTION_APPROVAL_NOT_RECORDED")
+        gpio = ctx.operator.number(
+            ctx.definition.test_id,
+            "Measured logic level at the ESP32 RX input behind the divider (V)",
+            unit="V", minimum=0.0, maximum=6.0)
+        if gpio is None:
+            ctx.save_measurements()
+            ctx.block("GPIO_LEVEL_MEASUREMENT_MISSING: the approved 5 V variant "
+                      "requires a divider-level measurement at the ESP32 RX input")
+        # ESP32-S3 RX input level, separate from module VCC (ESP32-S3 Series
+        # Datasheet v2.2, the docs/00-cited authority): HIGH threshold
+        # VIH = 0.75 x VDD = 2.475 V at VDD 3.3 V; 3.4 V keeps this
+        # evaluator's existing 3.3 V-class logic ceiling as an operating
+        # margin below the datasheet absolute maximum VDD + 0.3 V = 3.6 V.
+        ctx.check_closed("esp32_gpio_input_level", gpio, 2.475, 3.4, detail="V")
+        ctx.measurements["gpio_input_level_v"] = gpio
+        direct = ctx.ask_confirm(
+            "No 5 V rail is wired directly to any ESP32 GPIO; only the measured "
+            "divider level reaches the RX pin")
+        ctx.check("no_direct_5v_to_gpio", direct,
+                  failure_reason="DIRECT_5V_TO_GPIO_FORBIDDEN")
     for item in ctx.definition.params.get("items", []):
         if not ctx.ask_confirm(item):
             ctx.check(f"item:{item}", False, failure_reason=f"MODULE_CHECK_FAILED: {item}")

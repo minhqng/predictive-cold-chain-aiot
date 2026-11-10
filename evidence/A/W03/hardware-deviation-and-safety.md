@@ -16,7 +16,7 @@
 | Hướng | DE//RE điều khiển bằng GPIO | **auto-direction**, không có chân DE//RE trên header `GND/RXD/TXD/VCC` |
 | Mức RX | RO 3.3 V đấu thẳng | TXD idle **5 V** theo báo cáo; phân áp tạm 10k/10k/10k → ~3.314 V **đo được** (vận hành W01), tính ≈ 3.33 V |
 
-**Trạng thái:** `MEASUREMENT REQUIRED` — change review `CR-A-W01-01` đang mở (W01 `freeze-deviation-review.md`).
+**Trạng thái:** `MEASUREMENT REQUIRED` — change review `CR-A-W01-01` ở trạng thái mở trước 2026-11-09 (W01 `freeze-deviation-review.md`). **Cập nhật 2026-11-09:** CR-A-W01-01 đã được **project owner phê duyệt** (thay thế TTL485-V2.0 chấp nhận cho CG-HW-001; decision log W01); các mục xác minh mức logic đo lại vẫn giữ nguyên cho lần đấu lại mạch kế tiếp (xem `rs485-pin-and-compatibility.md` §6).
 
 **Quy tắc W03 (bắt buộc):**
 
