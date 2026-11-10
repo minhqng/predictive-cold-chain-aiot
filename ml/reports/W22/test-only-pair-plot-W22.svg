@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="422" viewBox="0 0 760 422" role="img">
+<title>TEST_ONLY · Toy paired fixture</title><desc>SYNTHETIC_STATISTICAL_UNIT_TEST_ONLY — toy fixture; not a ColdGuard physical A/B result</desc>
+<rect x="0" y="0" width="760" height="422" fill="#ffffff"/>
+<rect x="8" y="8" width="744" height="30" rx="4" fill="#fff8c5" stroke="#d4a72c"/>
+<text x="18" y="28" font-family="sans-serif" font-size="13" font-weight="700" fill="#7d4e00">TEST_ONLY · SYNTHETIC_STATISTICAL_UNIT_TEST_ONLY — toy fixture; not a ColdGuard physical A/B result</text>
+<text x="18" y="60" font-family="sans-serif" font-size="14" font-weight="700" fill="#24292f">Toy paired fixture — thermal_exposure [°C·s] · PRIMARY OUTCOME</text>
+<text x="18" y="78" font-family="sans-serif" font-size="11" fill="#57606a">n = 8 accepted pairs · sign convention I_i = Y_A − Y_B · positive = Controller B improved</text>
+<line x1="720" y1="86" x2="720" y2="350" stroke="#d0d7de"/>
+<g id="pair-P-01"><title>P-01: A=120 → B=100 °C·s; I=20 (improved)</title>
+<text x="12" y="105.0" font-family="monospace" font-size="10" fill="#24292f">P-01 (TOY-S2-A-001/TOY-S2-B-001)</text>
+<line x1="170" y1="149.72" x2="720" y2="331.79" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="327.79" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<g id="pair-P-02"><title>P-02: A=120 → B=115 °C·s; I=5 (improved)</title>
+<text x="12" y="135.0" font-family="monospace" font-size="10" fill="#24292f">P-02 (TOY-S2-A-002/TOY-S2-B-002)</text>
+<line x1="170" y1="149.72" x2="720" y2="195.24" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="191.24" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<g id="pair-P-03"><title>P-03: A=120 → B=115 °C·s; I=5 (improved)</title>
+<text x="12" y="165.0" font-family="monospace" font-size="10" fill="#24292f">P-03 (TOY-S2-A-003/TOY-S2-B-003)</text>
+<line x1="170" y1="149.72" x2="720" y2="195.24" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="191.24" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<g id="pair-P-04"><title>P-04: A=120 → B=125 °C·s; I=-5 (worsened)</title>
+<text x="12" y="195.0" font-family="monospace" font-size="10" fill="#24292f">P-04 (TOY-S2-A-004/TOY-S2-B-004)</text>
+<line x1="170" y1="149.72" x2="720" y2="104.21" stroke="#cf222e" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="100.21" width="8" height="8" fill="#cf222e" stroke="#ffffff"/>
+</g>
+<g id="pair-P-05"><title>P-05: A=120 → B=105 °C·s; I=15 (improved)</title>
+<text x="12" y="225.0" font-family="monospace" font-size="10" fill="#24292f">P-05 (TOY-S2-A-005/TOY-S2-B-005)</text>
+<line x1="170" y1="149.72" x2="720" y2="286.28" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="282.28" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<g id="pair-P-06"><title>P-06: A=120 → B=108 °C·s; I=12 (improved)</title>
+<text x="12" y="255.0" font-family="monospace" font-size="10" fill="#24292f">P-06 (TOY-S2-A-006/TOY-S2-B-006)</text>
+<line x1="170" y1="149.72" x2="720" y2="258.97" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="254.97" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<g id="pair-P-07"><title>P-07: A=120 → B=122 °C·s; I=-2 (worsened)</title>
+<text x="12" y="285.0" font-family="monospace" font-size="10" fill="#24292f">P-07 (TOY-S2-A-007/TOY-S2-B-007)</text>
+<line x1="170" y1="149.72" x2="720" y2="131.52" stroke="#cf222e" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="127.52" width="8" height="8" fill="#cf222e" stroke="#ffffff"/>
+</g>
+<g id="pair-P-08"><title>P-08: A=120 → B=103 °C·s; I=17 (improved)</title>
+<text x="12" y="315.0" font-family="monospace" font-size="10" fill="#24292f">P-08 (TOY-S2-A-008/TOY-S2-B-008)</text>
+<line x1="170" y1="149.72" x2="720" y2="304.48" stroke="#1a7f37" stroke-width="1.6"/>
+<circle cx="170" cy="149.72" r="4" fill="#0969da" stroke="#ffffff"/>
+<rect x="716" y="300.48" width="8" height="8" fill="#1a7f37" stroke="#ffffff"/>
+</g>
+<circle cx="170" cy="378" r="4" fill="#0969da"/><text x="180" y="382" font-family="sans-serif" font-size="11" fill="#24292f">Controller A outcome (circle)</text>
+<rect x="360" y="374" width="8" height="8" fill="#1a7f37"/><text x="374" y="382" font-family="sans-serif" font-size="11" fill="#24292f">Controller B outcome (square)</text>
+<text x="170" y="396" font-family="sans-serif" font-size="11" fill="#1a7f37">green: B improved</text><text x="300" y="396" font-family="sans-serif" font-size="11" fill="#cf222e">red: B worsened</text><text x="430" y="396" font-family="sans-serif" font-size="11" fill="#57606a">grey: no difference</text>
+</svg>
