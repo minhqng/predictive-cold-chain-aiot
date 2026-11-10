@@ -1,31 +1,34 @@
 # PHASE 8.2 — Final Verdict
 
-## Actual Git state at the end of Phase 8.2
+## Actual Git state at the end of Phase 8.2 (two measured states)
 
-- **HEAD**: `e75ec8666ccf5a48a02ea7952fc4bec047cf018f`
-- **Final tree**: `80f788cd0aaf6679d4bd802189b068a1099af06c`
-- **Approval-safe target equality:** the final tree is the **exact same
-  Git tree object** as the approved Phase 8 candidate tree (`e90335e`) —
-  verified by `git rev-parse HEAD^{tree}` == `git rev-parse e90335e^{tree}` and
-  by `git diff e90335e HEAD` (0 file).
-- **Atomic commit count** (first-parent from `ce9661a`): **14**
-- **Member ancestry preserved:** PASS 5/5
-  (A#94 `ae23a36`, A#95 `815387d`, C#69 `361e732`, D#90 `da82109`,
-  B#102 `824a5389`).
-- **SHA256 manifests valid:** premerge 12/12, leader-delivery 11/11.
-- **14 frozen files preserved:** byte-identical to the protected worktree
-  (`MATCH = 14 / DIFF = 0`).
-- **Protected worktree untouched:** HEAD `d22c8d5`, status 37 lines,
-  `git diff --check` OK.
-- **No GitHub push/PR/merge:** remote is a local scratchpad path only.
+Verified immediately after the 14 atomic owner commits, before the last
+Phase 8.2 documentation commit:
+
+- **REST_HEAD**: `e75ec8666ccf5a48a02ea7952fc4bec047cf018f`
+- **Final tree**: `80f788cd0aaf6679d4bd802189b068a1099af06c` — exact
+  tree-object equality with the approved Phase 8 candidate (`e90335e`);
+  `git diff e90335e HEAD` returned 0 files.
+- `git merge-base --is-ancestor` PASS 5/5.
+
+Recorded again immediately after the final Phase 8.2 documentation commit:
+
+- **DOC_HEAD**: `edabbb936e9848cff618e124c43b903364636a4c`
+- **DOC_TREE**: `1efea1bd98151c388f40f50bd516177e7001d8b5`
+- `git diff e90335e HEAD --name-status` returns 8 doc-only entries
+  (7 added `phase8-2-*` documents + 1 modified SHA256SUMS) and
+  **zero source/test/runtime/data/evidence changes**.
+- The member-ancestry results and frozen-file `MATCH = 14 / DIFF = 0`
+  result were re-measured from the doc-commit state unchanged.
 
 ## Final verdict
 
 **`ATOMIC_DELIVERY_READY_FOR_GITHUB_APPROVAL`**
 
-All owner commits actually exist as real atomic Conventional Commits inside the
-disposable sandbox, member ancestry is intact, the final tree exactly matches
-the approved Phase 8 candidate, all residual manifests are valid and no
+The 14 owner atomic commits exist as real Conventional Commits inside the
+disposable sandbox, member ancestry is intact, the 14-atomic-commit final tree
+exactly matches the approved Phase 8 candidate, all residual manifests are
+valid (19/19 in the updated leader-delivery manifest, 12/12 premerge) and no
 protected repository / member PR / raw evidence was modified.
 
 ## Outstanding, owner-approval-required only
