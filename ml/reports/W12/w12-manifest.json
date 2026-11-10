@@ -1,5 +1,5 @@
 {
-  "analysis_code_sha256": "e02fe54ddb0fbc868217b1717b0d1700d423688fdd4e10a52a6e4bea3ffc4c49",
+  "analysis_code_sha256": "ecb8db64ab5467a18fc0ada1f4f9a064de9e34c625c34227d4d4d53b3b50306d",
   "artifacts": {
     "benchmark-synthesis-W12.md": {
       "sha256": "f13735e35eb30c93232ce27ba25cfb7cff31493d8b7f8e849251cdef4c94492e"
@@ -17,7 +17,7 @@
       "sha256": "edf0d8e1740107975851d63ae86904993577c9f86043d2b27989c7120744ce89"
     },
     "gate-g3-evidence-matrix-W12.csv": {
-      "sha256": "679436819baaa5f3adc3812c8357bff90c51c82ba485f7df6659bba3db4e88a6"
+      "sha256": "23c2a117810af5e9e9e30bddca5821f6791327b66bcd7be27eb32d0e1eb90c1e"
     },
     "grouped-metrics-W12.csv": {
       "sha256": "8dfb3b541f34523e7f7ac98f878df6ac65a9666c8eec67f16d49ba64f2b22965"
@@ -5002,7 +5002,7 @@
         "requirement": "grouped dataset valid",
         "requirement_id": "G3-B-GROUPED-DATASET",
         "review_authority": "Project lead + Member B; A for physical validity",
-        "source_hash_revision": "W08=1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6; W10=3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2; W11=7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
+        "source_hash_revision": "W08=1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6; W10=3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2; W11=855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
       },
       {
         "actual_file_reference": "reports/W11/benchmark-manifest-W11.json; reports/W12/benchmark-synthesis-W12.md; reports/W12/grouped-metrics-W12.csv",
@@ -5017,7 +5017,7 @@
         "requirement": "XGBoost has interpretable benchmark",
         "requirement_id": "G3-B-XGB-BENCHMARK",
         "review_authority": "Project lead + Member B",
-        "source_hash_revision": "W11=7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b; W11_REVISION=c6b28678430ab575902a09be4b32bc327c72afcb; W12 manifest carries the synthesis artifact hashes"
+        "source_hash_revision": "W11=855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0; W11_REVISION=6bd02af752371613df44e596282ed336fff155fa; W12 manifest carries the synthesis artifact hashes"
       },
       {
         "actual_file_reference": "evidence/D/W01\u2013W03 contracts only; no committed D-W12 evidence",
@@ -5092,7 +5092,7 @@
         "requirement": "grouped evaluation is leakage-safe",
         "requirement_id": "G3-B-LEAKAGE",
         "review_authority": "Project lead + Member B",
-        "source_hash_revision": "W11=7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
+        "source_hash_revision": "W11=855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
       },
       {
         "actual_file_reference": "no approval record committed",
@@ -5155,13 +5155,13 @@
       "w11_manifest": {
         "exists": true,
         "path": "ml/reports/W11/benchmark-manifest-W11.json",
-        "sha256": "7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
+        "sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
       },
-      "w11_repository_revision": "c6b28678430ab575902a09be4b32bc327c72afcb"
+      "w11_repository_revision": "6bd02af752371613df44e596282ed336fff155fa"
     }
   },
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/benchmark-g3-W12.py --out reports/W12 --repository-revision 45152d7582a2763ffe49956057b9201370f64f70",
+  "generation_command": "python scripts/benchmark-g3-W12.py --out reports/W12 --repository-revision 840a513aced85b26c967c9cd3049a8a1f4873410",
   "grouped_synthesis": {
     "checks": [
       "artifact SHA-256 matches actual bytes for every manifest-listed W11 artifact",
@@ -5364,11 +5364,11 @@
       "feature_registry_schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
       "model_config_canonical_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
       "model_config_file_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
-      "w11_analysis_code_sha256": "6ee60412d4e660de6c42bb7813bf7a6c5f545845f4fa371dc0fa02283cd67e6d",
+      "w11_analysis_code_sha256": "3b20779774597d3dc1b8d515447c1b8302f27fcd4e35c346c0ae77f944a31511",
       "w11_fixture_version": "coldguard-w11-synthetic-grouped-v1",
-      "w11_manifest_sha256": "7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b",
+      "w11_manifest_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
       "w11_reports_dir": "W11",
-      "w11_repository_revision": "c6b28678430ab575902a09be4b32bc327c72afcb"
+      "w11_repository_revision": "6bd02af752371613df44e596282ed336fff155fa"
     }
   },
   "hard_boundaries": [
@@ -5949,10 +5949,10 @@
     "w11_manifest": {
       "exists": true,
       "path": "ml/reports/W11/benchmark-manifest-W11.json",
-      "sha256": "7446fe67e931c890fc602ccb1589f62b623a9233b7766004a8f234118cdd576b"
+      "sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
     }
   },
-  "repository_revision": "45152d7582a2763ffe49956057b9201370f64f70",
+  "repository_revision": "840a513aced85b26c967c9cd3049a8a1f4873410",
   "schema": "coldguard-w12-manifest-v1",
   "scientific_verdicts": {
     "GATE_G3": "NO-GO / FIX DATA",
