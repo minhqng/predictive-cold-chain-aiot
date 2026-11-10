@@ -40,11 +40,14 @@ import logging
 import threading
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
+from time import monotonic
 from typing import Any
 
+from sqlalchemy import select
 from sqlalchemy.engine import Connection, Engine
 
-from coldguard_backend.normalized_store import insert_normalized, map_to_row
+from coldguard_backend.normalized_store import insert_normalized, map_to_row, telemetry
+from coldguard_backend.observability import record_event
 from coldguard_backend.raw_store import RECEIVED_VALID, store_raw
 from coldguard_backend.twin_store import project_reported
 from coldguard_backend.validation import validate_telemetry_payload
@@ -63,6 +66,8 @@ class IngestMetrics:
     normalized_new: int = 0
     exact_duplicates: int = 0
     conflicts: int = 0
+    out_of_order: int = 0
+    explicit_replays: int = 0
     rejected_schema: int = 0
     rejected_topic_mismatch: int = 0
     observed_other: int = 0
@@ -77,6 +82,8 @@ class IngestMetrics:
                 "normalized_new": self.normalized_new,
                 "exact_duplicates": self.exact_duplicates,
                 "conflicts": self.conflicts,
+                "out_of_order": self.out_of_order,
+                "explicit_replays": self.explicit_replays,
                 "rejected_schema": self.rejected_schema,
                 "rejected_topic_mismatch": self.rejected_topic_mismatch,
                 "observed_other": self.observed_other,
@@ -92,15 +99,24 @@ def _decode_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     """Mark repeated provenance keys as ambiguous for Twin admission."""
     obj = {}
     for key, value in pairs:
-        obj[key] = None if key in ("synthetic", "replay") and key in obj else value
+        obj[key] = None if key in ("synthetic", "replay", "is_replay") and key in obj else value
     return obj
 
 
-def _normalize(connection: Connection, row: dict[str, Any]) -> dict[str, Any]:
+def _normalize(
+    connection: Connection, row: dict[str, Any], *, count_order: bool,
+) -> tuple[dict[str, Any], bool]:
     outcome = insert_normalized(connection, row)
+    out_of_order = False
+    if count_order and outcome["outcome"] == "inserted":
+        later = select(telemetry.c.id).where(
+            telemetry.c.device_id == row["device_id"], telemetry.c.boot_id == row["boot_id"],
+            telemetry.c.seq > row["seq"],
+        )
+        out_of_order = connection.scalar(select(later.exists()))
     if outcome["outcome"] == "inserted" and row["twin_eligible"]:
         project_reported(connection, outcome["id"])
-    return outcome
+    return outcome, out_of_order
 
 
 def ingest_message(
@@ -123,16 +139,24 @@ def ingest_message(
     reported — the committed raw row remains as evidence.
     """
     stamp = received_at or _utcnow()
+    started = monotonic()
     if metrics is not None:
         with metrics._lock:
             metrics.received += 1
     # Step 1: raw evidence commits first (own transaction on Engine).
-    stored = store_raw(engine_or_conn, topic=topic, payload=payload, received_at=stamp)
+    try:
+        stored = store_raw(engine_or_conn, topic=topic, payload=payload, received_at=stamp)
+    except Exception:
+        record_event(log, "telemetry_ingest", "raw_persistence_failed", started, level=logging.ERROR)
+        raise
+    identifiers = {key: stored[key] for key in ("device_id", "run_id", "boot_id", "seq")}
+    identifiers["event_id"] = f"raw:{stored['id']}"
     if metrics is not None:
         with metrics._lock:
             metrics.raw_persisted += 1
     status = stored["ingest_status"]
     if status != RECEIVED_VALID:
+        record_event(log, "telemetry_ingest", status.lower(), started, **identifiers)
         if metrics is not None:
             with metrics._lock:
                 if status in ("RECEIVED_INVALID_SCHEMA", "RECEIVED_MALFORMED_JSON"):
@@ -156,43 +180,39 @@ def ingest_message(
         if validated is None:  # pragma: no cover - defensive; status says valid
             raise RuntimeError(f"raw row marked valid but revalidation failed: {errors}")
         row = map_to_row(validated, raw_id=stored["id"], received_at=stamp)
+        replay_flags = (parsed.get("replay", False), parsed.get("is_replay", False))
+        if metrics is not None and any(flag is True for flag in replay_flags):
+            with metrics._lock:
+                metrics.explicit_replays += 1
         row["twin_eligible"] = (
             not retained
             and parsed.get("synthetic", False) is False
-            and parsed.get("replay", False) is False
+            and all(flag is False for flag in replay_flags)
         )
         if isinstance(engine_or_conn, Engine):
             with engine_or_conn.begin() as connection:
-                outcome = _normalize(connection, row)
+                outcome, out_of_order = _normalize(connection, row, count_order=metrics is not None)
         else:
             with engine_or_conn.begin_nested():
-                outcome = _normalize(engine_or_conn, row)
+                outcome, out_of_order = _normalize(engine_or_conn, row, count_order=metrics is not None)
     except Exception:
         if metrics is not None:
             with metrics._lock:
                 metrics.normalization_failures += 1
-        log.exception(
-            "normalized/Twin transaction failed: topic=%s raw_id=%s; raw evidence kept",
-            topic,
-            stored["id"],
-        )
+        record_event(log, "telemetry_ingest", "normalization_failed", started, level=logging.ERROR, **identifiers)
         return {"raw_id": stored["id"], "raw_status": status, "normalized": "failed"}
     if metrics is not None:
         with metrics._lock:
+            metrics.out_of_order += out_of_order
             if outcome["outcome"] == "inserted":
                 metrics.normalized_new += 1
             elif outcome["outcome"] == "exact_duplicate":
                 metrics.exact_duplicates += 1
             else:
                 metrics.conflicts += 1
-    if outcome["outcome"] == "conflict":
-        log.warning(
-            "conflicting replay for identity (%s, %s, %s): raw_id=%s kept as "
-            "evidence; authoritative normalized id=%s NOT overwritten",
-            row["device_id"],
-            row["boot_id"],
-            row["seq"],
-            stored["id"],
-            outcome["id"],
-        )
+    record_event(
+        log, "telemetry_ingest", outcome["outcome"], started,
+        level=logging.WARNING if outcome["outcome"] == "conflict" else logging.DEBUG,
+        **identifiers,
+    )
     return {"raw_id": stored["id"], "raw_status": status, "normalized": outcome}
