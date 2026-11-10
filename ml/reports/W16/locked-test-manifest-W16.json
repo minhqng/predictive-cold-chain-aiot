@@ -1,0 +1,1447 @@
+{
+  "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+  "artifact_hashes": [
+    {
+      "declared_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "matches": true,
+      "path": "reports/W15/model/model.ubj",
+      "recomputed_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "role": "model_native"
+    },
+    {
+      "declared_sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd",
+      "matches": true,
+      "path": "reports/W15/model/model.json",
+      "recomputed_sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd",
+      "role": "model_secondary"
+    }
+  ],
+  "dataset_identity": {
+    "calibration_status": "NOT_AVAILABLE",
+    "clock_sync": "NOT_EVIDENCED",
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "hardware_config_id": "CG-HW-001",
+    "hardware_config_status": "DECLARED_NOT_VERIFIED",
+    "physical_dataset_id": null,
+    "physical_run_validity": "NOT_VALIDATED",
+    "run_identity_status": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+    "sample_quality_status": "NOT_EVALUABLE",
+    "source_sha256": [],
+    "status": "FAIL_VERIFIED",
+    "time_domain": "BOOT_SCOPED_UPTIME"
+  },
+  "evaluation_disposition": {
+    "interpretation": "NO_INTERPRETATION_TEST_NOT_RUN",
+    "locked_evaluation": "NOT_EXECUTED_PREREQUISITES_UNMET",
+    "metrics_policy": "AP, precision, recall, EWT, AIW and calibration metrics have no value; they are NOT_ESTIMABLE/NOT_APPLICABLE until an authorized one-time evaluation produces them",
+    "metrics_reported": false,
+    "model_release_candidate": "NOT_ISSUED"
+  },
+  "evaluation_status": "NOT_RUN",
+  "freeze_ledger": [
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "a model that is not release-approved cannot be used for the final test",
+      "canonical_ref": "03 \u00a792",
+      "field_id": "model_version",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "DEVELOPMENT_CANDIDATE_ONLY",
+      "value": "coldguard-w15-synthetic-xgb-candidate-v1"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "artifact hash is registered but its candidate is non-deployable",
+      "canonical_ref": "03 \u00a792",
+      "field_id": "native_model_sha256",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "DEVELOPMENT_CANDIDATE_ONLY",
+      "value": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "configuration is a development candidate, not a frozen release config",
+      "canonical_ref": "03 \u00a792",
+      "field_id": "model_config_sha256",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "DEVELOPMENT_CANDIDATE_ONLY",
+      "value": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "feature-registry-v1.yaml @ f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "blocking_effect": "feature definitions must stay frozen once referenced",
+      "canonical_ref": "03 \u00a792; 05B \u00a79",
+      "field_id": "feature_version",
+      "source": "feature-registry-v1.yaml",
+      "source_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "status": "FROZEN_APPROVED",
+      "value": "CG-FEAT-1.0"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "ordered feature identities must stay frozen once referenced",
+      "canonical_ref": "03 \u00a792",
+      "field_id": "ordered_feature_ids_sha256",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "FROZEN_APPROVED",
+      "value": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "training dataset is synthetic; no physical training identity exists",
+      "canonical_ref": "03 \u00a792; 05B \u00a77",
+      "field_id": "training_dataset_identity",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "DEVELOPMENT_CANDIDATE_ONLY",
+      "value": "W11_EXPANDED_SYNTHETIC_GROUPED"
+    },
+    {
+      "authority": "D",
+      "authority_evidence": "xgb-v1-config.yaml @ 01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "blocking_effect": "critical-target definition must be frozen by its policy owner",
+      "canonical_ref": "03 \u00a742-43, \u00a792",
+      "field_id": "target_definition",
+      "source": "xgb-v1-config.yaml",
+      "source_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "status": "UNFROZEN",
+      "value": {
+        "boundary_c": null,
+        "target_spec_version": "coldguard-w11-development-label-v1",
+        "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+      }
+    },
+    {
+      "authority": "A",
+      "authority_evidence": "xgb-v1-config.yaml @ 01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "blocking_effect": "representative temperature is a physical measurement decision",
+      "canonical_ref": "03 \u00a742-43",
+      "field_id": "representative_temperature",
+      "source": "xgb-v1-config.yaml",
+      "source_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "status": "UNFROZEN",
+      "value": "DEVELOPMENT_CANDIDATE_NOT_SELECTED"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W13/horizon-manifest-W13.json @ 02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404",
+      "blocking_effect": "no final test may run without one frozen primary horizon",
+      "canonical_ref": "03 \u00a744, \u00a784, \u00a792",
+      "field_id": "primary_horizon",
+      "source": "reports/W13/horizon-manifest-W13.json",
+      "source_sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404",
+      "status": "UNFROZEN",
+      "value": {
+        "decision_freeze_status": "NOT_FROZEN",
+        "decision_primary_horizon_s": null,
+        "horizon_s": 60.0,
+        "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN"
+      }
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "score-only semantics are legal but must be confirmed by the release authority",
+      "canonical_ref": "03 \u00a758-60, \u00a792",
+      "field_id": "risk_score_calibration_semantics",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "FROZEN_APPROVED",
+      "value": {
+        "calibration_status": "RISK_SCORE_ONLY",
+        "score_semantics": "risk_score"
+      }
+    },
+    {
+      "authority": "D",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "an illustrative threshold can never become the final operating threshold",
+      "canonical_ref": "03 \u00a787, \u00a792",
+      "field_id": "operating_threshold",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "UNFROZEN",
+      "value": {
+        "source": null,
+        "status": "ILLUSTRATIVE_NOT_FROZEN",
+        "value": 0.5
+      }
+    },
+    {
+      "authority": "D",
+      "authority_evidence": "reports/W15/model/model-manifest-W15.json @ 85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "blocking_effect": "persistence k must be frozen before the final test",
+      "canonical_ref": "03 \u00a788, \u00a792",
+      "field_id": "warning_persistence",
+      "source": "reports/W15/model/model-manifest-W15.json",
+      "source_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "status": "UNFROZEN",
+      "value": {
+        "k": null,
+        "status": "NOT_FROZEN"
+      }
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "xgb-v1-config.yaml @ 01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "blocking_effect": "episode/association policy is a synthetic illustrative policy",
+      "canonical_ref": "03 \u00a789-90",
+      "field_id": "event_matching_policy",
+      "source": "xgb-v1-config.yaml",
+      "source_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "status": "DEVELOPMENT_CANDIDATE_ONLY",
+      "value": {
+        "association_policy_status": "SYNTHETIC_ILLUSTRATIVE",
+        "episode_policy_status": "SYNTHETIC_ILLUSTRATIVE"
+      }
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "feature-registry-v1.yaml @ f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "blocking_effect": "explicit-missing policy is part of the frozen feature schema",
+      "canonical_ref": "03 \u00a7125",
+      "field_id": "missingness_policy",
+      "source": "feature-registry-v1.yaml",
+      "source_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "status": "FROZEN_APPROVED",
+      "value": "explicit_missing_never_zero_filled"
+    },
+    {
+      "authority": "B",
+      "authority_evidence": "ml/scripts/w16-preflight-W16.py (registered analysis_code_sha256 1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf)",
+      "blocking_effect": "analysis code identity is frozen by this pre-registration",
+      "canonical_ref": "03 \u00a792, \u00a7133, \u00a7158",
+      "field_id": "analysis_code_version",
+      "source": "ml/scripts/w16-preflight-W16.py",
+      "source_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+      "status": "FROZEN_APPROVED",
+      "value": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf"
+    },
+    {
+      "authority": "A",
+      "authority_evidence": "reports/W08/gate-b-manifest-W08.json @ 1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "blocking_effect": "no authoritative physical dataset exists",
+      "canonical_ref": "01 \u00a717; 03 \u00a7137 Gate B",
+      "field_id": "physical_dataset_identity",
+      "source": "reports/W08/gate-b-manifest-W08.json",
+      "source_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "status": "MISSING_EVIDENCE",
+      "value": null
+    },
+    {
+      "authority": "A",
+      "authority_evidence": "reports/W08/gate-b-manifest-W08.json @ 1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "blocking_effect": "declared hardware is not verified hardware",
+      "canonical_ref": "01 \u00a739.1; 03 \u00a7137 Gate B",
+      "field_id": "hardware_configuration",
+      "source": "reports/W08/gate-b-manifest-W08.json",
+      "source_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "status": "MISSING_EVIDENCE",
+      "value": {
+        "hardware_config_id": "CG-HW-001",
+        "status": "DECLARED_NOT_VERIFIED"
+      }
+    },
+    {
+      "authority": "C",
+      "authority_evidence": "reports/W08/gate-b-manifest-W08.json @ 1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "blocking_effect": "boot-scoped uptime is not trusted physical event time",
+      "canonical_ref": "01 \u00a718; 03 \u00a7137 Gate B",
+      "field_id": "telemetry_time_provenance",
+      "source": "reports/W08/gate-b-manifest-W08.json",
+      "source_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "status": "MISSING_EVIDENCE",
+      "value": {
+        "clock_sync": "NOT_EVIDENCED",
+        "time_domain": "BOOT_SCOPED_UPTIME"
+      }
+    },
+    {
+      "authority": "A",
+      "authority_evidence": "reports/W08/gate-b-manifest-W08.json @ 1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "blocking_effect": "physical run identity is unresolved",
+      "canonical_ref": "03 \u00a747; 05B \u00a77-8",
+      "field_id": "run_identity_and_pairing",
+      "source": "reports/W08/gate-b-manifest-W08.json",
+      "source_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "status": "MISSING_EVIDENCE",
+      "value": {
+        "run_identity_status": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+        "split_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED"
+      }
+    },
+    {
+      "authority": "A",
+      "authority_evidence": "reports/W08/gate-b-manifest-W08.json @ 1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "blocking_effect": "measurement calibration provenance is absent",
+      "canonical_ref": "01 \u00a739.2; 03 \u00a7137 Gate B",
+      "field_id": "calibration_provenance",
+      "source": "reports/W08/gate-b-manifest-W08.json",
+      "source_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "status": "MISSING_EVIDENCE",
+      "value": "NOT_AVAILABLE"
+    }
+  ],
+  "holdout_access": "NOT_AUTHORIZED",
+  "holdout_isolation": {
+    "audit_basis": "DECLARED_REPORT_METADATA_ONLY",
+    "never_used_for": {
+      "ablation_based_winner_selection": "NO_RECORDED_TEST_EXPOSURE",
+      "calibration_fitting": "NO_RECORDED_TEST_EXPOSURE",
+      "class_weight_or_sampling_decisions": "NO_RECORDED_TEST_EXPOSURE",
+      "feature_selection": "NO_RECORDED_TEST_EXPOSURE",
+      "hyperparameter_tuning": "NO_RECORDED_TEST_EXPOSURE",
+      "model_architecture_selection": "NO_RECORDED_TEST_EXPOSURE",
+      "persistence_selection": "NO_RECORDED_TEST_EXPOSURE",
+      "primary_horizon_selection": "NO_RECORDED_TEST_EXPOSURE",
+      "threshold_selection": "NO_RECORDED_TEST_EXPOSURE"
+    },
+    "prior_access": {
+      "basis": "test_partition_used=false and locked_test_used=false across W11-W15 tracked manifests; no opening receipt exists",
+      "limitation": "tracked metadata cannot prove absence of out-of-band access that left no repository record",
+      "records": [],
+      "scan": {
+        "flag_observations": 17,
+        "opened_flags": [],
+        "scanned_documents": [
+          "W08",
+          "W11",
+          "W11_fold",
+          "W12",
+          "W13",
+          "W14",
+          "W15",
+          "W15_model"
+        ]
+      },
+      "status": "NO_RECORDED_OPENING"
+    }
+  },
+  "holdout_opened": false,
+  "inputs": {
+    "feature-registry-v1.yaml": {
+      "sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb"
+    },
+    "reports/W08/gate-b-manifest-W08.json": {
+      "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6"
+    },
+    "reports/W11/benchmark-manifest-W11.json": {
+      "sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
+    },
+    "reports/W11/cv-fold-manifest.yaml": {
+      "sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6"
+    },
+    "reports/W12/w12-manifest.json": {
+      "sha256": "ef06f9712203b39c01351ad89a17368574e98a0db6436f842e926b68418073a7"
+    },
+    "reports/W13/horizon-manifest-W13.json": {
+      "sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404"
+    },
+    "reports/W14/w14-manifest.json": {
+      "sha256": "e4a0263ead067a10df8d23ffc2bb10d6e750c88e515153fd6f637c733077357d"
+    },
+    "reports/W15/model/model-manifest-W15.json": {
+      "sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e"
+    },
+    "reports/W15/w15-manifest.json": {
+      "sha256": "3f1a16939e1c16345e9948eb109085d123d3e57a57717132b0ab9c2d89d5eafa"
+    },
+    "xgb-v1-config.yaml": {
+      "sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a"
+    }
+  },
+  "inputs_observed": [
+    "feature-registry-v1.yaml",
+    "reports/W08/gate-b-manifest-W08.json",
+    "reports/W11/benchmark-manifest-W11.json",
+    "reports/W11/cv-fold-manifest.yaml",
+    "reports/W12/w12-manifest.json",
+    "reports/W13/horizon-manifest-W13.json",
+    "reports/W14/w14-manifest.json",
+    "reports/W15/model/model-manifest-W15.json",
+    "reports/W15/w15-manifest.json",
+    "xgb-v1-config.yaml"
+  ],
+  "inputs_scope": "METADATA_ONLY",
+  "layer_version": "coldguard-w16-locked-test-preregistration-v1",
+  "limitations": [
+    "PRE_REGISTRATION_ONLY: no locked-test evaluation has run and none is authorized.",
+    "No physical dataset, no predictive-eligible real run and no frozen primary horizon exist; every predictive prerequisite is blocked.",
+    "The registered model is a synthetic software control and is not deployable.",
+    "Holdout isolation is audited from declared report metadata; it cannot prove absence of out-of-band access.",
+    "This gate validates metadata and declared artifact hashes; it does not validate future physical data quality.",
+    "A preflight PASS would only mean 'ready for an operator-authorized evaluation'; it would not authorize the evaluation itself."
+  ],
+  "manifest_kind": "PRE_REGISTRATION_ONLY",
+  "model_inference_identity": {
+    "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+    "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+    "calibration_status": "RISK_SCORE_ONLY",
+    "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "event_matching_policy_status": {
+      "association": "SYNTHETIC_ILLUSTRATIVE",
+      "episode": "SYNTHETIC_ILLUSTRATIVE"
+    },
+    "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "feature_version": "CG-FEAT-1.0",
+    "horizon_s": 60.0,
+    "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "model_config_version": "coldguard-xgb-v1-development-v1",
+    "native_model_file_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "native_model_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "operating_threshold": 0.5,
+    "operating_threshold_record_evidence_sha256": null,
+    "operating_threshold_source": null,
+    "operating_threshold_status": "ILLUSTRATIVE_NOT_FROZEN",
+    "ordered_feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+    "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+    "risk_score_semantics": "risk_score",
+    "target_spec_version": "coldguard-w11-development-label-v1",
+    "training_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "warning_persistence_k": null,
+    "warning_persistence_status": "NOT_FROZEN"
+  },
+  "readiness_decision": {
+    "decision": "REFUSED_PREREQUISITES_UNMET",
+    "forbidden_actions": [
+      "opening locked-test observations",
+      "computing locked-test predictive metrics",
+      "tuning any model/threshold/persistence on test data",
+      "issuing a model release candidate",
+      "granting Gate G4"
+    ],
+    "permitted_actions": [
+      "static metadata checks",
+      "pre-registration review"
+    ],
+    "refusal_reasons": [
+      "APPROVAL_MISSING:A_PHYSICAL",
+      "APPROVAL_MISSING:B_METHOD",
+      "APPROVAL_MISSING:C_TELEMETRY",
+      "APPROVAL_MISSING:D_POLICY",
+      "APPROVAL_MISSING:TEAM_LEAD",
+      "CALIBRATION_PROVENANCE_MISSING",
+      "CRITICAL_TARGET_UNFROZEN",
+      "DATASET_EVIDENCE_CLASS_NOT_PHYSICAL",
+      "EVENT_MATCHING_POLICY_UNFROZEN",
+      "FREEZE_LEDGER_INCOMPLETE",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "MODEL_SYNTHETIC_NON_DEPLOYABLE",
+      "OPERATING_THRESHOLD_UNFROZEN",
+      "PHYSICAL_DATASET_IDENTITY_MISSING",
+      "PHYSICAL_RUN_VALIDITY_MISSING",
+      "PRIMARY_HORIZON_UNFROZEN",
+      "RELEASE_AUTHORIZATION_MISSING",
+      "REPRESENTATIVE_TEMPERATURE_UNFROZEN",
+      "RUN_SOURCE_IDENTITY_MISSING",
+      "SAMPLE_QUALITY_UNTRUSTED",
+      "SCIENTIFIC_PREREQUISITES_BLOCKED",
+      "TEST_MEMBERSHIP_NOT_FROZEN",
+      "TIME_PROVENANCE_INADEQUATE",
+      "WARNING_PERSISTENCE_UNFROZEN"
+    ],
+    "refused_requirements": [
+      {
+        "canonical_ref": "01 \u00a717; 03 \u00a7137 Gate B",
+        "evidence_scope": "PROCESS",
+        "observed": "no physical dataset identity is registered",
+        "reason_code": "PHYSICAL_DATASET_IDENTITY_MISSING",
+        "requirement": "An authoritative physical dataset identity with immutable source hashes must exist.",
+        "requirement_id": "W16-DS-01",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a7137 Gate B; 00 \u00a75.2",
+        "evidence_scope": "PROCESS",
+        "observed": "declared evidence class = SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "reason_code": "DATASET_EVIDENCE_CLASS_NOT_PHYSICAL",
+        "requirement": "Dataset evidence class must be physical and not contradict its provenance.",
+        "requirement_id": "W16-DS-02",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a747, \u00a749, \u00a792",
+        "evidence_scope": "PROCESS",
+        "observed": "locked_test.frozen_at is null",
+        "reason_code": "TEST_MEMBERSHIP_NOT_FROZEN",
+        "requirement": "Locked-test membership must be frozen with an immutable identity before any evaluation.",
+        "requirement_id": "W16-DS-03",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "05B \u00a78; 03 \u00a747",
+        "evidence_scope": "PROCESS",
+        "observed": "no per-run physical source hashes declared",
+        "reason_code": "RUN_SOURCE_IDENTITY_MISSING",
+        "requirement": "No physical run may appear twice under different identifiers (source-hash lineage).",
+        "requirement_id": "W16-DS-09",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a717, \u00a733; 03 \u00a7137 Gate B",
+        "evidence_scope": "PHYSICAL",
+        "observed": "physical_run_validity=NOT_VALIDATED",
+        "reason_code": "PHYSICAL_RUN_VALIDITY_MISSING",
+        "requirement": "Physical run validity must be established for the final population.",
+        "requirement_id": "W16-PV-01",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a739.1; 03 \u00a7137 Gate B",
+        "evidence_scope": "PHYSICAL",
+        "observed": "hardware_config_status=DECLARED_NOT_VERIFIED",
+        "reason_code": "HARDWARE_CONFIG_NOT_VERIFIED",
+        "requirement": "Hardware configuration/lineage must be verified for the final population.",
+        "requirement_id": "W16-PV-02",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a718; 03 \u00a7137 Gate B",
+        "evidence_scope": "PHYSICAL",
+        "observed": "time_domain=BOOT_SCOPED_UPTIME, clock_sync=NOT_EVIDENCED",
+        "reason_code": "TIME_PROVENANCE_INADEQUATE",
+        "requirement": "Physical event time and clock synchronization must be evidenced.",
+        "requirement_id": "W16-PV-03",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a733; W08 completeness policy",
+        "evidence_scope": "PHYSICAL",
+        "observed": "sample_quality_status=NOT_EVALUABLE",
+        "reason_code": "SAMPLE_QUALITY_UNTRUSTED",
+        "requirement": "Sample quality must be trusted under the predeclared completeness policy.",
+        "requirement_id": "W16-PV-04",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a739.2; 03 \u00a7137 Gate B",
+        "evidence_scope": "PHYSICAL",
+        "observed": "calibration_status=NOT_AVAILABLE",
+        "reason_code": "CALIBRATION_PROVENANCE_MISSING",
+        "requirement": "Measurement calibration provenance must be traceable for the final population.",
+        "requirement_id": "W16-PV-05",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a7103, \u00a7137; 05B \u00a744",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "evidence_class=SYNTHETIC_SOFTWARE_CONTROL_ONLY, release_eligibility=NON_DEPLOYABLE_CANDIDATE",
+        "reason_code": "MODEL_SYNTHETIC_NON_DEPLOYABLE",
+        "requirement": "A synthetic/non-deployable model must never acquire release or locked-test eligibility.",
+        "requirement_id": "W16-MD-07",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a742-43, \u00a792; 05B \u00a754",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "target_status=DEVELOPMENT_CANDIDATE_NOT_FROZEN, boundary_c=None",
+        "reason_code": "CRITICAL_TARGET_UNFROZEN",
+        "requirement": "The critical target definition must be frozen by its policy authority.",
+        "requirement_id": "W16-MD-08",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a742-43",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "representative_temperature=DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+        "reason_code": "REPRESENTATIVE_TEMPERATURE_UNFROZEN",
+        "requirement": "The representative temperature for the final label must be frozen.",
+        "requirement_id": "W16-MD-09",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a744, \u00a784, \u00a792",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "horizon_status=ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN, decision=NOT_FROZEN, primary_horizon_s=None",
+        "reason_code": "PRIMARY_HORIZON_UNFROZEN",
+        "requirement": "One primary horizon must be frozen before the final test.",
+        "requirement_id": "W16-MD-10",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a787, \u00a792",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "operating_threshold_status=ILLUSTRATIVE_NOT_FROZEN, value=0.5, source=MISSING",
+        "reason_code": "OPERATING_THRESHOLD_UNFROZEN",
+        "requirement": "The operating threshold must be selected on development data and frozen.",
+        "requirement_id": "W16-MD-11",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a788, \u00a792",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "warning_persistence_status=NOT_FROZEN, k=None",
+        "reason_code": "WARNING_PERSISTENCE_UNFROZEN",
+        "requirement": "The warning persistence rule must be frozen before the final test.",
+        "requirement_id": "W16-MD-12",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a789-90",
+        "evidence_scope": "DECLARED_METADATA_ONLY",
+        "observed": "episode=SYNTHETIC_ILLUSTRATIVE, association=SYNTHETIC_ILLUSTRATIVE",
+        "reason_code": "EVENT_MATCHING_POLICY_UNFROZEN",
+        "requirement": "The warning-episode and event-association policy must be frozen.",
+        "requirement_id": "W16-MD-14",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "03 \u00a792; 05B \u00a744",
+        "evidence_scope": "PROCESS",
+        "observed": "unfrozen or missing fields: calibration_provenance, event_matching_policy, hardware_configuration, model_config_sha256, model_version, native_model_sha256, operating_threshold, physical_dataset_identity, primary_horizon, representative_temperature, run_identity_and_pairing, target_definition, telemetry_time_provenance, training_dataset_identity, warning_persistence",
+        "reason_code": "FREEZE_LEDGER_INCOMPLETE",
+        "requirement": "Every freeze field required for the final test must be FROZEN_APPROVED.",
+        "requirement_id": "W16-GV-10",
+        "status": "FAIL_VERIFIED"
+      },
+      {
+        "canonical_ref": "05B \u00a744; 03 \u00a792",
+        "evidence_scope": "PROCESS",
+        "observed": "no approval record issued",
+        "reason_code": "APPROVAL_MISSING:B_METHOD",
+        "requirement": "Required approval must be issued: Member B methodological freeze: features, model, horizon, metrics, analysis code.",
+        "requirement_id": "W16-GV-03",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a717-18; 05B \u00a744",
+        "evidence_scope": "PROCESS",
+        "observed": "no approval record issued",
+        "reason_code": "APPROVAL_MISSING:A_PHYSICAL",
+        "requirement": "Required approval must be issued: Member A authorization of physical measurement validity and provenance.",
+        "requirement_id": "W16-GV-04",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a742, \u00a787-88; 05B \u00a754",
+        "evidence_scope": "PROCESS",
+        "observed": "no approval record issued",
+        "reason_code": "APPROVAL_MISSING:D_POLICY",
+        "requirement": "Required approval must be issued: Member D authorization of critical target, threshold and persistence policy.",
+        "requirement_id": "W16-GV-05",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "01 \u00a718; 05B \u00a754",
+        "evidence_scope": "PROCESS",
+        "observed": "no approval record issued",
+        "reason_code": "APPROVAL_MISSING:C_TELEMETRY",
+        "requirement": "Required approval must be issued: Member C support of telemetry time-domain and clock provenance.",
+        "requirement_id": "W16-GV-06",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+        "evidence_scope": "PROCESS",
+        "observed": "no approval record issued",
+        "reason_code": "APPROVAL_MISSING:TEAM_LEAD",
+        "requirement": "Required approval must be issued: Team-lead release authorization for the one-time locked evaluation.",
+        "requirement_id": "W16-GV-07",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+        "evidence_scope": "PROCESS",
+        "observed": "no release authorization record",
+        "reason_code": "RELEASE_AUTHORIZATION_MISSING",
+        "requirement": "Explicit release authorization for the one-time locked evaluation must exist.",
+        "requirement_id": "W16-GV-08",
+        "status": "BLOCKED_BY_MISSING_EVIDENCE"
+      },
+      {
+        "canonical_ref": "03 \u00a7137; 04 \u00a731; 05B \u00a754",
+        "evidence_scope": "PROCESS",
+        "observed": "gate_b=RED, gate_g3=NO-GO / FIX DATA, predictive_eligible_runs=0",
+        "reason_code": "SCIENTIFIC_PREREQUISITES_BLOCKED",
+        "requirement": "Physical/data prerequisites must permit a predictive evaluation (Gate B GREEN, Gate G3 GO).",
+        "requirement_id": "W16-GV-09",
+        "status": "FAIL_VERIFIED"
+      }
+    ]
+  },
+  "registration": {
+    "analysis_code_sha256": "1eec1c4d6445c32ca96e1ebe6bef7f5350ea1b5a298aadc4345f54ecaf7a43cf",
+    "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+    "test_pairs": [
+      "W11-PAIR-001",
+      "W11-PAIR-002"
+    ],
+    "test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ]
+  },
+  "repository_revision": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+  "required_approvals": [
+    {
+      "approval_id": "approval.methodological_freeze",
+      "canonical_ref": "05B \u00a744; 03 \u00a792",
+      "description": "Member B methodological freeze: features, model, horizon, metrics, analysis code.",
+      "reason_code": "APPROVAL_MISSING:B_METHOD",
+      "records": 0,
+      "role": "B_METHOD",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "approval_id": "approval.physical_measurement",
+      "canonical_ref": "01 \u00a717-18; 05B \u00a744",
+      "description": "Member A authorization of physical measurement validity and provenance.",
+      "reason_code": "APPROVAL_MISSING:A_PHYSICAL",
+      "records": 0,
+      "role": "A_PHYSICAL",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "approval_id": "approval.critical_threshold",
+      "canonical_ref": "03 \u00a742, \u00a787-88; 05B \u00a754",
+      "description": "Member D authorization of critical target, threshold and persistence policy.",
+      "reason_code": "APPROVAL_MISSING:D_POLICY",
+      "records": 0,
+      "role": "D_POLICY",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "approval_id": "approval.time_provenance",
+      "canonical_ref": "01 \u00a718; 05B \u00a754",
+      "description": "Member C support of telemetry time-domain and clock provenance.",
+      "reason_code": "APPROVAL_MISSING:C_TELEMETRY",
+      "records": 0,
+      "role": "C_TELEMETRY",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "approval_id": "approval.release_authorization",
+      "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+      "description": "Team-lead release authorization for the one-time locked evaluation.",
+      "reason_code": "APPROVAL_MISSING:TEAM_LEAD",
+      "records": 0,
+      "role": "TEAM_LEAD",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    }
+  ],
+  "requirements": [
+    {
+      "canonical_ref": "05B \u00a744; 03 \u00a792",
+      "evidence_scope": "PROCESS",
+      "observed": "no metric values or test results in the record",
+      "reason_code": null,
+      "requirement": "The pre-registration record must not contain any final metric value or test-derived result.",
+      "requirement_id": "W16-PR-01",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a749, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "no recorded opening in W11-W15 tracked metadata; limitation disclosed",
+      "reason_code": null,
+      "requirement": "Prior holdout access must be accounted for from tracked metadata.",
+      "requirement_id": "W16-PR-02",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a749, \u00a792-93",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "header.holdout_opened is false",
+      "reason_code": null,
+      "requirement": "The tracked locked-test record must not already be opened.",
+      "requirement_id": "W16-PR-03",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "01 \u00a717; 03 \u00a7137 Gate B",
+      "evidence_scope": "PROCESS",
+      "observed": "no physical dataset identity is registered",
+      "reason_code": "PHYSICAL_DATASET_IDENTITY_MISSING",
+      "requirement": "An authoritative physical dataset identity with immutable source hashes must exist.",
+      "requirement_id": "W16-DS-01",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a7137 Gate B; 00 \u00a75.2",
+      "evidence_scope": "PROCESS",
+      "observed": "declared evidence class = SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "reason_code": "DATASET_EVIDENCE_CLASS_NOT_PHYSICAL",
+      "requirement": "Dataset evidence class must be physical and not contradict its provenance.",
+      "requirement_id": "W16-DS-02",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747, \u00a749, \u00a792",
+      "evidence_scope": "PROCESS",
+      "observed": "locked_test.frozen_at is null",
+      "reason_code": "TEST_MEMBERSHIP_NOT_FROZEN",
+      "requirement": "Locked-test membership must be frozen with an immutable identity before any evaluation.",
+      "requirement_id": "W16-DS-03",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a792-93",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "locked_test.opened_at is null",
+      "reason_code": null,
+      "requirement": "The locked-test record must not already be opened.",
+      "requirement_id": "W16-DS-04",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747, \u00a749",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "4 test runs disjoint from 16 development runs",
+      "reason_code": null,
+      "requirement": "Registered locked-test membership must be non-empty and unambiguous.",
+      "requirement_id": "W16-DS-05",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747; 05B \u00a78",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "10 pairs, none straddling partitions",
+      "reason_code": null,
+      "requirement": "A pair/group lineage must never cross partitions or contain ambiguous membership.",
+      "requirement_id": "W16-DS-06",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747, \u00a749",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "split, fold manifest and W13-W15 population agree",
+      "reason_code": null,
+      "requirement": "Locked-test membership must be identical across every tracked manifest.",
+      "requirement_id": "W16-DS-07",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747, \u00a749, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "registered == observed (4 runs)",
+      "reason_code": null,
+      "requirement": "Observed test membership must equal the registered membership (no change after freeze).",
+      "requirement_id": "W16-DS-08",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a747; 05B \u00a78",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "registered == observed (2 test pairs)",
+      "reason_code": null,
+      "requirement": "Registered test pairs must match the observed pair lineage.",
+      "requirement_id": "W16-DS-12",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "05B \u00a78; 03 \u00a747",
+      "evidence_scope": "PROCESS",
+      "observed": "no per-run physical source hashes declared",
+      "reason_code": "RUN_SOURCE_IDENTITY_MISSING",
+      "requirement": "No physical run may appear twice under different identifiers (source-hash lineage).",
+      "requirement_id": "W16-DS-09",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a749, \u00a792; 05B \u00a744",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "test_partition_used=false across recorded layer manifests",
+      "reason_code": null,
+      "requirement": "Recorded evaluation history must show the test partition was never used.",
+      "requirement_id": "W16-DS-10",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "01 \u00a717, \u00a733; 03 \u00a7137 Gate B",
+      "evidence_scope": "PHYSICAL",
+      "observed": "physical_run_validity=NOT_VALIDATED",
+      "reason_code": "PHYSICAL_RUN_VALIDITY_MISSING",
+      "requirement": "Physical run validity must be established for the final population.",
+      "requirement_id": "W16-PV-01",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a739.1; 03 \u00a7137 Gate B",
+      "evidence_scope": "PHYSICAL",
+      "observed": "hardware_config_status=DECLARED_NOT_VERIFIED",
+      "reason_code": "HARDWARE_CONFIG_NOT_VERIFIED",
+      "requirement": "Hardware configuration/lineage must be verified for the final population.",
+      "requirement_id": "W16-PV-02",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a718; 03 \u00a7137 Gate B",
+      "evidence_scope": "PHYSICAL",
+      "observed": "time_domain=BOOT_SCOPED_UPTIME, clock_sync=NOT_EVIDENCED",
+      "reason_code": "TIME_PROVENANCE_INADEQUATE",
+      "requirement": "Physical event time and clock synchronization must be evidenced.",
+      "requirement_id": "W16-PV-03",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a733; W08 completeness policy",
+      "evidence_scope": "PHYSICAL",
+      "observed": "sample_quality_status=NOT_EVALUABLE",
+      "reason_code": "SAMPLE_QUALITY_UNTRUSTED",
+      "requirement": "Sample quality must be trusted under the predeclared completeness policy.",
+      "requirement_id": "W16-PV-04",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a739.2; 03 \u00a7137 Gate B",
+      "evidence_scope": "PHYSICAL",
+      "observed": "calibration_status=NOT_AVAILABLE",
+      "reason_code": "CALIBRATION_PROVENANCE_MISSING",
+      "requirement": "Measurement calibration provenance must be traceable for the final population.",
+      "requirement_id": "W16-PV-05",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "05B \u00a78 B1-B2",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "dataset identity=W11_EXPANDED_SYNTHETIC_GROUPED",
+      "reason_code": null,
+      "requirement": "The split manifest must refer to the same dataset identity as the registered model.",
+      "requirement_id": "W16-DS-11",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792; artifact-convention \u00a74-5",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "reports/W15/model/model.ubj -> 25a8ef7a71817d4d...; reports/W15/model/model.json -> 67eef303104bca00...",
+      "reason_code": null,
+      "requirement": "Declared model artifacts must re-hash to their registered SHA-256 values.",
+      "requirement_id": "W16-MD-01",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "manifest=25a8ef7a71817d4d, file=25a8ef7a71817d4d, registered=25a8ef7a71817d4d",
+      "reason_code": null,
+      "requirement": "Model identity must be identical across the manifest, the native file declaration and the registration.",
+      "requirement_id": "W16-MD-02",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "manifest=4369f39f44a1d3b4, config=4369f39f44a1d3b4, registered=4369f39f44a1d3b4",
+      "reason_code": null,
+      "requirement": "The model configuration hash must match the registered configuration.",
+      "requirement_id": "W16-MD-03",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792; 05B \u00a79",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "manifest=1d36d338f35dd448, registry=1d36d338f35dd448, registered=1d36d338f35dd448",
+      "reason_code": null,
+      "requirement": "The feature schema hash must match the registry identity and the registration.",
+      "requirement_id": "W16-MD-04",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "28 features, allowlist=28, order_sha=98491993d95ba782",
+      "reason_code": null,
+      "requirement": "Ordered feature identities must match the allowlist, their recorded hash and the registration.",
+      "requirement_id": "W16-MD-05",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792; 05B \u00a754",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "model=coldguard-w11-development-label-v1, config=coldguard-w11-development-label-v1",
+      "reason_code": null,
+      "requirement": "The target definition version must be identical across model and configuration.",
+      "requirement_id": "W16-MD-06",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a7103, \u00a7137; 05B \u00a744",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "evidence_class=SYNTHETIC_SOFTWARE_CONTROL_ONLY, release_eligibility=NON_DEPLOYABLE_CANDIDATE",
+      "reason_code": "MODEL_SYNTHETIC_NON_DEPLOYABLE",
+      "requirement": "A synthetic/non-deployable model must never acquire release or locked-test eligibility.",
+      "requirement_id": "W16-MD-07",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a742-43, \u00a792; 05B \u00a754",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "target_status=DEVELOPMENT_CANDIDATE_NOT_FROZEN, boundary_c=None",
+      "reason_code": "CRITICAL_TARGET_UNFROZEN",
+      "requirement": "The critical target definition must be frozen by its policy authority.",
+      "requirement_id": "W16-MD-08",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a742-43",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "representative_temperature=DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+      "reason_code": "REPRESENTATIVE_TEMPERATURE_UNFROZEN",
+      "requirement": "The representative temperature for the final label must be frozen.",
+      "requirement_id": "W16-MD-09",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a744, \u00a784, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "horizon_status=ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN, decision=NOT_FROZEN, primary_horizon_s=None",
+      "reason_code": "PRIMARY_HORIZON_UNFROZEN",
+      "requirement": "One primary horizon must be frozen before the final test.",
+      "requirement_id": "W16-MD-10",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a787, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "operating_threshold_status=ILLUSTRATIVE_NOT_FROZEN, value=0.5, source=MISSING",
+      "reason_code": "OPERATING_THRESHOLD_UNFROZEN",
+      "requirement": "The operating threshold must be selected on development data and frozen.",
+      "requirement_id": "W16-MD-11",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a788, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "warning_persistence_status=NOT_FROZEN, k=None",
+      "reason_code": "WARNING_PERSISTENCE_UNFROZEN",
+      "requirement": "The warning persistence rule must be frozen before the final test.",
+      "requirement_id": "W16-MD-12",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a758-60, \u00a792",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "score_semantics=risk_score, calibration=RISK_SCORE_ONLY, decision=RISK_SCORE_ONLY",
+      "reason_code": null,
+      "requirement": "Calibration and output semantics must match the declared output contract (risk score or development-fit probability).",
+      "requirement_id": "W16-MD-13",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a789-90",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "episode=SYNTHETIC_ILLUSTRATIVE, association=SYNTHETIC_ILLUSTRATIVE",
+      "reason_code": "EVENT_MATCHING_POLICY_UNFROZEN",
+      "requirement": "The warning-episode and event-association policy must be frozen.",
+      "requirement_id": "W16-MD-14",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a7125; registry policy",
+      "evidence_scope": "DECLARED_METADATA_ONLY",
+      "observed": "missingness_policy=explicit_missing_never_zero_filled",
+      "reason_code": null,
+      "requirement": "The missingness policy must be part of the frozen feature schema.",
+      "requirement_id": "W16-MD-15",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792, \u00a7133, \u00a7158",
+      "evidence_scope": "PROCESS",
+      "observed": "registered=1eec1c4d6445c32c, current=1eec1c4d6445c32c",
+      "reason_code": null,
+      "requirement": "The analysis/preflight code identity must be registered and unchanged.",
+      "requirement_id": "W16-MD-16",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "05B \u00a744 freeze authority",
+      "evidence_scope": "PROCESS",
+      "observed": "all freeze authorities permitted",
+      "reason_code": null,
+      "requirement": "Every freeze field must record an authority permitted for that decision.",
+      "requirement_id": "W16-GV-01",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "05B \u00a744; 03 \u00a792",
+      "evidence_scope": "PROCESS",
+      "observed": "no contradicted freeze claims",
+      "reason_code": null,
+      "requirement": "No field may claim FROZEN_APPROVED while its observed evidence is unfrozen or missing.",
+      "requirement_id": "W16-GV-02",
+      "status": "PASS_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792; 05B \u00a744",
+      "evidence_scope": "PROCESS",
+      "observed": "unfrozen or missing fields: calibration_provenance, event_matching_policy, hardware_configuration, model_config_sha256, model_version, native_model_sha256, operating_threshold, physical_dataset_identity, primary_horizon, representative_temperature, run_identity_and_pairing, target_definition, telemetry_time_provenance, training_dataset_identity, warning_persistence",
+      "reason_code": "FREEZE_LEDGER_INCOMPLETE",
+      "requirement": "Every freeze field required for the final test must be FROZEN_APPROVED.",
+      "requirement_id": "W16-GV-10",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "05B \u00a744; 03 \u00a792",
+      "evidence_scope": "PROCESS",
+      "observed": "no approval record issued",
+      "reason_code": "APPROVAL_MISSING:B_METHOD",
+      "requirement": "Required approval must be issued: Member B methodological freeze: features, model, horizon, metrics, analysis code.",
+      "requirement_id": "W16-GV-03",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a717-18; 05B \u00a744",
+      "evidence_scope": "PROCESS",
+      "observed": "no approval record issued",
+      "reason_code": "APPROVAL_MISSING:A_PHYSICAL",
+      "requirement": "Required approval must be issued: Member A authorization of physical measurement validity and provenance.",
+      "requirement_id": "W16-GV-04",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a742, \u00a787-88; 05B \u00a754",
+      "evidence_scope": "PROCESS",
+      "observed": "no approval record issued",
+      "reason_code": "APPROVAL_MISSING:D_POLICY",
+      "requirement": "Required approval must be issued: Member D authorization of critical target, threshold and persistence policy.",
+      "requirement_id": "W16-GV-05",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "01 \u00a718; 05B \u00a754",
+      "evidence_scope": "PROCESS",
+      "observed": "no approval record issued",
+      "reason_code": "APPROVAL_MISSING:C_TELEMETRY",
+      "requirement": "Required approval must be issued: Member C support of telemetry time-domain and clock provenance.",
+      "requirement_id": "W16-GV-06",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+      "evidence_scope": "PROCESS",
+      "observed": "no approval record issued",
+      "reason_code": "APPROVAL_MISSING:TEAM_LEAD",
+      "requirement": "Required approval must be issued: Team-lead release authorization for the one-time locked evaluation.",
+      "requirement_id": "W16-GV-07",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a792-93; 04 \u00a731",
+      "evidence_scope": "PROCESS",
+      "observed": "no release authorization record",
+      "reason_code": "RELEASE_AUTHORIZATION_MISSING",
+      "requirement": "Explicit release authorization for the one-time locked evaluation must exist.",
+      "requirement_id": "W16-GV-08",
+      "status": "BLOCKED_BY_MISSING_EVIDENCE"
+    },
+    {
+      "canonical_ref": "03 \u00a7137; 04 \u00a731; 05B \u00a754",
+      "evidence_scope": "PROCESS",
+      "observed": "gate_b=RED, gate_g3=NO-GO / FIX DATA, predictive_eligible_runs=0",
+      "reason_code": "SCIENTIFIC_PREREQUISITES_BLOCKED",
+      "requirement": "Physical/data prerequisites must permit a predictive evaluation (Gate B GREEN, Gate G3 GO).",
+      "requirement_id": "W16-GV-09",
+      "status": "FAIL_VERIFIED"
+    },
+    {
+      "canonical_ref": "03 \u00a792-93; 05B \u00a744",
+      "evidence_scope": "PROCESS",
+      "observed": "no evaluation receipt supplied or produced",
+      "reason_code": null,
+      "requirement": "The preflight must not have executed the locked test or produced an evaluation receipt.",
+      "requirement_id": "W16-EX-01",
+      "status": "PASS_VERIFIED"
+    }
+  ],
+  "revision_semantics": "GENERATION_BASE_NOT_DELIVERY_COMMIT",
+  "schema": "coldguard-w16-preregistration-v1",
+  "split_identity": {
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "disjointness": {
+      "dev_test_overlap": [],
+      "duplicate_physical_sources": [],
+      "duplicate_test_ids": false,
+      "pair_problems": [],
+      "pair_straddling": []
+    },
+    "locked_test": {
+      "frozen": false,
+      "frozen_at": null,
+      "opened_at": null,
+      "test_partition_used": false
+    },
+    "observed": {
+      "fold_test_runs": [
+        "CG-W11-S1-001",
+        "CG-W11-S1-002",
+        "CG-W11-S2-001",
+        "CG-W11-S2-002"
+      ],
+      "grouping_key": "run_id + pair_id (one effective group per pair)",
+      "pair_lineage": [
+        {
+          "pair_id": "W11-PAIR-001",
+          "partition": "test",
+          "run_ids": [
+            "CG-W11-S1-001",
+            "CG-W11-S2-001"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-002",
+          "partition": "test",
+          "run_ids": [
+            "CG-W11-S1-002",
+            "CG-W11-S2-002"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-003",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-003",
+            "CG-W11-S2-003"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-004",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-004",
+            "CG-W11-S2-004"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-005",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-005",
+            "CG-W11-S2-005"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-006",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-006",
+            "CG-W11-S2-006"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-007",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-007",
+            "CG-W11-S2-007"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-008",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-008",
+            "CG-W11-S2-008"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-009",
+          "partition": "train",
+          "run_ids": [
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ]
+        },
+        {
+          "pair_id": "W11-PAIR-010",
+          "partition": "validation",
+          "run_ids": [
+            "CG-W11-S1-010",
+            "CG-W11-S2-010"
+          ]
+        }
+      ],
+      "population_locked_test_runs": [
+        "CG-W11-S1-001",
+        "CG-W11-S1-002",
+        "CG-W11-S2-001",
+        "CG-W11-S2-002"
+      ],
+      "test_runs": [
+        "CG-W11-S1-001",
+        "CG-W11-S1-002",
+        "CG-W11-S2-001",
+        "CG-W11-S2-002"
+      ],
+      "train_runs": [
+        "CG-W11-S1-003",
+        "CG-W11-S1-004",
+        "CG-W11-S1-008",
+        "CG-W11-S1-009",
+        "CG-W11-S2-003",
+        "CG-W11-S2-004",
+        "CG-W11-S2-008",
+        "CG-W11-S2-009"
+      ],
+      "validation_runs": [
+        "CG-W11-S1-005",
+        "CG-W11-S1-006",
+        "CG-W11-S1-007",
+        "CG-W11-S1-010",
+        "CG-W11-S2-005",
+        "CG-W11-S2-006",
+        "CG-W11-S2-007",
+        "CG-W11-S2-010"
+      ]
+    },
+    "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "registered": {
+      "test_pairs": [
+        "W11-PAIR-001",
+        "W11-PAIR-002"
+      ],
+      "test_runs": [
+        "CG-W11-S1-001",
+        "CG-W11-S1-002",
+        "CG-W11-S2-001",
+        "CG-W11-S2-002"
+      ]
+    }
+  },
+  "statistical_analysis_registration": {
+    "aggregation": {
+      "independent_unit": "run_id (pair_id lineage collapses paired runs into one group)",
+      "reporting": "per independent test run/group and pooled across groups; correlated windows and correlated folds are never counted as independent experiments"
+    },
+    "aiw": {
+      "definition": "t_critical - t_warning - T_system - T_physical in seconds; T_system is sensing + inference + policy + command overhead",
+      "implementation": "coldguard_ml.evaluation_contract.compute_aiw",
+      "name": "AIW",
+      "preconditions": [
+        "measured command-to-effect latency chain",
+        "frozen critical criterion",
+        "trusted warning time"
+      ],
+      "undefined_behavior": "NOT_ESTIMABLE with the exact missing precondition; never zero"
+    },
+    "calibration": {
+      "applicability": "only when the frozen output semantics are a calibrated probability; with risk_score semantics calibration metrics are NOT_APPLICABLE and no probability wording is permitted",
+      "fit_population": "development data only; never the locked test",
+      "implementation": "coldguard_ml.w14_calibration (development-only diagnostics)"
+    },
+    "event_metrics": {
+      "false_warning_burden": {
+        "denominator": "trusted eligible run-hours in the locked test",
+        "metric": "false_warning_episodes_per_eligible_hour"
+      },
+      "implementation": "coldguard_ml.event_evaluator.evaluate_events",
+      "missed_events": {
+        "denominator": "eligible critical events in the locked test",
+        "metric": "missed_critical_event_count"
+      },
+      "warning_episode_definition": "contiguous samples above the frozen operating threshold for at least the frozen persistence rule k; bridging follows the frozen event matching policy only"
+    },
+    "ewt": {
+      "definition": "t_reactive - t_predictive in seconds (negative kept, never clamped)",
+      "implementation": "coldguard_ml.evaluation_contract.compute_ewt",
+      "name": "EWT",
+      "preconditions": [
+        "qualified common trajectory",
+        "trusted event time",
+        "no intervening predictive intervention",
+        "uncensored reactive crossing",
+        "frozen reactive criterion"
+      ],
+      "undefined_behavior": "NOT_ESTIMABLE with the exact missing precondition; never zero"
+    },
+    "interpretation_categories": [
+      "SUPPORTS_PREDICTIVE_USEFULNESS",
+      "MIXED_EVIDENCE",
+      "DOES_NOT_SUPPORT"
+    ],
+    "invalid_and_censored_data": {
+      "implementation": "coldguard_ml.grouped_evaluation + registry missingness policy",
+      "rule": "exclude only per predeclared validity rules; report exclusion counts and run/group denominators; never impute, never zero-fill missingness"
+    },
+    "not_run_interpretation": "NO_INTERPRETATION_TEST_NOT_RUN",
+    "primary_metric": {
+      "canonical_constant": "PRIMARY_PREDICTIVE_METRIC (evaluation_contract)",
+      "definition": "Average precision from the precision/recall curve of risk scores against the frozen binary label, with no interpolation.",
+      "denominator": "all eligible positive and negative anchors; AP averages precision at each positive rank",
+      "implementation": "coldguard_ml.grouped_evaluation.classification_metrics (average_precision_score); no second metric engine",
+      "name": "non_interpolated_average_precision",
+      "population": "eligible trusted locked-test anchors from frozen independent test runs, partitioned exactly as registered",
+      "undefined_behavior": "report UNDEFINED_SINGLE_CLASS_TEST / UNDEFINED_NO_ELIGIBLE_ANCHORS; never report 0 or 1 for an uncomputable metric",
+      "undefined_cases": [
+        "single-class locked-test population",
+        "zero eligible anchors",
+        "frozen label unavailable for any test run"
+      ],
+      "unit": "dimensionless, range [0, 1]"
+    },
+    "supporting_metrics": {
+      "precision": {
+        "definition": "tp / (tp + fp) at the frozen operating threshold and persistence rule",
+        "denominator": "predicted positive anchors",
+        "undefined_behavior": "NO_PREDICTED_POSITIVES; never report 0",
+        "undefined_cases": [
+          "no predicted positives"
+        ],
+        "unit": "dimensionless"
+      },
+      "recall": {
+        "definition": "tp / positive anchors at the frozen operating threshold and persistence rule",
+        "denominator": "eligible positive anchors",
+        "undefined_behavior": "UNDEFINED_NO_POSITIVES; never report 0",
+        "undefined_cases": [
+          "zero positive anchors"
+        ],
+        "unit": "dimensionless"
+      }
+    },
+    "uncertainty_reporting": [
+      "independent run/group counts",
+      "class and event denominators",
+      "excluded/censored counts with reasons",
+      "explicit non-estimable statuses for every undefined metric",
+      "limitations section stating the tested prototype/configuration only"
+    ]
+  },
+  "synthetic_evidence_statement": "All currently registered population, model and split identities are synthetic software controls. They cannot support a physical predictive claim."
+}
