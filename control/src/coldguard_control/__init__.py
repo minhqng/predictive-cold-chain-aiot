@@ -27,6 +27,13 @@ from .commands import (
     validate_command,
 )
 from .config import ConfigError, PolicyConfig
+from .device_safety import (
+    ActuatorSafetyDecision,
+    ActuatorSafetyFinding,
+    ActuatorSafetyState,
+    DeviceSafetyInputError,
+    check_actuator_safety,
+)
 from .policy import (
     PolicyDecision,
     PolicyInput,
@@ -37,6 +44,13 @@ from .policy import (
     ThermalView,
     evaluate_policy,
     safe_local_exit_status,
+)
+from .quality import (
+    ChannelObservation,
+    QualityAssessment,
+    QualityBlocker,
+    QualityInputError,
+    assess_quality,
 )
 from .taxonomy import (
     FailureRule,
@@ -53,17 +67,60 @@ from .types import (
     DeviceMode,
     FailureDisposition,
     ModelHealth,
+    PhysicalVerificationState,
     PolicyState,
     QualityState,
+    CoolingHealthState,
     ReasonCode,
+    EnvelopeQualification,
+)
+# New modules
+from .controller_a import (
+    ControllerAConfig,
+    ControllerASample,
+    ControllerADecision,
+    ControllerA,
+    replay_controller_a,
+)
+from .safe_local import SafeLocalSession, SafeLocalStep
+from .verification import (
+    VerificationPolicy,
+    VerificationObservation,
+    VerificationSnapshot,
+    VerificationTracker,
+    start_verification,
 )
 
 __version__ = "0.1.0"
+
+# W10‑W13 exported symbols
+from .types import VerificationStatus, IncidentAction
+from .faults import (
+    FaultProtocol,
+    InjectionCheckResult,
+    InjectionVerdict,
+    FaultProtocolStatus,
+    FORBIDDEN_TECHNIQUE_IDS,
+    get_protocol,
+    check_injection,
+    assert_protocol_allowed,
+    audit_protocols,
+)
+from .incident import (
+    CANDIDATE_MAP_VERSION,
+    IncidentRecommendation,
+    recommend_incident_actions,
+)
+from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
     "AckStatus",
     "ActuationIntent",
+    "ActuatorSafetyDecision",
+    "ActuatorSafetyFinding",
+    "ActuatorSafetyState",
+    "ChannelObservation",
     "CommandDecision",
     "CommandRequest",
     "CommandSchemaError",
@@ -71,10 +128,12 @@ __all__ = [
     "ControllerId",
     "CoolingState",
     "DeviceMode",
+    "DeviceSafetyInputError",
     "FailureDisposition",
     "FailureRule",
     "LocalSafetyEvidence",
     "ModelHealth",
+    "PhysicalVerificationState",
     "PolicyConfig",
     "PolicyDecision",
     "PolicyInput",
@@ -82,15 +141,55 @@ __all__ = [
     "PolicyPreconditionError",
     "PolicyState",
     "PredictionView",
+    "QualityAssessment",
+    "QualityBlocker",
+    "QualityInputError",
     "QualityState",
     "ReasonCode",
+    "EnvelopeQualification",
+    "CoolingHealthState",
     "RemotePathView",
     "ThermalView",
     "UnknownFailureError",
     "all_failure_rules",
+    "assess_quality",
+    "check_actuator_safety",
     "classify_failure",
     "evaluate_policy",
     "failures_with_disposition",
     "safe_local_exit_status",
     "validate_command",
+    "ControllerAConfig",
+    "ControllerASample",
+    "ControllerADecision",
+    "ControllerA",
+    "replay_controller_a",
+    "SafeLocalSession",
+    "SafeLocalStep",
+    "VerificationPolicy",
+    "VerificationObservation",
+    "VerificationSnapshot",
+    "VerificationTracker",
+    "start_verification",
+    "VerificationStatus",
+    "CoolingHealthState",
+    "IncidentAction",
+    "FaultProtocol",
+    "InjectionCheckResult",
+    "InjectionVerdict",
+    "FaultProtocolStatus",
+    "check_injection",
+    "assert_protocol_allowed",
+    "audit_protocols",
+    "FORBIDDEN_TECHNIQUE_IDS",
+    "get_protocol",
+    "CANDIDATE_MAP_VERSION",
+    "IncidentRecommendation",
+    "recommend_incident_actions",
+    "AIWInput",
+    "AIWResult",
+    "AIWStatus",
+    "TimingEvidence",
+    "assess_aiw",
+
 ]

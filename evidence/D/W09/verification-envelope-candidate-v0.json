@@ -1,0 +1,12 @@
+{
+  "policy_version": "v0",
+  "envelope_id": "env-001",
+  "qualification": "CANDIDATE_UNQUALIFIED",
+  "active_current_min_a": 7.0,
+  "active_current_max_a": 10.0,
+  "off_current_max_a": 0.1,
+  "electrical_window_s": 2.0,
+  "thermal_window_s": 5.0,
+  "thermal_min_drop_c": 1.0,
+  "source": "test"
+}

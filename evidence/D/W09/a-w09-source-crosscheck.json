@@ -1,0 +1,22 @@
+{
+  "boot_ids": [
+    "56044b74"
+  ],
+  "electrical_quality_counts": {
+    "UNKNOWN": 957
+  },
+  "eligible_s1_run_ids": [],
+  "note": "Source admission alone never qualifies an OFF/ON envelope or proves cooling; the verifier also requires applied-state and physical windows.",
+  "rows": 957,
+  "run_labels": [
+    "run-00000000",
+    "run-00000001"
+  ],
+  "scope": "D_READ_ONLY_SOURCE_ADMISSION_NEGATIVE_CONTROL",
+  "source_admissible_for_review": false,
+  "source_csv": "evidence/A/W09/exports/CG-S1-H8C-600S.row-validity.csv",
+  "source_csv_sha256": "da27b2668097c207dd679e563fc18322742d68dfb4eb5a894f64958be35eebaf",
+  "source_index": "evidence/A/W09/s1-run-index.json",
+  "source_index_sha256": "eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af",
+  "verdict": "UNKNOWN"
+}

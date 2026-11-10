@@ -1,4 +1,4 @@
-"""Frozen vocabulary for the ColdGuard policy core (Member D, W01-W03).
+"""Frozen vocabulary for the ColdGuard policy core (Member D, W01-W13).
 
 Every name and meaning here is traceable to the canonical documents:
 
@@ -10,6 +10,9 @@ Every name and meaning here is traceable to the canonical documents:
 - ACK statuses            -> Doc 02 section 32.1
 - reason codes            -> Doc 02 sections 58/59 and 05D section 28
 - failure dispositions    -> 05D section 35 D-W03-03 (Doc 01 section 28 ids)
+- verification states     -> Doc 02 section 35.3 (W11)
+- cooling-health states   -> Doc 01 section 23 / Doc 02 section 36 (W11)
+- incident actions        -> 05D D-W11-04 (W11)
 
 This module deliberately contains no operating thresholds. Every numeric
 operating value is supplied by a versioned ``PolicyConfig`` owned by Member D
@@ -128,6 +131,55 @@ class AckStatus(str, Enum):
     OUT_OF_RANGE = "OUT_OF_RANGE"
 
 
+class PhysicalVerificationState(str, Enum):
+    """Independent physical-response verification state, separate from ACK.
+
+    VERIFIED requires qualified physical evidence; an ACK alone is insufficient.
+    """
+
+    NOT_REQUIRED = "NOT_REQUIRED"
+    PENDING = "PENDING"
+    ELECTRICAL_VERIFIED = "ELECTRICAL_VERIFIED"
+    THERMAL_VERIFIED = "THERMAL_VERIFIED"
+    VERIFIED = "VERIFIED"
+    FAILED_ELECTRICAL = "FAILED_ELECTRICAL"
+    FAILED_THERMAL = "FAILED_THERMAL"
+    UNKNOWN = "UNKNOWN"
+
+
+VerificationState = PhysicalVerificationState
+
+
+class CoolingHealthState(str, Enum):
+    """Cooling-health derived states (Doc 01, Doc 02 section 36).
+
+    The state classifies the observable response only. It never asserts a
+    component-level root cause (05D section 15).
+    """
+
+    HEALTHY_RESPONSE = "HEALTHY_RESPONSE"
+    ELECTRICAL_RESPONSE_MISSING = "ELECTRICAL_RESPONSE_MISSING"
+    THERMAL_EFFECTIVENESS_DEGRADED = "THERMAL_EFFECTIVENESS_DEGRADED"
+    CONTROL_ELECTRICAL_ANOMALY = "CONTROL_ELECTRICAL_ANOMALY"
+    UNKNOWN = "UNKNOWN"
+
+
+class EnvelopeQualification(str, Enum):
+    """Provenance status of a verification envelope.
+
+    ``QUALIFIED`` means the envelope is frozen from an approved characterization
+    source. ``CANDIDATE_UNQUALIFIED`` means the numbers are observations that
+    have not been accepted as evidence (for example Member A's W08/W09
+    electrical status tokens are empty). ``UNRESOLVED`` means no envelope is
+    available yet.
+    """
+
+    QUALIFIED = "QUALIFIED"
+    CANDIDATE_UNQUALIFIED = "CANDIDATE_UNQUALIFIED"
+    UNRESOLVED = "UNRESOLVED"
+
+
+
 class FailureDisposition(str, Enum):
     """Allowed failure-handling dispositions for W03 (05D D-W03-03).
 
@@ -141,6 +193,25 @@ class FailureDisposition(str, Enum):
     FALLBACK = "FALLBACK"
     LOCKOUT = "LOCKOUT"
     NOT_CONTRACTED = "NOT_CONTRACTED"
+
+
+VerificationStatus = PhysicalVerificationState
+
+
+class IncidentAction(str, Enum):
+    """Per-diagnosis incident actions (05D D-W11-04).
+
+    Each cooling-health state maps to a fixed, documented action set:
+    warn, block predictive, force OFF, use local threshold, enter lockout.
+    The mapping is policy semantics, not a numeric threshold; any numeric
+    boundary (envelope, window) stays in the versioned configuration.
+    """
+
+    WARN = "WARN"
+    BLOCK_PREDICTIVE = "BLOCK_PREDICTIVE"
+    FORCE_OFF = "FORCE_OFF"
+    USE_LOCAL_THRESHOLD = "USE_LOCAL_THRESHOLD"
+    ENTER_LOCKOUT = "ENTER_LOCKOUT"
 
 
 class ReasonCode(str, Enum):
