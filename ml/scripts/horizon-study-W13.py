@@ -547,7 +547,7 @@ def _scientific_verdicts(
             f"PARTIAL_{completed}_OF_{len(study.horizons)}_HORIZONS"
         ),
         "W11_PIPELINE_DEFECT": (
-            "OPEN_EMPTY_RUN_POPULATION_MAX_ERROR_NOT_FIXED_IN_W13"
+            "REPAIRED_EMPTY_RUN_POPULATION_REFUSAL_IN_W11"
             if refused
             else "NOT_OBSERVED"
         ),

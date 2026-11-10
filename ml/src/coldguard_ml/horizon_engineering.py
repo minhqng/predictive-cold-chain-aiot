@@ -786,16 +786,21 @@ def run_horizon_study(
                     refusal_reason=(
                         "W13_HORIZON_NOT_ESTIMABLE: the label configuration "
                         f"leaves {len(empty_runs)} of {len(labeled.run_ids)} "
-                        "runs with zero evaluable anchors (all anchors "
-                        "CENSORED), and the remaining evaluable population is "
-                        f"single-class ({labeled.positive_count} positive, "
-                        f"{labeled.negative_count} negative), so AP and "
-                        "event metrics would stay undefined even without the "
-                        "downstream failure; the W11 grouped pipeline also "
-                        "raises on a zero-sample run (xgb_benchmark.py "
-                        "evaluation_end_by_run max over an empty population), "
-                        "and W13 does not patch the W11 layer — the defect "
-                        "stays open for its owning week"
+                        "runs with zero evaluable anchors; the shared W11 "
+                        "grouped benchmark refuses that declared population "
+                        "deterministically "
+                        "(DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) instead of "
+                        "dropping a run, so the horizon is not estimable under "
+                        "the frozen benchmark contract; the remaining "
+                        f"evaluable population is {labeled.positive_count} "
+                        f"positive and {labeled.negative_count} negative"
+                        + (
+                            ", which is single-class, so AP and event metrics "
+                            "stay undefined"
+                            if labeled.positive_count == 0
+                            or labeled.negative_count == 0
+                            else ""
+                        )
                     ),
                 )
             )
@@ -882,9 +887,11 @@ def run_horizon_study(
             "the locked synthetic test pair and any locked physical test "
             "partition remain untouched",
             "a horizon whose label configuration leaves a run with zero "
-            "evaluable anchors is recorded as NOT_ESTIMABLE: the W11 grouped "
-            "pipeline raises on the empty population and W13 does not patch "
-            "the W11 layer; the defect is reported, not fixed here",
+            "evaluable anchors is recorded as NOT_ESTIMABLE because the shared "
+            "W11 grouped benchmark refuses that declared population "
+            "(DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) rather than drop the run; the "
+            "W11 repair is verified by the W13 regression, not reimplemented "
+            "here",
         ),
     )
 

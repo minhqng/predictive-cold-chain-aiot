@@ -56,8 +56,11 @@ from coldguard_ml.labels import (
     generate_label_records,
 )
 from coldguard_ml.xgb_benchmark import (
+    NON_ESTIMABLE_RUN_REASON,
+    NonEstimableRunError,
     build_expanded_w11_fixture,
     load_benchmark_config,
+    run_grouped_benchmark,
 )
 
 ML_ROOT = Path(__file__).resolve().parents[1]
@@ -620,11 +623,31 @@ def test_study_covers_candidates_and_refuses_zero_sample_horizon(study):
     assert refused.method_folds == ()
     assert refused.aggregate_ap == {}
     assert refused.refusal_reason and "W13_HORIZON_NOT_ESTIMABLE" in refused.refusal_reason
+    assert "DEV_RUN_WITHOUT_EVALUABLE_ANCHORS" in refused.refusal_reason
+    assert "max()" not in refused.refusal_reason
+    assert "defect stays open" not in refused.refusal_reason
     # The H=300 population is single-class positive; negatives are zero, not
     # fabricated, and censored anchors are excluded rather than labeled 0.
     assert refused.negative_count == 0
     assert refused.positive_count > 0
     assert refused.censored_exclusions > 0
+
+
+def test_h300_population_is_refused_by_the_shared_benchmark(registry, config, tmp_path):
+    fixture = build_expanded_w11_fixture()
+    variant = dataclasses.replace(
+        config,
+        label=dataclasses.replace(
+            config.label,
+            horizon_s=300.0,
+            spec_version=W13_LABEL_SPEC_VERSION,
+        ),
+    )
+    with pytest.raises(NonEstimableRunError) as caught:
+        run_grouped_benchmark(fixture, registry, variant, out_dir=tmp_path)
+    assert caught.value.reason_code == NON_ESTIMABLE_RUN_REASON
+    assert len(caught.value.runs) == 8
+    assert all(reasons.get("CENSORED", 0) > 0 for _, reasons in caught.value.runs)
 
 
 def test_study_never_reads_the_locked_test(study):
@@ -876,7 +899,7 @@ def test_cli_writes_consistent_manifest_with_honest_statuses(tmp_path):
     )
     assert (
         manifest["scientific_verdicts"]["W11_PIPELINE_DEFECT"]
-        == "OPEN_EMPTY_RUN_POPULATION_MAX_ERROR_NOT_FIXED_IN_W13"
+        == "REPAIRED_EMPTY_RUN_POPULATION_REFUSAL_IN_W11"
     )
     assert (
         manifest["scientific_verdicts"]["HORIZON_DECISION"]
