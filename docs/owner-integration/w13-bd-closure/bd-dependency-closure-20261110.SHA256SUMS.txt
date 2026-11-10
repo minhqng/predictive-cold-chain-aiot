@@ -1,0 +1,30 @@
+# Owner sidecar hashes — W13 B→D data-dependency closure (Phase 2B, 2026-11-10)
+
+Additive owner evidence only; frozen `SHA256SUMS.txt` in this directory untouched.
+
+```
+698ef8c8e44df572c96ad2b5ad7006e11a657779b6ba5d5ca9c363e3280e5ee9  bd-dependency-closure-20261110.json
+```
+
+Provenance: deterministic output of
+`backend/src/coldguard_backend/cross_team_paths.py`
+(`uv run --frozen --with-editable ../ml python -m coldguard_backend.cross_team_paths
+--json ...`, seed 20261110) in the `_owner-w01-w13` worktree.
+
+Contents:
+- nine DATASET_ACCEPTED runs (S1×4, S2×5; 3,721 frames) admitted through Member
+  B's real `Observation` validator, per-run SHA-256 re-verified against the
+  committed `run_index.csv`;
+- deterministic grouped split (seed 20261110; 3 runs per partition, floor 3);
+- 3,721 causal windows through Member B's real `generate_windows`
+  (train 1020 / validation 1500 / test 1201);
+- per-horizon (30/60/120/300 s) label verdicts with the honest W13 gate:
+  door-bearing runs REFUSED_GROUND_TRUTH_UNKNOWN (B's own LabelError — the
+  critical-Tmean threshold is NOT_FROZEN_PENDING_MEMBER_D), S1 runs
+  NO_CRITICAL_STATE_INFO; zero positive labels exist;
+- per-horizon Member D `PredictionView` hand-off: ModelHealth.UNAVAILABLE,
+  risk_score None — verified against D's real `evaluate_policy` fallback
+  (AI_UNAVAILABLE, predictive_blocked, HOLD).
+
+A HOST_STAMP is the dataset's declared timebase, not a device-verified
+EVENT_UTC; every admitted row carries that caveat forward.

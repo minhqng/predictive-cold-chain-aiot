@@ -1,0 +1,403 @@
+{
+  "closure": "B->D W13 data-dependency closure (Phase 2B)",
+  "honesty": [
+    "no critical-Tmean threshold is frozen; D decides",
+    "every event in a constructed series is trusted=False",
+    "B refused label evaluation where decidable coverage is unknown",
+    "no y=1 label exists in this closure; none was fabricated",
+    "HOST_STAMP is a declared dataset timebase, not device EVENT_UTC"
+  ],
+  "labels": {
+    "W10-02": {
+      "30.0": {
+        "reason": "run W10-02: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "reason": "run W10-02: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "reason": "run W10-02: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "reason": "run W10-02: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      }
+    },
+    "W10-03-run1": {
+      "30.0": {
+        "reason": "run W10-03-run1: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "reason": "run W10-03-run1: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "reason": "run W10-03-run1: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "reason": "run W10-03-run1: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      }
+    },
+    "W10-03-run2": {
+      "30.0": {
+        "reason": "run W10-03-run2: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "reason": "run W10-03-run2: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "reason": "run W10-03-run2: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "reason": "run W10-03-run2: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      }
+    },
+    "W10-03-run3": {
+      "30.0": {
+        "reason": "run W10-03-run3: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "reason": "run W10-03-run3: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "reason": "run W10-03-run3: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "reason": "run W10-03-run3: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      }
+    },
+    "W10-03-run4": {
+      "30.0": {
+        "reason": "run W10-03-run4: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "reason": "run W10-03-run4: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "reason": "run W10-03-run4: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "reason": "run W10-03-run4: label coverage unknown (no trajectory_end/coverage_end supplied and series declares none)",
+        "verdict": "REFUSED_GROUND_TRUTH_UNKNOWN",
+        "windows_labeled": 0
+      }
+    },
+    "trial1-imported": {
+      "30.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      }
+    },
+    "trial2": {
+      "30.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      }
+    },
+    "trial3": {
+      "30.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      }
+    },
+    "trial4": {
+      "30.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "60.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "120.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      },
+      "300.0": {
+        "verdict": "NO_CRITICAL_STATE_INFO",
+        "windows_labeled": 0
+      }
+    }
+  },
+  "prediction_views": {
+    "30.0": {
+      "above_preemptive_s": null,
+      "age_s": null,
+      "feature_version": "NONE_MEMBER_B_W13",
+      "health": "UNAVAILABLE",
+      "horizon_s": 30.0,
+      "model_version": "NONE_MEMBER_B_W13",
+      "risk_score": null,
+      "series_run_id": "committed-dataset"
+    },
+    "60.0": {
+      "above_preemptive_s": null,
+      "age_s": null,
+      "feature_version": "NONE_MEMBER_B_W13",
+      "health": "UNAVAILABLE",
+      "horizon_s": 60.0,
+      "model_version": "NONE_MEMBER_B_W13",
+      "risk_score": null,
+      "series_run_id": "committed-dataset"
+    },
+    "120.0": {
+      "above_preemptive_s": null,
+      "age_s": null,
+      "feature_version": "NONE_MEMBER_B_W13",
+      "health": "UNAVAILABLE",
+      "horizon_s": 120.0,
+      "model_version": "NONE_MEMBER_B_W13",
+      "risk_score": null,
+      "series_run_id": "committed-dataset"
+    },
+    "300.0": {
+      "above_preemptive_s": null,
+      "age_s": null,
+      "feature_version": "NONE_MEMBER_B_W13",
+      "health": "UNAVAILABLE",
+      "horizon_s": 300.0,
+      "model_version": "NONE_MEMBER_B_W13",
+      "risk_score": null,
+      "series_run_id": "committed-dataset"
+    }
+  },
+  "runs": [
+    {
+      "admitted": 120,
+      "boot_id": "73311d0c",
+      "classification": "DATASET_ACCEPTED_S2",
+      "deduplicated": 120,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 120,
+      "run_tag": "W10-02",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 300,
+      "boot_id": "73311d0c",
+      "classification": "DATASET_ACCEPTED_S2",
+      "deduplicated": 300,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 300,
+      "run_tag": "W10-03-run1",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 300,
+      "boot_id": "73311d0c",
+      "classification": "DATASET_ACCEPTED_S2",
+      "deduplicated": 300,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 300,
+      "run_tag": "W10-03-run2",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 300,
+      "boot_id": "73311d0c",
+      "classification": "DATASET_ACCEPTED_S2",
+      "deduplicated": 300,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 300,
+      "run_tag": "W10-03-run3",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 300,
+      "boot_id": "73311d0c",
+      "classification": "DATASET_ACCEPTED_S2",
+      "deduplicated": 300,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 300,
+      "run_tag": "W10-03-run4",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 600,
+      "boot_id": "4a21a645",
+      "classification": "DATASET_ACCEPTED_S1",
+      "deduplicated": 600,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 600,
+      "run_tag": "trial2",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 600,
+      "boot_id": "4a21a645",
+      "classification": "DATASET_ACCEPTED_S1",
+      "deduplicated": 600,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 600,
+      "run_tag": "trial3",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 601,
+      "boot_id": "4a21a645",
+      "classification": "DATASET_ACCEPTED_S1",
+      "deduplicated": 601,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 601,
+      "run_tag": "trial4",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    },
+    {
+      "admitted": 600,
+      "boot_id": "c20d17f6",
+      "classification": "DATASET_ACCEPTED_S1",
+      "deduplicated": 600,
+      "event_time_trust": "HOST_STAMP_DECLARED_NOT_DEVICE_VERIFIED",
+      "refused": 0,
+      "refused_by_reason": {},
+      "rows": 600,
+      "run_tag": "trial1-imported",
+      "sha256_verified": true,
+      "timebase": "HOST_STAMP"
+    }
+  ],
+  "seed": 20261110,
+  "split": {
+    "content_sha256": null,
+    "controller_context": "observational-capture-no-controller-in-loop",
+    "created_at": null,
+    "created_by": "owner",
+    "dataset_id": "committed-20261107-accepted",
+    "excluded_runs": [],
+    "git_commit": null,
+    "grouping": {
+      "key": "run_id"
+    },
+    "hardware_lineage": {
+      "hardware_config_id": "CG-HW-001"
+    },
+    "locked_test": {
+      "frozen_at": null,
+      "opened_at": null
+    },
+    "pair_lineage": [],
+    "split_id": "owner-w01-w13-closure-split",
+    "split_seed": 20261110,
+    "status": "draft",
+    "test_runs": [
+      "W10-03-run2",
+      "W10-03-run4",
+      "trial4"
+    ],
+    "train_runs": [
+      "W10-02",
+      "W10-03-run1",
+      "trial2"
+    ],
+    "validation_runs": [
+      "W10-03-run3",
+      "trial1-imported",
+      "trial3"
+    ]
+  },
+  "totals": {
+    "admitted": 3721,
+    "runs": 9,
+    "windows": {
+      "test": 1201,
+      "train": 1020,
+      "validation": 1500
+    }
+  }
+}
