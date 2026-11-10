@@ -1,0 +1,2824 @@
+{
+  "analysis_code_sha256": "c415d74469e8e1a3fa0c693765a8c2f3a185562df382249fa8f959f367dfbe2c",
+  "arms": {
+    "A1A": {
+      "arm_id": "A1A",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 21,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+        "UNWEIGHTED": 1.0
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w14-a1a-single-center-v1"
+    },
+    "A1B": {
+      "arm_id": "A1B",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 28,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+        "UNWEIGHTED": 1.0
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w14-a1b-three-chamber-air-v1"
+    },
+    "A2A": {
+      "arm_id": "A2A",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 14,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 0.9999695085993444,
+        "UNWEIGHTED": 0.9999869791289905
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w14-a2a-thermal-v1"
+    },
+    "A2B": {
+      "arm_id": "A2B",
+      "censored_exclusions": 960,
+      "evaluable_samples": 1936,
+      "feature_count": 18,
+      "fit_folds": 8,
+      "fold_ap_max": 1.0,
+      "fold_ap_min": 1.0,
+      "fold_count": 4,
+      "group_count": 8,
+      "negative": 1456,
+      "oof_ap": {
+        "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+        "UNWEIGHTED": 1.0
+      },
+      "positive": 480,
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "strategy_count": 2,
+      "strategy_fold_ap_values": {
+        "TRAIN_FOLD_CLASS_WEIGHT": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ],
+        "UNWEIGHTED": [
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "untrusted_exclusions": 0,
+      "view_id": "coldguard-w14-a2b-thermal-door-v1"
+    }
+  },
+  "artifacts": {
+    "A1-arm-summary-W14.csv": {
+      "sha256": "0c6466bb6c5fd12eedac8a4701a9f07682141e2f66d28908c1ad0566e8c0f869"
+    },
+    "A1-feature-provenance-W14.csv": {
+      "sha256": "64b377f956725c8899681be1620a986e24d1889e6994695a73230ae864d4124a"
+    },
+    "A1-fold-metrics-W14.csv": {
+      "sha256": "066e38c98645bf85f1512002f2902b15687206860b1b9abb0a252fe0d36a6149"
+    },
+    "A1-paired-folds-W14.csv": {
+      "sha256": "faf1fb6a7986d84ea66fc3eb8a529cd98604ed283eabdbc564a90613278409a0"
+    },
+    "A1-support-W14.csv": {
+      "sha256": "8dc6ff0d37f92dc4eebf91e436eee781f1b7b6224ae7834321bb53a908e4058f"
+    },
+    "A2-arm-summary-W14.csv": {
+      "sha256": "e30e5b8553a1ae980909596ce238fbd71d3f6bf04c564f49dba14d1338b42711"
+    },
+    "A2-feature-provenance-W14.csv": {
+      "sha256": "9b0d89115f66d1198c5edbc5998088d54ccf0a917ffd8232f278ea7b96433848"
+    },
+    "A2-fold-metrics-W14.csv": {
+      "sha256": "302b5716ef1be068af541d8c5c6523c5f80be8e845ad0af1ef1bd3b94cac726e"
+    },
+    "A2-paired-folds-W14.csv": {
+      "sha256": "f892553db71766608772d2f22250e7447e565c0edbd80b128ab92e9714475207"
+    },
+    "A2-support-W14.csv": {
+      "sha256": "8dc6ff0d37f92dc4eebf91e436eee781f1b7b6224ae7834321bb53a908e4058f"
+    },
+    "calibration-bins-W14.csv": {
+      "sha256": "961a0f91aa4bb76f7d8c25f5b743d89127bfdbd5b8f07890b83a66c0c84004ec"
+    },
+    "calibration-folds-W14.csv": {
+      "sha256": "58a565d6b692f80e3d7e9365c836528dff58da7f87719a3fbadd28ed20237ce3"
+    },
+    "calibration-summary-W14.json": {
+      "sha256": "c1da43b0125429cb39e5f917a3824c73e826a8ccb4e38d5b436556051d66e96c"
+    }
+  },
+  "calibration": {
+    "decision": {
+      "decision": "RISK_SCORE_ONLY",
+      "missing_requirements": [
+        "real_eligible_population",
+        "real_independent_groups",
+        "label_identity_frozen",
+        "horizon_frozen",
+        "group_disjoint_fit_calibration_evaluation",
+        "pair_lineage_disjoint",
+        "reliability_interpretable",
+        "brier_estimable",
+        "discrimination_estimable",
+        "model_feature_identity_frozen",
+        "not_synthetic_only"
+      ],
+      "product_contract": [
+        "The model output is a risk_score, not an empirically calibrated probability.",
+        "No percentage-risk wording and no claim such as '72% chance of critical temperature within H' is permitted.",
+        "Display and interpretation must state that the score is an uncalibrated decision statistic.",
+        "Any later transition to probability wording requires a new evidence-backed decision."
+      ],
+      "reasons": [
+        "CALIBRATION_BLOCKED_NO_REAL_ELIGIBLE_DEVELOPMENT_POPULATION",
+        "CALIBRATION_BLOCKED_TARGET_OR_HORIZON_NOT_FROZEN",
+        "CALIBRATION_BLOCKED_SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "CALIBRATION_BLOCKED_RELIABILITY_BINS_NOT_INTERPRETABLE"
+      ]
+    },
+    "diagnostics": {
+      "all_folds_group_disjoint": true,
+      "all_folds_pair_disjoint": true,
+      "brier_definition": {
+        "positive_class": "y=1 (critical event within the reference horizon)",
+        "scale": "[0, 1] mean squared difference (binary, pos_label=1)"
+      },
+      "brier_estimable": true,
+      "candidate_family": [
+        "sigmoid"
+      ],
+      "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+      "discrimination_estimable": true,
+      "feature_ids": [
+        "T_chamber_max_c",
+        "T_chamber_min_c",
+        "T_chamber_mean_c",
+        "T_chamber_spread_c",
+        "T_center_c",
+        "T_bottom_c",
+        "T_near_door_c",
+        "rolling_mean_temperature_60s",
+        "rolling_std_temperature_60s",
+        "rolling_min_temperature_60s",
+        "rolling_max_temperature_60s",
+        "past_only_slope_c_per_min_60s",
+        "past_only_temperature_delta_60s",
+        "past_only_spatial_spread_60s",
+        "door_open",
+        "time_since_open",
+        "duration_so_far",
+        "count_past_60s",
+        "applied_cooling",
+        "applied_duty",
+        "time_since_confirmed_applied_change",
+        "cooling_voltage_v",
+        "cooling_current_a",
+        "cooling_power_w",
+        "energy_counter_wh",
+        "past_integrated_cooling_energy_wh",
+        "ambient_temperature_c",
+        "relative_humidity_pct"
+      ],
+      "folds": [
+        {
+          "ap_reason": null,
+          "brier_delta": -0.0005218186009243136,
+          "calibrated_ap": 1.0,
+          "calibrated_brier": 2.2303981520886367e-05,
+          "calibration_curve_prob_pred": [
+            0.002732460208713183,
+            0.9917956415364835
+          ],
+          "calibration_curve_prob_true": [
+            0.0,
+            1.0
+          ],
+          "calibration_groups": [
+            "W11-PAIR-008",
+            "W11-PAIR-009"
+          ],
+          "calibration_negative": 364,
+          "calibration_positive": 120,
+          "calibration_runs": [
+            "CG-W11-S1-008",
+            "CG-W11-S2-008",
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ],
+          "calibration_samples": 484,
+          "detail": null,
+          "empty_bin_count": 3,
+          "evaluation_groups": [
+            "W11-PAIR-005",
+            "W11-PAIR-006"
+          ],
+          "evaluation_negative": 364,
+          "evaluation_positive": 120,
+          "evaluation_runs": [
+            "CG-W11-S1-005",
+            "CG-W11-S2-005",
+            "CG-W11-S1-006",
+            "CG-W11-S2-006"
+          ],
+          "evaluation_samples": 484,
+          "fold_id": "F1",
+          "model_fit_groups": [
+            "W11-PAIR-003",
+            "W11-PAIR-007",
+            "W11-PAIR-010",
+            "W11-PAIR-004"
+          ],
+          "model_fit_runs": [
+            "CG-W11-S1-003",
+            "CG-W11-S2-003",
+            "CG-W11-S1-007",
+            "CG-W11-S2-007",
+            "CG-W11-S1-010",
+            "CG-W11-S2-010",
+            "CG-W11-S1-004",
+            "CG-W11-S2-004"
+          ],
+          "model_fit_samples": 968,
+          "perfect_separation": true,
+          "raw_ap": 1.0,
+          "raw_brier": 0.0005441225824452,
+          "reason": null,
+          "reliability_bins": [
+            {
+              "bin_index": 0,
+              "count": 364,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.0,
+              "mean_score": 0.0027324602087131647,
+              "negative": 364,
+              "observed_positive_fraction": 0.0,
+              "positive": 0,
+              "reason": null,
+              "upper": 0.2
+            },
+            {
+              "bin_index": 4,
+              "count": 120,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.8,
+              "mean_score": 0.9917956415364823,
+              "negative": 0,
+              "observed_positive_fraction": 1.0,
+              "positive": 120,
+              "reason": null,
+              "upper": 1.0
+            }
+          ],
+          "status": "FIT"
+        },
+        {
+          "ap_reason": null,
+          "brier_delta": -0.0005218186009243136,
+          "calibrated_ap": 1.0,
+          "calibrated_brier": 2.2303981520886367e-05,
+          "calibration_curve_prob_pred": [
+            0.002732460208713183,
+            0.9917956415364835
+          ],
+          "calibration_curve_prob_true": [
+            0.0,
+            1.0
+          ],
+          "calibration_groups": [
+            "W11-PAIR-006",
+            "W11-PAIR-003"
+          ],
+          "calibration_negative": 364,
+          "calibration_positive": 120,
+          "calibration_runs": [
+            "CG-W11-S1-006",
+            "CG-W11-S2-006",
+            "CG-W11-S1-003",
+            "CG-W11-S2-003"
+          ],
+          "calibration_samples": 484,
+          "detail": null,
+          "empty_bin_count": 3,
+          "evaluation_groups": [
+            "W11-PAIR-007",
+            "W11-PAIR-008"
+          ],
+          "evaluation_negative": 364,
+          "evaluation_positive": 120,
+          "evaluation_runs": [
+            "CG-W11-S1-007",
+            "CG-W11-S2-007",
+            "CG-W11-S1-008",
+            "CG-W11-S2-008"
+          ],
+          "evaluation_samples": 484,
+          "fold_id": "F2",
+          "model_fit_groups": [
+            "W11-PAIR-004",
+            "W11-PAIR-010",
+            "W11-PAIR-005",
+            "W11-PAIR-009"
+          ],
+          "model_fit_runs": [
+            "CG-W11-S1-004",
+            "CG-W11-S2-004",
+            "CG-W11-S1-010",
+            "CG-W11-S2-010",
+            "CG-W11-S1-005",
+            "CG-W11-S2-005",
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ],
+          "model_fit_samples": 968,
+          "perfect_separation": true,
+          "raw_ap": 1.0,
+          "raw_brier": 0.0005441225824452,
+          "reason": null,
+          "reliability_bins": [
+            {
+              "bin_index": 0,
+              "count": 364,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.0,
+              "mean_score": 0.0027324602087131647,
+              "negative": 364,
+              "observed_positive_fraction": 0.0,
+              "positive": 0,
+              "reason": null,
+              "upper": 0.2
+            },
+            {
+              "bin_index": 4,
+              "count": 120,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.8,
+              "mean_score": 0.9917956415364823,
+              "negative": 0,
+              "observed_positive_fraction": 1.0,
+              "positive": 120,
+              "reason": null,
+              "upper": 1.0
+            }
+          ],
+          "status": "FIT"
+        },
+        {
+          "ap_reason": null,
+          "brier_delta": -0.0005218186009243136,
+          "calibrated_ap": 1.0,
+          "calibrated_brier": 2.2303981520886367e-05,
+          "calibration_curve_prob_pred": [
+            0.002732460208713183,
+            0.9917956415364835
+          ],
+          "calibration_curve_prob_true": [
+            0.0,
+            1.0
+          ],
+          "calibration_groups": [
+            "W11-PAIR-004",
+            "W11-PAIR-010"
+          ],
+          "calibration_negative": 364,
+          "calibration_positive": 120,
+          "calibration_runs": [
+            "CG-W11-S1-004",
+            "CG-W11-S2-004",
+            "CG-W11-S1-010",
+            "CG-W11-S2-010"
+          ],
+          "calibration_samples": 484,
+          "detail": null,
+          "empty_bin_count": 3,
+          "evaluation_groups": [
+            "W11-PAIR-003",
+            "W11-PAIR-009"
+          ],
+          "evaluation_negative": 364,
+          "evaluation_positive": 120,
+          "evaluation_runs": [
+            "CG-W11-S1-003",
+            "CG-W11-S2-003",
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ],
+          "evaluation_samples": 484,
+          "fold_id": "F3",
+          "model_fit_groups": [
+            "W11-PAIR-008",
+            "W11-PAIR-007",
+            "W11-PAIR-006",
+            "W11-PAIR-005"
+          ],
+          "model_fit_runs": [
+            "CG-W11-S1-008",
+            "CG-W11-S2-008",
+            "CG-W11-S1-007",
+            "CG-W11-S2-007",
+            "CG-W11-S1-006",
+            "CG-W11-S2-006",
+            "CG-W11-S1-005",
+            "CG-W11-S2-005"
+          ],
+          "model_fit_samples": 968,
+          "perfect_separation": true,
+          "raw_ap": 1.0,
+          "raw_brier": 0.0005441225824452,
+          "reason": null,
+          "reliability_bins": [
+            {
+              "bin_index": 0,
+              "count": 364,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.0,
+              "mean_score": 0.0027324602087131647,
+              "negative": 364,
+              "observed_positive_fraction": 0.0,
+              "positive": 0,
+              "reason": null,
+              "upper": 0.2
+            },
+            {
+              "bin_index": 4,
+              "count": 120,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.8,
+              "mean_score": 0.9917956415364823,
+              "negative": 0,
+              "observed_positive_fraction": 1.0,
+              "positive": 120,
+              "reason": null,
+              "upper": 1.0
+            }
+          ],
+          "status": "FIT"
+        },
+        {
+          "ap_reason": null,
+          "brier_delta": -0.0005218186009243136,
+          "calibrated_ap": 1.0,
+          "calibrated_brier": 2.2303981520886367e-05,
+          "calibration_curve_prob_pred": [
+            0.002732460208713183,
+            0.9917956415364835
+          ],
+          "calibration_curve_prob_true": [
+            0.0,
+            1.0
+          ],
+          "calibration_groups": [
+            "W11-PAIR-008",
+            "W11-PAIR-006"
+          ],
+          "calibration_negative": 364,
+          "calibration_positive": 120,
+          "calibration_runs": [
+            "CG-W11-S1-008",
+            "CG-W11-S2-008",
+            "CG-W11-S1-006",
+            "CG-W11-S2-006"
+          ],
+          "calibration_samples": 484,
+          "detail": null,
+          "empty_bin_count": 3,
+          "evaluation_groups": [
+            "W11-PAIR-004",
+            "W11-PAIR-010"
+          ],
+          "evaluation_negative": 364,
+          "evaluation_positive": 120,
+          "evaluation_runs": [
+            "CG-W11-S1-004",
+            "CG-W11-S2-004",
+            "CG-W11-S1-010",
+            "CG-W11-S2-010"
+          ],
+          "evaluation_samples": 484,
+          "fold_id": "F4",
+          "model_fit_groups": [
+            "W11-PAIR-005",
+            "W11-PAIR-007",
+            "W11-PAIR-003",
+            "W11-PAIR-009"
+          ],
+          "model_fit_runs": [
+            "CG-W11-S1-005",
+            "CG-W11-S2-005",
+            "CG-W11-S1-007",
+            "CG-W11-S2-007",
+            "CG-W11-S1-003",
+            "CG-W11-S2-003",
+            "CG-W11-S1-009",
+            "CG-W11-S2-009"
+          ],
+          "model_fit_samples": 968,
+          "perfect_separation": true,
+          "raw_ap": 1.0,
+          "raw_brier": 0.0005441225824452,
+          "reason": null,
+          "reliability_bins": [
+            {
+              "bin_index": 0,
+              "count": 364,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.0,
+              "mean_score": 0.0027324602087131647,
+              "negative": 364,
+              "observed_positive_fraction": 0.0,
+              "positive": 0,
+              "reason": null,
+              "upper": 0.2
+            },
+            {
+              "bin_index": 4,
+              "count": 120,
+              "group_count": 2,
+              "interpretable": true,
+              "lower": 0.8,
+              "mean_score": 0.9917956415364823,
+              "negative": 0,
+              "observed_positive_fraction": 1.0,
+              "positive": 120,
+              "reason": null,
+              "upper": 1.0
+            }
+          ],
+          "status": "FIT"
+        }
+      ],
+      "isotonic_refusal": "CALIBRATION_ISOTONIC_REFUSED_INSUFFICIENT_CALIBRATION_SAMPLES",
+      "layer_version": "coldguard-w14-group-safe-calibration-v1",
+      "limitations": [
+        "synthetic development population only; never physical probability evidence",
+        "the synthetic fixture is perfectly separable on its scenario-identifying door/thermal pattern; perfect AP is not a plant result",
+        "reliability bins with one independent group are not interpretable",
+        "four outer folds reuse correlated development groups; no significance claim",
+        "the calibrator is fitted on development groups disjoint from model fit and evaluation, but the whole experiment remains a software control",
+        "CalibratedClassifierCV's default cv is not used; group isolation is explicit",
+        "isotonic calibration is refused below the official ~1000-sample caveat"
+      ],
+      "perfect_separation": true,
+      "pooled_calibrated_ap": 1.0,
+      "pooled_calibrated_brier": 2.2303981520886367e-05,
+      "pooled_empty_bin_count": 3,
+      "pooled_group_count": 8,
+      "pooled_raw_ap": 1.0,
+      "pooled_raw_brier": 0.0005441225824452001,
+      "pooled_reliability_bins": [
+        {
+          "bin_index": 0,
+          "count": 1456,
+          "group_count": 8,
+          "interpretable": true,
+          "lower": 0.0,
+          "mean_score": 0.002732460208713165,
+          "negative": 1456,
+          "observed_positive_fraction": 0.0,
+          "positive": 0,
+          "reason": null,
+          "upper": 0.2
+        },
+        {
+          "bin_index": 4,
+          "count": 480,
+          "group_count": 8,
+          "interpretable": true,
+          "lower": 0.8,
+          "mean_score": 0.9917956415364823,
+          "negative": 0,
+          "observed_positive_fraction": 1.0,
+          "positive": 480,
+          "reason": null,
+          "upper": 1.0
+        }
+      ],
+      "reference_horizon_s": 60.0,
+      "reference_horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+      "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+      "reliability_interpretable": false,
+      "schema": "coldguard-w14-calibration-diagnostics-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "versions": {
+        "numpy": "2.5.3",
+        "pandas": "3.0.6",
+        "python": "3.12",
+        "scikit_learn": "1.9.1",
+        "xgboost": "3.4.1"
+      },
+      "view_id": "coldguard-w14-a1b-three-chamber-air-v1"
+    },
+    "real_evidence": {
+      "brier_estimable": false,
+      "discrimination_estimable": false,
+      "grouped_fit_calibration_evaluation_disjoint": false,
+      "horizon_frozen": false,
+      "label_identity_frozen": false,
+      "locked_test_untouched": true,
+      "missing_requirements": [
+        "real_eligible_population",
+        "real_independent_groups",
+        "label_identity_frozen",
+        "horizon_frozen",
+        "group_disjoint_fit_calibration_evaluation",
+        "pair_lineage_disjoint",
+        "reliability_interpretable",
+        "brier_estimable",
+        "discrimination_estimable",
+        "model_feature_identity_frozen",
+        "not_synthetic_only"
+      ],
+      "model_feature_identity_frozen": false,
+      "pair_lineage_disjoint": false,
+      "product_requires_probability": false,
+      "real_eligible_groups": 0,
+      "real_eligible_samples": 0,
+      "reliability_interpretable": false,
+      "synthetic_only": true
+    }
+  },
+  "delivery_commit": "NOT_RECORDED_AT_GENERATION",
+  "deterministic": true,
+  "ewt_aiw": {
+    "AIW": {
+      "measured_inputs": {
+        "command_to_electrical_n": 1,
+        "command_to_electrical_s": 1.094,
+        "command_to_thermal_s": 51.0,
+        "door_to_critical_s": null,
+        "door_to_critical_status": "NOT_COMPUTABLE",
+        "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_CAPTURES",
+        "physical_verified": false
+      },
+      "missing_dependencies": [
+        {
+          "ask": "A-W13-03 door->critical time",
+          "closes_with": "supervised S2 door-disturbance capture under the frozen critical definition",
+          "id": "GAP-DOOR-CRITICAL",
+          "owner": "Member A (physical) / Member D (critical definition)",
+          "status": "NOT_COMPUTABLE",
+          "why": "no door-open event in any committed capture"
+        },
+        {
+          "ask": "backend command -> device latency",
+          "closes_with": "a transport decision with Member C and an authorized energized session",
+          "id": "GAP-NETWORK-COMMAND-LATENCY",
+          "owner": "Member C / Member D",
+          "status": "NOT_COMPUTABLE",
+          "why": "production firmware has no network command path (output stage compiled out)"
+        },
+        {
+          "ask": "A-W13-01 median/P95 distribution",
+          "closes_with": "additional clean START traces converted to the H6 schema, then re-run",
+          "id": "GAP-COMMAND-ELECTRICAL-DISTRIBUTION",
+          "owner": "Member A",
+          "status": "SINGLE_OBSERVATION",
+          "why": "one committed console trace yields one command->electrical event; H7 run logs live in a sibling commissioning worktree (read-only), not in this branch"
+        }
+      ],
+      "pr95": {
+        "classification": "NOT_VERIFIED_FOR_CANONICAL_USE",
+        "consumed_as_canonical_evidence": false,
+        "head_revision": "815387d19a3898e6b33ccb65758a554dd0c589e1",
+        "merge_status": "OPEN_UNMERGED",
+        "pr": 95,
+        "summary": "2026-11-09 passive S1 trial: capture PASS, VALID passive baseline, NOT ADMITTED to the frozen 18-row/segment export; door_status=UNVERIFIED, calibration_id=UNRECORDED, 2 PZEM timeout frames; supplementary material only, pending merge and its restrictions a-g",
+        "trial_json_sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14"
+      },
+      "reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+      "status": "NOT_ESTIMABLE"
+    },
+    "EWT": {
+      "distinct_reasons": [
+        "EVENT_UTC_UNAVAILABLE_DEVICE_HAS_NO_WALL_CLOCK",
+        "HOST_RECEIPT_TIME_IS_NOT_PHYSICAL_EVENT_TIME",
+        "CLOCK_SYNC_NOT_EVIDENCED_IN_PACKAGE",
+        "RUN_IDENTITY_UNRESOLVED_FOR_CG_RUN_PATTERN",
+        "CALIBRATION_TRACEABILITY_ABSENT_FROM_PACKAGE_SCHEMA",
+        "SEGMENTS_SHARE_BOOTS_ROWS_ARE_NOT_INDEPENDENT_RUNS",
+        "CRITICAL_CRITERION_AND_REPRESENTATIVE_T_NOT_FROZEN"
+      ],
+      "measured_anchors": "NONE_IN_ONE_TRUSTED_EVENT_TIME_DOMAIN",
+      "reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+      "status": "NOT_ESTIMABLE"
+    },
+    "w12_csv_sha256": "97ce1c40d97642fc0d5f3d546d529ea8deb2b4b508911c18889890018cdfbefa",
+    "w12_real_rows": [
+      {
+        "case_id": "REAL_EWT",
+        "event_id": "",
+        "ewt_s": "",
+        "intervention": "",
+        "label": "REAL_SOURCE_AUTHORIZED_REFUSAL",
+        "persistence_definition": "w12-sustained-30s-v1 reviewed declaration",
+        "population": "real physical non-intervened runs",
+        "predictive_clock_domain": "",
+        "predictive_run_id": "",
+        "reactive_clock_domain": "",
+        "reactive_run_id": "",
+        "reason": "no eligible non-intervened physical event population and no authoritative frozen warning/reactive timing pair",
+        "reason_code": "EWT_UNAVAILABLE_NO_QUALIFIED_COMMON_TRAJECTORY",
+        "status": "NOT_ESTIMABLE",
+        "warning_definition": "first valid persistent predictive warning"
+      },
+      {
+        "case_id": "REAL_AIW",
+        "event_id": "",
+        "ewt_s": "",
+        "intervention": "",
+        "label": "REAL_SOURCE_AUTHORIZED_REFUSAL",
+        "persistence_definition": "",
+        "population": "real physical non-intervened runs",
+        "predictive_clock_domain": "",
+        "predictive_run_id": "",
+        "reactive_clock_domain": "",
+        "reactive_run_id": "",
+        "reason": "no complete measured command/ACK/electrical/thermal latency chain",
+        "reason_code": "AIW_UNAVAILABLE_MEASURED_LATENCY_CHAIN_MISSING",
+        "status": "NOT_ESTIMABLE",
+        "warning_definition": ""
+      }
+    ]
+  },
+  "fold_identity": {
+    "effective_independent_groups": 8,
+    "folds": [
+      {
+        "fold_id": "F1",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-005",
+          "W11-PAIR-006"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006"
+        ]
+      },
+      {
+        "fold_id": "F2",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-009",
+          "CG-W11-S1-010",
+          "CG-W11-S2-003",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-009",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-007",
+          "W11-PAIR-008"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008"
+        ]
+      },
+      {
+        "fold_id": "F3",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-010"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-010"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-009"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-009"
+        ]
+      },
+      {
+        "fold_id": "F4",
+        "pair_lineage": [
+          {
+            "group_id": "W11-PAIR-003",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-003",
+              "CG-W11-S2-003"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-004",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-004",
+              "CG-W11-S2-004"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-005",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-005",
+              "CG-W11-S2-005"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-006",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-006",
+              "CG-W11-S2-006"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-007",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-007",
+              "CG-W11-S2-007"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-008",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-008",
+              "CG-W11-S2-008"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-009",
+            "partition": "train",
+            "run_ids": [
+              "CG-W11-S1-009",
+              "CG-W11-S2-009"
+            ]
+          },
+          {
+            "group_id": "W11-PAIR-010",
+            "partition": "validation",
+            "run_ids": [
+              "CG-W11-S1-010",
+              "CG-W11-S2-010"
+            ]
+          }
+        ],
+        "seed": 42,
+        "train_group_ids": [
+          "W11-PAIR-003",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009"
+        ],
+        "train_run_ids": [
+          "CG-W11-S1-003",
+          "CG-W11-S1-005",
+          "CG-W11-S1-006",
+          "CG-W11-S1-007",
+          "CG-W11-S1-008",
+          "CG-W11-S1-009",
+          "CG-W11-S2-003",
+          "CG-W11-S2-005",
+          "CG-W11-S2-006",
+          "CG-W11-S2-007",
+          "CG-W11-S2-008",
+          "CG-W11-S2-009"
+        ],
+        "validation_group_ids": [
+          "W11-PAIR-004",
+          "W11-PAIR-010"
+        ],
+        "validation_run_ids": [
+          "CG-W11-S1-004",
+          "CG-W11-S1-010",
+          "CG-W11-S2-004",
+          "CG-W11-S2-010"
+        ]
+      }
+    ],
+    "grouping_key": "run_id + pair_id (one effective group per pair)",
+    "n_splits": 4,
+    "seed": 42
+  },
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_base_revision": "824a5389c29ade0e56ecef7ef21eb35c2a379a7b",
+  "generation_command": "uv run --locked --python 3.12 python scripts/w14-ablation-W14.py",
+  "hard_boundaries": [
+    "No W15 implementation.",
+    "No A3 electrical ablation.",
+    "No model release freeze.",
+    "No locked-test evaluation.",
+    "No physical control commands.",
+    "No changes to A/C/D source or evidence.",
+    "No rewriting canonical documentation.",
+    "No fabricated calibration or physical result.",
+    "No sensor-role relabeling to make A1 easier.",
+    "No unapproved feature-registry mutation.",
+    "No random row/window splitting.",
+    "No use of locked test to select feature groups.",
+    "No synthetic probability claim.",
+    "No change to W13's scientific decision.",
+    "No merging earlier PRs.",
+    "No AGENTS.md, .opencode files or agent reports in the repository."
+  ],
+  "inputs": {
+    "calibration_diagnostics_performed": true,
+    "calibration_diagnostics_scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "feature_registry": {
+      "file_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "path": "feature-registry-v1.yaml",
+      "schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
+    },
+    "fixture_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "model_config": {
+      "config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+      "file_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "path": "xgb-v1-config.yaml"
+    },
+    "model_config_calibration_status": "NOT_PERFORMED",
+    "model_family": "XGBoost",
+    "model_params": {
+      "colsample_bytree": 1.0,
+      "learning_rate": 0.05,
+      "max_depth": 3,
+      "n_estimators": 60,
+      "n_jobs": 1,
+      "objective": "binary:logistic",
+      "random_state": 42,
+      "reg_alpha": 0.0,
+      "reg_lambda": 1.0,
+      "subsample": 1.0,
+      "tree_method": "hist"
+    },
+    "risk_threshold": 0.5,
+    "score_semantics": "risk_score",
+    "w12_ewt": {
+      "path": "reports/W12/ewt-assessment-W12.csv",
+      "sha256": "97ce1c40d97642fc0d5f3d546d529ea8deb2b4b508911c18889890018cdfbefa"
+    },
+    "w13_manifest": {
+      "manifest_sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d",
+      "path": "reports/W13/horizon-manifest-W13.json",
+      "run_index_sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4",
+      "sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404",
+      "source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85"
+    }
+  },
+  "layer_version": "coldguard-w14-role-correct-ablation-v1",
+  "model_artifacts_scratch_only": {
+    "A1A": {
+      "files": {
+        "json": {
+          "file": "model-synthetic-smoke.json",
+          "sha256": "b29b22a6f441dc1dfa42295eee8cc6b0164dc9a3983659fa579effd514f70817"
+        },
+        "ubj": {
+          "file": "model-synthetic-smoke.ubj",
+          "sha256": "3ff226c0cecd7652bc27d8a27611d305f1f7ec301993d2b0e70a13fec6737d2c"
+        }
+      },
+      "promotable_to_physical_model": false
+    },
+    "A1B": {
+      "files": {
+        "json": {
+          "file": "model-synthetic-smoke.json",
+          "sha256": "82e487a99ba93dad4e192000f826dacc6d62377316672ba4f010ba9f1368cebc"
+        },
+        "ubj": {
+          "file": "model-synthetic-smoke.ubj",
+          "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
+        }
+      },
+      "promotable_to_physical_model": false
+    },
+    "A2A": {
+      "files": {
+        "json": {
+          "file": "model-synthetic-smoke.json",
+          "sha256": "b51914fc37d635d73838265e98e86ae50e5ca35a9f22be6751de85f45793c20c"
+        },
+        "ubj": {
+          "file": "model-synthetic-smoke.ubj",
+          "sha256": "aeb0d81e3242ed640fb9b0e056acba53a77052564ffd4468b5778c6ae864097c"
+        }
+      },
+      "promotable_to_physical_model": false
+    },
+    "A2B": {
+      "files": {
+        "json": {
+          "file": "model-synthetic-smoke.json",
+          "sha256": "f86b6c1a0b061918a912ef78834f8511d2a61bfbfdeb6ec330eba74a85f211dd"
+        },
+        "ubj": {
+          "file": "model-synthetic-smoke.ubj",
+          "sha256": "5c368a602fc7690b1b432604f271e133d31fc0a9e84218187496a236cb948786"
+        }
+      },
+      "promotable_to_physical_model": false
+    }
+  },
+  "package_versions": {
+    "numpy": "2.5.3",
+    "pandas": "3.0.6",
+    "python": "3.12",
+    "scikit_learn": "1.9.1",
+    "xgboost": "3.4.1"
+  },
+  "paired_folds": {
+    "A1": [
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F1",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F1",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F2",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F2",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F3",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F3",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F4",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A1",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F4",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      }
+    ],
+    "A2": [
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F1",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F1",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F2",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F2",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F3",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F3",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F4",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "TRAIN_FOLD_CLASS_WEIGHT"
+      },
+      {
+        "ap_a": 1.0,
+        "ap_b": 1.0,
+        "component": "A2",
+        "delta_ap_b_minus_a": 0.0,
+        "event_recall_a": 1.0,
+        "event_recall_b": 1.0,
+        "false_warnings_a": 0.0,
+        "false_warnings_b": 0.0,
+        "fold_id": "F4",
+        "missed_events_a": 0,
+        "missed_events_b": 0,
+        "strategy": "UNWEIGHTED"
+      }
+    ]
+  },
+  "population": {
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "development_groups": [
+      "W11-PAIR-003",
+      "W11-PAIR-004",
+      "W11-PAIR-005",
+      "W11-PAIR-006",
+      "W11-PAIR-007",
+      "W11-PAIR-008",
+      "W11-PAIR-009",
+      "W11-PAIR-010"
+    ],
+    "development_runs": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009",
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-010",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-010"
+    ],
+    "evaluable_samples": 1936,
+    "excluded": {
+      "CENSORED": 960
+    },
+    "excluded_by_run": {
+      "CG-W11-S1-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S1-010": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-003": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-004": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-005": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-006": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-007": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-008": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-009": {
+        "CENSORED": 60
+      },
+      "CG-W11-S2-010": {
+        "CENSORED": 60
+      }
+    },
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "locked_test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ],
+    "negative": 1456,
+    "positive": 480,
+    "provenance": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "sample_identity_sha256": "6d6d265d03bd664bd808652789c48af3c79a508c01625bc445f5c5c427f4f889",
+    "test_partition_used": false
+  },
+  "reference_horizon": {
+    "label_identity": {
+      "boundary_c": null,
+      "frozen_at": null,
+      "horizon_s": 60.0,
+      "representative_temperature": "DEVELOPMENT_CANDIDATE_NOT_SELECTED",
+      "spec_version": "coldguard-w11-development-label-v1",
+      "status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+    },
+    "primary_horizon_frozen": false,
+    "source": "pre-existing W11 development label candidate; not selected by W14",
+    "status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "value_s": 60.0
+  },
+  "revision_semantics": "GENERATION_BASE_NOT_DELIVERY_COMMIT",
+  "schema": "coldguard-w14-manifest-v1",
+  "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "scientific_verdicts": {
+    "A1": "SOFTWARE_VERIFIED",
+    "A2": "SOFTWARE_VERIFIED",
+    "AIW": "NOT_ESTIMABLE",
+    "CALIBRATION": "RISK_SCORE_ONLY",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "EWT": "NOT_ESTIMABLE",
+    "SOFTWARE": "COMPLETE"
+  },
+  "verification": {
+    "a1a_excludes_tec_hot_side": true,
+    "a1a_single_sensor_role": "CHAMBER_CENTER",
+    "a1b_reproduces_w11_allowlist": true,
+    "a2_door_unknown_never_closed_verified_by_test": true,
+    "calibration_candidate_family": [
+      "sigmoid"
+    ],
+    "default_cv_used": false,
+    "grouped_folds_disjoint_computed": true,
+    "isotonic_refused": "CALIBRATION_ISOTONIC_REFUSED_INSUFFICIENT_CALIBRATION_SAMPLES",
+    "locked_test_untouched": true,
+    "prior_gate_g3_declared": "NO-GO / FIX DATA",
+    "prior_layer_code_hash_drift": "xgb_benchmark.py gained an optional labeled_override parameter after W11-W13; with override=None the W11 path is unchanged and the W14 test suite proves fold-level result equivalence. W11/W12/W13 result artifacts were not modified.",
+    "sample_population_identity_sha256": "6d6d265d03bd664bd808652789c48af3c79a508c01625bc445f5c5c427f4f889",
+    "test_partition_used": false,
+    "w10_registry_schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "w13_horizon_decision": "PROVISIONAL_CANDIDATE_ONLY",
+    "w13_primary_horizon_frozen": "NOT_FROZEN"
+  },
+  "views": {
+    "A1A": {
+      "arm_id": "A1A",
+      "component": "A1",
+      "description": "One predeclared chamber-air probe (CHAMBER_CENTER) with the frozen thermal formulas applied to that probe only, plus the identical non-thermal context used in A1B.",
+      "excluded_features": [
+        {
+          "feature_id": "T_bottom_c",
+          "reason": "other chamber-air probe; excluded from the single-probe arm"
+        },
+        {
+          "feature_id": "T_near_door_c",
+          "reason": "other chamber-air probe; excluded from the single-probe arm"
+        },
+        {
+          "feature_id": "T_chamber_max_c",
+          "reason": "multi-probe aggregate leaks other probes"
+        },
+        {
+          "feature_id": "T_chamber_min_c",
+          "reason": "multi-probe aggregate leaks other probes"
+        },
+        {
+          "feature_id": "T_chamber_mean_c",
+          "reason": "multi-probe aggregate leaks other probes"
+        },
+        {
+          "feature_id": "T_chamber_spread_c",
+          "reason": "multi-probe spatial statistic leaks other probes"
+        },
+        {
+          "feature_id": "past_only_spatial_spread_60s",
+          "reason": "multi-probe spatial statistic is undefined for one sensor"
+        },
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is not chamber air and is excluded from both arms"
+        }
+      ],
+      "feature_count": 21,
+      "features": [
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_SINGLE_PROBE"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "A1A_single_center_past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_FORMULA_SINGLE_ROLE_APPLICATION"
+        },
+        {
+          "base_feature_id": "door_open",
+          "family": "door_context",
+          "feature_id": "door_open",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "time_since_open",
+          "family": "door_context",
+          "feature_id": "time_since_open",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "duration_so_far",
+          "family": "door_context",
+          "feature_id": "duration_so_far",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "count_past_60s",
+          "family": "door_context",
+          "feature_id": "count_past_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "applied_cooling",
+          "family": "actuation_context",
+          "feature_id": "applied_cooling",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "applied_duty",
+          "family": "actuation_context",
+          "feature_id": "applied_duty",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "time_since_confirmed_applied_change",
+          "family": "actuation_context",
+          "feature_id": "time_since_confirmed_applied_change",
+          "lookback_s": null,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "cooling_voltage_v",
+          "family": "electrical_context",
+          "feature_id": "cooling_voltage_v",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "cooling_current_a",
+          "family": "electrical_context",
+          "feature_id": "cooling_current_a",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "cooling_power_w",
+          "family": "electrical_context",
+          "feature_id": "cooling_power_w",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "energy_counter_wh",
+          "family": "electrical_context",
+          "feature_id": "energy_counter_wh",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "past_integrated_cooling_energy_wh",
+          "family": "electrical_context",
+          "feature_id": "past_integrated_cooling_energy_wh",
+          "lookback_s": null,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "ambient_temperature_c",
+          "family": "environmental_context",
+          "feature_id": "ambient_temperature_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "relative_humidity_pct",
+          "family": "environmental_context",
+          "feature_id": "relative_humidity_pct",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w14-a1a-single-center-v1"
+    },
+    "A1B": {
+      "arm_id": "A1B",
+      "component": "A1",
+      "description": "Three role-qualified chamber-air probes (T1/T3/T4) with the W11 28-feature allowlist. T2 TEC hot side is excluded.",
+      "excluded_features": [
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is not chamber air and is excluded from both arms"
+        }
+      ],
+      "feature_count": 28,
+      "features": [
+        {
+          "base_feature_id": "T_chamber_max_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_max_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_min_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_min_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_mean_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_mean_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_spread_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_spread_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_bottom_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_bottom_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_BOTTOM"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_near_door_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_near_door_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_spatial_spread_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_spatial_spread_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "door_open",
+          "family": "door_context",
+          "feature_id": "door_open",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "time_since_open",
+          "family": "door_context",
+          "feature_id": "time_since_open",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "duration_so_far",
+          "family": "door_context",
+          "feature_id": "duration_so_far",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "count_past_60s",
+          "family": "door_context",
+          "feature_id": "count_past_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "applied_cooling",
+          "family": "actuation_context",
+          "feature_id": "applied_cooling",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "applied_duty",
+          "family": "actuation_context",
+          "feature_id": "applied_duty",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "time_since_confirmed_applied_change",
+          "family": "actuation_context",
+          "feature_id": "time_since_confirmed_applied_change",
+          "lookback_s": null,
+          "source_roles": [
+            "POWER_PATH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_voltage_v",
+          "family": "electrical_context",
+          "feature_id": "cooling_voltage_v",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_current_a",
+          "family": "electrical_context",
+          "feature_id": "cooling_current_a",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "cooling_power_w",
+          "family": "electrical_context",
+          "feature_id": "cooling_power_w",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "energy_counter_wh",
+          "family": "electrical_context",
+          "feature_id": "energy_counter_wh",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_integrated_cooling_energy_wh",
+          "family": "electrical_context",
+          "feature_id": "past_integrated_cooling_energy_wh",
+          "lookback_s": null,
+          "source_roles": [
+            "PZEM_COOLING_BRANCH"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "ambient_temperature_c",
+          "family": "environmental_context",
+          "feature_id": "ambient_temperature_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "relative_humidity_pct",
+          "family": "environmental_context",
+          "feature_id": "relative_humidity_pct",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "BME280_AMBIENT"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w14-a1b-three-chamber-air-v1"
+    },
+    "A2A": {
+      "arm_id": "A2A",
+      "component": "A2",
+      "description": "Thermal-only feature family; no door, electrical or actuation context.",
+      "excluded_features": [
+        {
+          "feature_id": "door_open",
+          "reason": "door context excluded from the thermal-only arm"
+        },
+        {
+          "feature_id": "time_since_open",
+          "reason": "door context excluded from the thermal-only arm"
+        },
+        {
+          "feature_id": "duration_so_far",
+          "reason": "door context excluded from the thermal-only arm"
+        },
+        {
+          "feature_id": "count_past_60s",
+          "reason": "door context excluded from the thermal-only arm"
+        },
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is not chamber air and is excluded from both arms"
+        },
+        {
+          "feature_id": "electrical/actuation/environment",
+          "reason": "A3 owns electrical context; A2 controls it by excluding it from both arms"
+        }
+      ],
+      "feature_count": 14,
+      "features": [
+        {
+          "base_feature_id": "T_chamber_max_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_max_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_min_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_min_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_mean_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_mean_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_spread_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_spread_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_bottom_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_bottom_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_BOTTOM"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_near_door_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_near_door_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_spatial_spread_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_spatial_spread_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w14-a2a-thermal-v1"
+    },
+    "A2B": {
+      "arm_id": "A2B",
+      "component": "A2",
+      "description": "The identical A2A thermal feature set plus the four authorized MC-38 door-context features.",
+      "excluded_features": [
+        {
+          "feature_id": "T_tec_hot_side_c",
+          "reason": "TEC hot side is not chamber air and is excluded from both arms"
+        },
+        {
+          "feature_id": "electrical/actuation/environment",
+          "reason": "A3 owns electrical context; A2 controls it by excluding it from both arms"
+        }
+      ],
+      "feature_count": 18,
+      "features": [
+        {
+          "base_feature_id": "T_chamber_max_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_max_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_min_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_min_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_mean_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_mean_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_chamber_spread_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_chamber_spread_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_center_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_center_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_CENTER"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_bottom_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_bottom_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_BOTTOM"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "T_near_door_c",
+          "family": "instantaneous_thermal",
+          "feature_id": "T_near_door_c",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_mean_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_mean_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_std_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_std_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_min_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_min_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "rolling_max_temperature_60s",
+          "family": "rolling_thermal",
+          "feature_id": "rolling_max_temperature_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_slope_c_per_min_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_slope_c_per_min_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_temperature_delta_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_temperature_delta_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "past_only_spatial_spread_60s",
+          "family": "rolling_thermal",
+          "feature_id": "past_only_spatial_spread_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "CHAMBER_CENTER",
+            "CHAMBER_BOTTOM",
+            "CHAMBER_NEAR_DOOR"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY"
+        },
+        {
+          "base_feature_id": "door_open",
+          "family": "door_context",
+          "feature_id": "door_open",
+          "lookback_s": 0.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "time_since_open",
+          "family": "door_context",
+          "feature_id": "time_since_open",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "duration_so_far",
+          "family": "door_context",
+          "feature_id": "duration_so_far",
+          "lookback_s": null,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        },
+        {
+          "base_feature_id": "count_past_60s",
+          "family": "door_context",
+          "feature_id": "count_past_60s",
+          "lookback_s": 60.0,
+          "source_roles": [
+            "DOOR_MC38"
+          ],
+          "time_domain": "source_declared",
+          "transform": "FROZEN_REGISTRY_CONTEXT"
+        }
+      ],
+      "layer_version": "coldguard-w14-role-correct-ablation-v1",
+      "schema": "coldguard-w14-ablation-view-v1",
+      "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "view_id": "coldguard-w14-a2b-thermal-door-v1"
+    }
+  }
+}
