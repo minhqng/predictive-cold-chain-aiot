@@ -102,7 +102,7 @@ Fixture `W11_EXPANDED_SYNTHETIC_GROUPED` (`coldguard-w11-synthetic-grouped-v1`);
 | 300 | 800 | 800 | 0 | 1.0000 | 2096 | 0 | NOT_RUN_HORIZON_REFUSED |
 
 Censored horizons are excluded, never labeled negative.
-H=300 s benchmark evaluation is refused: W13_HORIZON_NOT_ESTIMABLE: the label configuration leaves 8 of 16 runs with zero evaluable anchors (all anchors CENSORED), and the remaining evaluable population is single-class (800 positive, 0 negative), so AP and event metrics would stay undefined even without the downstream failure; the W11 grouped pipeline also raises on a zero-sample run (xgb_benchmark.py evaluation_end_by_run max over an empty population), and W13 does not patch the W11 layer — the defect stays open for its owning week.
+H=300 s benchmark evaluation is refused: W13_HORIZON_NOT_ESTIMABLE: the label configuration leaves 8 of 16 runs with zero evaluable anchors; the shared W11 grouped benchmark refuses that declared population deterministically (DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) instead of dropping a run, so the horizon is not estimable under the frozen benchmark contract; the remaining evaluable population is 800 positive and 0 negative, which is single-class, so AP and event metrics stay undefined.
 
 ### Per-method fold AP (every fold reported; undefined stays undefined)
 
@@ -187,7 +187,7 @@ Every horizon carries a REAL_REFUSAL row in horizon-metrics.csv with all metrics
 - EWT and AIW are NOT_ESTIMABLE: no measured non-overlapping latency chain and no eligible non-intervened real pair exist
 - censored horizons are excluded, never labeled negative
 - the locked synthetic test pair and any locked physical test partition remain untouched
-- a horizon whose label configuration leaves a run with zero evaluable anchors is recorded as NOT_ESTIMABLE: the W11 grouped pipeline raises on the empty population and W13 does not patch the W11 layer; the defect is reported, not fixed here
+- a horizon whose label configuration leaves a run with zero evaluable anchors is recorded as NOT_ESTIMABLE because the shared W11 grouped benchmark refuses that declared population (DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) rather than drop the run; the W11 repair is verified by the W13 regression, not reimplemented here
 
 ## Replay
 

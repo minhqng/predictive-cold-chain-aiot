@@ -1,13 +1,13 @@
 {
-  "analysis_code_sha256": "24f06d04770a6af7fc21cae2d82b75927b4351a7d9b4ad501f86ebc93b24121f",
+  "analysis_code_sha256": "24ca623b0240b285496ec2c85d3a9cef6d88c83da4f191b2ad985cdb3a85c1ff",
   "artifacts": {
     "horizon-metrics.csv": {
       "file": "horizon-metrics.csv",
-      "sha256": "a086364bff69a91495c8c35ba76c5e5447704d7bb4f8adb3b0f136f7b68691cb"
+      "sha256": "9b29cdee8487742401acc9c76f60cb78f6519aad6177e9c36e7bbfcdb5d4513b"
     },
     "horizon-study.md": {
       "file": "horizon-study.md",
-      "sha256": "7f754417e23f354225a7fa8bc72e57d61aedcb86c2fbd727408c077e2527d368"
+      "sha256": "5748c6c85fedbc2fc5e5f35aa2facde34208a2f883679d04ff93eee0c71d92ab"
     },
     "primary-horizon-decision.md": {
       "file": "primary-horizon-decision.md",
@@ -110,7 +110,7 @@
   },
   "deterministic": true,
   "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
-  "generation_command": "python scripts/horizon-study-W13.py --a-dataset-dir <A_DATASET_EXPORT>/evidence/A/SOURCES/20261107/datasets --out reports/W13 --repository-revision a27eeede5ab920dcb7e06a8cce6c8618cabdd8cf",
+  "generation_command": "python scripts/horizon-study-W13.py --a-dataset-dir <A_DATASET_EXPORT>/evidence/A/SOURCES/20261107/datasets --out reports/W13 --repository-revision ef5eb0c4b823573166f77919608d259939754ccf",
   "hard_boundaries": [
     "18 exported rows/segments are never 18 independent runs; the independence ceiling is the distinct boot count and shared-boot windows carry A's independence caveat",
     "A scenario acceptance (A-W09-02 / A-W10-03 PASS) is not B predictive eligibility; the W04 admission ladder refuses every real run here",
@@ -503,7 +503,7 @@
       "trial_json_sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14"
     }
   },
-  "repository_revision": "a27eeede5ab920dcb7e06a8cce6c8618cabdd8cf",
+  "repository_revision": "ef5eb0c4b823573166f77919608d259939754ccf",
   "schema": "coldguard-w13-horizon-manifest-v1",
   "scientific_verdicts": {
     "HORIZON_DECISION": "PROVISIONAL_CANDIDATE_ONLY",
@@ -514,7 +514,7 @@
     "REAL_EWT": "NOT_ESTIMABLE",
     "REAL_PREDICTIVE_ADMISSION": "REFUSED_NO_ELIGIBLE_RUNS",
     "SYNTHETIC_HORIZON_STUDY": "SOFTWARE_CONTROL_ONLY",
-    "W11_PIPELINE_DEFECT": "OPEN_EMPTY_RUN_POPULATION_MAX_ERROR_NOT_FIXED_IN_W13",
+    "W11_PIPELINE_DEFECT": "REPAIRED_EMPTY_RUN_POPULATION_REFUSAL_IN_W11",
     "W13_SOFTWARE": "GREEN"
   },
   "study": {
@@ -1626,7 +1626,7 @@
         "population": "SYNTHETIC_DEVELOPMENT",
         "positive_count": 800,
         "positive_prevalence": 1.0,
-        "refusal_reason": "W13_HORIZON_NOT_ESTIMABLE: the label configuration leaves 8 of 16 runs with zero evaluable anchors (all anchors CENSORED), and the remaining evaluable population is single-class (800 positive, 0 negative), so AP and event metrics would stay undefined even without the downstream failure; the W11 grouped pipeline also raises on a zero-sample run (xgb_benchmark.py evaluation_end_by_run max over an empty population), and W13 does not patch the W11 layer \u2014 the defect stays open for its owning week",
+        "refusal_reason": "W13_HORIZON_NOT_ESTIMABLE: the label configuration leaves 8 of 16 runs with zero evaluable anchors; the shared W11 grouped benchmark refuses that declared population deterministically (DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) instead of dropping a run, so the horizon is not estimable under the frozen benchmark contract; the remaining evaluable population is 800 positive and 0 negative, which is single-class, so AP and event metrics stay undefined",
         "scientific_claim_status": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
         "untrusted_exclusions": 0
       }
@@ -1638,7 +1638,7 @@
       "EWT and AIW are NOT_ESTIMABLE: no measured non-overlapping latency chain and no eligible non-intervened real pair exist",
       "censored horizons are excluded, never labeled negative",
       "the locked synthetic test pair and any locked physical test partition remain untouched",
-      "a horizon whose label configuration leaves a run with zero evaluable anchors is recorded as NOT_ESTIMABLE: the W11 grouped pipeline raises on the empty population and W13 does not patch the W11 layer; the defect is reported, not fixed here"
+      "a horizon whose label configuration leaves a run with zero evaluable anchors is recorded as NOT_ESTIMABLE because the shared W11 grouped benchmark refuses that declared population (DEV_RUN_WITHOUT_EVALUABLE_ANCHORS) rather than drop the run; the W11 repair is verified by the W13 regression, not reimplemented here"
     ],
     "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
     "spec_version": "coldguard-w13-horizon-sensitivity-v1",
