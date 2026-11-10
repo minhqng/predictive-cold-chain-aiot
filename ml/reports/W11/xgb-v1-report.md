@@ -25,7 +25,7 @@
 - W08 Gate B manifest: `reports/W08/gate-b-manifest-W08.json` SHA-256 `1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6`
 - Feature registry SHA-256: `1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9`
 - Model config SHA-256: `4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84`
-- Repository revision at generation: `c6b28678430ab575902a09be4b32bc327c72afcb`
+- Repository revision at generation: `6bd02af752371613df44e596282ed336fff155fa`
 - Test runs (untouched): CG-W11-S1-001, CG-W11-S1-002, CG-W11-S2-001, CG-W11-S2-002
 - W10 held-out synthetic test pair remains untouched
 
