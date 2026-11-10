@@ -1,0 +1,276 @@
+{
+  "analysis_code_sha256": "5385cbabbc2494653dc163a934c70e1d18884217114591fc11b0f84da497a0e2",
+  "artifacts": {
+    "S2-feature-report.md": {
+      "bytes": 7528,
+      "sha256": "4c3dc546471cb863b432838d75aeef9e899b8c859a604cf8e84d879b4f28b545"
+    },
+    "feature-audit-W10.svg": {
+      "bytes": 45977,
+      "sha256": "5fb7fd372b5dd4952f94ec31d24e77811e844807e41f3904fd9e8dab6e900e16"
+    },
+    "feature-summary-W10.csv": {
+      "bytes": 6494,
+      "sha256": "f34ecbc7f00834f13292d90c067a3d5e4a78735518288e5fc796f5f434c07335"
+    },
+    "label-pilot-W10.csv": {
+      "bytes": 2907,
+      "sha256": "1ed9ebf0c7de0275b79905403f0a61a4a51c8ef79d3515b61197c191fdebd5e2"
+    },
+    "real-diagnostic-W10.svg": {
+      "bytes": 57437,
+      "sha256": "5e716c2210098203e4864441cd638cb40c62be5f723eaeced2a25cbc642a8c01"
+    }
+  },
+  "deterministic": true,
+  "fixture": {
+    "physical_authority": false,
+    "source_type": "SYNTHETIC_FIXTURE",
+    "version": "coldguard-w10-synthetic-s2-v1"
+  },
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_command": "python scripts/feature-pipeline-W10.py --out reports/W10 --repository-revision 1f8feb76be9d7870b73c28b5516ce6dfc1559fb6",
+  "layer_version": "coldguard-w10-causal-feature-pipeline-v1",
+  "real_a": {
+    "boot_id": "56044b74",
+    "door_openings": 0,
+    "eligible_s1_runs": 0,
+    "eligible_s2_feature_rows": 0,
+    "eligible_s2_runs": 0,
+    "feature_rows": 957,
+    "feature_values_present": 18477,
+    "output_classes": {
+      "DIAGNOSTIC_PHYSICAL_FEATURE_VIEW": 957,
+      "ELIGIBLE_DEVELOPMENT_FEATURE_SET": 0,
+      "REJECTED_OR_NOT_EVALUABLE": 0,
+      "SYNTHETIC_FEATURE_TEST": 0
+    },
+    "rows": 957,
+    "run_identity": "UNRESOLVED_MULTIPLE_SOURCE_RUN_IDS_IN_ONE_BOOT_ID",
+    "source_path": "../evidence/A/W09/exports/CG-S1-H8C-600S.json",
+    "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+    "time_domain": "BOOT_SCOPED_UPTIME"
+  },
+  "real_label_pilot": {
+    "ELIGIBLE_S2_RUNS": 0,
+    "REAL_HORIZON_SELECTION": "NOT_FROZEN",
+    "REAL_S2_LABEL_PILOT": "NOT_EVALUABLE",
+    "reason": "Gate B is RED, no eligible S2 run exists and no authoritative critical-event series is available for the real capture"
+  },
+  "registry": {
+    "feature_count": 31,
+    "feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "T_tec_hot_side_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "requested_cooling",
+      "applied_cooling",
+      "readback_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "feature_schema_version": "CG-FEAT-1.0",
+    "features_by_family": {
+      "actuation_context": [
+        "requested_cooling",
+        "applied_cooling",
+        "readback_cooling",
+        "applied_duty",
+        "time_since_confirmed_applied_change"
+      ],
+      "diagnostic_thermal": [
+        "T_tec_hot_side_c"
+      ],
+      "door_context": [
+        "door_open",
+        "time_since_open",
+        "duration_so_far",
+        "count_past_60s"
+      ],
+      "electrical_context": [
+        "cooling_voltage_v",
+        "cooling_current_a",
+        "cooling_power_w",
+        "energy_counter_wh",
+        "past_integrated_cooling_energy_wh"
+      ],
+      "environmental_context": [
+        "ambient_temperature_c",
+        "relative_humidity_pct"
+      ],
+      "instantaneous_thermal": [
+        "T_chamber_max_c",
+        "T_chamber_min_c",
+        "T_chamber_mean_c",
+        "T_chamber_spread_c",
+        "T_center_c",
+        "T_bottom_c",
+        "T_near_door_c"
+      ],
+      "rolling_thermal": [
+        "rolling_mean_temperature_60s",
+        "rolling_std_temperature_60s",
+        "rolling_min_temperature_60s",
+        "rolling_max_temperature_60s",
+        "past_only_slope_c_per_min_60s",
+        "past_only_temperature_delta_60s",
+        "past_only_spatial_spread_60s"
+      ]
+    },
+    "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
+  },
+  "registry_policy": {
+    "boot_boundary_policy": "no_rolling_or_door_continuity_across_boot",
+    "door_trust_rule": "trusted only when state is OPEN or CLOSED, door quality is VALID and polarity is attested",
+    "duplicate_policy": "collapse identical canonical payloads per sample identity; refuse contradictory payloads (input order never decides)",
+    "electrical_qualification": "only VALID electrical samples produce electrical features; UNKNOWN/INVALID/DEGRADED stay missing",
+    "fit_policy": "no_cross_partition_fit_no_normalization",
+    "max_gap_s": 5.0,
+    "minimum_history_rule": "earliest included sample must satisfy t - time >= minimum_history_s; coverage is measured on actual event time, never on sample count",
+    "missing_data_policy": "explicit_missing_never_zero_filled",
+    "time_domain_policy": "source_declared_never_inferred_from_receive_time",
+    "window_convention": "(t - lookback_s, t]"
+  },
+  "report_schema": "coldguard-w10-s2-feature-report-v1",
+  "repository_revision": "1f8feb76be9d7870b73c28b5516ce6dfc1559fb6",
+  "role_map": {
+    "chamber_air_roles": [
+      "CHAMBER_CENTER",
+      "CHAMBER_BOTTOM",
+      "CHAMBER_NEAR_DOOR"
+    ],
+    "hot_side_roles": [
+      "TEC_HOT_SIDE"
+    ],
+    "observed_rig": {
+      "slots": {
+        "t1": {
+          "in_chamber_air_aggregate": true,
+          "physical_position": "CHAMBER_CENTER"
+        },
+        "t2": {
+          "in_chamber_air_aggregate": false,
+          "physical_position": "TEC_HOT_SIDE"
+        },
+        "t3": {
+          "in_chamber_air_aggregate": true,
+          "physical_position": "CHAMBER_BOTTOM"
+        },
+        "t4": {
+          "in_chamber_air_aggregate": true,
+          "physical_position": "CHAMBER_NEAR_DOOR"
+        }
+      },
+      "source": "A operator as-built role record as analysed in evidence/A/W07/repeatability-tmean_airroles_v0.json; a role record, not independently measured calibration"
+    }
+  },
+  "schema": "coldguard-w10-feature-pipeline-manifest-v1",
+  "split": {
+    "pair_lineage": [
+      {
+        "pair_id": "PAIR-001",
+        "partition": "validation",
+        "run_ids": [
+          "CG-S1-A-001",
+          "CG-S2-A-001"
+        ]
+      },
+      {
+        "pair_id": "PAIR-002",
+        "partition": "test",
+        "run_ids": [
+          "CG-S1-A-002",
+          "CG-S2-A-002"
+        ]
+      },
+      {
+        "pair_id": "PAIR-003",
+        "partition": "train",
+        "run_ids": [
+          "CG-S1-A-003",
+          "CG-S2-A-003"
+        ]
+      }
+    ],
+    "seed": 7,
+    "test_partition_used": false,
+    "test_runs": [
+      "CG-S1-A-002",
+      "CG-S2-A-002"
+    ],
+    "train_runs": [
+      "CG-S1-A-003",
+      "CG-S2-A-003"
+    ],
+    "validation_runs": [
+      "CG-S1-A-001",
+      "CG-S2-A-001"
+    ]
+  },
+  "synthetic": {
+    "candidate_horizons": [
+      30.0,
+      60.0,
+      120.0,
+      300.0
+    ],
+    "censored_or_untrusted_label_observations": 968,
+    "deterministic_recompute": "PASS",
+    "development_runs": 4,
+    "door_transitions": 2,
+    "feature_anchors": 484,
+    "feature_values_present": 12746,
+    "feature_values_total": 15004,
+    "future_perturbation": "PASS",
+    "future_truncation": "PASS",
+    "label_observations": 1936,
+    "labelled_anchors": 1936,
+    "software_status": "GREEN",
+    "test_runs_recorded": [
+      "CG-S1-A-002",
+      "CG-S2-A-002"
+    ],
+    "test_runs_used": 0
+  },
+  "verification": {
+    "deterministic_recompute": "PASS",
+    "eligible_rows_under_red_gate": 0,
+    "future_perturbation": "PASS",
+    "future_truncation": "PASS",
+    "locked_test_rows": 0
+  },
+  "w08": {
+    "eligible_s1_runs_for_source": 0,
+    "eligible_s2_runs_for_source": 0,
+    "gate_preserved": true,
+    "path": "reports/W08/gate-b-manifest-W08.json",
+    "physical_gate": "RED",
+    "predictive_gate": "NOT_READY",
+    "receipt_count_for_source": 1,
+    "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+    "source_hash_bound": true
+  }
+}

@@ -1,0 +1,53 @@
+{
+  "description": "Synthetic exact duplicate delivery. One logical event, multiplicity retained.",
+  "events": [
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-exact",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-exact",
+      "device_uptime_ms": 3000,
+      "event_id": "telem-exact-a",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "applied_cooling": "ON",
+        "chamber_air_mean_c": "25.000000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-exact",
+      "seq": 300,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-exact",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-exact",
+      "device_uptime_ms": 3000,
+      "event_id": "telem-exact-b",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "applied_cooling": "ON",
+        "chamber_air_mean_c": "25.000000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-exact",
+      "seq": 300,
+      "uncertainty_s": 0.05
+    }
+  ],
+  "fixture_schema": "coldguard-w06-event-fixture-v1",
+  "provenance": "SYNTHETIC_UNIT_TEST_ONLY"
+}

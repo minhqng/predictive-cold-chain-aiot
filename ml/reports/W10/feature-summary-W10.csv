@@ -1,0 +1,63 @@
+population,feature_id,family,anchors,produced,missing_total,missing_by_reason,first_eligible_anchor_s,first_value_anchor_s
+SYNTHETIC_DEVELOPMENT,T_chamber_max_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_chamber_min_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_chamber_mean_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_chamber_spread_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_center_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_bottom_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_near_door_c,instantaneous_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,T_tec_hot_side_c,diagnostic_thermal,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,rolling_mean_temperature_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,rolling_std_temperature_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,rolling_min_temperature_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,rolling_max_temperature_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,past_only_slope_c_per_min_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,past_only_temperature_delta_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,past_only_spatial_spread_60s,rolling_thermal,484,244,240,"{""MISSING_INSUFFICIENT_HISTORY"": 240}",60.0,60.0
+SYNTHETIC_DEVELOPMENT,door_open,door_context,484,478,6,"{""MISSING_UNKNOWN_DOOR"": 6}",0.0,0.0
+SYNTHETIC_DEVELOPMENT,time_since_open,door_context,484,162,322,"{""MISSING_NO_OBSERVED_TRANSITION"": 322}",0.0,40.0
+SYNTHETIC_DEVELOPMENT,duration_so_far,door_context,484,478,6,"{""MISSING_UNKNOWN_DOOR"": 6}",0.0,0.0
+SYNTHETIC_DEVELOPMENT,count_past_60s,door_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,requested_cooling,actuation_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,applied_cooling,actuation_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,readback_cooling,actuation_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,applied_duty,actuation_context,484,364,120,"{""MISSING_INPUT"": 120}",0.0,30.0
+SYNTHETIC_DEVELOPMENT,time_since_confirmed_applied_change,actuation_context,484,364,120,"{""MISSING_INPUT"": 120}",0.0,30.0
+SYNTHETIC_DEVELOPMENT,cooling_voltage_v,electrical_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,cooling_current_a,electrical_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,cooling_power_w,electrical_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,energy_counter_wh,electrical_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,past_integrated_cooling_energy_wh,electrical_context,484,480,4,"{""MISSING_INSUFFICIENT_HISTORY"": 4}",1.0,1.0
+SYNTHETIC_DEVELOPMENT,ambient_temperature_c,environmental_context,484,484,0,{},0.0,0.0
+SYNTHETIC_DEVELOPMENT,relative_humidity_pct,environmental_context,484,484,0,{},0.0,0.0
+REAL_A_DIAGNOSTIC,T_chamber_max_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_chamber_min_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_chamber_mean_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_chamber_spread_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_center_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_bottom_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_near_door_c,instantaneous_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,T_tec_hot_side_c,diagnostic_thermal,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,rolling_mean_temperature_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,rolling_std_temperature_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,rolling_min_temperature_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,rolling_max_temperature_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,past_only_slope_c_per_min_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,past_only_temperature_delta_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,past_only_spatial_spread_60s,rolling_thermal,957,896,61,"{""MISSING_INSUFFICIENT_HISTORY"": 61}",61.894,61.894
+REAL_A_DIAGNOSTIC,door_open,door_context,957,0,957,"{""MISSING_QUALITY"": 940, ""MISSING_UNKNOWN_DOOR"": 17}",0.904,
+REAL_A_DIAGNOSTIC,time_since_open,door_context,957,0,957,"{""MISSING_NO_OBSERVED_TRANSITION"": 957}",0.904,
+REAL_A_DIAGNOSTIC,duration_so_far,door_context,957,0,957,"{""MISSING_QUALITY"": 940, ""MISSING_UNKNOWN_DOOR"": 17}",0.904,
+REAL_A_DIAGNOSTIC,count_past_60s,door_context,957,0,957,"{""MISSING_QUALITY"": 940, ""MISSING_UNKNOWN_DOOR"": 17}",0.904,
+REAL_A_DIAGNOSTIC,requested_cooling,actuation_context,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,applied_cooling,actuation_context,957,952,5,"{""MISSING_INPUT"": 5}",0.904,0.904
+REAL_A_DIAGNOSTIC,readback_cooling,actuation_context,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,applied_duty,actuation_context,957,957,0,{},0.904,0.904
+REAL_A_DIAGNOSTIC,time_since_confirmed_applied_change,actuation_context,957,726,231,"{""MISSING_INPUT"": 5, ""MISSING_NO_OBSERVED_TRANSITION"": 226}",0.904,226.894
+REAL_A_DIAGNOSTIC,cooling_voltage_v,electrical_context,957,0,957,"{""MISSING_ELECTRICAL_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,cooling_current_a,electrical_context,957,0,957,"{""MISSING_ELECTRICAL_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,cooling_power_w,electrical_context,957,0,957,"{""MISSING_ELECTRICAL_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,energy_counter_wh,electrical_context,957,0,957,"{""MISSING_ELECTRICAL_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,past_integrated_cooling_energy_wh,electrical_context,957,0,957,"{""MISSING_ELECTRICAL_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,ambient_temperature_c,environmental_context,957,0,957,"{""MISSING_ENVIRONMENT_UNQUALIFIED"": 957}",0.904,
+REAL_A_DIAGNOSTIC,relative_humidity_pct,environmental_context,957,0,957,"{""MISSING_ENVIRONMENT_UNQUALIFIED"": 957}",0.904,

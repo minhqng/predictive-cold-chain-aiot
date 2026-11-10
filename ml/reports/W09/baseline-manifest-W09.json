@@ -1,0 +1,921 @@
+{
+  "a_run_index_sha256": "eb71d3f58004a25e60315b39ed88e33daa7e069a7a1fc3df391713cfce33b5af",
+  "aiw": {
+    "reason": "W09 produces no command/ACK/electrical/thermal latency chain; AIW requires measured W06/W04 components",
+    "status": "NOT_ESTIMABLE",
+    "synthetic_latency_allowed": false
+  },
+  "analysis_code_sha256": "e13b07f6f45defdc242af9b2716421b7756ac56e495e6ad63073cae82b3c2685",
+  "artifact_rows": {
+    "baseline-events-W09.csv": 14,
+    "false-warning-summary-W09.csv": 4
+  },
+  "artifact_sha256": {
+    "baseline-comparison-W09.svg": "63071abc1454cbca99286e11e77276275244c9f278cddccd7f15c0ace4ab2c10",
+    "baseline-events-W09.csv": "8791a1893e87d4d576b32910c5181cd48889f7cd53aea2c60082d113eff96534",
+    "baseline-report.md": "d167485f2d87ada1bdd803e57df7267f2b04ebfa0532911495c329cb1ea812a7",
+    "false-warning-summary-W09.csv": "fd375469a8b9a8cd9178eea02aef4ffb062aac95a59be3bfe46506420348532f"
+  },
+  "authoritative_result": "PARAMETERS_NOT_FROZEN",
+  "baselines": [
+    {
+      "evaluation": {
+        "association_policy": {
+          "allow_censored_events": false,
+          "policy_version": "synthetic-w09-association-v1",
+          "post_window_s": 30.0,
+          "pre_window_s": 30.0,
+          "require_trusted_events": true,
+          "source": "illustrative sensitivity policy",
+          "status": "SYNTHETIC_ILLUSTRATIVE"
+        },
+        "coverage_trustworthy": true,
+        "episode_policy": {
+          "bridge_gap_s": 2.0,
+          "bridge_unknown_gaps": false,
+          "min_persistence_s": 0.0,
+          "policy_version": "synthetic-w09-episode-v1",
+          "source": "illustrative sensitivity policy",
+          "status": "SYNTHETIC_ILLUSTRATIVE"
+        },
+        "episodes": [
+          {
+            "censored": false,
+            "duration_s": 381.99,
+            "end_s": 381.99,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "event_id": "EP:d9633104070e2ac576f8",
+            "event_type": "WARNING_EPISODE",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 383,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 0.0,
+            "synthetic_control": true,
+            "termination": "RECOVERED",
+            "warning_span_s": 381.99
+          },
+          {
+            "censored": false,
+            "duration_s": 38.0,
+            "end_s": 955.99,
+            "episode_id": "EP:40a60dee7fa7b0b0abca",
+            "event_id": "EP:40a60dee7fa7b0b0abca",
+            "event_type": "WARNING_EPISODE",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 39,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 917.99,
+            "synthetic_control": true,
+            "termination": "RUN_ENDED",
+            "warning_span_s": 38.0
+          }
+        ],
+        "events": [
+          {
+            "censored": false,
+            "definition_version": "coldguard-w09-event-definitions-v1",
+            "event_id": "fca43766e61ffeaaa63bb888",
+            "event_type": "CRITICAL_EVENT",
+            "interval_end_s": 0.0,
+            "interval_start_s": null,
+            "intervention": false,
+            "match_status": "MATCHED",
+            "observed": true,
+            "run_id": null,
+            "source": "B0 declared critical criterion",
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "time_certainty": "BEFORE_OBSERVATION_START",
+            "time_s": 0.0,
+            "trusted": true
+          },
+          {
+            "censored": false,
+            "definition_version": "coldguard-w09-event-definitions-v1",
+            "event_id": "b80d84b6c4f286b1d35b1620",
+            "event_type": "CRITICAL_EVENT",
+            "interval_end_s": 917.99,
+            "interval_start_s": 916.99,
+            "intervention": false,
+            "match_status": "MATCHED",
+            "observed": true,
+            "run_id": null,
+            "source": "B0 declared critical criterion",
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "time_certainty": "EXACT_AT_SAMPLE",
+            "time_s": 917.99,
+            "trusted": true
+          },
+          {
+            "censored": false,
+            "duration_s": 381.99,
+            "end_s": 381.99,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "event_id": "EP:d9633104070e2ac576f8",
+            "event_type": "WARNING_EPISODE",
+            "match_status": "MATCHED",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 383,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 0.0,
+            "synthetic_control": true,
+            "termination": "RECOVERED",
+            "warning_span_s": 381.99
+          },
+          {
+            "censored": false,
+            "duration_s": 38.0,
+            "end_s": 955.99,
+            "episode_id": "EP:40a60dee7fa7b0b0abca",
+            "event_id": "EP:40a60dee7fa7b0b0abca",
+            "event_type": "WARNING_EPISODE",
+            "match_status": "MATCHED",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 39,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 917.99,
+            "synthetic_control": true,
+            "termination": "RUN_ENDED",
+            "warning_span_s": 38.0
+          }
+        ],
+        "matches": [
+          {
+            "alternative_episode_ids": [],
+            "delta_s": 0.0,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "episode_start_s": 0.0,
+            "event_id": "fca43766e61ffeaaa63bb888",
+            "event_time_s": 0.0
+          },
+          {
+            "alternative_episode_ids": [],
+            "delta_s": 0.0,
+            "episode_id": "EP:40a60dee7fa7b0b0abca",
+            "episode_start_s": 917.99,
+            "event_id": "b80d84b6c4f286b1d35b1620",
+            "event_time_s": 917.99
+          }
+        ],
+        "metrics": {
+          "censored_event_count": 0,
+          "eligible_critical_event_denominator": 2,
+          "episode_support": 2,
+          "event_precision": 1.0,
+          "event_recall": 1.0,
+          "event_support": 2,
+          "false_warning_episodes": 0,
+          "false_warning_episodes_per_eligible_hour": 0.0,
+          "false_warning_episodes_per_eligible_run": null,
+          "intervened_event_count": 0,
+          "missed_critical_events": 0,
+          "provenance_mismatch_episode_count": 0,
+          "provenance_mismatch_event_count": 0,
+          "run_support": 0,
+          "true_matched_warning_episodes": 2,
+          "undefined_reasons": [
+            "NO_ELIGIBLE_RUN_DENOMINATOR"
+          ],
+          "unmatched_warning_episodes": 0,
+          "untrusted_event_count": 0
+        },
+        "missed_event_ids": [],
+        "run_id": null,
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "synthetic_control": true,
+        "unmatched_episode_ids": [],
+        "warning_definition": "B0_CRITERION_STATE_SATISFIED"
+      },
+      "label": "SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY",
+      "replay": {
+        "baseline": "B0_THRESHOLD",
+        "boot_sessions": 1,
+        "config_sha256": "c41c5fd2ef89f314a27164185c8830a3e79b8974a3879ddb2dc72cd00c330c17",
+        "config_version": "coldguard-w09-baseline-contract-v1",
+        "coverage": {
+          "duplicate_sample_count": 0,
+          "evaluable_duration_s": 955.99,
+          "evaluable_fraction": 1.0,
+          "evaluable_sample_count": 957,
+          "gap_count": 0,
+          "observation_duration_s": 955.99,
+          "sample_count": 957,
+          "unknown_duration_s": 0.0,
+          "unknown_sample_count": 0
+        },
+        "evaluability": "EVALUABLE_DIAGNOSTIC",
+        "limitations": [
+          "A baseline replay is a criterion detection, not an actuator command.",
+          "Only W04 quality-qualified rows are evaluated; missing values are never substituted.",
+          "A crossing between samples is an interval, not a fabricated instant."
+        ],
+        "parameter_source": "software-only illustrative sensitivity value",
+        "parameter_status": "SYNTHETIC_ILLUSTRATIVE",
+        "persistence": null,
+        "refusal_reason": "NONE",
+        "refused_intervals": [],
+        "run_id": null,
+        "scenario_id": "S1",
+        "source_path": "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "time_domain": "BOOT_SCOPED_UPTIME",
+        "transitions": [
+          {
+            "crossing_interval_end_s": 0.0,
+            "crossing_interval_start_s": null,
+            "crossing_time_s": null,
+            "detection_time_s": 0.0,
+            "event_id": "fca43766e61ffeaaa63bb888",
+            "event_type": "REACTIVE_CRITERION_CROSSING",
+            "new_state": "SATISFIED",
+            "prior_state": null,
+            "reason": "GE threshold 25.0 at representative 29.916666666666668",
+            "sample_id": "SOURCE_DOES_NOT_CARRY_DEVICE_ID|56044b74|1",
+            "sample_index": 0,
+            "time_certainty": "BEFORE_OBSERVATION_START",
+            "time_s": 0.0
+          },
+          {
+            "crossing_interval_end_s": 917.99,
+            "crossing_interval_start_s": 916.99,
+            "crossing_time_s": 917.99,
+            "detection_time_s": 917.99,
+            "event_id": "b80d84b6c4f286b1d35b1620",
+            "event_type": "REACTIVE_CRITERION_CROSSING",
+            "new_state": "SATISFIED",
+            "prior_state": null,
+            "reason": "GE threshold 25.0 at representative 25.0",
+            "sample_id": "SOURCE_DOES_NOT_CARRY_DEVICE_ID|56044b74|919",
+            "sample_index": 918,
+            "time_certainty": "EXACT_AT_SAMPLE",
+            "time_s": 917.99
+          }
+        ]
+      },
+      "s1": {
+        "chatter_event_count": null,
+        "diagnostic_unmatched_episodes": 0,
+        "eligibility_reasons": [
+          "ABSOLUTE_TIME_NOT_EVIDENCED",
+          "AUTHORITY_A_LEDGER_INVALID",
+          "CALIBRATION_UNVERIFIED",
+          "CAPTURE_DURATION_NOT_DECLARED",
+          "DEVICE_IDENTITY_MISSING",
+          "HARDWARE_CONFIG_NOT_VERIFIED",
+          "RUN_IDENTITY_UNRESOLVED",
+          "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+          "SCENARIO_VALIDITY_NOT_GRANTED",
+          "TIMING_INTEGRITY_FAILED",
+          "W08_PHYSICAL_GATE_NOT_GREEN",
+          "W08_PHYSICAL_GATE_RED"
+        ],
+        "eligibility_status": "BLOCKED",
+        "episode_durations_s": [
+          381.99,
+          38.0
+        ],
+        "episode_start_end": [
+          [
+            0.0,
+            381.99
+          ],
+          [
+            917.99,
+            955.99
+          ]
+        ],
+        "evaluable_time_s": 955.99,
+        "false_warning_episode_count": null,
+        "observation_duration_s": 955.99,
+        "on_off_toggles": null,
+        "outcome_reason": "run is not eligible for the S1 dataset; diagnostic replay only",
+        "outcome_status": "UNDEFINED",
+        "run_id": null,
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "state_transition_count": 2,
+        "synthetic_control": true,
+        "unknown_fraction": 0.0,
+        "unknown_time_s": 0.0,
+        "warning_burden_per_eligible_hour": null,
+        "warning_burden_per_run": null
+      }
+    },
+    {
+      "evaluation": {
+        "association_policy": {
+          "allow_censored_events": false,
+          "policy_version": "synthetic-w09-association-v1",
+          "post_window_s": 30.0,
+          "pre_window_s": 30.0,
+          "require_trusted_events": true,
+          "source": "illustrative sensitivity policy",
+          "status": "SYNTHETIC_ILLUSTRATIVE"
+        },
+        "coverage_trustworthy": true,
+        "episode_policy": {
+          "bridge_gap_s": 2.0,
+          "bridge_unknown_gaps": false,
+          "min_persistence_s": 0.0,
+          "policy_version": "synthetic-w09-episode-v1",
+          "source": "illustrative sensitivity policy",
+          "status": "SYNTHETIC_ILLUSTRATIVE"
+        },
+        "episodes": [
+          {
+            "censored": false,
+            "duration_s": 469.99,
+            "end_s": 469.99,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "event_id": "EP:d9633104070e2ac576f8",
+            "event_type": "WARNING_EPISODE",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 471,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 0.0,
+            "synthetic_control": true,
+            "termination": "RECOVERED",
+            "warning_span_s": 469.99
+          },
+          {
+            "censored": false,
+            "duration_s": 18.0,
+            "end_s": 955.99,
+            "episode_id": "EP:040fcd216de1842a419b",
+            "event_id": "EP:040fcd216de1842a419b",
+            "event_type": "WARNING_EPISODE",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 19,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 937.99,
+            "synthetic_control": true,
+            "termination": "RUN_ENDED",
+            "warning_span_s": 18.0
+          }
+        ],
+        "events": [
+          {
+            "censored": false,
+            "definition_version": "coldguard-w09-event-definitions-v1",
+            "event_id": "fca43766e61ffeaaa63bb888",
+            "event_type": "CRITICAL_EVENT",
+            "interval_end_s": 0.0,
+            "interval_start_s": null,
+            "intervention": false,
+            "match_status": "MATCHED",
+            "observed": true,
+            "run_id": null,
+            "source": "B0 declared critical criterion",
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "time_certainty": "BEFORE_OBSERVATION_START",
+            "time_s": 0.0,
+            "trusted": true
+          },
+          {
+            "censored": false,
+            "definition_version": "coldguard-w09-event-definitions-v1",
+            "event_id": "b80d84b6c4f286b1d35b1620",
+            "event_type": "CRITICAL_EVENT",
+            "interval_end_s": 917.99,
+            "interval_start_s": 916.99,
+            "intervention": false,
+            "match_status": "MATCHED",
+            "observed": true,
+            "run_id": null,
+            "source": "B0 declared critical criterion",
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "time_certainty": "EXACT_AT_SAMPLE",
+            "time_s": 917.99,
+            "trusted": true
+          },
+          {
+            "censored": false,
+            "duration_s": 469.99,
+            "end_s": 469.99,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "event_id": "EP:d9633104070e2ac576f8",
+            "event_type": "WARNING_EPISODE",
+            "match_status": "MATCHED",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 471,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 0.0,
+            "synthetic_control": true,
+            "termination": "RECOVERED",
+            "warning_span_s": 469.99
+          },
+          {
+            "censored": false,
+            "duration_s": 18.0,
+            "end_s": 955.99,
+            "episode_id": "EP:040fcd216de1842a419b",
+            "event_id": "EP:040fcd216de1842a419b",
+            "event_type": "WARNING_EPISODE",
+            "match_status": "MATCHED",
+            "policy_version": "synthetic-w09-episode-v1",
+            "run_id": null,
+            "sample_count": 19,
+            "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+            "start_s": 937.99,
+            "synthetic_control": true,
+            "termination": "RUN_ENDED",
+            "warning_span_s": 18.0
+          }
+        ],
+        "matches": [
+          {
+            "alternative_episode_ids": [],
+            "delta_s": 0.0,
+            "episode_id": "EP:d9633104070e2ac576f8",
+            "episode_start_s": 0.0,
+            "event_id": "fca43766e61ffeaaa63bb888",
+            "event_time_s": 0.0
+          },
+          {
+            "alternative_episode_ids": [],
+            "delta_s": -20.0,
+            "episode_id": "EP:040fcd216de1842a419b",
+            "episode_start_s": 937.99,
+            "event_id": "b80d84b6c4f286b1d35b1620",
+            "event_time_s": 917.99
+          }
+        ],
+        "metrics": {
+          "censored_event_count": 0,
+          "eligible_critical_event_denominator": 2,
+          "episode_support": 2,
+          "event_precision": 1.0,
+          "event_recall": 1.0,
+          "event_support": 2,
+          "false_warning_episodes": 0,
+          "false_warning_episodes_per_eligible_hour": 0.0,
+          "false_warning_episodes_per_eligible_run": null,
+          "intervened_event_count": 0,
+          "missed_critical_events": 0,
+          "provenance_mismatch_episode_count": 0,
+          "provenance_mismatch_event_count": 0,
+          "run_support": 0,
+          "true_matched_warning_episodes": 2,
+          "undefined_reasons": [
+            "NO_ELIGIBLE_RUN_DENOMINATOR"
+          ],
+          "unmatched_warning_episodes": 0,
+          "untrusted_event_count": 0
+        },
+        "missed_event_ids": [],
+        "run_id": null,
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "synthetic_control": true,
+        "unmatched_episode_ids": [],
+        "warning_definition": "B1_REACTIVE_ON_STATE"
+      },
+      "label": "SOFTWARE_ONLY_SENSITIVITY_NOT_EVIDENTIARY",
+      "replay": {
+        "baseline": "B1_HYSTERESIS",
+        "boot_sessions": 1,
+        "config_sha256": "3dbb6356b94b8dffeadff5fac8c8282556400764abb2afa218fed2a51ee25edd",
+        "config_version": "coldguard-w09-baseline-contract-v1",
+        "coverage": {
+          "duplicate_sample_count": 0,
+          "evaluable_duration_s": 955.99,
+          "evaluable_fraction": 1.0,
+          "evaluable_sample_count": 957,
+          "gap_count": 0,
+          "observation_duration_s": 955.99,
+          "sample_count": 957,
+          "unknown_duration_s": 0.0,
+          "unknown_sample_count": 0
+        },
+        "evaluability": "EVALUABLE_DIAGNOSTIC",
+        "limitations": [
+          "A baseline replay is a criterion detection, not an actuator command.",
+          "Only W04 quality-qualified rows are evaluated; missing values are never substituted.",
+          "A crossing between samples is an interval, not a fabricated instant.",
+          "The replay mirrors D's pure hysteresis comparator only; it does not implement fault, SAFE_LOCAL or device-mode priority."
+        ],
+        "parameter_source": "software-only illustrative sensitivity values",
+        "parameter_status": "SYNTHETIC_ILLUSTRATIVE",
+        "persistence": null,
+        "refusal_reason": "NONE",
+        "refused_intervals": [],
+        "run_id": null,
+        "scenario_id": "S1",
+        "source_path": "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "time_domain": "BOOT_SCOPED_UPTIME",
+        "transitions": [
+          {
+            "crossing_interval_end_s": 0.0,
+            "crossing_interval_start_s": null,
+            "crossing_time_s": 0.0,
+            "detection_time_s": 0.0,
+            "event_id": "4cf3a1ebd542bf0f6eef1548",
+            "event_type": "REACTIVE_ON_TRANSITION",
+            "new_state": "ON",
+            "prior_state": "OFF",
+            "reason": "T=29.916666666666668 >= upper boundary 26.0",
+            "sample_id": "SOURCE_DOES_NOT_CARRY_DEVICE_ID|56044b74|1",
+            "sample_index": 0,
+            "time_certainty": "WITHIN_SAMPLE_INTERVAL",
+            "time_s": 0.0
+          },
+          {
+            "crossing_interval_end_s": 470.99,
+            "crossing_interval_start_s": 469.99,
+            "crossing_time_s": 470.99,
+            "detection_time_s": 470.99,
+            "event_id": "f98d12c12ea9cb82fced55ae",
+            "event_type": "REACTIVE_OFF_TRANSITION",
+            "new_state": "OFF",
+            "prior_state": "ON",
+            "reason": "T=23.0 <= lower boundary 23.0",
+            "sample_id": "SOURCE_DOES_NOT_CARRY_DEVICE_ID|56044b74|472",
+            "sample_index": 471,
+            "time_certainty": "EXACT_AT_SAMPLE",
+            "time_s": 470.99
+          },
+          {
+            "crossing_interval_end_s": 937.99,
+            "crossing_interval_start_s": 936.99,
+            "crossing_time_s": 937.99,
+            "detection_time_s": 937.99,
+            "event_id": "47bc2ed00ccad937019dc19b",
+            "event_type": "REACTIVE_ON_TRANSITION",
+            "new_state": "ON",
+            "prior_state": "OFF",
+            "reason": "T=26.0 >= upper boundary 26.0",
+            "sample_id": "SOURCE_DOES_NOT_CARRY_DEVICE_ID|56044b74|939",
+            "sample_index": 938,
+            "time_certainty": "EXACT_AT_SAMPLE",
+            "time_s": 937.99
+          }
+        ]
+      },
+      "s1": {
+        "chatter_event_count": 0,
+        "diagnostic_unmatched_episodes": 0,
+        "eligibility_reasons": [
+          "ABSOLUTE_TIME_NOT_EVIDENCED",
+          "AUTHORITY_A_LEDGER_INVALID",
+          "CALIBRATION_UNVERIFIED",
+          "CAPTURE_DURATION_NOT_DECLARED",
+          "DEVICE_IDENTITY_MISSING",
+          "HARDWARE_CONFIG_NOT_VERIFIED",
+          "RUN_IDENTITY_UNRESOLVED",
+          "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+          "SCENARIO_VALIDITY_NOT_GRANTED",
+          "TIMING_INTEGRITY_FAILED",
+          "W08_PHYSICAL_GATE_NOT_GREEN",
+          "W08_PHYSICAL_GATE_RED"
+        ],
+        "eligibility_status": "BLOCKED",
+        "episode_durations_s": [
+          469.99,
+          18.0
+        ],
+        "episode_start_end": [
+          [
+            0.0,
+            469.99
+          ],
+          [
+            937.99,
+            955.99
+          ]
+        ],
+        "evaluable_time_s": 955.99,
+        "false_warning_episode_count": null,
+        "observation_duration_s": 955.99,
+        "on_off_toggles": 3,
+        "outcome_reason": "run is not eligible for the S1 dataset; diagnostic replay only",
+        "outcome_status": "UNDEFINED",
+        "run_id": null,
+        "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+        "state_transition_count": 3,
+        "synthetic_control": true,
+        "unknown_fraction": 0.0,
+        "unknown_time_s": 0.0,
+        "warning_burden_per_eligible_hour": null,
+        "warning_burden_per_run": null
+      }
+    }
+  ],
+  "diagnostic_overlay": {
+    "physical_authority": false,
+    "representation": "DIAGNOSTIC_MEAN_T1_T3_T4",
+    "source": "rig role map T1=CHAMBER_CENTER, T3=CHAMBER_BOTTOM, T4=CHAMBER_NEAR_DOOR; diagnostic overlay only, not a frozen baseline representative"
+  },
+  "event_definitions": [
+    {
+      "definition": "first observed transition of the configured representative temperature criterion from not-satisfied to satisfied",
+      "event_type": "REACTIVE_CRITERION_CROSSING",
+      "evidence": "source sample identity and event-time interval",
+      "source": "W09 B0 deterministic threshold replay",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "offline hysteresis replay transition to ON at the configured upper boundary; a policy intent, not an actuator command",
+      "event_type": "REACTIVE_ON_TRANSITION",
+      "evidence": "source sample identity, prior state and policy version",
+      "source": "W09 B1 deterministic hysteresis replay",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "offline hysteresis replay transition to OFF at the configured lower boundary while previously ON",
+      "event_type": "REACTIVE_OFF_TRANSITION",
+      "evidence": "source sample identity, prior state and policy version",
+      "source": "W09 B1 deterministic hysteresis replay",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "one contiguous warning interval after the declared persistence and bridging policy; repeated warning samples do not create extra episodes",
+      "event_type": "WARNING_EPISODE",
+      "evidence": "episode start/end, sample support and policy version",
+      "source": "W09 warning-episode policy",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "an observed thermal criterion crossing on one eligible, non-predictively-intervened trajectory",
+      "event_type": "CRITICAL_EVENT",
+      "evidence": "event-time interval, source and criterion definition",
+      "source": "declared B0 critical criterion",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "a fully observed eligible run with no qualifying critical event; a genuine negative-control observation",
+      "event_type": "NO_EVENT_OBSERVATION",
+      "evidence": "evaluable run duration and event denominator",
+      "source": "W08 eligibility plus W09 coverage",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "an observation whose critical-event status is unknown because the trajectory ended or was interrupted before the criterion could be observed",
+      "event_type": "CENSORED_OBSERVATION",
+      "evidence": "censoring time and reason",
+      "source": "W09 coverage and refused intervals",
+      "version": "coldguard-w09-event-definitions-v1"
+    },
+    {
+      "definition": "an interval whose time, quality or identity cannot support a precise event timestamp",
+      "event_type": "UNTRUSTED_INTERVAL",
+      "evidence": "interval bounds and refusal reason",
+      "source": "W04/W05/W09 quality and time gates",
+      "version": "coldguard-w09-event-definitions-v1"
+    }
+  ],
+  "generated_at_utc": "NOT_RECORDED_BY_DESIGN",
+  "generation_command": "python scripts/baseline-evaluation-W09.py --source ../evidence/A/W09/exports/CG-S1-H8C-600S.json --a-run-index ../evidence/A/W09/s1-run-index.json --scenario S1 --out reports/W09 --a-w08-manifest reports/W08/gate-b-manifest-W08.json --sensitivity baselines/sensitivity-example-W09.json --repository-revision 01b004696d301c41ff4b09dd341a25343054c2f7",
+  "layer_version": "coldguard-w09-deterministic-baselines-v1",
+  "limitations": [
+    "A baseline criterion detection is not an actuator command.",
+    "The real A W09 capture is A-invalid; no physical baseline performance is established.",
+    "The 957 rows are not independent exposure units.",
+    "No real EWT is computed from a threshold baseline alone.",
+    "No AIW is estimated without measured latency components.",
+    "The locked test is not opened, inspected or frozen."
+  ],
+  "locked_test_access": "NONE",
+  "parameters": null,
+  "repository_revision": "01b004696d301c41ff4b09dd341a25343054c2f7",
+  "schema": "coldguard-w09-baseline-manifest-v1",
+  "sensitivity": {
+    "association": {
+      "allow_censored_events": false,
+      "policy_version": "synthetic-w09-association-v1",
+      "post_window_s": 30.0,
+      "pre_window_s": 30.0,
+      "require_trusted_events": true,
+      "source": "illustrative sensitivity policy",
+      "status": "SYNTHETIC_ILLUSTRATIVE"
+    },
+    "chatter": {
+      "max_toggles": 4,
+      "source": "illustrative sensitivity diagnostic rule",
+      "status": "SYNTHETIC_ILLUSTRATIVE",
+      "window_s": 30.0
+    },
+    "episode": {
+      "bridge_gap_s": 2.0,
+      "bridge_unknown_gaps": false,
+      "min_persistence_s": 0.0,
+      "policy_version": "synthetic-w09-episode-v1",
+      "source": "illustrative sensitivity policy",
+      "status": "SYNTHETIC_ILLUSTRATIVE"
+    },
+    "freeze_evidence": null,
+    "hysteresis": {
+      "baseline": "B1_HYSTERESIS",
+      "freeze_status": "SYNTHETIC_ILLUSTRATIVE",
+      "initial_state": "OFF",
+      "initial_state_source": "illustrative sensitivity initial state; not a device observation",
+      "lower_off_c": 23.0,
+      "max_continuity_gap_s": 10.0,
+      "policy_version": "synthetic-w09-sensitivity-v1",
+      "quality": {
+        "accepted_probe_status": [
+          "OK",
+          "NONE"
+        ],
+        "accepted_row_quality": [
+          "VALID"
+        ],
+        "max_probe_age_s": 5.0,
+        "quality_domain": "thermal"
+      },
+      "representation": {
+        "freeze_status": "SYNTHETIC_ILLUSTRATIVE",
+        "mode": "CHAMBER_AIR_MEAN",
+        "name": "MEAN_T1_T3_T4",
+        "slots": [
+          "t1",
+          "t3",
+          "t4"
+        ],
+        "source": "observed rig role map; T2 hot side excluded",
+        "unit": "degC"
+      },
+      "run_id": null,
+      "scenario_id": "S1",
+      "time_domain": "BOOT_SCOPED_UPTIME",
+      "upper_lower_source": "software-only illustrative sensitivity values",
+      "upper_on_c": 26.0
+    },
+    "parameter_source": "software-only illustrative values for the W09 diagnostic sensitivity replay; no physical authority",
+    "path": "baselines/sensitivity-example-W09.json",
+    "persistence_candidate": null,
+    "representation": {
+      "freeze_status": "SYNTHETIC_ILLUSTRATIVE",
+      "mode": "CHAMBER_AIR_MEAN",
+      "name": "MEAN_T1_T3_T4",
+      "slots": [
+        "t1",
+        "t3",
+        "t4"
+      ],
+      "source": "observed rig role map; T2 hot side excluded",
+      "unit": "degC"
+    },
+    "run_id": null,
+    "scenario_id": "S1",
+    "sha256": "ec98a46883fb335a9312e754cbda528721b0504c6848081867e5e7ca63762f8c",
+    "status": "SYNTHETIC_ILLUSTRATIVE",
+    "threshold": {
+      "baseline": "B0_THRESHOLD",
+      "max_continuity_gap_s": 10.0,
+      "operator": "GE",
+      "policy_version": "not-applicable-stateless-b0",
+      "quality": {
+        "accepted_probe_status": [
+          "OK",
+          "NONE"
+        ],
+        "accepted_row_quality": [
+          "VALID"
+        ],
+        "max_probe_age_s": 5.0,
+        "quality_domain": "thermal"
+      },
+      "representation": {
+        "freeze_status": "SYNTHETIC_ILLUSTRATIVE",
+        "mode": "CHAMBER_AIR_MEAN",
+        "name": "MEAN_T1_T3_T4",
+        "slots": [
+          "t1",
+          "t3",
+          "t4"
+        ],
+        "source": "observed rig role map; T2 hot side excluded",
+        "unit": "degC"
+      },
+      "run_id": null,
+      "scenario_id": "S1",
+      "threshold_c": 25.0,
+      "threshold_source": "software-only illustrative sensitivity value",
+      "threshold_status": "SYNTHETIC_ILLUSTRATIVE",
+      "time_domain": "BOOT_SCOPED_UPTIME"
+    }
+  },
+  "source": {
+    "chamber_air_slots": [
+      "t1",
+      "t3",
+      "t4"
+    ],
+    "hot_side_slots": [
+      "t2"
+    ],
+    "path": "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+    "rows": 957,
+    "sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+    "time_domain": "BOOT_SCOPED_UPTIME"
+  },
+  "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+  "synthetic_controls": {
+    "evidence": [
+      "tests/test_baselines.py",
+      "tests/test_event_evaluator.py"
+    ],
+    "status": "SYNTHETIC_CONTROL_ONLY"
+  },
+  "w05": {
+    "admission_status": "EXCLUDED_OR_BLOCKED",
+    "channel_quality_status": "ATTENTION_REQUIRED",
+    "highest_stage": "USABLE_FOR_DIAGNOSTIC_QA",
+    "qa_execution_status": "COMPLETED"
+  },
+  "w08": {
+    "a_ledger_verdict": "INVALID",
+    "eligibility_reasons": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED",
+      "W08_PHYSICAL_GATE_NOT_GREEN",
+      "W08_PHYSICAL_GATE_RED"
+    ],
+    "found": true,
+    "path": "reports/W08/gate-b-manifest-W08.json",
+    "physical_gate": "RED",
+    "policy_statuses": [
+      {
+        "dimension": "WHOLE_CAPTURE_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.95
+      },
+      {
+        "dimension": "CRITICAL_CHANNEL_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.99
+      },
+      {
+        "dimension": "PRIMARY_EVENT_WINDOW_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.99
+      },
+      {
+        "dimension": "PRE_EVENT_BASELINE_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.95
+      },
+      {
+        "dimension": "POST_EVENT_OR_RECOVERY_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "PROPOSED",
+        "threshold_value": 0.9
+      },
+      {
+        "dimension": "TIMING_ALIGNMENT_COMPLETENESS",
+        "freeze_evidence": null,
+        "owner": "Member B — AI & Experimental Data",
+        "review_authority": "Project lead + Member A (physical evidence)",
+        "threshold_status": "UNRESOLVED",
+        "threshold_value": null
+      }
+    ],
+    "predictive_gate": "NOT_READY",
+    "reason_codes": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED",
+      "W08_PHYSICAL_GATE_NOT_GREEN",
+      "W08_PHYSICAL_GATE_RED"
+    ],
+    "run_eligibility": "BLOCKED",
+    "s1_eligibility": "BLOCKED",
+    "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+    "source_sha256_match": true,
+    "split_feasibility": "NOT_FEASIBLE"
+  }
+}
