@@ -1,0 +1,171 @@
+{
+  "a_manifest_sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d",
+  "a_run_index_sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4",
+  "a_source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+  "a_timing_report_sha256": "2826a71026e7d4b8dc2cf3413efb5e4983785fc59ae760586569b91279fb2169",
+  "analysis_code_sha256": "e377c985a5faff7e6d75fc00902045c723476cc964674dfbfa6bbf7ff54d2b26",
+  "delivery_commit": "NOT_RECORDED_AT_GENERATION",
+  "deterministic_replay": {
+    "no_timestamps_in_generated_artifacts": true,
+    "two_independent_processes": "VERIFIED_DURING_DELIVERY_NOT_EMBEDDED"
+  },
+  "family_totals": {
+    "accepted_s1_windows": 4,
+    "accepted_s2_windows": 5,
+    "analyzed_segments": 18,
+    "boot_ids": [
+      "4a21a645",
+      "4b555191",
+      "56044b74",
+      "73311d0c",
+      "be89bf4a",
+      "c20d17f6",
+      "c4ff0ab3",
+      "f44c9bed"
+    ],
+    "cooling_step_segments": 4,
+    "distinct_boots": 8,
+    "door_windows": 5,
+    "frames_total": 9293,
+    "independence_statement": "18 exported rows/segments span 8 distinct boots; rows and windows are never independent runs",
+    "independent_qualified_runs": 0,
+    "independent_sessions": 8,
+    "manifest_totals": {
+      "frames_by_scenario": {
+        "COOLING_STEP": 957,
+        "COOLING_STEP_1800S": 2915,
+        "COOLING_STEP_500PERMILLE": 392,
+        "S1": 2401,
+        "S1_OUTSIDE": 62,
+        "S2_DOOR": 1200,
+        "S2_OUTSIDE": 346,
+        "S2_TIMING": 120,
+        "W07_PASSIVE_REPEAT": 900
+      },
+      "frames_total": 9293,
+      "runs_and_segments": 18
+    },
+    "predictive_eligible_runs": 0,
+    "segments": 18
+  },
+  "gate_b": {
+    "GATE_B_PHYSICAL_DATA": "RED",
+    "PREDICTIVE_DATASET_READINESS": "NOT_READY",
+    "SPLIT_FEASIBILITY": "NOT_FEASIBLE",
+    "SPLIT_STATUS": "RED",
+    "allowed_uses": [
+      "diagnostic QA of structurally valid captures"
+    ],
+    "command": [
+      "python",
+      "scripts/gate-b-readiness-W08.py",
+      "--source",
+      "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+      "--a-run-index",
+      "evidence/A/W09/s1-run-index.json",
+      "--scenario",
+      "S1",
+      "--out",
+      "<GATE_B_SCRATCH>",
+      "--repository-revision",
+      "a9dacbe984b3287c7b7b0cdce8416552f66d3808"
+    ],
+    "physical_reasons": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "INDEPENDENT_RUN_POPULATION_INSUFFICIENT",
+      "NO_ELIGIBLE_RUNS_FOR_DECLARED_SCENARIO",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED"
+    ],
+    "population": "1 candidate run(s); 0 eligible",
+    "predictive_reasons": [
+      "ABSOLUTE_TIME_NOT_EVIDENCED",
+      "AUTHORITY_A_LEDGER_INVALID",
+      "CALIBRATION_UNVERIFIED",
+      "CAPTURE_DURATION_NOT_DECLARED",
+      "DEVICE_IDENTITY_MISSING",
+      "GATE_B_NOT_GREEN",
+      "HARDWARE_CONFIG_NOT_VERIFIED",
+      "INDEPENDENT_RUN_POPULATION_INSUFFICIENT",
+      "NO_ELIGIBLE_RUNS_FOR_DECLARED_SCENARIO",
+      "RUN_IDENTITY_UNRESOLVED",
+      "RUN_MANIFEST_LINKAGE_NOT_PROVIDED",
+      "SCENARIO_VALIDITY_NOT_GRANTED",
+      "TIMING_INTEGRITY_FAILED"
+    ],
+    "prohibited_uses": [
+      "predictive model training or benchmark claims",
+      "locked test or Gate C evidence",
+      "any claim that physical repeatability is established"
+    ],
+    "software_status": "GREEN",
+    "source_path": "evidence/A/W09/exports/CG-S1-H8C-600S.json",
+    "source_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+    "split_reasons": [
+      "SPLIT_POPULATION_INSUFFICIENT"
+    ],
+    "validator_exit_code": 0
+  },
+  "hash_semantics": {
+    "FILE_CONTENT_SHA256": "SHA-256 over the committed file bytes",
+    "GIT_BLOB_SHA1": "not used as a source pin",
+    "SOURCE_IDENTITY": "SHA-256 pins from the A manifest/run index and committed B sources"
+  },
+  "layer_version": "coldguard-existing-data-recovery-v1",
+  "not_read": [
+    "ml/reports/W16 (locked-test preregistration; values never opened)",
+    "ml/reports/W20 (final A/B outcome material; analysis never run)"
+  ],
+  "observations_csv_sha256": "605234075507e539fc98e8e7cefa06ca3fcb1fc4fdcfc932d5d4c5276f8592ff",
+  "package_id": "coldguard-b-existing-data-recovery",
+  "package_version": "2026-11-11-W24-v1",
+  "plots": {
+    "real-physical-plots/chamber-air-a20261107-trial2.svg": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+    "real-physical-plots/chamber-air-a20261107-w10-03-run1.svg": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+    "real-physical-plots/cooling-a20261107-a-w07-03-trial-2-be89bf4a.svg": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+    "real-physical-plots/cooling-a20261107-h8-c-600s-tec-100pct.svg": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+    "real-physical-plots/cooling-a20261107-h8-e-1800s-tec-100pct.svg": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+    "real-physical-plots/door-a20261107-w10-02.svg": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+    "real-physical-plots/door-a20261107-w10-03-run1.svg": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+    "real-physical-plots/door-a20261107-w10-03-run2.svg": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+    "real-physical-plots/door-a20261107-w10-03-run3.svg": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+    "real-physical-plots/door-a20261107-w10-03-run4.svg": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+    "real-physical-plots/missingness-inventory.svg": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+    "real-physical-plots/w05-diagnostic.svg": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054"
+  },
+  "replay_command": "uv run --locked --python 3.12 --extra test python scripts/existing-data-recovery.py --a-dataset-dir <A_DATASET_EXPORT>/evidence/A/SOURCES/20261107/datasets --source-inventory reports/DataRecovery/source-inventory.json --out reports/DataRecovery --repository-revision a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+  "reports": {
+    "gate-b-reassessment.md": "05a1367d6219fd288fb44e2210f706ac1464f012cf9549ed8212dca0a4ce5da6",
+    "physical-data-assessment.md": "1b2a5ed36bb03491ee74fb5e98e85b6fb2415b0bd719b7b5203eacd0406dfc4d",
+    "predictive-eligibility-review.md": "ee125e775b3f3e6242a80149e105667219b326bdbd7b29a4f2075350889f6f41",
+    "presentation-summary-vi.md": "3c59b0e28bb95fa927bd786c4d6e6a8beaf7237fa436e45403f058731430e1b2"
+  },
+  "repository_revision": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+  "schema": "coldguard-existing-data-recovery-manifest-v1",
+  "scientific_status": {
+    "DEADLINE_DEMO_PACKAGE": "READY",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "EXISTING_DATA_REUSE": "READY_FOR_BOUNDED_ANALYSIS",
+    "EXISTING_PHYSICAL_DATA_AUDIT": "COMPLETE",
+    "EXPLORATORY_PREDICTIVE_ASSESSMENT": "NOT_ESTIMABLE",
+    "GATE_B_PHYSICAL_DATA": "RED",
+    "PREDICTIVE_DATASET_READINESS": "NOT_READY",
+    "REAL_PREDICTIVE_BENCHMARK": "NOT_ESTABLISHED",
+    "USABLE_DOOR_DISTURBANCE_DATA": "VERIFIED",
+    "USABLE_PHYSICAL_DESCRIPTIVE_DATA": "VERIFIED",
+    "USABLE_SENSOR_DIAGNOSTIC_DATA": "PARTIAL",
+    "W16_LOCKED_TEST": "NOT_OPENED",
+    "W20_PHYSICAL_AB_ANALYSIS": "NOT_RUN"
+  },
+  "source_export_command": "git archive d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85 evidence/A/SOURCES/20261107/datasets | tar -x -C <export-dir>",
+  "source_inventory_sha256": "bd451f9dc4d99ae6a8cf88c8e16dbe6a44f0e67affaec7c390a59505f3130fb5",
+  "w05_export_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+  "w21_manifest_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3"
+}
