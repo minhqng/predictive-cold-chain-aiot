@@ -162,6 +162,13 @@ from .campaign_integrity import (
     assess_campaign_run,
     compute_config_sha256,
 )
+from .campaign_audit import (
+    AnomalyEntry,
+    AuditAnomalyCategory,
+    CampaignAuditDecision,
+    CampaignAuditRecord,
+    audit_campaign,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -277,4 +284,9 @@ __all__ = [
     "assess_campaign_pair",
     "assess_campaign_run",
     "compute_config_sha256",
+    "AnomalyEntry",
+    "AuditAnomalyCategory",
+    "CampaignAuditDecision",
+    "CampaignAuditRecord",
+    "audit_campaign",
 ]
