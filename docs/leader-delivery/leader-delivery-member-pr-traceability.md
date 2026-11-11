@@ -1,5 +1,9 @@
 # Leader Delivery — Member PR Traceability (52/52 member-weeks, W01–W13)
 
+> This table records the original delivery snapshot. See the
+> [PR #113 attribution reconciliation](pr113-attribution-reconciliation.md)
+> for current delivered ancestry and the commit mapping.
+
 ## Method
 
 Classification sources, all measured from verified Git state:
