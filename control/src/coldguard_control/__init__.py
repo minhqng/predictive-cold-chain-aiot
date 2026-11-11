@@ -112,6 +112,13 @@ from .incident import (
     recommend_incident_actions,
 )
 from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
+from .predictive_gate import (
+    OutputSemantics,
+    PredictiveCandidateEvidence,
+    PredictiveGateDecision,
+    PredictiveGateStatus,
+    assess_predictive_gate,
+)
 from .verification_bridge import (
     A_LIFECYCLE_ORDER,
     AObservationalLifecycle,
@@ -197,6 +204,11 @@ __all__ = [
     "AIWStatus",
     "TimingEvidence",
     "assess_aiw",
+    "OutputSemantics",
+    "PredictiveCandidateEvidence",
+    "PredictiveGateDecision",
+    "PredictiveGateStatus",
+    "assess_predictive_gate",
     "A_LIFECYCLE_ORDER",
     "AObservationalLifecycle",
     "AtoDVerificationDecision",
