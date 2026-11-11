@@ -149,6 +149,19 @@ from .enablement import (
     EnablementStatus,
     evaluate_physical_enablement,
 )
+from .campaign_integrity import (
+    CampaignAssessmentDecision,
+    CampaignAssessmentStatus,
+    ControllerVariant,
+    FrozenControllerIdentity,
+    PairLedgerRecord,
+    PairedCampaignDecision,
+    PairedCampaignRecord,
+    RunEvidence,
+    assess_campaign_pair,
+    assess_campaign_run,
+    compute_config_sha256,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -253,4 +266,15 @@ __all__ = [
     "EnablementPreconditions",
     "EnablementStatus",
     "evaluate_physical_enablement",
+    "CampaignAssessmentDecision",
+    "CampaignAssessmentStatus",
+    "ControllerVariant",
+    "FrozenControllerIdentity",
+    "PairLedgerRecord",
+    "PairedCampaignDecision",
+    "PairedCampaignRecord",
+    "RunEvidence",
+    "assess_campaign_pair",
+    "assess_campaign_run",
+    "compute_config_sha256",
 ]
