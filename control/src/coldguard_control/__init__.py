@@ -137,6 +137,12 @@ from .resilience import (
     ResilienceMode,
     assess_resilience,
 )
+from .shadow import (
+    ShadowDecision,
+    ShadowTimingComparison,
+    compare_shadow_to_reactive,
+    evaluate_shadow,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -233,5 +239,9 @@ __all__ = [
     "ResilienceInput",
     "ResilienceMode",
     "assess_resilience",
+    "ShadowDecision",
+    "ShadowTimingComparison",
+    "compare_shadow_to_reactive",
+    "evaluate_shadow",
 
 ]
