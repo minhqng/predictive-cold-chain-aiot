@@ -112,6 +112,12 @@ from .incident import (
     recommend_incident_actions,
 )
 from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
+from .verification_bridge import (
+    A_LIFECYCLE_ORDER,
+    AObservationalLifecycle,
+    AtoDVerificationDecision,
+    assess_a_lifecycle_for_d,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -191,5 +197,9 @@ __all__ = [
     "AIWStatus",
     "TimingEvidence",
     "assess_aiw",
+    "A_LIFECYCLE_ORDER",
+    "AObservationalLifecycle",
+    "AtoDVerificationDecision",
+    "assess_a_lifecycle_for_d",
 
 ]

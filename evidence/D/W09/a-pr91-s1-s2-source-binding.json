@@ -1,0 +1,53 @@
+{
+  "scope": "D_READ_ONLY_A_PR91_S1_S2_SOURCE_BINDING",
+  "source_pr": {
+    "number": 91,
+    "url": "https://github.com/minhqng/predictive-cold-chain-aiot/pull/91",
+    "head": "63982e9592e0687099afb53fa1e4422f57761d74",
+    "branch": "feat/a-s1-s2-source-evidence"
+  },
+  "sources": [
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/source-publication-index.json",
+      "sha256": "6d5295533699b4e01cc4d4f976b138022b4ec6e61dad07adc7d2fd9ac5d373af"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/source-result-A-W09-02.json",
+      "sha256": "0381497c8e6ba4c73815ca28c206892e779323d2a6b45f7bbc48d5bad5ba5515"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/source-result-A-W10-03.json",
+      "sha256": "144a5109d53118cbe4e6a37e292f9d76321f110ca19a36aa6fa95c9088e67398"
+    }
+  ],
+  "raw_sources": [
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-20261107T063828Z/raw/telemetry_raw.log",
+      "sha256": "2793a1c0ec7e6185e8a064c322b22c197b09ec061fd0074530821d5764babcb7"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s1/s1-multi-20261107T064902Z/raw/telemetry_raw.log",
+      "sha256": "9b1f70de28f5114d3a08c1023f2ad714745c2f0c21a2f1e21bd926cbef4d529b"
+    },
+    {
+      "path": "evidence/A/SOURCES/20261107/s2/door-20261107T081539Z/raw/telemetry_raw.log",
+      "sha256": "3f02fc9ca1f15b351701e7113d8370ccb3a34c34f7413ada808f10536394f078"
+    }
+  ],
+  "s1": {
+    "source_test_id": "A-W09-02",
+    "outcome": "PASS",
+    "valid_windows": 4,
+    "frames": 2401,
+    "classification": "passive thermal/electrical-idle; not cooling/energy"
+  },
+  "s2": {
+    "source_test_id": "A-W10-03",
+    "outcome": "PASS",
+    "valid_windows": 4,
+    "frames": 1200,
+    "classification": "door-disturbance source windows"
+  },
+  "verdict": "PR91_SOURCES_HASH_VERIFIED",
+  "note": "PR #91 has been fetched locally at the pinned head. The raw S1/S2 files in the current checkout match its publication-index hashes."
+}
