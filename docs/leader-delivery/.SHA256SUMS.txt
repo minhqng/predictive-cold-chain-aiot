@@ -17,3 +17,4 @@ bc457586cad4ff51d6d835eb77a25f34cf30a61d5bc5b44d01811f364b77f28a  phase8-2-final
 0d4e23a7b5943c910761b27003ab66cb6de7c54510b157b748cfd82ea1c9f1bb  phase8-2-github-delivery-runbook.md
 a40a3d1cbd30cc3f2d94aae7c68c1605fbe7451b6b51508b79728ff7eb67f4b5  phase8-2-test-and-review.md
 f676cde2b2d28565fbd22a33304800af7b343c408c01fb1f10ce5814a38b1cbd  phase8-2-tree-equivalence.md
+46ae56fb26056344b0d12a2b1c67cbfd51c4732e77e4aeba39a96e8983c6e29c  phase8-2-attribution-repin.md
