@@ -42,7 +42,7 @@ from typing import Any
 
 from pydantic import ValidationError
 
-from coldguard_backend.contracts import Telemetry
+from coldguard_backend.contracts import CommandAck, Telemetry
 
 SUPPORTED_SCHEMA_VERSIONS = frozenset({1, 2})
 
@@ -269,5 +269,130 @@ def validate_topic_identity(topic: str, telemetry: Telemetry) -> list[dict[str, 
                 f"payload device_id {telemetry.device_id!r}; no normalized "
                 "sample is created",
             }
+        ]
+    return []
+
+
+# --- Command ACK strict validation (C-W06-03) ------------------------------
+
+_ACK_TOPIC_RE = re.compile(r"^coldguard/([^/+#]+)/command_ack$")
+
+_ACK_EXACT_INT_PATHS = (
+    ("schema_version",),
+    ("uptime_ms",),
+    ("ack_seq",),
+)
+_ACK_STRING_PATHS = (
+    ("command_id",),
+    ("device_id",),
+    ("boot_id",),
+    ("status",),
+    ("reason_code",),
+    ("device_mode",),
+    ("canonical_status",),
+    ("time_sync_state",),
+    ("output_stage",),
+    ("fault_code",),
+)
+_ACK_BOOL_PATHS = (
+    ("reapplied",),
+    ("expiry_evaluable",),
+)
+
+
+def ack_topic_device_id(topic: str) -> str | None:
+    """Device segment of a canonical command_ack topic, else None."""
+    match = _ACK_TOPIC_RE.match(topic)
+    if not match:
+        return None
+    segment = match.group(1)
+    return segment if segment.strip() else None
+
+
+def _ack_strict_type_errors(parsed: Any) -> list[dict[str, Any]]:
+    errors: list[dict[str, Any]] = []
+    if not isinstance(parsed, dict):
+        return [{"code": "WRONG_TYPE", "loc": "", "message": "ACK must be an object"}]
+    for path in _ACK_EXACT_INT_PATHS:
+        present, value = _get_path(parsed, path)
+        if present and value is not None and type(value) is not int:
+            errors.append(
+                {"code": "WRONG_TYPE", "loc": ".".join(path),
+                 "message": f"{'.'.join(path)} must be an integer"}
+            )
+    for path in _ACK_STRING_PATHS:
+        present, value = _get_path(parsed, path)
+        if present and value is not None and type(value) is not str:
+            errors.append(
+                {"code": "WRONG_TYPE", "loc": ".".join(path),
+                 "message": f"{'.'.join(path)} must be a string"}
+            )
+    for path in _ACK_BOOL_PATHS:
+        present, value = _get_path(parsed, path)
+        if present and value is not None and type(value) is not bool:
+            errors.append(
+                {"code": "WRONG_TYPE", "loc": ".".join(path),
+                 "message": f"{'.'.join(path)} must be a boolean"}
+            )
+    for section in ("applied", "desired"):
+        if section in parsed and parsed[section] is not None and not isinstance(parsed[section], dict):
+            errors.append(
+                {"code": "WRONG_TYPE", "loc": section,
+                 "message": f"{section} must be an object or null"}
+            )
+        elif isinstance(parsed.get(section), dict):
+            obj = parsed[section]
+            if "cooling" in obj and type(obj["cooling"]) is not str:
+                errors.append(
+                    {"code": "WRONG_TYPE", "loc": f"{section}.cooling",
+                     "message": "cooling must be a string"}
+                )
+            if "duty" in obj and obj["duty"] is not None and (
+                isinstance(obj["duty"], bool) or not isinstance(obj["duty"], (int, float))
+            ):
+                errors.append(
+                    {"code": "WRONG_TYPE", "loc": f"{section}.duty",
+                     "message": "duty must be a JSON number or null"}
+                )
+    return errors
+
+
+def validate_command_ack(parsed: Any) -> tuple[CommandAck | None, list[dict[str, Any]]]:
+    """Strict-validate a parsed command-ACK document (exact types + contract)."""
+    errors = _ack_strict_type_errors(parsed)
+    if errors:
+        return None, errors
+    if isinstance(parsed, dict):
+        version = parsed.get("schema_version")
+        if type(version) is int and version != 1:
+            return None, [
+                {"code": "UNSUPPORTED_SCHEMA", "loc": "schema_version",
+                 "message": f"unsupported ACK schema_version {version!r}; supported: [1]"}
+            ]
+    try:
+        ack = CommandAck.model_validate(parsed)
+    except ValidationError as exc:
+        return None, [
+            {"code": "SCHEMA_VIOLATION",
+             "loc": ".".join(str(part) for part in err.get("loc", ())),
+             "message": str(err.get("msg", ""))[:500]}
+            for err in exc.errors()[:20]
+        ]
+    return ack, []
+
+
+def validate_ack_topic_identity(topic: str, ack: CommandAck) -> list[dict[str, Any]]:
+    """Prove the command_ack topic device segment equals the ACK device_id."""
+    device_segment = ack_topic_device_id(topic)
+    if device_segment is None:
+        return [
+            {"code": "MALFORMED_TOPIC", "loc": "topic",
+             "message": f"ACK topic {topic!r} is not coldguard/{{device_id}}/command_ack"}
+        ]
+    if device_segment != ack.device_id:
+        return [
+            {"code": "TOPIC_MISMATCH", "loc": "device_id",
+             "message": f"topic device {device_segment!r} disagrees with ACK "
+             f"device_id {ack.device_id!r}"}
         ]
     return []

@@ -71,8 +71,8 @@
       "path": "evidence/A/W05/schema-fixture.json",
       "scenario_screen": null,
       "session": "W05 schema fixture",
-      "sha256": "056b841e9490f137cc953e1ab27fb83c3595740cd4a8025b81108bcc8c7ecabe",
-      "size_bytes": 8000,
+      "sha256": "16c86888a04e9a427e309f14bbe8a7579f3fb206776bb30ec1a0574821c327f4",
+      "size_bytes": 8504,
       "status_label": "HOST_VERIFIED"
     },
     {
@@ -89,8 +89,8 @@
       "path": "evidence/A/W06/demo-command-capture.log",
       "scenario_screen": null,
       "session": "W06 host harness",
-      "sha256": "6b83c45505702a603bf23af86e49842cf03cfb45d964e445bd66fb5d5c9513e1",
-      "size_bytes": 4536,
+      "sha256": "9a6a47a0119c9303cb8c24094b878c78e1999b538fd5267a17f0ead281b3ec06",
+      "size_bytes": 4668,
       "status_label": "HOST_VERIFIED"
     },
     {

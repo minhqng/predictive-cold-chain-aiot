@@ -1,0 +1,2111 @@
+{
+ "combined_tree": "phase7-combined FINAL TESTED: e53f5f2f1348ab929e7f09f039b725a47502a865 (tree 5f7dfc084fd4a6041e683ac6ef66e571451d72a9; base d22c8d5 + A#94 ae23a36 + A#95 815387d + C#69 361e732 + D#90 da82109 + B#102 824a5389 + owner integration e9681be + test alignment e53f5f2)",
+ "digest_of_digests": "7f9f76c3f0ce56bae809a02eec4ad4151eed613161e4cf6898c2c7cbd90e923e",
+ "files": [
+  {
+   "path": "backend/.dockerignore",
+   "sha256": "832e6dae8621b12b3d4d21c0fd074945ca165a1a2da55e8c7fb270f0f18f990f"
+  },
+  {
+   "path": "backend/.pytest_cache/CACHEDIR.TAG",
+   "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+   "path": "backend/.pytest_cache/README.md",
+   "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+   "path": "backend/.pytest_cache/v/cache/lastfailed",
+   "sha256": "5dff77ee2f2ec8d94fb508961f9c593ac54d58a110c8be339b9509ff47503731"
+  },
+  {
+   "path": "backend/.pytest_cache/v/cache/nodeids",
+   "sha256": "6f4eabc7a7b5d2c01826318dff672946b491ab95cf19cc02578d9a3f91a3438b"
+  },
+  {
+   "path": "backend/alembic.ini",
+   "sha256": "5c87e28ead8d8c9cae542b6c7a90967af4830a279d193da4f966c37fa42a0c6e"
+  },
+  {
+   "path": "backend/COMMAND_PATH.md",
+   "sha256": "04cf050e20a1b9abf8639ffc6b3c6865799b3e7691c7be97761dccd3e76de361"
+  },
+  {
+   "path": "backend/Dockerfile",
+   "sha256": "73c42162ebe041f02170da12ed2f5beb7f271470f79e5754bba0cb61828b21a5"
+  },
+  {
+   "path": "backend/EXPERIMENTS.md",
+   "sha256": "08049f142efb2b3c3e2574e813b2212e6c59ceb9568e1b9c5243f2a7cfe5a927"
+  },
+  {
+   "path": "backend/fixtures/command_v0.json",
+   "sha256": "d432c7c4f31a3b612488b9a00114422069af386dd2d577d0aebf757a7ebfe7d7"
+  },
+  {
+   "path": "backend/fixtures/telemetry_v0.json",
+   "sha256": "bb279b2bbb02f318b878b9afd231d85cc32150a222ac90d18ba7eda81a5fbe2f"
+  },
+  {
+   "path": "backend/PLATFORM_RECOVERY.md",
+   "sha256": "2554dcc535efe79747cd60a0f8d7742275e3f3240c1d4da09cc2e81967e98b35"
+  },
+  {
+   "path": "backend/pyproject.toml",
+   "sha256": "c99945f633c53672cd00206cf78587180e6c53c070019a598e6846880df7b967"
+  },
+  {
+   "path": "backend/scripts/export_s1.py",
+   "sha256": "80922e5511a0a5b5e89ea5a90b810fcf75532158e3f4bcc8d1d26bf4e084fc94"
+  },
+  {
+   "path": "backend/scripts/proof_1000.py",
+   "sha256": "2e6a15e413cc453b33e92719646a375d3b74fb646d36408e6068d78020af9539"
+  },
+  {
+   "path": "backend/scripts/proof_platform_soak.py",
+   "sha256": "dd2ae4d3c8a5f446065f4a0724b3bdbcfef79aa534b755cea5302414e41082df"
+  },
+  {
+   "path": "backend/scripts/proof_w03_duplicates.py",
+   "sha256": "9e0554191d4d4287fac5e00f434753274450378b273bbb52f44de695edbd5c6c"
+  },
+  {
+   "path": "backend/scripts/reconcile.py",
+   "sha256": "fb6629d1ffabcd66c3675ebdec9f286b4d09fdcd922e644e9311d5cadfe4eb2e"
+  },
+  {
+   "path": "backend/scripts/serial_gateway.py",
+   "sha256": "ae3e14182f01ae091186021d3dc58b166dd3b8716ae7174fee4124eec696fb59"
+  },
+  {
+   "path": "backend/scripts/verify_restore.py",
+   "sha256": "71bd1d7925fab46099caed086411180e04fc8409eb74a55b9ab130bf97893721"
+  },
+  {
+   "path": "backend/src/coldguard_backend/__init__.py",
+   "sha256": "d865805e0bdb69894d683fb05e2223823af2423a8c3e97029982a97b00c4b8ef"
+  },
+  {
+   "path": "backend/src/coldguard_backend/ack_consumer.py",
+   "sha256": "bf7cae9de49bd4486943c11f677205f5744d7174e4f0bdd54e671e89337cc252"
+  },
+  {
+   "path": "backend/src/coldguard_backend/ack_translation.py",
+   "sha256": "fe40202d9207bd6ab1b2c7248aa71b6a5f700cee62f1a1547aee75993e3b662d"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_ack_bridge.py",
+   "sha256": "ac9ed356f6e1e6faabe0269d378b51ab076fa206b731316135c12cb58d2ead3e"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_path_runner.py",
+   "sha256": "46ef43da1d21199c2f7e1363a423763cdb4c81a11648d3f4619f0e5cc809d47a"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_publisher.py",
+   "sha256": "b964b70db390a1575866f3463a9d90429a849f571dd5b38f8d7c31ec3f3be7b5"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_service.py",
+   "sha256": "8f1a7ceb7b379b0307c94bc502eec0505053540ee9a13a3c80468d080c21d740"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_store.py",
+   "sha256": "152aac166d520dd7c7144c09c213a2c5eb28eeaa12e6f37faf2f7cdaf7d7caa5"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_timing.py",
+   "sha256": "248a5dc9cdffb1f5a4e0d109c0fcb5db15d99ce75032520b767c801aba1d61ae"
+  },
+  {
+   "path": "backend/src/coldguard_backend/command_translation.py",
+   "sha256": "35db86a97774a79e5e1b04655134f345ebf935e358eecee8ec3457c8558c6859"
+  },
+  {
+   "path": "backend/src/coldguard_backend/config.py",
+   "sha256": "b4db7da58fbb20dce7b5727424561a0b775b68c1674d7407a261d8c43961f3d1"
+  },
+  {
+   "path": "backend/src/coldguard_backend/contracts.py",
+   "sha256": "3b8a207744d3f33de10c694a1acedff6ffe034fa151ae3d43fd027474290b6bb"
+  },
+  {
+   "path": "backend/src/coldguard_backend/cross_team_paths.py",
+   "sha256": "db6e5a07760f8cad83099174538749bc48088b82d627653af90be0ae41965855"
+  },
+  {
+   "path": "backend/src/coldguard_backend/dataset_export.py",
+   "sha256": "7136a37d3b0665b238860633486e1649f18bfecab540de219a55a6d05aca00d8"
+  },
+  {
+   "path": "backend/src/coldguard_backend/event_timeline.py",
+   "sha256": "18e49fbd47f4271e7ccf17097ef0c6269eeca8cb626fbdf4987c02280fe02436"
+  },
+  {
+   "path": "backend/src/coldguard_backend/experiment_evidence.py",
+   "sha256": "694bb3d6f0439e8402cc93153ebf066a56d5b64312f7734ffb5cb0fb0346b93d"
+  },
+  {
+   "path": "backend/src/coldguard_backend/experiment_store.py",
+   "sha256": "93a6ce712f68456325b269e8040a425facd49c25cac9d0e9f2513aae6cd86a78"
+  },
+  {
+   "path": "backend/src/coldguard_backend/ingest.py",
+   "sha256": "c8110b413fe363efc1c39bc62ef1682126a63201c9974d4abf8b7baa6166245c"
+  },
+  {
+   "path": "backend/src/coldguard_backend/main.py",
+   "sha256": "417e8e80f6abd66a89592edc1a454bd86d6cb30acc6e2c797ec199452c2fe01b"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/__init__.py",
+   "sha256": "0eb9b61218f250386a46a9ef5f8d6dbf3594d0616ccba30d9c004970d89d1046"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/env.py",
+   "sha256": "d2c3b5c31b9509187f322add3fa9f48518d3fbabf8e92b82c6a6fe50730f1bba"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/script.py.mako",
+   "sha256": "2696a67c253237c33e1a65f2394663dac5306c4079bf7fce81b1c9fe6685ab10"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0001_baseline.py",
+   "sha256": "b099deb2fc8df2cd098db29cb431eeb4aac7a30c176074f64c19302fbc4c9484"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0002_raw.py",
+   "sha256": "4e52374c3c4b9ff61a64206e7eadb9da50abe55e8249aeca1512f3fcbe1e108c"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0003_normalized.py",
+   "sha256": "80f33ce2738e1d479773ffdd640309f1a6f33d81fdfce48038323061a24d761d"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0004_device_twin.py",
+   "sha256": "6aeba20ccf4452a02dafd5d81e25b0c2bd996224fd04e58d6ee87ad54cec62a8"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0005_serial_source.py",
+   "sha256": "e0d604336470ec5f553b515a99eafe1313ceea5b2ae84a1258a87e9553d85ea9"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0006_storage_baseline.py",
+   "sha256": "e9abe5d1e0ae1350fd0d302ea0c24ab7409a40c0a50b5ccb99cd8195a67e33e4"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0007_reconciliation_metadata.py",
+   "sha256": "c19652011e163649a28c2aebab71204c2246a8e616ef8722be122c6bf18f84f2"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0008_commands.py",
+   "sha256": "95b315f95f505bdba0bcaa76b21a290f234567bdb65e92f66900d59967be0742"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/0009_experiments.py",
+   "sha256": "7db2cfb1b78177102abcc6916914a912aa8d026ae0852be4f41a799115f8fc09"
+  },
+  {
+   "path": "backend/src/coldguard_backend/migrations/versions/__init__.py",
+   "sha256": "25f94537c877821bcf730807302048bb4ac6345e619c188e56bb7f6b9d5c245e"
+  },
+  {
+   "path": "backend/src/coldguard_backend/mqtt_consumer.py",
+   "sha256": "532bc7b79b89932e834bbb5a0013dece4109409dc2460713fc30eaa76809106a"
+  },
+  {
+   "path": "backend/src/coldguard_backend/normalized_store.py",
+   "sha256": "0e10f07f5a6ee84563a4c539f26edb77195a9376e72f819b6bf6a7e99fb23b44"
+  },
+  {
+   "path": "backend/src/coldguard_backend/observability.py",
+   "sha256": "c0937208eb47b7a41b721380b84b2a88433899098845d811c1a0bd98bccb7720"
+  },
+  {
+   "path": "backend/src/coldguard_backend/raw_store.py",
+   "sha256": "2d94f89aed588cf28ba63512b7171a3bb34e05852475f1851352de0b7a882f72"
+  },
+  {
+   "path": "backend/src/coldguard_backend/reconciliation.py",
+   "sha256": "90de0461b3aff10286f8201b4868ca8427d870409f04ad2819117bdbb4840e74"
+  },
+  {
+   "path": "backend/src/coldguard_backend/serial_observation.py",
+   "sha256": "8ccc12879b7a62a22f1e796f2832b47c901fbbc4e8e4bcb1839baad80a411fba"
+  },
+  {
+   "path": "backend/src/coldguard_backend/simulator.py",
+   "sha256": "6070a2d19648252302fffc096fcc2cafd8c0078b135b9d771ad5a6c1bb04d7ed"
+  },
+  {
+   "path": "backend/src/coldguard_backend/timing.py",
+   "sha256": "10412aabb0a797f1351106ac6a089b3ebdffc3fb98f97712da9b5fe0738681aa"
+  },
+  {
+   "path": "backend/src/coldguard_backend/twin_store.py",
+   "sha256": "43de70503de881f57ebc1230f15dbe81e55ceb53c64c083e89bf78f7c1c75aab"
+  },
+  {
+   "path": "backend/src/coldguard_backend/validation.py",
+   "sha256": "b1e7218ade2c382059494ea43c4169b2f00ebb4d79d63ffd780fa9253984c701"
+  },
+  {
+   "path": "backend/src/coldguard_backend.egg-info/dependency_links.txt",
+   "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+   "path": "backend/src/coldguard_backend.egg-info/PKG-INFO",
+   "sha256": "ac8858f581d2eff86f0b3daddee867857f5a86555f5f89d0b512e89baf802d64"
+  },
+  {
+   "path": "backend/src/coldguard_backend.egg-info/requires.txt",
+   "sha256": "ee4c44dd44dddc4ea1657861128c62e5c2b8da47abd2912569fa8505fe70d31c"
+  },
+  {
+   "path": "backend/src/coldguard_backend.egg-info/SOURCES.txt",
+   "sha256": "d61f21ebe0711f777f4d5c6dab29d8c45fa93b995cbb2f029c2fe29114342b9f"
+  },
+  {
+   "path": "backend/src/coldguard_backend.egg-info/top_level.txt",
+   "sha256": "b6aad3c5951730b10571779beb7cc6352167236b1edc1fc10d015b93c6763442"
+  },
+  {
+   "path": "backend/tests/__init__.py",
+   "sha256": "0a1582e3d086880744790f84b2084814e44527d8dc1c02076c456bd4039639f2"
+  },
+  {
+   "path": "backend/tests/command_testkit.py",
+   "sha256": "c925bab6d26d517e19ee6c1d5e4286c40c2aba1d34fa63f81639e494750139d4"
+  },
+  {
+   "path": "backend/tests/conftest.py",
+   "sha256": "00ecbb4c8c757cf37bef38b38bbde857537ab2f4d33f71c9c273fb9f58551517"
+  },
+  {
+   "path": "backend/tests/mqtt_testkit.py",
+   "sha256": "6edd335a3f768ee2dc3c1aa50ae650ad4a2e96aab2b062fb887dc5370f67d103"
+  },
+  {
+   "path": "backend/tests/test_ack_consumer.py",
+   "sha256": "3fd83e5d01436a1607f8981e65c448af84758f1cc1bcc45f9258f0fea74eee34"
+  },
+  {
+   "path": "backend/tests/test_ack_translation.py",
+   "sha256": "332ce27dfc961e9fc868a5b13330daef2bb85d5ede63655c8e077e330fc66c05"
+  },
+  {
+   "path": "backend/tests/test_api.py",
+   "sha256": "def35927a556529f2d29048354f0f7b9fad04b9d423d289b2e27a4da7968bf71"
+  },
+  {
+   "path": "backend/tests/test_bd_dependency_closure.py",
+   "sha256": "dc6da9b945f7e3413dd48896687774d35152e28290efb0c093737e77141b9f1b"
+  },
+  {
+   "path": "backend/tests/test_broker_security.py",
+   "sha256": "af8b1f4cee2df7113cbe7bdb2ef0108196f4ff16435063b3fe919fc79121ace7"
+  },
+  {
+   "path": "backend/tests/test_command_ack_integration.py",
+   "sha256": "220077d124699bcc8bc5fd90dd85f98adf20fae9f84628333c44f6ccf9bf52e4"
+  },
+  {
+   "path": "backend/tests/test_command_contracts.py",
+   "sha256": "69ccfae91eb3b142936b1959b058de341cb486c8917575bd3ecf3e1333690b5d"
+  },
+  {
+   "path": "backend/tests/test_command_integration.py",
+   "sha256": "8595226493aa904646c7740843377cd5c573b6b2b96fb5350fbb2a1f90ca2d39"
+  },
+  {
+   "path": "backend/tests/test_command_migration.py",
+   "sha256": "e06bca0f5359120077a8002fc1bd92a47415fcbecc06abfd41c9cb28a38a18c9"
+  },
+  {
+   "path": "backend/tests/test_command_path_runner.py",
+   "sha256": "749634ba279378b322b6c69a3bb77a110abad020889f0e31b53ce272d131b07c"
+  },
+  {
+   "path": "backend/tests/test_command_path_runner_d90.py",
+   "sha256": "34a6b66a942646f780e5bbdf50d162cef6bf464786aba5d8cc320e814fd40857"
+  },
+  {
+   "path": "backend/tests/test_command_publisher.py",
+   "sha256": "c207e7bfaccaa09fa287f979da93bb4a4b2c872ce41052a426083258a91f99db"
+  },
+  {
+   "path": "backend/tests/test_command_store.py",
+   "sha256": "76f85da1675b96b8e49aebeac9638be281059c942c75988ad95f45aa64962c49"
+  },
+  {
+   "path": "backend/tests/test_command_translation.py",
+   "sha256": "29d06ccdb305009e204a49d1f1a17d81beaec95f00bdd67556c3b17732334e5a"
+  },
+  {
+   "path": "backend/tests/test_config.py",
+   "sha256": "ec81ee0de376eb7204bcc50a1d078795bbe5daf4c88463d6683c438b92280fb8"
+  },
+  {
+   "path": "backend/tests/test_consumer.py",
+   "sha256": "61d8907f696af5edc1fcd4bf9effbe098f43dafab0acd8a7af6c34520998ae91"
+  },
+  {
+   "path": "backend/tests/test_consumer_mismatch.py",
+   "sha256": "68301cbfaf39dd2d2f048061599c34626eba581615d796fc99a5bfe2eb4050af"
+  },
+  {
+   "path": "backend/tests/test_contracts.py",
+   "sha256": "0b51eee14a5095bf0066cc52f237d0a89dad44b1afbc1a30cf14adf1486d49fc"
+  },
+  {
+   "path": "backend/tests/test_cross_team_data_paths.py",
+   "sha256": "c92e5abd70f4471fbd22efbb5e6f1856953d4db553c6570d487ef01bea542074"
+  },
+  {
+   "path": "backend/tests/test_cross_team_paths.py",
+   "sha256": "07ea3eb934ff4e2200d089170a922e7efe3576af130af31303a48a6d51d90a66"
+  },
+  {
+   "path": "backend/tests/test_experiment_migration.py",
+   "sha256": "21ed15df889bd5f261edf43945d24281ff593f2e29592b7f40a759b4574de079"
+  },
+  {
+   "path": "backend/tests/test_experiments.py",
+   "sha256": "414ce6f7f5e20dc36b92944558f96440083aa4f52b646ea9a6167728f6a8068a"
+  },
+  {
+   "path": "backend/tests/test_health.py",
+   "sha256": "12b2832d7d85416af33b7c0f4d2c2955b9f6589769a3f338ad5e327181b970c3"
+  },
+  {
+   "path": "backend/tests/test_ingest.py",
+   "sha256": "ad72b75a2f0e913ac8572d521332666776a49303b059a19e6a74e7f91630a643"
+  },
+  {
+   "path": "backend/tests/test_migration_baseline.py",
+   "sha256": "162b7168c1783c0e2eddfa8506b68c3c1e1f524afb3f3a5e363607821189ce6a"
+  },
+  {
+   "path": "backend/tests/test_migration_w02.py",
+   "sha256": "4e53146d36834730ff5e8209a061c2fe474462cbfc509801e9f5c507d8875b57"
+  },
+  {
+   "path": "backend/tests/test_migration_w03.py",
+   "sha256": "b790dd2c1c84a32e4a4d9b595345284e17b1492d8189659d04e519f0159c4e25"
+  },
+  {
+   "path": "backend/tests/test_migration_w04.py",
+   "sha256": "a6922892ba41dfc1f4607130c6a5dd408397a7f1db4d1657bc4d30727a1913d0"
+  },
+  {
+   "path": "backend/tests/test_migration_w05.py",
+   "sha256": "2848be982f39ed99b3991da82daf4ce4b4c26fb7e1298ede7cc708a58187f225"
+  },
+  {
+   "path": "backend/tests/test_normalized.py",
+   "sha256": "460c49b53d4dc1d3d26ee3f3d689da0e7b87d55954df8db64ae9df4f20172c76"
+  },
+  {
+   "path": "backend/tests/test_observability.py",
+   "sha256": "1a80e1aa6d5668b67d255b43b3cb8bb6a0e2bf0254cfd11f60f72cd6674669b7"
+  },
+  {
+   "path": "backend/tests/test_offline_replay.py",
+   "sha256": "528c8e3c3740e24a1f6cafc6f06349078c55b39aa0528ced6097df55ec5d90b6"
+  },
+  {
+   "path": "backend/tests/test_platform_reconnect.py",
+   "sha256": "acc5ce98c2701c2470868a4fe19e879ff6f1f4907d188dc0be9a35177324ff71"
+  },
+  {
+   "path": "backend/tests/test_raw_store.py",
+   "sha256": "572e40e38ff71b51d5db301c2d8cd351f084684deac86066abea68a5d852acd9"
+  },
+  {
+   "path": "backend/tests/test_reason_codes.py",
+   "sha256": "bdbca64638137481f93661528f1d069064878df0bfb9ca3e1b333667aab21996"
+  },
+  {
+   "path": "backend/tests/test_reconciliation.py",
+   "sha256": "30a6af8ae92fcc98aed2804ebcaac0199be85761b8cf087f2ae10d622402f107"
+  },
+  {
+   "path": "backend/tests/test_schema_compatibility.py",
+   "sha256": "a54036d0c56f4d24182dcf17cea81215c1f8a5a5cf10953cd2c1413228463588"
+  },
+  {
+   "path": "backend/tests/test_serial_gateway.py",
+   "sha256": "86831394c9d6d25edc858fdf054dd7d0797292391305a6043bd1b68b4f1c19ee"
+  },
+  {
+   "path": "backend/tests/test_simulator.py",
+   "sha256": "19d7dd0a0372c41807ecc122a7961d7ab5065503a77e3874af253c4710e19a25"
+  },
+  {
+   "path": "backend/tests/test_timing.py",
+   "sha256": "6a8dd518e12676535c5b1b0a2df074d3d54866f86befac34c593c1205dbbc4ec"
+  },
+  {
+   "path": "backend/tests/test_twin.py",
+   "sha256": "9eeb1126ce2e6003e1346f7cf498e0c5bf545254991b3f9dc247e2ac6c6b1fce"
+  },
+  {
+   "path": "backend/tests/test_validation.py",
+   "sha256": "7c598b13c6f7cb1af63d793236877e58679962227566dfab5a681e6d64ed9c5a"
+  },
+  {
+   "path": "backend/uv.lock",
+   "sha256": "b50502a85112d153f561641b651d356936511eeea330025f3ab34933254e37d4"
+  },
+  {
+   "path": "control/.pytest_cache/CACHEDIR.TAG",
+   "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+   "path": "control/.pytest_cache/README.md",
+   "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+   "path": "control/.pytest_cache/v/cache/nodeids",
+   "sha256": "654c6f334ada37942aea7dd7d2c363ca3dcf10d5dba6d6eb40356deaed29f07b"
+  },
+  {
+   "path": "control/pyproject.toml",
+   "sha256": "648da3de15ca185d7c7fbca08bf91536cfce4c34e95c7cda4750498e8f6f1aa1"
+  },
+  {
+   "path": "control/scripts/a_w09_crosscheck.py",
+   "sha256": "ea971094d464b477299e5db719f4e72190573f818c2c6190a4f153a0eeeb9a3c"
+  },
+  {
+   "path": "control/scripts/build_d_g3_matrix.py",
+   "sha256": "b604dea0a0c7fe7f53bbc668fe0390fb173c5c183de9a0bbeeef77a96fb47262"
+  },
+  {
+   "path": "control/scripts/command_projection.py",
+   "sha256": "364759cb0758538730ad7a92e1d9ed290c955ab49729a0a0f0712b0d4200f7a1"
+  },
+  {
+   "path": "control/src/coldguard_control/__init__.py",
+   "sha256": "76c92786b9a3950d8a463934ca10c8ca45e8325691ef2c8ed0eaaf8253272b54"
+  },
+  {
+   "path": "control/src/coldguard_control/aiw.py",
+   "sha256": "63d503e768c6581aea750a1774ba73cdfc144687c4130626877a5a00185270e5"
+  },
+  {
+   "path": "control/src/coldguard_control/commands.py",
+   "sha256": "d58c911c5ae631fc2ce77f97dfa8b4ffd41c1de24cb2c80689f7a24999f9a3f9"
+  },
+  {
+   "path": "control/src/coldguard_control/config.py",
+   "sha256": "d821ee231b57b1151bc0185aca77c9520c9336e109eb67a9aa40c71b92248505"
+  },
+  {
+   "path": "control/src/coldguard_control/controller_a.py",
+   "sha256": "772e5e05c5781fb1b8a1d4d5db1c8e69330f299044fd6f1d2428537f845a4c10"
+  },
+  {
+   "path": "control/src/coldguard_control/device_safety.py",
+   "sha256": "6f0af1ad834ec9528b227384b9acc66a25b8b501dd4da8055bc9ae354711554a"
+  },
+  {
+   "path": "control/src/coldguard_control/faults.py",
+   "sha256": "679005f1af1d75d48456d44c878e6a2bd61a5ab7643392d94bf3e63c2738a957"
+  },
+  {
+   "path": "control/src/coldguard_control/incident.py",
+   "sha256": "9a2fd3d796078f12e0bf6ecbc2e7c25f8b18ae883a680cd9021a4ef0efcae0b0"
+  },
+  {
+   "path": "control/src/coldguard_control/policy.py",
+   "sha256": "b6db9d2bcee057372d2c60dacc4f093af37493af17a54a291446070bbe747d8f"
+  },
+  {
+   "path": "control/src/coldguard_control/quality.py",
+   "sha256": "75c95a2b924d32eb6a9e42cbfafa7c56bb9dc9182680f115a8003ce054755d17"
+  },
+  {
+   "path": "control/src/coldguard_control/safe_local.py",
+   "sha256": "9e039d58ab2acd22fdbddb17b4da94b95aacda061ad86fe3dbda0882abf0a693"
+  },
+  {
+   "path": "control/src/coldguard_control/taxonomy.py",
+   "sha256": "8a7039ab63bb8b31903c02c5590e252dfcdfe4efca491f5c0100ae048019f6b4"
+  },
+  {
+   "path": "control/src/coldguard_control/types.py",
+   "sha256": "787febc8f108466c7f4c806446bfe89845aec939f519cb82af30c307042c5f47"
+  },
+  {
+   "path": "control/src/coldguard_control/verification.py",
+   "sha256": "09cf89f840fef1d998754a97b312a1acdf564775f7f397d26b2ec06d2bf87f82"
+  },
+  {
+   "path": "control/src/coldguard_control.egg-info/dependency_links.txt",
+   "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+   "path": "control/src/coldguard_control.egg-info/PKG-INFO",
+   "sha256": "2ebbd40ba2d380c92647f955ad3abd7a1339b4a23b479e4bd8a306d1ea22c5e3"
+  },
+  {
+   "path": "control/src/coldguard_control.egg-info/requires.txt",
+   "sha256": "f5a4bafdfd9d4e3ff876fd1c3544562c5a926e817d38df4243330586b36699d5"
+  },
+  {
+   "path": "control/src/coldguard_control.egg-info/SOURCES.txt",
+   "sha256": "f5ba52d398037143aec6858473e3b97d7ea22d7d111c9e9555ac14f2a210251e"
+  },
+  {
+   "path": "control/src/coldguard_control.egg-info/top_level.txt",
+   "sha256": "328760f75d58704f93faf71ce993ba15b1ccc9c4b564ed9f1dd846cd0b66c44e"
+  },
+  {
+   "path": "control/tests/_builders.py",
+   "sha256": "50a5bd181a2681d97bdea577cafc03046d81b0c7577f53c8d1018028c9e2d854"
+  },
+  {
+   "path": "control/tests/test_a_w09_crosscheck.py",
+   "sha256": "84a739a4babf6c14ae0952aabe582fda01f0fb211e7c3ecb705b7a608ec038d2"
+  },
+  {
+   "path": "control/tests/test_aiw.py",
+   "sha256": "17ec2550001a34089db3bdc67168cd1087860418bd4856a2b20366d4029f8fab"
+  },
+  {
+   "path": "control/tests/test_bool_types.py",
+   "sha256": "d6421fd1b82ae3025964eb1df98452fbd3c54dfffe847b5938e3300ed4337d64"
+  },
+  {
+   "path": "control/tests/test_command_matrix.py",
+   "sha256": "cfb5c723013a0b745bf77ca26cb9e66a391e9ba365279521ed5d0ba646e18a73"
+  },
+  {
+   "path": "control/tests/test_command_projection.py",
+   "sha256": "6fe93b3c7dca9bb52e55e5a3b8689d530c3c5b82855f4bfebb4d6d9a2efbb359"
+  },
+  {
+   "path": "control/tests/test_command_ttl.py",
+   "sha256": "9c62fd4bae16363d8bb4a140f5ecb9a799cb23c57e759f05664c9181463bae4b"
+  },
+  {
+   "path": "control/tests/test_controller_a.py",
+   "sha256": "4defd4b6f44ce790c3388a07304f031d016cc8dea2b767536be5a275cce0f51c"
+  },
+  {
+   "path": "control/tests/test_cooling_health_states.py",
+   "sha256": "854cd3f36acc6e6ba4ba9bb1e5c298e935b112014de573b1ce28c99b80cc3477"
+  },
+  {
+   "path": "control/tests/test_device_safety.py",
+   "sha256": "00bc5b68019af654dc61cfdc61ec4780a2529f5bd1449f00c9d04cca04ffc426"
+  },
+  {
+   "path": "control/tests/test_enum_types.py",
+   "sha256": "26fa465fb63a73a7783f9cb2cdedc46e96d67ad9359378ead7e98df7de5e7723"
+  },
+  {
+   "path": "control/tests/test_faults_module.py",
+   "sha256": "6d73777c2ff49c49e54a6e61f604265306743fef67b8b8e68933ab13f26e3ee2"
+  },
+  {
+   "path": "control/tests/test_incident.py",
+   "sha256": "b6a1471abbf257cdf0fb9429a4fa81db5b873f4fa944fce728c803f47f046373"
+  },
+  {
+   "path": "control/tests/test_incident_actions.py",
+   "sha256": "f69d596b2787e8e5e0b16d3f68794308d243d514c1c944afa3e6dae472e3cdb3"
+  },
+  {
+   "path": "control/tests/test_nonfinite.py",
+   "sha256": "a190150cef67b81b34556a1ccf69c2ea44b7a03391d28359e62cb6ddb8669a48"
+  },
+  {
+   "path": "control/tests/test_package.py",
+   "sha256": "c710e3e207a1f933a2963b27711a1c9a136bc39788ef959bea7c46efc2802d2d"
+  },
+  {
+   "path": "control/tests/test_policy_priorities.py",
+   "sha256": "a94f8d91b54a0df7ced1af54efa824303bf33e112f39909c68d764120b3476ff"
+  },
+  {
+   "path": "control/tests/test_policy_states.py",
+   "sha256": "0851beb805f9bfc165f976cdde186afe59fd0b5d302683305b35e824951e1263"
+  },
+  {
+   "path": "control/tests/test_purity.py",
+   "sha256": "e27b9c554a94c70be21b025b85b8bafc6412bc661781b09a80c808c736010346"
+  },
+  {
+   "path": "control/tests/test_quality.py",
+   "sha256": "cd99011c76286428c7efadf2e48e7fc29e828739036d9d98a4b9245c9dc98777"
+  },
+  {
+   "path": "control/tests/test_safe_local_exit_gate.py",
+   "sha256": "6f26b0a08fd391d7df09093d607b6b678489d4a421a34f327f08e2d5c572a43a"
+  },
+  {
+   "path": "control/tests/test_safe_local_session.py",
+   "sha256": "1e9823a1e6a33dcf85478a9334830b91b79e89c787b15a37c6641825ce374039"
+  },
+  {
+   "path": "control/tests/test_synthetic_lifecycle.py",
+   "sha256": "843e1e7e362d3edd4267b3dbb08f659a05589fb001916cc70a522386f77b2cfb"
+  },
+  {
+   "path": "control/tests/test_taxonomy.py",
+   "sha256": "5e56cdb1f3007fc768561bc4c5ce025f1f56ddeb3e55408fb0d1b28a6115634d"
+  },
+  {
+   "path": "control/tests/test_verification.py",
+   "sha256": "6d9458f5ecdf384ad45411f00add6874ca599b4b3f6f89ad00358756eb4fd547"
+  },
+  {
+   "path": "control/tests/test_verification_states.py",
+   "sha256": "f752317f74167c5c9e08798d7c16d11a56fcba4439b72f25275fc9705d2d480b"
+  },
+  {
+   "path": "control/uv.lock",
+   "sha256": "afd2112b413a22d6e752985410190d189b8767a9f9dff8374ef6f59a2e36aee0"
+  },
+  {
+   "path": "docs/premerge/combined-tree-manifest.json",
+   "sha256": "70fcc289c595879aa0e86afd72716d133220e092274ca287f83dbf38c58da46b"
+  },
+  {
+   "path": "docs/premerge/premerge-combined-tests.md",
+   "sha256": "aa161562d82a1b6988762aa42c2a2b1c557a7287cdcbc811a650eacc2fb38699"
+  },
+  {
+   "path": "docs/premerge/premerge-conflict-ledger.md",
+   "sha256": "f9e086be7c9670e15eabeafcf748d17539642c29cb3bfbef08c3ecced1021ffd"
+  },
+  {
+   "path": "docs/premerge/premerge-data-integrity.md",
+   "sha256": "bdf8e96406df01d0d2260c8cda957010168a606ee5f84602e210fa9916db13b5"
+  },
+  {
+   "path": "docs/premerge/premerge-source-lock.md",
+   "sha256": "26bb5fd7e8d1fc6865f9fcba0e9d02ec0dcd05965fe6fbfe644dcfe0af1c4ad9"
+  },
+  {
+   "path": "firmware/CMakeLists.txt",
+   "sha256": "61174dfc23006dd4a17ddfb0c2cd4dcdd861e910c853d2ab957b2832aa8da0c4"
+  },
+  {
+   "path": "firmware/h6-bench/CMakeLists.txt",
+   "sha256": "6432a5ebb0385332d21f8e7b50b766d3cdae10c587421a9f5528de4ed19d39f2"
+  },
+  {
+   "path": "firmware/h6-bench/main/CMakeLists.txt",
+   "sha256": "a849a86ea48420d8a00470e883ed7b8f34c1e268834c9300df18d418f0bb1ba5"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_config.h",
+   "sha256": "ffc7fff981b76a183b0eaeb449f9a03de8959735ad3588cff3f8d998b681234c"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_main.c",
+   "sha256": "c496001e081fe8371b2d763a960000bd4dbe2cac66297d799a5836a7a11be6e9"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_pzem.c",
+   "sha256": "ec6bc24dab4017086b45e6ee8726b7d7bfca143054dbd3298537e20cf9dcfe3a"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_pzem.h",
+   "sha256": "bfab70137ad4588ecbad64c2115172e41aef754567ceaf091f6000beee6afbd1"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_selftest.c",
+   "sha256": "09998ca7629e07db6ebaad5cdc39742fc953e77a93186f09751b82d845ef9b22"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_selftest.h",
+   "sha256": "cc64a9c684492c3482d054056fdd045fc313198e3fd9ed06ae4f1283775409ca"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_state.c",
+   "sha256": "f84a3f2354ba1dc4143dac59f31594ebde7f1895eded9cc8ed765d9f2e9bf29d"
+  },
+  {
+   "path": "firmware/h6-bench/main/h6_state.h",
+   "sha256": "1b8791aa722e4efc7c2baa98cf99ece93778d18e12a7b5494a0a9706412270d0"
+  },
+  {
+   "path": "firmware/h6-bench/sdkconfig.defaults",
+   "sha256": "cdd0b1eeddaa129d55dd09dc533c2d5151522c56017c43c2f3313549a498a389"
+  },
+  {
+   "path": "firmware/h6-bench/tools/h6_serial.py",
+   "sha256": "bbb4d3493489beebfa237eb49b52002ab18ae55b951ccbf30964cee17bbebb63"
+  },
+  {
+   "path": "firmware/main/app_main.c",
+   "sha256": "d1a9ddfc2369f4b515b7c3ee09e88682d9247fe09a92d243978078e960c2f9f2"
+  },
+  {
+   "path": "firmware/main/cg_actuator.c",
+   "sha256": "57242b3c78d5d77692ad009872d6f76ea32e7f33344d7aa517083ab52bf5b2eb"
+  },
+  {
+   "path": "firmware/main/cg_actuator.h",
+   "sha256": "e778ad8a5f84ca66b8f21c6bcdca275b7af50b65bc47cb6ec1a20e208fe57230"
+  },
+  {
+   "path": "firmware/main/cg_bme280.c",
+   "sha256": "4f579d3d13da327f0daa197418006e93ff459d428400dc7c9d4b11cf7418fb39"
+  },
+  {
+   "path": "firmware/main/cg_bme280.h",
+   "sha256": "5fffee93b459f2e994eff37a609593b5ead068ab44ccb20e8199cf9e20b12129"
+  },
+  {
+   "path": "firmware/main/cg_bme280_idf.c",
+   "sha256": "bf5a869583f2cc6026dce5157517df1994f8d53555ad5b38f353a775352d9d27"
+  },
+  {
+   "path": "firmware/main/cg_bme280_idf.h",
+   "sha256": "fc18357a484a72da70b4ea53105502cec23476d867f3ad3b9d54949fec8dc480"
+  },
+  {
+   "path": "firmware/main/cg_command.c",
+   "sha256": "adf2abac02e42cb155fca038e6119daf241f0b7ff237469a3bd126a48df4b201"
+  },
+  {
+   "path": "firmware/main/cg_command.h",
+   "sha256": "7b9ca01800cd76d8a65c1a67ad597b67dfc6513e572cec433d51aaeb584b8a26"
+  },
+  {
+   "path": "firmware/main/cg_commission.c",
+   "sha256": "7ceba4db6e7c41797a2ab4ce491c19526afd402ce4b4796696df61d75627d89b"
+  },
+  {
+   "path": "firmware/main/cg_commission.h",
+   "sha256": "8ddff47e73aa8eff3cadfe8ddd88625750375aebd9974b93d6e51bb88e0bb6ef"
+  },
+  {
+   "path": "firmware/main/cg_console.c",
+   "sha256": "f0c3595f020864aaac204562e0be2416aeb80df0148b8a9ae6db6d3315b2f4f3"
+  },
+  {
+   "path": "firmware/main/cg_console.h",
+   "sha256": "a306a6e74ff5a0cd45e5c05cf2c7e393334d88ee23047aea9cb6e57a6f6d4d3e"
+  },
+  {
+   "path": "firmware/main/cg_crc16.c",
+   "sha256": "6ccaa1abce1ee13c9cc0df852991e1ca44f6951826e871bc8094d2e9c8aef315"
+  },
+  {
+   "path": "firmware/main/cg_crc16.h",
+   "sha256": "b5c45c096a221f97416d327f2895b0760c5f1670e78bb244ebf0e3ba05de908c"
+  },
+  {
+   "path": "firmware/main/cg_door.c",
+   "sha256": "1109b45c320723c4bc69443825d73045eabb7a336685ce19298816c23aa91ec0"
+  },
+  {
+   "path": "firmware/main/cg_door.h",
+   "sha256": "36ba154c45c4ef4c4006a47218215b869395d874819f254c4d1929ac488d47ba"
+  },
+  {
+   "path": "firmware/main/cg_ds18b20.c",
+   "sha256": "530485955d872c51384e2f2cd1d73914fdacb08e7fbe4b4761ac7cddcdf0ad51"
+  },
+  {
+   "path": "firmware/main/cg_ds18b20.h",
+   "sha256": "55bb0f88cfe853dc0479341f182e969035772d95524bf9942f3e8658faf12d55"
+  },
+  {
+   "path": "firmware/main/cg_fault_inject.c",
+   "sha256": "c4f7c95dafd6319d0a142e429a1df2bc5810e9eca3d79bf4c68adc88b5b05039"
+  },
+  {
+   "path": "firmware/main/cg_fault_inject.h",
+   "sha256": "2388f96660b8e5d9491a650af798d66a92db167da3ec8624ba9db7609bf1ce68"
+  },
+  {
+   "path": "firmware/main/cg_health.c",
+   "sha256": "f840d9da08424ba353b865db8b47824bf3ef086d7df0afe14b486cf98adf342f"
+  },
+  {
+   "path": "firmware/main/cg_health.h",
+   "sha256": "ad96dde8248c21433c270e6a44034ff7c718327ca0fee9789716d2cb56898f46"
+  },
+  {
+   "path": "firmware/main/cg_log.c",
+   "sha256": "756eacfe9f1c630ad042b1a0f6aa52400ef2e037b2ef18d387f4ef85723c2a1b"
+  },
+  {
+   "path": "firmware/main/cg_log.h",
+   "sha256": "6a88ab4e04912c78eee18e3597dd8524229cd95af68c632edb0fc36efb4534f6"
+  },
+  {
+   "path": "firmware/main/cg_onewire.c",
+   "sha256": "eaef7ac31ae88385e04fd3983c68c8aeb5a075014b5acba33bd7cb454f5ef790"
+  },
+  {
+   "path": "firmware/main/cg_onewire.h",
+   "sha256": "11b66aed41ff041d76c0ffdd6a17c5065fb72e822e41e027dc7d769681a178fe"
+  },
+  {
+   "path": "firmware/main/cg_power.c",
+   "sha256": "16c1f168ce05a96d75488073552668c50f45c707f92b958d125c75bc184306c7"
+  },
+  {
+   "path": "firmware/main/cg_power.h",
+   "sha256": "3d98f0305d0aae29cdd06e9e5ac742aee8422fbb059b3a218923a6efb08c9dd1"
+  },
+  {
+   "path": "firmware/main/cg_pzem.c",
+   "sha256": "31288112f7feb98675b01a5da8e4bbf21f456c82795c48e358654164a98e88d7"
+  },
+  {
+   "path": "firmware/main/cg_pzem.h",
+   "sha256": "ee74ef5528819c67c21dbd7f0ed588c1847f00a605c42ba97156a1bd788c9d0e"
+  },
+  {
+   "path": "firmware/main/cg_quality.c",
+   "sha256": "3a82faa92a70bbbc7e12202c0ba5aa1e75be7b76c83e3543dab0a51cd40b57db"
+  },
+  {
+   "path": "firmware/main/cg_quality.h",
+   "sha256": "60f310d78837b3f4e1bd1198a5eb33f3737187fc385abd94645dbb47cceace41"
+  },
+  {
+   "path": "firmware/main/cg_rom_map.c",
+   "sha256": "65786a0febdfdc47e6f2c57e2a9d3d7a30c4d2dd52d728b7d081856f12f63b72"
+  },
+  {
+   "path": "firmware/main/cg_rom_map.h",
+   "sha256": "fa1bb646f8879e4b2a697c574fa8e45289d855f73b743f5e9d397f4e5d71177a"
+  },
+  {
+   "path": "firmware/main/cg_rs485.c",
+   "sha256": "f1f5aefba4661dd029187210af1c91aab119d5a8db7a6bca6960c02fc0658600"
+  },
+  {
+   "path": "firmware/main/cg_rs485.h",
+   "sha256": "5807240722b13862fc30583e65978b8b4133996dfdff21b8d4bcecae8a78c5de"
+  },
+  {
+   "path": "firmware/main/cg_safety.c",
+   "sha256": "6a205edb961871abcf0984c92178ca4b6bdbf93b393ea6b471a75a466f180abc"
+  },
+  {
+   "path": "firmware/main/cg_safety.h",
+   "sha256": "26db865fbba522e101267c82c5230525870736d0d7e8e633e960b53173d43732"
+  },
+  {
+   "path": "firmware/main/cg_snapshot.c",
+   "sha256": "1e308dd9718e44ef0e3f74ae8668aa2bdbcd5eabc7987d39272c59bb4251850c"
+  },
+  {
+   "path": "firmware/main/cg_snapshot.h",
+   "sha256": "0a1b9a62ebe36813c98c638694a68d007838f67663dd31769a47f00a61352e30"
+  },
+  {
+   "path": "firmware/main/cg_tec_command.c",
+   "sha256": "79322ada83ff1c8ccf005031b3c08ab1a2146bba5e4f7804df67626cc3aa9f7b"
+  },
+  {
+   "path": "firmware/main/cg_tec_command.h",
+   "sha256": "e9943258fa2482cfe98b978efdc171d9e6b83123e9d5e53d36fe7cc4fd140cc6"
+  },
+  {
+   "path": "firmware/main/cg_tec_control.c",
+   "sha256": "a26ddcee3c16d0a109f2735dc449c116513266a962a693676c6afb62e64fb1a9"
+  },
+  {
+   "path": "firmware/main/cg_tec_control.h",
+   "sha256": "50e94b3b74b732cb0eb656617a66f7008f91bf5c22ef27d0c0bb824f7b41c039"
+  },
+  {
+   "path": "firmware/main/cg_tec_hw.c",
+   "sha256": "7041de3d219f1e49b8069c9c1892a98b2a8d85cdd2788576836b304bcd6077ed"
+  },
+  {
+   "path": "firmware/main/cg_tec_limits.c",
+   "sha256": "b53627e1a16b4d7a713aabe0192f6d7c08607a71fed7683dac9527768b44e3f1"
+  },
+  {
+   "path": "firmware/main/cg_tec_limits.h",
+   "sha256": "a66bda13e17d8bab709f11342640c0981e7eae6861708f2cb50c2132a0c3ad17"
+  },
+  {
+   "path": "firmware/main/cg_tec_platform.h",
+   "sha256": "c52549810db921176caba2ec455528bf30f513b91e9b0b1a4d2dfa1bf39a5f04"
+  },
+  {
+   "path": "firmware/main/cg_telemetry.c",
+   "sha256": "ba60ae607cedaf190571f087766516510b85ffe8880286615b2a50b741ab077e"
+  },
+  {
+   "path": "firmware/main/cg_telemetry.h",
+   "sha256": "f50bc99f05fc1f0095a6e505aca2ca37cfc6640f160dd1dfed63a9c9f175674c"
+  },
+  {
+   "path": "firmware/main/CMakeLists.txt",
+   "sha256": "183deab471578c25989217d66128343ec518f9e140534504691e25a93429f204"
+  },
+  {
+   "path": "firmware/main/coldguard_config.h",
+   "sha256": "f5e476554f1d9cf465a858a8d45a87a44223563bab5725ed2f11b89a558e8aad"
+  },
+  {
+   "path": "firmware/sdkconfig.defaults",
+   "sha256": "198a9bc943b1d3a2e4e9e35679db20caf87d44dc50037ed60fe8e2a8de6f982d"
+  },
+  {
+   "path": "firmware/tools/cg_auto_reboot.py",
+   "sha256": "03752128ff42dd8abfcb18bcec306e632ef94f9f1d2063e1120f7a08d091c14a"
+  },
+  {
+   "path": "firmware/tools/cg_build_boot_default_off_csv.py",
+   "sha256": "0e4f8377b171c5317fa31a1f302e69f80bf6c569092dc09685a2cc3e0ffcb2ad"
+  },
+  {
+   "path": "firmware/tools/cg_build_cooling_trace_csv.py",
+   "sha256": "244456bea891b810a02d26c0f367bb5d01cb4ec9b6677b0afb9de798bf4a370b"
+  },
+  {
+   "path": "firmware/tools/cg_build_door_csv.py",
+   "sha256": "e2ee9038af32ca8060710d54f1e56820bfa051e14c84951206c09e262e3b6130"
+  },
+  {
+   "path": "firmware/tools/cg_build_h6_trace_csv.py",
+   "sha256": "211c4d2e64d04500fb306b13861e381f7b5d220430053de3b4b74411009ba33a"
+  },
+  {
+   "path": "firmware/tools/cg_build_pzem_off_csv.py",
+   "sha256": "8c391da24e9c24e8aa76a4adb08ff8705c5a891d4fa2b6c0bdb37c57bb5427fb"
+  },
+  {
+   "path": "firmware/tools/cg_build_sensor_csv.py",
+   "sha256": "c961d898bd1c8ec0ed789874aefd7f9599fb89a319865e00e795e0d92089d0f4"
+  },
+  {
+   "path": "firmware/tools/cg_build_telemetry.py",
+   "sha256": "03195e947cf55bc6182fbfdb3fe392a0373507edf99d63dd26fdcfc4ec8eb0e1"
+  },
+  {
+   "path": "firmware/tools/cg_capture.py",
+   "sha256": "ce38eecfd3a9c2800f6ffca808e32f23b9d252a4bc3d1e5419dda468220c456d"
+  },
+  {
+   "path": "firmware/tools/cg_check_firmware.py",
+   "sha256": "a78d6d4c3ff31e8485f1c21caa4c34dcb783abafa7e454f7958f52d32610e528"
+  },
+  {
+   "path": "firmware/tools/cg_check_firmware_w03.py",
+   "sha256": "6181dadc1bab65bed5ce4600d67815be12944d52263887ca05d249391c55e77d"
+  },
+  {
+   "path": "firmware/tools/cg_check_firmware_w04.py",
+   "sha256": "a9d7bd87e1c0be1a7a1a4c5c9a23f2f3f95d2db56488e6c9e4ae646eac6074b9"
+  },
+  {
+   "path": "firmware/tools/cg_check_firmware_w05.py",
+   "sha256": "90d52250071d7d75cee6f2c4ffe5d85893363cadba755ee7e7130e5c835ec616"
+  },
+  {
+   "path": "firmware/tools/cg_check_firmware_w06.py",
+   "sha256": "5c53aa435bd3043c21d94fd7fd2c4ddac890ef81bc935abacf813375bb6c837a"
+  },
+  {
+   "path": "firmware/tools/cg_command_trace.py",
+   "sha256": "4bc7bc53c88896788fc32618e73c7d54b208743e03e0a1cc760914aa6b3ddf87"
+  },
+  {
+   "path": "firmware/tools/cg_gpio_map.py",
+   "sha256": "950f56fc19680501c089f8b173ea8eb0d9b5af938825ad7303f9a1b66cc9fa12"
+  },
+  {
+   "path": "firmware/tools/cg_modbus.py",
+   "sha256": "2f83430a2ae2a362ad9337f47d23b056240541b0c3022be5bef29186a592d389"
+  },
+  {
+   "path": "firmware/tools/cg_probe_roles.py",
+   "sha256": "5e3c82679636a6e11638258b9089b00d72abaf13d643977db97c0f3b6428aa6e"
+  },
+  {
+   "path": "firmware/tools/cg_pzem_readback.py",
+   "sha256": "55d28422eeba51801f61923c970670026ef53629e8ece6628ed77480fa20a5c2"
+  },
+  {
+   "path": "firmware/tools/cg_reset_criterion.py",
+   "sha256": "0f593fcc3f11341ac12d5f570e96b6c3bd6b5b4cd59774e113841d2bb92ae6fb"
+  },
+  {
+   "path": "firmware/tools/cg_s4_refusal.py",
+   "sha256": "d1a632eb8032b87a609eae2a2be14485eb8696f2dc8f3f160c3bffeb389cdfda"
+  },
+  {
+   "path": "firmware/tools/cg_serial.py",
+   "sha256": "7d3be34a5fef243d5d6704a446c2eefb19591e292138738b077ca42f98dd277b"
+  },
+  {
+   "path": "firmware/tools/cg_telemetry_schema.py",
+   "sha256": "3aea3a803f1fda25a63c1d51f83c9b6a2f692a4102bf23d138c0c2fbb8c9ea43"
+  },
+  {
+   "path": "firmware/tools/cg_thermal_repeatability.py",
+   "sha256": "04c6e28a58bda9d0f350815e5739b3a86e8478e148ba49c4212ac5996e9e22d5"
+  },
+  {
+   "path": "firmware/tools/cg_timing_analysis.py",
+   "sha256": "4a96b54674dc8f83894bf11e2cda7a3fbe074b593ee5e15cb43d61267884b78f"
+  },
+  {
+   "path": "firmware/tools/cg_verify_reboots.py",
+   "sha256": "3c3517986226989952a80bbed2c4adab47b119ecb75748be29f3245eb29585c1"
+  },
+  {
+   "path": "firmware/tools/cg_w08_envelope.py",
+   "sha256": "f3bf22e1e14c6adfd853e069204ed8c845b75909b9c6a47728a1c81ffc50b61e"
+  },
+  {
+   "path": "firmware/tools/cg_w08_gate_a.py",
+   "sha256": "968b5982de9792698f02c34e7a6d445f5fc7e7474e286fc76fc26fe8173ca770"
+  },
+  {
+   "path": "firmware/tools/cg_w08_hot_side.py",
+   "sha256": "bdd899fe230f53c9df732fec54887763b1afb3ca72210f857d65b355c5b5e8d1"
+  },
+  {
+   "path": "firmware/tools/cg_w09_capture_parser.py",
+   "sha256": "80c35a6da2807dfe1c58b679c4f4aeab177c92088d6b4a4de16710dbd1a84f01"
+  },
+  {
+   "path": "firmware/tools/cg_w09_export.py",
+   "sha256": "b5ac08b396e66ef3420b7f95f1b18605dd48b1d3d61f4f79d9516811fa3f6266"
+  },
+  {
+   "path": "firmware/tools/cg_w09_noise.py",
+   "sha256": "b9c18cdd6eda12fe47f0ac310e25074735f76530d13663d7386dc1be734e58af"
+  },
+  {
+   "path": "firmware/tools/cg_w09_run_protocol.py",
+   "sha256": "55d5e0c3f811c19aa0515f06daf5cc9cfd262172cc4e07047ea03810603f3df0"
+  },
+  {
+   "path": "firmware/tools/cg_w09_validity.py",
+   "sha256": "3c148a9cc5dabf59554133fa972d8edffa9b1379e52dd42936cf5898ea2f7936"
+  },
+  {
+   "path": "firmware/tools/cg_w10_door.py",
+   "sha256": "6781e841797c1f07f43f8e05a0fa420689248cf4492eceda66b72f92083f6d65"
+  },
+  {
+   "path": "firmware/tools/cg_w10_pairing.py",
+   "sha256": "8f6763df6ed9751efae2fb8d135fdc536ca51ed7745a33cd59fe079ea563e617"
+  },
+  {
+   "path": "firmware/tools/cg_w11_s3_feasibility.py",
+   "sha256": "045eb79ac102bef690bac3b0a1b37f62910836ed8e8c58ab8b7bc5ee20c2c0ee"
+  },
+  {
+   "path": "firmware/tools/cg_w11_s4.py",
+   "sha256": "6fd180491639ad12002b86aba31aba18248223e140d747d49a12706042b9d653"
+  },
+  {
+   "path": "firmware/tools/cg_w12_drift_audit.py",
+   "sha256": "13d59c82d632f8945da070e7f11cd68ef38c6c18aff1f061251842cdcba018de"
+  },
+  {
+   "path": "firmware/tools/cg_w13_timing.py",
+   "sha256": "63054428457543f2e7300bb6726824c6d57cc653e95828f7c387e28a2bd87648"
+  },
+  {
+   "path": "firmware/tools/cg_w14_pairing.py",
+   "sha256": "43f3d15f95058a6dd81864c6ab33ac08c5293c1cf19a2e5110d047237ea5ff8b"
+  },
+  {
+   "path": "firmware/tools/cg_w14_sensor_qa.py",
+   "sha256": "ce021c93f6ca813ab03a3a1de452821dfe88ddc3320bcce9ba33312e07abb769"
+  },
+  {
+   "path": "firmware/tools/cg_w14_spatial.py",
+   "sha256": "d9e79f4d4aa68e99dd02f3c26e45dc29a14191b4b0f818c9c038bcecd2dbf850"
+  },
+  {
+   "path": "firmware/tools/cg_w15_pwm_gonogo.py",
+   "sha256": "cbc3d3f2427c1338a18a4ffd454c2853203853985f74c71aad73f33d2fdfbb37"
+  },
+  {
+   "path": "firmware/tools/cg_w15_pzem_quality.py",
+   "sha256": "7f6a5c3a941038a7aa13d5b3d446809d187bbd44402f368103618d2ec88e2db1"
+  },
+  {
+   "path": "firmware/tools/cg_w16_comparability.py",
+   "sha256": "2337b65a538c67ebf9e6c6504c10a238d2c54f8777e7f4d755cc8d8732932b3d"
+  },
+  {
+   "path": "firmware/tools/cg_w17_shadow_audit.py",
+   "sha256": "a6e6ec4ff71819e4d113ccb7e88a844eab83877372af9a65f3deb3d0dc70f25a"
+  },
+  {
+   "path": "firmware/tools/cg_w18_enablement_audit.py",
+   "sha256": "261cb0153d0a10bf718816e9db79f9fe4adb07235cf70760fc145a3b51ff9419"
+  },
+  {
+   "path": "firmware/tools/cg_w19_campaign_prep.py",
+   "sha256": "be268861da3967c9a8ce02ae14864853a00f353b9e444bd58ed7789082224619"
+  },
+  {
+   "path": "firmware/tools/cg_w20_campaign_freeze.py",
+   "sha256": "0fab7f2a67527408e9d8eb23b848ac1c747016ce921193c0b996aef55207661b"
+  },
+  {
+   "path": "firmware/tools/cg_w21_reliability_audit.py",
+   "sha256": "6e8738506bddf5f095e6f2c93f874ce8f4047cb347b6ff46d4ffab8c70b0b77c"
+  },
+  {
+   "path": "firmware/tools/cg_w22_rerun_governance.py",
+   "sha256": "bec5644c5e65197ec825949162dba4789d8afb96867c970b3013de5b0a593a08"
+  },
+  {
+   "path": "firmware/tools/cg_w24_final_freeze.py",
+   "sha256": "67ccbc3bc4324f1a657eec52e931e2740187ec02b39cd5a946cb7e31b60b5115"
+  },
+  {
+   "path": "firmware/tools/README.md",
+   "sha256": "0b2d9da69936722d5de8e8a0724059a6285f9e7e674ba73fa5ccb880f89491aa"
+  },
+  {
+   "path": "firmware/tools/run_all_checks.py",
+   "sha256": "f21de4d5442ff18855623899f8bd0ef023e6aab1c5b30462c301e1429730927b"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w03.py",
+   "sha256": "03d498ddf7a09271ccfe50584d8a7db3f355ad3598dda8e761436221c5af7cca"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w04.py",
+   "sha256": "5ea68c1af3770d9c4032866112352ba0719f5810e2154699b8e44dac6367aceb"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w05.py",
+   "sha256": "329e5fd27674cec6b81ece3f411c28c4211c0ddbfbe24648b38394b09b3bd02a"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w06.py",
+   "sha256": "129823fc7a33e4d01caf97ebe33c2789e12d29f33acb23d82b8b128ddfdf5e3a"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w07.py",
+   "sha256": "1b86bbd2c8f1c747f2e9c3aa69a7bb586c6ad414fc8f29baa45c83c01a136728"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w08.py",
+   "sha256": "e721467f188da81e82655b5b9aa2e046a6c4a9fcb1b3a9f499ea297be7f5ca5d"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w09.py",
+   "sha256": "596cfd61db9b5e15f09b5524ea5be8c583b055ecba94be0737c411de0c3a192f"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w10.py",
+   "sha256": "1ec75b5bb72a099f67473bb01f3dfd94844cbe93d59a6e0be332db6afa92c219"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w11.py",
+   "sha256": "0b3769f6cf358327727feeace4ca732bdeec1cf37f219899e649812fb36d74ed"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w12.py",
+   "sha256": "ad965d9da301ae05aa17a38a6e29b3bf68885156f79cf41ff61588af5f3bb68a"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w13.py",
+   "sha256": "df722381decbf484dced3b3b422e11607c89134ac0c90c136420a3549606ba8b"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w14.py",
+   "sha256": "719fbfe32c4f6002af6ef1d53104d735a047b17e5a7578f3d452d0f791dbd1d3"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w15.py",
+   "sha256": "3965292260035f0909d0e4c02709bdf546c443aae52e678cb9a055ed1b0fa867"
+  },
+  {
+   "path": "firmware/tools/run_all_checks_w16.py",
+   "sha256": "32ee0a20803343422963bec3a074ad57f22990f0ab75b0ec3ad91ffdaf91e207"
+  },
+  {
+   "path": "firmware/tools/tests/cg_bme280_harness.c",
+   "sha256": "84f7d2cb142d92c5894981e68dd696a071473fda97f054a129130ba9b941b162"
+  },
+  {
+   "path": "firmware/tools/tests/cg_bme280_integration_harness.c",
+   "sha256": "eddce41009759550366e8b431e41b484498c7336d8624ae35fdbef843d57006a"
+  },
+  {
+   "path": "firmware/tools/tests/cg_fault_inject_harness.c",
+   "sha256": "42463436eba4726d931f0120cfec94b4f93d5559b27fdaac958a540e2f746001"
+  },
+  {
+   "path": "firmware/tools/tests/cg_pzem_fixtures.py",
+   "sha256": "b72ee47a1e303f79dc3b9cd2e3991351e16b8edc5611ecd0499037fe482d60c3"
+  },
+  {
+   "path": "firmware/tools/tests/cg_pzem_inject_harness.c",
+   "sha256": "f2740ac2e25e4f2f9d42e66ec2b04ef61e8e27ae2fb7cb898ea991131e11687a"
+  },
+  {
+   "path": "firmware/tools/tests/cg_tec_harness.c",
+   "sha256": "572ca475cd600cf78c275b47f433e38812b0278ce14bc1265a567918a6992650"
+  },
+  {
+   "path": "firmware/tools/tests/cg_w05_harness.c",
+   "sha256": "036657f7b564948c93a75ed097949df3952be23666d623bb39d027cdfdc5903c"
+  },
+  {
+   "path": "firmware/tools/tests/cg_w06_harness.c",
+   "sha256": "6e983bd979de866c1692d65a7e20396ea7b9bd946c3e92729dc1df89c5ce8d3b"
+  },
+  {
+   "path": "firmware/tools/tests/cg_w09_fixtures.py",
+   "sha256": "0adede784946c3583f497ac1e5f11107aadd1412ab8af9bb5a3062d30bbc35da"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_actuator_safety.py",
+   "sha256": "38cf59d93426c394b6eca0f8e9ae47c0e463800399d32ddf543077c4ed86d445"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_bme280_harness.py",
+   "sha256": "88ce9d396e5834a3a9788c5bc6c580acd47faa6738539b19fd59c3ea7255698f"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_bme280_integration.py",
+   "sha256": "732840dc7c3876ae68d5362830dd11bf7fac960d6b28a454080696907ae49357"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_check_firmware.py",
+   "sha256": "34ef5a3fa85568e9c257809803645d32720947628a307c62b196da45d817aec9"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_check_firmware_w04.py",
+   "sha256": "c7c2bb84f9e6ed5eb0a85f0a763e04bebe6dc74acddef8b4fdfe53fc5da8c0e3"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_check_firmware_w05.py",
+   "sha256": "afb3d20a936f945dfe4fb9ff75e1120de1735de4f8358cf09122ee81896b62fe"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_check_firmware_w06.py",
+   "sha256": "fc1a0f4d3b8cc9982c5470047248655565ef994c8bb86762977ae38151d0703d"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_command_trace.py",
+   "sha256": "f7891bc39e017eda72535af1f527ebcaf6fa0531621d3df4e53cb17b25726d19"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_fault_inject.py",
+   "sha256": "0efcacc73ea552231819d844f10061cb05b9200f0dded7fc9adf3da315a914f5"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_gpio_map.py",
+   "sha256": "7a4b927a0f77de8df5374d213e0b0b2598ec81f13d2933e8823f96d839c4391b"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_modbus.py",
+   "sha256": "857c8a803ab7ab911bcfb44447d0455f131da0cf1517594c69cce8d69681f66c"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_probe_roles.py",
+   "sha256": "2e0bade4f39364262d5274238ba5facc07f17c6744905e0adac0291a97173af8"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_pzem_tools.py",
+   "sha256": "4b9b32e4602900bac0b3077c78373e2815a94ec7db40c317fd665c462c130cc4"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_pzem_transport_inject.py",
+   "sha256": "d2688d50cc94623f2bd789696e7ab64600531e869b599c5d999ecde5c3b668b1"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_reset_criterion.py",
+   "sha256": "6e459c701c10fbc718fc3c50639296400c795a9aab8580375167338135596e85"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_serial.py",
+   "sha256": "82e7e3cb6d9ac7dee458ae1775210aa61aaeeff11711b728d068fc1150054066"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_serial_pzem.py",
+   "sha256": "10aa440aebbb551f75b9ac4176f0f95e6291b1895eddfb5990145203516002f4"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_tec_state_machine.py",
+   "sha256": "9e90b1a89e726c952a77dbfcf44c04841bbc50fe0d38fd3e9bb17539b70173b6"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_telemetry.py",
+   "sha256": "f2b6086a003b0ea408cd18364ef05aae5766a389af24f5c3d4e66e454f25caa4"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_telemetry_schema3_raw.py",
+   "sha256": "071dccaa35cf064940f0e4004404906b58968c2f616b3cf26a235ffba30464ba"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_telemetry_w05.py",
+   "sha256": "a4460c8c33e00c780055ed1e1154ff6f4d31b7c9f78e0d9ab02cdaf948ce7324"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_thermal_repeatability.py",
+   "sha256": "9c1de0cba0d1c77443b62e7e005c800f159daffb51e611319c34eb8a9f8103d8"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_timing_analysis.py",
+   "sha256": "c6c55301c2abbdeb7ca3b6e49e8b7cd4e439400df8e8e85ac4d54c85d04cd898"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_tools_cli.py",
+   "sha256": "ccccf6fdfe8fc4dd69fb29e365f1c995dc9d280838d174d511fc96fe99dccca5"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w05_harness.py",
+   "sha256": "c83a6351e654256c58f55abbf69707d322030a2d3fe6c042adca8e55d0b96146"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w06_harness.py",
+   "sha256": "e87f6cc954f7bf3a92c76c5c31c3830f0ed2b4880dbaca8a7dfbfb0c1e4d40b7"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w08_envelope.py",
+   "sha256": "155810b2aebc04d7180332937c27b1c41b06648ff487ddf3b7f8c0b6e733b059"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w08_envelope_claims.py",
+   "sha256": "fbd05339473bea37363ca3679b255f9fb728d9aee756e83fdd3c4478f92406a2"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w08_hot_side.py",
+   "sha256": "732e342c96c4cfd843bf2766dc2bd2172f77318cb3c6fa91ca7042cc94eec5e8"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_capture_parser.py",
+   "sha256": "f3d754464494640cd41283f0a4f59dad7975a98bd636ef390f32476dbfb07b5d"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_dossier_claims.py",
+   "sha256": "6a99c345b0ae6ff871fcb0de4f15ddd9fab1fc93b806f0cbd8c33b5d5e30b484"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_export.py",
+   "sha256": "f46207e2c3211bbfb54a115ff2ab6cbcf1574044d26aa10ee4a5a8630b6f10a8"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_noise.py",
+   "sha256": "9a0d7fa91cfa8772d39a8bf6a736f3d34c0720081660be5ca3905ddd7731972c"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_runners.py",
+   "sha256": "e9036bbd9887c4c5174ac9493df408a0e0039ed743ccc0aeb12d60e59fcb88c1"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w09_validity.py",
+   "sha256": "0df44199e8145f458f303f418bdc178ba6ad5203e8463f8b0923faab10aaf60c"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w10_door.py",
+   "sha256": "5482a7f612e466b1d47496df738e002a159c9ed5172d90d0a398931d26ca8343"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w10_pairing.py",
+   "sha256": "309d919e9fc628c5d43b559dcca099d4ff547bf134eea614aca02775d9bfb7d1"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w11_s4.py",
+   "sha256": "dafd1c8a78dac6e9c5095d70bc0f610b2d174f8dadba1a6cdf2f5858f8831ccb"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w12_drift_audit.py",
+   "sha256": "9d345bb7a36eae3c37d4c8d51902a98ed4af6005d45bc4f4259a43c744731fa0"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w13_timing.py",
+   "sha256": "25ad69ce27613f01b2ae353808f1ccefc252b094a191f3a1bed67db3d28b813e"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w14_dossier.py",
+   "sha256": "3b3bf949bde6c3fb466ddffefa264331322d552234e2331479dee49d7f43d9f5"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w14_pairing.py",
+   "sha256": "d66f5c54535196c9184a612c12e6d123427448c7d28903dea34ce18c7d669b5e"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w14_provenance.py",
+   "sha256": "5b72e7995ade83c595435b8581f704ae1d9778cfd882f4abfdc8d601295e9ab4"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w14_sensor_qa.py",
+   "sha256": "48215d81857fc524ac3f971f06486cfba24b6d2c7efc5afb9e4082a8b6303b5c"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w14_spatial.py",
+   "sha256": "40007e1a88e3a130c9f2c5a3eff7a459dda497af3c7fa78e091892e0ebe4fcbd"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w15_pzem_quality.py",
+   "sha256": "81105aead16acf58db1528fbe67b388db988accd11d15021cb3ea8261ce38830"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w16_comparability.py",
+   "sha256": "ce9e35d6fb0e450a142e754ac316862bcbe84816607f83bc1fbe1f08a2bf1518"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w17_shadow_audit.py",
+   "sha256": "37b524dc30aac0ac2409e617f88caf05d0aca0e7a5394b15cb7178761c0e5856"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w18_enablement.py",
+   "sha256": "5f4d78978b427e0551dc177311069baa8c3b60b9d93e430e3c6a5d479d95a9ce"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w19_campaign.py",
+   "sha256": "639d5ece134a5fde063f4845c269c3683486cdeb3ef8ef62f3b00c55aefb8429"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w20_freeze.py",
+   "sha256": "b03a136a20aed2e684a4c3714fc0ed3561503340ef2eaabaaeea8b5b84be0f5b"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w21_reliability.py",
+   "sha256": "562a71053c0e42f4e3872b600034e5dd811afda545aa9d493f0b906c271c6144"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w22_governance.py",
+   "sha256": "2542815887c74baec5219088d28f4d638e76ba5af34e1e8cc380dac1221972ad"
+  },
+  {
+   "path": "firmware/tools/tests/test_cg_w24_acceptance.py",
+   "sha256": "b4d10f386a698f957c435a0b2a6fb078885d362a35bed33726a15398cfea1938"
+  },
+  {
+   "path": "firmware/tools/tests/test_contract_artifact_consistency.py",
+   "sha256": "5bad45571801176247ad24d254be1c3d3a0e92f898f366fcc8bd9f1eb60db12c"
+  },
+  {
+   "path": "ml/.pytest_cache/CACHEDIR.TAG",
+   "sha256": "37dc88ef9a0abeddbe81053a6dd8fdfb13afb613045ea1eb4a5c815a74a3bde4"
+  },
+  {
+   "path": "ml/.pytest_cache/README.md",
+   "sha256": "73fd6fccdd802c419a6b2d983d6c3173b7da97558ac4b589edec2dfe443db9ad"
+  },
+  {
+   "path": "ml/.pytest_cache/v/cache/nodeids",
+   "sha256": "139d4b1dd996ac0fe1d051f64c1ee814a5c87225b6ac94b75441416cabbd0f07"
+  },
+  {
+   "path": "ml/analysis-contract-v1.md",
+   "sha256": "66ac54fde8f56ad8ccda40e91c545e3fe2ff8aa8fb2e10e2b22235a5eba64287"
+  },
+  {
+   "path": "ml/artifact-convention.md",
+   "sha256": "1ce9a341396ee9050225075f2a5178c486a909388eecda051b6deb8a52cb4dda"
+  },
+  {
+   "path": "ml/baselines/baseline-contract-v1.md",
+   "sha256": "a661ec75c1d4c00ffd6bcfd5cb64535207166a7b31d7121956005d989653c426"
+  },
+  {
+   "path": "ml/baselines/sensitivity-example-W09.json",
+   "sha256": "ec98a46883fb335a9312e754cbda528721b0504c6848081867e5e7ca63762f8c"
+  },
+  {
+   "path": "ml/claim-data-matrix.md",
+   "sha256": "0db3ee00c5a3111f7160cda11ee077711b9c9b6f8795486034b15a07e367f775"
+  },
+  {
+   "path": "ml/data-dictionary-v0.md",
+   "sha256": "69da55d6a1a8892c4acbec6f657d96d32ffe03db4c0c21cc3f2eb2e07ba3cd32"
+  },
+  {
+   "path": "ml/data-readiness-contract-v1.md",
+   "sha256": "f6675069d7be46352a6d453271d95979283729df62872162cda7f3cb834ef311"
+  },
+  {
+   "path": "ml/feature-registry-v1.yaml",
+   "sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb"
+  },
+  {
+   "path": "ml/leakage-risk-register.md",
+   "sha256": "97808bc59474a50a6b36c05f2e534ccafdea0089e69754bd3aad3112712d0649"
+  },
+  {
+   "path": "ml/metric-hierarchy.md",
+   "sha256": "b266d05d396d30e5a2b0b9b715875d5cba714b56a6cf86a1dd01d3bf95ef644f"
+  },
+  {
+   "path": "ml/metric-spec.md",
+   "sha256": "7ebeb5d4aedab1e01189bb911b6888f05f8984b7f23d9b29066bfbd8396d81c4"
+  },
+  {
+   "path": "ml/pairing-candidate-variables.md",
+   "sha256": "ce30fa2476e4564255b72453e21e775c70410269e8b9829662ef2025f1939429"
+  },
+  {
+   "path": "ml/pyproject.toml",
+   "sha256": "b6791a649ce982c87c2d3e1314d7ca9790d1fc923289ebf47e148cc4b0992111"
+  },
+  {
+   "path": "ml/reports/W05/channel-summary.csv",
+   "sha256": "dfec2b7697b61d616a1f815ca976e49c3c13bc20efbf08905770d25a3cb9a2e2"
+  },
+  {
+   "path": "ml/reports/W05/physical-state-W05.svg",
+   "sha256": "c52f72d628122407dfa35d81f46c75d2c2512f1e0e4e6350c3f199c376b4b068"
+  },
+  {
+   "path": "ml/reports/W05/qa-manifest-W05.json",
+   "sha256": "66343133d3809892187ce4b39524150bb03e143baaa161b0bea777a22bd4f31c"
+  },
+  {
+   "path": "ml/reports/W05/qa-report-W05.html",
+   "sha256": "83c7e0771040f88f2989e1a0bf258cf98359e5d63eb11f97f4cf7d2691166ba2"
+  },
+  {
+   "path": "ml/reports/W05/qa-report-W05.md",
+   "sha256": "ea4892cc1ea699ed8eabe47e9fd4ff5b81e2589ca2b7c77cf047e3b12507cf10"
+  },
+  {
+   "path": "ml/reports/W06/event-timeline-W06.csv",
+   "sha256": "22944110edaf86609ae5db71ee4e1540604854f7b93ca25d94265cad160db19b"
+  },
+  {
+   "path": "ml/reports/W06/response-summary-W06.csv",
+   "sha256": "0a211e8319caa7efa6bc9bfc60a604f9b2ea21396319f25ace6d802f8c929910"
+  },
+  {
+   "path": "ml/reports/W06/timing-audit-W06.md",
+   "sha256": "3ad9c225f471f6a3f1b2ea82e7156029366e1b0e68219b1e1e480fd547893efa"
+  },
+  {
+   "path": "ml/reports/W06/timing-manifest-W06.json",
+   "sha256": "3fedd4c4fa0a5525d4b0939b18fb0ed243c83c3d4a04d94aa0ecf5f435e3f6bd"
+  },
+  {
+   "path": "ml/reports/W07/phase-trajectories-W07.svg",
+   "sha256": "f7a09a4d597c1703ed3ef4866a4f4194999d594b223dcd4f5a5b72cfe83628ad"
+  },
+  {
+   "path": "ml/reports/W07/plant-eda-manifest-W07.json",
+   "sha256": "3252e9f3ee4f8a97877fd5cb6211e1e4be20caa9f3801a8ce3317fc4c9415dcb"
+  },
+  {
+   "path": "ml/reports/W07/plant-eda-report.md",
+   "sha256": "ac9b7ade3637b9971f001214d5ba793080b99af8059d6f69e95ad0daabf05e11"
+  },
+  {
+   "path": "ml/reports/W07/repeatability-summary.csv",
+   "sha256": "ca796726d1ab3f11d780453914e9ba5ae4f08627df89d1c9acd57a098994dc27"
+  },
+  {
+   "path": "ml/reports/W08/completeness-policy-W08.md",
+   "sha256": "72609e4763a43f1a66c9258a0ca6fc8924a1dd4bafc270b89f4467ea0dbd4c59"
+  },
+  {
+   "path": "ml/reports/W08/development-split-plan-W08.md",
+   "sha256": "448fe2392ec693a1a7b984db68a6897a9c665cc44d4e9c0834b8ab519e4ac3ab"
+  },
+  {
+   "path": "ml/reports/W08/gate-b-manifest-W08.json",
+   "sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6"
+  },
+  {
+   "path": "ml/reports/W08/gate-b-readiness-W08.md",
+   "sha256": "48d0c37d917e3cab0f9278b00bb78796c7e5f5c48fd8a27e71280013980f5acb"
+  },
+  {
+   "path": "ml/reports/W08/run-validation-W08.csv",
+   "sha256": "54228f7a2ef244206a6be119e062fcd2d74be8e3e7c449c510627e8a51a6084e"
+  },
+  {
+   "path": "ml/reports/W09/baseline-comparison-W09.svg",
+   "sha256": "63071abc1454cbca99286e11e77276275244c9f278cddccd7f15c0ace4ab2c10"
+  },
+  {
+   "path": "ml/reports/W09/baseline-events-W09.csv",
+   "sha256": "8791a1893e87d4d576b32910c5181cd48889f7cd53aea2c60082d113eff96534"
+  },
+  {
+   "path": "ml/reports/W09/baseline-manifest-W09.json",
+   "sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45"
+  },
+  {
+   "path": "ml/reports/W09/baseline-report.md",
+   "sha256": "d167485f2d87ada1bdd803e57df7267f2b04ebfa0532911495c329cb1ea812a7"
+  },
+  {
+   "path": "ml/reports/W09/false-warning-summary-W09.csv",
+   "sha256": "fd375469a8b9a8cd9178eea02aef4ffb062aac95a59be3bfe46506420348532f"
+  },
+  {
+   "path": "ml/reports/W10/feature-audit-W10.svg",
+   "sha256": "5fb7fd372b5dd4952f94ec31d24e77811e844807e41f3904fd9e8dab6e900e16"
+  },
+  {
+   "path": "ml/reports/W10/feature-manifest-W10.json",
+   "sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2"
+  },
+  {
+   "path": "ml/reports/W10/feature-summary-W10.csv",
+   "sha256": "f34ecbc7f00834f13292d90c067a3d5e4a78735518288e5fc796f5f434c07335"
+  },
+  {
+   "path": "ml/reports/W10/label-pilot-W10.csv",
+   "sha256": "1ed9ebf0c7de0275b79905403f0a61a4a51c8ef79d3515b61197c191fdebd5e2"
+  },
+  {
+   "path": "ml/reports/W10/real-diagnostic-W10.svg",
+   "sha256": "5e716c2210098203e4864441cd638cb40c62be5f723eaeced2a25cbc642a8c01"
+  },
+  {
+   "path": "ml/reports/W10/S2-feature-report.md",
+   "sha256": "4c3dc546471cb863b432838d75aeef9e899b8c859a604cf8e84d879b4f28b545"
+  },
+  {
+   "path": "ml/reports/W11/baseline-comparison-W11.csv",
+   "sha256": "e6dcd3bbafe8ac8868fe4fe613b9261409f352b5b70071d2b45b7b11a4a10918"
+  },
+  {
+   "path": "ml/reports/W11/benchmark-manifest-W11.json",
+   "sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0"
+  },
+  {
+   "path": "ml/reports/W11/cv-fold-manifest.yaml",
+   "sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6"
+  },
+  {
+   "path": "ml/reports/W11/fold-metrics-W11.csv",
+   "sha256": "f475049385183481bbe4341fe590cb00b2be4b6b66e967b4b9882e90a9f3083e"
+  },
+  {
+   "path": "ml/reports/W11/leakage-audit-W11.md",
+   "sha256": "71903c0114d0cdfa70aae1cd508df89ce124c6e119237e31aca05bafa89a36aa"
+  },
+  {
+   "path": "ml/reports/W11/model-synthetic-smoke.json",
+   "sha256": "82e487a99ba93dad4e192000f826dacc6d62377316672ba4f010ba9f1368cebc"
+  },
+  {
+   "path": "ml/reports/W11/model-synthetic-smoke.ubj",
+   "sha256": "2665c214fa52c3ba43c0c845be7269c50e10989c047245c9d1e44297fbec20d2"
+  },
+  {
+   "path": "ml/reports/W11/xgb-v1-report.md",
+   "sha256": "0186fff8c07a06bf10ef11d51cbf266e7254d38ef676711229ca8a7f7ff67f79"
+  },
+  {
+   "path": "ml/reports/W12/benchmark-synthesis-W12.md",
+   "sha256": "f13735e35eb30c93232ce27ba25cfb7cff31493d8b7f8e849251cdef4c94492e"
+  },
+  {
+   "path": "ml/reports/W12/event-operational-summary-W12.csv",
+   "sha256": "7836bf6506ff3765c3be27f6ce773cf13765f88c97c77f5b7db19e01c18ab523"
+  },
+  {
+   "path": "ml/reports/W12/ewt-assessment-W12.csv",
+   "sha256": "97ce1c40d97642fc0d5f3d546d529ea8deb2b4b508911c18889890018cdfbefa"
+  },
+  {
+   "path": "ml/reports/W12/feature-importance-W12.csv",
+   "sha256": "8bbf37fa4a75a642d8d759926e15a88017a8db99868901cdf6491982508266a5"
+  },
+  {
+   "path": "ml/reports/W12/gate-g3-evidence-matrix-W12.csv",
+   "sha256": "23c2a117810af5e9e9e30bddca5821f6791327b66bcd7be27eb32d0e1eb90c1e"
+  },
+  {
+   "path": "ml/reports/W12/gate-g3-W12.md",
+   "sha256": "edf0d8e1740107975851d63ae86904993577c9f86043d2b27989c7120744ce89"
+  },
+  {
+   "path": "ml/reports/W12/grouped-metrics-W12.csv",
+   "sha256": "8dfb3b541f34523e7f7ac98f878df6ac65a9666c8eec67f16d49ba64f2b22965"
+  },
+  {
+   "path": "ml/reports/W12/w12-manifest.json",
+   "sha256": "ef06f9712203b39c01351ad89a17368574e98a0db6436f842e926b68418073a7"
+  },
+  {
+   "path": "ml/reports/W13/horizon-manifest-W13.json",
+   "sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404"
+  },
+  {
+   "path": "ml/reports/W13/horizon-metrics.csv",
+   "sha256": "9b29cdee8487742401acc9c76f60cb78f6519aad6177e9c36e7bbfcdb5d4513b"
+  },
+  {
+   "path": "ml/reports/W13/horizon-study.md",
+   "sha256": "5748c6c85fedbc2fc5e5f35aa2facde34208a2f883679d04ff93eee0c71d92ab"
+  },
+  {
+   "path": "ml/reports/W13/primary-horizon-decision.md",
+   "sha256": "f3b263fca4ed494d5ae279fc39ea16d2c66d861718b29a316bcc878b0234c90b"
+  },
+  {
+   "path": "ml/scripts/baseline-evaluation-W09.py",
+   "sha256": "3a0ade525a8101bab5c4c836390c4befe9b4b91c7178c4181c2f390adb6a0cd0"
+  },
+  {
+   "path": "ml/scripts/benchmark-g3-W12.py",
+   "sha256": "b2f056cb7163c9afe2259aa4116ae5543b1f39e5a803626beaa0efc9d0965cce"
+  },
+  {
+   "path": "ml/scripts/event-alignment-W06.py",
+   "sha256": "54c83e1b6fcb9e81c6db02a781af8cf6b7bd4127a1a8c76a37719f01aea5f697"
+  },
+  {
+   "path": "ml/scripts/feature-pipeline-W10.py",
+   "sha256": "4d4b7bf9b271c66e5ca3c715dc238dc072a45dfe38714313f06b48361afbcd7c"
+  },
+  {
+   "path": "ml/scripts/gate-b-readiness-W08.py",
+   "sha256": "c234a5bbfd392991b64cbb6b2f60fb012da0bd0a557f60fc838ce939a02c4be4"
+  },
+  {
+   "path": "ml/scripts/horizon-study-W13.py",
+   "sha256": "e144bc5ab7f6ebf5b4a4f59be02b9174226180264ca3b7997d7edc0682b16390"
+  },
+  {
+   "path": "ml/scripts/plant-eda-W07.py",
+   "sha256": "a1dc06e31e9388838c0898df89072798df98d94f84e75e5712243ce41e75ebfc"
+  },
+  {
+   "path": "ml/scripts/real-data-qa-v1.py",
+   "sha256": "17fec358cae1db5b304deee604d67578f202cd1cd956d6afb51b81f5475e8daa"
+  },
+  {
+   "path": "ml/scripts/sample_size_planning.py",
+   "sha256": "005e340c06ed51ebbeb441868e869cd8f4cf1e8f7fedf4c1f00ee09321057a26"
+  },
+  {
+   "path": "ml/scripts/schema-check.py",
+   "sha256": "b034d49d902ff2599e076c0ab043868150a56fb693a39d632bdf27d6ee0d9a8b"
+  },
+  {
+   "path": "ml/scripts/xgb-benchmark-W11.py",
+   "sha256": "43b40ea40445cafffb06d6af288195da0ba477f71dbfab4016183d5e0d5ea75d"
+  },
+  {
+   "path": "ml/src/coldguard_ml/__init__.py",
+   "sha256": "5d856a120a143753cc44104e4b5092a4496100dc54ac3ed897ef98896a6fcb9d"
+  },
+  {
+   "path": "ml/src/coldguard_ml/baselines.py",
+   "sha256": "5f8f8fe378381ac4cbed25f790a42828aa5e0aee780aa5e298580d92aea1bcdc"
+  },
+  {
+   "path": "ml/src/coldguard_ml/benchmark_synthesis.py",
+   "sha256": "c0ae6d6368c9a90cbf4a76b56ff05f50281ffa6248d9fe6204114601b794e837"
+  },
+  {
+   "path": "ml/src/coldguard_ml/data_readiness.py",
+   "sha256": "02dda3d2cf677b75e7840ca25443209e6ce13cc369a1e062f2d80a8c431dafd4"
+  },
+  {
+   "path": "ml/src/coldguard_ml/errors.py",
+   "sha256": "f15a6c88aaeb1c0b18e4ac0bc09ab9538bf42e67e0dc430b006bb9f76492f6ce"
+  },
+  {
+   "path": "ml/src/coldguard_ml/evaluation_contract.py",
+   "sha256": "bb483d6137a05fc97f9605207530d6b633a0d6662f5dfcf25409b5cd32bc6c9e"
+  },
+  {
+   "path": "ml/src/coldguard_ml/event_evaluator.py",
+   "sha256": "2042a318af7b93d5c1874c75969a23b93b1f43b51ef8f3ee2e259870253c4ab2"
+  },
+  {
+   "path": "ml/src/coldguard_ml/ewt_assessment.py",
+   "sha256": "f6ee14cb330cfc26fb6470e89f7c9079e9229cc0e174e2f70d499a9a789d4099"
+  },
+  {
+   "path": "ml/src/coldguard_ml/feature_fixtures.py",
+   "sha256": "711bf4a0acd9913207c430a6188640afb2e9ff25feb156743de58a241ec6e837"
+  },
+  {
+   "path": "ml/src/coldguard_ml/feature_importance.py",
+   "sha256": "a8feabd62dd7bb2b5173e7df6db4fb0bb9c21b0bcd34caa2cb14540237ea20ec"
+  },
+  {
+   "path": "ml/src/coldguard_ml/feature_pipeline.py",
+   "sha256": "3bd22ca0e49006b6ab61a3ee17ff2deeda273c51ba8d882c4517e80ddbc63ff8"
+  },
+  {
+   "path": "ml/src/coldguard_ml/feature_plot.py",
+   "sha256": "83db88861356e390ce1c09ca9bc4fdf20578988b1bbd09fd27eae43d36ae3c92"
+  },
+  {
+   "path": "ml/src/coldguard_ml/feature_registry.py",
+   "sha256": "f619a04dd7156c6abfa8a4a1bff695b01911f9998032a4411777c6bad817ab4b"
+  },
+  {
+   "path": "ml/src/coldguard_ml/g3_readiness.py",
+   "sha256": "322de92b603cecbfe3ad085cc530773844e92b7514abda0befe535bfe60dbc05"
+  },
+  {
+   "path": "ml/src/coldguard_ml/grouped_evaluation.py",
+   "sha256": "89319d75df6196b8f4bbf20de5b40e115aa41b60712f97628469c11c1a91de0e"
+  },
+  {
+   "path": "ml/src/coldguard_ml/horizon_engineering.py",
+   "sha256": "dc9bf811985d4a664c869949407a6861928aa5aab33bce4d3ec29191f4db0d42"
+  },
+  {
+   "path": "ml/src/coldguard_ml/intake.py",
+   "sha256": "b71782e7321ca6b2386c3b6c5b3cff8e84224a6b2e3ebf9090666273a0e939dd"
+  },
+  {
+   "path": "ml/src/coldguard_ml/label_pilot.py",
+   "sha256": "7ab82643e273874c6c4d0000bb637bccd8bbcdce4b910ec4850aefd24b2fb43f"
+  },
+  {
+   "path": "ml/src/coldguard_ml/labels.py",
+   "sha256": "e2643a184aec6ce841fa64fd093d398c7a295a1c7cb9c27138bfb713c0db52b7"
+  },
+  {
+   "path": "ml/src/coldguard_ml/leakage_audit.py",
+   "sha256": "2d48f02f9d0ff0ec6aa376ea34c90aea2d04f4d3dbfc4ea2efa21f5a2707dc04"
+  },
+  {
+   "path": "ml/src/coldguard_ml/manifests.py",
+   "sha256": "c7f93c84718b25b8922377ca823ae146c7b238bd40e37ef8aced7f9e3b67165f"
+  },
+  {
+   "path": "ml/src/coldguard_ml/observations.py",
+   "sha256": "b4581064d504554d5b8a95cb114ac48d21bd1cb3fd5bf8361bb8889afae408e8"
+  },
+  {
+   "path": "ml/src/coldguard_ml/operational_metrics.py",
+   "sha256": "42cb35118e7f80bb21a214669d3323bf6402a4927080088e5621aaefb736ac11"
+  },
+  {
+   "path": "ml/src/coldguard_ml/plant_eda.py",
+   "sha256": "739dd7073d86afb4669779afad8a9e43deda9ae46daa2f7dcc637f14c832924c"
+  },
+  {
+   "path": "ml/src/coldguard_ml/real_data_qa.py",
+   "sha256": "b7401bb396b1befeaaf692c0280b4dd08287ebc0ae7d0ae83d0e8ef0f487f447"
+  },
+  {
+   "path": "ml/src/coldguard_ml/splitting.py",
+   "sha256": "ce3760c4ae0d9e3f299624193103849e33ec8182cac3039abbc021251bc35bab"
+  },
+  {
+   "path": "ml/src/coldguard_ml/synthetic.py",
+   "sha256": "d814811bbcda48fa187e075668ae0532a09f43fc739824624f983aee3aaead77"
+  },
+  {
+   "path": "ml/src/coldguard_ml/timing_alignment.py",
+   "sha256": "c6eb0e6d4dacc08d1b622ec2be668bcee509f9f2d610bad53f4d0ca2958da2b6"
+  },
+  {
+   "path": "ml/src/coldguard_ml/windows.py",
+   "sha256": "86795e8202c278c8facd32e69d81fd0b24fdb40e12c26714d4bcca0960c49f1f"
+  },
+  {
+   "path": "ml/src/coldguard_ml/xgb_benchmark.py",
+   "sha256": "4257e1c5f255337f48155a7b971a58ced1e8649fbafd60121a063be2b698d744"
+  },
+  {
+   "path": "ml/src/coldguard_ml.egg-info/dependency_links.txt",
+   "sha256": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b"
+  },
+  {
+   "path": "ml/src/coldguard_ml.egg-info/PKG-INFO",
+   "sha256": "58869d4de1d1090ad1859e7e660f9c70bf42bc09f207290a3410e16d9b37f4d4"
+  },
+  {
+   "path": "ml/src/coldguard_ml.egg-info/requires.txt",
+   "sha256": "7cc2549acac834c1678cb920eb63e24ff324b1c900a1acf718b63419ec6bafe9"
+  },
+  {
+   "path": "ml/src/coldguard_ml.egg-info/SOURCES.txt",
+   "sha256": "02a581e6f8db76dcbf5b47191cdaf3f63ea1a3120bd779e51f7db2197fdc96ba"
+  },
+  {
+   "path": "ml/src/coldguard_ml.egg-info/top_level.txt",
+   "sha256": "a60f417f8b5244bbd0ffa4fbb4e54b54abe8fff6d724ddd66d003f3ac93c7091"
+  },
+  {
+   "path": "ml/statistical-analysis-plan-v0.md",
+   "sha256": "3270ff85cbbc21f212299df5c3d0dc43fa34fcb52f8c7f1a041e6abcd19b5daf"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/contradictory-identity.json",
+   "sha256": "1e19a62acc470c7f3be13fbfaf152dc415196b3b817cb4f5c508d702b56bee45"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/exact-duplicate.json",
+   "sha256": "0249f388bfa0388960b4b2b81c18fb122b1a4589c3dfd551b23e6692372c3af8"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/mixed-clock.json",
+   "sha256": "61203589259e90b2859d9194955141304cb93692db3a467fba1de1583b2c1c43"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/no-response.json",
+   "sha256": "d78ea9e996ef0ea4e352adeaaec0fa80d82cda3ef4609800851b2e579430f7d9"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/qualified-response.json",
+   "sha256": "e1bfc9ca8ca3f79a260bef6c5a5725ad246806a9a480e1fced964b53ca0dea21"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/two-boots-equal-uptime.json",
+   "sha256": "a1acade0d6a8deb9a83ffa0634aa20c2e6814a27161247e7f71d2c84fcd079f5"
+  },
+  {
+   "path": "ml/tests/fixtures/W06/unqualified-electrical.json",
+   "sha256": "e3b6468eebbc8fe99dbc0dbe4eb5275079d70e793c9fe1df2bfd81c94b4a4c73"
+  },
+  {
+   "path": "ml/tests/test_baselines.py",
+   "sha256": "ec40b9a1ce7fd379e6a4f83be7033a1277d45d8e28df2eb6465b71c4d1ff51d7"
+  },
+  {
+   "path": "ml/tests/test_benchmark_g3_w12.py",
+   "sha256": "d1a0ec06c3b594551d985a93fae6e848804fd0ae509570ce1c090a42ea123b25"
+  },
+  {
+   "path": "ml/tests/test_benchmark_synthesis.py",
+   "sha256": "c9b29faf41d552a28a461ab27e148fb5c0632bc1f09903173db096a25613864e"
+  },
+  {
+   "path": "ml/tests/test_data_readiness.py",
+   "sha256": "52ab6286718bd66b10f82b7ec1c914b623d741570385ce331260fa002c36abde"
+  },
+  {
+   "path": "ml/tests/test_evaluation_contract.py",
+   "sha256": "48b121b8fe245a0c5f7468e99c0c7e5decc8650bf1a012e441d80f36e5594a7e"
+  },
+  {
+   "path": "ml/tests/test_event_evaluator.py",
+   "sha256": "526615edb5edf62971f66fb00e7bbde81349bf5f0e2c1cafeb36a402908c3664"
+  },
+  {
+   "path": "ml/tests/test_ewt_assessment.py",
+   "sha256": "1d95a2e4ba2e789ad557e96b69041d4f3e72cf9d25df61ce32c7b2eddd380c4d"
+  },
+  {
+   "path": "ml/tests/test_feature_causality.py",
+   "sha256": "da88e5cef3039bf51160866039836476b9475b686c798a4425a16d617c6d65df"
+  },
+  {
+   "path": "ml/tests/test_feature_importance.py",
+   "sha256": "9b21e563ee2e59b38519fabbcfa75dfdfbf103bcd5083bc66f6814f2580379e9"
+  },
+  {
+   "path": "ml/tests/test_feature_pipeline.py",
+   "sha256": "2fc4b1830a66d1d597b7641ef5552c6870969d0764fda4decf583359345fc434"
+  },
+  {
+   "path": "ml/tests/test_feature_registry.py",
+   "sha256": "2bc2b738ee961c25481b7f12c710cbb83f3d013d3a0ffdb0c166bb1591c75214"
+  },
+  {
+   "path": "ml/tests/test_g3_readiness.py",
+   "sha256": "0b64344b7c955ef7bd6b2bcfa2a7af0ff775418e20dce81e7fda55bede6f9c49"
+  },
+  {
+   "path": "ml/tests/test_grouped_evaluation.py",
+   "sha256": "222753d0617fd43b9c1a52c2c4d1ed80cc95cc9b1b358ab27f6bac07e2a85029"
+  },
+  {
+   "path": "ml/tests/test_horizon_engineering.py",
+   "sha256": "cffacc28909d8e0ba06f9d9f5a5c32cf189bb8ebcc1e60ec0fb0b04e9e89bf25"
+  },
+  {
+   "path": "ml/tests/test_intake_schema.py",
+   "sha256": "6ff95adb176350c657c98dc4a7db6533ccae13054616a7c9821661d2331a3a6e"
+  },
+  {
+   "path": "ml/tests/test_labels.py",
+   "sha256": "0382a70058436fb85a49cf2f0d0d5d18ec392dad7e35d0c40aa985091910701f"
+  },
+  {
+   "path": "ml/tests/test_manifests.py",
+   "sha256": "a13d34cb904ee6de79f41f52c25548c0be4d209051eaabc640b2b485ae9b814b"
+  },
+  {
+   "path": "ml/tests/test_observations_contract.py",
+   "sha256": "736d9023b8be5df219e93ca614ac09ac5a4e633c78f6722fae505314dbc36db0"
+  },
+  {
+   "path": "ml/tests/test_operational_metrics.py",
+   "sha256": "32bfc71c0c127b9b9adb2d6264f1c9f95b6b08a4164f0032c3198dee2a466140"
+  },
+  {
+   "path": "ml/tests/test_package.py",
+   "sha256": "bf8229dd11b386a1be73be193831ca4bb051576a7920eb77b91cf077082e9e80"
+  },
+  {
+   "path": "ml/tests/test_pipeline_integrity.py",
+   "sha256": "16e6edfa9879b48db994da90f881b6fecd874949d22081f3b80ad5b45d8968ea"
+  },
+  {
+   "path": "ml/tests/test_plant_eda.py",
+   "sha256": "bd1ae0c45101d1270f77b40e11dc9b94fd64d2d83db1230467c39452c64537d3"
+  },
+  {
+   "path": "ml/tests/test_real_data_qa.py",
+   "sha256": "4c9f8f32b3d5593b6509f0ed683913c40afae414268bd9b739700e71c400c620"
+  },
+  {
+   "path": "ml/tests/test_sample_size_planning.py",
+   "sha256": "b8a96d688625fa0e9bdcd6254d55c5b99b45ea33bbd37f670988f8ee19cc0bf7"
+  },
+  {
+   "path": "ml/tests/test_splitting.py",
+   "sha256": "0862af30e3bebe67b1b7d3f338e02ec16dab60772bbc9be8b2df39ce94840f10"
+  },
+  {
+   "path": "ml/tests/test_synthetic.py",
+   "sha256": "faf91b09ae5e9f5fc14e8bd478755be09fbca55e1cfb37b31c8a204e25ee163e"
+  },
+  {
+   "path": "ml/tests/test_timing_alignment.py",
+   "sha256": "058248464e207557e3354ad8dd3f0ed97e3af7c4372b6758759b2177459e1f95"
+  },
+  {
+   "path": "ml/tests/test_w11_integrity.py",
+   "sha256": "341ff4b263f6e5449ee9aab6406ba423e9dc425b8ece960686ac784a23bcf615"
+  },
+  {
+   "path": "ml/tests/test_w11_leakage.py",
+   "sha256": "9e069e754d8209273aca05ee3fca52a5ef53f4dc96bf5514773edf9fb5b6ca38"
+  },
+  {
+   "path": "ml/tests/test_windows.py",
+   "sha256": "a2f875b8b3e16013d309a0cfafe468ef4674ae9e879940b6506862070bb4911a"
+  },
+  {
+   "path": "ml/tests/test_xgb_benchmark.py",
+   "sha256": "083838c3a42a8847f3163ac33787de5bd27b2b2e1af241f872814e2ae3e0040e"
+  },
+  {
+   "path": "ml/timing-alignment-contract-v1.md",
+   "sha256": "c83d99c10a2ee79604e7b3954878b69a07abbb949f2bb066e8575c2a88d8a760"
+  },
+  {
+   "path": "ml/uv.lock",
+   "sha256": "dae6cae255b6cdd7c8ca0ded7e902124c0dac467215f309feb45642ad649e5a5"
+  },
+  {
+   "path": "ml/xgb-v1-config.yaml",
+   "sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a"
+  }
+ ],
+ "tested_tree_verification": {
+  "backend_services": "404 passed / 1 legitimate skip (pre-freeze tree e9681be)",
+  "owner_targeted_on_final_tree": "75 passed / 1 legitimate skip (e53f5f2)",
+  "ml_control_ml_suites": "832 + 428 passed (B#102/D#90 trees)"
+ }
+}

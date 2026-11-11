@@ -1,0 +1,99 @@
+{
+  "description": "Synthetic contradictory-identity control. Both payloads retained.",
+  "events": [
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-conflict",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-conflict",
+      "device_uptime_ms": 2000,
+      "event_id": "telem-dup-a",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "applied_cooling": "ON",
+        "chamber_air_mean_c": "25.000000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-conflict",
+      "seq": 200,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": null,
+      "boot_id": "sim-boot-conflict",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": null,
+      "device_id": "cg-sim-conflict",
+      "device_uptime_ms": 2000,
+      "event_id": "telem-dup-b",
+      "event_type": "TELEMETRY_SAMPLE",
+      "measurement_quality": "VALID",
+      "normalized_fields": {
+        "applied_cooling": "OFF",
+        "chamber_air_mean_c": "26.500000",
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-conflict",
+      "seq": 200,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": 20,
+      "boot_id": "sim-boot-conflict",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": "CMD-CONFLICT",
+      "device_id": "cg-sim-conflict",
+      "device_uptime_ms": 2000,
+      "event_id": "ack-dup-a",
+      "event_type": "DEVICE_ACK",
+      "measurement_quality": "NOT_APPLICABLE_PROTOCOL_EVIDENCE",
+      "normalized_fields": {
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID",
+        "reason": "NONE",
+        "status": "ACCEPTED"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-conflict",
+      "seq": null,
+      "uncertainty_s": 0.05
+    },
+    {
+      "ack_seq": 20,
+      "boot_id": "sim-boot-conflict",
+      "clock_domain": "DEVICE_BOOT_UPTIME",
+      "clock_sync": "SYNTHETIC_EXACT",
+      "command_id": "CMD-CONFLICT",
+      "device_id": "cg-sim-conflict",
+      "device_uptime_ms": 2000,
+      "event_id": "ack-dup-b",
+      "event_type": "DEVICE_ACK",
+      "measurement_quality": "NOT_APPLICABLE_PROTOCOL_EVIDENCE",
+      "normalized_fields": {
+        "quality.electrical": "VALID",
+        "quality.overall": "VALID",
+        "quality.thermal": "VALID",
+        "reason": "DEVICE_ID_MISMATCH",
+        "status": "REJECTED"
+      },
+      "reason_codes": [],
+      "run_id": "sim-run-conflict",
+      "seq": null,
+      "uncertainty_s": 0.05
+    }
+  ],
+  "fixture_schema": "coldguard-w06-event-fixture-v1",
+  "provenance": "SYNTHETIC_UNIT_TEST_ONLY"
+}

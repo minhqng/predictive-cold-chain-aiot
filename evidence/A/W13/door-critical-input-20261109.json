@@ -1,0 +1,86 @@
+{
+  "schema": "cg-w13-door-critical-input-v1",
+  "created_utc": "2026-11-09T16:25:19Z",
+  "purpose": "A-W10-05/A-W13-03 D-input: door response envelope of the 4 qualifying S2 runs + timing run, per the recorded 2026-11-07 door protocol (door_report.json: OPEN cue ~0 s, close ~15 s, open duration ~13-14 s).",
+  "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_DATASETS",
+  "touches_hardware": false,
+  "critical_tmean_c": null,
+  "critical_tmean_status": "NOT_FROZEN_PENDING_MEMBER_D",
+  "door_to_critical": {
+    "value_s": null,
+    "number_emitted": false,
+    "reason": "The frozen critical-Tmean threshold is Member D's decision; no number may be emitted before that freeze (A-W13-03 / A-W10-05 remain INCOMPLETE with reason NO_DOOR_CRITICAL_SAMPLES until D freezes and the official evaluator reruns)."
+  },
+  "inputs": [
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/W10-02-normalized.csv",
+      "sha256": "36bddca2ecfc4f741512018102508cf8a441d96fb3b50efe8bafb4f2740f53d8"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/W10-03-run1-normalized.csv",
+      "sha256": "06f93c3c851e6815b9a4c8c9e24898c173790b2eba149c257af6d5a3cf006335"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/W10-03-run2-normalized.csv",
+      "sha256": "37101f71252d0a8df092176b821b09143b7e8d73526f10162937bb4916314b10"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/W10-03-run3-normalized.csv",
+      "sha256": "994606017b9615a139f98b988031199271927772287b79bee902f76725d84803"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/W10-03-run4-normalized.csv",
+      "sha256": "d55c94575b07930db78c9cf8ea08a9dd73e2b776e03512363bb0c10268d3d456"
+    }
+  ],
+  "per_run_envelope": {
+    "W10-02": {
+      "frames": 120,
+      "tmean_min_c": 29.75,
+      "tmean_max_c": 29.8958,
+      "baseline_mean_c_30s": 29.8507,
+      "first_sustained_rise_0p125C_delay_s": null,
+      "final_tmean_c": 29.7917
+    },
+    "W10-03-run1": {
+      "frames": 300,
+      "tmean_min_c": 29.7292,
+      "tmean_max_c": 29.8542,
+      "baseline_mean_c_30s": 29.807,
+      "first_sustained_rise_0p125C_delay_s": null,
+      "final_tmean_c": 29.8125
+    },
+    "W10-03-run2": {
+      "frames": 300,
+      "tmean_min_c": 29.75,
+      "tmean_max_c": 29.8958,
+      "baseline_mean_c_30s": 29.8368,
+      "first_sustained_rise_0p125C_delay_s": null,
+      "final_tmean_c": 29.8958
+    },
+    "W10-03-run3": {
+      "frames": 300,
+      "tmean_min_c": 29.8542,
+      "tmean_max_c": 29.9583,
+      "baseline_mean_c_30s": 29.9236,
+      "first_sustained_rise_0p125C_delay_s": null,
+      "final_tmean_c": 29.9375
+    },
+    "W10-03-run4": {
+      "frames": 300,
+      "tmean_min_c": 29.8958,
+      "tmean_max_c": 30.0,
+      "baseline_mean_c_30s": 29.9757,
+      "first_sustained_rise_0p125C_delay_s": null,
+      "final_tmean_c": 29.9792
+    }
+  },
+  "notes_for_member_d": [
+    "All 4 S2 door runs and the timing run sit in the ~29.73-29.90 degC tmean band; door-open durations ~13-14 s produced a recorded rise_c of 0.04-0.05 degC (door_report.json). A critical upper boundary chosen near or below the in-run tmean maxima produces frequent positives; a boundary chosen above ~29.9 degC produces ZERO positive samples in this dataset - Doc 03 section 42 requires enough positive/negative events, so D must freeze with this envelope in view.",
+    "first_sustained_rise_0p125C_delay_s uses a 0.125 degC/15 s detection proxy - NOT the canonical response definition (A-W13-02's method governs); null means no sustained excursion of that size occurred."
+  ],
+  "limitations": [
+    "Offline analysis of committed captures; no new physical measurement.",
+    "Crossing semantics, if a draft critical value is passed, are provisional (upward, 2-sample sustain) and govern ONLY after D's frozen definition matches or a canonical evaluator consumes this."
+  ]
+}

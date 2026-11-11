@@ -92,10 +92,38 @@ W06_NO_COMMAND_TAIL = (
     " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
     " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED"
 )
-derived_schema3 = committed_line.replace("schema=2 ", "schema=3 ", 1) + W06_NO_COMMAND_TAIL
-frame3 = telem.parse_line(derived_schema3, 1)
+# The no-command-received frame the shipped formatter emits (cg_telemetry.c:382-385).
+W06_NO_COMMAND_TAIL = (
+    " command_id=NONE desired_cooling=NONE desired_duty_permille=nan"
+    " last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED"
+)
+# The committed capture line already carries the full no-command tail on every
+# schema=3 frame (cg_telemetry.c:382-385), so upgrade a historical schema=2
+# line only; appending the tail to a schema=3 line would duplicate five fields
+# and be rejected by parse_line.
+if committed_schema == 3:
+    schema3_line = committed_line
+elif committed_schema == 2:
+    replaced = committed_line.replace("schema=2 ", "schema=3 ", 1)
+    if replaced == committed_line:
+        raise SystemExit(
+            "committed capture claims schema=2 but carries no schema=2 token")
+    schema3_line = replaced + W06_NO_COMMAND_TAIL
+else:
+    raise SystemExit(
+        f"unsupported committed capture schema {committed_schema!r}: "
+        "the probe supports schema 2 (upgrade) and schema 3 (direct parse) only"
+    )
+frame3 = telem.parse_line(schema3_line, 1)
 device_raw = dict(frame3.raw_fields)
 device_fields = dict(frame3.fields)
+
+# Numeric-looking tokens the parser left as strings: the real type-gap report,
+# recomputed from the parsed probe frame on every run (never a static claim).
+untyped_numeric_fields = sorted(
+    k for k, v in device_fields.items()
+    if isinstance(v, str) and re.match(r"^-?\d+(\.\d+)?$", v)
+)
 
 # ---------------------------------------------------------------- (C) translation
 # Field-name/unit mapping a Member C gateway would have to perform to turn one
@@ -499,20 +527,18 @@ defects = [
      "verdict": "Gateway must re-encode; Member A's refusal of unknown fields is "
                 "intentional and must not be relaxed."},
     {"id": "R-07", "severity": "P1", "owner": "Member A",
-     "claim": "Member A's own W06 evidence does not exercise the schema-3 telemetry "
-              "branch it claims to deliver.",
-     "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=2 and "
-                 "zero command tokens, while its test's docstring at "
-                 "firmware/tools/tests/test_cg_command_trace.py:28 calls it 'The schema-3 "
-                 "telemetry line the harness emitted into the demo capture'",
-     "verdict": "MEMBER A MUST FIX: regenerate the capture from the shipped schema-3 "
-                "formatter."},
+     "claim": "Member A's own W06 evidence exercises the schema-3 telemetry branch.",
+     "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=3 and "
+                 "the full W06 command/ACK tail",
+     "verdict": "RESOLVED: the committed demo capture is a real schema=3 frame with "
+                "the no-command-received tail; test_cg_command_trace.py pins it."},
     {"id": "R-08", "severity": "P2", "owner": "Member A",
-     "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are not typed by the Member A "
-              "parser, so they cross the wire as text.",
-     "evidence": "firmware/tools/cg_telemetry_schema.py:309-345 (_coerce falls through "
-                 "to the token); the probe's untyped_numeric_fields list",
-     "verdict": "Add these to FLOAT_FIELDS in Member A's own tool."},
+     "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are typed by the Member A "
+              "parser (fixed in this remediation).",
+     "evidence": "firmware/tools/cg_telemetry_schema.py FLOAT_FIELDS now contains the "
+                 "four raw temperature tokens; parsed as float|None",
+     "verdict": "RESOLVED: the four raw temperature tokens are in FLOAT_FIELDS and "
+                "parse as float|None; the regression pins the coercion."},
 ]
 
 ack_vs_execution = {
@@ -571,24 +597,29 @@ out = {
         "committed_capture_schema": committed_schema,
         "derived_frame_schema": frame3.fields["schema"],
         "derived_frame_provenance": (
-            "DERIVED, not captured: the committed W06 demo capture carries schema="
-            f"{committed_schema} and no command tokens; the five schema-3 tokens were "
-            "appended exactly as firmware/main/cg_telemetry.c:382-384 emits them for the "
-            "no-command-received case."
+            "PARSED, not derived: the committed W06 demo capture carries schema=3 "
+            "with the full W06 command/ACK tail already in the frame; it was parsed "
+            "directly with no token appended."
+            if committed_schema == 3 else
+            "DERIVED, not captured: the committed W06 demo capture carries "
+            f"schema={committed_schema}; schema=3 was reached by replacing the "
+            "schema token and appending the five no-command-received tokens "
+            "exactly as firmware/main/cg_telemetry.c:382-384 emits them."
         ),
         "parsed_field_count": len(device_fields),
         "frame_token_order": list(device_raw.keys()),
         "fields": device_raw,
     },
     "device_parser_type_gaps": {
-        "note": ("cg_telemetry_schema._coerce leaves any token not listed in "
-                 "FLOAT_FIELDS/INTEGER_FIELDS as a raw string; these mapped wire "
-                 "numbers are therefore untyped by Member A's own parser and a "
-                 "gateway must cast them itself."),
-        "untyped_numeric_fields": sorted(
-            k for k, v in device_fields.items()
-            if isinstance(v, str) and re.match(r"^-?\d+(\.\d+)?$", v)
+        "note": (
+            "Member A's parser coerced every mapped wire number in the probe "
+            "frame to float|int; no numeric field crossed as text."
+            if not untyped_numeric_fields else
+            "cg_telemetry_schema._coerce left these numeric-looking tokens as "
+            f"raw strings: {', '.join(untyped_numeric_fields)}. A gateway must "
+            "cast them itself."
         ),
+        "untyped_numeric_fields": untyped_numeric_fields,
     },
     "compatibility_matrix": rows,
     "backend_hard_gaps": gaps,

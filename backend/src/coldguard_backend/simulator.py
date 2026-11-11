@@ -27,8 +27,10 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 import os
 import threading
+import time
 from datetime import datetime, timedelta, timezone
 
 import paho.mqtt.client as mqtt
@@ -219,6 +221,7 @@ def run_simulation(
     count: int,
     start_seq: int = 0,
     publish_families: bool = True,
+    interval_s: float = 0,
 ) -> SimulationResult:
     """Publish ``count`` distinct telemetry messages plus family snapshots.
 
@@ -229,6 +232,8 @@ def run_simulation(
     """
     if count < 1:
         raise ValueError("count must be >= 1")
+    if not math.isfinite(interval_s) or interval_s < 0:
+        raise ValueError("interval_s must be finite and non-negative")
     connected = threading.Event()
     failure: list[str] = []
 
@@ -268,7 +273,11 @@ def run_simulation(
         if failure:
             raise ConnectionError(failure[0])
         acknowledged = 0
+        next_publish = time.monotonic()
         for offset in range(count):
+            if interval_s:
+                time.sleep(max(0, next_publish - time.monotonic()))
+                next_publish = time.monotonic() + interval_s
             seq = start_seq + offset
             info = client.publish(
                 topic_for(device_id, "telemetry"),

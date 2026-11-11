@@ -1,8 +1,8 @@
 {
   "artifact": "member-a-bcd-contract",
-  "generated_at_utc": "2026-11-03T14:10:06.840947+00:00",
+  "generated_at_utc": "2026-11-09T04:31:43.427927+00:00",
   "generated_by": "evidence/A/HANDOFF/contract_probe.py",
-  "worktree": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts",
+  "worktree": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local",
   "claim_class_legend": {
     "OBSERVED": "produced or read by this run against committed source",
     "HISTORICAL": "carried from an existing document, not re-verified here"
@@ -11,15 +11,15 @@
     "device_serial_schema": {
       "name": "CG_TELEMETRY_SCHEMA_VERSION",
       "value": "3",
-      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\coldguard_config.h",
-      "line": 472,
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\firmware\\main\\coldguard_config.h",
+      "line": 540,
       "namespace": "serial #CG TELEM line"
     },
     "device_parser_schema": {
       "name": "SCHEMA_VERSION",
       "value": "3",
-      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\tools\\cg_telemetry_schema.py",
-      "line": 43,
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\firmware\\tools\\cg_telemetry_schema.py",
+      "line": 51,
       "supported_schemas": [
         1,
         2,
@@ -29,20 +29,21 @@
     "backend_wire_schema": {
       "name": "WIRE_SCHEMA_VERSION",
       "value": "1",
-      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\backend\\src\\coldguard_backend\\contracts.py",
-      "line": 38,
+      "file": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\backend\\src\\coldguard_backend\\contracts.py",
+      "line": 40,
       "namespace": "MQTT JSON Telemetry envelope",
       "supported": [
-        1
+        1,
+        2
       ]
     }
   },
   "probe_frame": {
-    "committed_capture_line": "#CG TELEM schema=2 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=1000000 elapsed_ms=1000000 run_elapsed_ms=0 run_id=CG-S1-A-001 device_id=coldguard-001 boot_id=abcd0123 boot_count=7 seq=1 firmware_version=cg-w05-0.1.0 hardware_config_id=CG-HW-001 calibration_id=UNRECORDED test_phase=IDLE t1_rom=287088CA00000051 t2_rom=28AEBF2200000006 t3_rom=28CBE9CA00000072 spare_rom=283BE5C9000000A9 role_status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING rom_source=FROZEN_CONFIG_MAP t_inside_c=25.0625 t_inside_status=OK t_inside_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_hot_side_c=nan t_hot_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=11.9000 voltage_status=OK current_a=0.0000 current_status=OK power_w=0.0000 power_status=OK energy_wh=12.0000 energy_status=OK pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=OK raw_t1_c=25.0625 raw_t1_status=OK raw_t2_c=25.0625 raw_t2_status=OK raw_t3_c=25.0625 raw_t3_status=OK raw_spare_c=25.0625 raw_spare_status=OK thermal_age_ms=1000 power_age_ms=500 door_age_ms=10 thermal_seq=42 power_seq=999 door_transitions=0 door_cycles=0 probes_valid=3 probes_expected=3 thermal_quality=VALID environment_quality=DEGRADED door_quality=UNKNOWN electrical_quality=VALID quality=UNKNOWN cooling_applied=OFF cooling_applied_source=FIRMWARE_OUTPUT_STATE cooling_evidence=MEASURED_IDLE_AND_ZERO health=NEVER health_thermal=NEVER health_bme=NEVER health_door=NEVER health_power=NEVER health_telemetry=NEVER health_control=NEVER thermal_beats=0 power_beats=0 door_beats=0 thermal_max_gap_ms=0 power_max_gap_ms=0 door_max_gap_ms=0",
-    "committed_capture_schema": 2,
+    "committed_capture_line": "#CG TELEM schema=3 timestamp_utc=UNAVAILABLE timestamp_utc_source=DEVICE_HAS_NO_WALL_CLOCK uptime_ms=1000000 elapsed_ms=1000000 run_elapsed_ms=0 run_id=CG-S1-A-001 device_id=coldguard-001 boot_id=abcd0123 boot_count=7 seq=1 firmware_version=cg-w06-0.1.0 hardware_config_id=CG-HW-001 calibration_id=UNRECORDED test_phase=IDLE t1_rom=287088CA00000051 t2_rom=28AEBF2200000006 t3_rom=28CBE9CA00000072 spare_rom=283BE5C9000000A9 role_status=ROLE_ASSIGNED_PHYSICAL_LABEL_PENDING rom_source=FROZEN_CONFIG_MAP t_inside_c=25.0625 t_inside_status=OK t_inside_src=T1 t_hot_side_c=25.0625 t_hot_side_status=OK t_hot_side_src=T2 t_cold_side_c=nan t_cold_side_status=NOT_ASSIGNED t_ambient_c=nan t_ambient_status=NOT_ASSIGNED relative_humidity_pct=nan relative_humidity_status=SENSOR_NOT_PRESENT door_open=nan door_status=UNVERIFIED door_raw=1 voltage_v=11.9000 voltage_status=OK current_a=0.0000 current_status=OK power_w=0.0000 power_status=OK energy_wh=12.0000 energy_status=OK pwm_duty=0 fan_command=OFF fan_status=NOT_COMMANDABLE output_stage=DISABLED tec_state=OFF fault_code=0x00000000 fault_reason=BOOT_SAFE_OFF sensor_validity=VALID power_validity=OK raw_t1_c=25.0625 raw_t1_status=OK raw_t2_c=25.0625 raw_t2_status=OK raw_t3_c=25.0625 raw_t3_status=OK raw_spare_c=25.0625 raw_spare_status=OK thermal_age_ms=1000 power_age_ms=500 door_age_ms=10 thermal_seq=42 power_seq=999 door_transitions=0 door_cycles=0 probes_valid=3 probes_expected=3 thermal_quality=VALID environment_quality=DEGRADED door_quality=UNKNOWN electrical_quality=VALID quality=UNKNOWN cooling_applied=OFF cooling_applied_source=FIRMWARE_OUTPUT_STATE cooling_evidence=MEASURED_IDLE_AND_ZERO health=NEVER health_thermal=NEVER health_bme=NEVER health_door=NEVER health_power=NEVER health_telemetry=NEVER health_control=NEVER thermal_beats=0 power_beats=0 door_beats=0 thermal_max_gap_ms=0 power_max_gap_ms=0 door_max_gap_ms=0 command_id=NONE desired_cooling=NONE desired_duty_permille=nan last_ack_status=NONE last_ack_reason=NO_COMMAND_RECEIVED",
+    "committed_capture_schema": 3,
     "derived_frame_schema": 3,
-    "derived_frame_provenance": "DERIVED, not captured: the committed W06 demo capture carries schema=2 and no command tokens; the five schema-3 tokens were appended exactly as firmware/main/cg_telemetry.c:382-384 emits them for the no-command-received case.",
-    "parsed_field_count": 95,
+    "derived_frame_provenance": "PARSED, not derived: the committed W06 demo capture carries schema=3 with the full W06 command/ACK tail already in the frame; it was parsed directly with no token appended.",
+    "parsed_field_count": 96,
     "frame_token_order": [
       "schema",
       "timestamp_utc",
@@ -68,10 +69,11 @@
       "t_inside_c",
       "t_inside_status",
       "t_inside_src",
-      "t_cold_side_c",
-      "t_cold_side_status",
       "t_hot_side_c",
       "t_hot_side_status",
+      "t_hot_side_src",
+      "t_cold_side_c",
+      "t_cold_side_status",
       "t_ambient_c",
       "t_ambient_status",
       "relative_humidity_pct",
@@ -152,7 +154,7 @@
       "boot_id": "abcd0123",
       "boot_count": "7",
       "seq": "1",
-      "firmware_version": "cg-w05-0.1.0",
+      "firmware_version": "cg-w06-0.1.0",
       "hardware_config_id": "CG-HW-001",
       "calibration_id": "UNRECORDED",
       "test_phase": "IDLE",
@@ -164,11 +166,12 @@
       "rom_source": "FROZEN_CONFIG_MAP",
       "t_inside_c": "25.0625",
       "t_inside_status": "OK",
-      "t_inside_src": "T2",
+      "t_inside_src": "T1",
+      "t_hot_side_c": "25.0625",
+      "t_hot_side_status": "OK",
+      "t_hot_side_src": "T2",
       "t_cold_side_c": "nan",
       "t_cold_side_status": "NOT_ASSIGNED",
-      "t_hot_side_c": "nan",
-      "t_hot_side_status": "NOT_ASSIGNED",
       "t_ambient_c": "nan",
       "t_ambient_status": "NOT_ASSIGNED",
       "relative_humidity_pct": "nan",
@@ -239,13 +242,8 @@
     }
   },
   "device_parser_type_gaps": {
-    "note": "cg_telemetry_schema._coerce leaves any token not listed in FLOAT_FIELDS/INTEGER_FIELDS as a raw string; these mapped wire numbers are therefore untyped by Member A's own parser and a gateway must cast them itself.",
-    "untyped_numeric_fields": [
-      "raw_spare_c",
-      "raw_t1_c",
-      "raw_t2_c",
-      "raw_t3_c"
-    ]
+    "note": "Member A's parser coerced every mapped wire number in the probe frame to float|int; no numeric field crossed as text.",
+    "untyped_numeric_fields": []
   },
   "compatibility_matrix": [
     {
@@ -322,7 +320,7 @@
     },
     {
       "device_field": "firmware_version",
-      "device_value_in_probe_frame": "cg-w05-0.1.0",
+      "device_value_in_probe_frame": "cg-w06-0.1.0",
       "device_declared_type": "str",
       "backend_field": "firmware_version",
       "backend_declared_type": "str",
@@ -470,8 +468,8 @@
       "device_declared_type": "VALID|DEGRADED|INVALID|UNKNOWN",
       "backend_field": "quality.overall",
       "backend_declared_type": "VALID|DEGRADED|INVALID",
-      "backend_verdict": "REJECT",
-      "backend_error": "SCHEMA_VIOLATION@quality.overall: Input should be 'VALID', 'DEGRADED' or 'INVALID'"
+      "backend_verdict": "ACCEPT (only after schema rewrite + name mapping)",
+      "backend_error": ""
     },
     {
       "device_field": "boot_count",
@@ -988,7 +986,16 @@
     },
     {
       "device_field": "t_hot_side_c",
-      "device_value_in_probe_frame": "nan",
+      "device_value_in_probe_frame": "25.0625",
+      "device_declared_type": "serial token",
+      "backend_field": "<none>",
+      "backend_declared_type": "<none>",
+      "backend_verdict": "IGNORED (Telemetry._WireBase extra='allow'; not a column in normalized_store.telemetry)",
+      "backend_error": ""
+    },
+    {
+      "device_field": "t_hot_side_src",
+      "device_value_in_probe_frame": "T2",
       "device_declared_type": "serial token",
       "backend_field": "<none>",
       "backend_declared_type": "<none>",
@@ -997,7 +1004,7 @@
     },
     {
       "device_field": "t_hot_side_status",
-      "device_value_in_probe_frame": "NOT_ASSIGNED",
+      "device_value_in_probe_frame": "OK",
       "device_declared_type": "serial token",
       "backend_field": "<none>",
       "backend_declared_type": "<none>",
@@ -1015,7 +1022,7 @@
     },
     {
       "device_field": "t_inside_src",
-      "device_value_in_probe_frame": "T2",
+      "device_value_in_probe_frame": "T1",
       "device_declared_type": "serial token",
       "backend_field": "<none>",
       "backend_declared_type": "<none>",
@@ -1149,7 +1156,7 @@
         {
           "code": "UNSUPPORTED_SCHEMA",
           "loc": "schema_version",
-          "message": "unsupported schema_version 3; supported: [1]"
+          "message": "unsupported schema_version 3; supported: [1, 2]"
         }
       ],
       "payload_sent": {
@@ -1161,7 +1168,7 @@
         "uptime_ms": 1000000,
         "run_id": "CG-S1-A-001",
         "hardware_config_id": "CG-HW-001",
-        "firmware_version": "cg-w05-0.1.0",
+        "firmware_version": "cg-w06-0.1.0",
         "calibration_id": "UNRECORDED",
         "thermal": {
           "t1": 25.0625,
@@ -1200,11 +1207,6 @@
           "code": "SCHEMA_VIOLATION",
           "loc": "captured_at",
           "message": "Input should be a valid datetime or date, invalid character in year"
-        },
-        {
-          "code": "SCHEMA_VIOLATION",
-          "loc": "quality.overall",
-          "message": "Input should be 'VALID', 'DEGRADED' or 'INVALID'"
         }
       ],
       "payload_sent": {
@@ -1216,7 +1218,7 @@
         "uptime_ms": 1000000,
         "run_id": "CG-S1-A-001",
         "hardware_config_id": "CG-HW-001",
-        "firmware_version": "cg-w05-0.1.0",
+        "firmware_version": "cg-w06-0.1.0",
         "calibration_id": "UNRECORDED",
         "thermal": {
           "t1": 25.0625,
@@ -1251,7 +1253,7 @@
   },
   "quality_vocabulary_probe": {
     "accepted": false,
-    "error": "1 validation error for Telemetry\nquality.overall\n  Input should be 'VALID', 'DEGRADED' or 'INVALID' [type=literal_error, input_value='UNKNOWN', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.14/v/literal_error"
+    "error": "1 validation error for Telemetry\n  Value error, UNKNOWN quality requires schema 2 [type=value_error, input_value={'schema_version': 1, 'de..., 'overall': 'UNKNOWN'}}, input_type=dict]"
   },
   "duty_unit_probe": {
     "device_pwm_duty_0": {
@@ -1269,7 +1271,7 @@
   },
   "mqtt_topics": {
     "device_mqtt_publishers_found": 0,
-    "device_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\app_main.c:20",
+    "device_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\firmware\\main\\app_main.c:20",
     "backend_subscriptions": [
       {
         "topic": "coldguard/+/telemetry",
@@ -1288,8 +1290,8 @@
         "qos": 1
       }
     ],
-    "backend_acl_command_ack_read": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\infra\\mosquitto\\acl.conf:37",
-    "simulator_family_allows_command_ack": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\backend\\src\\coldguard_backend\\simulator.py:57",
+    "backend_acl_command_ack_read": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\infra\\mosquitto\\acl.conf:37",
+    "simulator_family_allows_command_ack": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\backend\\src\\coldguard_backend\\simulator.py:57",
     "simulator_publish_policy_command_ack": {
       "topic_for": "coldguard/coldguard-001/command_ack",
       "qos_retain_for": "ERROR ValueError: no publisher policy for family 'command_ack'"
@@ -1304,12 +1306,12 @@
         "docs\\00-project-scope-architecture.md:1593: coldguard/{deviceId}/ack"
       ],
       "docs_02": [
-        "docs\\02-aiot-closed-loop-engineering.md:783: coldguard/{device_id}/telemetry",
-        "docs\\02-aiot-closed-loop-engineering.md:784: coldguard/{device_id}/event",
-        "docs\\02-aiot-closed-loop-engineering.md:785: coldguard/{device_id}/state",
-        "docs\\02-aiot-closed-loop-engineering.md:786: coldguard/{device_id}/command",
-        "docs\\02-aiot-closed-loop-engineering.md:787: coldguard/{device_id}/command_ack",
-        "docs\\02-aiot-closed-loop-engineering.md:788: coldguard/{device_id}/health"
+        "docs\\02-aiot-closed-loop-engineering.md:792: coldguard/{device_id}/telemetry",
+        "docs\\02-aiot-closed-loop-engineering.md:793: coldguard/{device_id}/event",
+        "docs\\02-aiot-closed-loop-engineering.md:794: coldguard/{device_id}/state",
+        "docs\\02-aiot-closed-loop-engineering.md:795: coldguard/{device_id}/command",
+        "docs\\02-aiot-closed-loop-engineering.md:796: coldguard/{device_id}/command_ack",
+        "docs\\02-aiot-closed-loop-engineering.md:797: coldguard/{device_id}/health"
       ],
       "docs_05C": [
         "docs\\05C-member-c-iot-backend-digital-twin.md:421: coldguard/{device_id}/telemetry",
@@ -1354,7 +1356,7 @@
       "action_duty_permille"
     ],
     "device_parser_rejects_unknown_field": true,
-    "device_parser_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\A-handoff-contracts\\firmware\\main\\cg_command.c:780",
+    "device_parser_evidence": "C:\\Users\\dlbac\\Downloads\\coldguard-repo\\_a-remediation-local\\firmware\\main\\cg_command.c:780",
     "backend_command_field_names": [
       "action",
       "command_id",
@@ -1462,17 +1464,17 @@
       "id": "R-07",
       "severity": "P1",
       "owner": "Member A",
-      "claim": "Member A's own W06 evidence does not exercise the schema-3 telemetry branch it claims to deliver.",
-      "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=2 and zero command tokens, while its test's docstring at firmware/tools/tests/test_cg_command_trace.py:28 calls it 'The schema-3 telemetry line the harness emitted into the demo capture'",
-      "verdict": "MEMBER A MUST FIX: regenerate the capture from the shipped schema-3 formatter."
+      "claim": "Member A's own W06 evidence exercises the schema-3 telemetry branch.",
+      "evidence": "evidence/A/W06/demo-command-capture.log line 10 carries schema=3 and the full W06 command/ACK tail",
+      "verdict": "RESOLVED: the committed demo capture is a real schema=3 frame with the no-command-received tail; test_cg_command_trace.py pins it."
     },
     {
       "id": "R-08",
       "severity": "P2",
       "owner": "Member A",
-      "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are not typed by the Member A parser, so they cross the wire as text.",
-      "evidence": "firmware/tools/cg_telemetry_schema.py:309-345 (_coerce falls through to the token); the probe's untyped_numeric_fields list",
-      "verdict": "Add these to FLOAT_FIELDS in Member A's own tool."
+      "claim": "raw_t1_c/raw_t2_c/raw_t3_c/raw_spare_c are typed by the Member A parser (fixed in this remediation).",
+      "evidence": "firmware/tools/cg_telemetry_schema.py FLOAT_FIELDS now contains the four raw temperature tokens; parsed as float|None",
+      "verdict": "RESOLVED: the four raw temperature tokens are in FLOAT_FIELDS and parse as float|None; the regression pins the coercion."
     }
   ],
   "ack_reason_vocabulary": {
@@ -1564,10 +1566,11 @@
       "t_inside_c",
       "t_inside_status",
       "t_inside_src",
-      "t_cold_side_c",
-      "t_cold_side_status",
       "t_hot_side_c",
       "t_hot_side_status",
+      "t_hot_side_src",
+      "t_cold_side_c",
+      "t_cold_side_status",
       "t_ambient_c",
       "t_ambient_status",
       "relative_humidity_pct",

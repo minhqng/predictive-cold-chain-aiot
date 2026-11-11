@@ -1,0 +1,331 @@
+{
+  "schema": "cg-w09-healthy-ranges-s1-v1",
+  "created_utc": "2026-11-09T16:12:26Z",
+  "authority": "docs/05A section 18 (A-W09-04 input) — measurement-only; acceptance of A-W09-04 stays gated on A-W08-03",
+  "evidence_kind": "HOST_ANALYSIS_OF_COMMITTED_DATASETS",
+  "touches_hardware": false,
+  "physical_verified": false,
+  "identity": {
+    "firmware_version": "cg-w06-0.1.0",
+    "hardware_config_id": "CG-HW-001",
+    "grammar": "TELEM"
+  },
+  "dataset": "PR #91 (merged) evidence/A/SOURCES/20261107/datasets (manifest.json: 18 runs, 9293 frames)",
+  "inputs": [
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/trial1-imported-normalized.csv",
+      "sha256": "414e182fa1546ae34237d5d7daf6208da20e36b555138ec501b31f73b39c33a8"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/trial2-normalized.csv",
+      "sha256": "ee0562a481466dcbac568d89063f062af3a241afdae88299559c49154267d199"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/trial3-normalized.csv",
+      "sha256": "3d90f92c630c1ce46becbc85882fcf1d578f41fcaee0985bc024acf1f9dd4848"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/trial4-normalized.csv",
+      "sha256": "29c6e0b1e55552350de54584cf4f4159df94fb72b217cec19a46f3981638d6f9"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/H8-C-600s-TEC-100pct-normalized.csv",
+      "sha256": "ca6c4cb03d8d3f7ccdbcf6c1c47c1948f61996a80892423a1e897c0923b649e2"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/a-w07-02-run-1-4b555191-normalized.csv",
+      "sha256": "aee3cc8cfaf3604b9e4ddca55299f9c38873cd6ad3a18704f2784697dbf94ea0"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/a-w07-02-run-2-4b555191-normalized.csv",
+      "sha256": "1064f36ecfb4fab8ae77f5f4bd522b80c8f87eed903c47f48b760bf2c22ef870"
+    },
+    {
+      "file": "evidence/A/SOURCES/20261107/datasets/datasets/a-w07-02-run-3-4b555191-normalized.csv",
+      "sha256": "ee5ea52311df6faa21634a23f821ab856fc8bbc96c45f066777f25ee98c85c35"
+    }
+  ],
+  "s1_passive_runs": {
+    "trial1-imported-normalized.csv": {
+      "frames": 600,
+      "probes": {
+        "t1_c": {
+          "n": 599,
+          "mean_c": 29.561,
+          "min_c": 29.1875,
+          "max_c": 29.875,
+          "sigma_first_diff_c": 0.028441,
+          "sigma_second_diff_c": 0.028514
+        },
+        "t2_c": {
+          "n": 599,
+          "mean_c": 29.6952,
+          "min_c": 29.5625,
+          "max_c": 29.75,
+          "sigma_first_diff_c": 0.031921,
+          "sigma_second_diff_c": 0.031116
+        },
+        "t3_c": {
+          "n": 599,
+          "mean_c": 29.2206,
+          "min_c": 28.9375,
+          "max_c": 29.5,
+          "sigma_first_diff_c": 0.028218,
+          "sigma_second_diff_c": 0.028772
+        },
+        "t4_c": {
+          "n": 599,
+          "mean_c": 29.6057,
+          "min_c": 29.25,
+          "max_c": 29.875,
+          "sigma_first_diff_c": 0.028448,
+          "sigma_second_diff_c": 0.026762
+        }
+      },
+      "tmean_air": {
+        "n": 599,
+        "mean_c": 29.4624,
+        "min_c": 29.125,
+        "max_c": 29.75,
+        "ols_slope_c_per_s": 0.00102298
+      },
+      "cadence_s": {
+        "mean": 1.0001,
+        "min": 0.92,
+        "max": 1.024,
+        "n_intervals": 599
+      }
+    },
+    "trial2-normalized.csv": {
+      "frames": 600,
+      "probes": {
+        "t1_c": {
+          "n": 600,
+          "mean_c": 29.91,
+          "min_c": 29.875,
+          "max_c": 29.9375,
+          "sigma_first_diff_c": 0.030962,
+          "sigma_second_diff_c": 0.031092
+        },
+        "t2_c": {
+          "n": 600,
+          "mean_c": 29.7459,
+          "min_c": 29.6875,
+          "max_c": 29.75,
+          "sigma_first_diff_c": 0.022115,
+          "sigma_second_diff_c": 0.02092
+        },
+        "t3_c": {
+          "n": 600,
+          "mean_c": 29.5587,
+          "min_c": 29.5,
+          "max_c": 29.625,
+          "sigma_first_diff_c": 0.027385,
+          "sigma_second_diff_c": 0.026313
+        },
+        "t4_c": {
+          "n": 600,
+          "mean_c": 29.9376,
+          "min_c": 29.875,
+          "max_c": 30.0,
+          "sigma_first_diff_c": 0.02528,
+          "sigma_second_diff_c": 0.025812
+        }
+      },
+      "tmean_air": {
+        "n": 600,
+        "mean_c": 29.8021,
+        "min_c": 29.75,
+        "max_c": 29.8542,
+        "ols_slope_c_per_s": 8.372e-05
+      },
+      "cadence_s": {
+        "mean": 1.0,
+        "min": 0.92,
+        "max": 1.02,
+        "n_intervals": 599
+      }
+    },
+    "trial3-normalized.csv": {
+      "frames": 600,
+      "probes": {
+        "t1_c": {
+          "n": 600,
+          "mean_c": 29.9424,
+          "min_c": 29.875,
+          "max_c": 30.0,
+          "sigma_first_diff_c": 0.021517,
+          "sigma_second_diff_c": 0.023002
+        },
+        "t2_c": {
+          "n": 600,
+          "mean_c": 29.7527,
+          "min_c": 29.75,
+          "max_c": 29.8125,
+          "sigma_first_diff_c": 0.016151,
+          "sigma_second_diff_c": 0.017334
+        },
+        "t3_c": {
+          "n": 600,
+          "mean_c": 29.6075,
+          "min_c": 29.5625,
+          "max_c": 29.625,
+          "sigma_first_diff_c": 0.036205,
+          "sigma_second_diff_c": 0.036054
+        },
+        "t4_c": {
+          "n": 600,
+          "mean_c": 29.9859,
+          "min_c": 29.9375,
+          "max_c": 30.0,
+          "sigma_first_diff_c": 0.033001,
+          "sigma_second_diff_c": 0.03381
+        }
+      },
+      "tmean_air": {
+        "n": 600,
+        "mean_c": 29.8453,
+        "min_c": 29.8125,
+        "max_c": 29.875,
+        "ols_slope_c_per_s": 5.337e-05
+      },
+      "cadence_s": {
+        "mean": 1.0,
+        "min": 0.92,
+        "max": 1.02,
+        "n_intervals": 599
+      }
+    },
+    "trial4-normalized.csv": {
+      "frames": 601,
+      "probes": {
+        "t1_c": {
+          "n": 601,
+          "mean_c": 29.9533,
+          "min_c": 29.9375,
+          "max_c": 30.0,
+          "sigma_first_diff_c": 0.03671,
+          "sigma_second_diff_c": 0.038897
+        },
+        "t2_c": {
+          "n": 601,
+          "mean_c": 29.7502,
+          "min_c": 29.6875,
+          "max_c": 29.8125,
+          "sigma_first_diff_c": 0.010206,
+          "sigma_second_diff_c": 0.010215
+        },
+        "t3_c": {
+          "n": 601,
+          "mean_c": 29.6243,
+          "min_c": 29.5625,
+          "max_c": 29.6875,
+          "sigma_first_diff_c": 0.011968,
+          "sigma_second_diff_c": 0.011978
+        },
+        "t4_c": {
+          "n": 601,
+          "mean_c": 29.9992,
+          "min_c": 29.9375,
+          "max_c": 30.0625,
+          "sigma_first_diff_c": 0.011411,
+          "sigma_second_diff_c": 0.01142
+        }
+      },
+      "tmean_air": {
+        "n": 601,
+        "mean_c": 29.8589,
+        "min_c": 29.8333,
+        "max_c": 29.875,
+        "ols_slope_c_per_s": 1.97e-06
+      },
+      "cadence_s": {
+        "mean": 1.0,
+        "min": 0.92,
+        "max": 1.02,
+        "n_intervals": 600
+      }
+    }
+  },
+  "pooled_passive_noise_trend_immune": {
+    "t1_c": {
+      "n_total": 2400,
+      "sigma_second_diff_c": 0.030916,
+      "min_c": 29.1875,
+      "max_c": 30.0
+    },
+    "t2_c": {
+      "n_total": 2400,
+      "sigma_second_diff_c": 0.02128,
+      "min_c": 29.5625,
+      "max_c": 29.8125
+    },
+    "t3_c": {
+      "n_total": 2400,
+      "sigma_second_diff_c": 0.027248,
+      "min_c": 28.9375,
+      "max_c": 29.6875
+    },
+    "t4_c": {
+      "n_total": 2400,
+      "sigma_second_diff_c": 0.025868,
+      "min_c": 29.25,
+      "max_c": 30.0625
+    }
+  },
+  "sampling_cadence_s": {
+    "mean": 1.0,
+    "min": 0.92,
+    "max": 1.024
+  },
+  "off_electrical_envelope_s1": {
+    "frames": 2401,
+    "electrical_valid_rate": 0.99917,
+    "thermal_valid_rate": 0.99958,
+    "current_a": {
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "voltage_v": {
+      "mean": 11.95,
+      "min": 11.94,
+      "max": 11.95
+    },
+    "power_w": {
+      "mean": 0.0,
+      "max": 0.0
+    },
+    "qualification_note": "Electrical status columns are OK-qualified throughout this dataset (cg-w06-0.1.0 TELEM schema), unlike the W09-era H8-C CSV whose status columns were empty (that dossier labeled the electrical domain UNQUALIFIED)."
+  },
+  "active_electrical_range_h8c": {
+    "source": "evidence/A/SOURCES/20261107/datasets/datasets/H8-C-600s-TEC-100pct-normalized.csv",
+    "boot_id": "56044b74",
+    "firmware_version": "h8-bench",
+    "segment": "tec_state==COOLING (H8-C 600 s, 100% duty bench stage, run-00000001)",
+    "frames": 600,
+    "current_a": {
+      "mean": 7.2247,
+      "median": 7.16,
+      "p95": 7.62,
+      "max": 9.99
+    },
+    "voltage_v": {
+      "mean": 11.7951,
+      "min": 11.76,
+      "max": 11.95
+    },
+    "power_w": {
+      "mean": 85.1593,
+      "max": 117.4
+    },
+    "caveat": "Bench H8 image (grammar H8S), 100% duty. Production-stage W06 verification of the active range remains part of A-W08-03/W16-01."
+  },
+  "excluded": {
+    "w07_passive_repeats": "a-w07-02-run-1..3: compact capture records without full 4-probe rows; excluded from thermal statistics, kept in the dataset manifest."
+  },
+  "limitations": [
+    "Derived offline from committed captures; no new physical measurement performed.",
+    "S1 trials are passive warm-up/near-steady runs at room ambient; the active ON segment comes from the bench H8-C capture (production-stage ON evidence is A-W08-03).",
+    "Trend-immune second-difference sigma follows the W09-era estimator; per-run ambient drift is recorded in per-run tmean ols_slope_c_per_s."
+  ]
+}

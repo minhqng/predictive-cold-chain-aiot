@@ -152,13 +152,26 @@ DEFINITIONS = [
       checks=("4.75..5.25 V", "evidence photo", "notes recorded"),
       evidence=("logic-power-measurement.md", "meter photo")),
     T("A-W03-02", 3, "RS-485 transceiver power and pin map",
-      "Verify the installed RS-485 module VCC is 3.3 V class and map DI, RO, DE, /RE, A and B. The frozen BOM calls for MAX3485; the as-built deviation must be recorded, not hidden.",
+      "Verify the RS-485 transceiver supply and pin map. Original frozen configuration "
+      "(MAX3485, 3.3 V supply): module VCC 3.2..3.4 V. Approved substitution "
+      "(TTL485-V2.0, 5 V supply, W01 CR-A-W01-01, project owner 2026-11-09): 5 V-class "
+      "module supply is expected and valid; a recorded W01 owner approval is required; "
+      "the ESP32 RX input level is validated SEPARATELY behind the divider "
+      "(2.475..3.4 V); a 5 V rail must never reach a GPIO directly. In both "
+      "configurations map DI, RO, DE, /RE semantics, A and B, and record any "
+      "deviation, never hide it.",
       GUIDED, NO_POWER, "max3485",
       params={"items": ["DI mapped", "RO mapped", "DE mapped", "/RE mapped", "A mapped", "B mapped"]},
       hw=("RS-485 transceiver module", "multimeter"),
-      actions=("measure module VCC", "inspect and record every pin"),
-      checks=("VCC 3.2..3.4 V", "all six pins recorded", "photo evidence"),
-      evidence=("rs485-wiring.png", "VCC measurement")),
+      actions=("identify the installed module configuration",
+               "measure the module supply and the ESP32 RX input level",
+               "inspect and record every pin"),
+      checks=("module supply matches the installed approved configuration",
+              "approved substitution provenance (5 V variant)",
+              "ESP32 RX input level 2.475..3.4 V behind the divider (5 V variant)",
+              "no 5 V rail wired directly to a GPIO (5 V variant)",
+              "all six pin functions recorded", "photo evidence"),
+      evidence=("rs485-wiring.png", "module supply measurement", "ESP32 RX level measurement")),
     T("A-W03-03", 3, "PZEM communication",
       "Verify PZEM communication power, slave address, Modbus CRC and actual serial framing; if 8N1 fails, review the shipped manual revision before declaring a hardware fault.",
       AUTOMATED, READ_ONLY, "pzem_link",

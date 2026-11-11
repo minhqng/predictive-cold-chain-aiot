@@ -1,0 +1,18 @@
+{
+  "policy": {
+    "policy_version": "test-policy",
+    "representative_source": "TMAX",
+    "upper_on_c": 8.0,
+    "lower_off_c": 6.0,
+    "thermal_max_age_s": 15.0,
+    "command_max_future_skew_s": 5.0,
+    "broker_offline_grace_s": 30.0,
+    "backend_state_max_age_s": 10.0,
+    "safe_local_exit_min_stable_s": 0.0,
+    "predictive_enabled": false
+  },
+  "persistence_s": 0.0,
+  "min_on_dwell_s": 0.0,
+  "min_off_dwell_s": 0.0,
+  "source": "test"
+}

@@ -111,6 +111,8 @@ class MqttIngestConsumer:
         self._lock = threading.Lock()
         self._running = False
         self._connected = threading.Event()
+        self._subscribed = threading.Event()
+        self._startup_ready = threading.Event()
         self._connect_error: str | None = None
         self.received_count = 0
         self.persisted_count = 0
@@ -155,7 +157,16 @@ class MqttIngestConsumer:
                 raise RuntimeError("MqttIngestConsumer is already running")
             self._running = True
         self._connected.clear()
+        self._subscribed.clear()
+        self._startup_ready.clear()
         self._connect_error = None
+        try:
+            self._start()
+        except BaseException:
+            self.stop()
+            raise
+
+    def _start(self) -> None:
         self._engine = self._build_engine()
         # MQTT 5 is the canonical preference (Doc 02 section 6.1); the
         # v3.1.1 subset would be acceptable only if chosen intentionally.
@@ -169,39 +180,40 @@ class MqttIngestConsumer:
         client.on_connect = self._on_connect
         client.on_message = self._on_message
         client.on_disconnect = self._on_disconnect
+        client.on_subscribe = self._on_subscribe
         self._client = client
         try:
             client.connect(self._config.mqtt_host, self._config.mqtt_port, keepalive=30)
-        except Exception as exc:
-            self._shutdown_locked()
+        except OSError as exc:
             raise TimeoutError(
                 f"mqtt broker unreachable at "
                 f"{self._config.mqtt_host}:{self._config.mqtt_port}: {exc}"
             ) from exc
         client.loop_start()
-        if not self._connected.wait(timeout=_CONNECT_TIMEOUT_S):
-            self.stop()
+        if not self._startup_ready.wait(timeout=_CONNECT_TIMEOUT_S):
             raise TimeoutError(
                 f"mqtt broker at {self._config.mqtt_host}:{self._config.mqtt_port} "
-                f"did not answer CONNECT within {_CONNECT_TIMEOUT_S:.0f}s"
+                f"did not confirm subscriptions within {_CONNECT_TIMEOUT_S:.0f}s"
             )
-        if self._connect_error is not None:
-            self.stop()
-            raise ConnectionError(self._connect_error)
+        if self._connect_error is not None or not self._subscribed.is_set():
+            raise ConnectionError(self._connect_error or "mqtt subscription lost during startup")
 
     def stop(self) -> None:
         """Shut down the loop, connection, and engine. Idempotent."""
         client, engine = self._shutdown_locked()
-        if client is not None:
-            try:
-                client.loop_stop()
-            finally:
+        try:
+            if client is not None:
                 try:
                     client.disconnect()
                 except Exception:  # noqa: BLE001 - shutdown must not raise
                     log.warning("mqtt disconnect raised during stop", exc_info=True)
-        if engine is not None:
-            engine.dispose()
+                finally:
+                    client.loop_stop()
+        finally:
+            self._connected.clear()
+            self._subscribed.clear()
+            if engine is not None:
+                engine.dispose()
 
     def _shutdown_locked(self) -> tuple[mqtt.Client | None, Engine | None]:
         with self._lock:
@@ -221,19 +233,32 @@ class MqttIngestConsumer:
                 f"{self._config.mqtt_username!r} (reason {reason_code}); "
                 f"check provisioned broker credentials"
             )
-            self._connected.set()
+            log.error("%s", self._connect_error)
+            self._startup_ready.set()
             return
-        for topic, qos in self._subscriptions:
-            # A custom wildcard filter can also receive telemetry.
-            result, _mid = client.subscribe(
-                topic, options=mqtt.SubscribeOptions(qos=qos, retainAsPublished=True)
-            )
-            if result != mqtt.MQTT_ERR_SUCCESS:
-                log.error("mqtt subscribe failed: topic=%s qos=%s rc=%s", topic, qos, result)
-        log.info("mqtt connected; subscribed to %d topic filters", len(self._subscriptions))
         self._connected.set()
+        self._connect_error = None
+        result, _mid = client.subscribe([
+            (topic, mqtt.SubscribeOptions(qos=qos, retainAsPublished=True))
+            for topic, qos in self._subscriptions
+        ])
+        if result != mqtt.MQTT_ERR_SUCCESS:
+            self._connect_error = f"mqtt subscription request failed: rc={result}"
+            log.error("%s", self._connect_error)
+            self._startup_ready.set()
+
+    def _on_subscribe(self, client, userdata, mid, reason_codes, properties=None) -> None:
+        if [code.value for code in reason_codes] == [qos for _, qos in self._subscriptions]:
+            self._subscribed.set()
+            log.info("mqtt subscribed to %d topic filters", len(self._subscriptions))
+        else:
+            self._connect_error = f"mqtt subscription rejected or downgraded: {reason_codes}"
+            log.error("%s", self._connect_error)
+        self._startup_ready.set()
 
     def _on_disconnect(self, client, userdata, flags, reason_code, properties=None) -> None:
+        self._connected.clear()
+        self._subscribed.clear()
         if reason_failed(reason_code):
             log.warning("mqtt disconnected unexpectedly: %s", reason_code)
 
@@ -261,7 +286,7 @@ class MqttIngestConsumer:
                 self.error_count += 1
             # No payload bytes in logs: payloads may carry device data;
             # topic + length is enough for triage.
-            log.exception(
+            log.error(
                 "raw persistence failed: topic=%s bytes=%d; "
                 "db commit absent, failure counted; auto-ack enabled so "
                 "delivery may still be acknowledged after callback "
@@ -286,6 +311,8 @@ class MqttIngestConsumer:
         with self._lock:
             base: dict[str, int | bool] = {
                 "running": self._running,
+                "broker_connected": self._connected.is_set(),
+                "subscribed": self._subscribed.is_set(),
                 "received": self.received_count,
                 "persisted": self.persisted_count,
                 "errors": self.error_count,

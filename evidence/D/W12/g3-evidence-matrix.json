@@ -1,0 +1,51 @@
+{
+  "scope": "MEMBER_D_G3_READINESS_ONLY",
+  "overall": "NOT_VERIFIED",
+  "team_gate_decision": "NOT_CLAIMED",
+  "sources": [
+    {
+      "path": "evidence/A/W12/gate-g3-input.json",
+      "sha256": "59b12eb99b0d10e8ac409fb55fbcd4b7ff6d922f87c53e6da59c372746f22013"
+    },
+    {
+      "path": "evidence/D/W09/a-w09-source-crosscheck.json",
+      "sha256": "8f4215b2065f967a68cd4a83ac0d5ee690e341bb3fd82c07e11962cca46327da"
+    }
+  ],
+  "checks": [
+    {
+      "id": "D-W12-01",
+      "status": "OPEN",
+      "reason": "Measured Controller A thresholds, persistence and applied-action state are not frozen"
+    },
+    {
+      "id": "D-W12-02",
+      "status": "CONTRACT_ONLY",
+      "reason": "Replay contract exists; no admissible independent recorded run is committed"
+    },
+    {
+      "id": "D-W12-03",
+      "status": "BLOCKED",
+      "reason": "Physical S2 benchmark and qualified electrical channel remain open"
+    },
+    {
+      "id": "D-W12-04",
+      "status": "SYNTHETIC_ONLY",
+      "reason": "Unit lifecycle wiring is tested; device-to-actuation trace is absent"
+    },
+    {
+      "id": "D-W12-05",
+      "status": "OPEN",
+      "reason": "A G3 input has open blockers; whole-team gate requires owner signoffs"
+    }
+  ],
+  "a_open_blockers": [
+    "no qualified electrical channel in the committed capture (current_status/voltage_status empty) - A-W12-02 figures are UNQUALIFIED",
+    "sensor fixtures, V1 mounting, terminals and cable routing have no post-freeze inspection record - A-W12-03 NEED_USER_ACTION",
+    "fuse/conductor deviation remains open and uncertified - A-W12-03 BLOCKED_HARDWARE"
+  ],
+  "a_w09_electrical_quality_counts": {
+    "UNKNOWN": 957
+  },
+  "rebuild_command": "python control/scripts/build_d_g3_matrix.py"
+}

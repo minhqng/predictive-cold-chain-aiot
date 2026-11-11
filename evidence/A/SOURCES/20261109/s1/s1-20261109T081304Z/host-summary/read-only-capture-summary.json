@@ -1,0 +1,28 @@
+{
+  "baud": 115200,
+  "bytes_written": 0,
+  "error": null,
+  "field_values": {
+    "boot_id": [
+      "c0e43470"
+    ],
+    "current_a": [
+      "nan",
+      "0.0000"
+    ],
+    "power_w": [
+      "nan",
+      "0.0000"
+    ],
+    "voltage_v": [
+      "nan",
+      "11.9500",
+      "11.9600"
+    ]
+  },
+  "lines": 3668,
+  "port": "COM4",
+  "seconds": 600.0,
+  "telemetry_frames": 600,
+  "writes_to_port": "NONE"
+}

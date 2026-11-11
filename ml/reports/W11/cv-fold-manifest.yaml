@@ -1,0 +1,377 @@
+schema: coldguard-w11-cv-fold-manifest-v1
+layer_version: coldguard-w11-grouped-xgb-benchmark-v1
+dataset_id: W11_EXPANDED_SYNTHETIC_GROUPED
+fixture_version: coldguard-w11-synthetic-grouped-v1
+provenance: SYNTHETIC_SOFTWARE_CONTROL_ONLY
+grouping_key: run_id + pair_id (one effective group per pair)
+effective_independent_groups: 8
+n_splits: 4
+split_seed: 42
+feature_registry_sha256: 1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9
+feature_ids:
+- T_chamber_max_c
+- T_chamber_min_c
+- T_chamber_mean_c
+- T_chamber_spread_c
+- T_center_c
+- T_bottom_c
+- T_near_door_c
+- rolling_mean_temperature_60s
+- rolling_std_temperature_60s
+- rolling_min_temperature_60s
+- rolling_max_temperature_60s
+- past_only_slope_c_per_min_60s
+- past_only_temperature_delta_60s
+- past_only_spatial_spread_60s
+- door_open
+- time_since_open
+- duration_so_far
+- count_past_60s
+- applied_cooling
+- applied_duty
+- time_since_confirmed_applied_change
+- cooling_voltage_v
+- cooling_current_a
+- cooling_power_w
+- energy_counter_wh
+- past_integrated_cooling_energy_wh
+- ambient_temperature_c
+- relative_humidity_pct
+label_identity:
+  horizon_s: 60.0
+  spec_version: coldguard-w11-development-label-v1
+  representative_temperature: DEVELOPMENT_CANDIDATE_NOT_SELECTED
+  boundary_c: null
+  frozen_at: null
+model_config_sha256: 4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84
+test_partition_used: false
+test_runs:
+- CG-W11-S1-001
+- CG-W11-S1-002
+- CG-W11-S2-001
+- CG-W11-S2-002
+folds:
+- fold_id: F1
+  train_group_ids:
+  - W11-PAIR-003
+  - W11-PAIR-004
+  - W11-PAIR-007
+  - W11-PAIR-008
+  - W11-PAIR-009
+  - W11-PAIR-010
+  validation_group_ids:
+  - W11-PAIR-005
+  - W11-PAIR-006
+  train_run_ids:
+  - CG-W11-S1-003
+  - CG-W11-S1-004
+  - CG-W11-S1-007
+  - CG-W11-S1-008
+  - CG-W11-S1-009
+  - CG-W11-S1-010
+  - CG-W11-S2-003
+  - CG-W11-S2-004
+  - CG-W11-S2-007
+  - CG-W11-S2-008
+  - CG-W11-S2-009
+  - CG-W11-S2-010
+  validation_run_ids:
+  - CG-W11-S1-005
+  - CG-W11-S1-006
+  - CG-W11-S2-005
+  - CG-W11-S2-006
+  pair_lineage:
+  - group_id: W11-PAIR-003
+    run_ids:
+    - CG-W11-S1-003
+    - CG-W11-S2-003
+    partition: train
+  - group_id: W11-PAIR-004
+    run_ids:
+    - CG-W11-S1-004
+    - CG-W11-S2-004
+    partition: train
+  - group_id: W11-PAIR-005
+    run_ids:
+    - CG-W11-S1-005
+    - CG-W11-S2-005
+    partition: validation
+  - group_id: W11-PAIR-006
+    run_ids:
+    - CG-W11-S1-006
+    - CG-W11-S2-006
+    partition: validation
+  - group_id: W11-PAIR-007
+    run_ids:
+    - CG-W11-S1-007
+    - CG-W11-S2-007
+    partition: train
+  - group_id: W11-PAIR-008
+    run_ids:
+    - CG-W11-S1-008
+    - CG-W11-S2-008
+    partition: train
+  - group_id: W11-PAIR-009
+    run_ids:
+    - CG-W11-S1-009
+    - CG-W11-S2-009
+    partition: train
+  - group_id: W11-PAIR-010
+    run_ids:
+    - CG-W11-S1-010
+    - CG-W11-S2-010
+    partition: train
+  seed: 42
+  train_window_count: 1452
+  validation_window_count: 484
+  train_class_counts:
+    positive: 360
+    negative: 1092
+  validation_class_counts:
+    positive: 120
+    negative: 364
+  censored_exclusions: 240
+  untrusted_exclusions: 0
+- fold_id: F2
+  train_group_ids:
+  - W11-PAIR-003
+  - W11-PAIR-004
+  - W11-PAIR-005
+  - W11-PAIR-006
+  - W11-PAIR-009
+  - W11-PAIR-010
+  validation_group_ids:
+  - W11-PAIR-007
+  - W11-PAIR-008
+  train_run_ids:
+  - CG-W11-S1-003
+  - CG-W11-S1-004
+  - CG-W11-S1-005
+  - CG-W11-S1-006
+  - CG-W11-S1-009
+  - CG-W11-S1-010
+  - CG-W11-S2-003
+  - CG-W11-S2-004
+  - CG-W11-S2-005
+  - CG-W11-S2-006
+  - CG-W11-S2-009
+  - CG-W11-S2-010
+  validation_run_ids:
+  - CG-W11-S1-007
+  - CG-W11-S1-008
+  - CG-W11-S2-007
+  - CG-W11-S2-008
+  pair_lineage:
+  - group_id: W11-PAIR-003
+    run_ids:
+    - CG-W11-S1-003
+    - CG-W11-S2-003
+    partition: train
+  - group_id: W11-PAIR-004
+    run_ids:
+    - CG-W11-S1-004
+    - CG-W11-S2-004
+    partition: train
+  - group_id: W11-PAIR-005
+    run_ids:
+    - CG-W11-S1-005
+    - CG-W11-S2-005
+    partition: train
+  - group_id: W11-PAIR-006
+    run_ids:
+    - CG-W11-S1-006
+    - CG-W11-S2-006
+    partition: train
+  - group_id: W11-PAIR-007
+    run_ids:
+    - CG-W11-S1-007
+    - CG-W11-S2-007
+    partition: validation
+  - group_id: W11-PAIR-008
+    run_ids:
+    - CG-W11-S1-008
+    - CG-W11-S2-008
+    partition: validation
+  - group_id: W11-PAIR-009
+    run_ids:
+    - CG-W11-S1-009
+    - CG-W11-S2-009
+    partition: train
+  - group_id: W11-PAIR-010
+    run_ids:
+    - CG-W11-S1-010
+    - CG-W11-S2-010
+    partition: train
+  seed: 42
+  train_window_count: 1452
+  validation_window_count: 484
+  train_class_counts:
+    positive: 360
+    negative: 1092
+  validation_class_counts:
+    positive: 120
+    negative: 364
+  censored_exclusions: 240
+  untrusted_exclusions: 0
+- fold_id: F3
+  train_group_ids:
+  - W11-PAIR-004
+  - W11-PAIR-005
+  - W11-PAIR-006
+  - W11-PAIR-007
+  - W11-PAIR-008
+  - W11-PAIR-010
+  validation_group_ids:
+  - W11-PAIR-003
+  - W11-PAIR-009
+  train_run_ids:
+  - CG-W11-S1-004
+  - CG-W11-S1-005
+  - CG-W11-S1-006
+  - CG-W11-S1-007
+  - CG-W11-S1-008
+  - CG-W11-S1-010
+  - CG-W11-S2-004
+  - CG-W11-S2-005
+  - CG-W11-S2-006
+  - CG-W11-S2-007
+  - CG-W11-S2-008
+  - CG-W11-S2-010
+  validation_run_ids:
+  - CG-W11-S1-003
+  - CG-W11-S1-009
+  - CG-W11-S2-003
+  - CG-W11-S2-009
+  pair_lineage:
+  - group_id: W11-PAIR-003
+    run_ids:
+    - CG-W11-S1-003
+    - CG-W11-S2-003
+    partition: validation
+  - group_id: W11-PAIR-004
+    run_ids:
+    - CG-W11-S1-004
+    - CG-W11-S2-004
+    partition: train
+  - group_id: W11-PAIR-005
+    run_ids:
+    - CG-W11-S1-005
+    - CG-W11-S2-005
+    partition: train
+  - group_id: W11-PAIR-006
+    run_ids:
+    - CG-W11-S1-006
+    - CG-W11-S2-006
+    partition: train
+  - group_id: W11-PAIR-007
+    run_ids:
+    - CG-W11-S1-007
+    - CG-W11-S2-007
+    partition: train
+  - group_id: W11-PAIR-008
+    run_ids:
+    - CG-W11-S1-008
+    - CG-W11-S2-008
+    partition: train
+  - group_id: W11-PAIR-009
+    run_ids:
+    - CG-W11-S1-009
+    - CG-W11-S2-009
+    partition: validation
+  - group_id: W11-PAIR-010
+    run_ids:
+    - CG-W11-S1-010
+    - CG-W11-S2-010
+    partition: train
+  seed: 42
+  train_window_count: 1452
+  validation_window_count: 484
+  train_class_counts:
+    positive: 360
+    negative: 1092
+  validation_class_counts:
+    positive: 120
+    negative: 364
+  censored_exclusions: 240
+  untrusted_exclusions: 0
+- fold_id: F4
+  train_group_ids:
+  - W11-PAIR-003
+  - W11-PAIR-005
+  - W11-PAIR-006
+  - W11-PAIR-007
+  - W11-PAIR-008
+  - W11-PAIR-009
+  validation_group_ids:
+  - W11-PAIR-004
+  - W11-PAIR-010
+  train_run_ids:
+  - CG-W11-S1-003
+  - CG-W11-S1-005
+  - CG-W11-S1-006
+  - CG-W11-S1-007
+  - CG-W11-S1-008
+  - CG-W11-S1-009
+  - CG-W11-S2-003
+  - CG-W11-S2-005
+  - CG-W11-S2-006
+  - CG-W11-S2-007
+  - CG-W11-S2-008
+  - CG-W11-S2-009
+  validation_run_ids:
+  - CG-W11-S1-004
+  - CG-W11-S1-010
+  - CG-W11-S2-004
+  - CG-W11-S2-010
+  pair_lineage:
+  - group_id: W11-PAIR-003
+    run_ids:
+    - CG-W11-S1-003
+    - CG-W11-S2-003
+    partition: train
+  - group_id: W11-PAIR-004
+    run_ids:
+    - CG-W11-S1-004
+    - CG-W11-S2-004
+    partition: validation
+  - group_id: W11-PAIR-005
+    run_ids:
+    - CG-W11-S1-005
+    - CG-W11-S2-005
+    partition: train
+  - group_id: W11-PAIR-006
+    run_ids:
+    - CG-W11-S1-006
+    - CG-W11-S2-006
+    partition: train
+  - group_id: W11-PAIR-007
+    run_ids:
+    - CG-W11-S1-007
+    - CG-W11-S2-007
+    partition: train
+  - group_id: W11-PAIR-008
+    run_ids:
+    - CG-W11-S1-008
+    - CG-W11-S2-008
+    partition: train
+  - group_id: W11-PAIR-009
+    run_ids:
+    - CG-W11-S1-009
+    - CG-W11-S2-009
+    partition: train
+  - group_id: W11-PAIR-010
+    run_ids:
+    - CG-W11-S1-010
+    - CG-W11-S2-010
+    partition: validation
+  seed: 42
+  train_window_count: 1452
+  validation_window_count: 484
+  train_class_counts:
+    positive: 360
+    negative: 1092
+  validation_class_counts:
+    positive: 120
+    negative: 364
+  censored_exclusions: 240
+  untrusted_exclusions: 0

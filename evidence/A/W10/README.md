@@ -100,3 +100,11 @@ Source `evidence/A/W04/tec-cooling-response-600s.csv`, boot `56044b74`, 957 rows
 * **The critical threshold is Member D's safety contract**, not a Member A
   number, so `door→critical` needs D's frozen threshold before it is computable.
 * Host tests prove the rules (57 W10 tests); they do not measure the plant.
+
+## CURRENT HANDOFF (2026-11-07)
+
+The accepted real S1/S2 dataset is published at `evidence/A/SOURCES/20261107/datasets/`
+(18 runs, 9,293 measured frames, manifest + SHA256SUMS + standalone regeneration).
+Earlier sections of this document are historical snapshots of the weeks when this
+dataset did not yet exist; verdicts above describe those snapshots, not the current
+package. Consumers: read `README.md` + `manifest.json` in that directory first.

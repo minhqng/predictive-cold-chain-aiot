@@ -1,0 +1,30 @@
+{
+  "sandbox": "p8leader (disposable, outside protected repo)",
+  "branch": "leader/delivery/w01-w13-combined-reviewed",
+  "baseline_commit": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+  "phase_7b1_verified_tree": "f7830dcdd023ecc276df32282741ebb3e17cb263",
+  "phase_7b1_verified_tree_equiv": "5f7dfc084fd4a6041e683ac6ef66e571451d72a9",
+  "member_merge_commits": {
+    "A94": "240b393",
+    "A95": "2cd8023",
+    "C69": "98dc386",
+    "D90": "5f4c859",
+    "B102": "ce9661a"
+  },
+  "owner_layer_commit": "e9681be",
+  "test_align_commit": "e53f5f2",
+  "file_counts": {
+    "total_tracked": 1372,
+    "base": 962,
+    "A94": 7,
+    "A95": 44,
+    "C69": 59,
+    "D90": 53,
+    "B102": 122,
+    "owner_integration": 44,
+    "per_pr_sum_note": "sum=1291 includes base-962 plus all member files; per-PR first-parent diffs are 7/44/59/53/122"
+  },
+  "frozen_tracked_files": 14,
+  "caches_or_build_artifacts": "none (verified by grep)",
+  "generated": "Phase 8 Leader Delivery"
+}

@@ -1,0 +1,12 @@
+{
+ "rows": 1289,
+ "counts": {
+  "main/base": 962,
+  "member C (observability stack)": 59,
+  "owner integration layer": 44,
+  "member D (AIW/verification)": 53,
+  "member A (acceptance integrity)": 42,
+  "member A (telemetry remediation)": 7,
+  "member B (W13 horizon engineering)": 122
+ }
+}

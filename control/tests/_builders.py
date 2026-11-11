@@ -137,6 +137,7 @@ def make_evidence(**overrides: object) -> LocalSafetyEvidence:
         "fan_available": True,
         "active_fault": False,
         "hardware_safety_condition": False,
+        "clock_synchronized": True,
     }
     values.update(overrides)
     return LocalSafetyEvidence(**values)  # type: ignore[arg-type]

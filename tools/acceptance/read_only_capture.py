@@ -27,7 +27,28 @@ import json
 import pathlib
 import sys
 
+sys.path.insert(0, str(pathlib.Path(__file__).resolve().parents[2] / "firmware" / "tools"))
+import cg_telemetry_schema as schema  # noqa: E402
+
 TELEMETRY_MARKER = "pwm_applied_permille="
+TELEMETRY_PREFIX = "#CG TELEM "
+
+
+def is_telemetry_frame(text: str) -> bool:
+    """True only for a complete device telemetry frame.
+
+    A line counts as telemetry when it declares the canonical serial
+    telemetry grammar AND the real parser validates it, so malformed
+    "#CG TELEM ..." lines are never counted. Legacy H8 frames keep the
+    historical pwm token as their proof.
+    """
+    if text.startswith(TELEMETRY_PREFIX):
+        try:
+            schema.parse_line(text)
+        except Exception:
+            return False
+        return True
+    return TELEMETRY_MARKER in text
 DISTINCT_KEYS = (
     "fw",
     "hw",
@@ -128,7 +149,8 @@ def main(argv: list[str] | None = None) -> int:
                             f"{text}\n"
                         )
                         summary["lines"] = int(summary["lines"]) + 1
-                        if TELEMETRY_MARKER in text:
+                        summary["lines"] = int(summary["lines"]) + 1
+                        if is_telemetry_frame(text):
                             summary["telemetry_frames"] = (
                                 int(summary["telemetry_frames"]) + 1
                             )
