@@ -125,6 +125,12 @@ from .verification_bridge import (
     AtoDVerificationDecision,
     assess_a_lifecycle_for_d,
 )
+from .security import (
+    CommandAuthorizationDecision,
+    CommandAuthorizationInput,
+    CommandRole,
+    authorize_command,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -213,5 +219,9 @@ __all__ = [
     "AObservationalLifecycle",
     "AtoDVerificationDecision",
     "assess_a_lifecycle_for_d",
+    "CommandAuthorizationDecision",
+    "CommandAuthorizationInput",
+    "CommandRole",
+    "authorize_command",
 
 ]
