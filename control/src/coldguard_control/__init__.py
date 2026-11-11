@@ -143,6 +143,12 @@ from .shadow import (
     compare_shadow_to_reactive,
     evaluate_shadow,
 )
+from .enablement import (
+    EnablementDecision,
+    EnablementPreconditions,
+    EnablementStatus,
+    evaluate_physical_enablement,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -243,5 +249,8 @@ __all__ = [
     "ShadowTimingComparison",
     "compare_shadow_to_reactive",
     "evaluate_shadow",
-
+    "EnablementDecision",
+    "EnablementPreconditions",
+    "EnablementStatus",
+    "evaluate_physical_enablement",
 ]
