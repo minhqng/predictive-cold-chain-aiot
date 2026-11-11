@@ -169,6 +169,16 @@ from .campaign_audit import (
     CampaignAuditRecord,
     audit_campaign,
 )
+from .negative_campaign import (
+    REQUIRED_OUTCOMES,
+    EvidenceAuthority,
+    NegativeCampaignCase,
+    NegativeCampaignDecision,
+    NegativeCaseAssessment,
+    NegativeCaseEvidence,
+    NegativeOutcome,
+    assess_negative_campaign,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -289,4 +299,12 @@ __all__ = [
     "CampaignAuditDecision",
     "CampaignAuditRecord",
     "audit_campaign",
+    "REQUIRED_OUTCOMES",
+    "EvidenceAuthority",
+    "NegativeCampaignCase",
+    "NegativeCampaignDecision",
+    "NegativeCaseAssessment",
+    "NegativeCaseEvidence",
+    "NegativeOutcome",
+    "assess_negative_campaign",
 ]
