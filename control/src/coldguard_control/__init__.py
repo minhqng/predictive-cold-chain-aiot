@@ -131,6 +131,12 @@ from .security import (
     CommandRole,
     authorize_command,
 )
+from .resilience import (
+    ResilienceDecision,
+    ResilienceInput,
+    ResilienceMode,
+    assess_resilience,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -223,5 +229,9 @@ __all__ = [
     "CommandAuthorizationInput",
     "CommandRole",
     "authorize_command",
+    "ResilienceDecision",
+    "ResilienceInput",
+    "ResilienceMode",
+    "assess_resilience",
 
 ]
