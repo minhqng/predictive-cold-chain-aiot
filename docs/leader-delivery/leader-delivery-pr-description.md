@@ -1,38 +1,51 @@
 # PR Description — ColdGuard W01–W13 Combined Leader Integration Delivery
 
-**Target:** `main` (baseline `d22c8d5b`)
-**Source branch:** `leader/delivery/w01-w13-combined-reviewed`
-**Delivery mode:** one reviewed PR (Ride Hailing #88 / #90 / #93 pattern)
+**Target:** `main` (baseline `d22c8d5b` — GitHub main, no drift)
+**Source branch:** `leader/delivery/w01-w13-atomic-reviewed`
+**Delivery mode:** ONE reviewed Leader PR (Ride Hailing #88 / #90 / #93 pattern)
 
 ## Scope
 
-Integrates all Member A/B/C/D W01–W13 contributions through their verified upstream
-PR heads, plus the existing owner integration layer, into a single reviewed PR.
+Integrates all Member A/B/C/D W01–W13 contributions through their five verified
+upstream PR heads plus the owner integration layer as a 17-commit atomic owner
+range, one terminal docs commit, and one terminal traceability reference.
 It does NOT include W14+ work and does NOT run physical TEC hardware.
 
-## Member PR references (exact SHAs)
+## Member provenance (per member — full table in
+`docs/leader-delivery/leader-delivery-member-pr-traceability.md`)
 
-| Member | PR | Head SHA | Files |
-|---|---|---|---|
-| A | #94 (telemetry contract remediation) | `ae23a36fe98fcf1bf6005dd9fcd79b95fb796570` | 7 |
-| A | #95 (acceptance integrity) | `815387d19a3898e6b33ccb65758a554dd0c589e1` | 44 |
-| C | #69 (observability stack, c-w04..c-w12) | `361e73246a3a6746a39a7e2769dffdfb7b1ce486` | 59 |
-| D | #90 (AIW/verification, d-w04..d-w12) | `da821094985006945d0306dd7b16be576378bc18` | 53 |
-| B | #102 (W13 horizon engineering, b-w04..b-w13) | `824a5389c29ade0e56ecef7ef21eb35c2a379a7b` | 122 |
+- **A** — W01–W13: entries via merged baseline series (#7 #8 #9 #13 #77 + #91–93);
+  remaining delta via remediation PRs #94 (`ae23a36…`) and #95 (`815387d…`), both
+  verified delivery ancestors. 13/13 weeks covered, 0 missing.
+- **B** — W01–W03 via merged #42 (b-pre-w04 intake); W04–W12 per-week PRs
+  (#43–#59, open) superseded by the #102 stack (`824a53…`); W13 ships with #102.
+- **C** — W01–W04 superseded line (#47 into non-main base; #44 closed; exactly one
+  `twin_store.py` + one `versions/0004_device_twin.py` in the delivery tree — no
+  re-merge); W05–W12 per-week PRs (#60–#68, open) superseded by the #69 stack
+  (`361e73…`); W13 ships with #69.
+- **D** — W01–W03 via the base control package (no own PR); W04–W12 per-week PRs
+  (#81–#89, open) superseded by the #90 stack (`da82109…`); W13 ships with #90.
 
-All member commits are preserved via SHA-preserving merge commits — original
-Author / AuthorDate / message unchanged. PR #44 (C-W04) is superseded by content
-already on main; not merged again.
+Classification result (52/52 member-weeks): ALREADY_IN_MAIN 19,
+INCLUDED_VIA_ANCESTRY 29, SUPERSEDED 4 (C W01–W04), MISSING 0.
 
-## Leader / owner fixes
+Original Author/AuthorDate of all member commits preserved via SHA-preserving
+merge commits and verified ancestry — no squash, no rebase of member history.
 
-- `e9681be` chore(integration): add owner cross-team integration layer
-- `e53f5f2` test(integration): align owner suites with merged D#90 matrix
-- `b2586f4`/`4b25349`/`5d73b1b` docs(premerge)/fix(premerge): packaging corrections
+## Owner integration delta (`ce9661a..<terminal delivery HEAD>`)
+
+- 17-commit metadata-normalized owner range: 14 atomic owner commits
+  (commands/ack contract A W06, b-to-d W13 closure, composition runner, harness
+  test, evidence sidecars, A-D semantics, scope-architecture, provenance tooling,
+  two packaging dossiers) + 3 terminal docs commits. Full mapping:
+  `docs/leader-delivery/phase8-2-atomic-commit-ledger.md` and
+  `docs/leader-delivery/phase8-2-attribution-repin.md`.
+- Observer-side pre-merge dossier and manifest pins:
+  `docs/premerge/`, `docs/leader-delivery/.SHA256SUMS.txt` (20/20 OK).
 
 ## Safety limitations remaining (not in this PR)
 
-- USB clock-sync + watchdog + real AI→TEC actuation are deferred (physical gates).
+- USB clock-sync + watchdog + real-TEC actuation are deferred (physical gates).
 - No critical-Tmean freeze yet (demo-specific, owner to freeze separately).
 - A observational VERIFIED != D qualified physical health (F3 decision, owner-approved separation).
 - `UNSYNCHRONIZED_COMMAND = SAFETY_BLOCKED` remains authoritative.
@@ -48,6 +61,7 @@ already on main; not merged again.
 | Control (D#90 exact) | 428 PASS |
 | Owner cross-team / owner suites on merged tree | 81 PASS / 1 known SKIP |
 
-Post-merge regression requirements, per-member file counts, and the reconciliation plan
-for the original 5 member PRs are in
-`docs/leader-delivery/leader-delivery-pr-reconciliation.md` and `leader-delivery-source-lock.md`.
+Post-merge regression requirements, per-member file counts, and the reconciliation
+plan for the original member PRs are in
+`docs/leader-delivery/leader-delivery-pr-reconciliation.md` and
+`docs/leader-delivery/leader-delivery-source-lock.md`.
