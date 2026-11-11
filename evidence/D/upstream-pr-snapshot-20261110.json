@@ -1,0 +1,75 @@
+{
+  "schema": "coldguard-d-upstream-pr-snapshot-v1",
+  "captured_at": "2026-11-10T13:16:13+07:00",
+  "main": {
+    "sha": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+    "latest_merged_pr": 93
+  },
+  "sources": [
+    {
+      "member": "A",
+      "pr": 94,
+      "state": "OPEN",
+      "sha": "ae23a36fe98fcf1bf6005dd9fcd79b95fb796570",
+      "use": "telemetry typing and schema-aware contract probe"
+    },
+    {
+      "member": "A",
+      "pr": 95,
+      "state": "OPEN",
+      "sha": "815387d19a3898e6b33ccb65758a554dd0c589e1",
+      "use": "supplementary passive S1 only; not admitted to frozen package"
+    },
+    {
+      "member": "B",
+      "pr": 102,
+      "state": "OPEN",
+      "sha": "824a5389c29ade0e56ecef7ef21eb35c2a379a7b",
+      "use": "W13 provisional horizon and refusal ledger"
+    },
+    {
+      "member": "B",
+      "pr": 103,
+      "state": "OPEN",
+      "sha": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+      "use": "W14 risk-score-only semantics; EWT and AIW not estimable"
+    },
+    {
+      "member": "C",
+      "pr": 69,
+      "state": "OPEN",
+      "sha": "361e73246a3a6746a39a7e2769dffdfb7b1ce486",
+      "use": "structured events and timing contract"
+    },
+    {
+      "member": "C",
+      "pr": 70,
+      "state": "OPEN",
+      "sha": "8803b29008b80aa9917fd514aff479db44650537",
+      "use": "prediction provenance and freshness contract"
+    },
+    {
+      "member": "C",
+      "pr": 71,
+      "state": "OPEN",
+      "sha": "27c12aa7d6d75f9125db1621ce8afbdccd196eca",
+      "use": "command authorization, MQTT ACL and TLS contract"
+    },
+    {
+      "member": "C",
+      "pr": 72,
+      "state": "OPEN",
+      "sha": "e31d30bce7b6aedb4116385a86dcaaace4f6b142",
+      "use": "outage recovery and resynchronization contract"
+    },
+    {
+      "member": "C",
+      "pr": 73,
+      "state": "OPEN",
+      "sha": "fb71b3c87bf140732cc85c520baf630d38ae18cb",
+      "use": "shadow trace and timing audit contract"
+    }
+  ],
+  "integration_rule": "OPEN PRs are inspected and hash-pinned; they are not merged into D or represented as canonical main.",
+  "physical_enablement": false
+}
