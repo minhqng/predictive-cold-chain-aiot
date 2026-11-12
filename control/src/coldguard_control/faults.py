@@ -181,6 +181,31 @@ _ALLOWED_TECHNIQUES: dict[str, InjectionTechnique] = {
             source="Doc 05D D-W10-01; Doc 03 sections 103 DIAG-02, 66",
         ),
         InjectionTechnique(
+            technique_id="SW-SENSOR-ROLE-INVALID",
+            name="Test-only single sensor-role invalidation",
+            injection_class=InjectionClass.SOFTWARE_STATE,
+            actuation_prevented=False,
+            method=(
+                "Use the compile-time-gated, test-only firmware hook to make "
+                "one named DS18B20 role unavailable while retaining the ROM "
+                "map and recording degradation plus recovery. The hook is "
+                "disabled in production builds."
+            ),
+            source="A-W21-02 on-device evidence; Doc 03 section 104 hierarchy level 1",
+        ),
+        InjectionTechnique(
+            technique_id="SW-PZEM-TRANSPORT-DISABLE",
+            name="Test-only PZEM transport-boundary disable",
+            injection_class=InjectionClass.SOFTWARE_STATE,
+            actuation_prevented=False,
+            method=(
+                "Use the compile-time-gated, test-only firmware hook at the "
+                "RS-485 transport boundary so PZEM values become unavailable "
+                "without touching mains or actuator wiring, then record recovery."
+            ),
+            source="A-W21-03 on-device evidence; Doc 03 section 104 hierarchy level 1",
+        ),
+        InjectionTechnique(
             technique_id="SENSOR-SAFE-DISCONNECT",
             name="Safe low-voltage sensor disconnect",
             injection_class=InjectionClass.SAFE_LOW_VOLTAGE_DISCONNECT,
@@ -337,7 +362,7 @@ _PROTOCOLS: dict[str, FaultProtocol] = {
         protocol_id="SENSOR-DEGRADED",
         fault_id="F-PHY-01",
         title="Sensor degraded protocol",
-        technique_ids=("SENSOR-SAFE-DISCONNECT",),
+        technique_ids=("SW-SENSOR-ROLE-INVALID", "SENSOR-SAFE-DISCONNECT"),
         required_preconditions=(
             "at least one representative thermal channel remains VALID",
             "disconnected channel is low-voltage and safe to disconnect",
@@ -371,7 +396,7 @@ _PROTOCOLS: dict[str, FaultProtocol] = {
         protocol_id="PZEM-UNAVAILABLE",
         fault_id="F-ELEC-01",
         title="PZEM unavailable protocol",
-        technique_ids=("PZEM-COMM-REMOVAL",),
+        technique_ids=("SW-PZEM-TRANSPORT-DISABLE", "PZEM-COMM-REMOVAL"),
         required_preconditions=(
             "PZEM is the only electrical channel; its removal leaves the "
             "actuator and thermal channels untouched",

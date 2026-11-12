@@ -1,0 +1,61 @@
+{
+  "scope": "D_READ_ONLY_A_PR95_SUPPLEMENTARY_S1_HANDOFF",
+  "source_pr": {
+    "number": 95,
+    "url": "https://github.com/minhqng/predictive-cold-chain-aiot/pull/95",
+    "head": "815387d19a3898e6b33ccb65758a554dd0c589e1",
+    "branch": "fix/a-main-acceptance-integrity",
+    "state_at_review": "OPEN"
+  },
+  "package": {
+    "path": "evidence/A/SOURCES/20261109/s1/s1-20261109T081304Z",
+    "sha256sums_sha256": "b57c991e1fe6ac49bd624533f486624bd1a8332d61470bd57353c8c79dba0d1e",
+    "files": [
+      {
+        "path": "trial.json",
+        "sha256": "f028441d10af53f43873000a6d16ab43e79a80f6defe0b974a6a5dc60c9d3b14"
+      },
+      {
+        "path": "commands.log",
+        "sha256": "1e01a084808ab63ede0f5667f5a63d9345eae9c9b732c89039d734e7f539130d"
+      },
+      {
+        "path": "raw/telemetry_raw.log",
+        "sha256": "96b89c1642d45a4c4520ed7b57e39d2b977506803dda92fbea0346ea2e01d3c2"
+      },
+      {
+        "path": "host-summary/read-only-capture-summary.json",
+        "sha256": "c06f54b28c7ecd3f0d875e3d96627d7591666942021ad8af80d9a0206663a3ec"
+      },
+      {
+        "path": "host-summary/acceptance-verification.json",
+        "sha256": "b6a24aea926aee4d37e1e80a9ea475857f74a04641682cf11c5771df8ff85c5b"
+      }
+    ]
+  },
+  "result": {
+    "outcome": "PASS",
+    "frames": 600,
+    "duration_s": 599.0029999999999,
+    "boot_id": "c0e43470",
+    "thermal_valid_rate": 0.9983333333333333,
+    "electrical_valid_rate": 0.9966666666666667,
+    "commands_sent": 0,
+    "bytes_written": 0,
+    "actuation": "NONE",
+    "fuse": "OUT"
+  },
+  "admission": {
+    "physical_run_validity": "VALID_SUPPLEMENTARY_PASSIVE_S1",
+    "frozen_18_run_package": "NOT_ADMITTED_MANIFEST_UNCHANGED",
+    "b_training": "SUPPLEMENTARY_WITH_RESTRICTIONS",
+    "restrictions": [
+      "passive only; not cooling-response evidence",
+      "door status is UNVERIFIED at frame level",
+      "two startup PZEM timeout frames",
+      "calibration_id is UNRECORDED",
+      "one capture is one run, not multiple independent runs"
+    ]
+  },
+  "verdict": "PR95_SUPPLEMENTARY_S1_HASH_VERIFIED_NOT_ADMITTED"
+}

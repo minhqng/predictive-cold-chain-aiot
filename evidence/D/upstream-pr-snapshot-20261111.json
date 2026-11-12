@@ -1,0 +1,66 @@
+{
+  "schema": "coldguard-d-upstream-pr-snapshot-v1",
+  "captured_at": "2026-11-11T20:03:02+07:00",
+  "main": {
+    "sha": "557e887432d1a72b3d097f92644fe72b809c824e",
+    "summary": "reviewed cold-chain system delivery integrated"
+  },
+  "sources": [
+    {
+      "member": "A",
+      "pr": 94,
+      "state": "MERGED",
+      "sha": "ae23a36fe98fcf1bf6005dd9fcd79b95fb796570"
+    },
+    {
+      "member": "A",
+      "pr": 95,
+      "state": "MERGED",
+      "sha": "815387d19a3898e6b33ccb65758a554dd0c589e1"
+    },
+    {
+      "member": "B",
+      "pr": 102,
+      "state": "CLOSED_CONTENT_RECONSTRUCTED_IN_MAIN",
+      "sha": "824a5389c29ade0e56ecef7ef21eb35c2a379a7b"
+    },
+    {
+      "member": "B",
+      "pr": 103,
+      "state": "OPEN",
+      "sha": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641"
+    },
+    {
+      "member": "C",
+      "pr": 69,
+      "state": "CLOSED_CONTENT_RECONSTRUCTED_IN_MAIN",
+      "sha": "361e73246a3a6746a39a7e2769dffdfb7b1ce486"
+    },
+    {
+      "member": "C",
+      "pr": 70,
+      "state": "OPEN",
+      "sha": "8803b29008b80aa9917fd514aff479db44650537"
+    },
+    {
+      "member": "C",
+      "pr": 71,
+      "state": "OPEN",
+      "sha": "27c12aa7d6d75f9125db1621ce8afbdccd196eca"
+    },
+    {
+      "member": "C",
+      "pr": 72,
+      "state": "OPEN",
+      "sha": "e31d30bce7b6aedb4116385a86dcaaace4f6b142"
+    },
+    {
+      "member": "C",
+      "pr": 73,
+      "state": "OPEN",
+      "sha": "fb71b3c87bf140732cc85c520baf630d38ae18cb"
+    }
+  ],
+  "integration_rule": "Merged or reconstructed content is consumed from main; open PRs remain hash-pinned non-canonical inputs.",
+  "physical_enablement": false
+}

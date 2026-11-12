@@ -1,0 +1,101 @@
+{
+  "scope": "D_OFFLINE_S2_CRITICAL_THRESHOLD_EVALUATION",
+  "policy_version": "d-w13-critical-30p5-candidate-v0",
+  "threshold_status": "CANDIDATE_NOT_SAFETY_FROZEN",
+  "critical_threshold_c": 30.5,
+  "representative_source": "TMEAN_AIR_MEAN_T1_T3_T4",
+  "candidate_source": {
+    "path": "evidence/D/W13/critical-threshold-candidate-v0.json",
+    "sha256": "a6982b6de72586b2a7974b84c14f4b71b43b4a03ac8e367d630e593a7a441670"
+  },
+  "source_pr": {
+    "number": 91,
+    "url": "https://github.com/minhqng/predictive-cold-chain-aiot/pull/91",
+    "head": "63982e9592e0687099afb53fa1e4422f57761d74",
+    "branch": "feat/a-s1-s2-source-evidence"
+  },
+  "pr91_source_binding": {
+    "path": "evidence/D/W09/a-pr91-s1-s2-source-binding.json",
+    "sha256": "6c962ea5d124bd94cb5f49ee10ca0fb4302e1b5ab3c11227075ef117cd5a17df"
+  },
+  "normalized_handoff_manifest": {
+    "path": "evidence/A/SOURCES/20261107/datasets/manifest.json",
+    "sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d"
+  },
+  "run_index": {
+    "path": "evidence/A/SOURCES/20261107/datasets/run_index.csv",
+    "sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4"
+  },
+  "accepted_s2_door_runs": 4,
+  "threshold_reached_runs": 0,
+  "aggregate_status": "RIGHT_CENSORED_NO_CAPTURE_REACHED_THRESHOLD",
+  "a_w13_03_result": "NOT_COMPUTABLE_THRESHOLD_NOT_REACHED",
+  "physical_enablement": false,
+  "runs": [
+    {
+      "run_id": "W10-03-run1",
+      "dataset": "datasets/W10-03-run1-normalized.csv",
+      "dataset_sha256": "06f93c3c851e6815b9a4c8c9e24898c173790b2eba149c257af6d5a3cf006335",
+      "boot_id": "73311d0c",
+      "hardware_config_id": "CG-HW-001",
+      "firmware_version": "cg-w06-0.1.0",
+      "clock_domain": "HOST_STAMP",
+      "qualified_rows": 300,
+      "door_open_at": "2026-11-07T08:21:04.164050+00:00",
+      "critical_at": null,
+      "door_to_critical_s": null,
+      "right_censored_lower_bound_s": 235.982194,
+      "max_tmean_after_door_c": 29.8542,
+      "status": "RIGHT_CENSORED_THRESHOLD_NOT_REACHED"
+    },
+    {
+      "run_id": "W10-03-run2",
+      "dataset": "datasets/W10-03-run2-normalized.csv",
+      "dataset_sha256": "37101f71252d0a8df092176b821b09143b7e8d73526f10162937bb4916314b10",
+      "boot_id": "73311d0c",
+      "hardware_config_id": "CG-HW-001",
+      "firmware_version": "cg-w06-0.1.0",
+      "clock_domain": "HOST_STAMP",
+      "qualified_rows": 300,
+      "door_open_at": "2026-11-07T08:27:12.176466+00:00",
+      "critical_at": null,
+      "door_to_critical_s": null,
+      "right_censored_lower_bound_s": 236.941782,
+      "max_tmean_after_door_c": 29.8958,
+      "status": "RIGHT_CENSORED_THRESHOLD_NOT_REACHED"
+    },
+    {
+      "run_id": "W10-03-run3",
+      "dataset": "datasets/W10-03-run3-normalized.csv",
+      "dataset_sha256": "994606017b9615a139f98b988031199271927772287b79bee902f76725d84803",
+      "boot_id": "73311d0c",
+      "hardware_config_id": "CG-HW-001",
+      "firmware_version": "cg-w06-0.1.0",
+      "clock_domain": "HOST_STAMP",
+      "qualified_rows": 300,
+      "door_open_at": "2026-11-07T08:33:21.118494+00:00",
+      "critical_at": null,
+      "door_to_critical_s": null,
+      "right_censored_lower_bound_s": 236.002051,
+      "max_tmean_after_door_c": 29.9583,
+      "status": "RIGHT_CENSORED_THRESHOLD_NOT_REACHED"
+    },
+    {
+      "run_id": "W10-03-run4",
+      "dataset": "datasets/W10-03-run4-normalized.csv",
+      "dataset_sha256": "d55c94575b07930db78c9cf8ea08a9dd73e2b776e03512363bb0c10268d3d456",
+      "boot_id": "73311d0c",
+      "hardware_config_id": "CG-HW-001",
+      "firmware_version": "cg-w06-0.1.0",
+      "clock_domain": "HOST_STAMP",
+      "qualified_rows": 300,
+      "door_open_at": "2026-11-07T08:39:31.100274+00:00",
+      "critical_at": null,
+      "door_to_critical_s": null,
+      "right_censored_lower_bound_s": 234.972512,
+      "max_tmean_after_door_c": 30.0,
+      "status": "RIGHT_CENSORED_THRESHOLD_NOT_REACHED"
+    }
+  ],
+  "note": "30.5 C is a team-supplied candidate, not a commissioned safety limit. A non-crossing run yields a lower observation bound, not a fabricated door-to-critical time."
+}

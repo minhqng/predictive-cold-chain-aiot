@@ -1,0 +1,17 @@
+{
+  "policy_version": "d-w13-critical-30p5-candidate-v0",
+  "critical_threshold_c": 30.5,
+  "representative_source": "TMEAN_AIR_MEAN_T1_T3_T4",
+  "status": "CANDIDATE_NOT_SAFETY_FROZEN",
+  "source": "team reply supplied on 2026-11-10 after D requested a thermal threshold",
+  "approved_for_physical_enablement": false,
+  "open_parameters": [
+    "lower recovery threshold",
+    "hysteresis",
+    "persistence",
+    "minimum dwell",
+    "hot-side stop",
+    "qualified OFF/ON electrical envelopes"
+  ],
+  "note": "This value permits offline S2 evaluation only. It is not a commissioned safety limit or a complete Controller A configuration."
+}

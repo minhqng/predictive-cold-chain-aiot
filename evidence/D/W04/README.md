@@ -84,7 +84,7 @@ New enum `PhysicalVerificationState` added to track independent electrical/therm
 | D-W04-02 Device safety checklist | PASS | `check_actuator_safety()`, 18 tests |
 | D-W04-03 TTL semantics | PASS | `config.py`, `commands.py`, `test_command_ttl.py` |
 | D-W04-04 Reason codes v0 | PASS | `types.py` ReasonCode enum |
-| D-W04-05 Physical first-actuation review | OPEN | A's H6 evidence reviewed; no D code changes needed |
+| D-W04-05 Physical first-actuation review | PARTIAL | Main now contains A-W04-06 polarity `PASS` and A-W12-03 post-freeze inspection `PASS`; enabled-stage boot/reset/interlock proof, fuse/conductor disposition and G1 approval remain open |
 
 ## Open items
 
@@ -94,6 +94,8 @@ New enum `PhysicalVerificationState` added to track independent electrical/therm
 | Characterize command_max_ttl_s | A/C | Define maximum acceptable validity window based on use case |
 | Clock synchronization implementation | A/firmware | Implement SNTP or gateway-provided synchronized epoch |
 | Physical verification integration | C/D | Join command ACK with electrical/thermal evidence in backend |
+| Fuse/conductor ampacity disposition | A/hardware owner | Resolve and sign the open deviation retained in A-W12-03 notes |
+| G1 decision | Designated gate owner | Review enabled-stage safety package; D does not self-declare the team gate |
 
 ## Read order
 

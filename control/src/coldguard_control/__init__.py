@@ -112,6 +112,73 @@ from .incident import (
     recommend_incident_actions,
 )
 from .aiw import AIWInput, AIWResult, AIWStatus, TimingEvidence, assess_aiw
+from .predictive_gate import (
+    OutputSemantics,
+    PredictiveCandidateEvidence,
+    PredictiveGateDecision,
+    PredictiveGateStatus,
+    assess_predictive_gate,
+)
+from .verification_bridge import (
+    A_LIFECYCLE_ORDER,
+    AObservationalLifecycle,
+    AtoDVerificationDecision,
+    assess_a_lifecycle_for_d,
+)
+from .security import (
+    CommandAuthorizationDecision,
+    CommandAuthorizationInput,
+    CommandRole,
+    authorize_command,
+)
+from .resilience import (
+    ResilienceDecision,
+    ResilienceInput,
+    ResilienceMode,
+    assess_resilience,
+)
+from .shadow import (
+    ShadowDecision,
+    ShadowTimingComparison,
+    compare_shadow_to_reactive,
+    evaluate_shadow,
+)
+from .enablement import (
+    EnablementDecision,
+    EnablementPreconditions,
+    EnablementStatus,
+    evaluate_physical_enablement,
+)
+from .campaign_integrity import (
+    CampaignAssessmentDecision,
+    CampaignAssessmentStatus,
+    ControllerVariant,
+    FrozenControllerIdentity,
+    PairLedgerRecord,
+    PairedCampaignDecision,
+    PairedCampaignRecord,
+    RunEvidence,
+    assess_campaign_pair,
+    assess_campaign_run,
+    compute_config_sha256,
+)
+from .campaign_audit import (
+    AnomalyEntry,
+    AuditAnomalyCategory,
+    CampaignAuditDecision,
+    CampaignAuditRecord,
+    audit_campaign,
+)
+from .negative_campaign import (
+    REQUIRED_OUTCOMES,
+    EvidenceAuthority,
+    NegativeCampaignCase,
+    NegativeCampaignDecision,
+    NegativeCaseAssessment,
+    NegativeCaseEvidence,
+    NegativeOutcome,
+    assess_negative_campaign,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -191,5 +258,53 @@ __all__ = [
     "AIWStatus",
     "TimingEvidence",
     "assess_aiw",
-
+    "OutputSemantics",
+    "PredictiveCandidateEvidence",
+    "PredictiveGateDecision",
+    "PredictiveGateStatus",
+    "assess_predictive_gate",
+    "A_LIFECYCLE_ORDER",
+    "AObservationalLifecycle",
+    "AtoDVerificationDecision",
+    "assess_a_lifecycle_for_d",
+    "CommandAuthorizationDecision",
+    "CommandAuthorizationInput",
+    "CommandRole",
+    "authorize_command",
+    "ResilienceDecision",
+    "ResilienceInput",
+    "ResilienceMode",
+    "assess_resilience",
+    "ShadowDecision",
+    "ShadowTimingComparison",
+    "compare_shadow_to_reactive",
+    "evaluate_shadow",
+    "EnablementDecision",
+    "EnablementPreconditions",
+    "EnablementStatus",
+    "evaluate_physical_enablement",
+    "CampaignAssessmentDecision",
+    "CampaignAssessmentStatus",
+    "ControllerVariant",
+    "FrozenControllerIdentity",
+    "PairLedgerRecord",
+    "PairedCampaignDecision",
+    "PairedCampaignRecord",
+    "RunEvidence",
+    "assess_campaign_pair",
+    "assess_campaign_run",
+    "compute_config_sha256",
+    "AnomalyEntry",
+    "AuditAnomalyCategory",
+    "CampaignAuditDecision",
+    "CampaignAuditRecord",
+    "audit_campaign",
+    "REQUIRED_OUTCOMES",
+    "EvidenceAuthority",
+    "NegativeCampaignCase",
+    "NegativeCampaignDecision",
+    "NegativeCaseAssessment",
+    "NegativeCaseEvidence",
+    "NegativeOutcome",
+    "assess_negative_campaign",
 ]
