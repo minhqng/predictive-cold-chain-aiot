@@ -1,0 +1,2446 @@
+{
+  "schema": "coldguard-w24-artifact-checksums-v1",
+  "package_id": "coldguard-b-w24-final-handover",
+  "repository": "minhqng/predictive-cold-chain-aiot",
+  "source_revision": "c0d8b247291c05cce308feae25b3fedd329af494",
+  "revision_semantics": "W24_PARENT_COMMIT_NOT_DELIVERY_COMMIT",
+  "hash_semantics": {
+    "FILE_CONTENT_SHA256": "SHA-256 over the committed file bytes",
+    "GIT_COMMIT": "40-hex Git commit that last touched the path on this branch; not a content checksum",
+    "SOURCE_IDENTITY": "SHA-256 pins from the A 20261107 manifest/run index and committed B sources",
+    "SELF_REFERENCE": "This inventory does not hash itself; W24 outputs are validated by tests and the handover manifest."
+  },
+  "categories": {
+    "A_dataset_export": {
+      "summary": {
+        "w11_synthetic": {
+          "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+          "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "generated_in_memory": true,
+          "runs_total": 20,
+          "development_runs": 16,
+          "locked_test_runs": 4,
+          "pair_groups": 10,
+          "windows_generated": 2896,
+          "evaluable_rows": 1936,
+          "censored_rows": 960,
+          "label_horizon_s": 60.0,
+          "label_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+          "permitted_use": "offline software-control experiments only",
+          "missing_information": "no physical run identity, no physical sensor population, no frozen target or horizon"
+        },
+        "a_physical_export": {
+          "dataset_label": "A20261107",
+          "source_revision": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+          "source_path": "evidence/A/SOURCES/20261107/datasets",
+          "source_export_command": "git archive d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85 evidence/A/SOURCES/20261107/datasets | tar -x -C <export-dir>",
+          "a_manifest_sha256": "5273e528e6505caf55dec79a5fccbe0e6407161c1fedb864b52a7160706cc72d",
+          "a_run_index_sha256": "53d476747c4a865ddec09492c9c49601a72ab766e9862faac0a2c9a43a22bbb4",
+          "a_timing_report_sha256": "2826a71026e7d4b8dc2cf3413efb5e4983785fc59ae760586569b91279fb2169",
+          "w05_export_sha256": "f6235e23b4513f98ba7c1deb289f4a3d48afd3c0a87d7f38bfe4e67b2fc79feb",
+          "w21_manifest_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+          "segments": 18,
+          "frames": 9293,
+          "boots": 8,
+          "accepted_s1_windows": 4,
+          "accepted_s2_windows": 5,
+          "independent_qualified_runs": 0,
+          "permitted_use": "descriptive analysis and diagnostic QA only",
+          "missing_information": [
+            "device wall clock and clock synchronization",
+            "calibration identity",
+            "certified device identity",
+            "absolute physical event UTC",
+            "independent held-out source group",
+            "frozen critical threshold and representative temperature"
+          ],
+          "raw_data_copied_into_w24": false
+        }
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-W11-MANIFEST",
+          "source_path": "ml/reports/W11/benchmark-manifest-W11.json",
+          "source_commit": "1c49ffc46ab74494bc3146d1212bf45cb74261e9",
+          "content_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+          "bytes": 103357,
+          "purpose": "W11 grouped synthetic benchmark identity and split population",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic fixture only; AP=1.0 is a software control, never physical accuracy."
+        },
+        {
+          "artifact_id": "B-W11-BENCHMARK-SCRIPT",
+          "source_path": "ml/scripts/xgb-benchmark-W11.py",
+          "source_commit": "c6b28678430ab575902a09be4b32bc327c72afcb",
+          "content_sha256": "43b40ea40445cafffb06d6af288195da0ba477f71dbfab4016183d5e0d5ea75d",
+          "bytes": 42852,
+          "purpose": "Grouped XGBoost synthetic benchmark driver",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Synthetic only; never a physical benchmark."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-SOURCE-INVENTORY",
+          "source_path": "ml/reports/DataRecovery/source-inventory.json",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "bd451f9dc4d99ae6a8cf88c8e16dbe6a44f0e67affaec7c390a59505f3130fb5",
+          "bytes": 123091,
+          "purpose": "Allowlisted source inventory for the 18-segment A 20261107 package",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Segments share boots; not independent experiments."
+        },
+        {
+          "artifact_id": "B-W05-QA-MANIFEST",
+          "source_path": "ml/reports/W05/qa-manifest-W05.json",
+          "source_commit": "beae5f41e947b1e837b00c62d0ee16615d4723f2",
+          "content_sha256": "66343133d3809892187ce4b39524150bb03e143baaa161b0bea777a22bd4f31c",
+          "bytes": 51045,
+          "purpose": "W05 physical-data QA and schema intake result",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Candidate capture only; A ledger INVALID."
+        },
+        {
+          "artifact_id": "B-W21-DIAGNOSIS-MANIFEST",
+          "source_path": "ml/reports/W21/w21-manifest.json",
+          "source_commit": "b7dec7eed7f29bb8714449fd9e8837f2569819e4",
+          "content_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+          "bytes": 77321,
+          "purpose": "W21 diagnosis and resilience evidence assessment",
+          "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Bounded on-device software injection; output stage compiled out; not physical_fault accuracy."
+        }
+      ]
+    },
+    "B_split_manifest": {
+      "summary": {
+        "manifest_path": "ml/reports/W11/cv-fold-manifest.yaml",
+        "manifest_sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6",
+        "grouping_key": "run_id + pair_id (one effective group per pair)",
+        "effective_independent_groups": 8,
+        "folds": 4,
+        "seed": 42,
+        "train_runs": 8,
+        "validation_runs": 8,
+        "locked_test_runs": 4,
+        "locked_test_pairs": [
+          "W11-PAIR-001",
+          "W11-PAIR-002"
+        ],
+        "pair_groups": [
+          "W11-PAIR-001",
+          "W11-PAIR-002",
+          "W11-PAIR-003",
+          "W11-PAIR-004",
+          "W11-PAIR-005",
+          "W11-PAIR-006",
+          "W11-PAIR-007",
+          "W11-PAIR-008",
+          "W11-PAIR-009",
+          "W11-PAIR-010"
+        ],
+        "test_partition_used": false,
+        "locked_test_handling": "W16 pre-registration only; holdout_opened=false; evaluation NOT_RUN",
+        "scientific_eligibility": "SYNTHETIC_SOFTWARE_CONTROL_ONLY; no physical predictive split approved"
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-W11-SPLIT-MANIFEST",
+          "source_path": "ml/reports/W11/cv-fold-manifest.yaml",
+          "source_commit": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+          "content_sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6",
+          "bytes": 7867,
+          "purpose": "W11 grouped development/locked-test membership and fold definition",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic membership only; no physical predictive split exists."
+        },
+        {
+          "artifact_id": "B-W11-MANIFEST",
+          "source_path": "ml/reports/W11/benchmark-manifest-W11.json",
+          "source_commit": "1c49ffc46ab74494bc3146d1212bf45cb74261e9",
+          "content_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+          "bytes": 103357,
+          "purpose": "W11 grouped synthetic benchmark identity and split population",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic fixture only; AP=1.0 is a software control, never physical accuracy."
+        },
+        {
+          "artifact_id": "B-W16-LOCKED-TEST-MANIFEST",
+          "source_path": "ml/reports/W16/locked-test-manifest-W16.json",
+          "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+          "content_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+          "bytes": 63370,
+          "purpose": "W16 locked-test pre-registration and fail-closed refusal record",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED_REFUSAL_RECORD",
+          "reproducibility_status": "REPLAYED_EXPECTED_DIFF",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Pre-registration only; holdout_opened=false and evaluation NOT_RUN; only repository_revision differs on replay."
+        },
+        {
+          "artifact_id": "B-W16-LOCKED-TEST-REFUSAL",
+          "source_path": "ml/reports/W16/locked-test-result.md",
+          "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+          "content_sha256": "a52d6bea2f3621f5fadd98f4ab2f4456522b8a2535acb42111c38d8ae971436b",
+          "bytes": 7815,
+          "purpose": "W16 refusal report: locked test not executed, no metrics exist",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED_REFUSAL_RECORD",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Must never be mislabeled as a completed locked evaluation."
+        }
+      ]
+    },
+    "C_feature_registry": {
+      "summary": {
+        "path": "ml/feature-registry-v1.yaml",
+        "sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+        "feature_version": "CG-FEAT-1.0",
+        "registry_schema_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+        "ordered_feature_ids": [
+          "T_chamber_max_c",
+          "T_chamber_min_c",
+          "T_chamber_mean_c",
+          "T_chamber_spread_c",
+          "T_center_c",
+          "T_bottom_c",
+          "T_near_door_c",
+          "rolling_mean_temperature_60s",
+          "rolling_std_temperature_60s",
+          "rolling_min_temperature_60s",
+          "rolling_max_temperature_60s",
+          "past_only_slope_c_per_min_60s",
+          "past_only_temperature_delta_60s",
+          "past_only_spatial_spread_60s",
+          "door_open",
+          "time_since_open",
+          "duration_so_far",
+          "count_past_60s",
+          "applied_cooling",
+          "applied_duty",
+          "time_since_confirmed_applied_change",
+          "cooling_voltage_v",
+          "cooling_current_a",
+          "cooling_power_w",
+          "energy_counter_wh",
+          "past_integrated_cooling_energy_wh",
+          "ambient_temperature_c",
+          "relative_humidity_pct"
+        ],
+        "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+        "missing_data_policy": "explicit_missing_never_zero_filled",
+        "max_gap_s": 5.0,
+        "fit_policy": "no_cross_partition_fit_no_normalization",
+        "sensor_roles": {
+          "T1": "CHAMBER_CENTER",
+          "T2": "TEC_HOT_SIDE",
+          "T3": "CHAMBER_BOTTOM",
+          "T4": "CHAMBER_NEAR_DOOR"
+        },
+        "T2_in_chamber_air_aggregate": false
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-FEATURE-REGISTRY",
+          "source_path": "ml/feature-registry-v1.yaml",
+          "source_commit": "d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
+          "content_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+          "bytes": 39718,
+          "purpose": "W10 frozen feature schema, causal definitions and sensor role map",
+          "evidence_class": "SOFTWARE_CONTRACT",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Definitions frozen; thresholds, horizon, representative temperature and operating rules are not."
+        },
+        {
+          "artifact_id": "B-W10-FEATURE-MANIFEST",
+          "source_path": "ml/reports/W10/feature-manifest-W10.json",
+          "source_commit": "884f2908895646948b114ae5f3ef8937c20e6b83",
+          "content_sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2",
+          "bytes": 8591,
+          "purpose": "W10 causal feature pipeline verification",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic S2 fixture; real features incomplete."
+        },
+        {
+          "artifact_id": "B-W10-FEATURE-PIPELINE-SCRIPT",
+          "source_path": "ml/scripts/feature-pipeline-W10.py",
+          "source_commit": "884f2908895646948b114ae5f3ef8937c20e6b83",
+          "content_sha256": "4d4b7bf9b271c66e5ca3c715dc238dc072a45dfe38714313f06b48361afbcd7c",
+          "bytes": 35933,
+          "purpose": "Causal feature generation driver",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Software verified; physical feature availability not established."
+        }
+      ]
+    },
+    "D_model_artifact": {
+      "summary": {
+        "expected_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+        "observed_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+        "matches_expected": true,
+        "artifact_path": "ml/reports/W15/model/model.ubj",
+        "model_card_paths": [
+          "ml/reports/W15/model-card-W15.md",
+          "ml/reports/W23/model-card-W23.md"
+        ],
+        "training_population": {
+          "development_only": true,
+          "locked_test_used": false,
+          "negative": 1456,
+          "positive": 480,
+          "run_count": 16,
+          "sample_count": 1936
+        },
+        "training_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+        "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+        "feature_order_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+        "config_hash": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+        "model_version": "coldguard-xgb-v1-development-v1",
+        "output_semantics": "risk_score",
+        "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+        "intended_use": [
+          "offline software-control experiments on the W11 synthetic fixture",
+          "risk_score semantics only",
+          "future shadow-inference candidate only after all release gates"
+        ],
+        "prohibited_use": [
+          "physical Controller B actuation",
+          "calibrated-probability or percentage-risk wording",
+          "public reliability or early-warning superiority claims",
+          "final A/B comparison",
+          "deployment or registration in C's backend"
+        ]
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-W15-MODEL-UBJ",
+          "source_path": "ml/reports/W15/model/model.ubj",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+          "bytes": 46433,
+          "purpose": "W15 native XGBoost model artifact (risk score only)",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "NOT_REFIT_IN_W24",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Non-deployable candidate; 27 of 28 features unused; time_since_open shortcut."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-JSON",
+          "source_path": "ml/reports/W15/model/model.json",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd",
+          "bytes": 32683,
+          "purpose": "W15 secondary JSON model serialization",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "NOT_REFIT_IN_W24",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Same synthetic, non-deployable model as the native artifact."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-MANIFEST",
+          "source_path": "ml/reports/W15/model/model-manifest-W15.json",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+          "bytes": 11162,
+          "purpose": "W15 model card metadata, hashes, feature order and prohibited uses",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Declares a synthetic non-deployable model; not a release record."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-CARD",
+          "source_path": "ml/reports/W15/model-card-W15.md",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "1ea2488a9d79693fc80789f2f7a17b69a0cfb917cd408489af3b0fa2ce1be2dc",
+          "bytes": 8463,
+          "purpose": "W15 development model card",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Model is not approved for physical Controller B."
+        },
+        {
+          "artifact_id": "B-W23-MODEL-CARD",
+          "source_path": "ml/reports/W23/model-card-W23.md",
+          "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+          "content_sha256": "59858fef63b8aec0a9afda606e0c9be23032c5634f37cdb0da15e69a1f875875",
+          "bytes": 12964,
+          "purpose": "W23 consolidated model card and release eligibility statement",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Retains NON_DEPLOYABLE_CANDIDATE and RISK_SCORE_ONLY."
+        },
+        {
+          "artifact_id": "B-W15-HYPERPARAM-CANDIDATE",
+          "source_path": "ml/reports/W15/hyperparameter-freeze-candidate-W15.json",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "07d6b6d1efe119e9b33937c44850486382ec5b89adb0008b093bbe380b4a0aa6",
+          "bytes": 5374,
+          "purpose": "W15 candidate hyperparameter declaration",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Candidate only; not a scientific hyperparameter selection."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-INSPECTION",
+          "source_path": "ml/reports/W15/A3-model-inspection-W15.json",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "ec6746d0155597f6233f436284acb0cf0a218a6e2a96dd44455f53fd070363a6",
+          "bytes": 5041,
+          "purpose": "Native model split-usage diagnostic",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Diagnostic only, not causal importance; documents the time_since_open shortcut."
+        },
+        {
+          "artifact_id": "B-MODEL-CONFIG",
+          "source_path": "ml/xgb-v1-config.yaml",
+          "source_commit": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+          "content_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+          "bytes": 3661,
+          "purpose": "W11/W15 development model configuration",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Development candidate configuration; hyperparameters not scientifically selected."
+        }
+      ]
+    },
+    "E_final_result_files": {
+      "summary": {
+        "real_physical_descriptive_table": "ml/reports/DataRecovery/real-observation-summary.csv",
+        "real_physical_descriptive_table_sha256": "605234075507e539fc98e8e7cefa06ca3fcb1fc4fdcfc932d5d4c5276f8592ff",
+        "synthetic_benchmark_files": [
+          "ml/reports/W11/benchmark-manifest-W11.json",
+          "ml/reports/W12/grouped-metrics-W12.csv"
+        ],
+        "statistical_test_fixture_files": [
+          "ml/reports/W22/w22-manifest.json",
+          "ml/reports/W22/test-only-pair-plot-W22.svg"
+        ],
+        "FINAL_PREDICTIVE_RESULT_CSV": "NOT_PRODUCED",
+        "FINAL_PHYSICAL_AB_RESULT_CSV": "NOT_PRODUCED",
+        "note": "No placeholder numerical rows were created; real-observation-summary.csv is descriptive only."
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-DATARECOVERY-REAL-OBSERVATIONS",
+          "source_path": "ml/reports/DataRecovery/real-observation-summary.csv",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "605234075507e539fc98e8e7cefa06ca3fcb1fc4fdcfc932d5d4c5276f8592ff",
+          "bytes": 368188,
+          "purpose": "Real physical descriptive observation table",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive table only; not a locked predictive result and not a physical A/B outcome table."
+        },
+        {
+          "artifact_id": "B-W12-GROUPED-METRICS",
+          "source_path": "ml/reports/W12/grouped-metrics-W12.csv",
+          "source_commit": "c1ef437786bb187b697038810050966116927a01",
+          "content_sha256": "8dfb3b541f34523e7f7ac98f878df6ac65a9666c8eec67f16d49ba64f2b22965",
+          "bytes": 5762,
+          "purpose": "Synthetic grouped benchmark metrics",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Not physical AP, recall or forecast accuracy."
+        },
+        {
+          "artifact_id": "B-W11-MANIFEST",
+          "source_path": "ml/reports/W11/benchmark-manifest-W11.json",
+          "source_commit": "1c49ffc46ab74494bc3146d1212bf45cb74261e9",
+          "content_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+          "bytes": 103357,
+          "purpose": "W11 grouped synthetic benchmark identity and split population",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic fixture only; AP=1.0 is a software control, never physical accuracy."
+        },
+        {
+          "artifact_id": "B-W22-STATISTICS-MANIFEST",
+          "source_path": "ml/reports/W22/w22-manifest.json",
+          "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+          "content_sha256": "a027dbdda4f36de9cda87516719fe0e2aeb92076d00b67651934a50023bd01e2",
+          "bytes": 26986,
+          "purpose": "W22 paired-statistics software contract and no-physical-outcome statuses",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Toy fixtures only; final physical effect/CI/p not computed."
+        },
+        {
+          "artifact_id": "B-W22-TOY-PAIR-PLOT",
+          "source_path": "ml/reports/W22/test-only-pair-plot-W22.svg",
+          "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+          "content_sha256": "e8b22bbc2cc3b1a9f2c0680d3f12f22255815c7cad5f2ca27ae607ab0c0303e3",
+          "bytes": 5130,
+          "purpose": "TEST_ONLY paired-effect demonstration on toy fixtures",
+          "evidence_class": "SYNTHETIC_STATISTICAL_UNIT_TEST_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Not a physical A/B result and must not be captioned as one."
+        }
+      ]
+    },
+    "F_key_analysis_artifacts": {
+      "artifacts": [
+        {
+          "artifact_id": "B-W03-STATISTICAL-ANALYSIS-PLAN",
+          "source_path": "ml/statistical-analysis-plan-v0.md",
+          "source_commit": "d32473c568662d5f67fdb79202e14232239dcfc8",
+          "content_sha256": "3270ff85cbbc21f212299df5c3d0dc43fa34fcb52f8c7f1a041e6abcd19b5daf",
+          "bytes": 24887,
+          "purpose": "W03 statistical analysis plan",
+          "evidence_class": "SOFTWARE_CONTRACT",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Pre-specification; no physical outcomes executed."
+        },
+        {
+          "artifact_id": "B-W05-QA-MANIFEST",
+          "source_path": "ml/reports/W05/qa-manifest-W05.json",
+          "source_commit": "beae5f41e947b1e837b00c62d0ee16615d4723f2",
+          "content_sha256": "66343133d3809892187ce4b39524150bb03e143baaa161b0bea777a22bd4f31c",
+          "bytes": 51045,
+          "purpose": "W05 physical-data QA and schema intake result",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Candidate capture only; A ledger INVALID."
+        },
+        {
+          "artifact_id": "B-W06-TIMING-MANIFEST",
+          "source_path": "ml/reports/W06/timing-manifest-W06.json",
+          "source_commit": "97dba5282ee240cfd308946270605a18a56ecd98",
+          "content_sha256": "3fedd4c4fa0a5525d4b0939b18fb0ed243c83c3d4a04d94aa0ecf5f435e3f6bd",
+          "bytes": 2547482,
+          "purpose": "W06 timing and event-alignment evidence",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Boot-scoped uptime; absolute time not evidenced."
+        },
+        {
+          "artifact_id": "B-W07-EDA-MANIFEST",
+          "source_path": "ml/reports/W07/plant-eda-manifest-W07.json",
+          "source_commit": "739fbfed3960f9868a1c3447e1b8a75580e5563e",
+          "content_sha256": "3252e9f3ee4f8a97877fd5cb6211e1e4be20caa9f3801a8ce3317fc4c9415dcb",
+          "bytes": 138355,
+          "purpose": "W07 physical exploratory analysis and repeatability",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Repeatability is limited by shared boots."
+        },
+        {
+          "artifact_id": "B-W08-GATE-B-MANIFEST",
+          "source_path": "ml/reports/W08/gate-b-manifest-W08.json",
+          "source_commit": "36a5aab063409f3b8e47a790ed82ddac10645e82",
+          "content_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+          "bytes": 49025,
+          "purpose": "W08 canonical Gate B validator result",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "GATE_B_PHYSICAL_DATA=RED; PREDICTIVE_DATASET_READINESS=NOT_READY; canonical intake is the W09 export."
+        },
+        {
+          "artifact_id": "B-W08-GATE-B-REPORT",
+          "source_path": "ml/reports/W08/gate-b-readiness-W08.md",
+          "source_commit": "36a5aab063409f3b8e47a790ed82ddac10645e82",
+          "content_sha256": "48d0c37d917e3cab0f9278b00bb78796c7e5f5c48fd8a27e71280013980f5acb",
+          "bytes": 9269,
+          "purpose": "W08 Gate B readiness report",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Physical gate remains RED."
+        },
+        {
+          "artifact_id": "B-W09-BASELINE-MANIFEST",
+          "source_path": "ml/reports/W09/baseline-manifest-W09.json",
+          "source_commit": "7e1b9333a28063ccd76a47e0465ae2287873a58e",
+          "content_sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45",
+          "bytes": 35140,
+          "purpose": "W09 deterministic baseline evaluation on physical diagnostic data",
+          "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "No predictive baseline established on physical data."
+        },
+        {
+          "artifact_id": "B-W10-FEATURE-MANIFEST",
+          "source_path": "ml/reports/W10/feature-manifest-W10.json",
+          "source_commit": "884f2908895646948b114ae5f3ef8937c20e6b83",
+          "content_sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2",
+          "bytes": 8591,
+          "purpose": "W10 causal feature pipeline verification",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic S2 fixture; real features incomplete."
+        },
+        {
+          "artifact_id": "B-W11-MANIFEST",
+          "source_path": "ml/reports/W11/benchmark-manifest-W11.json",
+          "source_commit": "1c49ffc46ab74494bc3146d1212bf45cb74261e9",
+          "content_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+          "bytes": 103357,
+          "purpose": "W11 grouped synthetic benchmark identity and split population",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic fixture only; AP=1.0 is a software control, never physical accuracy."
+        },
+        {
+          "artifact_id": "B-W12-G3-MANIFEST",
+          "source_path": "ml/reports/W12/w12-manifest.json",
+          "source_commit": "34435bdba8b4b98d418233ef3c07975deea36a1e",
+          "content_sha256": "ef06f9712203b39c01351ad89a17368574e98a0db6436f842e926b68418073a7",
+          "bytes": 280183,
+          "purpose": "W12 G3 assessment: synthetic benchmark synthesis and Gate B/G3 verdicts",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "G3 remains NO-GO / FIX DATA; physical benchmark not established."
+        },
+        {
+          "artifact_id": "B-W12-G3-REPORT",
+          "source_path": "ml/reports/W12/gate-g3-W12.md",
+          "source_commit": "c1ef437786bb187b697038810050966116927a01",
+          "content_sha256": "edf0d8e1740107975851d63ae86904993577c9f86043d2b27989c7120744ce89",
+          "bytes": 7081,
+          "purpose": "W12 Gate G3 evidence report",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Synthetic evidence cannot close G3."
+        },
+        {
+          "artifact_id": "B-W13-HORIZON-MANIFEST",
+          "source_path": "ml/reports/W13/horizon-manifest-W13.json",
+          "source_commit": "824a5389c29ade0e56ecef7ef21eb35c2a379a7b",
+          "content_sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404",
+          "bytes": 68151,
+          "purpose": "W13 horizon engineering study and provisional decision",
+          "evidence_class": "ENGINEERING_REFERENCE_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Primary horizon NOT_FROZEN; 60 s is an engineering reference."
+        },
+        {
+          "artifact_id": "B-W13-HORIZON-DECISION",
+          "source_path": "ml/reports/W13/primary-horizon-decision.md",
+          "source_commit": "f234990db4412867f2e151618b8b350d85ef8a45",
+          "content_sha256": "f3b263fca4ed494d5ae279fc39ea16d2c66d861718b29a316bcc878b0234c90b",
+          "bytes": 2788,
+          "purpose": "W13 primary-horizon decision record",
+          "evidence_class": "ENGINEERING_REFERENCE_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "No primary horizon is frozen."
+        },
+        {
+          "artifact_id": "B-W14-CALIBRATION-MANIFEST",
+          "source_path": "ml/reports/W14/w14-manifest.json",
+          "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+          "content_sha256": "e4a0263ead067a10df8d23ffc2bb10d6e750c88e515153fd6f637c733077357d",
+          "bytes": 86907,
+          "purpose": "W14 ablation, calibration and EWT/AIW assessment statuses",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Calibration RISK_SCORE_ONLY; EWT/AIW NOT_ESTIMABLE."
+        },
+        {
+          "artifact_id": "B-W14-CALIBRATION-REPORT",
+          "source_path": "ml/reports/W14/calibration-report.md",
+          "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+          "content_sha256": "ca1ce2f41cacd1d739c253b4294138b75387ef1aa8a9b882bf50ed4ddcfbf778",
+          "bytes": 12226,
+          "purpose": "W14 calibration assessment",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "No calibrated physical probability exists."
+        },
+        {
+          "artifact_id": "B-W14-AIW-REPORT",
+          "source_path": "ml/reports/W14/AIW-report.md",
+          "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+          "content_sha256": "90c6935ab4c02b3e2dd64a80338a656be2b5d14dc0a4be92e78d1ece3569e6f0",
+          "bytes": 9900,
+          "purpose": "W14 EWT/AIW estimability assessment",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Real EWT and AIW are NOT_ESTIMABLE, never zero."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-UBJ",
+          "source_path": "ml/reports/W15/model/model.ubj",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+          "bytes": 46433,
+          "purpose": "W15 native XGBoost model artifact (risk score only)",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "NOT_REFIT_IN_W24",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Non-deployable candidate; 27 of 28 features unused; time_since_open shortcut."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-MANIFEST",
+          "source_path": "ml/reports/W15/model/model-manifest-W15.json",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+          "bytes": 11162,
+          "purpose": "W15 model card metadata, hashes, feature order and prohibited uses",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Declares a synthetic non-deployable model; not a release record."
+        },
+        {
+          "artifact_id": "B-W15-MODEL-CARD",
+          "source_path": "ml/reports/W15/model-card-W15.md",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "1ea2488a9d79693fc80789f2f7a17b69a0cfb917cd408489af3b0fa2ce1be2dc",
+          "bytes": 8463,
+          "purpose": "W15 development model card",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Model is not approved for physical Controller B."
+        },
+        {
+          "artifact_id": "B-W15-FITTING-SCRIPT",
+          "source_path": "ml/scripts/w15-electrical-ablation-W15.py",
+          "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+          "content_sha256": "c331c7d360f991569112a1a20bd70d7b593519167d69622bde0f92cf76458fc9",
+          "bytes": 37200,
+          "purpose": "W15 electrical ablation and model fitting driver",
+          "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "NOT_EXECUTED_IN_W24",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "W24 feature freeze forbids refitting; artifact hash verified instead."
+        },
+        {
+          "artifact_id": "B-W16-LOCKED-TEST-MANIFEST",
+          "source_path": "ml/reports/W16/locked-test-manifest-W16.json",
+          "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+          "content_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+          "bytes": 63370,
+          "purpose": "W16 locked-test pre-registration and fail-closed refusal record",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED_REFUSAL_RECORD",
+          "reproducibility_status": "REPLAYED_EXPECTED_DIFF",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Pre-registration only; holdout_opened=false and evaluation NOT_RUN; only repository_revision differs on replay."
+        },
+        {
+          "artifact_id": "B-W16-HOLDOUT-READINESS",
+          "source_path": "ml/reports/W16/holdout-readiness-W16.md",
+          "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+          "content_sha256": "5460a1c053f939a399aa0979cacdc6a79e5999d6bf5c5ed7797c8fcc83ae7858",
+          "bytes": 10719,
+          "purpose": "W16 holdout integrity, G4 readiness and prerequisites ledger",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Metadata audit only; no physical validation."
+        },
+        {
+          "artifact_id": "B-W16-LOCKED-TEST-REFUSAL",
+          "source_path": "ml/reports/W16/locked-test-result.md",
+          "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+          "content_sha256": "a52d6bea2f3621f5fadd98f4ab2f4456522b8a2535acb42111c38d8ae971436b",
+          "bytes": 7815,
+          "purpose": "W16 refusal report: locked test not executed, no metrics exist",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED_REFUSAL_RECORD",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Must never be mislabeled as a completed locked evaluation."
+        },
+        {
+          "artifact_id": "B-W17-SHADOW-PARITY-MANIFEST",
+          "source_path": "ml/reports/W17/w17-manifest.json",
+          "source_commit": "d3de0716f9694b37a6da50fd3935534bfe14038c",
+          "content_sha256": "8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+          "bytes": 12651,
+          "purpose": "W17 offline shadow parity and freshness verification",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Live shadow not established; physical Controller B not enabled."
+        },
+        {
+          "artifact_id": "B-W17-SHADOW-REPLAY-SCRIPT",
+          "source_path": "ml/scripts/w17-shadow-replay-W17.py",
+          "source_commit": "d3de0716f9694b37a6da50fd3935534bfe14038c",
+          "content_sha256": "daed99a03d2167034fca38f6f531ce953824b9c1b624a3595740d1ff202e8f59",
+          "bytes": 46197,
+          "purpose": "Offline shadow replay driver",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Synthetic offline replay only."
+        },
+        {
+          "artifact_id": "B-W18-RUNTIME-MONITORING-MANIFEST",
+          "source_path": "ml/reports/W18/w18-manifest.json",
+          "source_commit": "54c030ce9096a7e85b62570420f6596ff756d4f3",
+          "content_sha256": "bd1391d72d030af5e0ca99540059424fbf45ca1ccced255e8d41ca374799c9ab",
+          "bytes": 48723,
+          "purpose": "W18 runtime monitoring and intervention-trace audit",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Signoff withheld; no physical intervention trace."
+        },
+        {
+          "artifact_id": "B-W18-RUNTIME-AUDIT-SCRIPT",
+          "source_path": "ml/scripts/w18-runtime-audit-W18.py",
+          "source_commit": "54c030ce9096a7e85b62570420f6596ff756d4f3",
+          "content_sha256": "e5a01675d77c2105d6c307b41ab218ad0dc6696f0c8427ef578ee6c0db887011",
+          "bytes": 55898,
+          "purpose": "Runtime monitoring audit driver",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Synthetic fixture only."
+        },
+        {
+          "artifact_id": "B-W19-PAIRED-LEDGER-MANIFEST",
+          "source_path": "ml/reports/W19/w19-manifest.json",
+          "source_commit": "d7bffbcfacc8505b227bd87a47dd03620ed82d16",
+          "content_sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82",
+          "bytes": 27208,
+          "purpose": "W19 paired-campaign ledger, validity and no-peeking gates",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "No physical pairs exist; campaign not authorized."
+        },
+        {
+          "artifact_id": "B-W19-CAMPAIGN-AUDIT-SCRIPT",
+          "source_path": "ml/scripts/w19-campaign-audit-W19.py",
+          "source_commit": "d7bffbcfacc8505b227bd87a47dd03620ed82d16",
+          "content_sha256": "f656f53ccab9a0ad3f33e222b1d45e197ebef8d88f8fb625807f5cae8b822148",
+          "bytes": 68856,
+          "purpose": "Paired-campaign integrity audit driver",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Fixtures only; no physical outcomes."
+        },
+        {
+          "artifact_id": "B-W20-CAMPAIGN-LOCK-MANIFEST",
+          "source_path": "ml/reports/W20/w20-manifest.json",
+          "source_commit": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+          "content_sha256": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+          "bytes": 64569,
+          "purpose": "W20 final campaign lock and analysis-authorization gate",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "ANALYSIS_PREFLIGHT_BLOCKED; W20_FINAL_ANALYSIS=NOT_RUN; no physical A/B outcomes."
+        },
+        {
+          "artifact_id": "B-W20-CAMPAIGN-PREFLIGHT-SCRIPT",
+          "source_path": "ml/scripts/w20-campaign-preflight-W20.py",
+          "source_commit": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+          "content_sha256": "e9b57941324c2047dd36fd1fa9bc757d20928973ba913ed6860213e8a5ebd747",
+          "bytes": 95367,
+          "purpose": "Campaign analysis authorization preflight",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Must remain blocked without external evidence."
+        },
+        {
+          "artifact_id": "B-W21-DIAGNOSIS-MANIFEST",
+          "source_path": "ml/reports/W21/w21-manifest.json",
+          "source_commit": "b7dec7eed7f29bb8714449fd9e8837f2569819e4",
+          "content_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+          "bytes": 77321,
+          "purpose": "W21 diagnosis and resilience evidence assessment",
+          "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Bounded on-device software injection; output stage compiled out; not physical_fault accuracy."
+        },
+        {
+          "artifact_id": "B-W21-RESILIENCE-AUDIT-SCRIPT",
+          "source_path": "ml/scripts/w21-resilience-audit-W21.py",
+          "source_commit": "b7dec7eed7f29bb8714449fd9e8837f2569819e4",
+          "content_sha256": "b5cba83b3d35f68c2f8bff99f27af0e44ceb86b87cf7d567b6416cb78ab37582",
+          "bytes": 90829,
+          "purpose": "Diagnosis/resilience audit driver",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Recorded checks NOT_VERIFIED without a pinned A checkout."
+        },
+        {
+          "artifact_id": "B-W22-STATISTICS-MANIFEST",
+          "source_path": "ml/reports/W22/w22-manifest.json",
+          "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+          "content_sha256": "a027dbdda4f36de9cda87516719fe0e2aeb92076d00b67651934a50023bd01e2",
+          "bytes": 26986,
+          "purpose": "W22 paired-statistics software contract and no-physical-outcome statuses",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Toy fixtures only; final physical effect/CI/p not computed."
+        },
+        {
+          "artifact_id": "B-W22-STATISTICS-SCRIPT",
+          "source_path": "ml/scripts/w22-statistics-contract-W22.py",
+          "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+          "content_sha256": "e61ebcfd7e4063141d228255b6324047695e0fdc0db1016a80d74a1c8aa11c0c",
+          "bytes": 87613,
+          "purpose": "Paired statistics and uncertainty computation engine",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Toy fixtures; physical analysis not authorized."
+        },
+        {
+          "artifact_id": "B-W23-EVIDENCE-PACKAGE",
+          "source_path": "ml/reports/W23/evidence-package-W23.json",
+          "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+          "content_sha256": "5ebc15881df08fe934f6c37d90e79c8e022bf941f1727027a5aaaa412e688874",
+          "bytes": 56744,
+          "purpose": "W23 machine-readable evidence package (97 sources: 88 local, 9 unavailable)",
+          "evidence_class": "SOFTWARE_EVIDENCE_PACKAGE",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Historical replay line recorded 83 verified before five local manifests were added; current audit verifies 88."
+        },
+        {
+          "artifact_id": "B-W23-AUDIT-SCRIPT",
+          "source_path": "ml/scripts/w23-evidence-audit-W23.py",
+          "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+          "content_sha256": "31a8378dd34f3b2239abf6891c8301cb3e564ca0304ec84d5d78c95cd4226278",
+          "bytes": 13651,
+          "purpose": "W23 manifest verifier and no-locked-payload audit",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPLAYED_TWO_PROCESSES",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Verifies declared sources; not a physical result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-MANIFEST",
+          "source_path": "ml/reports/DataRecovery/recovery-manifest.json",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "d959865e4e8ade37bf42943fcf2ed43a4dd1ec113f29252227d76395d81f59c2",
+          "bytes": 7995,
+          "purpose": "Existing physical-data recovery manifest with source pins and 12 plot hashes",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive recovery only; 0 predictive-eligible runs."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-SOURCE-INVENTORY",
+          "source_path": "ml/reports/DataRecovery/source-inventory.json",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "bd451f9dc4d99ae6a8cf88c8e16dbe6a44f0e67affaec7c390a59505f3130fb5",
+          "bytes": 123091,
+          "purpose": "Allowlisted source inventory for the 18-segment A 20261107 package",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Segments share boots; not independent experiments."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-SCRIPT",
+          "source_path": "ml/scripts/existing-data-recovery.py",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "8f8ae1cae775122efb5e0c1bf2e3a88ba8a1e3370b8be5592dd13b0950cc9fca",
+          "bytes": 6607,
+          "purpose": "Offline descriptive recovery driver (read-only source consumption)",
+          "evidence_class": "SOFTWARE_VERIFICATION",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_TWO_PROCESSES",
+          "handover_status": "COMPLETE_AND_VERIFIED",
+          "limitations": "Requires the pinned A export; writes no new physics."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-REAL-OBSERVATIONS",
+          "source_path": "ml/reports/DataRecovery/real-observation-summary.csv",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "605234075507e539fc98e8e7cefa06ca3fcb1fc4fdcfc932d5d4c5276f8592ff",
+          "bytes": 368188,
+          "purpose": "Real physical descriptive observation table",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive table only; not a locked predictive result and not a physical A/B outcome table."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-ASSESSMENT",
+          "source_path": "ml/reports/DataRecovery/physical-data-assessment.md",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "1b2a5ed36bb03491ee74fb5e98e85b6fb2415b0bd719b7b5203eacd0406dfc4d",
+          "bytes": 26392,
+          "purpose": "Real physical descriptive assessment and observed cooling/door behaviour",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "No AI forecasting claim; Gate B remains RED."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-ELIGIBILITY",
+          "source_path": "ml/reports/DataRecovery/predictive-eligibility-review.md",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "ee125e775b3f3e6242a80149e105667219b326bdbd7b29a4f2075350889f6f41",
+          "bytes": 5029,
+          "purpose": "Eight-question predictive eligibility review of all 18 sources",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "All sources refused for predictive use; descriptive use only."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-GATE-B-REASSESSMENT",
+          "source_path": "ml/reports/DataRecovery/gate-b-reassessment.md",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "05a1367d6219fd288fb44e2210f706ac1464f012cf9549ed8212dca0a4ce5da6",
+          "bytes": 3856,
+          "purpose": "Reassessment of W08 Gate B against the recorded physical package",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Records Gate B RED; does not replace the validator."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PRESENTATION-VI",
+          "source_path": "ml/reports/DataRecovery/presentation-summary-vi.md",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "3c59b0e28bb95fa927bd786c4d6e6a8beaf7237fa436e45403f058731430e1b2",
+          "bytes": 5288,
+          "purpose": "Vietnamese presentation summary of real recorded observations",
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "HASH_VERIFIED",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Presentation aid, not a scientific result."
+        }
+      ]
+    },
+    "G_real_physical_figures": {
+      "summary": {
+        "count": 12,
+        "manifest_declared_count": 12,
+        "all_match_declared": true,
+        "evidence_class": "PHYSICAL_RECORDED_DATA",
+        "not_predictive_results": true
+      },
+      "artifacts": [
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_TRIAL2",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-trial2.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+          "declared_sha256": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+          "matches_declared": true,
+          "bytes": 35226,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_W10_03_RUN1",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-w10-03-run1.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+          "declared_sha256": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+          "matches_declared": true,
+          "bytes": 19202,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_A_W07_03_TRIAL_2_BE89BF4A",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-a-w07-03-trial-2-be89bf4a.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+          "declared_sha256": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+          "matches_declared": true,
+          "bytes": 13156,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_C_600S_TEC_100PCT",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-c-600s-tec-100pct.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+          "declared_sha256": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+          "matches_declared": true,
+          "bytes": 44400,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_E_1800S_TEC_100PCT",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-e-1800s-tec-100pct.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+          "declared_sha256": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+          "matches_declared": true,
+          "bytes": 124249,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_02",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-02.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+          "declared_sha256": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+          "matches_declared": true,
+          "bytes": 6882,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN1",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run1.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+          "declared_sha256": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+          "matches_declared": true,
+          "bytes": 11415,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN2",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run2.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+          "declared_sha256": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+          "matches_declared": true,
+          "bytes": 11620,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN3",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run3.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+          "declared_sha256": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+          "matches_declared": true,
+          "bytes": 11783,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN4",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run4.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+          "declared_sha256": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+          "matches_declared": true,
+          "bytes": 11779,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-MISSINGNESS_INVENTORY",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/missingness-inventory.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+          "declared_sha256": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+          "matches_declared": true,
+          "bytes": 24693,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        },
+        {
+          "artifact_id": "B-DATARECOVERY-PLOT-W05_DIAGNOSTIC",
+          "source_path": "ml/reports/DataRecovery/real-physical-plots/w05-diagnostic.svg",
+          "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+          "content_sha256": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054",
+          "declared_sha256": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054",
+          "matches_declared": true,
+          "bytes": 68135,
+          "evidence_class": "PHYSICAL_RECORDED_DATA",
+          "verification_status": "VERIFIED",
+          "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+          "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+          "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result."
+        }
+      ]
+    }
+  },
+  "scientific_status": {
+    "GATE_B_PHYSICAL_DATA": "RED",
+    "PREDICTIVE_DATASET_READINESS": "NOT_READY",
+    "G3": "NO-GO / FIX DATA",
+    "PRIMARY_HORIZON": "NOT_FROZEN",
+    "REAL_PREDICTIVE_BENCHMARK": "NOT_ESTABLISHED",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "W15_MODEL": "SYNTHETIC_NON_DEPLOYABLE_CANDIDATE",
+    "W16_LOCKED_TEST": "NOT_OPENED",
+    "CONTROLLER_B_PHYSICAL_READINESS": "NOT_READY",
+    "FINAL_PHYSICAL_AB_ANALYSIS": "NOT_RUN",
+    "FINAL_PHYSICAL_P_VALUE": "NOT_COMPUTED",
+    "FINAL_PHYSICAL_CI": "NOT_COMPUTED",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED"
+  },
+  "external_sources": {
+    "declared_total": 97,
+    "local": 88,
+    "unavailable": 9,
+    "current_audit_verified": 88,
+    "historical_receipt_verified": 83,
+    "revision_explanation": "The delivered manifest has 97 source entries (88 local, 9 unavailable). The W23 receipt recorded an earlier 92-entry revision (83 local, 9 unavailable); five local manifest sources (W05, W07, W08, W09, W10) were added to the final manifest. The W23 receipt was not rewritten; W24 records the delivered revision and its re-audit result."
+  },
+  "artifact_index": {
+    "B-DATARECOVERY-ASSESSMENT": {
+      "artifact_id": "B-DATARECOVERY-ASSESSMENT",
+      "source_path": "ml/reports/DataRecovery/physical-data-assessment.md",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "1b2a5ed36bb03491ee74fb5e98e85b6fb2415b0bd719b7b5203eacd0406dfc4d",
+      "bytes": 26392,
+      "purpose": "Real physical descriptive assessment and observed cooling/door behaviour",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "No AI forecasting claim; Gate B remains RED.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-ELIGIBILITY": {
+      "artifact_id": "B-DATARECOVERY-ELIGIBILITY",
+      "source_path": "ml/reports/DataRecovery/predictive-eligibility-review.md",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "ee125e775b3f3e6242a80149e105667219b326bdbd7b29a4f2075350889f6f41",
+      "bytes": 5029,
+      "purpose": "Eight-question predictive eligibility review of all 18 sources",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "All sources refused for predictive use; descriptive use only.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-GATE-B-REASSESSMENT": {
+      "artifact_id": "B-DATARECOVERY-GATE-B-REASSESSMENT",
+      "source_path": "ml/reports/DataRecovery/gate-b-reassessment.md",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "05a1367d6219fd288fb44e2210f706ac1464f012cf9549ed8212dca0a4ce5da6",
+      "bytes": 3856,
+      "purpose": "Reassessment of W08 Gate B against the recorded physical package",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Records Gate B RED; does not replace the validator.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-MANIFEST": {
+      "artifact_id": "B-DATARECOVERY-MANIFEST",
+      "source_path": "ml/reports/DataRecovery/recovery-manifest.json",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "d959865e4e8ade37bf42943fcf2ed43a4dd1ec113f29252227d76395d81f59c2",
+      "bytes": 7995,
+      "purpose": "Existing physical-data recovery manifest with source pins and 12 plot hashes",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive recovery only; 0 predictive-eligible runs.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_TRIAL2": {
+      "artifact_id": "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_TRIAL2",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-trial2.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+      "declared_sha256": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+      "matches_declared": true,
+      "bytes": 35226,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_W10_03_RUN1": {
+      "artifact_id": "B-DATARECOVERY-PLOT-CHAMBER_AIR_A20261107_W10_03_RUN1",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-w10-03-run1.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+      "declared_sha256": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+      "matches_declared": true,
+      "bytes": 19202,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-COOLING_A20261107_A_W07_03_TRIAL_2_BE89BF4A": {
+      "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_A_W07_03_TRIAL_2_BE89BF4A",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-a-w07-03-trial-2-be89bf4a.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+      "declared_sha256": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+      "matches_declared": true,
+      "bytes": 13156,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_C_600S_TEC_100PCT": {
+      "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_C_600S_TEC_100PCT",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-c-600s-tec-100pct.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+      "declared_sha256": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+      "matches_declared": true,
+      "bytes": 44400,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_E_1800S_TEC_100PCT": {
+      "artifact_id": "B-DATARECOVERY-PLOT-COOLING_A20261107_H8_E_1800S_TEC_100PCT",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-e-1800s-tec-100pct.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+      "declared_sha256": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+      "matches_declared": true,
+      "bytes": 124249,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_02": {
+      "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_02",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-02.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+      "declared_sha256": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+      "matches_declared": true,
+      "bytes": 6882,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN1": {
+      "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN1",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run1.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+      "declared_sha256": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+      "matches_declared": true,
+      "bytes": 11415,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN2": {
+      "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN2",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run2.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+      "declared_sha256": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+      "matches_declared": true,
+      "bytes": 11620,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN3": {
+      "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN3",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run3.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+      "declared_sha256": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+      "matches_declared": true,
+      "bytes": 11783,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN4": {
+      "artifact_id": "B-DATARECOVERY-PLOT-DOOR_A20261107_W10_03_RUN4",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run4.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+      "declared_sha256": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+      "matches_declared": true,
+      "bytes": 11779,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-MISSINGNESS_INVENTORY": {
+      "artifact_id": "B-DATARECOVERY-PLOT-MISSINGNESS_INVENTORY",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/missingness-inventory.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+      "declared_sha256": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+      "matches_declared": true,
+      "bytes": 24693,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PLOT-W05_DIAGNOSTIC": {
+      "artifact_id": "B-DATARECOVERY-PLOT-W05_DIAGNOSTIC",
+      "source_path": "ml/reports/DataRecovery/real-physical-plots/w05-diagnostic.svg",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054",
+      "declared_sha256": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054",
+      "matches_declared": true,
+      "bytes": 68135,
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive plot only; units and source SHA-256 are embedded in the SVG; not a predictive or A/B result.",
+      "categories": [
+        "G_real_physical_figures"
+      ]
+    },
+    "B-DATARECOVERY-PRESENTATION-VI": {
+      "artifact_id": "B-DATARECOVERY-PRESENTATION-VI",
+      "source_path": "ml/reports/DataRecovery/presentation-summary-vi.md",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "3c59b0e28bb95fa927bd786c4d6e6a8beaf7237fa436e45403f058731430e1b2",
+      "bytes": 5288,
+      "purpose": "Vietnamese presentation summary of real recorded observations",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Presentation aid, not a scientific result.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-REAL-OBSERVATIONS": {
+      "artifact_id": "B-DATARECOVERY-REAL-OBSERVATIONS",
+      "source_path": "ml/reports/DataRecovery/real-observation-summary.csv",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "605234075507e539fc98e8e7cefa06ca3fcb1fc4fdcfc932d5d4c5276f8592ff",
+      "bytes": 368188,
+      "purpose": "Real physical descriptive observation table",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Descriptive table only; not a locked predictive result and not a physical A/B outcome table.",
+      "categories": [
+        "E_final_result_files",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-SCRIPT": {
+      "artifact_id": "B-DATARECOVERY-SCRIPT",
+      "source_path": "ml/scripts/existing-data-recovery.py",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "8f8ae1cae775122efb5e0c1bf2e3a88ba8a1e3370b8be5592dd13b0950cc9fca",
+      "bytes": 6607,
+      "purpose": "Offline descriptive recovery driver (read-only source consumption)",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_TWO_PROCESSES",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Requires the pinned A export; writes no new physics.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-DATARECOVERY-SOURCE-INVENTORY": {
+      "artifact_id": "B-DATARECOVERY-SOURCE-INVENTORY",
+      "source_path": "ml/reports/DataRecovery/source-inventory.json",
+      "source_commit": "c0d8b247291c05cce308feae25b3fedd329af494",
+      "content_sha256": "bd451f9dc4d99ae6a8cf88c8e16dbe6a44f0e67affaec7c390a59505f3130fb5",
+      "bytes": 123091,
+      "purpose": "Allowlisted source inventory for the 18-segment A 20261107 package",
+      "evidence_class": "PHYSICAL_RECORDED_DATA",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPRODUCED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Segments share boots; not independent experiments.",
+      "categories": [
+        "A_dataset_export",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-FEATURE-REGISTRY": {
+      "artifact_id": "B-FEATURE-REGISTRY",
+      "source_path": "ml/feature-registry-v1.yaml",
+      "source_commit": "d504bbe6b0a25eb707ee69de15f28aaee4794e1c",
+      "content_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+      "bytes": 39718,
+      "purpose": "W10 frozen feature schema, causal definitions and sensor role map",
+      "evidence_class": "SOFTWARE_CONTRACT",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Definitions frozen; thresholds, horizon, representative temperature and operating rules are not.",
+      "categories": [
+        "C_feature_registry"
+      ]
+    },
+    "B-MODEL-CONFIG": {
+      "artifact_id": "B-MODEL-CONFIG",
+      "source_path": "ml/xgb-v1-config.yaml",
+      "source_commit": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+      "content_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+      "bytes": 3661,
+      "purpose": "W11/W15 development model configuration",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Development candidate configuration; hyperparameters not scientifically selected.",
+      "categories": [
+        "D_model_artifact"
+      ]
+    },
+    "B-W03-STATISTICAL-ANALYSIS-PLAN": {
+      "artifact_id": "B-W03-STATISTICAL-ANALYSIS-PLAN",
+      "source_path": "ml/statistical-analysis-plan-v0.md",
+      "source_commit": "d32473c568662d5f67fdb79202e14232239dcfc8",
+      "content_sha256": "3270ff85cbbc21f212299df5c3d0dc43fa34fcb52f8c7f1a041e6abcd19b5daf",
+      "bytes": 24887,
+      "purpose": "W03 statistical analysis plan",
+      "evidence_class": "SOFTWARE_CONTRACT",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Pre-specification; no physical outcomes executed.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W05-QA-MANIFEST": {
+      "artifact_id": "B-W05-QA-MANIFEST",
+      "source_path": "ml/reports/W05/qa-manifest-W05.json",
+      "source_commit": "beae5f41e947b1e837b00c62d0ee16615d4723f2",
+      "content_sha256": "66343133d3809892187ce4b39524150bb03e143baaa161b0bea777a22bd4f31c",
+      "bytes": 51045,
+      "purpose": "W05 physical-data QA and schema intake result",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Candidate capture only; A ledger INVALID.",
+      "categories": [
+        "A_dataset_export",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W06-TIMING-MANIFEST": {
+      "artifact_id": "B-W06-TIMING-MANIFEST",
+      "source_path": "ml/reports/W06/timing-manifest-W06.json",
+      "source_commit": "97dba5282ee240cfd308946270605a18a56ecd98",
+      "content_sha256": "3fedd4c4fa0a5525d4b0939b18fb0ed243c83c3d4a04d94aa0ecf5f435e3f6bd",
+      "bytes": 2547482,
+      "purpose": "W06 timing and event-alignment evidence",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Boot-scoped uptime; absolute time not evidenced.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W07-EDA-MANIFEST": {
+      "artifact_id": "B-W07-EDA-MANIFEST",
+      "source_path": "ml/reports/W07/plant-eda-manifest-W07.json",
+      "source_commit": "739fbfed3960f9868a1c3447e1b8a75580e5563e",
+      "content_sha256": "3252e9f3ee4f8a97877fd5cb6211e1e4be20caa9f3801a8ce3317fc4c9415dcb",
+      "bytes": 138355,
+      "purpose": "W07 physical exploratory analysis and repeatability",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Repeatability is limited by shared boots.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W08-GATE-B-MANIFEST": {
+      "artifact_id": "B-W08-GATE-B-MANIFEST",
+      "source_path": "ml/reports/W08/gate-b-manifest-W08.json",
+      "source_commit": "36a5aab063409f3b8e47a790ed82ddac10645e82",
+      "content_sha256": "1dde8ea3d62b4cf7ba8a409108ab3f99b1170656880571c8fa6515af639babd6",
+      "bytes": 49025,
+      "purpose": "W08 canonical Gate B validator result",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "GATE_B_PHYSICAL_DATA=RED; PREDICTIVE_DATASET_READINESS=NOT_READY; canonical intake is the W09 export.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W08-GATE-B-REPORT": {
+      "artifact_id": "B-W08-GATE-B-REPORT",
+      "source_path": "ml/reports/W08/gate-b-readiness-W08.md",
+      "source_commit": "36a5aab063409f3b8e47a790ed82ddac10645e82",
+      "content_sha256": "48d0c37d917e3cab0f9278b00bb78796c7e5f5c48fd8a27e71280013980f5acb",
+      "bytes": 9269,
+      "purpose": "W08 Gate B readiness report",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Physical gate remains RED.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W09-BASELINE-MANIFEST": {
+      "artifact_id": "B-W09-BASELINE-MANIFEST",
+      "source_path": "ml/reports/W09/baseline-manifest-W09.json",
+      "source_commit": "7e1b9333a28063ccd76a47e0465ae2287873a58e",
+      "content_sha256": "a6e4b39d41c316512a2c0cc24b4f7b8363caec640ee39e8a9a5c6ff47b48dd45",
+      "bytes": 35140,
+      "purpose": "W09 deterministic baseline evaluation on physical diagnostic data",
+      "evidence_class": "PHYSICAL_MEASUREMENT_DIAGNOSTIC_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "No predictive baseline established on physical data.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W10-FEATURE-MANIFEST": {
+      "artifact_id": "B-W10-FEATURE-MANIFEST",
+      "source_path": "ml/reports/W10/feature-manifest-W10.json",
+      "source_commit": "884f2908895646948b114ae5f3ef8937c20e6b83",
+      "content_sha256": "3706cbb7c59c74e5f21e3575ed49121fcd404454b8ca4250328063c07755fad2",
+      "bytes": 8591,
+      "purpose": "W10 causal feature pipeline verification",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Synthetic S2 fixture; real features incomplete.",
+      "categories": [
+        "C_feature_registry",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W10-FEATURE-PIPELINE-SCRIPT": {
+      "artifact_id": "B-W10-FEATURE-PIPELINE-SCRIPT",
+      "source_path": "ml/scripts/feature-pipeline-W10.py",
+      "source_commit": "884f2908895646948b114ae5f3ef8937c20e6b83",
+      "content_sha256": "4d4b7bf9b271c66e5ca3c715dc238dc072a45dfe38714313f06b48361afbcd7c",
+      "bytes": 35933,
+      "purpose": "Causal feature generation driver",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Software verified; physical feature availability not established.",
+      "categories": [
+        "C_feature_registry"
+      ]
+    },
+    "B-W11-BENCHMARK-SCRIPT": {
+      "artifact_id": "B-W11-BENCHMARK-SCRIPT",
+      "source_path": "ml/scripts/xgb-benchmark-W11.py",
+      "source_commit": "c6b28678430ab575902a09be4b32bc327c72afcb",
+      "content_sha256": "43b40ea40445cafffb06d6af288195da0ba477f71dbfab4016183d5e0d5ea75d",
+      "bytes": 42852,
+      "purpose": "Grouped XGBoost synthetic benchmark driver",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Synthetic only; never a physical benchmark.",
+      "categories": [
+        "A_dataset_export"
+      ]
+    },
+    "B-W11-MANIFEST": {
+      "artifact_id": "B-W11-MANIFEST",
+      "source_path": "ml/reports/W11/benchmark-manifest-W11.json",
+      "source_commit": "1c49ffc46ab74494bc3146d1212bf45cb74261e9",
+      "content_sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+      "bytes": 103357,
+      "purpose": "W11 grouped synthetic benchmark identity and split population",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Synthetic fixture only; AP=1.0 is a software control, never physical accuracy.",
+      "categories": [
+        "A_dataset_export",
+        "B_split_manifest",
+        "E_final_result_files",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W11-SPLIT-MANIFEST": {
+      "artifact_id": "B-W11-SPLIT-MANIFEST",
+      "source_path": "ml/reports/W11/cv-fold-manifest.yaml",
+      "source_commit": "be98b4a3c64fbc6a4157dc4ba91210a85c370c6a",
+      "content_sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6",
+      "bytes": 7867,
+      "purpose": "W11 grouped development/locked-test membership and fold definition",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Synthetic membership only; no physical predictive split exists.",
+      "categories": [
+        "B_split_manifest"
+      ]
+    },
+    "B-W12-G3-MANIFEST": {
+      "artifact_id": "B-W12-G3-MANIFEST",
+      "source_path": "ml/reports/W12/w12-manifest.json",
+      "source_commit": "34435bdba8b4b98d418233ef3c07975deea36a1e",
+      "content_sha256": "ef06f9712203b39c01351ad89a17368574e98a0db6436f842e926b68418073a7",
+      "bytes": 280183,
+      "purpose": "W12 G3 assessment: synthetic benchmark synthesis and Gate B/G3 verdicts",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "G3 remains NO-GO / FIX DATA; physical benchmark not established.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W12-G3-REPORT": {
+      "artifact_id": "B-W12-G3-REPORT",
+      "source_path": "ml/reports/W12/gate-g3-W12.md",
+      "source_commit": "c1ef437786bb187b697038810050966116927a01",
+      "content_sha256": "edf0d8e1740107975851d63ae86904993577c9f86043d2b27989c7120744ce89",
+      "bytes": 7081,
+      "purpose": "W12 Gate G3 evidence report",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Synthetic evidence cannot close G3.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W12-GROUPED-METRICS": {
+      "artifact_id": "B-W12-GROUPED-METRICS",
+      "source_path": "ml/reports/W12/grouped-metrics-W12.csv",
+      "source_commit": "c1ef437786bb187b697038810050966116927a01",
+      "content_sha256": "8dfb3b541f34523e7f7ac98f878df6ac65a9666c8eec67f16d49ba64f2b22965",
+      "bytes": 5762,
+      "purpose": "Synthetic grouped benchmark metrics",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Not physical AP, recall or forecast accuracy.",
+      "categories": [
+        "E_final_result_files"
+      ]
+    },
+    "B-W13-HORIZON-DECISION": {
+      "artifact_id": "B-W13-HORIZON-DECISION",
+      "source_path": "ml/reports/W13/primary-horizon-decision.md",
+      "source_commit": "f234990db4412867f2e151618b8b350d85ef8a45",
+      "content_sha256": "f3b263fca4ed494d5ae279fc39ea16d2c66d861718b29a316bcc878b0234c90b",
+      "bytes": 2788,
+      "purpose": "W13 primary-horizon decision record",
+      "evidence_class": "ENGINEERING_REFERENCE_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "No primary horizon is frozen.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W13-HORIZON-MANIFEST": {
+      "artifact_id": "B-W13-HORIZON-MANIFEST",
+      "source_path": "ml/reports/W13/horizon-manifest-W13.json",
+      "source_commit": "824a5389c29ade0e56ecef7ef21eb35c2a379a7b",
+      "content_sha256": "02a76660319f6118900ec54ee3d50fa96968ad14b0a7110f3fdaf1b62417a404",
+      "bytes": 68151,
+      "purpose": "W13 horizon engineering study and provisional decision",
+      "evidence_class": "ENGINEERING_REFERENCE_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Primary horizon NOT_FROZEN; 60 s is an engineering reference.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W14-AIW-REPORT": {
+      "artifact_id": "B-W14-AIW-REPORT",
+      "source_path": "ml/reports/W14/AIW-report.md",
+      "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+      "content_sha256": "90c6935ab4c02b3e2dd64a80338a656be2b5d14dc0a4be92e78d1ece3569e6f0",
+      "bytes": 9900,
+      "purpose": "W14 EWT/AIW estimability assessment",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Real EWT and AIW are NOT_ESTIMABLE, never zero.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W14-CALIBRATION-MANIFEST": {
+      "artifact_id": "B-W14-CALIBRATION-MANIFEST",
+      "source_path": "ml/reports/W14/w14-manifest.json",
+      "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+      "content_sha256": "e4a0263ead067a10df8d23ffc2bb10d6e750c88e515153fd6f637c733077357d",
+      "bytes": 86907,
+      "purpose": "W14 ablation, calibration and EWT/AIW assessment statuses",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Calibration RISK_SCORE_ONLY; EWT/AIW NOT_ESTIMABLE.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W14-CALIBRATION-REPORT": {
+      "artifact_id": "B-W14-CALIBRATION-REPORT",
+      "source_path": "ml/reports/W14/calibration-report.md",
+      "source_commit": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+      "content_sha256": "ca1ce2f41cacd1d739c253b4294138b75387ef1aa8a9b882bf50ed4ddcfbf778",
+      "bytes": 12226,
+      "purpose": "W14 calibration assessment",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "No calibrated physical probability exists.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W15-FITTING-SCRIPT": {
+      "artifact_id": "B-W15-FITTING-SCRIPT",
+      "source_path": "ml/scripts/w15-electrical-ablation-W15.py",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "c331c7d360f991569112a1a20bd70d7b593519167d69622bde0f92cf76458fc9",
+      "bytes": 37200,
+      "purpose": "W15 electrical ablation and model fitting driver",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "NOT_EXECUTED_IN_W24",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "W24 feature freeze forbids refitting; artifact hash verified instead.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W15-HYPERPARAM-CANDIDATE": {
+      "artifact_id": "B-W15-HYPERPARAM-CANDIDATE",
+      "source_path": "ml/reports/W15/hyperparameter-freeze-candidate-W15.json",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "07d6b6d1efe119e9b33937c44850486382ec5b89adb0008b093bbe380b4a0aa6",
+      "bytes": 5374,
+      "purpose": "W15 candidate hyperparameter declaration",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Candidate only; not a scientific hyperparameter selection.",
+      "categories": [
+        "D_model_artifact"
+      ]
+    },
+    "B-W15-MODEL-CARD": {
+      "artifact_id": "B-W15-MODEL-CARD",
+      "source_path": "ml/reports/W15/model-card-W15.md",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "1ea2488a9d79693fc80789f2f7a17b69a0cfb917cd408489af3b0fa2ce1be2dc",
+      "bytes": 8463,
+      "purpose": "W15 development model card",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Model is not approved for physical Controller B.",
+      "categories": [
+        "D_model_artifact",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W15-MODEL-INSPECTION": {
+      "artifact_id": "B-W15-MODEL-INSPECTION",
+      "source_path": "ml/reports/W15/A3-model-inspection-W15.json",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "ec6746d0155597f6233f436284acb0cf0a218a6e2a96dd44455f53fd070363a6",
+      "bytes": 5041,
+      "purpose": "Native model split-usage diagnostic",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Diagnostic only, not causal importance; documents the time_since_open shortcut.",
+      "categories": [
+        "D_model_artifact"
+      ]
+    },
+    "B-W15-MODEL-JSON": {
+      "artifact_id": "B-W15-MODEL-JSON",
+      "source_path": "ml/reports/W15/model/model.json",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd",
+      "bytes": 32683,
+      "purpose": "W15 secondary JSON model serialization",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "NOT_REFIT_IN_W24",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Same synthetic, non-deployable model as the native artifact.",
+      "categories": [
+        "D_model_artifact"
+      ]
+    },
+    "B-W15-MODEL-MANIFEST": {
+      "artifact_id": "B-W15-MODEL-MANIFEST",
+      "source_path": "ml/reports/W15/model/model-manifest-W15.json",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+      "bytes": 11162,
+      "purpose": "W15 model card metadata, hashes, feature order and prohibited uses",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Declares a synthetic non-deployable model; not a release record.",
+      "categories": [
+        "D_model_artifact",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W15-MODEL-UBJ": {
+      "artifact_id": "B-W15-MODEL-UBJ",
+      "source_path": "ml/reports/W15/model/model.ubj",
+      "source_commit": "b9b93e10deeb5b9e2cfbdfba1bba0d17052ec4a4",
+      "content_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+      "bytes": 46433,
+      "purpose": "W15 native XGBoost model artifact (risk score only)",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "NOT_REFIT_IN_W24",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Non-deployable candidate; 27 of 28 features unused; time_since_open shortcut.",
+      "categories": [
+        "D_model_artifact",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W16-HOLDOUT-READINESS": {
+      "artifact_id": "B-W16-HOLDOUT-READINESS",
+      "source_path": "ml/reports/W16/holdout-readiness-W16.md",
+      "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+      "content_sha256": "5460a1c053f939a399aa0979cacdc6a79e5999d6bf5c5ed7797c8fcc83ae7858",
+      "bytes": 10719,
+      "purpose": "W16 holdout integrity, G4 readiness and prerequisites ledger",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Metadata audit only; no physical validation.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W16-LOCKED-TEST-MANIFEST": {
+      "artifact_id": "B-W16-LOCKED-TEST-MANIFEST",
+      "source_path": "ml/reports/W16/locked-test-manifest-W16.json",
+      "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+      "content_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+      "bytes": 63370,
+      "purpose": "W16 locked-test pre-registration and fail-closed refusal record",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED_REFUSAL_RECORD",
+      "reproducibility_status": "REPLAYED_EXPECTED_DIFF",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Pre-registration only; holdout_opened=false and evaluation NOT_RUN; only repository_revision differs on replay.",
+      "categories": [
+        "B_split_manifest",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W16-LOCKED-TEST-REFUSAL": {
+      "artifact_id": "B-W16-LOCKED-TEST-REFUSAL",
+      "source_path": "ml/reports/W16/locked-test-result.md",
+      "source_commit": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+      "content_sha256": "a52d6bea2f3621f5fadd98f4ab2f4456522b8a2535acb42111c38d8ae971436b",
+      "bytes": 7815,
+      "purpose": "W16 refusal report: locked test not executed, no metrics exist",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED_REFUSAL_RECORD",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Must never be mislabeled as a completed locked evaluation.",
+      "categories": [
+        "B_split_manifest",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W17-SHADOW-PARITY-MANIFEST": {
+      "artifact_id": "B-W17-SHADOW-PARITY-MANIFEST",
+      "source_path": "ml/reports/W17/w17-manifest.json",
+      "source_commit": "d3de0716f9694b37a6da50fd3935534bfe14038c",
+      "content_sha256": "8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532",
+      "bytes": 12651,
+      "purpose": "W17 offline shadow parity and freshness verification",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Live shadow not established; physical Controller B not enabled.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W17-SHADOW-REPLAY-SCRIPT": {
+      "artifact_id": "B-W17-SHADOW-REPLAY-SCRIPT",
+      "source_path": "ml/scripts/w17-shadow-replay-W17.py",
+      "source_commit": "d3de0716f9694b37a6da50fd3935534bfe14038c",
+      "content_sha256": "daed99a03d2167034fca38f6f531ce953824b9c1b624a3595740d1ff202e8f59",
+      "bytes": 46197,
+      "purpose": "Offline shadow replay driver",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Synthetic offline replay only.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W18-RUNTIME-AUDIT-SCRIPT": {
+      "artifact_id": "B-W18-RUNTIME-AUDIT-SCRIPT",
+      "source_path": "ml/scripts/w18-runtime-audit-W18.py",
+      "source_commit": "54c030ce9096a7e85b62570420f6596ff756d4f3",
+      "content_sha256": "e5a01675d77c2105d6c307b41ab218ad0dc6696f0c8427ef578ee6c0db887011",
+      "bytes": 55898,
+      "purpose": "Runtime monitoring audit driver",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Synthetic fixture only.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W18-RUNTIME-MONITORING-MANIFEST": {
+      "artifact_id": "B-W18-RUNTIME-MONITORING-MANIFEST",
+      "source_path": "ml/reports/W18/w18-manifest.json",
+      "source_commit": "54c030ce9096a7e85b62570420f6596ff756d4f3",
+      "content_sha256": "bd1391d72d030af5e0ca99540059424fbf45ca1ccced255e8d41ca374799c9ab",
+      "bytes": 48723,
+      "purpose": "W18 runtime monitoring and intervention-trace audit",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Signoff withheld; no physical intervention trace.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W19-CAMPAIGN-AUDIT-SCRIPT": {
+      "artifact_id": "B-W19-CAMPAIGN-AUDIT-SCRIPT",
+      "source_path": "ml/scripts/w19-campaign-audit-W19.py",
+      "source_commit": "d7bffbcfacc8505b227bd87a47dd03620ed82d16",
+      "content_sha256": "f656f53ccab9a0ad3f33e222b1d45e197ebef8d88f8fb625807f5cae8b822148",
+      "bytes": 68856,
+      "purpose": "Paired-campaign integrity audit driver",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Fixtures only; no physical outcomes.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W19-PAIRED-LEDGER-MANIFEST": {
+      "artifact_id": "B-W19-PAIRED-LEDGER-MANIFEST",
+      "source_path": "ml/reports/W19/w19-manifest.json",
+      "source_commit": "d7bffbcfacc8505b227bd87a47dd03620ed82d16",
+      "content_sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82",
+      "bytes": 27208,
+      "purpose": "W19 paired-campaign ledger, validity and no-peeking gates",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "No physical pairs exist; campaign not authorized.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W20-CAMPAIGN-LOCK-MANIFEST": {
+      "artifact_id": "B-W20-CAMPAIGN-LOCK-MANIFEST",
+      "source_path": "ml/reports/W20/w20-manifest.json",
+      "source_commit": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "content_sha256": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+      "bytes": 64569,
+      "purpose": "W20 final campaign lock and analysis-authorization gate",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "ANALYSIS_PREFLIGHT_BLOCKED; W20_FINAL_ANALYSIS=NOT_RUN; no physical A/B outcomes.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W20-CAMPAIGN-PREFLIGHT-SCRIPT": {
+      "artifact_id": "B-W20-CAMPAIGN-PREFLIGHT-SCRIPT",
+      "source_path": "ml/scripts/w20-campaign-preflight-W20.py",
+      "source_commit": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "content_sha256": "e9b57941324c2047dd36fd1fa9bc757d20928973ba913ed6860213e8a5ebd747",
+      "bytes": 95367,
+      "purpose": "Campaign analysis authorization preflight",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Must remain blocked without external evidence.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W21-DIAGNOSIS-MANIFEST": {
+      "artifact_id": "B-W21-DIAGNOSIS-MANIFEST",
+      "source_path": "ml/reports/W21/w21-manifest.json",
+      "source_commit": "b7dec7eed7f29bb8714449fd9e8837f2569819e4",
+      "content_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+      "bytes": 77321,
+      "purpose": "W21 diagnosis and resilience evidence assessment",
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Bounded on-device software injection; output stage compiled out; not physical_fault accuracy.",
+      "categories": [
+        "A_dataset_export",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W21-RESILIENCE-AUDIT-SCRIPT": {
+      "artifact_id": "B-W21-RESILIENCE-AUDIT-SCRIPT",
+      "source_path": "ml/scripts/w21-resilience-audit-W21.py",
+      "source_commit": "b7dec7eed7f29bb8714449fd9e8837f2569819e4",
+      "content_sha256": "b5cba83b3d35f68c2f8bff99f27af0e44ceb86b87cf7d567b6416cb78ab37582",
+      "bytes": 90829,
+      "purpose": "Diagnosis/resilience audit driver",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Recorded checks NOT_VERIFIED without a pinned A checkout.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W22-STATISTICS-MANIFEST": {
+      "artifact_id": "B-W22-STATISTICS-MANIFEST",
+      "source_path": "ml/reports/W22/w22-manifest.json",
+      "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+      "content_sha256": "a027dbdda4f36de9cda87516719fe0e2aeb92076d00b67651934a50023bd01e2",
+      "bytes": 26986,
+      "purpose": "W22 paired-statistics software contract and no-physical-outcome statuses",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Toy fixtures only; final physical effect/CI/p not computed.",
+      "categories": [
+        "E_final_result_files",
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W22-STATISTICS-SCRIPT": {
+      "artifact_id": "B-W22-STATISTICS-SCRIPT",
+      "source_path": "ml/scripts/w22-statistics-contract-W22.py",
+      "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+      "content_sha256": "e61ebcfd7e4063141d228255b6324047695e0fdc0db1016a80d74a1c8aa11c0c",
+      "bytes": 87613,
+      "purpose": "Paired statistics and uncertainty computation engine",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Toy fixtures; physical analysis not authorized.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W22-TOY-PAIR-PLOT": {
+      "artifact_id": "B-W22-TOY-PAIR-PLOT",
+      "source_path": "ml/reports/W22/test-only-pair-plot-W22.svg",
+      "source_commit": "cf0716df90a1b9a617df0e61166e218a4f263374",
+      "content_sha256": "e8b22bbc2cc3b1a9f2c0680d3f12f22255815c7cad5f2ca27ae607ab0c0303e3",
+      "bytes": 5130,
+      "purpose": "TEST_ONLY paired-effect demonstration on toy fixtures",
+      "evidence_class": "SYNTHETIC_STATISTICAL_UNIT_TEST_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Not a physical A/B result and must not be captioned as one.",
+      "categories": [
+        "E_final_result_files"
+      ]
+    },
+    "B-W23-AUDIT-SCRIPT": {
+      "artifact_id": "B-W23-AUDIT-SCRIPT",
+      "source_path": "ml/scripts/w23-evidence-audit-W23.py",
+      "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+      "content_sha256": "31a8378dd34f3b2239abf6891c8301cb3e564ca0304ec84d5d78c95cd4226278",
+      "bytes": 13651,
+      "purpose": "W23 manifest verifier and no-locked-payload audit",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_TWO_PROCESSES",
+      "handover_status": "COMPLETE_AND_VERIFIED",
+      "limitations": "Verifies declared sources; not a physical result.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W23-EVIDENCE-PACKAGE": {
+      "artifact_id": "B-W23-EVIDENCE-PACKAGE",
+      "source_path": "ml/reports/W23/evidence-package-W23.json",
+      "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+      "content_sha256": "5ebc15881df08fe934f6c37d90e79c8e022bf941f1727027a5aaaa412e688874",
+      "bytes": 56744,
+      "purpose": "W23 machine-readable evidence package (97 sources: 88 local, 9 unavailable)",
+      "evidence_class": "SOFTWARE_EVIDENCE_PACKAGE",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "REPLAYED_BYTE_IDENTICAL",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Historical replay line recorded 83 verified before five local manifests were added; current audit verifies 88.",
+      "categories": [
+        "F_key_analysis_artifacts"
+      ]
+    },
+    "B-W23-MODEL-CARD": {
+      "artifact_id": "B-W23-MODEL-CARD",
+      "source_path": "ml/reports/W23/model-card-W23.md",
+      "source_commit": "a9dacbe984b3287c7b7b0cdce8416552f66d3808",
+      "content_sha256": "59858fef63b8aec0a9afda606e0c9be23032c5634f37cdb0da15e69a1f875875",
+      "bytes": 12964,
+      "purpose": "W23 consolidated model card and release eligibility statement",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "reproducibility_status": "HASH_VERIFIED",
+      "handover_status": "AVAILABLE_WITH_LIMITATIONS",
+      "limitations": "Retains NON_DEPLOYABLE_CANDIDATE and RISK_SCORE_ONLY.",
+      "categories": [
+        "D_model_artifact"
+      ]
+    }
+  },
+  "entry_count": 82,
+  "unique_artifact_count": 68
+}

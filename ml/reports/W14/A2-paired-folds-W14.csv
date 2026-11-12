@@ -1,0 +1,9 @@
+component,fold_id,strategy,ap_a,ap_b,delta_ap_b_minus_a,event_recall_a,event_recall_b,false_warnings_a,false_warnings_b,missed_events_a,missed_events_b
+A2,F1,TRAIN_FOLD_CLASS_WEIGHT,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F1,UNWEIGHTED,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F2,TRAIN_FOLD_CLASS_WEIGHT,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F2,UNWEIGHTED,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F3,TRAIN_FOLD_CLASS_WEIGHT,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F3,UNWEIGHTED,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F4,TRAIN_FOLD_CLASS_WEIGHT,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0
+A2,F4,UNWEIGHTED,1.0,1.0,0.0,1.0,1.0,0.0,0.0,0,0

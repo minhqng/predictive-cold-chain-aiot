@@ -1,0 +1,56 @@
+{
+  "approved_freeze_record": null,
+  "created_from": {
+    "feature_registry": "ml/feature-registry-v1.yaml",
+    "feature_registry_sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+    "model_config": "ml/xgb-v1-config.yaml",
+    "model_config_sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+    "model_file": "ml/reports/W15/model/model.ubj",
+    "model_file_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "model_manifest": "ml/reports/W15/model/model-manifest-W15.json",
+    "model_manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e"
+  },
+  "manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+  "model_file_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+  "schema": "coldguard-w18-freeze-baseline-v1",
+  "semantics": "PINNED_DEVELOPMENT_BASELINE_NOT_AN_APPROVED_RELEASE_FREEZE",
+  "values": {
+    "calibration_semantics": {
+      "config_status": "NOT_PERFORMED",
+      "score_semantics": "risk_score",
+      "status": "RISK_SCORE_ONLY"
+    },
+    "critical_target": {
+      "boundary_c": null,
+      "config_target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+      "target_spec_version": "coldguard-w11-development-label-v1",
+      "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN"
+    },
+    "event_matching_policy": {
+      "association_status": "SYNTHETIC_ILLUSTRATIVE",
+      "episode_status": "SYNTHETIC_ILLUSTRATIVE"
+    },
+    "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "feature_version": "CG-FEAT-1.0",
+    "model_artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+    "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "model_config_sha256": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+    "model_library_version": "3.4.1",
+    "operating_threshold": {
+      "config_value": 0.5,
+      "status": "ILLUSTRATIVE_NOT_FROZEN",
+      "value": 0.5
+    },
+    "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+    "primary_horizon": {
+      "config_horizon_s": 60.0,
+      "horizon_s": 60.0,
+      "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN"
+    },
+    "w15_model_manifest_sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+    "warning_persistence": {
+      "k": null,
+      "status": "NOT_FROZEN"
+    }
+  }
+}

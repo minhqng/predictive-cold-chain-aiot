@@ -1,0 +1,79 @@
+{
+  "schema": "coldguard-w24-independent-replay-receipt-v1",
+  "status": "PENDING_TEMPLATE_NOT_A_COMPLETED_RECEIPT",
+  "completed": false,
+  "instructions": "Do not edit this template as a claim of completion. A different human team member must copy it, run ml/reports/W24/reproduction-runbook-W24.md from a fresh checkout, fill every field with observed values, and return the completed copy. An AI agent or the same author does not qualify as an independent human replay.",
+  "reviewer": {
+    "name": null,
+    "team_role": null,
+    "relationship_to_member_b": null,
+    "date_utc": null
+  },
+  "environment": {
+    "operating_system": null,
+    "shell": null,
+    "git_version": null,
+    "python_version": null,
+    "uv_version": null,
+    "checkout_path_optional": null
+  },
+  "source": {
+    "w24_delivery_commit": null,
+    "generation_parent": "c0d8b247291c05cce308feae25b3fedd329af494",
+    "uv_lock_sha256": null,
+    "dependency_sync_result": null
+  },
+  "commands_executed": [],
+  "results": {
+    "uv_lock_check": null,
+    "full_test_counts": {
+      "collected": null,
+      "passed": null,
+      "failed": null,
+      "skipped": null,
+      "skip_reasons": []
+    },
+    "build": {
+      "wheel": null,
+      "sdist": null
+    },
+    "w15_model_sha256_observed": null,
+    "w15_model_sha256_matches_declared": null,
+    "w23_audit": {
+      "verified": null,
+      "unavailable": null,
+      "violations": null,
+      "two_process_byte_identical": null
+    },
+    "data_recovery": {
+      "artifacts": null,
+      "two_process_byte_identical": null,
+      "matches_committed_package": null
+    },
+    "layer_replays": {
+      "w16": null,
+      "w17": null,
+      "w18": null,
+      "w19": null,
+      "w20": null,
+      "w21": null,
+      "w22": null
+    },
+    "determinism_differences": null
+  },
+  "boundaries_observed": {
+    "locked_test_not_opened": null,
+    "w20_analysis_not_run": null,
+    "no_model_refit": null,
+    "no_physical_experiment": null,
+    "no_prior_artifact_mutation": null
+  },
+  "unexpected_manual_steps": [],
+  "environment_assumptions": [],
+  "limitations": [],
+  "declaration": {
+    "i_am_a_different_human_reviewer": null,
+    "i_did_not_edit_reports_to_match": null,
+    "signature_or_attestation": null
+  }
+}

@@ -1,0 +1,2149 @@
+{
+  "adversarial_controls": {
+    "probe_count": 58,
+    "probes": [
+      {
+        "expectation": "the A-W21 result remains ON_DEVICE_SOFTWARE_INJECTION",
+        "name": "authentic_on_device_injection_classified",
+        "passed": true
+      },
+      {
+        "expectation": "host simulation cannot be promoted to on-device evidence",
+        "name": "host_simulation_not_on_device",
+        "passed": true
+      },
+      {
+        "expectation": "on-device injection cannot be promoted to physical response",
+        "name": "injection_not_physical_disconnect",
+        "passed": true
+      },
+      {
+        "expectation": "an output-disabled case cannot become a missing electrical response",
+        "name": "output_disabled_not_enabled_validation",
+        "passed": true
+      },
+      {
+        "expectation": "two test IDs from one boot count as one independent session",
+        "name": "shared_boot_not_independent",
+        "passed": true
+      },
+      {
+        "expectation": "tampered bytes fail the pinned raw-log hash",
+        "name": "raw_log_hash_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a mismatched boot identity fails the manifest/result check",
+        "name": "manifest_result_identity_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "unmerged C software evidence cannot be reported as physical",
+        "name": "unmerged_c_not_physical",
+        "passed": true
+      },
+      {
+        "expectation": "a recorded PASS does not verify evaluator authority",
+        "name": "pass_field_not_authority",
+        "passed": true
+      },
+      {
+        "expectation": "missing resilience fields yield NOT_VERIFIED, not a negative result",
+        "name": "missing_physical_not_negative",
+        "passed": true
+      },
+      {
+        "expectation": "a command ON alone is not measured current",
+        "name": "command_on_not_current",
+        "passed": true
+      },
+      {
+        "expectation": "an ACK is not an applied-power observation",
+        "name": "ack_not_physical_response",
+        "passed": true
+      },
+      {
+        "expectation": "current flow with absent thermal response is degraded effectiveness",
+        "name": "current_without_thermal",
+        "passed": true
+      },
+      {
+        "expectation": "UNKNOWN quality never becomes HEALTHY_RESPONSE",
+        "name": "unknown_not_healthy",
+        "passed": true
+      },
+      {
+        "expectation": "missing PZEM data stays MISSING, never a verified zero",
+        "name": "missing_pzem_not_zero",
+        "passed": true
+      },
+      {
+        "expectation": "a compiled-out stage is not a real electrical failure",
+        "name": "disabled_stage_not_electrical_failure",
+        "passed": true
+      },
+      {
+        "expectation": "weak thermal response is not a component root cause",
+        "name": "weak_thermal_not_component",
+        "passed": true
+      },
+      {
+        "expectation": "software-only scenarios do not produce detection accuracy",
+        "name": "software_detection_accuracy_refused",
+        "passed": true
+      },
+      {
+        "expectation": "concordance requires authoritative ground truth",
+        "name": "no_ground_truth_not_concordant",
+        "passed": true
+      },
+      {
+        "expectation": "synthetic diagnosis cannot be promoted to physical reliability",
+        "name": "synthetic_not_physical_reliability",
+        "passed": true
+      },
+      {
+        "expectation": "outage duration is absent when start/end are missing",
+        "name": "outage_duration_without_endpoints",
+        "passed": true
+      },
+      {
+        "expectation": "receipt timestamps cannot stand in for device event time",
+        "name": "receipt_time_not_event_time",
+        "passed": true
+      },
+      {
+        "expectation": "a backend reconnect alone does not exit SAFE_LOCAL",
+        "name": "reconnect_not_safe_local_exit",
+        "passed": true
+      },
+      {
+        "expectation": "historical replay does not regress the current twin",
+        "name": "twin_regression_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an applied expired command is reported FAILED, never as fresh control",
+        "name": "stale_command_not_applied",
+        "passed": true
+      },
+      {
+        "expectation": "duplicate telemetry does not inflate normalized sample counts",
+        "name": "duplicate_not_inflate_sample",
+        "passed": true
+      },
+      {
+        "expectation": "resync cannot complete without fresh state evidence",
+        "name": "resync_without_fresh_state",
+        "passed": true
+      },
+      {
+        "expectation": "an unavailable model does not keep trusting an old score",
+        "name": "ai_unavailable_score_not_trusted",
+        "passed": true
+      },
+      {
+        "expectation": "a software SAFE_LOCAL transition is not physical thermal protection",
+        "name": "safe_local_not_physical_protection",
+        "passed": true
+      },
+      {
+        "expectation": "one session is not a population resilience distribution",
+        "name": "single_session_not_distribution",
+        "passed": true
+      },
+      {
+        "expectation": "TEC_HOT_SIDE is never a chamber-air substitute",
+        "name": "hot_side_not_chamber_substitute",
+        "passed": true
+      },
+      {
+        "expectation": "the pinned extraction records an unchanged, distinct ROM map",
+        "name": "rom_remap_not_concealed",
+        "passed": true
+      },
+      {
+        "expectation": "UNKNOWN door state stays UNKNOWN",
+        "name": "unknown_door_not_closed",
+        "passed": true
+      },
+      {
+        "expectation": "an invalid temperature does not become a plausible number",
+        "name": "invalid_temperature_not_numeric",
+        "passed": true
+      },
+      {
+        "expectation": "stale PZEM data is not carried forward",
+        "name": "stale_pzem_not_current",
+        "passed": true
+      },
+      {
+        "expectation": "missing current is not converted to 0 A",
+        "name": "missing_current_not_zero",
+        "passed": true
+      },
+      {
+        "expectation": "a counter reset is not hidden as a negative delta",
+        "name": "energy_reset_not_hidden",
+        "passed": true
+      },
+      {
+        "expectation": "recovery requires newly valid samples",
+        "name": "recovery_requires_fresh_samples",
+        "passed": true
+      },
+      {
+        "expectation": "degraded-feature inference requires explicit model validation",
+        "name": "degraded_model_inference_refused",
+        "passed": true
+      },
+      {
+        "expectation": "W21 fault evidence never becomes predictive training data",
+        "name": "test_fault_not_training_data",
+        "passed": true
+      },
+      {
+        "expectation": "absent Gate F means no energy analysis runs",
+        "name": "gate_f_closed_no_energy_analysis",
+        "passed": true
+      },
+      {
+        "expectation": "PWM characterization is not claimed under a closed gate",
+        "name": "pwm_not_claimed",
+        "passed": true
+      },
+      {
+        "expectation": "PZEM energy stays cooling-branch energy",
+        "name": "cooling_branch_not_whole_system",
+        "passed": true
+      },
+      {
+        "expectation": "W21 code never opens a W20 paired-outcome payload",
+        "name": "w20_outcome_not_opened",
+        "passed": true
+      },
+      {
+        "expectation": "no W16 locked-test file is an input and the holdout stays unopened",
+        "name": "w16_locked_test_not_opened",
+        "passed": true
+      },
+      {
+        "expectation": "the W15 report is synthetic and the model remains nondeployable",
+        "name": "w15_model_not_deployable",
+        "passed": true
+      },
+      {
+        "expectation": "G4/G5 read as their actual observed states from prior manifests",
+        "name": "g4_g5_not_upgraded",
+        "passed": true
+      },
+      {
+        "expectation": "W21 code is confined to the ml/ tree",
+        "name": "c_d_code_not_modified",
+        "passed": true
+      },
+      {
+        "expectation": "W21 code has no physical fault-injection capability",
+        "name": "no_physical_fault_injection",
+        "passed": true
+      },
+      {
+        "expectation": "the diagnosis table keeps MISSING/UNKNOWN states instead of zero",
+        "name": "unknown_not_numeric_zero",
+        "passed": true
+      },
+      {
+        "expectation": "an authentic source reaches the bounded on-device gate",
+        "name": "positive_valid_source_admitted",
+        "passed": true
+      },
+      {
+        "expectation": "bounded on-device evidence passes the limited gate without physical acceptance",
+        "name": "positive_bounded_evidence_limited_gate",
+        "passed": true
+      },
+      {
+        "expectation": "the software fixture computes the declared durations",
+        "name": "positive_fixture_timeline_durations",
+        "passed": true
+      },
+      {
+        "expectation": "ordered unique telemetry produces a clean replay assessment",
+        "name": "positive_replay_clean",
+        "passed": true
+      },
+      {
+        "expectation": "a fully satisfied exit gate is ready",
+        "name": "positive_exit_gate_ready",
+        "passed": true
+      },
+      {
+        "expectation": "a complete enabled-actuator fixture can reach HEALTHY_RESPONSE",
+        "name": "positive_healthy_enabled_case",
+        "passed": true
+      },
+      {
+        "expectation": "a valid measured zero current reaches ELECTRICAL_RESPONSE_MISSING",
+        "name": "positive_electrical_missing_case",
+        "passed": true
+      },
+      {
+        "expectation": "measured current while OFF reaches UNEXPECTED_OFF_CURRENT",
+        "name": "positive_unexpected_off_current",
+        "passed": true
+      }
+    ],
+    "probes_passed": 58
+  },
+  "analysis_code_sha256": "7b4bb3a8683fea70219be158a235f0f009d9f4e830ac1335b02e639e46f6dbcc",
+  "canonical_diagnosis_rows": [
+    {
+      "case_id": "DIAG-01",
+      "condition": "healthy",
+      "expected": "HEALTHY_RESPONSE",
+      "reason": "NO_ENABLED_ACTUATOR_OBSERVATION",
+      "status": "NOT_ESTIMABLE"
+    },
+    {
+      "case_id": "DIAG-02",
+      "condition": "electrical response missing",
+      "expected": "ELECTRICAL_RESPONSE_MISSING",
+      "reason": "NO_ENABLED_ACTUATOR_OBSERVATION; A-W21-03 IS A PZEM TRANSPORT DISABLE, NOT A COMMANDED TEC FAILING TO DRAW CURRENT",
+      "status": "NOT_ESTIMABLE"
+    },
+    {
+      "case_id": "DIAG-03",
+      "condition": "unexpected current while OFF",
+      "expected": "UNEXPECTED_OFF_CURRENT",
+      "reason": "NO_OBSERVED_OFF_WITH_CURRENT",
+      "status": "NOT_ESTIMABLE"
+    },
+    {
+      "case_id": "DIAG-04",
+      "condition": "degraded thermal effectiveness",
+      "expected": "DEGRADED_THERMAL_EFFECTIVENESS",
+      "reason": "NO_SAFE_PHYSICAL_DEGRADATION_OBSERVATION",
+      "status": "NOT_ESTIMABLE"
+    }
+  ],
+  "capabilities": {
+    "activate_controller_b": false,
+    "change_policy_or_threshold": false,
+    "command_tec": false,
+    "open_w16_locked_test": false,
+    "open_w20_outcome_payload": false,
+    "physical_actuation": false,
+    "physical_fault_injection": false,
+    "publish_actuator_message": false,
+    "run_energy_experiment": false
+  },
+  "capability_audit": {
+    "calls": [
+      "Admission",
+      "AiFallbackAssessment",
+      "ArgumentParser",
+      "DiagnosisAssessment",
+      "DiagnosisCase",
+      "DiagnosisTable",
+      "ExitAssessment",
+      "GateFAssessment",
+      "Path",
+      "ReplayAssessment",
+      "ResilienceTimeline",
+      "RuntimeError",
+      "SourceRecord",
+      "StaleCommandAssessment",
+      "SystemExit",
+      "TelemetryRecord",
+      "TimelineAssessment",
+      "ValueError",
+      "W21DiagnosisError",
+      "W21EvidenceError",
+      "W21ResilienceError",
+      "_a_cases",
+      "_a_records",
+      "_admission_rows",
+      "_analysis_code_sha256",
+      "_assessment",
+      "_channel_observed",
+      "_concordance",
+      "_cross_check_a_session",
+      "_degraded_report",
+      "_diagnosis_report",
+      "_electrical_verification_supported",
+      "_gate_f_report",
+      "_input_record",
+      "_parse_args",
+      "_read_json",
+      "_reference_records",
+      "_require_aware",
+      "_safe_local_report",
+      "_seconds",
+      "_session_identity_matches",
+      "_thermal_verification_supported",
+      "_valid_state",
+      "_write",
+      "a_w21_timeline",
+      "add",
+      "add_argument",
+      "add_duration",
+      "admit_source",
+      "all",
+      "any",
+      "append",
+      "as_posix",
+      "assess_ai_fallback",
+      "assess_class_promotion",
+      "assess_diagnosis_table",
+      "assess_gate_f",
+      "assess_replay",
+      "assess_safe_local_exit",
+      "assess_stale_command",
+      "assess_timeline",
+      "astimezone",
+      "audit_capabilities",
+      "bool",
+      "build_source_inventory",
+      "canonical_diag_rows",
+      "canonical_json",
+      "canonical_payload",
+      "canonical_sha256",
+      "check",
+      "classify_case",
+      "compile",
+      "count_independent_sessions",
+      "dataclass",
+      "datetime",
+      "degraded_model_inference_allowed",
+      "dict",
+      "dumps",
+      "duration_class",
+      "electrical_measurement",
+      "encode",
+      "endswith",
+      "energy_delta",
+      "error",
+      "extend",
+      "find",
+      "format",
+      "fromkeys",
+      "frozenset",
+      "generate",
+      "get",
+      "getattr",
+      "hexdigest",
+      "insert",
+      "is_dir",
+      "is_file",
+      "is_symlink",
+      "isfinite",
+      "isinstance",
+      "isoformat",
+      "items",
+      "join",
+      "len",
+      "list",
+      "loads",
+      "lower",
+      "main",
+      "match",
+      "max",
+      "mkdir",
+      "next",
+      "normalize_door_state",
+      "normalize_temperature",
+      "parse",
+      "parse_args",
+      "pop",
+      "population_distribution_status",
+      "population_metrics",
+      "predictive_training_eligible",
+      "print",
+      "read_bytes",
+      "read_text",
+      "recovery_supported",
+      "ref",
+      "relative_to",
+      "replace",
+      "require_no_capability",
+      "required_negative_cases",
+      "resolve",
+      "run_adversarial_controls",
+      "set",
+      "setdefault",
+      "sha256",
+      "sha256_bytes",
+      "software_fixture_timeline",
+      "sorted",
+      "source_bytes_match",
+      "source_register",
+      "source_register_identity",
+      "split",
+      "startswith",
+      "str",
+      "strip",
+      "sum",
+      "to_dict",
+      "total_seconds",
+      "tuple",
+      "update",
+      "utcoffset",
+      "validate",
+      "validate_source_register",
+      "values",
+      "verify_source_bytes",
+      "walk",
+      "write_text",
+      "zip"
+    ],
+    "capabilities": {
+      "activate_controller_b": false,
+      "change_policy_or_threshold": false,
+      "command_tec": false,
+      "instantiate_hardware_or_broker_client": false,
+      "physical_fault_injection": false,
+      "publish_actuator_message": false,
+      "run_energy_experiment": false
+    },
+    "files_scanned": [
+      "src/coldguard_ml/w21_evidence.py",
+      "src/coldguard_ml/w21_diagnosis.py",
+      "src/coldguard_ml/w21_resilience.py",
+      "scripts/w21-resilience-audit-W21.py"
+    ],
+    "forbidden_calls": [],
+    "forbidden_imports": [],
+    "imports": [
+      "__future__",
+      "argparse",
+      "ast",
+      "coldguard_ml",
+      "dataclasses",
+      "datetime",
+      "hashlib",
+      "json",
+      "math",
+      "pathlib",
+      "re",
+      "sys",
+      "typing"
+    ]
+  },
+  "degraded_sensor_pzem": {
+    "missingness_rules": {
+      "chamber_sensor_replaced_by_hot_side": false,
+      "energy_counter_reset_hidden": false,
+      "invalid_temperature_as_number": false,
+      "missing_current_as_zero": false,
+      "missing_power_as_zero_energy": false,
+      "stale_value_as_fresh": false,
+      "unknown_door_as_closed": false
+    },
+    "model_robustness": "NOT_ESTABLISHED",
+    "model_status": "SYNTHETIC_NONDEPLOYABLE",
+    "recorded_device_evidence": "BOUNDED_ON_DEVICE_EVIDENCE"
+  },
+  "diagnosis_table": {
+    "cases": [
+      {
+        "case_id": "A-W21-02",
+        "classification": "DEGRADED_OR_UNKNOWN",
+        "concordance": "CONCORDANT_BOUNDED",
+        "evidence_levels": [
+          "RECORDED_CONDITION_OR_CONTROLLED_INJECTION",
+          "TRUSTED_CHANNEL_OBSERVATION",
+          "SOFTWARE_DIAGNOSTIC_CLASSIFICATION"
+        ],
+        "expected_classification": "DEGRADED_OR_UNKNOWN",
+        "independent_session_count": 1,
+        "refusals": [
+          "SINGLE_OBSERVATION_CANNOT_IDENTIFY_ROOT_CAUSE",
+          "OUTPUT_STAGE_DISABLED_NO_ACTUATOR_RESPONSE"
+        ],
+        "unsupported_conclusions": [
+          "PHYSICAL_DS18B20_FAILURE",
+          "MODEL_ROBUSTNESS_UNDER_SENSOR_LOSS",
+          "FAULT_DETECTION_ACCURACY",
+          "ENABLED_ACTUATOR_FAIL_SAFE"
+        ]
+      },
+      {
+        "case_id": "A-W21-03",
+        "classification": "DEGRADED_OR_UNKNOWN",
+        "concordance": "CONCORDANT_BOUNDED",
+        "evidence_levels": [
+          "RECORDED_CONDITION_OR_CONTROLLED_INJECTION",
+          "TRUSTED_CHANNEL_OBSERVATION",
+          "SOFTWARE_DIAGNOSTIC_CLASSIFICATION"
+        ],
+        "expected_classification": "DEGRADED_OR_UNKNOWN",
+        "independent_session_count": 1,
+        "refusals": [
+          "SINGLE_OBSERVATION_CANNOT_IDENTIFY_ROOT_CAUSE",
+          "OUTPUT_STAGE_DISABLED_NO_ACTUATOR_RESPONSE",
+          "MISSING_PZEM_IS_NOT_VERIFIED_ZERO_CURRENT"
+        ],
+        "unsupported_conclusions": [
+          "PHYSICAL_PZEM_DISCONNECTION",
+          "VERIFIED_ZERO_CURRENT",
+          "WHOLE_SYSTEM_POWER",
+          "ENABLED_ACTUATOR_ELECTRICAL_RESPONSE",
+          "FAULT_DETECTION_ACCURACY"
+        ]
+      }
+    ],
+    "independent_session_count": 1,
+    "metric_reasons": {
+      "diagnostic_accuracy": "INSUFFICIENT_INDEPENDENT_LABELED_SUPPORT",
+      "false_positive_rate": "INSUFFICIENT_INDEPENDENT_LABELED_SUPPORT",
+      "fault_recall": "INSUFFICIENT_INDEPENDENT_LABELED_SUPPORT",
+      "precision": "INSUFFICIENT_INDEPENDENT_LABELED_SUPPORT"
+    },
+    "metrics": {
+      "diagnostic_accuracy": "NOT_ESTIMABLE",
+      "false_positive_rate": "NOT_ESTIMABLE",
+      "fault_recall": "NOT_ESTIMABLE",
+      "precision": "NOT_ESTIMABLE"
+    },
+    "record_count": 50
+  },
+  "external_evidence": {
+    "a_bytes_observed_at_main": "d22c8d5b1fb3c05d8a9732ed0087d8e76b9f9e85",
+    "a_bytes_verified_live": false,
+    "a_evaluator_lineage": "feat/a-w21-evidence-final @ 5fd89fb (NOT_ON_MAIN)",
+    "a_independent_replay": "INDEPENDENT_EVALUATOR_REPLAY_PENDING",
+    "a_result_commit": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc"
+  },
+  "gate_f": {
+    "cooling_branch_boundary": "COOLING_BRANCH_ONLY",
+    "energy_analysis_run": false,
+    "optional_deliverable": "NOT_APPLICABLE_OPTIONAL_GATE_CLOSED",
+    "pwm_search_run": false,
+    "reasons": [
+      "NO_AUTHORITATIVE_AUTHORIZATION_ARTIFACT",
+      "CORE_EVIDENCE_INCOMPLETE",
+      "OPTIONAL_SCOPE_CANCELLED_OR_NOT_OPENED"
+    ],
+    "status": "NOT_OPENED"
+  },
+  "generation_inputs": {
+    "w15_a3_report": {
+      "path": "reports/W15/A3-report.md",
+      "sha256": "216f84618bd66f29d72853fbab5564f0a076c7d50ce6588cc3f1674f1967a233",
+      "size_bytes": 10159
+    },
+    "w18_manifest": {
+      "path": "reports/W18/w18-manifest.json",
+      "sha256": "bd1391d72d030af5e0ca99540059424fbf45ca1ccced255e8d41ca374799c9ab",
+      "size_bytes": 48723
+    },
+    "w20_manifest": {
+      "path": "reports/W20/w20-manifest.json",
+      "sha256": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+      "size_bytes": 64569
+    }
+  },
+  "layer_version": "coldguard-w21-evidence-v1",
+  "limitations": [
+    "The two recorded test IDs share one boot and one raw log; the independent on-device session count is 1.",
+    "The A acceptance evaluator lineage is not on main; independent evaluator replay is pending.",
+    "The actuator output stage was compiled out in every recorded frame.",
+    "C W21/W16 evidence is unmerged host software simulation with no committed evidence artifact.",
+    "D's final policy version is not frozen.",
+    "Gate F is not opened; no energy analysis was performed.",
+    "Manifest coherence and recorded-check cross-checks are marked VERIFIED only when --verify-sources is supplied; the committed run reports them NOT_VERIFIED and binds the pinned hashes."
+  ],
+  "metadata_files_read": [
+    "reports/W18/w18-manifest.json",
+    "reports/W20/w20-manifest.json",
+    "reports/W15/A3-report.md"
+  ],
+  "reports": {
+    "degraded-sensor-pzem-W21.md": "3cd357c61ebfdb9014116a722f4e004fa547bd9090600061ae347298d0631866",
+    "diagnosis-table-W21.md": "c67ada12603c810e5821546f3a3d4ebd6f780d6011f5a9f71f2190d3691477b4",
+    "optional-energy-gate-W21.md": "9939b5f0baa02710760551948c1395b35b6418d34c96041218b984223aa17897",
+    "safe-local-summary-W21.md": "053095bef6e55599b45a1b468a145ca72f23acd0b90785cbecb4bb54143cb74d"
+  },
+  "resilience": {
+    "a_w21_session": {
+      "durations": {},
+      "independent_session_count": 1,
+      "physical_thermal_protection": false,
+      "refusals": [
+        "SAFE_LOCAL_SOFTWARE_STATE_IS_NOT_PHYSICAL_THERMAL_PROTECTION"
+      ],
+      "scenario_id": "A-W21-02_03-SESSION",
+      "statuses": [
+        "OUTAGE_NOT_OBSERVED",
+        "DETECTION_NOT_OBSERVED",
+        "SAFE_LOCAL_STATE_NOT_VERIFIED",
+        "RESYNC_NOT_VERIFIED",
+        "PHYSICAL_CONTROL_NOT_VERIFIED"
+      ]
+    },
+    "combined_latency_distribution": "NOT_CREATED",
+    "external_dependencies": {
+      "a_w21_evaluator": {
+        "independent_replay": "INDEPENDENT_EVALUATOR_REPLAY_PENDING",
+        "lineage": "feat/a-w21-evidence-final @ 5fd89fb (NOT_ON_MAIN)",
+        "physical_acceptance": "NOT_ISSUED",
+        "state": "NOT_ON_MAIN"
+      },
+      "c_w16": {
+        "committed_evidence_artifacts": false,
+        "evidence_class": "HOST_SOFTWARE_SIMULATION",
+        "head": "e31d30bce7b6aedb4116385a86dcaaace4f6b142",
+        "physical_safe_local": "REFUSED",
+        "pr": 72,
+        "role": "outage/reconnect implementation; read-only contract reference",
+        "state": "OPEN_UNMERGED"
+      },
+      "c_w21": {
+        "base": "feat/c-w20-evidence-freeze @ 659512f91c41deadef036da71544ffa8b6245d93",
+        "committed_evidence_artifacts": false,
+        "evidence_class": "HOST_SOFTWARE_SIMULATION",
+        "head": "72a5861c0dd47b69a9f326312e3e1b523c1bcaee",
+        "physical_safe_local": "REFUSED",
+        "pr": 98,
+        "role": "backend/twin/replay implementation; read-only contract reference",
+        "state": "OPEN_UNMERGED"
+      },
+      "d_policy": {
+        "evidence_class": "CONTRACT_REFERENCE",
+        "head": "da821094985006945d0306dd7b16be576378bc18",
+        "physical_execution": "NOT_VERIFIED",
+        "policy_version": "NOT_FROZEN",
+        "pr": 90,
+        "role": "SAFE_LOCAL policy and control authority contract",
+        "state": "OPEN_UNMERGED"
+      }
+    },
+    "physical_safe_local": "NOT_ESTABLISHED",
+    "software_fixture": {
+      "durations": {
+        "detection_delay_s": {
+          "duration_class": "SOFTWARE_SIMULATION_DURATION",
+          "end": "2026-01-01T00:00:10+00:00",
+          "start": "2026-01-01T00:00:00+00:00",
+          "value_s": 10.0
+        },
+        "outage_duration_s": {
+          "duration_class": "SOFTWARE_SIMULATION_DURATION",
+          "end": "2026-01-01T00:02:00+00:00",
+          "start": "2026-01-01T00:00:00+00:00",
+          "value_s": 120.0
+        },
+        "reconnect_to_resync_s": {
+          "duration_class": "SOFTWARE_SIMULATION_DURATION",
+          "end": "2026-01-01T00:02:10+00:00",
+          "start": "2026-01-01T00:01:50+00:00",
+          "value_s": 20.0
+        },
+        "safe_local_interval_s": {
+          "duration_class": "SOFTWARE_SIMULATION_DURATION",
+          "end": "2026-01-01T00:01:50+00:00",
+          "start": "2026-01-01T00:00:10+00:00",
+          "value_s": 100.0
+        }
+      },
+      "independent_session_count": 1,
+      "physical_thermal_protection": false,
+      "refusals": [
+        "SAFE_LOCAL_SOFTWARE_STATE_IS_NOT_PHYSICAL_THERMAL_PROTECTION"
+      ],
+      "scenario_id": "TEST_ONLY_TIMELINE_FIXTURE",
+      "statuses": [
+        "PHYSICAL_CONTROL_NOT_VERIFIED"
+      ]
+    }
+  },
+  "revision_semantics": "W20_STACK_HEAD_BASE_NOT_W21_DELIVERY_COMMIT",
+  "schema": "coldguard-w21-resilience-diagnosis-evidence-v1",
+  "scientific_evidence_class": "BOUNDED_ON_DEVICE_SOFTWARE_INJECTION_PLUS_SOFTWARE_CONTRACTS",
+  "scientific_integrity": {
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "PHYSICAL_ACCEPTANCE": "NOT_ISSUED",
+    "W13_PRIMARY_HORIZON": "UNFROZEN",
+    "W15_MODEL": "SYNTHETIC_NONDEPLOYABLE",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W20_FINAL_ANALYSIS": "LOCKED"
+  },
+  "sensor_role_map": {
+    "t1": {
+      "chamber_air": true,
+      "physical_position": "CHAMBER_CENTER",
+      "rom": "287088CA00000051"
+    },
+    "t2": {
+      "chamber_air": false,
+      "physical_position": "TEC_HOT_SIDE",
+      "rom": "28AEBF2200000006"
+    },
+    "t3": {
+      "chamber_air": true,
+      "physical_position": "CHAMBER_BOTTOM",
+      "rom": "28CBE9CA00000072"
+    },
+    "t4": {
+      "chamber_air": true,
+      "physical_position": "CHAMBER_NEAR_DOOR",
+      "rom": "283BE5C9000000A9"
+    }
+  },
+  "session_identity": {
+    "boot_count": "181",
+    "boot_id": "4cf9be5f",
+    "device_id": "coldguard-001",
+    "evaluator_lineage": "feat/a-w21-evidence-final @ 5fd89fb (NOT_ON_MAIN)",
+    "evidence_mode": "ON_DEVICE_SOFTWARE_INJECTION",
+    "fault_window_frames": 50,
+    "firmware_binary_sha256": "e1073935168c01be029c23a87f6f012d852016deac0afb672437f234a269206b",
+    "firmware_version": "cg-w06-0.1.0",
+    "fuse": "OUT",
+    "hardware_config_id": "CG-HW-001",
+    "independent_evaluator_replay": "INDEPENDENT_EVALUATOR_REPLAY_PENDING",
+    "independent_session_count": 1,
+    "output_stage": "COMPILED_OUT",
+    "physical_disconnection": "NONE",
+    "raw_log_bytes": 371291,
+    "raw_log_sha256": "faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa",
+    "record_count": 50,
+    "recovery_frames": 50,
+    "role_map_provenance": "A_W07_AS_BUILT_ROLE_RECORD_CONSUMED_BY_ML_FEATURE_REGISTRY_V1; PHYSICAL_POSITION_VERIFICATION_REMAINS_A_OWNED",
+    "rom_map": {
+      "SPARE": "283BE5C9000000A9",
+      "T1": "287088CA00000051",
+      "T2": "28AEBF2200000006",
+      "T3": "28CBE9CA00000072"
+    },
+    "rom_map_unchanged": true,
+    "session": "W21-02_W21-03_combined",
+    "tec_actuation": "NONE",
+    "test_ids": [
+      "A-W21-02",
+      "A-W21-03"
+    ],
+    "total_recorded_frames": 100
+  },
+  "source_admissions": [
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-02-RESULT"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-03-RESULT"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SESSION-RAW"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SESSION-MANIFEST"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SESSION-EVENTS"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "EVALUATOR_LINEAGE_NOT_ON_MAIN",
+        "MANIFEST_COHERENT": "CROSS_CHECK_NOT_PERFORMED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "BOUNDED_INTERPRETATION_DECLARED_BUT_RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "RECORDED_CHECK_PASSED": "RECORDED_EVALUATOR_NOT_INDEPENDENTLY_REPLAYED",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_VERIFIED",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_VERIFIED",
+        "RECORDED_CHECK_PASSED": "NOT_VERIFIED",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "refusal_reasons": [
+        "MANIFEST_CROSS_CHECK_NOT_PERFORMED",
+        "RECORDED_CHECK_NOT_CROSS_CHECKED",
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SESSION-SHA256SUMS"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-README"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-TOP-SHA256SUMS"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SAFE-LOCAL-AUDIT"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-DEGRADED-SENSOR-VERIFICATION"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-PZEM-FAULT-RESPONSE"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-SOAK-PROTOCOL"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "SOURCE_SHA256_MATCH"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "A-W21-VALIDATE-SCRIPT"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W21-INCIDENT-AUDIT"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W21-RESILIENCE-DOC"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W21-INCIDENT-TEST"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W16-RECOVERY"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W16-RECOVERY-DOC"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "C-W16-OUTAGE-TEST"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-POLICY"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-SAFE-LOCAL"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-TYPES"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-CONFIG"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-W02-POLICY-STATES"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-W03-FAILURE-TAXONOMY"
+    },
+    {
+      "basis": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NO_AUTHORITATIVE_APPROVAL_RECORD",
+        "MANIFEST_COHERENT": "NOT_A_MEASUREMENT_SOURCE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "CONTRACT_REFERENCE_NOT_A_MEASUREMENT",
+        "RECORDED_CHECK_PASSED": "NOT_A_MEASUREMENT_SOURCE",
+        "SOURCE_BYTES_VERIFIED": "PINNED_SHA256_VERIFIED_AT_W21_AUTHORING"
+      },
+      "checks": {
+        "ACCEPTANCE_AUTHORITY_VERIFIED": "NOT_VERIFIED",
+        "MANIFEST_COHERENT": "NOT_APPLICABLE",
+        "MEASUREMENT_INTERPRETATION_SUPPORTED": "NOT_APPLICABLE",
+        "RECORDED_CHECK_PASSED": "NOT_APPLICABLE",
+        "SOURCE_BYTES_VERIFIED": "VERIFIED"
+      },
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "refusal_reasons": [
+        "ACCEPTANCE_AUTHORITY_NOT_VERIFIED"
+      ],
+      "source_id": "D-W11-DIAGNOSIS-HANDOFF"
+    }
+  ],
+  "source_inventory": [
+    {
+      "admissible_inference": [
+        "degraded/unknown quality was represented explicitly",
+        "no silent sensor ROM remap",
+        "valid acquisition returned from fresh samples",
+        "the output stayed OFF in this test configuration"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f",
+        "test_id": "A-W21-02"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "T1 explicitly invalid; overall UNKNOWN; thermal DEGRADED; ROM map unchanged; 25/25 fresh recovery frames; output OFF",
+      "producer": "Member A acceptance evaluator (unpublished lineage)",
+      "review_state": "RECORDED_PASS_EVALUATOR_NOT_ON_MAIN",
+      "scenario": "single DS18B20 role T1 software injection",
+      "size_bytes": 3785,
+      "source_id": "A-W21-02-RESULT",
+      "source_path": "evidence/A/W21/results/A-W21-02.json",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "4fbc22d3150d3e67a8e1c2556543c454e68e835426d8fd66a3bc0f6949b1682b",
+      "unsupported_inference": [
+        "physical DS18B20 cable failure",
+        "enabled-actuator fail-safe behaviour",
+        "model accuracy under real sensor loss",
+        "fault-detection accuracy across independent runs"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "PZEM unavailability was represented explicitly",
+        "missing current was not converted into a fresh or zero value",
+        "fresh electrical data returned after injection was cleared"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f",
+        "test_id": "A-W21-03"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "electrical quality INVALID 24 / VALID 1; overall quality INVALID 24 / UNKNOWN 1; current missing, never carried forward; 24/25 fresh recovery frames; output OFF",
+      "producer": "Member A acceptance evaluator (unpublished lineage)",
+      "review_state": "RECORDED_PASS_EVALUATOR_NOT_ON_MAIN",
+      "scenario": "PZEM transport-boundary software disable",
+      "size_bytes": 3273,
+      "source_id": "A-W21-03-RESULT",
+      "source_path": "evidence/A/W21/results/A-W21-03.json",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "b8bb30ba309bd90a555bb99d8c30dca289a15fd1559628937bf069142e8c8cdc",
+      "unsupported_inference": [
+        "physical PZEM or cable disconnection",
+        "verified zero current",
+        "commanded TEC failing to draw current under an enabled actuator",
+        "whole-system power",
+        "fault-detection accuracy"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "raw session bytes and phase order",
+        "one boot shared by both test IDs"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "phase-ordered device log for injection, hold and clear",
+      "producer": "Member A ESP32-S3 UART log",
+      "review_state": "SOURCE_BYTES_HASH_PINNED",
+      "scenario": "combined W21-02/W21-03 session in one boot",
+      "size_bytes": 371291,
+      "source_id": "A-W21-SESSION-RAW",
+      "source_path": "evidence/A/W21/fault-injection-session-20261108/raw.log",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa",
+      "unsupported_inference": [
+        "independent experiments per test ID",
+        "physical disconnection",
+        "physical thermal recovery"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "manifest-to-result identity coherence"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "boot/hardware/firmware/ROM identity and raw hash declared",
+      "producer": "Member A session recorder",
+      "review_state": "MANIFEST_COHERENT_WITH_RESULTS",
+      "scenario": "session identity, firmware image and phase map",
+      "size_bytes": 1865,
+      "source_id": "A-W21-SESSION-MANIFEST",
+      "source_path": "evidence/A/W21/fault-injection-session-20261108/manifest.json",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "1f37024afd676a42970d68ca12250fa37f04836bb4d3b2b77a09e73e1cf514ca",
+      "unsupported_inference": [
+        "independent evaluator approval"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "phase ordering",
+        "single shared boot"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "five declared injection/clear events across two scenarios",
+      "producer": "Member A session recorder",
+      "review_state": "EVENT_LIST_BOUND_TO_MANIFEST",
+      "scenario": "fault injection phase markers",
+      "size_bytes": 656,
+      "source_id": "A-W21-SESSION-EVENTS",
+      "source_path": "evidence/A/W21/fault-injection-session-20261108/events.json",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "57494aa95d21dc31dd38fd5d372caa4addeb8734aaf635b3663c66408024ce3b",
+      "unsupported_inference": [
+        "physical fault injection"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "checksum listing format"
+      ],
+      "evidence_class": "ON_DEVICE_SOFTWARE_INJECTION",
+      "gate": "BOUNDED_ON_DEVICE_EVIDENCE",
+      "identity": {
+        "boot_id": "4cf9be5f",
+        "device_id": "coldguard-001",
+        "session": "W21-02_W21-03_combined",
+        "session_key": "coldguard-001/4cf9be5f"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": true,
+      "observed_outcome": "events/manifest/raw hashes listed",
+      "producer": "Member A session recorder",
+      "review_state": "CHECKSUM_LISTING_VERIFIED",
+      "scenario": "session checksum listing",
+      "size_bytes": 235,
+      "source_id": "A-W21-SESSION-SHA256SUMS",
+      "source_path": "evidence/A/W21/fault-injection-session-20261108/SHA256SUMS.txt",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "b8f22398e24e21ea5dd2ab8ad93aee006bccc9acd5b5035f083234a3edd9289f",
+      "unsupported_inference": [
+        "independent evaluator approval"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "author-declared limitations"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "safety limitation and evaluator dependency declared",
+      "producer": "Member A",
+      "review_state": "DOCUMENT_REFERENCE",
+      "scenario": "A-W21 delivery notes and limitation statement",
+      "size_bytes": 2631,
+      "source_id": "A-W21-README",
+      "source_path": "evidence/A/W21/README.md",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "471e6e63f28aed69b0777a11688efc9a9f0711c2a3dd744df518b5dd3a0c03bb",
+      "unsupported_inference": [
+        "physical acceptance"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "document checksum listing"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "five top-level files hashed",
+      "producer": "Member A",
+      "review_state": "DOCUMENT_REFERENCE",
+      "scenario": "top-level A-W21 checksum listing",
+      "size_bytes": 447,
+      "source_id": "A-W21-TOP-SHA256SUMS",
+      "source_path": "evidence/A/W21/SHA256SUMS.txt",
+      "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "source_sha256": "3cd6b19b30f1885e555f6171b51cd48986037aa8adbcf752cf8b0c8c0565701b",
+      "unsupported_inference": [
+        "physical acceptance"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "declared design responsibilities"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "status READY_FOR_INTEGRATION; no physical SAFE_LOCAL run",
+      "producer": "Member A",
+      "review_state": "READY_FOR_INTEGRATION_ONLY",
+      "scenario": "SAFE_LOCAL integration support note",
+      "size_bytes": null,
+      "source_id": "A-W21-SAFE-LOCAL-AUDIT",
+      "source_path": "evidence/A/W21/safe-local-audit.md",
+      "source_revision": "cd1b40e08456a0a088f131cbdd2e1ef3b92052cc",
+      "source_sha256": "5f77e382b7d1b6ccce706816951e17b0cde42fc75ec32d0df97b3c56e4acc189",
+      "unsupported_inference": [
+        "observed physical SAFE_LOCAL"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "declared fallback rules"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "status SOFTWARE_VERIFIED; design rules only",
+      "producer": "Member A",
+      "review_state": "DESIGN_CONTRACT_ONLY",
+      "scenario": "declared degraded-sensor fallback rules",
+      "size_bytes": null,
+      "source_id": "A-W21-DEGRADED-SENSOR-VERIFICATION",
+      "source_path": "evidence/A/W21/degraded-sensor-verification.json",
+      "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "source_sha256": "f93d58fca3887c48485a6d717f0113ecf25a78b79c82696dec70f045329b14da",
+      "unsupported_inference": [
+        "physical measurement",
+        "model robustness"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "declared fault actions"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "status SOFTWARE_VERIFIED; design actions only",
+      "producer": "Member A",
+      "review_state": "DESIGN_CONTRACT_ONLY",
+      "scenario": "declared PZEM fault response",
+      "size_bytes": null,
+      "source_id": "A-W21-PZEM-FAULT-RESPONSE",
+      "source_path": "evidence/A/W21/pzem-fault-response.json",
+      "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "source_sha256": "c0c05f412b32192532fd282732476b7af3f3ca37f536587ccd92677c439efdd7",
+      "unsupported_inference": [
+        "physical actuator response"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "protocol description"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "protocol only",
+      "producer": "Member A",
+      "review_state": "PROTOCOL_ONLY",
+      "scenario": "soak protocol description",
+      "size_bytes": null,
+      "source_id": "A-W21-SOAK-PROTOCOL",
+      "source_path": "evidence/A/W21/soak-protocol.md",
+      "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "source_sha256": "7c34bbc59d752a81468545f5ad9b247347b9e2343da317666eeab5d4ee346ff5",
+      "unsupported_inference": [
+        "executed soak result"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "validation tooling exists"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "a-w21-documents"
+      },
+      "in_w20_ancestry": true,
+      "measurement_bearing": false,
+      "observed_outcome": "tooling reference",
+      "producer": "Member A",
+      "review_state": "TOOLING_REFERENCE",
+      "scenario": "A-W21 validation helper",
+      "size_bytes": null,
+      "source_id": "A-W21-VALIDATE-SCRIPT",
+      "source_path": "evidence/A/W21/validate_w21.py",
+      "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+      "source_sha256": "e63198127dc38b24796af926a07706dcad8ad2c94fb6a0cb601df94a4a1d6bbb",
+      "unsupported_inference": [
+        "independent evaluator approval"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "event/incident field mapping",
+        "duplicate/replay semantics"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w21-incident-audit"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "software implementation; no committed evidence artifact",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "read-only incident package builder",
+      "size_bytes": null,
+      "source_id": "C-W21-INCIDENT-AUDIT",
+      "source_path": "backend/src/coldguard_backend/incident_audit.py",
+      "source_revision": "72a5861c0dd47b69a9f326312e3e1b523c1bcaee",
+      "source_sha256": "5bff7345c22f4aae95fe8638a2f0ebd43591f2e521efa492214ac78396852033",
+      "unsupported_inference": [
+        "physical SAFE_LOCAL",
+        "accepted physical resilience"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "software evidence boundary"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w21-resilience-doc"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "declares SOFTWARE_SIMULATION and BLOCKED_EXTERNAL",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "W21 resilience/security audit notes",
+      "size_bytes": null,
+      "source_id": "C-W21-RESILIENCE-DOC",
+      "source_path": "backend/RESILIENCE.md",
+      "source_revision": "72a5861c0dd47b69a9f326312e3e1b523c1bcaee",
+      "source_sha256": "c93dd7fcf4eb0caae692ffc67281d212d612eba41044b004340e39f12e9ea4a0",
+      "unsupported_inference": [
+        "physical SAFE_LOCAL"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "declared software checks"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w21-incident-test"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "software assertions only",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "software incident audit tests",
+      "size_bytes": null,
+      "source_id": "C-W21-INCIDENT-TEST",
+      "source_path": "backend/tests/test_incident_audit.py",
+      "source_revision": "72a5861c0dd47b69a9f326312e3e1b523c1bcaee",
+      "source_sha256": "ba8133728568574684a0f2faeeba1cdaf68acc8c0dc87475dbf14a6bc4f6211e",
+      "unsupported_inference": [
+        "physical acceptance"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "resync contract fields"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w16-recovery"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "software implementation; unmerged",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "outage/reconnect backend recovery",
+      "size_bytes": null,
+      "source_id": "C-W16-RECOVERY",
+      "source_path": "backend/src/coldguard_backend/recovery.py",
+      "source_revision": "e31d30bce7b6aedb4116385a86dcaaace4f6b142",
+      "source_sha256": "76dd7ef0dabaa32212c2e2b3f587f82f665f78617903ab5d51e78196e4cc0adc",
+      "unsupported_inference": [
+        "physical SAFE_LOCAL"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "reconnect discipline"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w16-recovery-doc"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "software contract",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "platform recovery notes",
+      "size_bytes": null,
+      "source_id": "C-W16-RECOVERY-DOC",
+      "source_path": "backend/PLATFORM_RECOVERY.md",
+      "source_revision": "e31d30bce7b6aedb4116385a86dcaaace4f6b142",
+      "source_sha256": "de8138e0a57efcd1c94de958cb6b34cf316726ed45dfac651eef8f8f4815e52d",
+      "unsupported_inference": [
+        "physical resilience result"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "command expiry/reconnect checks"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "c-w16-outage-test"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "software assertions only",
+      "producer": "Member C",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "software outage recovery tests",
+      "size_bytes": null,
+      "source_id": "C-W16-OUTAGE-TEST",
+      "source_path": "backend/tests/test_outage_recovery.py",
+      "source_revision": "e31d30bce7b6aedb4116385a86dcaaace4f6b142",
+      "source_sha256": "b7fdcd85c7450772dc78f440b21a2a2b55dbc1af87bf6d0137ce97bc5b5eb18d",
+      "unsupported_inference": [
+        "physical acceptance"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "reason/state vocabulary",
+        "SAFE_LOCAL exit gate"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-policy"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "declared policy contract; thresholds not frozen",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "pure policy and safety gate",
+      "size_bytes": null,
+      "source_id": "D-POLICY",
+      "source_path": "control/src/coldguard_control/policy.py",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "b6db9d2bcee057372d2c60dacc4f093af37493af17a54a291446070bbe747d8f",
+      "unsupported_inference": [
+        "observed physical execution"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "entry/exit bookkeeping semantics"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-safe-local"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "declared session contract",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "SAFE_LOCAL session semantics",
+      "size_bytes": null,
+      "source_id": "D-SAFE-LOCAL",
+      "source_path": "control/src/coldguard_control/safe_local.py",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "9e039d58ab2acd22fdbddb17b4da94b95aacda061ad86fe3dbda0882abf0a693",
+      "unsupported_inference": [
+        "physical thermal protection"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "UNKNOWN semantics",
+        "model health fallback"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-types"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "declared vocabulary",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "quality/state/model-health vocabulary",
+      "size_bytes": null,
+      "source_id": "D-TYPES",
+      "source_path": "control/src/coldguard_control/types.py",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "787febc8f108466c7f4c806446bfe89845aec939f519cb82af30c307042c5f47",
+      "unsupported_inference": [
+        "observed execution"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "policy_version requirement"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-config"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "no frozen final policy version",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "versioned policy configuration",
+      "size_bytes": null,
+      "source_id": "D-CONFIG",
+      "source_path": "control/src/coldguard_control/config.py",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "d821ee231b57b1151bc0185aca77c9520c9336e109eb67a9aa40c71b92248505",
+      "unsupported_inference": [
+        "frozen threshold values"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "state precedence"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-w02-policy-states"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "design contract only",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "policy-state design contract",
+      "size_bytes": null,
+      "source_id": "D-W02-POLICY-STATES",
+      "source_path": "evidence/D/W02/policy-states.md",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "1787eace821d78c43f12d42a2d7098ed25ce165bb58a58b0ef08741b5c0a532f",
+      "unsupported_inference": [
+        "physical result"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "failure dispositions"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-w03-failure-taxonomy"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "declared dispositions; NOT_CONTRACTED rules explicit",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "failure disposition taxonomy",
+      "size_bytes": null,
+      "source_id": "D-W03-FAILURE-TAXONOMY",
+      "source_path": "evidence/D/W03/failure-taxonomy.md",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "e88848d5b50228b3123045c96c0f825f07f8b6a75bc6d58a006b2fb5eaf42c7d",
+      "unsupported_inference": [
+        "a",
+        "u",
+        "t",
+        "o",
+        "m",
+        "a",
+        "t",
+        "i",
+        "c",
+        " ",
+        "p",
+        "o",
+        "l",
+        "i",
+        "c",
+        "y",
+        " ",
+        "a",
+        "c",
+        "t",
+        "i",
+        "o",
+        "n",
+        " ",
+        "f",
+        "o",
+        "r",
+        " ",
+        "N",
+        "O",
+        "T",
+        "_",
+        "C",
+        "O",
+        "N",
+        "T",
+        "R",
+        "A",
+        "C",
+        "T",
+        "E",
+        "D"
+      ],
+      "verified_at_authoring": true
+    },
+    {
+      "admissible_inference": [
+        "event field contract",
+        "ACK is not physical proof"
+      ],
+      "evidence_class": "CONTRACT_REFERENCE",
+      "gate": "CONTRACT_REFERENCE_ONLY",
+      "identity": {
+        "session_key": "d-w11-diagnosis-handoff"
+      },
+      "in_w20_ancestry": false,
+      "measurement_bearing": false,
+      "observed_outcome": "contract proposed; C persistence OPEN",
+      "producer": "Member D",
+      "review_state": "PINNED_CONTRACT_REFERENCE",
+      "scenario": "diagnosis event handoff contract",
+      "size_bytes": null,
+      "source_id": "D-W11-DIAGNOSIS-HANDOFF",
+      "source_path": "evidence/D/W11/diagnosis-event-handoff.md",
+      "source_revision": "da821094985006945d0306dd7b16be576378bc18",
+      "source_sha256": "6286ec9c56ad7eaa038853e2449c6384a5ef58c2a32f0a0a60fddec8fe493aaa",
+      "unsupported_inference": [
+        "end-to-end persisted event"
+      ],
+      "verified_at_authoring": true
+    }
+  ],
+  "source_register_identity": {
+    "independent_session_count": 1,
+    "register_sha256": "0f742f5c00ba8294a2e6df21bb260f2fe1c90d526ac6aabb1953613b61507735",
+    "schema": "coldguard-w21-source-register-v1",
+    "source_count": 26
+  },
+  "source_revision": "127a79b96f4ebb89b20cbc8826ada1dd813bb5df",
+  "verdicts": {
+    "B_W21_01_DIAGNOSIS_TABLE": "SOFTWARE_VERIFIED",
+    "B_W21_01_REAL_DIAGNOSIS_EVIDENCE": "BOUNDED_ON_DEVICE_EVIDENCE",
+    "B_W21_02_PHYSICAL_SAFE_LOCAL": "NOT_ESTABLISHED",
+    "B_W21_02_SAFE_LOCAL_SUMMARY": "SOFTWARE_VERIFIED",
+    "B_W21_03_DEGRADED_SENSOR_PZEM": "SOFTWARE_VERIFIED",
+    "B_W21_03_RECORDED_DEVICE_EVIDENCE": "BOUNDED_ON_DEVICE_EVIDENCE",
+    "B_W21_04_OPTIONAL_ENERGY": "GATE_F_NOT_OPENED",
+    "CONTROLLER_B_SIGNOFF": "WITHHELD",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "REAL_MODEL_ROBUSTNESS": "NOT_ESTABLISHED",
+    "SOFTWARE": "COMPLETE",
+    "W15_MODEL": "SYNTHETIC_NONDEPLOYABLE",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W20_FINAL_ANALYSIS": "NOT_RUN"
+  }
+}

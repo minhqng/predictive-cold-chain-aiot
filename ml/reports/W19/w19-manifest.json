@@ -1,0 +1,817 @@
+{
+  "adversarial_controls": {
+    "probe_count": 46,
+    "probes": [
+      {
+        "expectation": "one protocol-valid synthetic pair is PAIR_VALID but never physically admitted",
+        "name": "valid_pair_control",
+        "passed": true
+      },
+      {
+        "expectation": "two A arms cannot form a pair",
+        "name": "two_a_arms_refused",
+        "passed": true
+      },
+      {
+        "expectation": "three terminal arms are ambiguous",
+        "name": "three_arms_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a run id may appear once",
+        "name": "duplicate_run_id_refused",
+        "passed": true
+      },
+      {
+        "expectation": "one physical source cannot appear twice",
+        "name": "duplicate_source_refused",
+        "passed": true
+      },
+      {
+        "expectation": "scenario must match",
+        "name": "scenario_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "hardware configuration must match",
+        "name": "hardware_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "calibration lineage must match",
+        "name": "calibration_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "actual order must follow the registered order",
+        "name": "order_deviation_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an unregistered order cannot produce a valid pair",
+        "name": "randomization_missing_blocks",
+        "passed": true
+      },
+      {
+        "expectation": "pilot-era tolerances are not an approved matching policy",
+        "name": "unfrozen_tolerances_block",
+        "passed": true
+      },
+      {
+        "expectation": "initial-state delta beyond the frozen tolerance invalidates the pair",
+        "name": "initial_tolerance_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a failure cannot trigger an automatic rerun or invalidation",
+        "name": "invalid_arm_requires_frozen_rule",
+        "passed": true
+      },
+      {
+        "expectation": "an invalid arm contributes zero valid pairs until a rerun completes",
+        "name": "invalid_arm_rerun_pending",
+        "passed": true
+      },
+      {
+        "expectation": "a permitted rerun keeps the invalid attempt and the original pair identity",
+        "name": "rerun_preserves_attempt_history",
+        "passed": true
+      },
+      {
+        "expectation": "a marked fixture can never enter a physical ledger",
+        "name": "fixture_in_physical_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an outcome column cannot enter the ledger validation route",
+        "name": "outcome_injection_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an attempt without a source hash is not physical evidence",
+        "name": "missing_source_hash_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an authorization claim without authority/evidence is refused",
+        "name": "fake_authorization_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a synthetic ledger cannot claim physical authorization",
+        "name": "fixture_never_authorized",
+        "passed": true
+      },
+      {
+        "expectation": "a protocol-valid arm cannot be replaced by an eligible-looking rerun",
+        "name": "rerun_of_valid_arm_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a frozen INVALIDATE_PAIR rule cannot be bypassed by a rerun",
+        "name": "invalidate_policy_not_bypassed_by_rerun",
+        "passed": true
+      },
+      {
+        "expectation": "a frozen field without a value blocks campaign freeze approval",
+        "name": "null_freeze_value_not_approved",
+        "passed": true
+      },
+      {
+        "expectation": "a protocol-valid B arm stays valid regardless of performance",
+        "name": "protocol_valid_worse_b_retained",
+        "passed": true
+      },
+      {
+        "expectation": "a protocol-invalid B arm is rejected regardless of performance",
+        "name": "protocol_invalid_better_b_rejected",
+        "passed": true
+      },
+      {
+        "expectation": "controller-arm identity is not an outcome and cannot change validity",
+        "name": "arm_swap_does_not_change_validity",
+        "passed": true
+      },
+      {
+        "expectation": "the validity route refuses outcome-shaped fields",
+        "name": "validity_outcome_payload_refused",
+        "passed": true
+      },
+      {
+        "expectation": "missing PZEM coverage is undefined, never zero energy",
+        "name": "missing_energy_stays_undefined",
+        "passed": true
+      },
+      {
+        "expectation": "a primary-outcome telemetry gap invalidates the attempt",
+        "name": "primary_gap_invalidates",
+        "passed": true
+      },
+      {
+        "expectation": "no refusal without objective, recorded reasons",
+        "name": "invalid_decision_records_reasons",
+        "passed": true
+      },
+      {
+        "expectation": "the validity API has no outcome parameter or field",
+        "name": "validity_input_carries_no_outcomes",
+        "passed": true
+      },
+      {
+        "expectation": "no W19 source imports or calls an outcome-analysis capability",
+        "name": "static_source_capability_audit",
+        "passed": true
+      },
+      {
+        "expectation": "a prohibited computation identifier is refused at runtime",
+        "name": "prohibited_operation_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the guard fails closed for unknown operations",
+        "name": "unknown_operation_refused",
+        "passed": true
+      },
+      {
+        "expectation": "allowed operations carry no outcome access",
+        "name": "allowed_operation_is_outcome_blind",
+        "passed": true
+      },
+      {
+        "expectation": "an outcome-shaped payload is refused before use",
+        "name": "outcome_payload_refused_globally",
+        "passed": true
+      },
+      {
+        "expectation": "a favorable interim result is not a permitted stop reason",
+        "name": "statistical_stop_reason_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a safety stop is operational evidence, never a statistical win",
+        "name": "safety_stop_is_operational",
+        "passed": true
+      },
+      {
+        "expectation": "the W16 locked holdout is not opened by W19",
+        "name": "w16_holdout_isolated",
+        "passed": true
+      },
+      {
+        "expectation": "a missing target is UNKNOWN_UNFROZEN, never a numeric zero",
+        "name": "missing_target_stays_unknown",
+        "passed": true
+      },
+      {
+        "expectation": "a planning number without approval/justification is not a target",
+        "name": "unjustified_target_not_approved",
+        "passed": true
+      },
+      {
+        "expectation": "fixture pairs never contribute to physical progress or the 50% wave",
+        "name": "synthetic_fixture_never_counts",
+        "passed": true
+      },
+      {
+        "expectation": "an unavailable attempt ledger is not reported as zero invalid attempts",
+        "name": "unavailable_ledger_distinguished",
+        "passed": true
+      },
+      {
+        "expectation": "the target cannot change once pairs are recorded",
+        "name": "post_start_target_change_refused",
+        "passed": true
+      },
+      {
+        "expectation": "recorded pairs, even if invalid, freeze the denominator",
+        "name": "recorded_invalid_pairs_block_target_change",
+        "passed": true
+      },
+      {
+        "expectation": "a synthetic ledger never establishes physical campaign progress",
+        "name": "synthetic_ledger_cannot_establish_progress",
+        "passed": true
+      }
+    ],
+    "probes_passed": 46
+  },
+  "analysis_code_sha256": "ca76e69bc98121c551efab7fd34e28e4fdc27ecca481421a92e34ed8ff909bee",
+  "campaign_state": {
+    "attempts_recorded": 0,
+    "authorization": {
+      "approval_effect": "NONE_SOFTWARE_ASSESSMENT_ONLY",
+      "authority_id": null,
+      "authorized": false,
+      "g4_status": null,
+      "refusal_reasons": [
+        "AUTHORIZATION_RECORD_MISSING"
+      ],
+      "status": "NOT_AUTHORIZED"
+    },
+    "authorization_claim": "NO_AUTHORIZATION_RECORD",
+    "campaign_freeze": {
+      "approval_effect": "NONE_SOFTWARE_ASSESSMENT_ONLY",
+      "approval_valid": false,
+      "fields": [],
+      "freeze_status": "MISSING_FREEZE_RECORD",
+      "missing_field_ids": [
+        "hardware_config_id",
+        "calibration_id",
+        "firmware_version",
+        "sensor_placement",
+        "model_artifact_sha256",
+        "feature_schema_hash",
+        "critical_target",
+        "representative_temperature",
+        "primary_horizon",
+        "operating_threshold",
+        "warning_persistence",
+        "controller_policy_version",
+        "cooling_action_magnitude",
+        "disturbance_protocol",
+        "initial_reset_criterion",
+        "pair_matching_tolerances",
+        "randomization_protocol",
+        "validity_exclusion_rules",
+        "primary_outcome",
+        "statistical_method",
+        "target_pair_count"
+      ],
+      "physical_admission": "BLOCKED_MISSING_FREEZE",
+      "unfrozen_field_ids": [
+        "hardware_config_id",
+        "calibration_id",
+        "firmware_version",
+        "sensor_placement",
+        "model_artifact_sha256",
+        "feature_schema_hash",
+        "critical_target",
+        "representative_temperature",
+        "primary_horizon",
+        "operating_threshold",
+        "warning_persistence",
+        "controller_policy_version",
+        "cooling_action_magnitude",
+        "disturbance_protocol",
+        "initial_reset_criterion",
+        "pair_matching_tolerances",
+        "randomization_protocol",
+        "validity_exclusion_rules",
+        "primary_outcome",
+        "statistical_method",
+        "target_pair_count"
+      ]
+    },
+    "campaign_id": "CG-S2-FINAL-CAMPAIGN-UNREGISTERED",
+    "controller_b_signoff": "WITHHELD",
+    "development_baseline_implication": "DEVELOPMENT_BASELINE_UNCHANGED_NEVER_IMPLIES_FINAL_AB_CAMPAIGN_FREEZE_APPROVED",
+    "g4": "NOT_READY",
+    "pair_target": "UNKNOWN_UNFROZEN",
+    "pairs_recorded": 0,
+    "physical_pairs": "NOT_ESTABLISHED",
+    "planned_pair_target": null,
+    "statistical_freeze": {
+      "approval_effect": "NONE_SOFTWARE_ASSESSMENT_ONLY",
+      "missing_fields": [
+        "primary_outcome",
+        "paired_sign_convention",
+        "confidence_level",
+        "bootstrap_seed",
+        "bootstrap_iterations",
+        "test_family",
+        "invalid_pair_handling",
+        "secondary_outcomes"
+      ],
+      "refusal_reasons": [
+        "STATISTICAL_FREEZE_RECORD_MISSING"
+      ],
+      "registered_sign_convention": "I_i = Y_A,i - Y_B,i",
+      "status": "NOT_FROZEN"
+    },
+    "w16_holdout": {
+      "frozen": false,
+      "opened_at": null,
+      "status": "NOT_OPENED",
+      "test_partition_used": false
+    }
+  },
+  "capabilities": {
+    "campaign_authorization": false,
+    "command_transport": false,
+    "hardware_actuation": false,
+    "model_training": false,
+    "network": false,
+    "outcome_analysis": false,
+    "physical_control": false,
+    "w16_holdout_access": false
+  },
+  "fixture_validation": {
+    "admitted_to_physical_campaign": false,
+    "attempt_accounting": {
+      "aborted_attempts": 0,
+      "initial_attempts": 2,
+      "invalid_attempts": 0,
+      "pending_attempts": 0,
+      "physical_candidate_attempts": 0,
+      "recorded_attempts": 2,
+      "rerun_attempts": 0,
+      "selected_attempts": 2,
+      "superseded_attempts": 0,
+      "synthetic_attempts": 2,
+      "total_attempts": 2,
+      "valid_attempts": 2
+    },
+    "pair_status_counts": {
+      "AWAITING_SECOND_ARM": 0,
+      "AWAITING_VALIDITY": 0,
+      "PAIR_BLOCKED_MISSING_FREEZE": 0,
+      "PAIR_INVALID": 0,
+      "PAIR_UNRESOLVED": 0,
+      "PAIR_VALID": 1,
+      "PLANNED": 0
+    },
+    "pairs": 1,
+    "physical_valid_pairs": 0,
+    "software_valid_pairs": 1
+  },
+  "generation_inputs": {
+    "campaign_records": {
+      "path": "reports/W19/campaign-records-W19.json",
+      "present": false,
+      "sha256": "ABSENT"
+    },
+    "metric_spec": {
+      "path": "metric-spec.md",
+      "present": true,
+      "sha256": "7ebeb5d4aedab1e01189bb911b6888f05f8984b7f23d9b29066bfbd8396d81c4"
+    },
+    "sample_size_planning": {
+      "path": "scripts/sample_size_planning.py",
+      "present": true,
+      "sha256": "005e340c06ed51ebbeb441868e869cd8f4cf1e8f7fedf4c1f00ee09321057a26"
+    },
+    "statistical_analysis_plan": {
+      "path": "statistical-analysis-plan-v0.md",
+      "present": true,
+      "sha256": "3270ff85cbbc21f212299df5c3d0dc43fa34fcb52f8c7f1a041e6abcd19b5daf"
+    },
+    "w15_model_manifest": {
+      "path": "reports/W15/model/model-manifest-W15.json",
+      "present": true,
+      "sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e"
+    },
+    "w16_locked_manifest": {
+      "path": "reports/W16/locked-test-manifest-W16.json",
+      "present": true,
+      "sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165"
+    },
+    "w17_manifest": {
+      "path": "reports/W17/w17-manifest.json",
+      "present": true,
+      "sha256": "8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532"
+    },
+    "w18_freeze_baseline": {
+      "path": "reports/W18/freeze-baseline-W18.json",
+      "present": true,
+      "sha256": "d1bcc8ff26ed28ed998fb2c43d7fa57ab928d6c4d90c1af801289016dd446581"
+    },
+    "w18_manifest": {
+      "path": "reports/W18/w18-manifest.json",
+      "present": true,
+      "sha256": "bd1391d72d030af5e0ca99540059424fbf45ca1ccced255e8d41ca374799c9ab"
+    }
+  },
+  "layer_version": "coldguard-w19-paired-campaign-integrity-v1",
+  "limitations": [
+    "No final physical A/B results are produced or opened.",
+    "No valid-pair campaign progress exists without admitted physical data.",
+    "No early treatment-effect analysis exists; W20 remains locked.",
+    "The W16 locked predictive holdout is not opened or evaluated.",
+    "Controller B remains unauthorized for physical intervention.",
+    "Gate G5 is not promoted.",
+    "Approval metadata is shape-checked only; external signatures cannot be verified offline.",
+    "All fixture attempts are synthetic, permanently marked and never admitted.",
+    "The 50% first-wave indicator is non-computable without a frozen target and accepted physical pairs."
+  ],
+  "next_member_b_action": "Prepare only W20 campaign-lock verification scaffolding (integrity precondition checks and frozen-target close-out reporting); do not open final physical-outcome analysis until the leader freezes the campaign target and Gate G4 is GREEN.",
+  "no_peeking": {
+    "allowed_operations": [
+      "attempt_identity_validation",
+      "campaign_progress",
+      "data_quality_status",
+      "pair_eligibility",
+      "protocol_violations",
+      "provenance_integrity_checks",
+      "run_completeness",
+      "safety_record_inspection"
+    ],
+    "controls": [
+      {
+        "expectation": "no W19 source imports or calls an outcome-analysis capability",
+        "name": "static_source_capability_audit",
+        "passed": true
+      },
+      {
+        "expectation": "a prohibited computation identifier is refused at runtime",
+        "name": "prohibited_operation_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the guard fails closed for unknown operations",
+        "name": "unknown_operation_refused",
+        "passed": true
+      },
+      {
+        "expectation": "allowed operations carry no outcome access",
+        "name": "allowed_operation_is_outcome_blind",
+        "passed": true
+      },
+      {
+        "expectation": "an outcome-shaped payload is refused before use",
+        "name": "outcome_payload_refused_globally",
+        "passed": true
+      },
+      {
+        "expectation": "a favorable interim result is not a permitted stop reason",
+        "name": "statistical_stop_reason_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a safety stop is operational evidence, never a statistical win",
+        "name": "safety_stop_is_operational",
+        "passed": true
+      },
+      {
+        "expectation": "the W16 locked holdout is not opened by W19",
+        "name": "w16_holdout_isolated",
+        "passed": true
+      }
+    ],
+    "guard_version": "coldguard-w19-peeking-guard-v1",
+    "permitted_stop_reasons": [
+      "AUTHORIZED_OPERATIONAL_CHANGE",
+      "EQUIPMENT_FAILURE",
+      "FEASIBILITY_RESTRICTION",
+      "SAFETY_RESTRICTION"
+    ],
+    "prohibited_operations": [
+      "best_worst_outcome_selection",
+      "confidence_interval_final_effect",
+      "final_physical_effectiveness_verdict",
+      "headline_p_value",
+      "interim_model_policy_optimization",
+      "mean_controller_b_benefit",
+      "pairwise_improvement_distribution",
+      "significance_based_early_stopping"
+    ],
+    "registered_sign_convention": "I_i = Y_A,i - Y_B,i",
+    "source_capability_audit": {
+      "files_scanned": [
+        "src/coldguard_ml/w19_no_peeking.py",
+        "src/coldguard_ml/w19_validity.py",
+        "src/coldguard_ml/w19_pair_ledger.py",
+        "src/coldguard_ml/w19_progress.py",
+        "scripts/w19-campaign-audit-W19.py",
+        "tests/test_w19_pair_ledger.py",
+        "tests/test_w19_validity.py",
+        "tests/test_w19_no_peeking.py",
+        "tests/test_w19_progress.py",
+        "tests/test_w19_delivery.py"
+      ],
+      "findings": [],
+      "passed": true
+    },
+    "statistical_freeze_fields": [
+      "primary_outcome",
+      "paired_sign_convention",
+      "confidence_level",
+      "bootstrap_seed",
+      "bootstrap_iterations",
+      "test_family",
+      "invalid_pair_handling",
+      "secondary_outcomes"
+    ]
+  },
+  "pair_ledger_contract": {
+    "campaign_freeze_fields": [
+      "hardware_config_id",
+      "calibration_id",
+      "firmware_version",
+      "sensor_placement",
+      "model_artifact_sha256",
+      "feature_schema_hash",
+      "critical_target",
+      "representative_temperature",
+      "primary_horizon",
+      "operating_threshold",
+      "warning_persistence",
+      "controller_policy_version",
+      "cooling_action_magnitude",
+      "disturbance_protocol",
+      "initial_reset_criterion",
+      "pair_matching_tolerances",
+      "randomization_protocol",
+      "validity_exclusion_rules",
+      "primary_outcome",
+      "statistical_method",
+      "target_pair_count"
+    ],
+    "fixture_markers": [
+      "TEST_ONLY",
+      "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
+    ],
+    "identity_fields": [
+      "actual_controller_order",
+      "attempt_id",
+      "block_id",
+      "calibration_id",
+      "campaign_id",
+      "controller_arm",
+      "disturbance_protocol_id",
+      "feature_version",
+      "firmware_version",
+      "hardware_config_id",
+      "model_artifact_id",
+      "model_artifact_sha256",
+      "pair_id",
+      "planned_controller_order",
+      "policy_version",
+      "protocol_version",
+      "quality_status",
+      "run_id",
+      "scenario_id",
+      "session_id",
+      "source_manifest_id",
+      "source_path",
+      "source_sha256",
+      "validity_reason_codes",
+      "validity_status"
+    ],
+    "layer_version": "coldguard-w19-paired-campaign-integrity-v1",
+    "pair_statuses": [
+      "PLANNED",
+      "AWAITING_SECOND_ARM",
+      "AWAITING_VALIDITY",
+      "PAIR_VALID",
+      "PAIR_INVALID",
+      "PAIR_BLOCKED_MISSING_FREEZE",
+      "PAIR_UNRESOLVED"
+    ],
+    "rerun_semantics": "same pair_id and arm; supersedes chain; invalid history retained",
+    "schema": "coldguard-w19-pair-ledger-v1",
+    "statistical_unit": "one valid matched Controller A/B pair"
+  },
+  "physical_authorization_status": "FINAL_AB_CAMPAIGN_NOT_AUTHORIZED",
+  "progress": {
+    "aborted_attempts": null,
+    "approval_effect": "NONE_SOFTWARE_ASSESSMENT_ONLY",
+    "blocked_pairs": 0,
+    "campaign_authorization_status": "NOT_AUTHORIZED",
+    "campaign_id": null,
+    "first_wave_fraction": null,
+    "first_wave_status": "NOT_COMPUTABLE",
+    "invalid_attempts": null,
+    "invalid_attempts_status": "UNKNOWN_ATTEMPT_LEDGER_UNAVAILABLE",
+    "invalid_pairs": 0,
+    "pair_status_counts": {},
+    "pair_target_freeze_status": "UNKNOWN_UNFROZEN",
+    "pair_target_source_conflict": false,
+    "pairs_awaiting_second_arm": 0,
+    "pairs_awaiting_validity": 0,
+    "pairs_planned": 0,
+    "pairs_started": 0,
+    "physical_campaign_status": "NOT_STARTED_BLOCKED",
+    "physical_evidence_class": "NOT_ESTABLISHED",
+    "planned_pair_target": null,
+    "refusal_reasons": [
+      "ATTEMPT_LEDGER_UNAVAILABLE",
+      "PAIR_TARGET_RECORD_MISSING"
+    ],
+    "remaining_target": "NOT_COMPUTABLE",
+    "software_validated_pairs": 0,
+    "superseded_attempts": null,
+    "target_overshoot_pairs": null,
+    "target_progress_status": "NOT_COMPUTABLE",
+    "unresolved_pairs": 0,
+    "valid_pair_progress_status": "NOT_ESTABLISHED",
+    "valid_pairs_completed": 0
+  },
+  "readiness_handoff": {
+    "controller_b_signoff": "WITHHELD",
+    "dimensions": [
+      [
+        "prediction_freshness",
+        "C/D",
+        "SOFTWARE_FRESHNESS_VERIFIED; RUNTIME_FRESHNESS_POLICY_PENDING_C_D",
+        "05B \u00a746; 02 \u00a75"
+      ],
+      [
+        "policy_freeze",
+        "B/D/TEAM_LEAD",
+        "target=DEVELOPMENT_CANDIDATE_NOT_FROZEN; horizon=ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN; threshold=ILLUSTRATIVE_NOT_FROZEN; persistence=NOT_FROZEN",
+        "03 \u00a744, \u00a787-88; 04 \u00a711.4"
+      ],
+      [
+        "approved_model_candidate",
+        "TEAM_LEAD",
+        "model_release_candidate=NOT_ISSUED",
+        "03 \u00a792-93"
+      ],
+      [
+        "locked_predictive_evaluation",
+        "B/TEAM_LEAD",
+        "locked_evaluation=NOT_EXECUTED_PREREQUISITES_UNMET",
+        "03 \u00a792-93; 04 \u00a731"
+      ],
+      [
+        "c_inference_trace_integration",
+        "C",
+        "PR_73_OPEN_UNMERGED; PR_74_OPEN_UNMERGED; NO_REAL_INFERENCE_RECORD",
+        "05B \u00a746; C W17/W18"
+      ],
+      [
+        "d_policy_safety_authorization",
+        "D",
+        "D_PREDICTIVE_POLICY_NOT_FROZEN; COMMAND_AUTHORITY_NOT_ESTABLISHED",
+        "02 \u00a71.6; 04 \u00a733"
+      ],
+      [
+        "a_physical_response_verification",
+        "A",
+        "dry_runs_recorded=0; enablement=BLOCKED_ON_PREREQUISITES; physical_state=PENDING_BENCH_EXECUTION",
+        "01 \u00a71.5-1.7; 03 \u00a7137"
+      ],
+      [
+        "g4_evidence",
+        "TEAM",
+        "W16 readiness decision=REFUSED_PREREQUISITES_UNMET",
+        "04 \u00a731"
+      ]
+    ],
+    "g4": "NOT_READY"
+  },
+  "reports": {
+    "campaign-readiness-W19.md": "f554788a441a2eebfc622d3731effc5fa93b010e06ba73a3cb699c6790a7187a",
+    "no-significance-peeking-W19.md": "20cf96565ab478d97e45196768465e6bf808e799c4eb4bccd28c6b22634eb996",
+    "pair-ledger-contract-W19.md": "1cc99bfcf99e2a95e74437c85c28c2c59e37979e272072c52e2f3add4af879df",
+    "validity-discipline-W19.md": "e4514e709be0785fefe8da2f8e2f127d607f16a4040c2fdadc309e78e2f62fcf"
+  },
+  "revision_semantics": "W18_STACK_HEAD_BASE_NOT_W19_DELIVERY_COMMIT",
+  "schema": "coldguard-w19-campaign-integrity-v1",
+  "scientific_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "source_revision": "54c030ce9096a7e85b62570420f6596ff756d4f3",
+  "unfinished_physical_requirements": [
+    "FINAL_AB_CAMPAIGN_AUTHORIZATION",
+    "FINAL_AB_CAMPAIGN_FREEZE_APPROVAL",
+    "PAIR_TARGET_FREEZE",
+    "STATISTICAL_ANALYSIS_FREEZE",
+    "GATE_G4_READY",
+    "CONTROLLER_B_SIGNOFF",
+    "ACCEPTED_PHYSICAL_PAIR_EVIDENCE"
+  ],
+  "validity_discipline": {
+    "controls": [
+      {
+        "expectation": "a protocol-valid B arm stays valid regardless of performance",
+        "name": "protocol_valid_worse_b_retained",
+        "passed": true
+      },
+      {
+        "expectation": "a protocol-invalid B arm is rejected regardless of performance",
+        "name": "protocol_invalid_better_b_rejected",
+        "passed": true
+      },
+      {
+        "expectation": "controller-arm identity is not an outcome and cannot change validity",
+        "name": "arm_swap_does_not_change_validity",
+        "passed": true
+      },
+      {
+        "expectation": "the validity route refuses outcome-shaped fields",
+        "name": "validity_outcome_payload_refused",
+        "passed": true
+      },
+      {
+        "expectation": "missing PZEM coverage is undefined, never zero energy",
+        "name": "missing_energy_stays_undefined",
+        "passed": true
+      },
+      {
+        "expectation": "a primary-outcome telemetry gap invalidates the attempt",
+        "name": "primary_gap_invalidates",
+        "passed": true
+      },
+      {
+        "expectation": "no refusal without objective, recorded reasons",
+        "name": "invalid_decision_records_reasons",
+        "passed": true
+      },
+      {
+        "expectation": "the validity API has no outcome parameter or field",
+        "name": "validity_input_carries_no_outcomes",
+        "passed": true
+      }
+    ],
+    "method": "coldguard-w19-validity-review-v1",
+    "metric_contracts": [
+      {
+        "canonical_ref": "Doc 03 \u00a768-69; SAP \u00a74.1",
+        "coverage_key": "thermal_primary",
+        "metric_id": "thermal_exposure",
+        "role": "PRIMARY"
+      },
+      {
+        "canonical_ref": "Doc 03 \u00a770; SAP \u00a74.7",
+        "coverage_key": "thermal_recovery",
+        "metric_id": "recovery_time",
+        "role": "SECONDARY"
+      },
+      {
+        "canonical_ref": "Doc 03 \u00a772, \u00a7102; metric-spec \u00a78",
+        "coverage_key": "electrical_energy",
+        "metric_id": "branch_energy",
+        "role": "SECONDARY"
+      }
+    ],
+    "reason_codes": [
+      "ATTEMPT_ABORTED",
+      "CALIBRATION_PROVENANCE_MISSING",
+      "CONTROLLER_ORDER_RECORD_MISSING",
+      "DISTURBANCE_NOT_EXECUTED",
+      "DISTURBANCE_STATUS_UNKNOWN",
+      "DISTURBANCE_TOLERANCE_EXCEEDED",
+      "FIRMWARE_IDENTITY_MISSING",
+      "HARDWARE_IDENTITY_MISSING",
+      "INITIAL_RESET_CRITERION_NOT_MET",
+      "INITIAL_RESET_EVIDENCE_MISSING",
+      "PHYSICAL_QUALITY_INVALID",
+      "PHYSICAL_QUALITY_UNVERIFIED",
+      "PRIMARY_OUTCOME_COMPLETENESS_UNKNOWN",
+      "PROTOCOL_VERSION_MISSING",
+      "SAFETY_STOP_RECORDED",
+      "TELEMETRY_GAP_COVERS_PRIMARY_EVENT",
+      "TEMPORAL_ORDER_INVALID",
+      "TEMPORAL_ORDER_UNVERIFIED",
+      "UNPROTOCOL_OPERATOR_INTERVENTION"
+    ]
+  },
+  "verdicts": {
+    "B_W19_01_PAIR_LEDGER": "SOFTWARE_VERIFIED",
+    "B_W19_02_VALIDITY_DISCIPLINE": "SOFTWARE_VERIFIED",
+    "B_W19_03_NO_SIGNIFICANCE_PEEKING": "SOFTWARE_VERIFIED",
+    "B_W19_04_PAIR_PROGRESS": "SOFTWARE_VERIFIED",
+    "CAMPAIGN_TARGET": "UNFROZEN",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "FINAL_CAMPAIGN": "NOT_AUTHORIZED",
+    "G4": "NOT_READY",
+    "NO_PEEKING": "SOFTWARE_VERIFIED",
+    "PAIR_LEDGER_SCHEMA": "VERIFIED",
+    "PAIR_LEDGER_SOFTWARE": "VERIFIED",
+    "PHYSICAL_PAIRS": "NOT_ESTABLISHED",
+    "PROGRESS_ACCOUNTING": "SOFTWARE_VERIFIED",
+    "SOFTWARE": "COMPLETE_PERMITTED_W19_SCOPE",
+    "VALIDITY_REVIEW": "SOFTWARE_VERIFIED",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W20_ANALYSIS": "NOT_UNLOCKED"
+  }
+}
