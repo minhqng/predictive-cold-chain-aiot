@@ -179,6 +179,19 @@ from .negative_campaign import (
     NegativeOutcome,
     assess_negative_campaign,
 )
+from .safety_case import (
+    DEFAULT_CORE_HAZARDS,
+    HazardCategory,
+    Likelihood,
+    MatrixResult,
+    OptionalScopeItem,
+    ResidualRisk,
+    SafetyCaseSummary,
+    SafetyMatrixEntry,
+    Severity,
+    assess_safety_case,
+    build_default_safety_case,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -307,4 +320,15 @@ __all__ = [
     "NegativeCaseEvidence",
     "NegativeOutcome",
     "assess_negative_campaign",
+    "DEFAULT_CORE_HAZARDS",
+    "HazardCategory",
+    "Likelihood",
+    "MatrixResult",
+    "OptionalScopeItem",
+    "ResidualRisk",
+    "SafetyCaseSummary",
+    "SafetyMatrixEntry",
+    "Severity",
+    "assess_safety_case",
+    "build_default_safety_case",
 ]
