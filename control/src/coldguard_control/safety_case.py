@@ -74,6 +74,7 @@ class SafetyMatrixEntry:
     test_description: str
     result: MatrixResult
     evidence_authority: EvidenceAuthority = field(default=EvidenceAuthority.HOST_SIMULATED)
+    evidence_ref: str | None = None
 
     def __post_init__(self) -> None:
         if not self.hazard_id or not self.hazard_id.strip():
@@ -94,6 +95,10 @@ class SafetyMatrixEntry:
             raise TypeError("result must be a MatrixResult")
         if not isinstance(self.evidence_authority, EvidenceAuthority):
             raise TypeError("evidence_authority must be an EvidenceAuthority")
+        if self.evidence_ref is not None and (
+            not isinstance(self.evidence_ref, str) or not self.evidence_ref.strip()
+        ):
+            raise ValueError("evidence_ref must be nonempty when provided")
 
 
 @dataclass(frozen=True, slots=True)
@@ -208,13 +213,14 @@ def _categorize_entries(
 
 
 def _check_core_evidence_green(entries: Sequence[SafetyMatrixEntry]) -> bool:
-    """Check if all core matrix entries have at least HOST_SIMULATED evidence."""
+    """Require every core row to be a provenance-backed live PASS."""
     if not entries:
         return False
     for entry in entries:
-        if entry.evidence_authority not in (
-            EvidenceAuthority.HOST_SIMULATED,
-            EvidenceAuthority.LIVE_EVIDENCE,
+        if (
+            entry.result is not MatrixResult.PASS
+            or entry.evidence_authority is not EvidenceAuthority.LIVE_EVIDENCE
+            or not entry.evidence_ref
         ):
             return False
     return True
@@ -389,9 +395,15 @@ DEFAULT_CORE_HAZARDS: Mapping[HazardCategory, Sequence[dict]] = MappingProxyType
 def build_default_safety_case(
     result_override: Mapping[str, MatrixResult] | None = None,
     evidence_authority: EvidenceAuthority = EvidenceAuthority.HOST_SIMULATED,
+    evidence_refs: Mapping[str, str] | None = None,
     include_optional: bool = False,
 ) -> SafetyCaseSummary:
     """Build a default safety case with canonical hazards from Doc 05D.
+
+    W22: Default builder results must be PENDING, not PASS.
+    Core evidence green and optional_scope_allowed require every required core
+    row PASS with LIVE_EVIDENCE and provenance.
+    Host fixtures must not permit optional scope.
 
     Args:
         result_override: Optional mapping from hazard_id to result.
@@ -403,11 +415,14 @@ def build_default_safety_case(
     """
     if result_override is None:
         result_override = {}
+    if evidence_refs is None:
+        evidence_refs = {}
 
     entries: list[SafetyMatrixEntry] = []
     for category, hazards in DEFAULT_CORE_HAZARDS.items():
         for h in hazards:
-            result = result_override.get(h["hazard_id"], MatrixResult.PASS)
+            # W22: Default to PENDING, not PASS
+            result = result_override.get(h["hazard_id"], MatrixResult.PENDING)
             entries.append(
                 SafetyMatrixEntry(
                     hazard_id=h["hazard_id"],
@@ -419,6 +434,7 @@ def build_default_safety_case(
                     test_description=h["test_description"],
                     result=result,
                     evidence_authority=evidence_authority,
+                    evidence_ref=evidence_refs.get(h["hazard_id"]),
                 )
             )
 

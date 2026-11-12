@@ -131,11 +131,11 @@ from coldguard_control.safety_case import (
     MatrixResult,
 )
 
-# Build default safety case with all host-simulated entries passing
+# Defaults are host-only PENDING fixtures and fail closed
 summary = build_default_safety_case()
-assert summary.core_matrix_all_pass is True
-assert summary.core_evidence_green is True
-assert summary.optional_scope_allowed is True
+assert summary.core_matrix_all_pass is False
+assert summary.core_evidence_green is False
+assert summary.optional_scope_allowed is False
 
 # Override one entry to FAIL
 summary = build_default_safety_case(
@@ -145,9 +145,11 @@ assert summary.core_matrix_all_pass is False
 assert summary.optional_scope_allowed is False
 assert "FAILED_ENTRY:CTRL-STALE-01" in summary.blockers
 
-# Include optional scope items
+# Optional items may be listed, but remain gated until every core row is a
+# provenance-backed LIVE_EVIDENCE PASS.
 summary = build_default_safety_case(include_optional=True)
 assert len(summary.optional_scope_items) == 3
+assert summary.optional_scope_allowed is False
 ```
 
 ## Tests

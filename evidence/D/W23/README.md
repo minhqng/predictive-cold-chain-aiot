@@ -38,8 +38,8 @@ Each rehearsal record measures three dimensions:
 RehearsalMetrics(
     failure_recovery=True,       # Ability to recover from injected faults
     operator_clarity=True,       # Clear state transitions and reason codes
-    timing_within_bounds=True,   # End-to-end latency within bounds
-    end_to_end_latency_ms=150,   # Measured latency
+    end_to_end_latency_ms=150,   # Recorded latency
+    timing_recorded=True,        # No undocumented numeric pass bound
 )
 ```
 
@@ -178,6 +178,7 @@ validate the contract, but only live rehearsal evidence can mark W23 complete.
 from coldguard_control.demo_rehearsal import (
     RehearsalAuthority,
     RehearsalScene,
+    REQUIRED_SCENE_OUTCOMES,
     SceneOutcome,
     build_demo_rehearsal_record,
     assess_rehearsal,
@@ -188,9 +189,16 @@ host_record = build_demo_rehearsal_record("REC-HOST-01")
 assert host_record.all_scenes_pass is True
 assert host_record.authority is RehearsalAuthority.HOST_SIMULATED
 
-# Build three live rehearsal records
+# Live records require provenance and explicit outcomes for every scene; the
+# helper never upgrades its host defaults to live evidence.
 live_records = [
-    build_demo_rehearsal_record(f"REC-LIVE-{i}", authority=RehearsalAuthority.LIVE_REHEARSAL)
+    build_demo_rehearsal_record(
+        f"REC-LIVE-{i}",
+        authority=RehearsalAuthority.LIVE_REHEARSAL,
+        override_outcomes={scene: REQUIRED_SCENE_OUTCOMES[scene] for scene in RehearsalScene},
+        evidence_ref=f"evidence/D/W23/REC-LIVE-{i}.json",
+        operator_identity="member-C",
+    )
     for i in range(1, 4)
 ]
 

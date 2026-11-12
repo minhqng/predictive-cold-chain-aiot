@@ -13,6 +13,11 @@ read-only role is denied, an out-of-scope device is denied, and a predictive
 command is denied when durable audit is unavailable. Allowed roles are an
 explicit deployment input; D does not silently grant a role command access.
 
+The module also models the ACL contract, unauthorized-publish/no-actuation
+result, secret/log scan, insufficient-role denial and both trusted and invalid
+TLS endpoint results. A clean host assessment remains `ready=false`; live
+readiness requires a live evidence reference and matching live TLS authority.
+
 Still required for live acceptance: deploy broker ACL and credentials, publish
 with an unauthorized test principal and observe `DENIED`, prove no device
 actuation, test an insufficient backend role, scan the deployed secret/log

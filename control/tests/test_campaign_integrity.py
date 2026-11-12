@@ -42,6 +42,12 @@ def run(controller=ControllerVariant.A, **overrides):
         "duplicate_logical_command": False,
         "verification_sensible": True,
         "control_anomaly": False,
+        # W19: New required fields for complete trace
+        "expected_action_issued": True,
+        "command_sent": True,
+        "ack_received": True,
+        "applied_state_observed": True,
+        "physical_response_observed": True,
     }
     values.update(overrides)
     return RunEvidence(**values)
@@ -55,6 +61,22 @@ def test_matching_run_is_accepted_and_preserved_for_pair_ledger():
     assert decision.ledger_record.pair_id == evidence.pair_id
     assert decision.ledger_record.config_sha256 == evidence.config_sha256
     assert decision.silently_corrected is False
+
+
+@pytest.mark.parametrize(
+    ("field", "reason"),
+    [
+        ("expected_action_issued", "EXPECTED_ACTION_NOT_ISSUED"),
+        ("command_sent", "COMMAND_NOT_SENT"),
+        ("ack_received", "ACK_NOT_RECEIVED"),
+        ("applied_state_observed", "APPLIED_STATE_NOT_OBSERVED"),
+        ("physical_response_observed", "PHYSICAL_RESPONSE_NOT_OBSERVED"),
+    ],
+)
+def test_incomplete_action_trace_fails_closed(field, reason):
+    decision = assess_campaign_run(run(**{field: False}), frozen(ControllerVariant.A))
+    assert decision.status is CampaignAssessmentStatus.FLAGGED
+    assert reason in decision.reasons
     assert decision.physical_command_emitted is False
 
 

@@ -4,6 +4,11 @@ The gate records whether B's recommendation is sufficiently specified for
 offline shadow evaluation or for a later physical-enablement review.  It does
 not enable Controller B and it never converts an uncalibrated risk score into
 a probability.
+
+W14 Requirements:
+- Threshold constrained to [0,1] for calibrated probability semantics
+- False-warning assessment must be documented
+- Persistence justification required (why this duration prevents chatter)
 """
 
 from __future__ import annotations
@@ -27,10 +32,40 @@ class PredictiveGateStatus(str, Enum):
 
 
 @dataclass(frozen=True, slots=True)
+class FalseWarningAssessment:
+    """W14 false-warning assessment with explicit justification.
+
+    Documents the false-positive rate at the chosen threshold and justifies
+    why the persistence duration prevents sensor chatter / transient spikes.
+    """
+    false_positive_rate_at_threshold: float | None  # Must be [0,1] if present
+    false_warning_count_in_validation: int  # Count from validation runs
+    total_validation_windows: int  # Total windows evaluated
+    persistence_justification: str  # Why this duration prevents chatter
+    max_transient_duration_s: float | None  # Longest transient observed
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.false_warning_count_in_validation, int) or self.false_warning_count_in_validation < 0:
+            raise ValueError("false_warning_count_in_validation must be non-negative integer")
+        if isinstance(self.total_validation_windows, bool) or not isinstance(self.total_validation_windows, int) or self.total_validation_windows < 0:
+            raise ValueError("total_validation_windows must be non-negative integer")
+        if self.false_positive_rate_at_threshold is not None:
+            if isinstance(self.false_positive_rate_at_threshold, bool) or not isinstance(self.false_positive_rate_at_threshold, (int, float)):
+                raise ValueError("false_positive_rate_at_threshold must be float or None")
+            if not 0 <= self.false_positive_rate_at_threshold <= 1:
+                raise ValueError("false_positive_rate_at_threshold must be within [0, 1]")
+        if not isinstance(self.persistence_justification, str) or not self.persistence_justification.strip():
+            raise ValueError("persistence_justification must be non-empty string")
+        if self.max_transient_duration_s is not None:
+            if isinstance(self.max_transient_duration_s, bool) or not isinstance(self.max_transient_duration_s, (int, float)) or not math.isfinite(self.max_transient_duration_s) or self.max_transient_duration_s <= 0:
+                raise ValueError("max_transient_duration_s must be positive finite or None")
+
+
+@dataclass(frozen=True, slots=True)
 class PredictiveCandidateEvidence:
     policy_version: str
     output_semantics: OutputSemantics
-    score_threshold: float | None
+    score_threshold: float | None  # Constrained to [0,1] for probability semantics
     persistence_s: float | None
     horizon_s: float | None
     model_frozen: bool
@@ -40,6 +75,7 @@ class PredictiveCandidateEvidence:
     aiw_status: AIWStatus
     g3_green: bool
     g4_green: bool
+    false_warning_assessment: FalseWarningAssessment | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.policy_version, str) or not self.policy_version.strip():
@@ -66,8 +102,14 @@ class PredictiveCandidateEvidence:
                 or not math.isfinite(float(value))
             ):
                 raise ValueError(f"{name} must be finite or None")
-        if self.score_threshold is not None and not 0 <= self.score_threshold <= 1:
-            raise ValueError("score_threshold must be within [0, 1]")
+        # A generic risk score may use any finite scale.  Only a calibrated
+        # probability is constrained to the probability interval.
+        if (
+            self.output_semantics is OutputSemantics.CALIBRATED_PROBABILITY
+            and self.score_threshold is not None
+            and not 0 <= self.score_threshold <= 1
+        ):
+            raise ValueError("score_threshold must be within [0, 1] for calibrated probability semantics")
         if self.persistence_s is not None and self.persistence_s <= 0:
             raise ValueError("persistence_s must be positive")
         if self.horizon_s is not None and self.horizon_s <= 0:
@@ -86,13 +128,21 @@ class PredictiveGateDecision:
     status: PredictiveGateStatus
     blockers: tuple[str, ...]
     probability_wording_allowed: bool
+    false_warning_assessed: bool
+    persistence_justified: bool
     physical_enablement: bool = False
 
 
 def assess_predictive_gate(
     evidence: PredictiveCandidateEvidence,
 ) -> PredictiveGateDecision:
-    """Classify W14 readiness without granting physical enablement."""
+    """Classify W14 readiness without granting physical enablement.
+
+    W14 requirements:
+    - False-warning assessment must be documented
+    - Persistence justification required
+    - Threshold constrained to [0,1] (enforced in evidence validation)
+    """
     if not isinstance(evidence, PredictiveCandidateEvidence):
         raise ValueError("evidence must be PredictiveCandidateEvidence")
 
@@ -113,6 +163,26 @@ def assess_predictive_gate(
     if not evidence.g4_green:
         blockers.append("g4_green")
 
+    # W14: False-warning assessment check
+    false_warning_assessed = (
+        evidence.false_warning_assessment is not None
+        and evidence.false_warning_assessment.false_warning_count_in_validation >= 0
+        and evidence.false_warning_assessment.total_validation_windows > 0
+        and bool(evidence.false_warning_assessment.persistence_justification.strip())
+    )
+    if not false_warning_assessed:
+        blockers.append("false_warning_assessment")
+
+    # W14: Persistence justification check
+    persistence_justified = (
+        evidence.persistence_s is not None
+        and evidence.persistence_s > 0
+        and evidence.false_warning_assessment is not None
+        and bool(evidence.false_warning_assessment.persistence_justification.strip())
+    )
+    if not persistence_justified:
+        blockers.append("persistence_justification")
+
     missing_policy = any(
         getattr(evidence, name) is None
         for name in ("score_threshold", "persistence_s", "horizon_s")
@@ -131,4 +201,6 @@ def assess_predictive_gate(
             evidence.output_semantics is OutputSemantics.CALIBRATED_PROBABILITY
             and evidence.calibration_qualified
         ),
+        false_warning_assessed=false_warning_assessed,
+        persistence_justified=persistence_justified,
     )

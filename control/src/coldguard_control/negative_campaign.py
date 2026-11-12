@@ -88,11 +88,19 @@ REQUIRED_OUTCOMES: Mapping[
 
 @dataclass(frozen=True, slots=True)
 class NegativeCaseEvidence:
-    """Immutable evidence supplied for one matrix case."""
+    """Immutable evidence supplied for one matrix case.
+
+    W21: LIVE evidence cannot be self-asserted.
+    Require nonempty evidence_ref and operator/observer identity for LIVE records.
+    Host records remain host and never count as live.
+    """
 
     case: NegativeCampaignCase
     authority: EvidenceAuthority
     observed_outcomes: frozenset[NegativeOutcome]
+    evidence_ref: str | None = None  # W21: Required for LIVE_EVIDENCE
+    operator_identity: str | None = None  # W21: Required for LIVE_EVIDENCE
+    observer_identity: str | None = None  # W21: Optional for LIVE_EVIDENCE
 
     def __post_init__(self) -> None:
         if not isinstance(self.case, NegativeCampaignCase):
@@ -106,6 +114,12 @@ class NegativeCaseEvidence:
             for outcome in self.observed_outcomes
         ):
             raise TypeError("observed_outcomes must contain NegativeOutcome values")
+        # W21: LIVE evidence requires nonempty evidence_ref and operator_identity
+        if self.authority is EvidenceAuthority.LIVE_EVIDENCE:
+            if not self.evidence_ref or not self.evidence_ref.strip():
+                raise ValueError("LIVE_EVIDENCE requires nonempty evidence_ref")
+            if not self.operator_identity or not self.operator_identity.strip():
+                raise ValueError("LIVE_EVIDENCE requires nonempty operator_identity")
 
 
 @dataclass(frozen=True, slots=True)
