@@ -1,0 +1,140 @@
+{
+  "schema": "coldguard-d-synthetic-report-demo-v1",
+  "authority": "SYNTHETIC_DEMO",
+  "description": "Synthetic report/demo evidence pack for Member D W14-W24",
+  "non_claims": {
+    "physical_execution": false,
+    "live_evidence": false,
+    "gate_signoff": false,
+    "final_acceptance": false,
+    "real_measurements": false,
+    "engineering_thresholds": false
+  },
+  "week_range": {
+    "start": 14,
+    "end": 24,
+    "total_weeks": 11
+  },
+  "entries": [
+    {
+      "week": 14,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W14"
+    },
+    {
+      "week": 15,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W15"
+    },
+    {
+      "week": 16,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W16"
+    },
+    {
+      "week": 17,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W17"
+    },
+    {
+      "week": 18,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W18"
+    },
+    {
+      "week": 19,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W19"
+    },
+    {
+      "week": 20,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W20"
+    },
+    {
+      "week": 21,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W21"
+    },
+    {
+      "week": 22,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W22"
+    },
+    {
+      "week": 23,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W23"
+    },
+    {
+      "week": 24,
+      "implementation_complete": true,
+      "host_validation_passed": true,
+      "live_validation_complete": false,
+      "final_acceptance": false,
+      "notes": "Synthetic demo evidence for W24"
+    }
+  ],
+  "validation_rules": {
+    "exact_week_coverage": "All weeks W14-W24 must be present (11 weeks)",
+    "no_duplicates": "Each week number appears exactly once",
+    "no_missing_weeks": "All weeks 14-24 must be covered",
+    "synthetic_authority_only": "No live/physical/signoff claims allowed",
+    "live_validation_must_be_false": "live_validation_complete must be false for all entries",
+    "final_acceptance_must_be_false": "final_acceptance must be false for all entries",
+    "no_physical_claims_in_notes": "Notes cannot mention PHYSICAL, LIVE, SIGNOFF, or ACCEPTANCE"
+  },
+  "expected_validation_result": {
+    "all_weeks_present": true,
+    "no_duplicates": true,
+    "all_synthetic_authority": true,
+    "no_live_claims": true,
+    "no_physical_claims": true,
+    "no_signoff_claims": true,
+    "valid": true,
+    "blockers": []
+  },
+  "summary": {
+    "week_range_start": 14,
+    "week_range_end": 24,
+    "total_weeks": 11,
+    "expected_weeks": 11,
+    "implementation_complete_count": 11,
+    "host_validation_passed_count": 11,
+    "live_validation_complete_count": 0,
+    "final_acceptance_count": 0,
+    "authority": "SYNTHETIC_DEMO",
+    "all_synthetic": true,
+    "valid": true
+  }
+}

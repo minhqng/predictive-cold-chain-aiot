@@ -231,6 +231,21 @@ from .handover import (
     build_default_freeze_archive,
     build_default_smoke_evidence,
 )
+from .report_demo import (
+    ReportDemoAuthority,
+    WeekCoverageStatus,
+    WeeklySyntheticEntry,
+    SyntheticReportFixture,
+    WeekCoverageAssessment,
+    SyntheticReportSummary,
+    REQUIRED_WEEKS,
+    validate_weekly_entry,
+    validate_synthetic_fixture,
+    assess_week_coverage,
+    assess_synthetic_report,
+    build_default_synthetic_fixture,
+    build_synthetic_fixture_from_json,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -405,4 +420,17 @@ __all__ = [
     "build_default_coverage_areas",
     "build_default_freeze_archive",
     "build_default_smoke_evidence",
+    "ReportDemoAuthority",
+    "WeekCoverageStatus",
+    "WeeklySyntheticEntry",
+    "SyntheticReportFixture",
+    "WeekCoverageAssessment",
+    "SyntheticReportSummary",
+    "REQUIRED_WEEKS",
+    "validate_weekly_entry",
+    "validate_synthetic_fixture",
+    "assess_week_coverage",
+    "assess_synthetic_report",
+    "build_default_synthetic_fixture",
+    "build_synthetic_fixture_from_json",
 ]
