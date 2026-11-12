@@ -19,6 +19,18 @@ from coldguard_control.demo_rehearsal import (
 )
 
 
+def live_record(record_id: str):
+    return build_demo_rehearsal_record(
+        record_id,
+        authority=RehearsalAuthority.LIVE_REHEARSAL,
+        override_outcomes={
+            scene: REQUIRED_SCENE_OUTCOMES[scene] for scene in RehearsalScene
+        },
+        evidence_ref=f"evidence/D/W23/{record_id}.json",
+        operator_identity="member-C",
+    )
+
+
 class TestRehearsalScene:
     """Tests for RehearsalScene enum."""
 
@@ -351,13 +363,24 @@ class TestBuildDemoRehearsalRecord:
         assert record.all_scenes_pass is True
 
     def test_live_rehearsal_record(self):
-        record = build_demo_rehearsal_record(
-            "REC-LIVE-01",
-            authority=RehearsalAuthority.LIVE_REHEARSAL,
-        )
+        record = live_record("REC-LIVE-01")
         assert record.authority is RehearsalAuthority.LIVE_REHEARSAL
         assert record.all_scenes_pass is True
 
+    def test_live_builder_rejects_missing_provenance_and_explicit_outcomes(self):
+        with pytest.raises(ValueError, match="evidence_ref"):
+            build_demo_rehearsal_record(
+                "REC-LIVE-MISSING",
+                authority=RehearsalAuthority.LIVE_REHEARSAL,
+            )
+        with pytest.raises(ValueError, match="explicit outcomes"):
+            build_demo_rehearsal_record(
+                "REC-LIVE-INCOMPLETE",
+                authority=RehearsalAuthority.LIVE_REHEARSAL,
+                evidence_ref="evidence/D/W23/incomplete.json",
+                operator_identity="member-C",
+                override_outcomes={},
+            )
     def test_override_outcomes_allows_partial_scene(self):
         record = build_demo_rehearsal_record(
             "REC-PARTIAL-01",
@@ -374,14 +397,14 @@ class TestBuildDemoRehearsalRecord:
         assert stale_assessment.passed is False
         assert record.all_scenes_pass is False
 
-    def test_high_latency_fails_timing_check(self):
+    def test_high_latency_is_recorded_without_invented_bound(self):
         record = build_demo_rehearsal_record(
             "REC-SLOW-01",
             latency_ms=600,
         )
-        assert record.metrics.timing_within_bounds is False
-        assert record.all_scenes_pass is False
-        assert "TIMING_NOT_WITHIN_BOUNDS" in record.blockers
+        assert record.metrics.timing_within_bounds is None
+        assert record.metrics.end_to_end_latency_ms == 600
+        assert record.all_scenes_pass is True
 
 
 class TestAssessRehearsal:
@@ -397,9 +420,23 @@ class TestAssessRehearsal:
         assert decision.readiness_achieved is False
         assert "INSUFFICIENT_LIVE_REHEARSAL:0/3" in decision.blockers
 
+    def test_caller_cannot_forge_all_scenes_pass(self):
+        forged = RehearsalRecord(
+            record_id="REC-FORGED",
+            authority=RehearsalAuthority.LIVE_REHEARSAL,
+            scene_evidence=(),
+            metrics=RehearsalMetrics(True, True),
+            all_scenes_pass=True,
+            evidence_ref="evidence/D/W23/forged.json",
+            operator_identity="member-C",
+        )
+        decision = assess_rehearsal([forged])
+        assert decision.readiness_achieved is False
+        assert decision.records[0].all_scenes_pass is False
+
     def test_three_live_records_complete_rehearsal(self):
         records = [
-            build_demo_rehearsal_record(f"REC-LIVE-{i}", authority=RehearsalAuthority.LIVE_REHEARSAL)
+            live_record(f"REC-LIVE-{i}")
             for i in range(1, 4)
         ]
         decision = assess_rehearsal(records)
@@ -410,7 +447,7 @@ class TestAssessRehearsal:
 
     def test_mixed_authority_counts_live_separately(self):
         records = [
-            build_demo_rehearsal_record("REC-LIVE-01", authority=RehearsalAuthority.LIVE_REHEARSAL),
+            live_record("REC-LIVE-01"),
             build_demo_rehearsal_record("REC-HOST-01", authority=RehearsalAuthority.HOST_SIMULATED),
             build_demo_rehearsal_record("REC-HOST-02", authority=RehearsalAuthority.HOST_SIMULATED),
         ]
@@ -495,7 +532,7 @@ class TestDoc05DSection55Compliance:
     def test_d_w23_05_three_rehearsal_records_required(self):
         """D-W23-05: Three full rehearsals measuring failure recovery, operator clarity, timing."""
         records = [
-            build_demo_rehearsal_record(f"REC-{i}", authority=RehearsalAuthority.LIVE_REHEARSAL)
+            live_record(f"REC-{i}")
             for i in range(1, 4)
         ]
         decision = assess_rehearsal(records)
@@ -504,7 +541,8 @@ class TestDoc05DSection55Compliance:
         for rec in records:
             assert rec.metrics.failure_recovery is True
             assert rec.metrics.operator_clarity is True
-            assert rec.metrics.timing_within_bounds is True
+            assert rec.metrics.timing_recorded is True
+            assert rec.metrics.end_to_end_latency_ms >= 0
 
     def test_host_simulation_cannot_claim_readiness(self):
         """Host simulation validates contract but cannot claim rehearsal completion."""

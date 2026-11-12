@@ -6,7 +6,9 @@ from coldguard_control.campaign_audit import (
     AnomalyEntry,
     AuditAnomalyCategory,
     CampaignAuditRecord,
-    audit_campaign,
+    CampaignEvidenceAuthority,
+    G5Signoff,
+    audit_campaign as audit_campaign_raw,
 )
 from coldguard_control.campaign_integrity import ControllerVariant
 
@@ -27,6 +29,13 @@ def record(controller=ControllerVariant.A, **overrides):
         "verification_failed": False,
         "safe_local_event_count": 0,
         "control_anomaly": False,
+        # W20: New required fields
+        "evidence_authority": CampaignEvidenceAuthority.LIVE_EVIDENCE,
+        "policy_id": "policy-v1",
+        "config_id": "config-v1",
+        "action_id": "action-v1",
+        "evidence_ref": "evidence/D/W20/live-run.json",
+        "operator_identity": "member-D",
     }
     values.update(overrides)
     return CampaignAuditRecord(**values)
@@ -36,6 +45,17 @@ def b_record(**overrides):
     values = dict(run_id="run-b-001", controller=ControllerVariant.B, policy_version="b-v1")
     values.update(overrides)
     return record(**values)
+
+
+SIGNOFF = G5Signoff(
+    signer="member-D",
+    signed_at="2026-11-12T10:00:00Z",
+    evidence_ref="evidence/D/W20/g5-signoff.json",
+)
+
+
+def audit_campaign(records):
+    return audit_campaign_raw(records, SIGNOFF)
 
 
 def test_clean_campaign_audits_and_reaches_g5():
@@ -49,6 +69,19 @@ def test_clean_campaign_audits_and_reaches_g5():
     assert decision.g5_ready is True
     assert decision.g5_blockers == ()
     assert decision.silently_corrected is False
+
+
+def test_host_records_or_missing_signoff_cannot_reach_g5():
+    host = [
+        record(ControllerVariant.A, evidence_authority=CampaignEvidenceAuthority.HOST_SIMULATED,
+               evidence_ref=None, operator_identity=None),
+        record(ControllerVariant.B, evidence_authority=CampaignEvidenceAuthority.HOST_SIMULATED,
+               evidence_ref=None, operator_identity=None),
+    ]
+    assert audit_campaign(host).g5_ready is False
+    unsigned = audit_campaign_raw([record(ControllerVariant.A), record(ControllerVariant.B)])
+    assert unsigned.g5_ready is False
+    assert "G5_SIGNOFF_REQUIRED" in unsigned.g5_blockers
 
 
 @pytest.mark.parametrize(

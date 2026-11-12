@@ -133,13 +133,17 @@ class ControlAssumptionStatus(str, Enum):
 
 @dataclass(frozen=True, slots=True)
 class FreezeArchiveEntry:
-    """One component of the policy freeze archive (D-W24-01)."""
+    """One component of the policy freeze archive (D-W24-01).
+
+    W24: Archive components require nonempty artifact path and valid sha256.
+    Default builders are host fixtures and can never complete handover.
+    """
 
     component: FreezeArchiveComponent
     version: str
     authority: HandoverAuthority
-    checksum_sha256: str | None = None
-    location_path: str | None = None
+    location_path: str  # W24: Required nonempty artifact path
+    checksum_sha256: str  # W24: Required valid sha256
 
     def __post_init__(self) -> None:
         if not isinstance(self.component, FreezeArchiveComponent):
@@ -148,12 +152,14 @@ class FreezeArchiveEntry:
             raise ValueError("version must be nonempty")
         if not isinstance(self.authority, HandoverAuthority):
             raise TypeError("authority must be a HandoverAuthority")
-        if self.checksum_sha256 is not None:
-            if not isinstance(self.checksum_sha256, str) or not self.checksum_sha256.strip():
-                raise ValueError("checksum_sha256 must be nonempty if provided")
-        if self.location_path is not None:
-            if not isinstance(self.location_path, str) or not self.location_path.strip():
-                raise ValueError("location_path must be nonempty if provided")
+        if not self.location_path or not self.location_path.strip():
+            raise ValueError("location_path must be nonempty")
+        # W24: Require valid sha256 (64 hex chars)
+        if not self.checksum_sha256 or not self.checksum_sha256.strip():
+            raise ValueError("checksum_sha256 must be nonempty")
+        val = self.checksum_sha256.strip().lower()
+        if len(val) != 64 or not all(c in "0123456789abcdef" for c in val):
+            raise ValueError("checksum_sha256 must be valid 64-char hex SHA-256")
 
 
 @dataclass(frozen=True, slots=True)
@@ -169,12 +175,18 @@ class FreezeArchiveAssessment:
 
 @dataclass(frozen=True, slots=True)
 class SmokeTestEvidence:
-    """Evidence for one smoke test case (D-W24-02)."""
+    """Evidence for one smoke test case (D-W24-02).
+
+    W24: Smoke requires live independent evidence plus provenance.
+    Coverage areas require actual evidence paths.
+    """
 
     test_case: SmokeTestCase
     authority: HandoverAuthority
     observed_outcomes: frozenset[SmokeTestOutcome]
     destructive: bool = False
+    evidence_path: str | None = None  # W24: Required for LIVE_INDEPENDENT
+    provenance: str | None = None  # W24: Required for LIVE_INDEPENDENT
 
     def __post_init__(self) -> None:
         if not isinstance(self.test_case, SmokeTestCase):
@@ -192,6 +204,12 @@ class SmokeTestEvidence:
             raise TypeError("destructive must be a strict boolean")
         if self.destructive:
             raise ValueError("destructive tests are not allowed in W24 smoke matrix")
+        # W24: LIVE_INDEPENDENT requires evidence_path and provenance
+        if self.authority is HandoverAuthority.LIVE_INDEPENDENT:
+            if not self.evidence_path or not self.evidence_path.strip():
+                raise ValueError("LIVE_INDEPENDENT requires nonempty evidence_path")
+            if not self.provenance or not self.provenance.strip():
+                raise ValueError("LIVE_INDEPENDENT requires nonempty provenance")
 
 
 @dataclass(frozen=True, slots=True)
@@ -220,7 +238,11 @@ class SmokeMatrixDecision:
 
 @dataclass(frozen=True, slots=True)
 class RunbookExecutionRecord:
-    """Record of runbook execution by another member (D-W24-03)."""
+    """Record of runbook execution by another member (D-W24-03).
+
+    W24: LIVE runbook requires executor identity and evidence ref.
+    Handover complete only with all requirements and real LIVE_INDEPENDENT provenance.
+    """
 
     executor_member: str  # e.g., "A", "B", "C" (not "D")
     status: RunbookExecutionStatus
@@ -228,6 +250,7 @@ class RunbookExecutionRecord:
     observer_member: str | None = None  # Should be "D"
     undocumented_assumptions: tuple[str, ...] = ()
     blocking_defects: tuple[str, ...] = ()
+    evidence_ref: str | None = None  # W24: Required for LIVE_INDEPENDENT
 
     def __post_init__(self) -> None:
         if not isinstance(self.executor_member, str):
@@ -245,6 +268,10 @@ class RunbookExecutionRecord:
             raise TypeError("undocumented_assumptions must be a tuple")
         if not isinstance(self.blocking_defects, tuple):
             raise TypeError("blocking_defects must be a tuple")
+        # W24: LIVE_INDEPENDENT requires evidence_ref
+        if self.authority is HandoverAuthority.LIVE_INDEPENDENT:
+            if not self.evidence_ref or not self.evidence_ref.strip():
+                raise ValueError("LIVE_INDEPENDENT requires nonempty evidence_ref")
 
 
 @dataclass(frozen=True, slots=True)
@@ -267,6 +294,8 @@ class CoverageAreaEntry:
         if self.location_path is not None:
             if not isinstance(self.location_path, str) or not self.location_path.strip():
                 raise ValueError("location_path must be nonempty if provided")
+        if self.documented and self.location_path is None:
+            raise ValueError("documented coverage requires location_path")
         if self.notes is not None:
             if not isinstance(self.notes, str):
                 raise TypeError("notes must be a string if provided")
@@ -337,7 +366,7 @@ def assess_freeze_archive(
         if comp not in by_component
     )
     all_present = len(missing) == 0
-    has_live = any(
+    has_live = bool(entries) and all(
         item.authority is HandoverAuthority.LIVE_INDEPENDENT
         for item in entries
     )
@@ -402,7 +431,7 @@ def assess_smoke_matrix(
     missing_cases = tuple(case for case in SmokeTestCase if case not in by_case)
     failed_cases = tuple(item.test_case for item in assessments if not item.passed)
     all_pass = not missing_cases and not failed_cases
-    has_live = any(
+    has_live = bool(assessments) and all(
         item.authority is HandoverAuthority.LIVE_INDEPENDENT
         for item in assessments
     )
@@ -415,6 +444,8 @@ def assess_smoke_matrix(
             blockers.append(f"MISSING_OUTCOME:{item.test_case.value}:{outcome.value}")
     if any_destructive:
         blockers.append("DESTRUCTIVE_TEST_NOT_ALLOWED_IN_W24")
+    if all_pass and not has_live:
+        blockers.append("LIVE_INDEPENDENT_SMOKE_REQUIRED")
 
     return SmokeMatrixDecision(
         assessments=tuple(assessments),
@@ -498,10 +529,12 @@ def assess_handover_completeness(
     freeze_complete = (
         freeze_archive is not None
         and freeze_archive.all_components_present
+        and freeze_archive.has_live_independent
     )
     smoke_complete = (
         smoke_matrix is not None
         and smoke_matrix.all_cases_pass
+        and smoke_matrix.has_live_independent
         and not smoke_matrix.any_destructive
     )
     runbook_valid = (
@@ -515,7 +548,8 @@ def assess_handover_completeness(
         area for area in HandoverCoverageArea if area not in areas_seen
     )
     all_documented = (
-        not missing_coverage and all(area.documented for area in areas_list)
+        not missing_coverage
+        and all(area.documented and area.location_path for area in areas_list)
     )
     no_blocking = (
         runbook_execution is None
@@ -597,6 +631,7 @@ def assess_handover_completeness(
 
 def build_default_coverage_areas(
     authority: HandoverAuthority = HandoverAuthority.HOST_VALIDATED,
+    location_paths: Mapping[HandoverCoverageArea, str] | None = None,
 ) -> tuple[CoverageAreaEntry, ...]:
     """Build default coverage area entries with all areas documented.
 
@@ -606,11 +641,21 @@ def build_default_coverage_areas(
     Returns:
         Tuple of CoverageAreaEntry for all required areas.
     """
+    if location_paths is None:
+        if authority is HandoverAuthority.LIVE_INDEPENDENT:
+            raise ValueError("LIVE_INDEPENDENT coverage requires explicit location_paths")
+        location_paths = {
+            area: f"host-fixture/coverage/{area.value.lower()}.md"
+            for area in HandoverCoverageArea
+        }
+    if set(location_paths) != set(HandoverCoverageArea):
+        raise ValueError("location_paths must cover every handover area")
     return tuple(
         CoverageAreaEntry(
             area=area,
             documented=True,
             evidence_authority=authority,
+            location_path=location_paths[area],
         )
         for area in HandoverCoverageArea
     )
@@ -618,6 +663,8 @@ def build_default_coverage_areas(
 
 def build_default_freeze_archive(
     authority: HandoverAuthority = HandoverAuthority.HOST_VALIDATED,
+    location_paths: Mapping[FreezeArchiveComponent, str] | None = None,
+    checksums: Mapping[FreezeArchiveComponent, str] | None = None,
 ) -> tuple[FreezeArchiveEntry, ...]:
     """Build default freeze archive entries with placeholder versions.
 
@@ -627,11 +674,27 @@ def build_default_freeze_archive(
     Returns:
         Tuple of FreezeArchiveEntry for all required components.
     """
+    if location_paths is None or checksums is None:
+        if authority is HandoverAuthority.LIVE_INDEPENDENT:
+            raise ValueError(
+                "LIVE_INDEPENDENT archive requires explicit location_paths and checksums"
+            )
+        location_paths = {
+            comp: f"host-fixture/freeze/{comp.value.lower()}.json"
+            for comp in FreezeArchiveComponent
+        }
+        checksums = {comp: "0" * 64 for comp in FreezeArchiveComponent}
+    if set(location_paths) != set(FreezeArchiveComponent):
+        raise ValueError("location_paths must cover every freeze component")
+    if set(checksums) != set(FreezeArchiveComponent):
+        raise ValueError("checksums must cover every freeze component")
     return tuple(
         FreezeArchiveEntry(
             component=comp,
             version="v1.0.0-W24",
             authority=authority,
+            location_path=location_paths[comp],
+            checksum_sha256=checksums[comp],
         )
         for comp in FreezeArchiveComponent
     )
@@ -639,6 +702,8 @@ def build_default_freeze_archive(
 
 def build_default_smoke_evidence(
     authority: HandoverAuthority = HandoverAuthority.HOST_VALIDATED,
+    evidence_paths: Mapping[SmokeTestCase, str] | None = None,
+    provenance: Mapping[SmokeTestCase, str] | None = None,
 ) -> tuple[SmokeTestEvidence, ...]:
     """Build default smoke test evidence with all outcomes present.
 
@@ -648,11 +713,22 @@ def build_default_smoke_evidence(
     Returns:
         Tuple of SmokeTestEvidence for all required cases.
     """
+    if authority is HandoverAuthority.LIVE_INDEPENDENT:
+        if evidence_paths is None or provenance is None:
+            raise ValueError(
+                "LIVE_INDEPENDENT smoke requires explicit evidence_paths and provenance"
+            )
+        if set(evidence_paths) != set(SmokeTestCase):
+            raise ValueError("evidence_paths must cover every smoke test")
+        if set(provenance) != set(SmokeTestCase):
+            raise ValueError("provenance must cover every smoke test")
     return tuple(
         SmokeTestEvidence(
             test_case=case,
             authority=authority,
             observed_outcomes=REQUIRED_SMOKE_OUTCOMES[case],
+            evidence_path=evidence_paths[case] if evidence_paths else None,
+            provenance=provenance[case] if provenance else None,
         )
         for case in SmokeTestCase
     )

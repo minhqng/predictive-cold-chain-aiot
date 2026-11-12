@@ -12,7 +12,7 @@ Scenes:
 Each rehearsal record measures:
 - failure_recovery: ability to recover from injected faults
 - operator_clarity: clear state transitions and reason codes
-- timing: end-to-end latency within bounds
+- timing: end-to-end latency recorded for later review
 
 Readiness requires all four scenes complete and three passing LIVE_REHEARSAL records.
 Host simulation may validate the contract but must not claim rehearsal completion.
@@ -146,26 +146,37 @@ REQUIRED_REHEARSAL_COUNT = 3
 
 @dataclass(frozen=True, slots=True)
 class RehearsalMetrics:
-    """Metrics recorded for each rehearsal."""
+    """Metrics recorded for each rehearsal.
+
+    W23: Timing should be recorded/reviewed without an arbitrary pass threshold.
+    Remove any invented 500ms readiness bound not stated in Doc 05D.
+    """
 
     failure_recovery: bool
     operator_clarity: bool
-    timing_within_bounds: bool
+    # Retained as an optional externally-reviewed annotation.  The module does
+    # not derive or gate on an undocumented numeric threshold.
+    timing_within_bounds: bool | None = None
     end_to_end_latency_ms: int = 0
+    timing_recorded: bool = True  # W23: timing recorded, not judged by arbitrary bound
 
     def __post_init__(self) -> None:
         if not isinstance(self.failure_recovery, bool):
             raise TypeError("failure_recovery must be a strict boolean")
         if not isinstance(self.operator_clarity, bool):
             raise TypeError("operator_clarity must be a strict boolean")
-        if not isinstance(self.timing_within_bounds, bool):
-            raise TypeError("timing_within_bounds must be a strict boolean")
+        if self.timing_within_bounds is not None and not isinstance(
+            self.timing_within_bounds, bool
+        ):
+            raise TypeError("timing_within_bounds must be a strict boolean or None")
         if isinstance(self.end_to_end_latency_ms, bool) or not isinstance(
             self.end_to_end_latency_ms, int
         ):
             raise TypeError("end_to_end_latency_ms must be an int")
         if self.end_to_end_latency_ms < 0:
             raise ValueError("end_to_end_latency_ms must be non-negative")
+        if not isinstance(self.timing_recorded, bool):
+            raise TypeError("timing_recorded must be a strict boolean")
 
 
 @dataclass(frozen=True, slots=True)
@@ -207,7 +218,11 @@ class SceneAssessment:
 
 @dataclass(frozen=True, slots=True)
 class RehearsalRecord:
-    """One complete rehearsal record with all four scenes."""
+    """One complete rehearsal record with all four scenes.
+
+    W23: LIVE rehearsal records require explicit evidence_ref and operator identity.
+    Host builder produces HOST_SIMULATED only.
+    """
 
     record_id: str
     authority: RehearsalAuthority
@@ -216,6 +231,9 @@ class RehearsalRecord:
     scene_assessments: tuple[SceneAssessment, ...] = field(default_factory=tuple)
     all_scenes_pass: bool = False
     blockers: tuple[str, ...] = field(default_factory=tuple)
+    # W23: Required for LIVE_REHEARSAL
+    evidence_ref: str | None = None
+    operator_identity: str | None = None
 
     def __post_init__(self) -> None:
         if not self.record_id or not self.record_id.strip():
@@ -232,6 +250,12 @@ class RehearsalRecord:
             raise TypeError("all_scenes_pass must be a strict boolean")
         if not isinstance(self.blockers, tuple):
             raise TypeError("blockers must be a tuple")
+        # W23: LIVE_REHEARSAL requires evidence_ref and operator_identity
+        if self.authority is RehearsalAuthority.LIVE_REHEARSAL:
+            if not self.evidence_ref or not self.evidence_ref.strip():
+                raise ValueError("LIVE_REHEARSAL requires nonempty evidence_ref")
+            if not self.operator_identity or not self.operator_identity.strip():
+                raise ValueError("LIVE_REHEARSAL requires nonempty operator_identity")
 
 
 @dataclass(frozen=True, slots=True)
@@ -269,8 +293,13 @@ def _build_rehearsal_record(
     authority: RehearsalAuthority,
     scene_evidence: Sequence[SceneEvidence],
     metrics: RehearsalMetrics,
+    evidence_ref: str | None = None,
+    operator_identity: str | None = None,
 ) -> RehearsalRecord:
-    """Build and assess one rehearsal record."""
+    """Build and assess one rehearsal record.
+
+    W23: Timing is recorded, not judged by arbitrary bounds.
+    """
     if isinstance(scene_evidence, (str, bytes)) or not isinstance(
         scene_evidence, Sequence
     ):
@@ -300,20 +329,20 @@ def _build_rehearsal_record(
             if not assessment.sequence_correct:
                 blockers.append(f"INVALID_SCENE_SEQUENCE:{scene.value}")
 
-    # Check metrics
+    # Check metrics (W23: timing recorded, not judged by arbitrary bounds)
     if not metrics.failure_recovery:
         blockers.append("FAILURE_RECOVERY_NOT_DEMONSTRATED")
     if not metrics.operator_clarity:
         blockers.append("OPERATOR_CLARITY_NOT_DEMONSTRATED")
-    if not metrics.timing_within_bounds:
-        blockers.append("TIMING_NOT_WITHIN_BOUNDS")
+    if not metrics.timing_recorded:
+        blockers.append("TIMING_NOT_RECORDED")
 
     all_scenes_pass = (
         len(by_scene) == len(RehearsalScene)
         and all(a.passed for a in assessments)
         and metrics.failure_recovery
         and metrics.operator_clarity
-        and metrics.timing_within_bounds
+        and metrics.timing_recorded
     )
 
     return RehearsalRecord(
@@ -324,6 +353,8 @@ def _build_rehearsal_record(
         scene_assessments=tuple(assessments),
         all_scenes_pass=all_scenes_pass,
         blockers=tuple(blockers),
+        evidence_ref=evidence_ref,
+        operator_identity=operator_identity,
     )
 
 
@@ -345,16 +376,27 @@ def assess_rehearsal(
         raise TypeError("records must be a Sequence of RehearsalRecord")
 
     by_id: dict[str, RehearsalRecord] = {}
+    verified_records: list[RehearsalRecord] = []
     for rec in records:
         if not isinstance(rec, RehearsalRecord):
             raise TypeError("each record must be a RehearsalRecord")
         if rec.record_id in by_id:
             raise ValueError(f"duplicate record_id: {rec.record_id}")
         by_id[rec.record_id] = rec
+        verified_records.append(
+            _build_rehearsal_record(
+                record_id=rec.record_id,
+                authority=rec.authority,
+                scene_evidence=rec.scene_evidence,
+                metrics=rec.metrics,
+                evidence_ref=rec.evidence_ref,
+                operator_identity=rec.operator_identity,
+            )
+        )
 
-    passing_records = sum(1 for rec in records if rec.all_scenes_pass)
+    passing_records = sum(1 for rec in verified_records if rec.all_scenes_pass)
     live_passing = sum(
-        1 for rec in records
+        1 for rec in verified_records
         if rec.all_scenes_pass and rec.authority is RehearsalAuthority.LIVE_REHEARSAL
     )
 
@@ -371,13 +413,13 @@ def assess_rehearsal(
             f"INSUFFICIENT_LIVE_REHEARSAL:{live_passing}/{REQUIRED_REHEARSAL_COUNT}"
         )
 
-    for rec in records:
+    for rec in verified_records:
         if not rec.all_scenes_pass:
             blockers.extend(rec.blockers)
 
     return RehearsalDecision(
-        records=tuple(records),
-        missing_records=max(0, REQUIRED_REHEARSAL_COUNT - len(records)),
+        records=tuple(verified_records),
+        missing_records=max(0, REQUIRED_REHEARSAL_COUNT - len(verified_records)),
         passing_records=passing_records,
         live_rehearsal_complete=live_rehearsal_complete,
         readiness_achieved=readiness_achieved,
@@ -390,20 +432,40 @@ def build_demo_rehearsal_record(
     authority: RehearsalAuthority = RehearsalAuthority.HOST_SIMULATED,
     override_outcomes: Mapping[RehearsalScene, frozenset[SceneOutcome]] | None = None,
     latency_ms: int = 150,
+    evidence_ref: str | None = None,
+    operator_identity: str | None = None,
 ) -> RehearsalRecord:
     """Build a demo rehearsal record with canonical scenes.
+
+    W23: build_demo_rehearsal_record must not manufacture LIVE records or
+    auto-fill live outcomes. LIVE rehearsal records require explicit evidence_ref
+    and operator identity. Host builder produces HOST_SIMULATED only.
 
     Args:
         record_id: Unique identifier for the record.
         authority: Authority level (HOST_SIMULATED or LIVE_REHEARSAL).
         override_outcomes: Optional overrides for specific scenes.
         latency_ms: End-to-end latency in milliseconds.
+        evidence_ref: Required for LIVE_REHEARSAL.
+        operator_identity: Required for LIVE_REHEARSAL.
 
     Returns:
         RehearsalRecord with all four scenes.
     """
     if override_outcomes is None:
         override_outcomes = {}
+
+    # W23: Host builder produces HOST_SIMULATED only
+    # Do not manufacture LIVE records
+    if authority is RehearsalAuthority.LIVE_REHEARSAL:
+        if not evidence_ref or not evidence_ref.strip():
+            raise ValueError("LIVE_REHEARSAL requires explicit evidence_ref")
+        if not operator_identity or not operator_identity.strip():
+            raise ValueError("LIVE_REHEARSAL requires explicit operator_identity")
+        if set(override_outcomes) != set(RehearsalScene):
+            raise ValueError(
+                "LIVE_REHEARSAL requires explicit outcomes for every scene"
+            )
 
     scene_evidence: list[SceneEvidence] = []
     for scene in RehearsalScene:
@@ -416,11 +478,12 @@ def build_demo_rehearsal_record(
             )
         )
 
+    # W23: Remove arbitrary 500ms bound - timing is recorded, not judged
     metrics = RehearsalMetrics(
         failure_recovery=True,
         operator_clarity=True,
-        timing_within_bounds=latency_ms <= 500,
         end_to_end_latency_ms=latency_ms,
+        timing_recorded=True,
     )
 
     return _build_rehearsal_record(
@@ -428,4 +491,6 @@ def build_demo_rehearsal_record(
         authority=authority,
         scene_evidence=scene_evidence,
         metrics=metrics,
+        evidence_ref=evidence_ref,
+        operator_identity=operator_identity,
     )

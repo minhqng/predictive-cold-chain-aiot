@@ -211,17 +211,13 @@ live_runbook = RunbookExecutionRecord(
     status=RunbookExecutionStatus.COMPLETED_OBSERVED,
     authority=HandoverAuthority.LIVE_INDEPENDENT,
     observer_member="D",
+    evidence_ref="evidence/D/W24/runbook-live.json",
 )
 
-result_live = assess_handover_completeness(
-    freeze_archive=freeze_result,
-    smoke_matrix=smoke_result,
-    runbook_execution=live_runbook,
-    coverage_areas=coverage,
-)
-
-assert result_live.live_independent_evidence is True
-assert result_live.handover_complete is True
+# A live runbook alone is insufficient.  The caller must also supply explicit
+# paths/checksums for every LIVE_INDEPENDENT archive component, evidence paths
+# and provenance for every live smoke case, and paths for all coverage areas.
+# Default builders remain HOST_VALIDATED fixtures and cannot complete handover.
 ```
 
 ## Tests

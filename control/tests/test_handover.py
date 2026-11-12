@@ -44,6 +44,40 @@ from coldguard_control.handover import (
 )
 
 
+VALID_SHA256 = "a" * 64
+
+
+def live_freeze_archive():
+    return build_default_freeze_archive(
+        authority=HandoverAuthority.LIVE_INDEPENDENT,
+        location_paths={
+            component: f"evidence/D/W24/freeze/{component.value}.json"
+            for component in FreezeArchiveComponent
+        },
+        checksums={component: VALID_SHA256 for component in FreezeArchiveComponent},
+    )
+
+
+def live_smoke_evidence():
+    return build_default_smoke_evidence(
+        authority=HandoverAuthority.LIVE_INDEPENDENT,
+        evidence_paths={
+            case: f"evidence/D/W24/smoke/{case.value}.json" for case in SmokeTestCase
+        },
+        provenance={case: "executed-by-member-C" for case in SmokeTestCase},
+    )
+
+
+def live_coverage_areas():
+    return build_default_coverage_areas(
+        authority=HandoverAuthority.LIVE_INDEPENDENT,
+        location_paths={
+            area: f"evidence/D/W24/coverage/{area.value}.md"
+            for area in HandoverCoverageArea
+        },
+    )
+
+
 class TestHandoverAuthority:
     """Test HandoverAuthority enum values."""
 
@@ -141,22 +175,20 @@ class TestFreezeArchiveEntry:
             component=FreezeArchiveComponent.CONTROLLER_A_CONFIG,
             version="v1.0.0-W24",
             authority=HandoverAuthority.HOST_VALIDATED,
-            checksum_sha256="abc123",
+            checksum_sha256=VALID_SHA256,
             location_path="evidence/D/W24/controller_a_config.json",
         )
         assert entry.component == FreezeArchiveComponent.CONTROLLER_A_CONFIG
         assert entry.version == "v1.0.0-W24"
         assert entry.authority == HandoverAuthority.HOST_VALIDATED
 
-    def test_entry_without_optional_fields(self):
-        """Entry without checksum/location is valid."""
-        entry = FreezeArchiveEntry(
-            component=FreezeArchiveComponent.POLICY_VERSION,
-            version="v1.0.0",
-            authority=HandoverAuthority.LIVE_INDEPENDENT,
-        )
-        assert entry.checksum_sha256 is None
-        assert entry.location_path is None
+    def test_entry_requires_checksum_and_location(self):
+        with pytest.raises(TypeError):
+            FreezeArchiveEntry(
+                component=FreezeArchiveComponent.POLICY_VERSION,
+                version="v1.0.0",
+                authority=HandoverAuthority.LIVE_INDEPENDENT,
+            )
 
     def test_invalid_component_type(self):
         """Component must be FreezeArchiveComponent."""
@@ -165,6 +197,8 @@ class TestFreezeArchiveEntry:
                 component="INVALID",
                 version="v1",
                 authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="fixture.json",
+                checksum_sha256=VALID_SHA256,
             )
 
     def test_empty_version(self):
@@ -174,6 +208,8 @@ class TestFreezeArchiveEntry:
                 component=FreezeArchiveComponent.POLICY_VERSION,
                 version="",
                 authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="fixture.json",
+                checksum_sha256=VALID_SHA256,
             )
 
     def test_invalid_authority_type(self):
@@ -183,6 +219,8 @@ class TestFreezeArchiveEntry:
                 component=FreezeArchiveComponent.POLICY_VERSION,
                 version="v1",
                 authority="HOST",
+                location_path="fixture.json",
+                checksum_sha256=VALID_SHA256,
             )
 
 
@@ -333,6 +371,8 @@ class TestAssessFreezeArchive:
                 component=FreezeArchiveComponent.CONTROLLER_A_CONFIG,
                 version="v1",
                 authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="host-fixture/controller-a.json",
+                checksum_sha256=VALID_SHA256,
             ),
         ]
         result = assess_freeze_archive(entries)
@@ -341,9 +381,7 @@ class TestAssessFreezeArchive:
 
     def test_live_independent_evidence(self):
         """Live independent evidence detected."""
-        entries = build_default_freeze_archive(
-            authority=HandoverAuthority.LIVE_INDEPENDENT
-        )
+        entries = live_freeze_archive()
         result = assess_freeze_archive(entries)
         assert result.has_live_independent is True
 
@@ -354,11 +392,15 @@ class TestAssessFreezeArchive:
                 component=FreezeArchiveComponent.POLICY_VERSION,
                 version="v1",
                 authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="host-fixture/policy-v1.json",
+                checksum_sha256=VALID_SHA256,
             ),
             FreezeArchiveEntry(
                 component=FreezeArchiveComponent.POLICY_VERSION,
                 version="v2",
                 authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="host-fixture/policy-v2.json",
+                checksum_sha256=VALID_SHA256,
             ),
         ]
         with pytest.raises(ValueError, match="duplicate component"):
@@ -419,9 +461,7 @@ class TestAssessSmokeMatrix:
 
     def test_live_independent_evidence(self):
         """Live independent evidence tracked."""
-        evidence = build_default_smoke_evidence(
-            authority=HandoverAuthority.LIVE_INDEPENDENT
-        )
+        evidence = live_smoke_evidence()
         result = assess_smoke_matrix(evidence)
         assert result.has_live_independent is True
 
@@ -491,8 +531,8 @@ class TestAssessHandoverCompleteness:
             coverage_areas=coverage,
         )
 
-        assert result.freeze_archive_complete is True
-        assert result.smoke_matrix_complete is True
+        assert result.freeze_archive_complete is False
+        assert result.smoke_matrix_complete is False
         assert result.runbook_execution_valid is True
         assert result.all_coverage_documented is True
         assert result.no_blocking_defects is True
@@ -502,21 +542,16 @@ class TestAssessHandoverCompleteness:
 
     def test_complete_handover_with_live_evidence(self):
         """Handover complete with live independent evidence."""
-        freeze = assess_freeze_archive(
-            build_default_freeze_archive(authority=HandoverAuthority.LIVE_INDEPENDENT)
-        )
-        smoke = assess_smoke_matrix(
-            build_default_smoke_evidence(authority=HandoverAuthority.LIVE_INDEPENDENT)
-        )
+        freeze = assess_freeze_archive(live_freeze_archive())
+        smoke = assess_smoke_matrix(live_smoke_evidence())
         runbook = RunbookExecutionRecord(
             executor_member="A",
             status=RunbookExecutionStatus.COMPLETED_OBSERVED,
             authority=HandoverAuthority.LIVE_INDEPENDENT,
             observer_member="D",
+            evidence_ref="evidence/D/W24/runbook-live.json",
         )
-        coverage = build_default_coverage_areas(
-            authority=HandoverAuthority.LIVE_INDEPENDENT
-        )
+        coverage = live_coverage_areas()
 
         result = assess_handover_completeness(
             freeze_archive=freeze,
@@ -564,6 +599,7 @@ class TestAssessHandoverCompleteness:
                 area=HandoverCoverageArea.SAFETY_HIERARCHY,
                 documented=True,
                 evidence_authority=HandoverAuthority.HOST_VALIDATED,
+                location_path="host-fixture/safety-hierarchy.md",
             ),
             CoverageAreaEntry(
                 area=HandoverCoverageArea.THREAT_MODEL,
@@ -624,6 +660,7 @@ class TestAssessHandoverCompleteness:
             status=RunbookExecutionStatus.COMPLETED_OBSERVED,
             authority=HandoverAuthority.LIVE_INDEPENDENT,
             observer_member="D",
+            evidence_ref="evidence/D/W24/runbook-live.json",
         )
         result = assess_handover_completeness(freeze, smoke, runbook, [])
         assert result.all_coverage_documented is False
@@ -664,6 +701,19 @@ class TestBuildDefaultHelpers:
         assert len(evidence) == 4
         assert all(e.destructive is False for e in evidence)
 
+    def test_default_helpers_cannot_manufacture_live_evidence(self):
+        with pytest.raises(ValueError, match="explicit location_paths"):
+            build_default_freeze_archive(
+                authority=HandoverAuthority.LIVE_INDEPENDENT
+            )
+        with pytest.raises(ValueError, match="explicit evidence_paths"):
+            build_default_smoke_evidence(
+                authority=HandoverAuthority.LIVE_INDEPENDENT
+            )
+        with pytest.raises(ValueError, match="explicit location_paths"):
+            build_default_coverage_areas(
+                authority=HandoverAuthority.LIVE_INDEPENDENT
+            )
 
 class TestDoc05DSection56Compliance:
     """Test compliance with Doc 05D section 56 requirements."""
@@ -726,9 +776,7 @@ class TestDoc05DSection56Compliance:
         host_entries = build_default_freeze_archive(
             authority=HandoverAuthority.HOST_VALIDATED
         )
-        live_entries = build_default_freeze_archive(
-            authority=HandoverAuthority.LIVE_INDEPENDENT
-        )
+        live_entries = live_freeze_archive()
 
         host_result = assess_freeze_archive(host_entries)
         live_result = assess_freeze_archive(live_entries)
@@ -765,6 +813,7 @@ class TestDoc05DSection56Compliance:
             authority=HandoverAuthority.LIVE_INDEPENDENT,
             observer_member="D",
             undocumented_assumptions=("Controller B threshold source undocumented",),
+            evidence_ref="evidence/D/W24/runbook-live.json",
         )
 
         freeze = assess_freeze_archive(build_default_freeze_archive())

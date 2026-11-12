@@ -257,6 +257,8 @@ class TestAssessSafetyCase:
             test_description="Test description",
             result=result,
             evidence_authority=authority,
+            evidence_ref=("evidence/D/W22/CTRL-01.json"
+                          if authority is EvidenceAuthority.LIVE_EVIDENCE else None),
         )
 
     def _make_risk(self, risk_id="RR-01"):
@@ -271,7 +273,7 @@ class TestAssessSafetyCase:
 
     def test_all_pass_entries_produce_green_core(self):
         summary = assess_safety_case(
-            matrix_entries=[self._make_entry()],
+            matrix_entries=[self._make_entry(authority=EvidenceAuthority.LIVE_EVIDENCE)],
             residual_risks=[self._make_risk()],
         )
         assert summary.core_matrix_all_pass is True
@@ -331,7 +333,7 @@ class TestAssessSafetyCase:
             )
         ]
         summary = assess_safety_case(
-            matrix_entries=[self._make_entry()],
+            matrix_entries=[self._make_entry(authority=EvidenceAuthority.LIVE_EVIDENCE)],
             residual_risks=[self._make_risk()],
             optional_scope_items=optional,
         )
@@ -450,11 +452,12 @@ class TestBuildDefaultSafetyCase:
         assert HazardCategory.PHYSICAL_VERIFICATION in categories
         assert HazardCategory.SECURITY_THREAT in categories
 
-    def test_default_case_all_pass(self):
+    def test_default_case_is_pending_and_fail_closed(self):
         summary = build_default_safety_case()
-        assert summary.core_matrix_all_pass is True
-        assert summary.core_evidence_green is True
-        assert summary.optional_scope_allowed is True
+        assert summary.core_matrix_all_pass is False
+        assert summary.core_evidence_green is False
+        assert summary.optional_scope_allowed is False
+        assert all(entry.result is MatrixResult.PENDING for entry in summary.matrix_entries)
 
     def test_result_override_applied(self):
         summary = build_default_safety_case(
@@ -604,7 +607,20 @@ class TestDoc05DSection54Compliance:
 
     def test_optional_scope_gated_on_core_green(self):
         """D-W22-04: Optional scope only when core matrix all pass and evidence green."""
-        all_pass = build_default_safety_case(include_optional=True)
+        hazard_ids = {
+            hazard["hazard_id"]
+            for hazards in DEFAULT_CORE_HAZARDS.values()
+            for hazard in hazards
+        }
+        all_pass = build_default_safety_case(
+            result_override={hazard_id: MatrixResult.PASS for hazard_id in hazard_ids},
+            evidence_authority=EvidenceAuthority.LIVE_EVIDENCE,
+            evidence_refs={
+                hazard_id: f"evidence/D/W22/{hazard_id}.json"
+                for hazard_id in hazard_ids
+            },
+            include_optional=True,
+        )
         assert all_pass.core_matrix_all_pass is True
         assert all_pass.core_evidence_green is True
         assert all_pass.optional_scope_allowed is True

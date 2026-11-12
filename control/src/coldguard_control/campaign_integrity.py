@@ -95,7 +95,12 @@ class FrozenControllerIdentity:
 
 @dataclass(frozen=True, slots=True)
 class RunEvidence:
-    """Audit evidence collected from a single campaign run."""
+    """Audit evidence collected from a single campaign run.
+
+    W19 (D-W19-01/D-W19-02): Expected controller action must be explicitly issued.
+    W19 (D-W19-03): Complete command -> ACK -> applied -> physical trace required.
+    Acceptance fails closed if any required stage is absent.
+    """
 
     run_id: str
     pair_id: str | None
@@ -108,6 +113,13 @@ class RunEvidence:
     duplicate_logical_command: bool
     verification_sensible: bool
     control_anomaly: bool
+    # W19: Expected action issued
+    expected_action_issued: bool
+    # W19: Complete trace stages (command -> ACK -> applied -> physical)
+    command_sent: bool
+    ack_received: bool
+    applied_state_observed: bool
+    physical_response_observed: bool
 
     def __post_init__(self) -> None:
         if not isinstance(self.run_id, str) or not self.run_id.strip():
@@ -134,6 +146,11 @@ class RunEvidence:
             "duplicate_logical_command",
             "verification_sensible",
             "control_anomaly",
+            "expected_action_issued",
+            "command_sent",
+            "ack_received",
+            "applied_state_observed",
+            "physical_response_observed",
         )
         for name in boolean_fields:
             val = getattr(self, name)
@@ -263,6 +280,21 @@ def assess_campaign_run(
     # 7. Control anomalies (D-W19-04)
     if evidence.control_anomaly:
         reasons.append("CONTROL_ANOMALY_DETECTED")
+
+    # W19 (D-W19-01/D-W19-02): Expected action must be issued
+    if not evidence.expected_action_issued:
+        reasons.append("EXPECTED_ACTION_NOT_ISSUED")
+
+    # W19 (D-W19-03): Complete trace required (command -> ACK -> applied -> physical)
+    # Fail closed if any stage is absent
+    if not evidence.command_sent:
+        reasons.append("COMMAND_NOT_SENT")
+    if not evidence.ack_received:
+        reasons.append("ACK_NOT_RECEIVED")
+    if not evidence.applied_state_observed:
+        reasons.append("APPLIED_STATE_NOT_OBSERVED")
+    if not evidence.physical_response_observed:
+        reasons.append("PHYSICAL_RESPONSE_NOT_OBSERVED")
 
     status = (
         CampaignAssessmentStatus.FLAGGED
