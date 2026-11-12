@@ -192,6 +192,21 @@ from .safety_case import (
     assess_safety_case,
     build_default_safety_case,
 )
+from .demo_rehearsal import (
+    REQUIRED_REHEARSAL_COUNT,
+    REQUIRED_SCENE_OUTCOMES,
+    REQUIRED_SCENE_SEQUENCE,
+    RehearsalAuthority,
+    RehearsalDecision,
+    RehearsalMetrics,
+    RehearsalRecord,
+    RehearsalScene,
+    SceneAssessment,
+    SceneEvidence,
+    SceneOutcome,
+    assess_rehearsal,
+    build_demo_rehearsal_record,
+)
 
 __all__ = [
     "SUPPORTED_SCHEMA_VERSION",
@@ -331,4 +346,17 @@ __all__ = [
     "Severity",
     "assess_safety_case",
     "build_default_safety_case",
+    "REQUIRED_SCENE_OUTCOMES",
+    "REQUIRED_SCENE_SEQUENCE",
+    "REQUIRED_REHEARSAL_COUNT",
+    "RehearsalAuthority",
+    "RehearsalDecision",
+    "RehearsalMetrics",
+    "RehearsalRecord",
+    "RehearsalScene",
+    "SceneAssessment",
+    "SceneEvidence",
+    "SceneOutcome",
+    "assess_rehearsal",
+    "build_demo_rehearsal_record",
 ]
