@@ -17,6 +17,7 @@ matrix:
 - reconnect remains `SAFE_LOCAL` until state is resynced, no stale command is
   pending and the configured stability interval has elapsed.
 
-The all-green software vector reports only `g4_ready=true` for that input. G4
-is not signed because live AI/broker/backend/DB outage injection, device local
-continuity and end-to-end resync evidence have not run.
+The all-green software vector reports `software_vector_green=true` but keeps
+`g4_ready=false`. G4 additionally requires a live evidence reference plus an
+explicit signer and timestamp. Those live outage, local-continuity and
+end-to-end resync records do not yet exist, so G4 remains unsigned.

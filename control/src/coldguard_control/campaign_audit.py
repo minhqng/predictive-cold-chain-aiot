@@ -13,6 +13,11 @@ as a pure decision layer:
   audit, and each controller used exactly one frozen policy version
   (D-W20-01: no policy drift, no change "for better results").
 
+W20 Requirements:
+- Live evidence authority/provenance required (host booleans never yield g5_ready)
+- Single policy+config+action identity per controller
+- Explicit G5 signoff required
+
 Audit semantics:
 - Only records marked ``valid`` are audited (invalid runs are excluded and
   listed; they never silently drop out of the policy-freeze check below).
@@ -38,6 +43,28 @@ from enum import Enum
 from typing import Sequence
 
 from .campaign_integrity import ControllerVariant
+
+
+class CampaignEvidenceAuthority(str, Enum):
+    """W20 evidence authority: host booleans never yield g5_ready."""
+
+    HOST_SIMULATED = "HOST_SIMULATED"
+    LIVE_EVIDENCE = "LIVE_EVIDENCE"
+
+
+@dataclass(frozen=True, slots=True)
+class G5Signoff:
+    """Explicit campaign-level D-W20-04 signoff."""
+
+    signer: str
+    signed_at: str
+    evidence_ref: str
+
+    def __post_init__(self) -> None:
+        for name in ("signer", "signed_at", "evidence_ref"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{name} must be a non-empty string")
 
 
 class AuditAnomalyCategory(str, Enum):
@@ -73,6 +100,10 @@ class AnomalyEntry:
 class CampaignAuditRecord:
     """Evidence for one campaign run, as audited by D-W20-02/D-W20-03.
 
+    W20 Requirements:
+    - Live evidence authority/provenance required
+    - Single policy+config+action identity per controller
+
     The five ``*_present`` fields are audited only for valid Controller B
     runs; ``reactive_trigger_correct`` only for valid Controller A runs.
     The anomaly fields (``rejected_command_reasons``, ``verification_failed``,
@@ -94,6 +125,14 @@ class CampaignAuditRecord:
     verification_failed: bool
     safe_local_event_count: int
     control_anomaly: bool
+    # W20: Evidence authority (host booleans never yield g5_ready)
+    evidence_authority: CampaignEvidenceAuthority
+    # W20: Pinned identity per controller
+    policy_id: str
+    config_id: str
+    action_id: str
+    evidence_ref: str | None = None
+    operator_identity: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.run_id, str) or not self.run_id.strip():
@@ -107,6 +146,15 @@ class CampaignAuditRecord:
             raise ValueError("policy_version must be a non-empty string")
         if not isinstance(self.valid, bool):
             raise TypeError(f"valid must be a strict boolean, got {type(self.valid).__name__}")
+        if not isinstance(self.evidence_authority, CampaignEvidenceAuthority):
+            raise TypeError(
+                "evidence_authority must be CampaignEvidenceAuthority, "
+                f"got {type(self.evidence_authority).__name__}"
+            )
+        for name in ("policy_id", "config_id", "action_id"):
+            value = getattr(self, name)
+            if not isinstance(value, str) or not value.strip():
+                raise ValueError(f"{name} must be a non-empty string (pinned identity)")
 
         for name in (
             "prediction_present",
@@ -141,6 +189,11 @@ class CampaignAuditRecord:
             or self.safe_local_event_count < 0
         ):
             raise ValueError("safe_local_event_count must be a non-negative integer")
+        if self.evidence_authority is CampaignEvidenceAuthority.LIVE_EVIDENCE:
+            if not self.evidence_ref or not self.evidence_ref.strip():
+                raise ValueError("LIVE_EVIDENCE requires evidence_ref")
+            if not self.operator_identity or not self.operator_identity.strip():
+                raise ValueError("LIVE_EVIDENCE requires operator_identity")
 
 
 @dataclass(frozen=True, slots=True)
@@ -158,7 +211,10 @@ class CampaignAuditDecision:
     silently_corrected: bool = False
 
 
-def audit_campaign(records: Sequence[CampaignAuditRecord]) -> CampaignAuditDecision:
+def audit_campaign(
+    records: Sequence[CampaignAuditRecord],
+    g5_signoff: G5Signoff | None = None,
+) -> CampaignAuditDecision:
     """Audit a final A/B campaign and compute G5 control readiness.
 
     Pure function: never edits input evidence, never emits a physical or
@@ -183,6 +239,8 @@ def audit_campaign(records: Sequence[CampaignAuditRecord]) -> CampaignAuditDecis
         if record.run_id in seen_run_ids:
             raise ValueError(f"duplicate run_id: {record.run_id}")
         seen_run_ids.add(record.run_id)
+    if g5_signoff is not None and not isinstance(g5_signoff, G5Signoff):
+        raise TypeError("g5_signoff must be G5Signoff or None")
 
     valid_runs = [r for r in records_list if r.valid]
     audit_findings: list[str] = []
@@ -247,7 +305,22 @@ def audit_campaign(records: Sequence[CampaignAuditRecord]) -> CampaignAuditDecis
         sorted({r.policy_version for r in records_list if r.controller is ControllerVariant.B})
     )
 
+    # W20: Check single identity per controller (policy_id, config_id, action_id)
+    a_identities = {(r.policy_id, r.config_id, r.action_id) for r in records_list if r.controller is ControllerVariant.A}
+    b_identities = {(r.policy_id, r.config_id, r.action_id) for r in records_list if r.controller is ControllerVariant.B}
+    single_identity_a = len(a_identities) == 1
+    single_identity_b = len(b_identities) == 1
+
+    # W20: Live evidence authority required (host booleans never yield g5_ready)
+    all_live = bool(valid_runs) and all(
+        r.evidence_authority is CampaignEvidenceAuthority.LIVE_EVIDENCE
+        and bool(r.evidence_ref)
+        and bool(r.operator_identity)
+        for r in valid_runs
+    )
+
     # D-W20-04: G5 control readiness.
+    # W20: Host booleans must never yield g5_ready - requires LIVE_EVIDENCE
     g5_blockers: list[str] = []
     if not any(r.controller is ControllerVariant.A and r.valid for r in records_list):
         g5_blockers.append("NO_VALID_CONTROLLER_A_RUN")
@@ -263,6 +336,17 @@ def audit_campaign(records: Sequence[CampaignAuditRecord]) -> CampaignAuditDecis
         g5_blockers.append(
             f"MULTIPLE_CONTROLLER_B_POLICY_VERSIONS: {', '.join(b_policy_versions)}"
         )
+    # W20: Single identity per controller
+    if not single_identity_a:
+        g5_blockers.append("MULTIPLE_CONTROLLER_A_IDENTITIES")
+    if not single_identity_b:
+        g5_blockers.append("MULTIPLE_CONTROLLER_B_IDENTITIES")
+    # W20: Live evidence required (host booleans never yield g5_ready)
+    if not all_live:
+        g5_blockers.append("LIVE_EVIDENCE_REQUIRED")
+    # W20: G5 signoff required
+    if g5_signoff is None:
+        g5_blockers.append("G5_SIGNOFF_REQUIRED")
 
     return CampaignAuditDecision(
         audited_run_ids=tuple(r.run_id for r in valid_runs),

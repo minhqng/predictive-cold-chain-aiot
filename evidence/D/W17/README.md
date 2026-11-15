@@ -12,6 +12,11 @@ stale/unavailable predictions, compares Controller A and hypothetical B timing
 only when both anchors exist, and has a fixed
 `physical_command_emitted=false` invariant.
 
+`ShadowExitReport` aggregates false policy transitions, stale-state issues,
+unresolved ambiguity and safety-block reasons while enforcing zero emitted
+commands. It is an evidence structure, not a claim that the pending live
+shadow campaign has exited successfully.
+
 The tests use synthetic policy values solely to verify logic. A live W17 exit
 report still needs a frozen B model/feature contract and policy candidate,
 running C experiment/telemetry stream, qualified A timing anchors, and an

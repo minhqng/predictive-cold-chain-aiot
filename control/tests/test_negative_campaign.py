@@ -14,7 +14,15 @@ from coldguard_control import (
 
 def complete_evidence(authority=EvidenceAuthority.HOST_SIMULATED):
     return [
-        NegativeCaseEvidence(case, authority, REQUIRED_OUTCOMES[case])
+        NegativeCaseEvidence(
+            case,
+            authority,
+            REQUIRED_OUTCOMES[case],
+            evidence_ref=(f"evidence/D/W21/{case.value}.json"
+                          if authority is EvidenceAuthority.LIVE_EVIDENCE else None),
+            operator_identity=("member-D"
+                               if authority is EvidenceAuthority.LIVE_EVIDENCE else None),
+        )
         for case in NegativeCampaignCase
     ]
 
@@ -39,6 +47,15 @@ def test_all_live_results_complete_the_evidence_gate():
     assert decision.all_cases_pass is True
     assert decision.live_evidence_complete is True
     assert decision.blockers == ()
+
+
+def test_live_authority_requires_provenance():
+    with pytest.raises(ValueError, match="evidence_ref"):
+        NegativeCaseEvidence(
+            NegativeCampaignCase.RECONNECT,
+            EvidenceAuthority.LIVE_EVIDENCE,
+            REQUIRED_OUTCOMES[NegativeCampaignCase.RECONNECT],
+        )
 
 
 def test_mixed_authority_does_not_claim_live_completion():

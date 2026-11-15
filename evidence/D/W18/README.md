@@ -19,7 +19,10 @@ Following `docs/05D-member-d-control-security-resilience.md` §50 (Week 18):
 
 ## Implementation
 - `enablement.py`:
-  - `EnablementPreconditions`: strictly validated boolean prerequisites without invented numeric physical thresholds.
+  - `EnablementPreconditions`: validates the prerequisites plus pinned
+    policy/config/action identities and explicit threshold/persistence values.
+  - `REVIEW_READY` requires provenance-backed live G4 evidence and signoff;
+    an all-green software vector alone remains blocked.
   - `EnablementStatus`: `DISABLED` (when enable is not requested), `BLOCKED` (when requested but any precondition fails), or `REVIEW_READY` (when requested and all prerequisites are verified).
   - Invariant: `physical_command_emitted=False` across all states. The gate is a pure logical evaluation and never directly emits a physical command.
 - Public exports in `coldguard_control/__init__.py`.

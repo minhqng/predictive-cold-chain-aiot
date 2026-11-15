@@ -9,9 +9,11 @@ reconnect. Each case has explicit required outcomes and an evidence authority.
 
 Host simulation may prove the decision contract and make `all_cases_pass`
 true. It cannot make `live_evidence_complete` true. That final state requires
-passing `LIVE_EVIDENCE` for every case. The module only assesses immutable
-caller-supplied facts; it does not publish, reconnect, authorize, enter a real
-mode, actuate hardware, or edit evidence.
+passing `LIVE_EVIDENCE` for every case, with a nonempty evidence reference and
+operator identity on every record. Merely changing the authority enum cannot
+create live completion. The module only assesses immutable caller-supplied
+facts; it does not publish, reconnect, authorize, enter a real mode, actuate
+hardware, or edit evidence.
 
 The final live negative/failure campaign remains pending. No physical effect,
 ACL event, backend denial, outage transition, or reconnect result is claimed

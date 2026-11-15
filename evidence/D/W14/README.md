@@ -21,5 +21,9 @@ evidence it returns `BLOCKED_MISSING_POLICY`, forbids probability wording and
 keeps `physical_enablement=false`. A fully populated future input can become
 only `ACTUATION_REVIEW_CANDIDATE`; the gate itself never enables hardware.
 
-Still required: B threshold/persistence/horizon freeze, model and feature
+That future input must include false-warning behavior and a persistence
+justification. Generic risk-score thresholds may use their documented score
+scale; only calibrated-probability thresholds are constrained to `[0, 1]`.
+
+Still required: B false-warning assessment, threshold/persistence/horizon freeze, model and feature
 freeze, real eligible runs, positive qualified AIW, G3 GREEN and G4 GREEN.

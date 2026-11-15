@@ -13,8 +13,10 @@ pure decision layer. For the final campaign it:
   SAFE_LOCAL events and control anomalies (D-W20-03);
 - computes **G5 control readiness** (D-W20-04) only when the final campaign
   has at least one valid A run and one valid B run, every valid run passes
-  the audit, and each controller used exactly one frozen policy version
-  (D-W20-01 — no policy drift, no change "for better results").
+  the audit, every valid run has provenance-backed live authority, each
+  controller uses one policy/config/action identity, and a campaign-level G5
+  signoff is supplied (D-W20-01 — no policy drift, no change "for better
+  results").
 
 The module never edits, mutates or silently corrects input evidence, makes no
 physical or transport claims, and never emits a physical command. The
@@ -23,5 +25,6 @@ not): any run under a different policy version is drift.
 
 **Wave 2 / G5 are pending.** No physical wave-2 A/B campaign has been run and
 no G5 signoff has been issued; this wave provides only the audited host
-tooling. G5 readiness is `False` (with explicit blockers) until valid
-Controller A and B campaign runs with the full evidence trail exist.
+tooling. Host booleans and per-run flags cannot sign G5. Readiness remains
+`False` until valid Controller A and B campaign runs have evidence references,
+operator identity, the full trace, and an explicit G5 signoff record.
