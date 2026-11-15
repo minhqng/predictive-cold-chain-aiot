@@ -44,3 +44,4 @@ frontend/.next/
 .DS_Store
 Thumbs.db
 .idea/
+/runtime/leader/
