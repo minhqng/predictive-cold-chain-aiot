@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ColdGuard | Demo</title>
+<style>
+  :root { color-scheme: dark; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: #0d1117; color: #e6edf3; font: 14px/1.45 "Segoe UI", system-ui, sans-serif; }
+  header { display: flex; align-items: baseline; gap: 16px; padding: 14px 20px; border-bottom: 1px solid #21262d; }
+  header h1 { font-size: 17px; margin: 0; font-weight: 600; }
+  button { background: #238636; border: 1px solid #2ea043; color: #fff; border-radius: 6px;
+    padding: 4px 14px; cursor: pointer; font: inherit; }
+  button:hover { background: #2ea043; }
+  :root {
+    --bg: #0d1117; --surface: #161b22; --line: #29323e;
+    --ink: #e6edf3; --muted: #a6b3c2; --accent: #91d9ff;
+    --ok: #7ee2ad; --warn: #ffd181;
+    --radius: 8px; --space: 16px; --gutter: clamp(16px, 4vw, 52px);
+  }
+  body { background: var(--bg); color: var(--ink); font-family: Geist, "Segoe UI", system-ui, sans-serif; }
+  .demo-shell { width: min(100%, 1360px); margin-inline: auto; padding-inline: var(--gutter); }
+  header.demo-shell { padding-block: 18px; align-items: center; border-color: var(--line); justify-content: space-between; flex-wrap: wrap; gap: 8px 16px; }
+  header h1 { font-size: 24px; font-weight: 700; letter-spacing: -.03em; }
+  main.demo-shell { display: flex; flex-direction: column; gap: var(--space); padding-block: 24px 32px; }
+  .live-label { font-size: 14px; color: var(--muted); }
+  [data-tone="ok"] { color: var(--ok); }
+  [data-tone="warn"] { color: var(--warn); }
+  .overview { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: var(--space); }
+  .metric, .history, .fold { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); min-width: 0; }
+  .metric { padding: var(--space); }
+  .metric h2 { margin: 0 0 8px; color: var(--muted); font-size: 14px; font-weight: 550; text-transform: none; letter-spacing: normal; }
+  .metric strong { display: block; font-size: clamp(23px, 3vw, 40px); line-height: 1.12; font-weight: 650; letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+  .metric p { color: var(--muted); margin: 8px 0 0; min-height: 1.5em; font-size: 13px; }
+  .forecast strong { color: var(--accent); }
+  .history { padding: var(--space); }
+  .history-head { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px var(--space); }
+  .history h2 { font-size: 18px; color: var(--ink); text-transform: none; letter-spacing: normal; margin: 0; }
+  .history canvas { display: block; width: 100%; margin-block: 8px; border-radius: var(--radius); background: var(--bg); }
+  .windows { display: flex; flex-wrap: wrap; gap: 4px; }
+  .windows button { min-height: 44px; padding-inline: 12px; background: var(--bg); border: 1px solid var(--line); color: var(--muted); }
+  .windows button[aria-pressed="true"] { border-color: var(--accent); color: var(--accent); }
+  .fold summary { padding: 12px var(--space); min-height: 44px; cursor: pointer; font-weight: 600; }
+  .fold summary:hover { color: var(--accent); }
+  :where(a, button, summary, input):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .details-list { padding: 0 var(--space) var(--space); border: 0; }
+  @media (max-width: 950px) { .overview { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+  @media (max-width: 600px) {
+    .overview { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+    .metric { padding: 12px; }
+    .history h2 { font-size: 16px; }
+  }
+  .readings { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--space); }
+  .reading-card { padding: var(--space); background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); min-width: 0; }
+  .reading-card h2 { margin: 0 0 8px; font-size: 15px; }
+  .reading-card dl { margin: 0; }
+  .reading-card dl > div { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 2px 12px; padding: 4px 0; }
+  .reading-card dt { color: var(--muted); }
+  .reading-card dd { margin: 0 0 0 auto; text-align: right; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .reading-card dt, .reading-card dd, .metric strong, .metric p, .details-list dd { min-width: 0; overflow-wrap: anywhere; }
+  @media (max-width: 720px) { .readings { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+  @media (max-width: 470px) { .readings { grid-template-columns: minmax(0, 1fr); } }
+  .setpoint-form { margin-top: 10px; display: flex; flex-direction: column; gap: 6px; }
+  .setpoint-form label { color: var(--muted); font-size: 12px; }
+  .setpoint-row { display: flex; gap: 6px; }
+  .setpoint-form input { background: var(--bg); border: 1px solid var(--line); color: var(--ink);
+    border-radius: 6px; padding: 4px 8px; font: inherit; min-width: 0; }
+  .setpoint-row input { flex: 1; }
+  .setpoint-form input[type="password"] { width: 100%; }
+  .setpoint-form button { padding: 4px 12px; }
+  .setpoint-form output { font-size: 12px; color: var(--muted); min-height: 1.4em; }
+</style>
+</head>
+<body>
+<header class="demo-shell">
+  <h1>ColdGuard</h1>
+  <span class="live-label" id="demoLive" role="status">Đang chờ dữ liệu</span>
+</header>
+<main class="demo-shell">
+  <div class="overview" aria-label="Trạng thái buồng lạnh">
+    <section class="metric"><h2>Nhiệt độ buồng</h2><strong id="demoTemp">—</strong></section>
+    <section class="metric forecast"><h2>Dự báo sau 60 giây</h2><strong id="demoForecast">—</strong><p id="demoForecastState">XGBoost thử nghiệm</p></section>
+    <section class="metric"><h2>Mục tiêu mô phỏng</h2><strong id="demoTarget">—</strong><p id="demoMode">—</p>
+      <form id="setpointForm" class="setpoint-form">
+        <label for="setpointInput">Đặt mục tiêu (°C)</label>
+        <div class="setpoint-row">
+          <input type="number" id="setpointInput" min="5" max="40" step="any" required>
+          <button type="submit" id="setpointBtn">Lưu</button>
+        </div>
+        <input type="password" id="operatorToken" placeholder="Mã vận hành" autocomplete="off">
+        <output id="setpointMsg" aria-live="polite"></output>
+      </form>
+    </section>
+    <section class="metric"><h2>Cửa</h2><strong id="demoDoor">—</strong><p id="demoDoorState"></p></section>
+    <section class="metric"><h2>TEC thực tế</h2><strong id="demoTec">—</strong><p id="demoDuty">—</p></section>
+  </div>
+  <div class="readings" aria-label="Số đo cảm biến">
+    <section class="reading-card">
+      <h2>Đầu dò nhiệt độ</h2>
+      <dl>
+        <div><dt>Tâm buồng (T1)</dt><dd id="probeCenter">—</dd></div>
+        <div><dt>Mặt nóng TEC (T2)</dt><dd id="probeHot">—</dd></div>
+        <div><dt>Đáy buồng (T3)</dt><dd id="probeBottom">—</dd></div>
+        <div><dt>Gần cửa (T4)</dt><dd id="probeDoor">—</dd></div>
+      </dl>
+    </section>
+    <section class="reading-card">
+      <h2>Nhiệt độ và độ ẩm · BME280</h2>
+      <dl>
+        <div><dt>Nhiệt độ không khí</dt><dd id="airTemp">—</dd></div>
+        <div><dt>Độ ẩm tương đối</dt><dd id="airHumidity">—</dd></div>
+      </dl>
+    </section>
+    <section class="reading-card">
+      <h2>Điện · PZEM</h2>
+      <dl>
+        <div><dt>Điện áp</dt><dd id="busVoltage">—</dd></div>
+        <div><dt>Dòng điện</dt><dd id="busCurrent">—</dd></div>
+        <div><dt>Công suất</dt><dd id="busPower">—</dd></div>
+        <div><dt>Điện năng tích lũy</dt><dd id="busEnergy">—</dd></div>
+      </dl>
+    </section>
+  </div>
+  <section class="history" aria-labelledby="historyTitle">
+    <div class="history-head">
+      <h2 id="historyTitle">Nhiệt độ buồng theo thời gian</h2>
+      <div class="windows" aria-label="Khoảng thời gian">
+        <button type="button" id="w15" aria-pressed="true">15 phút</button>
+        <button type="button" id="w30" aria-pressed="false">30 phút</button>
+        <button type="button" id="w60" aria-pressed="false">60 phút</button>
+      </div>
+    </div>
+    <canvas id="chart" height="252" role="img" aria-label="Biểu đồ nhiệt độ trung bình buồng lạnh"></canvas>
+  </section>
+  <details class="fold">
+    <summary>Thiết bị và nguồn dữ liệu</summary>
+    <div class="reading-card details-list">
+      <dl>
+        <div><dt>Thiết bị / phiên khởi động</dt><dd id="bootState">—</dd></div>
+        <div><dt>Digital Twin</dt><dd id="twinState">—</dd></div>
+        <div><dt>API dữ liệu lịch sử</dt><dd id="historyState">Đang chờ dữ liệu</dd></div>
+        <div><dt>Kiểm tra dự báo</dt><dd id="forecastCheck">Đang chờ dữ liệu</dd></div>
+        <div><dt>Kiểm chứng phần cứng</dt><dd>Chưa thực hiện trong đợt phát hành này</dd></div>
+      </dl>
+    </div>
+  </details>
+</main>
+<script>
+"use strict";
+const $ = (id) => document.getElementById(id);
+let live = null;
+let forecastSnapshot = null;
+let shadowSnapshot = null;
+let twinSnapshot = null;
+let receivedLiveAt = 0;
+function freshTime(value, maxAgeMs = 15000) {
+  const age = Date.now() - Date.parse(value);
+  return Number.isFinite(age) && age >= 0 && age <= maxAgeMs;
+}
+
+const demoNumber = (n, unit, digits = 1) => Number.isFinite(n)
+  ? new Intl.NumberFormat("vi-VN", { maximumFractionDigits: digits }).format(n) + " " + unit
+  : "—";
+
+function renderOverview() {
+  const t = live?.telemetry;
+  const isFresh = live?.fresh === true && live.source === "REAL_SERIAL"
+    && freshTime(t?.received_at) && Date.now() - receivedLiveAt < 15000;
+  const x = forecastSnapshot;
+  const shadow = shadowSnapshot;
+  const status = $("demoLive");
+  status.textContent = isFresh ? "●  Dữ liệu trực tiếp" : t ? "Dữ liệu đã cũ" : "Đang chờ dữ liệu";
+  status.dataset.tone = isFresh ? "ok" : "warn";
+  const probes = [t?.t1_c, t?.t3_c, t?.t4_c];
+  const chamber = isFresh && t.quality?.thermal === "VALID" && live.t4?.qualified && probes.every(Number.isFinite)
+    ? probes.reduce((sum, n) => sum + n, 0) / probes.length : null;
+  $("demoTemp").textContent = demoNumber(chamber, "°C");
+  const sensorReadings = [
+    ["probeCenter", t?.t1_c, "°C", t?.quality?.thermal === "VALID"],
+    ["probeHot", t?.t2_c, "°C", t?.quality?.thermal === "VALID"],
+    ["probeBottom", t?.t3_c, "°C", t?.quality?.thermal === "VALID"],
+    ["probeDoor", t?.t4_c, "°C", live?.t4?.qualified],
+    ["airTemp", t?.t_air_c, "°C", t?.quality?.environment === "VALID"],
+    ["airHumidity", t?.rh_pct, "%", t?.quality?.environment === "VALID"],
+    ["busVoltage", t?.voltage_v, "V", t?.quality?.electrical === "VALID"],
+    ["busCurrent", t?.current_a, "A", t?.quality?.electrical === "VALID"],
+    ["busPower", t?.power_w, "W", t?.quality?.electrical === "VALID"],
+    ["busEnergy", t?.energy_wh, "Wh", t?.quality?.electrical === "VALID"],
+  ];
+  for (const [id, value, unit, valid] of sensorReadings) {
+    $(id).textContent = demoNumber(isFresh && valid ? value : null, unit, 2);
+  }
+
+  const sameBoot = isFresh && x?.device_id === live.device && x.current_boot === t.boot_id;
+  const hasForecast = sameBoot && x.source === "REAL_SERIAL" && x.fresh === true
+    && x.horizon_s === 60 && x.forecast_status === "OK_EXPERIMENTAL_DEMO"
+    && Number.isFinite(x.predicted_temperature_c) && freshTime(x.anchor_utc);
+  $("demoForecast").textContent = demoNumber(hasForecast ? x.predicted_temperature_c : null, "°C");
+  $("demoForecastState").textContent = hasForecast ? "XGBoost thử nghiệm"
+    : sameBoot && x.forecast_status === "BLOCKED_FEATURES_INCOMPLETE" ? "Chờ đủ dữ liệu"
+    : "Chưa có dự báo";
+
+  const shadowCurrent = isFresh && shadow?.source === "SHADOW" && shadow.status === "CURRENT_POLICY"
+    && shadow.boot_id === t.boot_id && shadow.seq <= t.seq && freshTime(shadow.ts, 10000);
+  const twin = twinSnapshot;
+  const twinCurrent = isFresh && twin?.device_id === live.device
+    && twin.last_boot_id === t.boot_id && freshTime(twin.last_reported_at);
+  $("bootState").textContent = t ? live.device + " / " + t.boot_id : "Đang chờ thiết bị";
+  $("twinState").textContent = twinCurrent ? "Cùng phiên · mẫu " + twin.last_seq
+    : twin ? "Chờ đồng bộ với thiết bị" : "API chưa có dữ liệu";
+  $("forecastCheck").textContent = hasForecast
+    ? "Dữ liệu thật · " + x.feature_count + "/" + x.feature_total + " đầu vào · Thử nghiệm"
+    : x ? (x.forecast_status || x.score_status || "Chưa có dự báo") : "API chưa phản hồi";
+  $("demoTarget").textContent = demoNumber(shadowCurrent ? shadow.target_c : null, "°C");
+  const action = { ISSUE_OFF: "tắt", ISSUE_ON: "bật" }[shadow?.door_action];
+  $("demoMode").textContent = shadowCurrent
+    ? "Mô phỏng · " + (action ? "TEC đề xuất " + action : "Giữ nguyên TEC")
+    : "Chờ đề xuất mô phỏng";
+  const door = live?.door;
+  const doorValid = isFresh && door?.attested_this_boot && !door.device_mapping_conflict;
+  const doorText = doorValid ? { OPEN: "Mở", CLOSED: "Đóng" }[door.state] : null;
+  $("demoDoor").textContent = doorText || "—";
+  $("demoDoorState").textContent = doorText ? "" : isFresh ? "Mở rồi đóng cửa một lần" : "Chờ dữ liệu";
+  const cooling = isFresh ? t.actuation?.cooling : null;
+  const appliedDuty = isFresh ? t.actuation?.duty : null;
+  const validDuty = Number.isFinite(appliedDuty) && appliedDuty >= 0 && appliedDuty <= 1;
+  // A paused firmware session can report cooling=ON with applied duty=0.
+  const tecRunning = cooling === "ON" && validDuty && appliedDuty > 0;
+  const tecOff = validDuty && appliedDuty === 0 && (cooling === "ON" || cooling === "OFF");
+  const doorPaused = tecOff && doorText === "Mở"
+    && (cooling === "ON" || t.fault_reason === "DOOR_OPEN");
+  $("demoTec").textContent = tecRunning ? "Bật" : doorPaused ? "Tạm dừng" : tecOff ? "Tắt" : "—";
+  $("demoDuty").textContent = doorPaused ? "0% · Cửa mở"
+    : tecRunning || tecOff ? demoNumber(appliedDuty * 100, "%") : "Chờ phản hồi";
+  const fault = isFresh && typeof t.fault_code === "string" && /^0x[0-9a-f]+$/i.test(t.fault_code) && Number(t.fault_code) !== 0;
+  if (fault) $("demoDuty").textContent += " · Có lỗi";
+
+}
+
+function applyLive(d) {
+  live = d;
+  receivedLiveAt = Date.now();
+  renderOverview();
+  appendLivePoint(d);
+}
+async function pull(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(url + " -> " + r.status);
+  return r.json();
+}
+
+async function refreshXgb() {
+  try { forecastSnapshot = await pull("/api/leader/xgb"); }
+  catch { forecastSnapshot = null; }
+  renderOverview();
+}
+
+async function refreshShadow() {
+  try { shadowSnapshot = await pull("/api/leader/shadow"); }
+  catch { shadowSnapshot = null; }
+}
+
+async function refreshTwin() {
+  if (!live?.device) return;
+  try { twinSnapshot = await pull("/api/devices/" + encodeURIComponent(live.device) + "/state"); }
+  catch { twinSnapshot = null; }
+}
+
+// Setpoint is a desired-state policy input, not an actuation command: saving it
+// never calls ARM/GRANT/START. The operator token is entered at runtime and kept
+// in sessionStorage (never in source); the server fails closed without it.
+let setpointEdited = false;
+async function refreshSetpoint() {
+  try {
+    const s = await pull("/api/leader/setpoint");
+    const input = $("setpointInput");
+    if (Number.isFinite(s?.setpoint_c) && !input.matches(":focus") && !setpointEdited) {
+      input.value = s.setpoint_c;
+    }
+  } catch {}
+}
+async function submitSetpoint(event) {
+  event.preventDefault();
+  const msg = $("setpointMsg");
+  const value = $("setpointInput").valueAsNumber;
+  const token = $("operatorToken").value || sessionStorage.getItem("cgOperatorToken") || "";
+  if (!Number.isFinite(value)) { msg.textContent = "Nhập mục tiêu hợp lệ (5–40 °C)"; return; }
+  if (!token) { msg.textContent = "Nhập mã vận hành để lưu mục tiêu"; return; }
+  msg.textContent = "Đang lưu…";
+  try {
+    const r = await fetch("/api/leader/setpoint", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": "Bearer " + token },
+      body: JSON.stringify({ setpoint_c: value }),
+    });
+    const body = await r.json().catch(() => ({}));
+    if (r.ok) {
+      sessionStorage.setItem("cgOperatorToken", token);
+      setpointEdited = false;
+      msg.textContent = "Đã lưu " + demoNumber(body.setpoint_c, "°C") + " · không bật TEC";
+      refreshSetpoint();
+    } else if (r.status === 401) {
+      msg.textContent = "Mã vận hành không đúng — không lưu";
+    } else if (r.status === 503) {
+      msg.textContent = "Chưa cấp mã vận hành — không lưu";
+    } else {
+      msg.textContent = body.error || "Không lưu được mục tiêu";
+    }
+  } catch {
+    msg.textContent = "Không kết nối được máy chủ dashboard";
+  }
+}
+
+let updating = false;
+async function slowTick() {
+  if (updating) return;
+  updating = true;
+  try { await Promise.all([refreshXgb(), refreshShadow(), refreshTwin(), refreshSetpoint()]); renderOverview(); }
+  finally { updating = false; }
+}
+// ---- Thermal chart (real session data, no libraries) ----------------------
+let chartWindowMin = 15;
+let chartPoints = [];
+let seriesRequest = 0;
+
+
+function windowMs() { return chartWindowMin * 60000; }
+
+async function refreshSeries() {
+  const request = ++seriesRequest;
+  const minutes = chartWindowMin;
+  try {
+    const s = await pull("/api/leader/series?minutes=" + minutes);
+    if (request !== seriesRequest) return;
+    const history = (s.points || [])
+      .map(p => ({
+        t: Date.parse(p.t), mean: p.chamber_mean_c, boot: p.boot_id, seq: p.seq, source: p.source,
+      }))
+      .filter(p => Number.isFinite(p.t));
+    const seen = new Set(history.map(p => p.source + "/" + p.boot + "/" + p.seq));
+    chartPoints = [...history, ...chartPoints.filter(p => p.live
+      && !seen.has(p.source + "/" + p.boot + "/" + p.seq))].sort((a, b) => a.t - b.t);
+    const hasReplay = history.some(p => p.source === "REPLAY");
+    $("historyState").textContent = s.raw_status === "AVAILABLE"
+      ? (hasReplay ? "Có dữ liệu phát lại · nét đứt" : "Đã tải lịch sử thiết bị")
+      : "Chưa có dữ liệu thô cho đầu dò T4";
+    drawChart();
+  } catch {
+    if (request === seriesRequest) $("historyState").textContent = "API lịch sử chưa phản hồi";
+  }
+}
+
+function appendLivePoint(d) {
+  // Live SSE frame -> chart tail (same fields, one code path with history).
+  const t = d.telemetry || {};
+  if (!d.fresh || d.source !== "REAL_SERIAL" || !freshTime(t.received_at)
+      || chartPoints.some(p => p.source === d.source && p.boot === t.boot_id && p.seq === t.seq)) return;
+  const probes = [t.t1_c, t.t3_c, t.t4_c];
+  const mean = t.quality?.thermal === "VALID" && d.t4?.qualified && probes.every(Number.isFinite)
+    ? probes.reduce((sum, n) => sum + n, 0) / probes.length : null;
+  chartPoints.push({
+    t: Date.parse(t.received_at), mean, boot: t.boot_id, seq: t.seq, source: d.source, live: true,
+  });
+  chartPoints.sort((a, b) => a.t - b.t);
+  const cutoff = Date.now() - windowMs() - 60000;
+  while (chartPoints.length && chartPoints[0].t < cutoff) chartPoints.shift();
+  drawChart();
+}
+
+function drawChart() {
+  const canvas = $("chart");
+  const width = canvas.clientWidth || 800;
+  if (canvas.width !== width) canvas.width = width;
+  const ctx = canvas.getContext("2d");
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0, 0, W, H);
+  const now = Date.now();
+  const t0 = now - windowMs();
+  const pts = chartPoints.filter(p => p.t >= t0 && Number.isFinite(p.t));
+  if (pts.filter(p => Number.isFinite(p.mean)).length < 2) {
+    ctx.fillStyle = "#8b949e";
+    ctx.font = "12px monospace";
+    ctx.fillText("Đang chờ dữ liệu nhiệt độ", 12, 24);
+    return;
+  }
+  let lo = Infinity, hi = -Infinity;
+  for (const p of pts) {
+    for (const v of [p.mean]) {
+      if (v != null && Number.isFinite(v)) { lo = Math.min(lo, v); hi = Math.max(hi, v); }
+    }
+  }
+  if (!Number.isFinite(lo)) { lo = 0; hi = 1; }
+  const pad = Math.max(0.5, (hi - lo) * 0.15);
+  lo -= pad; hi += pad;
+  const X = (t) => (t - t0) / windowMs() * (W - 70) + 60;
+  const Y = (v) => H - 24 - (v - lo) / (hi - lo) * (H - 40);
+  // y grid
+  ctx.strokeStyle = "#21262d"; ctx.fillStyle = "#8b949e"; ctx.font = "10px monospace";
+  for (let i = 0; i <= 4; i++) {
+    const v = lo + (hi - lo) * i / 4;
+    const y = Y(v);
+    ctx.beginPath(); ctx.moveTo(60, y); ctx.lineTo(W - 6, y); ctx.stroke();
+    ctx.fillText(demoNumber(v, "°C"), 8, y + 3);
+  }
+  // series lines: null gaps break the line (never interpolated)
+  const line = (source, color, widthPx, dash) => {
+    ctx.strokeStyle = color; ctx.lineWidth = widthPx;
+    if (dash) ctx.setLineDash(dash);
+    ctx.beginPath();
+    let pen = false;
+    let previous = null;
+    for (const p of pts) {
+      if (p.source !== source || (previous && (p.boot !== previous.boot || p.t - previous.t > 5000))) pen = false;
+      previous = p;
+      if (p.source !== source) continue;
+      const v = p.mean;
+      if (v == null || !Number.isFinite(v)) { pen = false; continue; }
+      const x = X(p.t), y = Y(v);
+      if (!pen) { ctx.moveTo(x, y); pen = true; } else { ctx.lineTo(x, y); }
+    }
+    ctx.stroke();
+    ctx.setLineDash([]);
+  };
+  line("REAL_SERIAL", "#91d9ff", 2.5);
+  line("REPLAY", "#ffd181", 2, [6, 4]);
+  ctx.fillStyle = "#8b949e"; ctx.font = "10px monospace";
+  ctx.fillText(new Date(t0).toLocaleTimeString("vi-VN"), 62, H - 8);
+  ctx.fillText(new Date(now).toLocaleTimeString("vi-VN"), W - 92, H - 8);
+}
+
+for (const [id, min] of [["w15", 15], ["w30", 30], ["w60", 60]]) {
+  document.getElementById(id).addEventListener("click", (e) => {
+    e.preventDefault();
+    chartWindowMin = min;
+    for (const button of document.querySelectorAll(".windows button")) {
+      button.setAttribute("aria-pressed", String(button.id === id));
+    }
+    refreshSeries();
+  });
+}
+window.addEventListener("resize", drawChart);
+
+function connectSSE() {
+  if (!window.EventSource) return;
+  const stream = new EventSource("/api/leader/stream");
+  stream.onmessage = (event) => {
+    try { applyLive(JSON.parse(event.data)); } catch {}
+  };
+}connectSSE();
+// polling fallback mirrors the SSE data path at 1 s (in case SSE drops)
+setInterval(async () => {
+  renderOverview();
+  if (Date.now() - receivedLiveAt < 2000) return;
+  try { applyLive(await pull("/api/leader/live")); } catch {}
+}, 1000);
+refreshSeries();
+setInterval(slowTick, 4000);
+slowTick();
+$("setpointForm").addEventListener("submit", submitSetpoint);
+$("setpointInput").addEventListener("input", () => { setpointEdited = true; });
+refreshSetpoint();
+</script>
+</body>
+</html>
