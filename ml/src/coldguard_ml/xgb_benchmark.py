@@ -1633,6 +1633,101 @@ def _prepare_baseline_run(
     )
 
 
+def _validate_labeled_override(
+    fixture: BenchmarkFixture,
+    registry: FeatureRegistry,
+    config: BenchmarkConfig,
+    labeled: LabeledDataset,
+) -> None:
+    """Refuse an arm matrix that changes labels, groups or the run population."""
+    expected_identity = dict(config.label.spec().identity_fields)
+    if dict(labeled.label_identity) != expected_identity:
+        raise BenchmarkError(
+            "labeled override changes the configured label identity"
+        )
+    if labeled.horizon_s != config.label.horizon_s:
+        raise BenchmarkError("labeled override changes the configured horizon")
+    development_runs = {
+        trajectory.run_id
+        for trajectory in fixture.development_trajectories
+        if trajectory.run_id is not None
+    }
+    if set(labeled.run_ids) != development_runs:
+        raise BenchmarkError(
+            "labeled override does not cover exactly the development runs"
+        )
+    if not labeled.feature_ids:
+        raise BenchmarkError("labeled override has no feature columns")
+    if len(set(labeled.feature_ids)) != len(labeled.feature_ids):
+        raise BenchmarkError("labeled override feature allowlist contains duplicates")
+    banned = set(config.feature_policy.prohibited_fields) | set(
+        config.feature_policy.excluded_diagnostic_features
+    ) | {"T_tec_hot_side_c"}
+    leaked = sorted(banned & set(labeled.feature_ids))
+    if leaked:
+        raise BenchmarkError(
+            f"labeled override includes prohibited/diagnostic fields: {leaked}"
+        )
+    seen: set[str] = set()
+    for sample in labeled.samples:
+        if sample.run_id not in development_runs:
+            raise BenchmarkError(
+                f"labeled override contains non-development run {sample.run_id!r}"
+            )
+        partition = fixture.split.partition_of(sample.run_id)
+        if partition not in DEVELOPMENT_PARTITIONS:
+            raise BenchmarkError(
+                f"labeled override run {sample.run_id!r} is outside development"
+            )
+        if sample.partition != partition:
+            raise BenchmarkError(
+                f"labeled override run {sample.run_id!r} carries partition "
+                f"{sample.partition!r}, not {partition!r}"
+            )
+        if fixture.split.group_of.get(sample.run_id) != sample.group_id:
+            raise BenchmarkError(
+                f"labeled override run {sample.run_id!r} carries a foreign group"
+            )
+        if sample.sample_identity in seen:
+            raise BenchmarkError(
+                f"duplicate sample identity {sample.sample_identity!r} in override"
+            )
+        seen.add(sample.sample_identity)
+        if len(sample.features) != len(labeled.feature_ids):
+            raise BenchmarkError("override sample width differs from its allowlist")
+        if sample.y not in (0, 1):
+            raise BenchmarkError("override labels must be binary")
+    canonical = build_labeled_dataset(fixture, registry, config)
+    canonical_rows = {
+        (
+            sample.run_id,
+            sample.sample_identity,
+            sample.anchor_t_s,
+            sample.y,
+            sample.series_id,
+        )
+        for sample in canonical.samples
+    }
+    override_rows = {
+        (
+            sample.run_id,
+            sample.sample_identity,
+            sample.anchor_t_s,
+            sample.y,
+            sample.series_id,
+        )
+        for sample in labeled.samples
+    }
+    if canonical_rows != override_rows:
+        raise BenchmarkError(
+            "labeled override changes canonical labels, anchors or sample identity"
+        )
+    if dict(canonical.excluded_by_run) != dict(labeled.excluded_by_run):
+        raise BenchmarkError(
+            "labeled override changes the canonical censored/untrusted exclusions"
+        )
+
+
 def run_grouped_benchmark(
     fixture: BenchmarkFixture,
     registry: FeatureRegistry,
@@ -1640,6 +1735,7 @@ def run_grouped_benchmark(
     *,
     out_dir: Path | None = None,
     n_splits_override: int | None = None,
+    labeled_override: LabeledDataset | None = None,
 ) -> tuple[BenchmarkResult, dict[str, XGBClassifier]]:
     if fixture.provenance not in (SOFTWARE_ONLY, SYNTHETIC_PROVENANCE):
         raise BenchmarkError("only synthetic fixtures may be benchmarked in W11")
@@ -1658,7 +1754,13 @@ def run_grouped_benchmark(
                 f"fixture run {trajectory.run_id!r} is not partitioned; refusing "
                 "to omit it silently"
             )
-    labeled = build_labeled_dataset(fixture, registry, config)
+    labeled = (
+        build_labeled_dataset(fixture, registry, config)
+        if labeled_override is None
+        else labeled_override
+    )
+    if labeled_override is not None:
+        _validate_labeled_override(fixture, registry, config, labeled)
     runs_with_evaluable_labels = {sample.run_id for sample in labeled.samples}
     non_estimable_runs = [
         (run_id, labeled.excluded_by_run.get(run_id, {}))

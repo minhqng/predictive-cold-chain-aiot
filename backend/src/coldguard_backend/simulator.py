@@ -32,6 +32,7 @@ import os
 import threading
 import time
 from datetime import datetime, timedelta, timezone
+from uuid import NAMESPACE_URL, uuid5
 
 import paho.mqtt.client as mqtt
 
@@ -146,7 +147,9 @@ def build_event(
     captured = base_time + timedelta(seconds=seq)
     return {
         "schema_version": 1,
-        "event_id": f"{run_id}-evt-{seq:06d}",
+        "event_id": str(uuid5(
+            NAMESPACE_URL, json.dumps(["coldguard/event", device_id, run_id, boot_id, seq, event_type]),
+        )),
         "event_type": event_type,
         "device_id": device_id,
         "boot_id": boot_id,

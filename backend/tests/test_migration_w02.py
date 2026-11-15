@@ -20,8 +20,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W07 added revision 0009 (experiment registry and lifecycle history).
-EXPECTED_HEAD = "0009"
+# Campaign namespace, closure and immutable freeze evidence are reviewed through 0014.
+EXPECTED_HEAD = "0014"
 
 # C-W03 evolution: head moved 0002 -> 0003; the assertions above now
 # cover the normalized telemetry table as well. The W02->W03 upgrade
@@ -159,6 +159,10 @@ def _assert_expected_schema() -> None:
         "reconciliation_boundary", "reconciliation_legacy_audit",
         "commands", "command_attempts", "command_acks", "command_transitions",
         "experiments", "experiment_transitions",
+        "predictions", "prediction_inputs", "shadow_decisions", "physical_assessments",
+        "policy_approvals",
+        "campaigns", "campaign_runs", "campaign_run_closures",
+        "campaign_freezes",
     }, tables
     assert columns == EXPECTED_COLUMNS, columns - EXPECTED_COLUMNS or EXPECTED_COLUMNS - columns
     assert EXPECTED_INDEXES <= indexes, EXPECTED_INDEXES - indexes

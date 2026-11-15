@@ -1,0 +1,340 @@
+{
+  "analysis_code_sha256": "176834d52ef66f1f5851405d31ac82d5f2a9f5fbc952056c9e470003eeb5a14b",
+  "command_transport_capability": false,
+  "evidence_level": "OFFLINE_REPLAY_VERIFIED",
+  "external_dependency_semantics": "INTERFACE_AUDIT_SNAPSHOT_AT_IMPLEMENTATION",
+  "external_dependency_states": {
+    "gate_g4": "NOT_READY",
+    "member_a_w17_shadow_audit": "DATA_INSUFFICIENT_ZERO_SYNCHRONIZED_RUNS",
+    "member_c_pr_73_shadow_trace": "OPEN_UNMERGED_NOT_INTEGRATION_ACCEPTANCE",
+    "member_d_shadow_policy": "NOT_FROZEN",
+    "model_release_candidate": "NOT_ISSUED",
+    "runtime_freshness_policy": "PENDING_C_D",
+    "team_lead_cross_member_acceptance": "NOT_ESTABLISHED"
+  },
+  "feature_registry": {
+    "feature_count": 31,
+    "feature_version": "CG-FEAT-1.0",
+    "model_feature_count": 28,
+    "registry_sha256": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9"
+  },
+  "fixture": {
+    "dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+    "fixture_sha256": "68b981e642bc0309a8c7aa7cb8499b503da97a2b1946ce509c7eea81bc4d78d0",
+    "fixture_version": "coldguard-w11-synthetic-grouped-v1",
+    "locked_test_used": false,
+    "run_count": 16,
+    "run_ids": [
+      "CG-W11-S1-003",
+      "CG-W11-S1-004",
+      "CG-W11-S1-005",
+      "CG-W11-S1-006",
+      "CG-W11-S1-007",
+      "CG-W11-S1-008",
+      "CG-W11-S1-009",
+      "CG-W11-S1-010",
+      "CG-W11-S2-003",
+      "CG-W11-S2-004",
+      "CG-W11-S2-005",
+      "CG-W11-S2-006",
+      "CG-W11-S2-007",
+      "CG-W11-S2-008",
+      "CG-W11-S2-009",
+      "CG-W11-S2-010"
+    ],
+    "sample_count": 2896,
+    "source_type": "SYNTHETIC_FIXTURE"
+  },
+  "freshness": {
+    "channel_timestamp_basis": "FRAME_EVENT_TIME_WHEN_UNATTESTED",
+    "failure_reason": null,
+    "parameter_class": "SYNTHETIC_ILLUSTRATIVE_TEST_PARAMETER",
+    "parameters": {
+      "max_anchor_input_age_s": 2.0,
+      "max_door_age_s": 5.0,
+      "max_electrical_age_s": 5.0
+    },
+    "policy_status": "RUNTIME_FRESHNESS_POLICY_PENDING_C_D",
+    "probes": [
+      {
+        "detail": {
+          "disposition": "READY_FOR_SOFTWARE_REPLAY",
+          "reasons": []
+        },
+        "outcome": "READY",
+        "probe": "fresh_anchor"
+      },
+      {
+        "detail": {
+          "door_open_reason": "PRESENT",
+          "rolling_mean_reason": "MISSING_INSUFFICIENT_HISTORY"
+        },
+        "outcome": "OBSERVED",
+        "probe": "fresh_anchor_missingness"
+      },
+      {
+        "detail": {
+          "earlier_prediction_unchanged": true,
+          "included_only_at_later_anchor": true,
+          "late_identity": "cg-synthetic-001:CG-W11-S2-003-BOOT-1:30",
+          "late_observations": [
+            "cg-synthetic-001:CG-W11-S2-003-BOOT-1:30"
+          ]
+        },
+        "outcome": "PASS",
+        "probe": "late_packet_excluded"
+      },
+      {
+        "detail": {
+          "future_identity": "cg-synthetic-001:CG-W11-S2-003-BOOT-1:999"
+        },
+        "outcome": "PASS",
+        "probe": "future_event_excluded"
+      },
+      {
+        "detail": {
+          "cooling_power_is_zero": false,
+          "cooling_power_reason": "MISSING_ELECTRICAL_UNQUALIFIED",
+          "disposition": "REFUSED_STALE_INPUT"
+        },
+        "outcome": "REFUSED_STALE",
+        "probe": "stale_pzem"
+      },
+      {
+        "detail": {
+          "disposition": "REFUSED_UNTRUSTED_INPUT",
+          "reasons": [
+            "THERMAL_QUALITY_DEGRADED",
+            "ELECTRICAL_QUALITY_INVALID",
+            "OVERALL_QUALITY_INVALID"
+          ]
+        },
+        "outcome": "REFUSED_UNTRUSTED",
+        "probe": "degraded_channels"
+      },
+      {
+        "detail": {
+          "disposition": "READY_FOR_SOFTWARE_REPLAY",
+          "energy_counter_reason": "MISSING_COUNTER_RESET"
+        },
+        "outcome": "OBSERVED",
+        "probe": "counter_reset"
+      },
+      {
+        "detail": {
+          "disposition": "REFUSED_UNTRUSTED_INPUT",
+          "reasons": [
+            "DOOR_POLARITY_UNATTESTED"
+          ]
+        },
+        "outcome": "REFUSED_UNTRUSTED",
+        "probe": "door_polarity_unattested"
+      },
+      {
+        "detail": {
+          "disposition": "REFUSED_UNTRUSTED_INPUT",
+          "door_open_reason": "MISSING_UNKNOWN_DOOR",
+          "duration_reason": "MISSING_UNKNOWN_DOOR",
+          "reasons": [
+            "DOOR_CONTEXT_UNKNOWN"
+          ],
+          "time_since_open_reason": "PRESENT"
+        },
+        "outcome": "REFUSED_UNTRUSTED",
+        "probe": "unknown_door"
+      }
+    ],
+    "verdict": "SOFTWARE_VERIFIED"
+  },
+  "layer_version": "coldguard-w17-shadow-parity-v1",
+  "limitations": [
+    "synthetic development fixture only",
+    "offline software replay is not live shadow acceptance",
+    "primary horizon, operating threshold, warning persistence and runtime freshness policy remain unfrozen",
+    "model is NON_DEPLOYABLE_CANDIDATE and was not registered"
+  ],
+  "model_artifact": {
+    "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+    "calibration_status": "RISK_SCORE_ONLY",
+    "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+    "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+    "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+    "model_library_version": "3.4.1",
+    "operating_threshold": 0.5,
+    "operating_threshold_status": "ILLUSTRATIVE_NOT_FROZEN",
+    "ordered_feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "time_since_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+    "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+    "score_semantics": "risk_score",
+    "warning_persistence_status": "NOT_FROZEN"
+  },
+  "model_registered": false,
+  "network_capability": false,
+  "parity": {
+    "anchor_count": 784,
+    "compared_anchor_count": 783,
+    "comparison_outcomes": {
+      "excluded_degraded_windows": 0,
+      "feature_failed": 0,
+      "feature_passed": 783,
+      "prediction_failed": 0,
+      "prediction_passed": 783,
+      "refused_by_reason": {
+        "REFUSED_STALE_INPUT": 1
+      }
+    },
+    "defined_feature_values": 19428,
+    "feature_comparison_count": 783,
+    "feature_tolerance": 1e-09,
+    "first_mismatch": null,
+    "late_delivery": {
+      "default_transport_delay_s": 0.25,
+      "event_time_s": 30.0,
+      "injected": true,
+      "purpose": "exercise the late-delivery availability cut in the delivered run",
+      "run_id": "CG-W11-S2-003",
+      "scheduled_arrival_s": 60.0,
+      "telemetry_id": "cg-synthetic-001:CG-W11-S2-003-BOOT-1:30"
+    },
+    "late_observation_count": 1,
+    "max_feature_deviation": 0.0,
+    "max_score_deviation": 0.0,
+    "missing_feature_values": 2496,
+    "mutation_proof": {
+      "detected": true,
+      "feature_id": "T_chamber_max_c",
+      "feature_parity_detected": true,
+      "mismatch": "T_chamber_max_c: |5.351299853538284 - 5.851299853538284| = 0.5 > 1e-09",
+      "mutated_score": 0.0129065727815032,
+      "mutation_delta": 0.5,
+      "online_score": 0.0129065727815032,
+      "performed": true,
+      "score_unchanged": true
+    },
+    "offline_replay_verdict": "OFFLINE_REPLAY_VERIFIED",
+    "prediction_comparison_count": 783,
+    "replay_input_count": 2896,
+    "replay_inputs_sha256": "e18ef867ded9684d0e5b3b9db35a3c5e7ed64e8223f93c9c77db17ffa3eac4f2",
+    "replay_run_count": 16,
+    "score_tolerance": 1e-12,
+    "unconsumed_record_count": 0
+  },
+  "physical_control_capability": false,
+  "physical_controller_b": "NOT_ENABLED",
+  "readiness": {
+    "evidence_class": "OFFLINE_REPLAY_VERIFIED",
+    "level_1_offline_feature_parity": "OFFLINE_FEATURE_PARITY_VERIFIED",
+    "level_2_offline_prediction_parity": "OFFLINE_PREDICTION_PARITY_VERIFIED",
+    "level_3_shadow_trace_software": "SHADOW_TRACE_SOFTWARE_VERIFIED",
+    "level_4_real_online_shadow": "LIVE_SHADOW_NOT_ESTABLISHED",
+    "physical_shadow": "PHYSICAL_SHADOW_BLOCKED",
+    "reasons": [
+      "NO_PHYSICAL_DATASET",
+      "NO_FROZEN_PRIMARY_HORIZON",
+      "MODEL_RC_NOT_ISSUED",
+      "G4_NOT_READY",
+      "RUNTIME_FRESHNESS_POLICY_PENDING_C_D",
+      "EXTERNAL_DEPENDENCY_gate_g4_NOT_READY",
+      "EXTERNAL_DEPENDENCY_member_a_w17_shadow_audit_DATA_INSUFFICIENT_ZERO_SYNCHRONIZED_RUNS",
+      "EXTERNAL_DEPENDENCY_member_c_pr_73_shadow_trace_OPEN_UNMERGED_NOT_INTEGRATION_ACCEPTANCE",
+      "EXTERNAL_DEPENDENCY_member_d_shadow_policy_NOT_FROZEN",
+      "EXTERNAL_DEPENDENCY_model_release_candidate_NOT_ISSUED",
+      "EXTERNAL_DEPENDENCY_runtime_freshness_policy_PENDING_C_D",
+      "EXTERNAL_DEPENDENCY_team_lead_cross_member_acceptance_NOT_ESTABLISHED"
+    ]
+  },
+  "reports": {
+    "feature-freshness-W17.md": "4dd4566a906997a0ddc2ca888e0a081c0fa2b077f3a3be83390de074c6c6f867",
+    "online-offline-parity-W17.md": "0771bebcaf09c5eb009d3152c3ad3a62829f018f0da17d3ba0d780059fe1910d",
+    "shadow-readiness-W17.md": "80abc84ca37bee107bf12dd2e334d91a61a5a77268df48179394f4f093050749"
+  },
+  "revision_semantics": "W16_STACK_HEAD_BASE_NOT_W17_DELIVERY_COMMIT",
+  "schema": "coldguard-w17-shadow-readiness-v1",
+  "scientific_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "shadow_trace": {
+    "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+    "file_sha256": "b94822dea729cbf8953fe95b254a80689daa1c6c5bdd4a7fa442be0964eeb023",
+    "internal_sha256": "fc9dd80efa418aea651c80342dd0fc3d9b9d353af3b7e794ceee6c61e97a03e4",
+    "path": "shadow-trace-W17.json",
+    "record_count": 783
+  },
+  "source_revision": "c2b62234466b09585cf4e868c67a4d49ae06597f",
+  "verdicts": {
+    "B_W17_01_FEATURE_PARITY": "OFFLINE_FEATURE_PARITY_VERIFIED",
+    "B_W17_01_PREDICTION_PARITY": "OFFLINE_PREDICTION_PARITY_VERIFIED",
+    "B_W17_02_SHADOW_TRACE": "SHADOW_TRACE_SOFTWARE_VERIFIED",
+    "B_W17_03_FEATURE_FRESHNESS": "SOFTWARE_VERIFIED",
+    "B_W17_04_REAL_SHADOW_READINESS": "LIVE_SHADOW_NOT_ESTABLISHED",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "G4": "NOT_READY",
+    "LIVE_SHADOW": "LIVE_SHADOW_NOT_ESTABLISHED",
+    "PHYSICAL_SHADOW": "PHYSICAL_SHADOW_BLOCKED",
+    "SOFTWARE": "COMPLETE_PERMITTED_W17_SCOPE",
+    "W16_HOLDOUT": "NOT_OPENED"
+  },
+  "w16_readiness": {
+    "development_test_overlap": [],
+    "evaluation_status": "NOT_RUN",
+    "g4_ready": false,
+    "holdout_access": "NOT_AUTHORIZED",
+    "holdout_opened": false,
+    "locked_evaluation": "NOT_EXECUTED_PREREQUISITES_UNMET",
+    "manifest_kind": "PRE_REGISTRATION_ONLY",
+    "manifest_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+    "model_release_candidate": "NOT_ISSUED",
+    "readiness_decision": "REFUSED_PREREQUISITES_UNMET",
+    "schema": "coldguard-w16-preregistration-v1",
+    "test_runs": [
+      "CG-W11-S1-001",
+      "CG-W11-S1-002",
+      "CG-W11-S2-001",
+      "CG-W11-S2-002"
+    ]
+  },
+  "w16_test_count_reconciliation": {
+    "actual_passed": 1094,
+    "actual_skipped": 3,
+    "conclusion": "STALE_PR_BODY_NOT_A_DELIVERED_REGRESSION",
+    "explanation": "No test file changed between daf85e0 and c2b6223; the delivered W16 tree contains all 105 added tests. The PR body count is six tests below the reproducible collection, consistent with a description written before the final six W16 tests were added.",
+    "pr_105_body_collected": 1091,
+    "pr_105_body_passed": 1088,
+    "pr_105_body_skipped": 3,
+    "recommendation": "Correct the PR #105 body factually to 1094 passed, 3 skipped; no W16 history rewrite and no W16 code change are required.",
+    "skip_reason": "pinned A 20261107 export absent; set COLDGUARD_W13_A_DATASET_DIR to the read-only git-archive export to run the CLI replay proof",
+    "source": "PREFLIGHT_FULL_SUITE_RUN_ON_W16_HEAD",
+    "w15_base_collected": 992,
+    "w16_added_test_functions": 105,
+    "w16_collected": 1097,
+    "w16_head": "c2b62234466b09585cf4e868c67a4d49ae06597f"
+  }
+}

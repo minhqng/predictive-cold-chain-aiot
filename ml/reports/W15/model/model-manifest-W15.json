@@ -1,0 +1,393 @@
+{
+  "artifact_id": "coldguard-w15-synthetic-xgb-candidate-v1",
+  "calibration_status": "RISK_SCORE_ONLY",
+  "canonical_required_metadata_fields": [
+    "model_artifact_sha256",
+    "model_format",
+    "model_library_version",
+    "training_dataset_id",
+    "data_evidence_class",
+    "feature_schema_hash",
+    "ordered_feature_ids",
+    "target_spec_version",
+    "horizon_status",
+    "model_config_hash",
+    "calibration_status",
+    "operating_threshold_status",
+    "warning_persistence_status",
+    "training_code_revision",
+    "validation_evidence",
+    "release_eligibility"
+  ],
+  "data_evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+  "feature_schema_hash": "1d36d338f35dd448b8c680075fdbe26785384f418a4ef36769b234c7101c83c9",
+  "feature_version": "CG-FEAT-1.0",
+  "files": {
+    "json": {
+      "bytes": 32683,
+      "file": "model.json",
+      "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd"
+    },
+    "ubj": {
+      "bytes": 46433,
+      "file": "model.ubj",
+      "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+    }
+  },
+  "guarded_interface_required": true,
+  "horizon_s": 60.0,
+  "horizon_status": "ENGINEERING_REFERENCE_HORIZON_NOT_PRIMARY_FROZEN",
+  "intended_use": [
+    "offline software-control experiments on the W11 synthetic fixture",
+    "risk_score semantics only",
+    "future shadow-inference candidate only after all release gates"
+  ],
+  "limitations": [
+    "trained on a deterministic synthetic fixture; not physical evidence",
+    "eight development groups only; 4 correlated grouped folds are not 4 physical experiments",
+    "primary horizon and critical target are not frozen",
+    "no real calibration population; output is a risk score only",
+    "electrical block is run-invariant in the synthetic fixture",
+    "operating threshold and warning persistence are not frozen"
+  ],
+  "model_artifact_sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+  "model_bytes_deterministic_in_process": true,
+  "model_config_calibration_status": "NOT_PERFORMED",
+  "model_config_hash": "4369f39f44a1d3b4c27ec6dee8c47a7dc1fdfd3c5416a7660dd6481ee1f71a84",
+  "model_config_version": "coldguard-xgb-v1-development-v1",
+  "model_family": "XGBoost",
+  "model_format": "ubj",
+  "model_inspection": {
+    "diagnostic_only": true,
+    "dominant_feature": {
+      "feature_id": "time_since_open",
+      "feature_index": 15,
+      "split_count": 60,
+      "total_gain": 21460.123186
+    },
+    "dominant_feature_split_thresholds": [
+      60.0
+    ],
+    "feature_count": 28,
+    "features": [
+      {
+        "feature_id": "T_chamber_max_c",
+        "feature_index": 0,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_chamber_min_c",
+        "feature_index": 1,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_chamber_mean_c",
+        "feature_index": 2,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_chamber_spread_c",
+        "feature_index": 3,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_center_c",
+        "feature_index": 4,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_bottom_c",
+        "feature_index": 5,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "T_near_door_c",
+        "feature_index": 6,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "rolling_mean_temperature_60s",
+        "feature_index": 7,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "rolling_std_temperature_60s",
+        "feature_index": 8,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "rolling_min_temperature_60s",
+        "feature_index": 9,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "rolling_max_temperature_60s",
+        "feature_index": 10,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "past_only_slope_c_per_min_60s",
+        "feature_index": 11,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "past_only_temperature_delta_60s",
+        "feature_index": 12,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "past_only_spatial_spread_60s",
+        "feature_index": 13,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "door_open",
+        "feature_index": 14,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "time_since_open",
+        "feature_index": 15,
+        "split_count": 60,
+        "total_gain": 21460.123186
+      },
+      {
+        "feature_id": "duration_so_far",
+        "feature_index": 16,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "count_past_60s",
+        "feature_index": 17,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "applied_cooling",
+        "feature_index": 18,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "applied_duty",
+        "feature_index": 19,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "time_since_confirmed_applied_change",
+        "feature_index": 20,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "cooling_voltage_v",
+        "feature_index": 21,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "cooling_current_a",
+        "feature_index": 22,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "cooling_power_w",
+        "feature_index": 23,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "energy_counter_wh",
+        "feature_index": 24,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "past_integrated_cooling_energy_wh",
+        "feature_index": 25,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "ambient_temperature_c",
+        "feature_index": 26,
+        "split_count": 0,
+        "total_gain": 0.0
+      },
+      {
+        "feature_id": "relative_humidity_pct",
+        "feature_index": 27,
+        "split_count": 0,
+        "total_gain": 0.0
+      }
+    ],
+    "interpretation_note": "split usage is a native model diagnostic, not causal feature importance and not evidence of physical predictive value",
+    "total_split_count": 60,
+    "tree_count": 60,
+    "unused_feature_count": 27,
+    "unused_feature_ids": [
+      "T_chamber_max_c",
+      "T_chamber_min_c",
+      "T_chamber_mean_c",
+      "T_chamber_spread_c",
+      "T_center_c",
+      "T_bottom_c",
+      "T_near_door_c",
+      "rolling_mean_temperature_60s",
+      "rolling_std_temperature_60s",
+      "rolling_min_temperature_60s",
+      "rolling_max_temperature_60s",
+      "past_only_slope_c_per_min_60s",
+      "past_only_temperature_delta_60s",
+      "past_only_spatial_spread_60s",
+      "door_open",
+      "duration_so_far",
+      "count_past_60s",
+      "applied_cooling",
+      "applied_duty",
+      "time_since_confirmed_applied_change",
+      "cooling_voltage_v",
+      "cooling_current_a",
+      "cooling_power_w",
+      "energy_counter_wh",
+      "past_integrated_cooling_energy_wh",
+      "ambient_temperature_c",
+      "relative_humidity_pct"
+    ],
+    "used_feature_count": 1,
+    "used_feature_ids": [
+      "time_since_open"
+    ]
+  },
+  "model_library": "xgboost",
+  "model_library_version": "3.4.1",
+  "model_secondary_format": "json",
+  "operating_threshold": 0.5,
+  "operating_threshold_status": "ILLUSTRATIVE_NOT_FROZEN",
+  "ordered_feature_ids": [
+    "T_chamber_max_c",
+    "T_chamber_min_c",
+    "T_chamber_mean_c",
+    "T_chamber_spread_c",
+    "T_center_c",
+    "T_bottom_c",
+    "T_near_door_c",
+    "rolling_mean_temperature_60s",
+    "rolling_std_temperature_60s",
+    "rolling_min_temperature_60s",
+    "rolling_max_temperature_60s",
+    "past_only_slope_c_per_min_60s",
+    "past_only_temperature_delta_60s",
+    "past_only_spatial_spread_60s",
+    "door_open",
+    "time_since_open",
+    "duration_so_far",
+    "count_past_60s",
+    "applied_cooling",
+    "applied_duty",
+    "time_since_confirmed_applied_change",
+    "cooling_voltage_v",
+    "cooling_current_a",
+    "cooling_power_w",
+    "energy_counter_wh",
+    "past_integrated_cooling_energy_wh",
+    "ambient_temperature_c",
+    "relative_humidity_pct"
+  ],
+  "ordered_feature_ids_sha256": "98491993d95ba78292cc245d637a1832ebdfb80b1eb026361e39926fb331223c",
+  "probe_parity": {
+    "files": {
+      "json": {
+        "bytes": 32683,
+        "file": "model.json",
+        "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd"
+      },
+      "ubj": {
+        "bytes": 46433,
+        "file": "model.ubj",
+        "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f"
+      }
+    },
+    "fresh_process_reload_parity": true,
+    "fresh_process_xgboost": "3.4.1",
+    "max_abs_diff": 0.0,
+    "model_features": 28,
+    "probe_max_abs_diff": 0.0,
+    "probe_rows": 5,
+    "probe_tolerance_abs": 1e-12,
+    "reload_parity": true,
+    "tolerance_abs": 1e-12
+  },
+  "prohibited_use": [
+    "physical Controller B actuation",
+    "calibrated-probability or percentage-risk wording",
+    "public reliability or early-warning superiority claims",
+    "final A/B comparison",
+    "deployment or registration in C's backend"
+  ],
+  "raw_native_load_prohibited": true,
+  "release_eligibility": "NON_DEPLOYABLE_CANDIDATE",
+  "schema": "coldguard-w15-model-artifact-v1",
+  "score_semantics": "risk_score",
+  "target_spec_version": "coldguard-w11-development-label-v1",
+  "target_status": "DEVELOPMENT_CANDIDATE_NOT_FROZEN",
+  "training_code_revision": "9027c469a82859b4eb2dcf5b4d8255bf1f59c641",
+  "training_code_revision_semantics": "GENERATION_BASE_NOT_DELIVERY_COMMIT",
+  "training_dataset_id": "W11_EXPANDED_SYNTHETIC_GROUPED",
+  "training_population": {
+    "development_only": true,
+    "locked_test_used": false,
+    "negative": 1456,
+    "positive": 480,
+    "run_count": 16,
+    "sample_count": 1936
+  },
+  "validation_evidence": {
+    "event_summary": {
+      "fit_folds": 8,
+      "mean_event_recall": 1.0,
+      "mean_false_warning_episodes_per_hour": 0.0,
+      "total_missed_critical_events": 0
+    },
+    "fold_ap": {
+      "TRAIN_FOLD_CLASS_WEIGHT": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ],
+      "UNWEIGHTED": [
+        1.0,
+        1.0,
+        1.0,
+        1.0
+      ]
+    },
+    "not_physical_evidence": true,
+    "oof_ap": {
+      "TRAIN_FOLD_CLASS_WEIGHT": 1.0,
+      "UNWEIGHTED": 1.0
+    },
+    "protocol": "W11 grouped CV, 4 folds, seed 42, A3B arm",
+    "scientific_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY"
+  },
+  "warning_persistence_status": "NOT_FROZEN"
+}

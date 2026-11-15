@@ -1,0 +1,57 @@
+{
+  "schema": "coldguard-d-main-integration-crosscheck-v1",
+  "main_sha": "557e887432d1a72b3d097f92644fe72b809c824e",
+  "sources": [
+    {
+      "path": "evidence/A/W06/command-path-integration-20261110-traced.json",
+      "sha256": "6f6e450d726dae08ca96c8659df19ad164a2b3f06d03b360baba4b136c03b784"
+    },
+    {
+      "path": "docs/owner-integration/w13-bd-closure/bd-dependency-closure-20261110.json",
+      "sha256": "7bd71a018c7301653ccb4d47d5b9ede049928a90a6e5d5e465b0d4116e71fef7"
+    },
+    {
+      "path": "evidence/A/W13/door-critical-input-20261109.json",
+      "sha256": "528fac3da0b4c4bbe1d12f83bd78d5dfcc37a3c411bf1d7a33a805a4b26d1a73"
+    },
+    {
+      "path": "docs/owner-integration/a-d-verification-semantics-DECISION.md",
+      "sha256": "aeb2d2f4e57619fd493681f55aac620444323db160a083768de14be6762418b8"
+    }
+  ],
+  "command_path": {
+    "backend_policy_accepted": true,
+    "a_observational_trace_verdict": "TRACED",
+    "a_observational_stages": [
+      "COMMAND_SEEN",
+      "DEVICE_ACK",
+      "APPLIED_STATE",
+      "ELECTRICAL_VERIFIED",
+      "THERMAL_VERIFIED"
+    ],
+    "firmware_executed": false,
+    "source": "synthetic template from evidence/A/W06/demo-command-capture.log",
+    "d_direct_health_promotion_allowed": false,
+    "d_health_state": "UNKNOWN",
+    "d_reason": "FIXTURE_OR_HOST_TRACE_NOT_PHYSICAL"
+  },
+  "predictive_path": {
+    "horizons_s": [
+      30.0,
+      60.0,
+      120.0,
+      300.0
+    ],
+    "all_prediction_views_unavailable": true,
+    "positive_labels": 0,
+    "door_to_critical_s": null,
+    "critical_tmean_status": "NOT_FROZEN_PENDING_MEMBER_D"
+  },
+  "decisions": {
+    "physical_verification": "UNKNOWN",
+    "controller_b": "DISABLED",
+    "aiw": "NOT_ESTIMABLE",
+    "physical_enablement": false
+  },
+  "verdict": "MAIN_INTEGRATION_SOFTWARE_PATH_PRESENT_PHYSICAL_AND_PREDICTIVE_GATES_OPEN"
+}

@@ -1,0 +1,4 @@
+# Preserve the verified commissioning source byte-for-byte. The manifest.json
+# SHA-256 hashes were computed on the original files (CRLF included); any
+# line-ending normalization would break source provenance and image reproducibility.
+* -text

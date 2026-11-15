@@ -10,7 +10,9 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 WORKDIR /srv/backend
 
 COPY pyproject.toml uv.lock ./
+COPY alembic.ini ./
 COPY src/ ./src/
+COPY scripts/ ./scripts/
 
 # Pinned installer so the image build itself is reproducible.
 RUN pip install --no-cache-dir "uv==0.12.21" \

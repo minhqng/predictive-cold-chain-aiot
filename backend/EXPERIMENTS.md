@@ -81,8 +81,10 @@ last cursor to fetch newer entries and periodically refresh the displayed
 window to catch late commits. The feed is a database view of evidence, with
 separate pages reflecting separate snapshots.
 
-Door events come from observed device receipts on the exact topic and retain
-the first receipt of each source event ID within the device and run.
+Door events come from observed device receipts on the exact topic. The feed
+keeps the first receipt for each distinct JSON payload under a source event
+ID within the device and run. Later conflicting variants carry
+`event_id_conflict: true` and retain their boot provenance for review.
 Telemetry snapshots provide thermal, electrical, and control context. The
 backend projects command creation from its transition history and command
 acceptance only when a matching accepted ACK is present. Verification event
@@ -93,3 +95,49 @@ Reported event time remains separate from backend receipt time. Missing or
 invalid source times are null. A command link resolves only within the same
 run and device. The feed carries reported correlation and prediction IDs
 where available, alongside backend command prediction references.
+
+## Prediction evidence
+
+Revision 0010 adds append-only prediction records and ordered references to
+normalized telemetry. The trusted backend writer records model and feature
+versions and SHA-256 values, the input receipt-time window, horizon and
+risk score. Input IDs must belong to the exact device and run and fall within
+the declared window. Freshness ends at the newest linked input receipt plus
+the configured input age limit. The same prediction ID and payload can be
+retried without changing provenance or refreshing it.
+
+| Route | Purpose |
+|---|---|
+| `GET /api/devices/{device_id}/predictions/current` | Newest prediction scoped to the device and optional `run_id`. Returns `UNAVAILABLE` without evidence and suppresses stale risk. |
+| `GET /api/devices/{device_id}/predictions` | Paginated historical evidence with optional `run_id`, `limit` of 1–100, and bounded `offset`. |
+| `GET /api/devices/{device_id}/predictions/{prediction_id}` | Immutable evidence and ordered telemetry IDs for a single prediction. |
+
+The Twin stores prediction metadata in `derived_state.prediction`. Reading it
+computes age and suppresses stale risk while retaining historical evidence.
+Measured reported state and desired intent keep their independent authorities.
+These read APIs expose evidence and freshness. Model trust and permission to
+act require separate policy checks. A populated prediction schema refuses a
+downgrade that would delete its provenance.
+
+## Shadow policy trace
+
+Revision 0011 stores hypothetical decisions separately from commands.
+The prediction and its shadow decision commit together. A rejected decision
+identity cannot leave a new prediction or derived Twin update behind.
+The trusted runner reads a bounded receipt-time window from the registered
+device's active boot. It excludes replay and future inputs, checks the
+feature adapter against the approved frozen model, and records ordered
+feature values and input IDs for offline comparison. The runner adapts
+Member D's pure policy decision. Stale inference records a skip without
+calling the policy. This path has no publisher or command dispatch route.
+
+`GET /api/runs/{run_id}/shadow-trace` returns prediction evidence, input IDs,
+the hypothetical decision and its timing, and independent Controller A
+command records for the same device and run. Limits are 1–50 per section.
+The query preserves missing decisions and explicitly reports unavailable
+physical response evidence. Member B can rerun the model on the exported
+ordered feature vector. Open `/audit/runs/{run_id}/shadow` in a browser for
+the recorded prediction times, policy evaluation time and duration. The view
+is read-only and accepts the same bounded `limit` and `offset` parameters.
+Official online model/features and actual physical
+run evidence remain separate acceptance items.

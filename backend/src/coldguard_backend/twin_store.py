@@ -100,6 +100,23 @@ def project_reported(connection: Connection, telemetry_id: int) -> None:
     )
 
 
+def update_derived(connection: Connection, device_id: str, derived: dict[str, Any]) -> None:
+    """Upsert derived keys while leaving desired and reported authority separate."""
+    twin = device_twin.c
+    stamp = func.clock_timestamp()
+    statement = pg_insert(device_twin).values(
+        device_id=device_id, derived_state=derived, twin_version=1,
+        last_derived_at=stamp, updated_at=stamp,
+    )
+    connection.execute(statement.on_conflict_do_update(
+        index_elements=[twin.device_id],
+        set_={
+            "derived_state": twin.derived_state.op("||")(statement.excluded.derived_state),
+            "last_derived_at": stamp, "updated_at": stamp, "twin_version": twin.twin_version + 1,
+        },
+    ))
+
+
 def update_desired(
     connection: Connection,
     *,

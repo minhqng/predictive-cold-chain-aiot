@@ -1,0 +1,1633 @@
+{
+  "adversarial_controls": {
+    "probe_count": 65,
+    "probes": [
+      {
+        "expectation": "a permanently marked synthetic fixture passes structural groups and stops at metadata-ready pending authorization",
+        "name": "valid_fixture_reaches_metadata_ready",
+        "passed": true
+      },
+      {
+        "expectation": "missing G4 prevents analysis readiness",
+        "name": "missing_g4_blocks",
+        "passed": true
+      },
+      {
+        "expectation": "a string containing APPROVED is not proof of authorization",
+        "name": "fake_approval_string_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the W18 development baseline never becomes a campaign freeze",
+        "name": "development_baseline_is_not_a_freeze",
+        "passed": true
+      },
+      {
+        "expectation": "a frozen target must be a positive integer",
+        "name": "target_missing_or_zero_refused",
+        "passed": true
+      },
+      {
+        "expectation": "target reached but statistical freeze missing stays blocked",
+        "name": "target_reached_statistical_freeze_missing",
+        "passed": true
+      },
+      {
+        "expectation": "target reached but campaign policy freeze missing stays blocked",
+        "name": "target_reached_policy_freeze_missing",
+        "passed": true
+      },
+      {
+        "expectation": "target reached but raw export not backed up stays blocked",
+        "name": "target_reached_backup_missing",
+        "passed": true
+      },
+      {
+        "expectation": "target reached but physical verification trace absent stays blocked",
+        "name": "target_reached_physical_trace_absent",
+        "passed": true
+      },
+      {
+        "expectation": "an approved target cannot change after attempts started",
+        "name": "target_changed_after_attempts_started",
+        "passed": true
+      },
+      {
+        "expectation": "a freeze field with a null value cannot be approved",
+        "name": "null_freeze_value_not_approved",
+        "passed": true
+      },
+      {
+        "expectation": "freeze evidence revision must match the campaign attempts",
+        "name": "freeze_evidence_revision_disagrees",
+        "passed": true
+      },
+      {
+        "expectation": "an operator-supplied override cannot bypass a refusal",
+        "name": "operator_override_field_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the ledger campaign identity must match the reviewed campaign metadata",
+        "name": "ledger_campaign_identity_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the ledger frozen target must match the reviewed pair-target record",
+        "name": "ledger_frozen_target_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the ledger statistical freeze must match the reviewed freeze record",
+        "name": "ledger_statistical_freeze_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the ledger campaign freeze must match the reviewed freeze record",
+        "name": "ledger_campaign_freeze_mismatch_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a malformed target-history record cannot hide a post-start change",
+        "name": "malformed_target_history_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a malformed N-inflation claim cannot be treated as absent",
+        "name": "malformed_n_inflation_claim_refused",
+        "passed": true
+      },
+      {
+        "expectation": "missing W16 holdout evidence fails closed",
+        "name": "w16_holdout_missing_refused",
+        "passed": true
+      },
+      {
+        "expectation": "malformed W16 holdout evidence fails closed",
+        "name": "w16_holdout_malformed_refused",
+        "passed": true
+      },
+      {
+        "expectation": "one valid pair contributes exactly one observation",
+        "name": "valid_pair_counted_once",
+        "passed": true
+      },
+      {
+        "expectation": "the same run counted twice is refused",
+        "name": "same_run_id_across_attempts_refused",
+        "passed": true
+      },
+      {
+        "expectation": "one physical source cannot appear under different run ids",
+        "name": "same_physical_source_refused",
+        "passed": true
+      },
+      {
+        "expectation": "rerunning a valid arm is not an opportunity to improve results",
+        "name": "rerun_of_valid_arm_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an INVALIDATE_PAIR rule cannot be bypassed by a rerun",
+        "name": "invalidate_pair_rule_not_bypassed",
+        "passed": true
+      },
+      {
+        "expectation": "an invalid attempt cannot be omitted from history",
+        "name": "invalid_attempt_omitted_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an aborted attempt cannot be dropped from the final ledger",
+        "name": "aborted_attempt_dropped_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a missing second arm cannot count as a valid pair",
+        "name": "missing_second_arm_not_valid",
+        "passed": true
+      },
+      {
+        "expectation": "a superseded attempt cannot become an independent pair",
+        "name": "superseded_attempt_not_independent_pair",
+        "passed": true
+      },
+      {
+        "expectation": "a target reached only through duplicated attempts is refused",
+        "name": "target_reached_only_by_duplicates_refused",
+        "passed": true
+      },
+      {
+        "expectation": "incomplete data quality cannot be treated as valid",
+        "name": "incomplete_quality_not_valid",
+        "passed": true
+      },
+      {
+        "expectation": "an incorrect controller order cannot be accepted silently",
+        "name": "incorrect_controller_order_refused",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "model_artifact_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "feature_schema_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "policy_threshold_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "warning_persistence_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "cooling_magnitude_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "hardware_or_firmware_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "calibration_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "disturbance_protocol_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "initial_tolerance_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at E_SCIENTIFIC_FREEZE",
+        "name": "primary_outcome_definition_changed",
+        "passed": true
+      },
+      {
+        "expectation": "version/protocol drift is detected at D_HARDWARE_PROTOCOL_STABILITY",
+        "name": "drift_without_comparability_approval",
+        "passed": true
+      },
+      {
+        "expectation": "the preflight cannot open a thermal outcome payload",
+        "name": "thermal_outcome_payload_refused",
+        "passed": true
+      },
+      {
+        "expectation": "the preflight cannot open a power outcome series",
+        "name": "power_outcome_payload_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a p-value computation is statically rejected",
+        "name": "p_value_capability_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a paired-effect vector or CI cannot be produced",
+        "name": "paired_effect_capability_refused",
+        "passed": true
+      },
+      {
+        "expectation": "invalid pairs cannot be removed based on effect direction",
+        "name": "effect_based_pair_selection_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a pair-outcomes.csv cannot be generated from a synthetic fixture",
+        "name": "synthetic_outcome_table_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an opened W16 locked test blocks the campaign lock",
+        "name": "locked_test_opened_refused",
+        "passed": true
+      },
+      {
+        "expectation": "a successful software preflight never starts the final analysis",
+        "name": "preflight_does_not_start_analysis",
+        "passed": true
+      },
+      {
+        "expectation": "an unapproved CLI override cannot trigger evaluation",
+        "name": "cli_override_refused",
+        "passed": true
+      },
+      {
+        "expectation": "no result report claims scientific acceptance while analysis is NOT_RUN",
+        "name": "report_keeps_analysis_not_run",
+        "passed": true
+      },
+      {
+        "expectation": "a B-controlled trajectory cannot supply a naive counterfactual EWT",
+        "name": "closed_loop_b_ewt_refused",
+        "passed": true
+      },
+      {
+        "expectation": "an unobserved reactive crossing is not an EWT of zero",
+        "name": "missing_ewt_not_zero",
+        "passed": true
+      },
+      {
+        "expectation": "missing AIW latency inputs are not zero",
+        "name": "missing_aiw_not_zero",
+        "passed": true
+      },
+      {
+        "expectation": "an ACK is not a physical response",
+        "name": "ack_not_physical_response",
+        "passed": true
+      },
+      {
+        "expectation": "electrical observation cannot substitute for verified thermal recovery",
+        "name": "electrical_not_thermal_recovery",
+        "passed": true
+      },
+      {
+        "expectation": "a PZEM gap is not interpreted as zero energy",
+        "name": "pzem_gap_not_zero_energy",
+        "passed": true
+      },
+      {
+        "expectation": "cooling-branch energy is not whole-system energy",
+        "name": "cooling_branch_not_whole_system",
+        "passed": true
+      },
+      {
+        "expectation": "an unfrozen representative temperature blocks the outcome definition",
+        "name": "unfrozen_representative_temperature_refused",
+        "passed": true
+      },
+      {
+        "expectation": "synthetic timing cannot be promoted to real actionability evidence",
+        "name": "synthetic_timing_not_actionability",
+        "passed": true
+      },
+      {
+        "expectation": "post-intervention warning timing is not a no-control counterfactual",
+        "name": "post_intervention_warning_not_counterfactual",
+        "passed": true
+      },
+      {
+        "expectation": "AIW metadata with unknown provenance fails closed",
+        "name": "unknown_provenance_aiw_refused",
+        "passed": true
+      }
+    ],
+    "probes_passed": 65
+  },
+  "analysis_code_sha256": "326868bd16b8c7d8f4a307fa0d3992076d5adc7839966034d46c9718283064ef",
+  "campaign_metadata_source": {
+    "path": "ml/reports/W20/campaign-metadata-W20.json",
+    "present": true,
+    "sha256": "b0c49699036752c8707e650bb4f3b58a3389c12c94ae80106d38b8db94b3076b"
+  },
+  "campaign_state": {
+    "analysis_authorization_status": "NOT_ISSUED",
+    "authorization_status": "FAIL",
+    "campaign_id": "CG-W20-FINAL-AB-2026",
+    "closeout_state": "PAIR_TARGET_NOT_FROZEN",
+    "controller_b_signoff": "WITHHELD",
+    "counted_pairs_kind": "NONE",
+    "counted_valid_pairs": 0,
+    "g4": "NOT_READY",
+    "gate_decision": "ANALYSIS_PREFLIGHT_BLOCKED",
+    "pair_target_status": "UNKNOWN_UNFROZEN",
+    "planned_pair_target": null,
+    "proof_class": "METADATA_ONLY_FOR_REAL_CAMPAIGN",
+    "refusal_reasons": [
+      "A1:AUTHORIZATION_RECORD_MISSING",
+      "A4:REVIEW_AUTHORITY_MISSING",
+      "A5:APPROVED_FREEZE_VERSION_MISSING",
+      "A6:CONTROLLER_B_ENABLEMENT_MISSING",
+      "ANALYSIS_AUTHORIZATION_AUTHORITY_MISSING",
+      "ANALYSIS_AUTHORIZATION_AUTHORITY_ROLE_NOT_TEAM_LEAD",
+      "ANALYSIS_AUTHORIZATION_CAMPAIGN_ID_MISMATCH",
+      "ANALYSIS_AUTHORIZATION_NOT_VERIFIED_EXTERNALLY",
+      "ANALYSIS_AUTHORIZATION_REFERENCE_MISSING",
+      "ANALYSIS_AUTHORIZATION_REQUIRES_EXTERNAL_FILE_BINDING",
+      "ANALYSIS_AUTHORIZATION_STATUS=NOT_ISSUED",
+      "B1:PAIR_TARGET_STATUS=UNKNOWN_UNFROZEN;PAIR_TARGET_RECORD_MISSING",
+      "C1:PAIR_LEDGER_MISSING",
+      "CAMPAIGN_MANIFEST_MISSING",
+      "CLOSEOUT=PAIR_TARGET_NOT_FROZEN",
+      "D:analysis_plan_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:calibration_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:controller_policy_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:cooling_action_magnitude:CAMPAIGN_MANIFEST_MISSING",
+      "D:critical_target:CAMPAIGN_MANIFEST_MISSING",
+      "D:disturbance_protocol_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_order_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_schema_hash:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:firmware_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:hardware_config_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:initial_reset_criterion:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_artifact_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_calibration_semantics:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_config_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:pair_matching_tolerances:CAMPAIGN_MANIFEST_MISSING",
+      "D:predictive_threshold:CAMPAIGN_MANIFEST_MISSING",
+      "D:primary_horizon:CAMPAIGN_MANIFEST_MISSING",
+      "D:primary_outcome:CAMPAIGN_MANIFEST_MISSING",
+      "D:randomization_protocol:CAMPAIGN_MANIFEST_MISSING",
+      "D:reactive_threshold_hysteresis:CAMPAIGN_MANIFEST_MISSING",
+      "D:safety_limits:CAMPAIGN_MANIFEST_MISSING",
+      "D:sensor_placement:CAMPAIGN_MANIFEST_MISSING",
+      "D:target_pair_count:CAMPAIGN_MANIFEST_MISSING",
+      "D:warning_persistence:CAMPAIGN_MANIFEST_MISSING",
+      "E0:CAMPAIGN_FREEZE_NOT_APPROVED;MISSING_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count;UNFROZEN_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count",
+      "E1:STATISTICAL_FREEZE_STATUS=NOT_FROZEN;STATISTICAL_FREEZE_RECORD_MISSING",
+      "E2:OUTCOME_DEFINITION_FREEZE_MISSING",
+      "E3:PRIMARY_OUTCOME_MANIFEST_IDENTITY_MISSING",
+      "F1:FINAL_EXPORT_METADATA_MISSING",
+      "F3:FINAL_EXPORT_METADATA_MISSING",
+      "F4:FINAL_EXPORT_METADATA_MISSING",
+      "F7:FINAL_EXPORT_METADATA_MISSING",
+      "F8:FINAL_EXPORT_METADATA_MISSING"
+    ],
+    "w16_holdout": {
+      "frozen": false,
+      "opened_at": null,
+      "status": "NOT_OPENED",
+      "test_partition_used": false
+    },
+    "w19_verdicts": {
+      "B_W19_01_PAIR_LEDGER": "SOFTWARE_VERIFIED",
+      "B_W19_02_VALIDITY_DISCIPLINE": "SOFTWARE_VERIFIED",
+      "B_W19_03_NO_SIGNIFICANCE_PEEKING": "SOFTWARE_VERIFIED",
+      "B_W19_04_PAIR_PROGRESS": "SOFTWARE_VERIFIED",
+      "CAMPAIGN_TARGET": "UNFROZEN",
+      "DELIVERY": "PENDING_PUBLICATION",
+      "FINAL_CAMPAIGN": "NOT_AUTHORIZED",
+      "G4": "NOT_READY",
+      "NO_PEEKING": "SOFTWARE_VERIFIED",
+      "PAIR_LEDGER_SCHEMA": "VERIFIED",
+      "PAIR_LEDGER_SOFTWARE": "VERIFIED",
+      "PHYSICAL_PAIRS": "NOT_ESTABLISHED",
+      "PROGRESS_ACCOUNTING": "SOFTWARE_VERIFIED",
+      "SOFTWARE": "COMPLETE_PERMITTED_W19_SCOPE",
+      "VALIDITY_REVIEW": "SOFTWARE_VERIFIED",
+      "W16_HOLDOUT": "NOT_OPENED",
+      "W20_ANALYSIS": "NOT_UNLOCKED"
+    }
+  },
+  "capabilities": {
+    "campaign_authorization": false,
+    "command_dispatch": false,
+    "confidence_interval": false,
+    "ewt_computation": false,
+    "model_fitting": false,
+    "outcome_analysis": false,
+    "outcome_payload_access": false,
+    "p_value": false,
+    "paired_effect": false,
+    "temperature_or_energy_integration": false,
+    "w16_holdout_access": false
+  },
+  "capability_audit": {
+    "files_scanned": [
+      "src/coldguard_ml/w20_campaign_lock.py",
+      "src/coldguard_ml/w20_outcome_contract.py",
+      "src/coldguard_ml/w20_causal_boundary.py",
+      "scripts/w20-campaign-preflight-W20.py"
+    ],
+    "findings": [],
+    "passed": true
+  },
+  "causal_boundary": {
+    "aiw_values_computed": false,
+    "checks": {
+      "ACK_NOT_SUBSTITUTED_FOR_PHYSICAL_RESPONSE": true,
+      "CLOSED_LOOP_B_RUNS_EXCLUDED_FROM_NAIVE_EWT": true,
+      "COOLING_BRANCH_ENERGY_NOT_WHOLE_SYSTEM_ENERGY": true,
+      "ELECTRICAL_OBSERVATION_NOT_SUBSTITUTED_FOR_THERMAL_RECOVERY": true,
+      "POST_INTERVENTION_WARNING_NOT_USED_AS_NO_CONTROL_COUNTERFACTUAL": true,
+      "PZEM_GAP_NOT_CONVERTED_TO_ZERO_ENERGY": true,
+      "SYNTHETIC_TIMING_NOT_PROMOTED_TO_ACTIONABILITY": true,
+      "UNOBSERVED_REACTIVE_CROSSING_IS_NOT_ZERO": true
+    },
+    "counterfactual_crossings_invented": false,
+    "ewt_values_computed": false,
+    "proof_status": "CAUSAL_BOUNDARY_SOFTWARE_VERIFIED",
+    "version": "coldguard-w20-causal-boundary-v1"
+  },
+  "fixture_proof": {
+    "admission_plan_verdict": "ROW_METADATA_COMPLETE_PENDING_AUTHORIZED_EXECUTION",
+    "admitted_to_physical_campaign": false,
+    "analysis_actions": [],
+    "closeout_state": "CAMPAIGN_LOCK_READY_FOR_EXTERNAL_REVIEW",
+    "counted_valid_pairs": 1,
+    "gate_decision": "ANALYSIS_METADATA_READY_PENDING_AUTHORIZATION",
+    "outcome_access": false,
+    "proof_class": "TEST_ONLY_SOFTWARE_GATE_PROOF"
+  },
+  "generation_inputs": {
+    "a_w19_dossier": {
+      "SHA256SUMS.txt": {
+        "path": "evidence/A/W19/SHA256SUMS.txt",
+        "present": true,
+        "sha256": "36c0a725f24457dd1b338b647b085dc3c8bdf36e7fac83bae4935f4307ae41de"
+      },
+      "campaign-wave1-runbook.md": {
+        "path": "evidence/A/W19/campaign-wave1-runbook.md",
+        "present": true,
+        "sha256": "5bc6cfc0bc2db66b87092835605aed299927498a66b550c831480180aa563aae"
+      },
+      "invalid-attempt-taxonomy.json": {
+        "path": "evidence/A/W19/invalid-attempt-taxonomy.json",
+        "present": true,
+        "sha256": "0e04b5edba85eee40cd10bbf2caca4d0840db2716e9387534e0c6ee349b6097d"
+      },
+      "run-preparation-checklist.json": {
+        "path": "evidence/A/W19/run-preparation-checklist.json",
+        "present": true,
+        "sha256": "3dd1eebeab3a72a9e4874b1a3f68d74da5b329a916c7b5c4a8a9f65b8bdf46e5"
+      },
+      "validate_w19.py": {
+        "path": "evidence/A/W19/validate_w19.py",
+        "present": true,
+        "sha256": "1f443617271b03db6ee29a1472e34bfb9886b47859e680845d2aa4b633e1ff11"
+      },
+      "wave1-status.md": {
+        "path": "evidence/A/W19/wave1-status.md",
+        "present": true,
+        "sha256": "99676d554dcce00434dd91e450979e6d5438f8097a6c6de76a333839265fe65c"
+      }
+    },
+    "a_w20_dossier": {
+      "SHA256SUMS.txt": {
+        "path": "evidence/A/W20/SHA256SUMS.txt",
+        "present": true,
+        "sha256": "cc5ed3f014f8cb0baea9521a1c0db2d5ccb3eb34427c8ea390c824714725bb50"
+      },
+      "campaign-wave2-index.json": {
+        "path": "evidence/A/W20/campaign-wave2-index.json",
+        "present": true,
+        "sha256": "4c58e48f3ed3d2b131eabb6f23c8177bbf02a8ac687183450f4eb93753a76d9f"
+      },
+      "frozen-campaign-manifest.md": {
+        "path": "evidence/A/W20/frozen-campaign-manifest.md",
+        "present": true,
+        "sha256": "f548db3725428340e412a3638591e3b718617d353d5a60022e38350b51e8d50d"
+      },
+      "physical-drift-audit.md": {
+        "path": "evidence/A/W20/physical-drift-audit.md",
+        "present": true,
+        "sha256": "2e5435143b992eae46c32056bd01ddd0945fd74e0dd546f52e2c07a58cf0109e"
+      },
+      "validate_w20.py": {
+        "path": "evidence/A/W20/validate_w20.py",
+        "present": true,
+        "sha256": "50bda80727e2c6c34be4415a0e7a9b07af016efe8c2716c19dc265c75dc28342"
+      }
+    },
+    "campaign_metadata": {
+      "path": "ml/reports/W20/campaign-metadata-W20.json",
+      "present": true,
+      "sha256": "b0c49699036752c8707e650bb4f3b58a3389c12c94ae80106d38b8db94b3076b"
+    },
+    "metric_spec": {
+      "path": "ml/metric-spec.md",
+      "present": true,
+      "sha256": "7ebeb5d4aedab1e01189bb911b6888f05f8984b7f23d9b29066bfbd8396d81c4"
+    },
+    "statistical_analysis_plan": {
+      "path": "ml/statistical-analysis-plan-v0.md",
+      "present": true,
+      "sha256": "3270ff85cbbc21f212299df5c3d0dc43fa34fcb52f8c7f1a041e6abcd19b5daf"
+    },
+    "w16_locked_manifest": {
+      "path": "ml/reports/W16/locked-test-manifest-W16.json",
+      "present": true,
+      "sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165"
+    },
+    "w17_manifest": {
+      "path": "ml/reports/W17/w17-manifest.json",
+      "present": true,
+      "sha256": "8b2e92e7c70134e5ab0c6ac796c900b681bc7d66f79eddb48ecc939ddcc33532"
+    },
+    "w18_freeze_baseline": {
+      "path": "ml/reports/W18/freeze-baseline-W18.json",
+      "present": true,
+      "sha256": "d1bcc8ff26ed28ed998fb2c43d7fa57ab928d6c4d90c1af801289016dd446581"
+    },
+    "w18_manifest": {
+      "path": "ml/reports/W18/w18-manifest.json",
+      "present": true,
+      "sha256": "bd1391d72d030af5e0ca99540059424fbf45ca1ccced255e8d41ca374799c9ab"
+    },
+    "w19_manifest": {
+      "path": "ml/reports/W19/w19-manifest.json",
+      "present": true,
+      "sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82"
+    }
+  },
+  "groups": [
+    {
+      "group_id": "A_CAMPAIGN_AUTHORIZATION",
+      "reasons": [
+        "A1:AUTHORIZATION_RECORD_MISSING",
+        "A5:APPROVED_FREEZE_VERSION_MISSING",
+        "A4:REVIEW_AUTHORITY_MISSING",
+        "A6:CONTROLLER_B_ENABLEMENT_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7137; 04 W20; 05B \u00a748",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "AUTHORIZATION_RECORD_MISSING",
+          "group": "A_CAMPAIGN_AUTHORIZATION",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "A1",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7133; 04 W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "APPROVED_FREEZE_VERSION_MISSING",
+          "group": "A_CAMPAIGN_AUTHORIZATION",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "A5",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7137",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "REVIEW_AUTHORITY_MISSING",
+          "group": "A_CAMPAIGN_AUTHORIZATION",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "A4",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7137; 05D",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "CONTROLLER_B_ENABLEMENT_MISSING",
+          "group": "A_CAMPAIGN_AUTHORIZATION",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "A6",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "group_id": "B_FROZEN_PAIR_TARGET",
+      "reasons": [
+        "B1:PAIR_TARGET_STATUS=UNKNOWN_UNFROZEN;PAIR_TARGET_RECORD_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a799-101; 04 W20",
+          "classification": "CANONICAL",
+          "evidence": "PAIR_TARGET_STATUS=UNKNOWN_UNFROZEN;PAIR_TARGET_RECORD_MISSING",
+          "group": "B_FROZEN_PAIR_TARGET",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "B1",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "group_id": "C_VALID_PAIR_COMPLETION",
+      "reasons": [
+        "C1:PAIR_LEDGER_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a795-98; 05B \u00a747",
+          "classification": "CANONICAL",
+          "evidence": "PAIR_LEDGER_MISSING",
+          "group": "C_VALID_PAIR_COMPLETION",
+          "owner": "B",
+          "requirement_id": "C1",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "group_id": "D_HARDWARE_PROTOCOL_STABILITY",
+      "reasons": [
+        "D:hardware_config_id:CAMPAIGN_MANIFEST_MISSING",
+        "D:sensor_placement:CAMPAIGN_MANIFEST_MISSING",
+        "D:calibration_id:CAMPAIGN_MANIFEST_MISSING",
+        "D:firmware_version:CAMPAIGN_MANIFEST_MISSING",
+        "D:model_artifact_sha256:CAMPAIGN_MANIFEST_MISSING",
+        "D:model_config_sha256:CAMPAIGN_MANIFEST_MISSING",
+        "D:feature_version:CAMPAIGN_MANIFEST_MISSING",
+        "D:feature_schema_hash:CAMPAIGN_MANIFEST_MISSING",
+        "D:feature_order_sha256:CAMPAIGN_MANIFEST_MISSING",
+        "D:model_calibration_semantics:CAMPAIGN_MANIFEST_MISSING",
+        "D:primary_horizon:CAMPAIGN_MANIFEST_MISSING",
+        "D:critical_target:CAMPAIGN_MANIFEST_MISSING",
+        "D:reactive_threshold_hysteresis:CAMPAIGN_MANIFEST_MISSING",
+        "D:predictive_threshold:CAMPAIGN_MANIFEST_MISSING",
+        "D:warning_persistence:CAMPAIGN_MANIFEST_MISSING",
+        "D:controller_policy_version:CAMPAIGN_MANIFEST_MISSING",
+        "D:cooling_action_magnitude:CAMPAIGN_MANIFEST_MISSING",
+        "D:safety_limits:CAMPAIGN_MANIFEST_MISSING",
+        "D:disturbance_protocol_id:CAMPAIGN_MANIFEST_MISSING",
+        "D:initial_reset_criterion:CAMPAIGN_MANIFEST_MISSING",
+        "D:pair_matching_tolerances:CAMPAIGN_MANIFEST_MISSING",
+        "D:randomization_protocol:CAMPAIGN_MANIFEST_MISSING",
+        "D:analysis_plan_version:CAMPAIGN_MANIFEST_MISSING",
+        "D:primary_outcome:CAMPAIGN_MANIFEST_MISSING",
+        "D:target_pair_count:CAMPAIGN_MANIFEST_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a734-37, \u00a795-98",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:hardware_config_id",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a734-37; 01 \u00a71.5",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:sensor_placement",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a735; 01 \u00a718",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:calibration_id",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792; 05A W20",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A/C",
+          "requirement_id": "D:firmware_version",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792; 05B \u00a746",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:model_artifact_sha256",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:model_config_sha256",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792; 05B \u00a79",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:feature_version",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:feature_schema_hash",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:feature_order_sha256",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a758-60",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:model_calibration_semantics",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a744, \u00a792; 05B \u00a741",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B/D",
+          "requirement_id": "D:primary_horizon",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a742-43",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A/B",
+          "requirement_id": "D:critical_target",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a744, \u00a784; 05D",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "D",
+          "requirement_id": "D:reactive_threshold_hysteresis",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a787; 05B \u00a743",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B/D",
+          "requirement_id": "D:predictive_threshold",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a788; 05B \u00a743",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B/D",
+          "requirement_id": "D:warning_persistence",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "02 \u00a71.6; 04 \u00a711.4",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "D",
+          "requirement_id": "D:controller_policy_version",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7102; 05D",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "D",
+          "requirement_id": "D:cooling_action_magnitude",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "06; 05D",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "D",
+          "requirement_id": "D:safety_limits",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a734-38, \u00a795-98",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:disturbance_protocol_id",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a737",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:initial_reset_criterion",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a735",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A/B",
+          "requirement_id": "D:pair_matching_tolerances",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a736",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "A",
+          "requirement_id": "D:randomization_protocol",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7130-135; 05B \u00a748",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:analysis_plan_version",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a768-75, \u00a7133",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "B",
+          "requirement_id": "D:primary_outcome",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a799-101; 04 W20",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_MANIFEST_MISSING",
+          "group": "D_HARDWARE_PROTOCOL_STABILITY",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "D:target_pair_count",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "group_id": "E_SCIENTIFIC_FREEZE",
+      "reasons": [
+        "E0:CAMPAIGN_FREEZE_NOT_APPROVED;MISSING_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count;UNFROZEN_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count",
+        "E1:STATISTICAL_FREEZE_STATUS=NOT_FROZEN;STATISTICAL_FREEZE_RECORD_MISSING",
+        "E2:OUTCOME_DEFINITION_FREEZE_MISSING",
+        "E3:PRIMARY_OUTCOME_MANIFEST_IDENTITY_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7133; 04 W20",
+          "classification": "CANONICAL",
+          "evidence": "CAMPAIGN_FREEZE_NOT_APPROVED;MISSING_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count;UNFROZEN_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count",
+          "group": "E_SCIENTIFIC_FREEZE",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "E0",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7130-135; 05B \u00a748",
+          "classification": "CANONICAL",
+          "evidence": "STATISTICAL_FREEZE_STATUS=NOT_FROZEN;STATISTICAL_FREEZE_RECORD_MISSING",
+          "group": "E_SCIENTIFIC_FREEZE",
+          "owner": "TEAM_LEAD",
+          "requirement_id": "E1",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a768-75; 05B \u00a748",
+          "classification": "CANONICAL",
+          "evidence": "OUTCOME_DEFINITION_FREEZE_MISSING",
+          "group": "E_SCIENTIFIC_FREEZE",
+          "owner": "B/TEAM_LEAD",
+          "requirement_id": "E2",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7133; 05B \u00a748",
+          "classification": "CANONICAL",
+          "evidence": "PRIMARY_OUTCOME_MANIFEST_IDENTITY_MISSING",
+          "group": "E_SCIENTIFIC_FREEZE",
+          "owner": "B",
+          "requirement_id": "E3",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    },
+    {
+      "group_id": "F_EXPORT_RAW_INTEGRITY",
+      "reasons": [
+        "F1:FINAL_EXPORT_METADATA_MISSING",
+        "F3:FINAL_EXPORT_METADATA_MISSING",
+        "F4:FINAL_EXPORT_METADATA_MISSING",
+        "F7:FINAL_EXPORT_METADATA_MISSING",
+        "F8:FINAL_EXPORT_METADATA_MISSING"
+      ],
+      "rows": [
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7130-135; 05C W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "FINAL_EXPORT_METADATA_MISSING",
+          "group": "F_EXPORT_RAW_INTEGRITY",
+          "owner": "C/A",
+          "requirement_id": "F1",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7130-135; 05C W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "FINAL_EXPORT_METADATA_MISSING",
+          "group": "F_EXPORT_RAW_INTEGRITY",
+          "owner": "C/A",
+          "requirement_id": "F3",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7158-163; 05C W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "FINAL_EXPORT_METADATA_MISSING",
+          "group": "F_EXPORT_RAW_INTEGRITY",
+          "owner": "C/A",
+          "requirement_id": "F4",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7130-135; 05C W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "FINAL_EXPORT_METADATA_MISSING",
+          "group": "F_EXPORT_RAW_INTEGRITY",
+          "owner": "C/A",
+          "requirement_id": "F7",
+          "status": "FAIL"
+        },
+        {
+          "blocking_consequence": "analysis preflight remains blocked",
+          "canonical_ref": "03 \u00a7137; 05A W20",
+          "classification": "TEAM_DEPENDENCY",
+          "evidence": "FINAL_EXPORT_METADATA_MISSING",
+          "group": "F_EXPORT_RAW_INTEGRITY",
+          "owner": "C/A",
+          "requirement_id": "F8",
+          "status": "FAIL"
+        }
+      ],
+      "status": "FAIL"
+    }
+  ],
+  "layer_version": "coldguard-w20-campaign-lock-v1",
+  "limitations": [
+    "No final physical A/B outcome is opened, computed or reported.",
+    "No physical pair evidence exists in the current B stack.",
+    "No campaign authorization, pair-target freeze, statistical freeze or outcome-definition freeze has been issued.",
+    "The W16 locked predictive test remains unopened.",
+    "Controller B remains unauthorized for physical operation.",
+    "Gate G5 is not promoted.",
+    "Approval metadata is shape-checked only; external signatures cannot be verified offline.",
+    "Member C's W20 export tooling is not merged into this stack; raw-data content checks remain unverified.",
+    "The valid fixture proof is TEST_ONLY and cannot grant real authority."
+  ],
+  "member_a_checksums": {
+    "w19": {
+      "passed": true,
+      "root": "evidence/A/W19",
+      "sums_path": "evidence/A/W19/SHA256SUMS.txt",
+      "unverified": [],
+      "verified": {
+        "evidence/A/W19/campaign-wave1-runbook.md": "5bc6cfc0bc2db66b87092835605aed299927498a66b550c831480180aa563aae",
+        "evidence/A/W19/invalid-attempt-taxonomy.json": "0e04b5edba85eee40cd10bbf2caca4d0840db2716e9387534e0c6ee349b6097d",
+        "evidence/A/W19/run-preparation-checklist.json": "3dd1eebeab3a72a9e4874b1a3f68d74da5b329a916c7b5c4a8a9f65b8bdf46e5",
+        "evidence/A/W19/validate_w19.py": "1f443617271b03db6ee29a1472e34bfb9886b47859e680845d2aa4b633e1ff11",
+        "evidence/A/W19/wave1-status.md": "99676d554dcce00434dd91e450979e6d5438f8097a6c6de76a333839265fe65c"
+      }
+    },
+    "w20": {
+      "passed": true,
+      "root": "evidence/A/W20",
+      "sums_path": "evidence/A/W20/SHA256SUMS.txt",
+      "unverified": [],
+      "verified": {
+        "evidence/A/W20/campaign-wave2-index.json": "4c58e48f3ed3d2b131eabb6f23c8177bbf02a8ac687183450f4eb93753a76d9f",
+        "evidence/A/W20/frozen-campaign-manifest.md": "f548db3725428340e412a3638591e3b718617d353d5a60022e38350b51e8d50d",
+        "evidence/A/W20/physical-drift-audit.md": "2e5435143b992eae46c32056bd01ddd0945fd74e0dd546f52e2c07a58cf0109e",
+        "evidence/A/W20/validate_w20.py": "50bda80727e2c6c34be4415a0e7a9b07af016efe8c2716c19dc265c75dc28342"
+      }
+    }
+  },
+  "metadata_files_read": [
+    "ml/reports/W16/locked-test-manifest-W16.json",
+    "ml/reports/W17/w17-manifest.json",
+    "ml/reports/W18/w18-manifest.json",
+    "ml/reports/W18/freeze-baseline-W18.json",
+    "ml/reports/W19/w19-manifest.json",
+    "ml/reports/W20/campaign-metadata-W20.json",
+    "evidence/A/W19/SHA256SUMS.txt",
+    "evidence/A/W19/campaign-wave1-runbook.md",
+    "evidence/A/W19/invalid-attempt-taxonomy.json",
+    "evidence/A/W19/run-preparation-checklist.json",
+    "evidence/A/W19/validate_w19.py",
+    "evidence/A/W19/wave1-status.md",
+    "evidence/A/W20/SHA256SUMS.txt",
+    "evidence/A/W20/campaign-wave2-index.json",
+    "evidence/A/W20/frozen-campaign-manifest.md",
+    "evidence/A/W20/physical-drift-audit.md",
+    "evidence/A/W20/validate_w20.py",
+    "ml/reports/W18/w18-manifest.json",
+    "ml/reports/W18/freeze-baseline-W18.json",
+    "ml/reports/W16/locked-test-manifest-W16.json",
+    "ml/reports/W19/w19-manifest.json",
+    "ml/reports/W20/campaign-metadata-W20.json",
+    "ml/reports/W16/locked-test-manifest-W16.json",
+    "ml/reports/W17/w17-manifest.json",
+    "ml/reports/W18/w18-manifest.json",
+    "ml/reports/W18/freeze-baseline-W18.json",
+    "ml/reports/W19/w19-manifest.json",
+    "ml/statistical-analysis-plan-v0.md",
+    "ml/metric-spec.md",
+    "ml/reports/W20/campaign-metadata-W20.json",
+    "evidence/A/W19/SHA256SUMS.txt",
+    "evidence/A/W19/campaign-wave1-runbook.md",
+    "evidence/A/W19/invalid-attempt-taxonomy.json",
+    "evidence/A/W19/run-preparation-checklist.json",
+    "evidence/A/W19/validate_w19.py",
+    "evidence/A/W19/wave1-status.md",
+    "evidence/A/W20/SHA256SUMS.txt",
+    "evidence/A/W20/campaign-wave2-index.json",
+    "evidence/A/W20/frozen-campaign-manifest.md",
+    "evidence/A/W20/physical-drift-audit.md",
+    "evidence/A/W20/validate_w20.py"
+  ],
+  "next_member_b_action": "Keep W20 final analysis locked; when Member A and Member C publish the accepted final campaign export and the leader issues the campaign and statistical freezes, re-run the W20 preflight against that metadata and request external review. Do not open physical outcomes, compute paired effects or start W21 implementation in this task.",
+  "outcome_contract": {
+    "columns": [
+      "pair_id",
+      "run_A_id",
+      "run_B_id",
+      "controller_order",
+      "hardware_config_id",
+      "calibration_id",
+      "firmware_version",
+      "model_artifact_sha256_B",
+      "source_sha256_A",
+      "source_sha256_B",
+      "analysis_version",
+      "primary_outcome_name",
+      "primary_outcome_version",
+      "A_value",
+      "B_value",
+      "paired_improvement",
+      "thermal_exposure_c_s",
+      "recovery_time_s",
+      "peak_temperature_c",
+      "time_above_limit_s",
+      "branch_energy_wh",
+      "supporting_outcomes_json",
+      "coverage_status",
+      "undefined_reason_codes",
+      "validity_flags",
+      "metric_versions"
+    ],
+    "contract_version": "coldguard-w20-pair-outcome-contract-v1",
+    "current_admission_verdict": "BLOCKED_NO_VALID_PAIR",
+    "filename": "pair-outcomes.csv",
+    "metrics": [
+      "thermal_exposure",
+      "recovery_time",
+      "peak_temperature",
+      "time_above_limit",
+      "branch_energy"
+    ],
+    "outcome_values_present": false,
+    "schema": "coldguard-w20-pair-outcomes-v1",
+    "undefined_reason_codes": {
+      "branch_energy": [
+        "PZEM_GAP_MISSING_SPAN",
+        "ENERGY_COUNTER_RESET_UNRESOLVED",
+        "WHOLE_SYSTEM_ENERGY_NOT_ADMISSIBLE"
+      ],
+      "peak_temperature": [
+        "TELEMETRY_GAP_COVERS_OUTCOME_WINDOW",
+        "REPRESENTATIVE_TEMPERATURE_UNFROZEN"
+      ],
+      "recovery_time": [
+        "RECOVERY_CENSORED_NOT_OBSERVED",
+        "RECOVERY_REFERENCE_UNFROZEN",
+        "RECOVERY_BAND_UNFROZEN",
+        "ELECTRICAL_OBSERVATION_IS_NOT_THERMAL_RECOVERY"
+      ],
+      "thermal_exposure": [
+        "TELEMETRY_GAP_COVERS_OUTCOME_WINDOW",
+        "COVERAGE_BELOW_FROZEN_FLOOR",
+        "REPRESENTATIVE_TEMPERATURE_UNFROZEN"
+      ],
+      "time_above_limit": [
+        "TELEMETRY_GAP_COVERS_OUTCOME_WINDOW",
+        "TIME_BASE_INCONSISTENT"
+      ]
+    },
+    "verdicts": {
+      "OUTCOME_SCHEMA": "OUTCOME_SCHEMA_SOFTWARE_VERIFIED",
+      "PAIR_OUTCOME_TABLE": "PAIR_OUTCOME_TABLE_NOT_PRODUCED",
+      "PHYSICAL_OUTCOME_DATA": "PHYSICAL_OUTCOME_DATA_NOT_ADMITTED"
+    }
+  },
+  "paired_analysis_contract": {
+    "analysis_actions": [],
+    "analysis_authorized": false,
+    "confidence_interval_computed": false,
+    "p_value_computed": false,
+    "paired_effects_computed": false,
+    "sign_convention": "I_i = Y_A,i - Y_B,i",
+    "statistical_freeze_fields": [
+      "primary_outcome",
+      "paired_sign_convention",
+      "confidence_level",
+      "bootstrap_seed",
+      "bootstrap_iterations",
+      "test_family",
+      "invalid_pair_handling",
+      "secondary_outcomes"
+    ]
+  },
+  "prerequisite_status": {
+    "a_w19_revision": "3b27b7e",
+    "a_w20_revision": "3b27b7e",
+    "analysis_authorization_status": "NOT_ISSUED",
+    "c_w20_revision": "659512f91c41deadef036da71544ffa8b6245d93",
+    "d_w13_revision": "da821094985006945d0306dd7b16be576378bc18",
+    "g4": "NOT_READY",
+    "g5": "NOT_ESTABLISHED",
+    "pair_target_source": "ml/reports/W20/campaign-metadata-W20.json",
+    "pair_target_status": "UNKNOWN_UNFROZEN",
+    "physical_data_admission": "NOT_ADMITTED_NO_PHYSICAL_OUTCOME_PAYLOAD",
+    "statistical_freeze_source": "ml/reports/W20/campaign-metadata-W20.json",
+    "statistical_freeze_status": "FAIL"
+  },
+  "reports": {
+    "analysis-unlock-W20.md": "cea11179f2d58487dbc2cea5bba610c27bd4a84574b7278a3cfcd6ae43b19376",
+    "campaign-integrity.md": "89c02aa88a77f4b02eac12db92410a2bec84d0d51cd9750a91f5749a1ab9eae5",
+    "paired-outcome-contract-W20.md": "2768273d029dc3f0894867e85df3de52a44093bb745e86efdbc6077f61cf08c1"
+  },
+  "requirement_classification": {
+    "B-W20-01": {
+      "allowed_activity": "IMPLEMENT_AND_TEST_METADATA_LEVEL_GATE",
+      "class": "CANONICAL",
+      "requirement": "Verify final campaign lock",
+      "scientific_status": "BLOCKED_BY_EVIDENCE",
+      "software_status": "SOFTWARE_VERIFIED"
+    },
+    "B-W20-02": {
+      "allowed_activity": "DEFINE_AND_VALIDATE_OUTPUT_CONTRACT_ONLY",
+      "class": "CANONICAL",
+      "requirement": "Final valid-pair outcome table",
+      "scientific_status": "BLOCKED_BY_EVIDENCE",
+      "software_status": "SCHEMA_VERIFIED"
+    },
+    "B-W20-03": {
+      "allowed_activity": "REGISTER_ANALYSIS_SEMANTICS_AND_PROTECT_BOUNDARY",
+      "class": "CANONICAL",
+      "requirement": "Primary paired differences",
+      "scientific_status": "BLOCKED_BY_EVIDENCE",
+      "software_status": "REGISTERED"
+    },
+    "B-W20-04": {
+      "allowed_activity": "IMPLEMENT_CAUSAL_ROLE_AND_PROVENANCE_CHECKS",
+      "class": "CANONICAL",
+      "requirement": "Prevent incorrect EWT claims",
+      "scientific_status": "SOFTWARE_VERIFIED_NO_PHYSICAL_RESULT",
+      "software_status": "SOFTWARE_VERIFIED"
+    },
+    "W20_ANALYSIS_AUTHORIZATION": {
+      "class": "TEAM_DEPENDENCY"
+    },
+    "W20_PHYSICAL_CAMPAIGN": {
+      "class": "BLOCKED_BY_EVIDENCE"
+    },
+    "W21_RESILIENCE_ANALYSIS": {
+      "class": "SCHEDULED_DEBT",
+      "gate": "W21",
+      "owner": "B"
+    }
+  },
+  "revision_semantics": "W19_STACK_HEAD_BASE_NOT_W20_DELIVERY_COMMIT",
+  "schema": "coldguard-w20-campaign-lock-readiness-v1",
+  "scientific_evidence_class": "METADATA_ONLY_NO_PHYSICAL_OUTCOME_DATA",
+  "selection": {
+    "reasons": [],
+    "rule": "ALL_PREDECLARED",
+    "status": "PASS"
+  },
+  "source_revision": "d7bffbcfacc8505b227bd87a47dd03620ed82d16",
+  "stability": {
+    "applied_change_ids": [],
+    "identity_rows": [
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a734-37, \u00a795-98",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:hardware_config_id",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a734-37; 01 \u00a71.5",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:sensor_placement",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a735; 01 \u00a718",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:calibration_id",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792; 05A W20",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A/C",
+        "requirement_id": "D:firmware_version",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792; 05B \u00a746",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:model_artifact_sha256",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:model_config_sha256",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792; 05B \u00a79",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:feature_version",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:feature_schema_hash",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a792; 02 \u00a760.5",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:feature_order_sha256",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a758-60",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:model_calibration_semantics",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a744, \u00a792; 05B \u00a741",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B/D",
+        "requirement_id": "D:primary_horizon",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a742-43",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A/B",
+        "requirement_id": "D:critical_target",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a744, \u00a784; 05D",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "D",
+        "requirement_id": "D:reactive_threshold_hysteresis",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a787; 05B \u00a743",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B/D",
+        "requirement_id": "D:predictive_threshold",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a788; 05B \u00a743",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B/D",
+        "requirement_id": "D:warning_persistence",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "02 \u00a71.6; 04 \u00a711.4",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "D",
+        "requirement_id": "D:controller_policy_version",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a7102; 05D",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "D",
+        "requirement_id": "D:cooling_action_magnitude",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "06; 05D",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "D",
+        "requirement_id": "D:safety_limits",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a734-38, \u00a795-98",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:disturbance_protocol_id",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a737",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:initial_reset_criterion",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a735",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A/B",
+        "requirement_id": "D:pair_matching_tolerances",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a736",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "A",
+        "requirement_id": "D:randomization_protocol",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a7130-135; 05B \u00a748",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:analysis_plan_version",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a768-75, \u00a7133",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "B",
+        "requirement_id": "D:primary_outcome",
+        "status": "FAIL"
+      },
+      {
+        "blocking_consequence": "analysis preflight remains blocked",
+        "canonical_ref": "03 \u00a799-101; 04 W20",
+        "classification": "CANONICAL",
+        "evidence": "CAMPAIGN_MANIFEST_MISSING",
+        "group": "D_HARDWARE_PROTOCOL_STABILITY",
+        "owner": "TEAM_LEAD",
+        "requirement_id": "D:target_pair_count",
+        "status": "FAIL"
+      }
+    ],
+    "reasons": [
+      "CAMPAIGN_MANIFEST_MISSING"
+    ],
+    "status": "FAIL"
+  },
+  "unfinished_scientific_work": [
+    "FINAL_AB_CAMPAIGN_AUTHORIZATION",
+    "PAIR_TARGET_FREEZE",
+    "STATISTICAL_AND_OUTCOME_DEFINITION_FREEZE",
+    "FINAL_EXPORT_BACKUP_AND_PHYSICAL_TRACE",
+    "ACCEPTED_PHYSICAL_PAIR_EVIDENCE",
+    "GATE_G4_READY",
+    "CONTROLLER_B_SIGNOFF",
+    "SEPARATE_ANALYSIS_EXECUTION_AUTHORIZATION"
+  ],
+  "verdicts": {
+    "B_W20_01_CAMPAIGN_LOCK": "SOFTWARE_VERIFIED",
+    "B_W20_02_ACTUAL_PAIR_OUTCOMES": "NOT_COMPUTED",
+    "B_W20_02_PAIR_OUTCOME_CONTRACT": "SCHEMA_VERIFIED",
+    "B_W20_03_ACTUAL_PAIRED_DIFFERENCES": "NOT_COMPUTED",
+    "B_W20_03_PAIRED_ANALYSIS_CONTRACT": "REGISTERED",
+    "B_W20_04_EWT_CAUSAL_BOUNDARY": "SOFTWARE_VERIFIED",
+    "CAMPAIGN_LOCK": "BLOCKED",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "FINAL_CAMPAIGN": "NOT_AUTHORIZED",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "PAIR_TARGET": "UNKNOWN_UNFROZEN",
+    "PHYSICAL_PAIR_EVIDENCE": "NOT_ESTABLISHED",
+    "SCIENTIFIC_W20": "NOT_COMPLETE",
+    "SOFTWARE": "COMPLETE_PERMITTED_W20_SCOPE",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W20_ANALYSIS": "NOT_AUTHORIZED",
+    "W20_FINAL_ANALYSIS": "NOT_RUN"
+  },
+  "w16_preregistration_identity": {
+    "path": "ml/reports/W16/locked-test-manifest-W16.json",
+    "present": true,
+    "sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165"
+  },
+  "w18_freeze_baseline_identity": {
+    "path": "ml/reports/W18/freeze-baseline-W18.json",
+    "present": true,
+    "sha256": "d1bcc8ff26ed28ed998fb2c43d7fa57ab928d6c4d90c1af801289016dd446581"
+  },
+  "w19_manifest_identity": {
+    "path": "ml/reports/W19/w19-manifest.json",
+    "present": true,
+    "sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82"
+  },
+  "w19_no_peeking_contract": {
+    "guard_version": "coldguard-w19-peeking-guard-v1",
+    "registered_sign_convention": "I_i = Y_A,i - Y_B,i"
+  },
+  "w19_pair_ledger_contract": {
+    "layer_version": "coldguard-w19-paired-campaign-integrity-v1",
+    "schema": "coldguard-w19-pair-ledger-v1"
+  },
+  "w19_validity_contract": {
+    "method": "coldguard-w19-validity-review-v1",
+    "metric_contracts": [
+      "thermal_exposure",
+      "recovery_time",
+      "branch_energy"
+    ]
+  }
+}

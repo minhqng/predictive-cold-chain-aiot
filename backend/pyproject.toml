@@ -18,6 +18,7 @@ dependencies = [
 
 [project.optional-dependencies]
 gateway = ["pyserial==3.5"]
+inference = ["xgboost-cpu>=3.1,<4", "pyyaml>=6.0"]
 test = [
     "pytest>=8",
     "httpx>=0.27",
@@ -25,6 +26,14 @@ test = [
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.uv]
+# GHSA-6q48-6c7w-9gw2 and CVE-2026-114603: constrain transitive
+# trust/trace dependencies without adding new runtime integrations.
+constraint-dependencies = [
+    "certifi>=2026.10.19",
+    "opentelemetry-api>=1.45.1",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

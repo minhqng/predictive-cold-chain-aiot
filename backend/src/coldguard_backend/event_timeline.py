@@ -86,6 +86,7 @@ def _timeline_sources(run):
     raw_doc = cast(raw.raw_json, JSONB)
     source_event_id = raw_doc["event_id"].astext
     event_type = raw_doc["event_type"].astext
+    first_event_receipt = func.min(raw.id).over(partition_by=source_event_id)
     reported_command = _optional_string(raw_doc, "caused_by_command_id")
     linked_command = select(cmd.command_id).where(
         scope, cmd.command_id == reported_command,
@@ -95,6 +96,7 @@ def _timeline_sources(run):
         "device_event", raw.id, raw.backend_received_at, no_event_time,
         func.jsonb_build_object(
             "event_type", event_type, "source_event_id", source_event_id,
+            "boot_id", raw.boot_id, "event_id_conflict", raw.id != first_event_receipt,
             "reported_event_time", raw_doc["event_time"], "reported_command_id", reported_command,
             "command_id", linked_command, "prediction_id", _optional_string(raw_doc, "prediction_id"),
             "correlation_id", _optional_string(raw_doc, "correlation_id"), "synthetic", raw_doc["synthetic"],
@@ -105,7 +107,9 @@ def _timeline_sources(run):
         func.jsonb_typeof(raw_doc["event_id"]) == "string", func.btrim(source_event_id) != "",
         event_type.in_((EventType.DOOR_OPENED.value, EventType.DOOR_CLOSED.value)),
     ).add_columns(
-        func.row_number().over(partition_by=source_event_id, order_by=raw.id).label("receipt_number"),
+        func.row_number().over(
+            partition_by=(source_event_id, raw_doc), order_by=raw.id,
+        ).label("receipt_number"),
     ).subquery()
     door = select(
         door_rows.c.kind, door_rows.c.source_id, door_rows.c.backend_at,

@@ -1,0 +1,3 @@
+arm_id,view_id,feature_count,group_count,fold_count,evaluable_samples,positive,negative,censored_exclusions,untrusted_exclusions,fit_folds,strategy_count,fold_ap_min,fold_ap_max,strategy_fold_ap_values,oof_ap,scientific_class
+A1A,coldguard-w14-a1a-single-center-v1,21,8,4,1936,480,1456,960,0,8,2,1.0,1.0,"{""TRAIN_FOLD_CLASS_WEIGHT"": [1.0, 1.0, 1.0, 1.0], ""UNWEIGHTED"": [1.0, 1.0, 1.0, 1.0]}","{""TRAIN_FOLD_CLASS_WEIGHT"": 1.0, ""UNWEIGHTED"": 1.0}",SYNTHETIC_SOFTWARE_CONTROL_ONLY
+A1B,coldguard-w14-a1b-three-chamber-air-v1,28,8,4,1936,480,1456,960,0,8,2,1.0,1.0,"{""TRAIN_FOLD_CLASS_WEIGHT"": [1.0, 1.0, 1.0, 1.0], ""UNWEIGHTED"": [1.0, 1.0, 1.0, 1.0]}","{""TRAIN_FOLD_CLASS_WEIGHT"": 1.0, ""UNWEIGHTED"": 1.0}",SYNTHETIC_SOFTWARE_CONTROL_ONLY

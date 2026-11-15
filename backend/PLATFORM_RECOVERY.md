@@ -1,5 +1,8 @@
 # Platform soak and recovery
 
+See [the local runbook](RUNBOOK.md) for the current startup/readiness/stop route;
+the failure and evidence contracts below remain the recovery authority.
+
 Use explicitly provisioned local test providers for the software proof.
 Confirm PostgreSQL and Mosquitto are bound to loopback and belong to the test
 before starting. Apply migrations to the dedicated PostgreSQL database.
@@ -67,6 +70,27 @@ thermal timing require trusted physical evidence and stay null without it.
 Telemetry source clocks retain the existing timing-quality checks. A
 timezone-aware device timestamp alone cannot establish transport latency.
 
+## Outage resynchronization
+
+Set `COLDGUARD_RECONCILE_COMMANDS=true` after migrations to reconcile command
+history before the backend subscribes. Recovery records unresolved attempts
+as unknown and expires due commands in PostgreSQL. The recovery path has no
+publisher. An opt-in startup fails if the audit database is unavailable.
+
+`GET /api/runtime/readiness` reports broker and subscription readiness
+independently. `GET /api/devices/{device_id}/recovery` shows the reported boot
+and sequence, the latest normalized observation, desired expiry, pending
+attempt count, and the latest ACK receipt classification. The latest
+observation may be a replay and cannot authorize a boot switch. Broker
+connectivity cannot establish physical state or a device safety mode.
+
+Pass the publisher readiness check to `AuthorizedCommandGateway`. When
+the transport is unavailable, dispatch fails before creating intent. Database
+failure also prevents sending because durable intent and attempt evidence
+must commit first. A disconnected Paho command client does not reconnect or
+replay its queue. A deliberate later dispatch requires a newly ready transport
+and the normal policy, desired ownership and TTL checks.
+
 To exercise a real restart, set `COLDGUARD_TEST_DATABASE_URL` to a disposable
 database and `COLDGUARD_TEST_MOSQUITTO_EXE` to the broker executable with
 `mosquitto_passwd` available alongside it. The test provisions an
@@ -107,10 +131,12 @@ restore. Run the verifier from `backend/`.
 uv run --locked python scripts/verify_restore.py --output restore-proof.json
 ```
 
-The verifier streams ordered rows and records each table's count and SHA-256
-in UTC. It covers raw payload and normalized provenance, run manifests and
-transitions, command attempts, ACKs, and Twin state. A mismatch produces a
-nonzero exit code. Re-export the frozen S1 run set from both databases with the
+The verifier streams primary-key-ordered rows and records each table's count
+and SHA-256 in UTC. It covers raw payload and normalized provenance, run
+manifests and transitions, command attempts, ACKs, and Twin state. It also
+checks predictions and their inputs, shadow decisions, physical assessments,
+and policy approvals from the revisions that introduce them. A mismatch
+produces a nonzero exit code. Re-export the frozen S1 run set from both databases with the
 same `--created-at` and backend commit, then compare the artifact SHA-256.
 
 ## Gate G2

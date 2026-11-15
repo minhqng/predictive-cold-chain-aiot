@@ -1,0 +1,755 @@
+{
+  "bootstrap_policy": {
+    "default_iterations": 5000,
+    "minimum_iterations": 2000,
+    "quantile_convention": "LINEAR_INTERPOLATION_TYPE7_HYNDMAN_FAN",
+    "resampling_unit": "COMPLETE_MATCHED_PAIRS",
+    "rng": "PYTHON_RANDOM_MT19937_RANDOM_SEQUENCE_V1",
+    "seed": 20261110
+  },
+  "capabilities": {
+    "access_w16_locked_test": false,
+    "activate_controller_b": false,
+    "compute_real_treatment_effect": false,
+    "open_real_pair_outcomes": false,
+    "promote_gate_g4_g5": false,
+    "read_campaign_export": false,
+    "retune_model_or_policy": false,
+    "run_real_paired_analysis": false
+  },
+  "capability_audit": {
+    "capabilities": {
+      "access_w16_locked_test": false,
+      "activate_controller_b": false,
+      "compute_real_treatment_effect": false,
+      "open_real_pair_outcomes": false,
+      "promote_gate_g4_g5": false,
+      "read_campaign_export": false,
+      "retune_model_or_policy": false,
+      "run_real_paired_analysis": false
+    },
+    "ewt_functions": [],
+    "files_scanned": [
+      "src/coldguard_ml/w22_paired_statistics.py",
+      "src/coldguard_ml/w22_uncertainty.py",
+      "src/coldguard_ml/w22_sensitivity.py",
+      "src/coldguard_ml/w22_readiness.py",
+      "scripts/w22-statistics-contract-W22.py"
+    ],
+    "forbidden_imports": [],
+    "imports": [
+      "__future__",
+      "argparse",
+      "ast",
+      "coldguard_ml",
+      "contextlib",
+      "dataclasses",
+      "fractions",
+      "hashlib",
+      "io",
+      "json",
+      "math",
+      "pathlib",
+      "random",
+      "typing",
+      "w20_campaign_lock",
+      "w22_paired_statistics",
+      "w22_uncertainty"
+    ],
+    "pure_statistics_file_access_imports": []
+  },
+  "generation_inputs": {
+    "reports/W20/w20-manifest.json": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+    "reports/W21/w21-manifest.json": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3"
+  },
+  "interval_policy": {
+    "confidence_level": 0.95,
+    "freeze_id": "W22-TOY-CI-FREEZE-20261110",
+    "primary_method": "PAIRED_T_95_CI",
+    "second_method_role": "SENSITIVITY",
+    "selection_rule": "PREDECLARED_NO_FAVORABILITY_OR_WIDTH_SELECTION"
+  },
+  "layer_versions": {
+    "paired_statistics": "coldguard-w22-paired-statistics-v1",
+    "readiness": "coldguard-w22-readiness-v1",
+    "sensitivity": "coldguard-w22-sensitivity-v1",
+    "uncertainty": "coldguard-w22-uncertainty-v1"
+  },
+  "limitations": [
+    "Independent pair count: the inferential unit is one accepted matched Controller A/B pair; telemetry rows, windows and repeated event samples add no independent N.",
+    "Invalid or excluded pairs: every exclusion is listed with its rule, and a valid extreme pair is never removed from the primary analysis.",
+    "Dependence between runs on one rig: repeated runs share session context and are not multi-site evidence.",
+    "One chamber and one hardware unit: the campaign is a single apparatus, not a population of installations.",
+    "Scenario-specific model: predictive quality is conditional on the frozen scenario, features, threshold and policy.",
+    "Potential run-order and ambient drift: randomization, reset criteria and recorded order bound the bias but do not eliminate it.",
+    "Physical measurement and calibration limitations: sensor placement, ROM identity, calibration lineage and timing provenance constrain what the outcome numbers mean.",
+    "PZEM cooling-branch-only energy: energy is measured on the cooling branch, never whole-system energy.",
+    "Small-N confidence-interval sensitivity: interval width and method choice matter more as N shrinks; a zero-width interval is not proof of certainty.",
+    "Uncertainty from incomplete recovery: censored recovery is never a finite time and never enters as a numeric outcome.",
+    "Missing physical model acceptance: software verification, synthetic metrics and offline replay are not a physical model acceptance.",
+    "No biological quality ground truth: product-quality claims are outside the measured thermal/energy outcomes.",
+    "Inability to infer unobserved counterfactual outcomes: the closed-loop A/B pair identifies a measured difference under the frozen protocol, not every counterfactual trajectory."
+  ],
+  "pair_order_policy": "CANONICAL_SORT_BY_PAIR_ID",
+  "prior_layer_immutability": [
+    {
+      "expected_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+      "observed_sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+      "path": "reports/W16/locked-test-manifest-W16.json",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82",
+      "observed_sha256": "f3bbae932743b4b71c8e8ed7bbbb5334836353080361aa2746c3950cb989db82",
+      "path": "reports/W19/w19-manifest.json",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+      "observed_sha256": "0d8c2ad1cb846599d3535a74ade65186b388702da59eb4bfb0271dcb5a849ece",
+      "path": "reports/W20/w20-manifest.json",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "cea11179f2d58487dbc2cea5bba610c27bd4a84574b7278a3cfcd6ae43b19376",
+      "observed_sha256": "cea11179f2d58487dbc2cea5bba610c27bd4a84574b7278a3cfcd6ae43b19376",
+      "path": "reports/W20/analysis-unlock-W20.md",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "2768273d029dc3f0894867e85df3de52a44093bb745e86efdbc6077f61cf08c1",
+      "observed_sha256": "2768273d029dc3f0894867e85df3de52a44093bb745e86efdbc6077f61cf08c1",
+      "path": "reports/W20/paired-outcome-contract-W20.md",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+      "observed_sha256": "5b78141deca1d3f5fd5e16ac10b3344541261d66b5aaa6e49bb3169758fae2c3",
+      "path": "reports/W21/w21-manifest.json",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "c67ada12603c810e5821546f3a3d4ebd6f780d6011f5a9f71f2190d3691477b4",
+      "observed_sha256": "c67ada12603c810e5821546f3a3d4ebd6f780d6011f5a9f71f2190d3691477b4",
+      "path": "reports/W21/diagnosis-table-W21.md",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "053095bef6e55599b45a1b468a145ca72f23acd0b90785cbecb4bb54143cb74d",
+      "observed_sha256": "053095bef6e55599b45a1b468a145ca72f23acd0b90785cbecb4bb54143cb74d",
+      "path": "reports/W21/safe-local-summary-W21.md",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "3cd357c61ebfdb9014116a722f4e004fa547bd9090600061ae347298d0631866",
+      "observed_sha256": "3cd357c61ebfdb9014116a722f4e004fa547bd9090600061ae347298d0631866",
+      "path": "reports/W21/degraded-sensor-pzem-W21.md",
+      "unchanged": true
+    },
+    {
+      "expected_sha256": "9939b5f0baa02710760551948c1395b35b6418d34c96041218b984223aa17897",
+      "observed_sha256": "9939b5f0baa02710760551948c1395b35b6418d34c96041218b984223aa17897",
+      "path": "reports/W21/optional-energy-gate-W21.md",
+      "unchanged": true
+    }
+  ],
+  "quantile_convention": "LINEAR_INTERPOLATION_TYPE7_HYNDMAN_FAN",
+  "readiness": {
+    "gate_decision": "ANALYSIS_PREFLIGHT_BLOCKED",
+    "physical_analysis": "NOT_AUTHORIZED",
+    "real_paired_statistics": "NOT_COMPUTED",
+    "reasons": [
+      "A1:AUTHORIZATION_RECORD_MISSING",
+      "A4:REVIEW_AUTHORITY_MISSING",
+      "A5:APPROVED_FREEZE_VERSION_MISSING",
+      "A6:CONTROLLER_B_ENABLEMENT_MISSING",
+      "ANALYSIS_AUTHORIZATION_RECORD_MISSING",
+      "B1:PAIR_TARGET_STATUS=UNKNOWN_UNFROZEN;PAIR_TARGET_RECORD_MISSING",
+      "C1:PAIR_LEDGER_MISSING",
+      "CAMPAIGN_MANIFEST_MISSING",
+      "CLOSEOUT=PAIR_TARGET_NOT_FROZEN",
+      "D:analysis_plan_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:calibration_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:controller_policy_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:cooling_action_magnitude:CAMPAIGN_MANIFEST_MISSING",
+      "D:critical_target:CAMPAIGN_MANIFEST_MISSING",
+      "D:disturbance_protocol_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_order_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_schema_hash:CAMPAIGN_MANIFEST_MISSING",
+      "D:feature_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:firmware_version:CAMPAIGN_MANIFEST_MISSING",
+      "D:hardware_config_id:CAMPAIGN_MANIFEST_MISSING",
+      "D:initial_reset_criterion:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_artifact_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_calibration_semantics:CAMPAIGN_MANIFEST_MISSING",
+      "D:model_config_sha256:CAMPAIGN_MANIFEST_MISSING",
+      "D:pair_matching_tolerances:CAMPAIGN_MANIFEST_MISSING",
+      "D:predictive_threshold:CAMPAIGN_MANIFEST_MISSING",
+      "D:primary_horizon:CAMPAIGN_MANIFEST_MISSING",
+      "D:primary_outcome:CAMPAIGN_MANIFEST_MISSING",
+      "D:randomization_protocol:CAMPAIGN_MANIFEST_MISSING",
+      "D:reactive_threshold_hysteresis:CAMPAIGN_MANIFEST_MISSING",
+      "D:safety_limits:CAMPAIGN_MANIFEST_MISSING",
+      "D:sensor_placement:CAMPAIGN_MANIFEST_MISSING",
+      "D:target_pair_count:CAMPAIGN_MANIFEST_MISSING",
+      "D:warning_persistence:CAMPAIGN_MANIFEST_MISSING",
+      "E0:CAMPAIGN_FREEZE_NOT_APPROVED;MISSING_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count;UNFROZEN_FIELDS=hardware_config_id,calibration_id,firmware_version,sensor_placement,model_artifact_sha256,feature_schema_hash,critical_target,representative_temperature,primary_horizon,operating_threshold,warning_persistence,controller_policy_version,cooling_action_magnitude,disturbance_protocol,initial_reset_criterion,pair_matching_tolerances,randomization_protocol,validity_exclusion_rules,primary_outcome,statistical_method,target_pair_count",
+      "E1:STATISTICAL_FREEZE_STATUS=NOT_FROZEN;STATISTICAL_FREEZE_RECORD_MISSING",
+      "E2:OUTCOME_DEFINITION_FREEZE_MISSING",
+      "E3:PRIMARY_OUTCOME_MANIFEST_IDENTITY_MISSING",
+      "F1:FINAL_EXPORT_METADATA_MISSING",
+      "F3:FINAL_EXPORT_METADATA_MISSING",
+      "F4:FINAL_EXPORT_METADATA_MISSING",
+      "F7:FINAL_EXPORT_METADATA_MISSING",
+      "F8:FINAL_EXPORT_METADATA_MISSING",
+      "SELECTION_POLICY_MISSING",
+      "W20_GATE=ANALYSIS_PREFLIGHT_BLOCKED"
+    ],
+    "required_future_conditions": [
+      "Gate G4 ready and final A/B campaign authorized",
+      "frozen pair target completed",
+      "completed accepted matched pairs with full attempt history",
+      "approved hardware/model/policy freeze",
+      "approved statistical and outcome-definition freeze",
+      "accepted physical-source and export hashes",
+      "verified backup/trace provenance",
+      "externally verified analysis-execution authorization (W20 gate decision)",
+      "separately reviewed real-data intake bridge (not implemented in W22)"
+    ]
+  },
+  "reports": {
+    "analysis-readiness-W22.md": "daf98ad90e1e16925709fe19464e6e6d3b9a1680db0be5fb32f6bddcce458d71",
+    "paired-statistics-contract-W22.md": "5478aa4f39d1101f4f58a27da5c3b30e966e8a0202dcad6bc40ca6c596a29eb4",
+    "scientific-limitations-W22.md": "df50359106d5d86825f5d976f5fea67248cd44e836803453fe7fbe4839ea2b1e",
+    "sensitivity-contract-W22.md": "9c02a1ffd8ddc073035124be93e13b635bec9872f2d205e2ce03665a46a193d5",
+    "test-only-pair-plot-W22.svg": "e8b22bbc2cc3b1a9f2c0680d3f12f22255815c7cad5f2ca27ae607ab0c0303e3",
+    "uncertainty-and-tests-W22.md": "e4474e5cd571a15df392d6291626e0d5cb0b53b2044dca3f68632017835a3367"
+  },
+  "reproducibility": {
+    "bootstrap_seed": 20261110,
+    "determinism": "TWO_INDEPENDENT_PROCESSES_BYTE_IDENTICAL",
+    "numpy": "NOT_USED",
+    "pair_order_policy": "CANONICAL_SORT_BY_PAIR_ID",
+    "python_requires": ">=3.12",
+    "quantile_convention": "LINEAR_INTERPOLATION_TYPE7_HYNDMAN_FAN",
+    "rng": "PYTHON_RANDOM_MT19937_RANDOM_SEQUENCE_V1",
+    "third_party_runtime_dependencies": "NONE_FOR_W22_ENGINE"
+  },
+  "schema": "coldguard-w22-paired-statistics-contract-v1",
+  "scientific_integrity": {
+    "FINAL_AB_CAMPAIGN": "NOT_AUTHORIZED",
+    "FINAL_PHYSICAL_CI": "NOT_COMPUTED",
+    "FINAL_PHYSICAL_EFFECT": "NOT_ESTABLISHED",
+    "FINAL_PHYSICAL_P_VALUE": "NOT_COMPUTED",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "INTERPRETATION": "NO_INTERPRETATION_ANALYSIS_NOT_RUN",
+    "PAIR_TARGET": "UNKNOWN_UNFROZEN",
+    "PHYSICAL_ANALYSIS": "NOT_AUTHORIZED",
+    "REAL_PAIRED_STATISTICS": "NOT_COMPUTED",
+    "W16_HOLDOUT": "NOT_OPENED",
+    "W20_FINAL_ANALYSIS": "LOCKED"
+  },
+  "sign_convention": "I_i = Y_A,i - Y_B,i",
+  "statistical_unit": "one accepted matched Controller A/B pair",
+  "toy_fixtures": {
+    "constant_improvements": [
+      3.0,
+      3.0,
+      3.0,
+      3.0
+    ],
+    "extreme_improvements": [
+      3.0,
+      3.0,
+      3.0,
+      50.0
+    ],
+    "label": "SYNTHETIC_STATISTICAL_UNIT_TEST_ONLY",
+    "primary_improvements": [
+      20.0,
+      5.0,
+      5.0,
+      -5.0,
+      15.0,
+      12.0,
+      -2.0,
+      17.0
+    ],
+    "reference_improvements": [
+      2.0,
+      4.5,
+      -1.0,
+      0.0,
+      3.5,
+      7.0,
+      2.5,
+      -3.0,
+      1.5,
+      5.5
+    ],
+    "secondary_improvements": [
+      4.0,
+      -1.0,
+      6.0,
+      2.0,
+      0.0,
+      3.0
+    ]
+  },
+  "verdicts": {
+    "B_W22_01_DESCRIPTIVE_STATISTICS": "SOFTWARE_VERIFIED",
+    "B_W22_02_95_CI": "SOFTWARE_VERIFIED",
+    "B_W22_03_TEST_FAMILY": "SOFTWARE_VERIFIED",
+    "B_W22_04_EFFECT_SIZE": "SOFTWARE_VERIFIED",
+    "B_W22_05_SENSITIVITY": "SOFTWARE_VERIFIED",
+    "B_W22_06_LIMITATIONS": "DOCUMENTED",
+    "DELIVERY": "PENDING_PUBLICATION",
+    "FINAL_PHYSICAL_CI": "NOT_COMPUTED",
+    "FINAL_PHYSICAL_EFFECT": "NOT_ESTABLISHED",
+    "FINAL_PHYSICAL_P_VALUE": "NOT_COMPUTED",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "REAL_PAIRED_ANALYSIS": "NOT_RUN",
+    "SOFTWARE": "COMPLETE",
+    "W20_ANALYSIS_GATE": "LOCKED"
+  },
+  "verification": {
+    "adversarial_controls": {
+      "probe_count": 56,
+      "probes": [
+        {
+          "expectation": "a valid labelled A/B pair enters statistics",
+          "name": "valid_pair_admitted",
+          "passed": true
+        },
+        {
+          "expectation": "two Controller A arms cannot form a pair",
+          "name": "two_a_arms_refused",
+          "passed": true
+        },
+        {
+          "expectation": "duplicate pair IDs are refused",
+          "name": "duplicate_pair_id_refused",
+          "passed": true
+        },
+        {
+          "expectation": "one run cannot contribute twice",
+          "name": "run_reused_across_pairs_refused",
+          "passed": true
+        },
+        {
+          "expectation": "reversed arm order is refused, not sign-flipped silently",
+          "name": "arm_order_reversed_refused",
+          "passed": true
+        },
+        {
+          "expectation": "duplicate run identities cannot inflate independent N; provenance collapse is a W19-bound intake duty",
+          "name": "telemetry_windows_not_pairs",
+          "passed": true
+        },
+        {
+          "expectation": "bootstrap depends on paired differences, not arm values",
+          "name": "arm_wise_bootstrap_refused",
+          "passed": true
+        },
+        {
+          "expectation": "non-finite pair is refused",
+          "name": "invalid_pair_silently_included_refused",
+          "passed": true
+        },
+        {
+          "expectation": "a rerun in the same pair block is not an extra pair",
+          "name": "rerun_extra_pair_refused",
+          "passed": true
+        },
+        {
+          "expectation": "a missing value is never coerced to zero",
+          "name": "unknown_value_not_zero",
+          "passed": true
+        },
+        {
+          "expectation": "descriptives match independent references",
+          "name": "known_descriptives",
+          "passed": true
+        },
+        {
+          "expectation": "sample and population SD are distinct",
+          "name": "sample_sd_denominator",
+          "passed": true
+        },
+        {
+          "expectation": "IQR uses the frozen type-7 quantile",
+          "name": "quantile_type7_pinned",
+          "passed": true
+        },
+        {
+          "expectation": "negative improvement reads as worsened",
+          "name": "negative_improvement_not_beneficial",
+          "passed": true
+        },
+        {
+          "expectation": "constant differences do not yield certainty",
+          "name": "constant_differences_refused_inference",
+          "passed": true
+        },
+        {
+          "expectation": "NaN and infinity are refused",
+          "name": "nan_inf_refused",
+          "passed": true
+        },
+        {
+          "expectation": "different units cannot be paired",
+          "name": "unit_mismatch_refused",
+          "passed": true
+        },
+        {
+          "expectation": "the plot contains every pair",
+          "name": "every_pair_plot_complete",
+          "passed": true
+        },
+        {
+          "expectation": "small-N CI uses the Student-t critical value",
+          "name": "student_t_not_196",
+          "passed": true
+        },
+        {
+          "expectation": "CI uses df = n - 1",
+          "name": "degrees_of_freedom_n_minus_1",
+          "passed": true
+        },
+        {
+          "expectation": "row/window bootstrap input is refused",
+          "name": "row_window_bootstrap_refused",
+          "passed": true
+        },
+        {
+          "expectation": "pair resampling preserves A/B pairing",
+          "name": "pair_level_bootstrap_preserves_pairing",
+          "passed": true
+        },
+        {
+          "expectation": "an unseeded bootstrap is refused",
+          "name": "unseeded_bootstrap_refused",
+          "passed": true
+        },
+        {
+          "expectation": "bootstrap iteration policy is enforced",
+          "name": "iteration_policy_enforced",
+          "passed": true
+        },
+        {
+          "expectation": "bootstrap collapse is not reliable uncertainty",
+          "name": "bootstrap_collapse_not_reliability",
+          "passed": true
+        },
+        {
+          "expectation": "N below the inferential minimum is refused",
+          "name": "n_below_minimum_refused",
+          "passed": true
+        },
+        {
+          "expectation": "two primary intervals are refused",
+          "name": "two_primary_cis_refused",
+          "passed": true
+        },
+        {
+          "expectation": "the predeclared primary CI is returned",
+          "name": "favorable_ci_not_selected",
+          "passed": true
+        },
+        {
+          "expectation": "the paired test is not a two-sample test",
+          "name": "paired_not_independent_test",
+          "passed": true
+        },
+        {
+          "expectation": "the declared family is used even when another p is smaller",
+          "name": "no_smallest_p_selection",
+          "passed": true
+        },
+        {
+          "expectation": "Wilcoxon requires its assumption license",
+          "name": "wilcoxon_license_required",
+          "passed": true
+        },
+        {
+          "expectation": "zero differences and ties are handled explicitly",
+          "name": "zero_tie_handling",
+          "passed": true
+        },
+        {
+          "expectation": "two-sided testing is the default",
+          "name": "two_sided_default",
+          "passed": true
+        },
+        {
+          "expectation": "d_z uses paired-difference SD",
+          "name": "paired_sd_effect_not_pooled",
+          "passed": true
+        },
+        {
+          "expectation": "zero SD yields an undefined effect",
+          "name": "zero_sd_effect_not_infinite",
+          "passed": true
+        },
+        {
+          "expectation": "relative improvement needs a meaningful denominator",
+          "name": "relative_denominator_guard",
+          "passed": true
+        },
+        {
+          "expectation": "a test statistic carries no usefulness claim",
+          "name": "significance_not_usefulness",
+          "passed": true
+        },
+        {
+          "expectation": "a valid extreme pair stays in the primary",
+          "name": "extreme_pair_retained_primary",
+          "passed": true
+        },
+        {
+          "expectation": "leave-one-out stays sensitivity-only",
+          "name": "loo_not_primary",
+          "passed": true
+        },
+        {
+          "expectation": "sensitivity never changes primary N",
+          "name": "primary_n_unchanged",
+          "passed": true
+        },
+        {
+          "expectation": "a secondary outcome is never promoted",
+          "name": "secondary_not_promoted",
+          "passed": true
+        },
+        {
+          "expectation": "a post-hoc check cannot be marked predeclared",
+          "name": "posthoc_not_preregistered",
+          "passed": true
+        },
+        {
+          "expectation": "prediction-horizon shopping is refused",
+          "name": "horizon_shopping_refused",
+          "passed": true
+        },
+        {
+          "expectation": "toy statistics remain synthetic evidence",
+          "name": "synthetic_not_physical",
+          "passed": true
+        },
+        {
+          "expectation": "no naive closed-loop EWT is produced",
+          "name": "closed_loop_ewt_refused",
+          "passed": true
+        },
+        {
+          "expectation": "one rig is not multiple independent sites",
+          "name": "one_rig_not_multiple_sites",
+          "passed": true
+        },
+        {
+          "expectation": "a blocked W20 gate refuses real analysis",
+          "name": "w20_blocked_not_authorized",
+          "passed": true
+        },
+        {
+          "expectation": "the W16 holdout stays unopened",
+          "name": "w16_holdout_not_opened",
+          "passed": true
+        },
+        {
+          "expectation": "a toy fixture cannot be relabelled physical",
+          "name": "fixture_not_physical_campaign",
+          "passed": true
+        },
+        {
+          "expectation": "a fake approval cannot unlock analysis",
+          "name": "fake_approval_refused",
+          "passed": true
+        },
+        {
+          "expectation": "the CLI has no lock-bypass flag",
+          "name": "cli_lock_bypass_refused",
+          "passed": true
+        },
+        {
+          "expectation": "no outcome CSV is accepted or produced",
+          "name": "no_outcome_csv_artifact",
+          "passed": true
+        },
+        {
+          "expectation": "no real physical p-value is computed",
+          "name": "no_real_p_value",
+          "passed": true
+        },
+        {
+          "expectation": "G4/G5 are not promoted by toy tests",
+          "name": "g4_g5_not_promoted",
+          "passed": true
+        },
+        {
+          "expectation": "W22 contains no model retuning",
+          "name": "model_not_retuned",
+          "passed": true
+        },
+        {
+          "expectation": "W16/W19/W20/W21 artifacts are unchanged",
+          "name": "prior_reports_unmodified",
+          "passed": true
+        }
+      ],
+      "probes_passed": 56
+    },
+    "deterministic_replay": "TWO_INDEPENDENT_PROCESSES_COMPARED_BY_TESTS",
+    "reference_checks": [
+      {
+        "expected": 8.375,
+        "name": "primary_mean",
+        "observed": 8.375,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 8.5,
+        "name": "primary_median",
+        "observed": 8.5,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 9.07016301633312,
+        "name": "primary_sample_sd",
+        "observed": 9.07016301633312,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 3.25,
+        "name": "primary_q1",
+        "observed": 3.25,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 15.5,
+        "name": "primary_q3",
+        "observed": 15.5,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.25,
+        "name": "reference_mean",
+        "observed": 2.25,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.25,
+        "name": "reference_median",
+        "observed": 2.25,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 3.0482235263619804,
+        "name": "reference_sample_sd",
+        "observed": 3.0482235263619804,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.891798748184251,
+        "name": "reference_population_sd",
+        "observed": 2.891798748184251,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 0.375,
+        "name": "reference_q1",
+        "observed": 0.375,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 4.25,
+        "name": "reference_q3",
+        "observed": 4.25,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.364624251592784,
+        "name": "t_critical_df7",
+        "observed": 2.3646242515927813,
+        "passed": true,
+        "tolerance": 1e-09
+      },
+      {
+        "expected": 2.611648448555221,
+        "name": "t_statistic_primary",
+        "observed": 2.6116484485552216,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 0.03482970817118022,
+        "name": "t_p_primary",
+        "observed": 0.03482970817118014,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 0.7921539557534638,
+        "name": "t_ci_lower_primary",
+        "observed": 0.7921539557534718,
+        "passed": true,
+        "tolerance": 1e-11
+      },
+      {
+        "expected": 15.957846044246537,
+        "name": "t_ci_upper_primary",
+        "observed": 15.957846044246528,
+        "passed": true,
+        "tolerance": 1e-11
+      },
+      {
+        "expected": 0.2890625,
+        "name": "sign_p_primary",
+        "observed": 0.2890625,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 0.0625,
+        "name": "wilcoxon_p_primary",
+        "observed": 0.0625,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 0.9233571640243616,
+        "name": "effect_dz_primary",
+        "observed": 0.9233571640243616,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.3333333333333335,
+        "name": "secondary_mean",
+        "observed": 2.3333333333333335,
+        "passed": true,
+        "tolerance": 1e-12
+      },
+      {
+        "expected": 2.581988897471611,
+        "name": "secondary_sample_sd",
+        "observed": 2.581988897471611,
+        "passed": true,
+        "tolerance": 1e-12
+      }
+    ]
+  }
+}

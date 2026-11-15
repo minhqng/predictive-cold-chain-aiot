@@ -25,8 +25,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W07 added revision 0009 (experiment registry and lifecycle history).
-EXPECTED_HEAD = "0009"
+# Campaign namespace, closure and immutable freeze evidence are reviewed through 0014.
+EXPECTED_HEAD = "0014"
 
 
 needs_real_db = pytest.mark.skipif(

@@ -28,8 +28,8 @@ import pytest
 from sqlalchemy import create_engine, inspect, text
 
 BACKEND_DIR = Path(__file__).resolve().parent.parent
-# W07 added revision 0009 (experiment registry and lifecycle history).
-EXPECTED_HEAD = "0009"
+# Campaign namespace, closure and immutable freeze evidence are reviewed through 0014.
+EXPECTED_HEAD = "0014"
 
 needs_real_db = pytest.mark.skipif(
     not os.environ.get("COLDGUARD_TEST_DATABASE_URL"),
@@ -67,6 +67,10 @@ def test_baseline_upgrades_from_empty_and_persists_head():
         "reconciliation_boundary", "reconciliation_legacy_audit",
         "commands", "command_attempts", "command_acks", "command_transitions",
         "experiments", "experiment_transitions",
+        "predictions", "prediction_inputs", "shadow_decisions", "physical_assessments",
+        "policy_approvals",
+        "campaigns", "campaign_runs", "campaign_run_closures",
+        "campaign_freezes",
     }
 
 

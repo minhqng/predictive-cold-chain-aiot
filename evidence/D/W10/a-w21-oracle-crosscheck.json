@@ -1,0 +1,76 @@
+{
+  "scope": "D_W10_READ_ONLY_A_W21_ORACLE_CROSSCHECK",
+  "sources": [
+    {
+      "path": "evidence/A/W21/fault-injection-session-20261108/manifest.json",
+      "sha256": "1f37024afd676a42970d68ca12250fa37f04836bb4d3b2b77a09e73e1cf514ca"
+    },
+    {
+      "path": "evidence/A/W21/results/A-W21-02.json",
+      "sha256": "4fbc22d3150d3e67a8e1c2556543c454e68e835426d8fd66a3bc0f6949b1682b"
+    },
+    {
+      "path": "evidence/A/W21/results/A-W21-03.json",
+      "sha256": "b8bb30ba309bd90a555bb99d8c30dca289a15fd1559628937bf069142e8c8cdc"
+    }
+  ],
+  "device_identity": {
+    "boot_id": "4cf9be5f",
+    "boot_count": "181",
+    "firmware_version": "cg-w06-0.1.0",
+    "hardware_config_id": "CG-HW-001",
+    "device_id": "coldguard-001",
+    "t1_rom": "287088CA00000051",
+    "t2_rom": "28AEBF2200000006",
+    "t3_rom": "28CBE9CA00000072",
+    "spare_rom": "283BE5C9000000A9"
+  },
+  "evidence_mode": "ON_DEVICE_SOFTWARE_INJECTION",
+  "raw_log_sha256": "faf008eb6c7e250c8b8f98385e6eb3817b1084771a56d800a3735c576c7106fa",
+  "cases": [
+    {
+      "source_test_id": "A-W21-02",
+      "protocol_id": "SENSOR-DEGRADED",
+      "fault_id": "F-PHY-01",
+      "technique_id": "SW-SENSOR-ROLE-INVALID",
+      "source_outcome": "PASS",
+      "observed": {
+        "invalid_roles": [
+          "T1"
+        ],
+        "thermal_invalid_frames": 25,
+        "recovery_valid_frames": 25,
+        "cooling_on_frames": 0
+      },
+      "expected_state": "DEGRADED thermal quality; diagnosis UNKNOWN or healthy only on the still-valid channels",
+      "expected_policy": "NORMAL with degraded_sensing; predictive intervention blocked; local threshold authoritative (Doc 02 section 40.1, Doc 05D D-W10-02)",
+      "expected_event": "reason SENSOR_DEGRADED",
+      "source_oracle_verdict": "MATCHED_NON_ENERGIZED_SOURCE_CASE"
+    },
+    {
+      "source_test_id": "A-W21-03",
+      "protocol_id": "PZEM-UNAVAILABLE",
+      "fault_id": "F-ELEC-01",
+      "technique_id": "SW-PZEM-TRANSPORT-DISABLE",
+      "source_outcome": "PASS",
+      "observed": {
+        "electrical_invalid_frames": 24,
+        "current_none_frames": 24,
+        "recovery_valid_frames": 24,
+        "cooling_on_frames": 0
+      },
+      "expected_state": "electrical evidence unavailable; diagnosis UNKNOWN (Doc 01 section 23.5)",
+      "expected_policy": "degraded electrical verification; thermal protection preserved; it does not by itself force OFF (Doc 01 section 28 F-ELEC-01, 05D D-W11-04)",
+      "expected_event": "reason PZEM_UNAVAILABLE",
+      "source_oracle_verdict": "MATCHED_NON_ENERGIZED_SOURCE_CASE"
+    }
+  ],
+  "aggregate": "2_SOURCE_CASES_MATCH_D_ORACLES",
+  "physical_enablement": false,
+  "remaining": [
+    "runtime D diagnosis events were not captured",
+    "C persistence of reason/evidence window/incident state is absent",
+    "output stage was disabled and fuse removed, so energized fail-safe is unproven",
+    "S4 electrical-response-missing, thermal-ineffective and unexpected-current-while-OFF cases remain open"
+  ]
+}

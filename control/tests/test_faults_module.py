@@ -50,6 +50,13 @@ def test_check_injection_safe():
     assert "not permission to execute" in result.detail
 
 
+def test_a_w21_software_injection_techniques_are_admitted():
+    sensor = check_injection("SENSOR-DEGRADED", "SW-SENSOR-ROLE-INVALID")
+    pzem = check_injection("PZEM-UNAVAILABLE", "SW-PZEM-TRANSPORT-DISABLE")
+    assert sensor.verdict == InjectionVerdict.PROTOCOL_ALLOWED
+    assert pzem.verdict == InjectionVerdict.PROTOCOL_ALLOWED
+
+
 def test_get_protocol_unknown_raises():
     with pytest.raises(KeyError):
         get_protocol("NON-EXISTENT")

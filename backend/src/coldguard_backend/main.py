@@ -21,15 +21,18 @@ from __future__ import annotations
 import logging
 import os
 from contextlib import asynccontextmanager
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Literal
 
 from fastapi import Depends, FastAPI, HTTPException, Path, Query, Request, Response
+from fastapi.responses import HTMLResponse
 from sqlalchemy import Engine, create_engine, select
 
 from coldguard_backend import experiment_store as runs
+from coldguard_backend.campaign_api import campaign_router
 from coldguard_backend.command_store import CommandNotFound
 from coldguard_backend.command_timing import command_timing
+from coldguard_backend.controller_b_trace import controller_b_trace
 from coldguard_backend.dataset_export import run_integrity
 from coldguard_backend.event_timeline import s2_timeline_page
 from coldguard_backend.experiment_evidence import (
@@ -41,6 +44,11 @@ from coldguard_backend.normalized_store import (
     telemetry,
 )
 from coldguard_backend.observability import runtime_metrics
+from coldguard_backend.prediction_store import (
+    current_prediction, derived_prediction_view, prediction_details, prediction_history,
+)
+from coldguard_backend.recovery import device_recovery_snapshot, reconcile_command_history
+from coldguard_backend.shadow_trace import render_shadow_audit, shadow_trace
 from coldguard_backend.raw_store import telemetry_raw
 from coldguard_backend.timing import compute_timing_metrics
 from coldguard_backend.twin_store import device_twin
@@ -100,6 +108,9 @@ async def lifespan(app: FastAPI):
     consumer = None
     ack_consumer = None
     try:
+        app.state.command_recovery = None
+        if os.environ.get("COLDGUARD_RECONCILE_COMMANDS", "").strip().lower() in ("1", "true", "yes"):
+            app.state.command_recovery = _recover_startup(app)
         if _ingest_enabled():
             consumer = _start_consumer()
             log.info("mqtt ingestion consumer started")
@@ -118,15 +129,48 @@ async def lifespan(app: FastAPI):
             if ack_consumer is not None:
                 ack_consumer.stop()
         finally:
-            if consumer is not None:
-                consumer.stop()
-                log.info("mqtt ingestion consumer stopped")
+            try:
+                if consumer is not None:
+                    consumer.stop()
+                    log.info("mqtt ingestion consumer stopped")
+            finally:
+                cached = getattr(app.state, "_cached_engine", None)
+                if cached is not None:
+                    cached.dispose()
+                    app.state._cached_engine = None
 
 
 app = FastAPI(title="ColdGuard Backend", lifespan=lifespan)
 app.state.mqtt_consumer = None
 app.state.ack_consumer = None
 app.state.db_engine = None
+app.state.command_recovery = None
+
+
+def _database_url() -> str:
+    explicit = os.environ.get("DATABASE_URL")
+    if explicit:
+        return explicit
+    from coldguard_backend.config import ColdGuardConfig
+
+    return ColdGuardConfig.load().database_url
+
+
+def _recover_startup(app: FastAPI) -> dict:
+    injected = app.state.db_engine
+    engine = injected if injected is not None else create_engine(
+        _database_url(), connect_args={"connect_timeout": 5},
+    )
+    try:
+        report = reconcile_command_history(engine)
+        log.info(
+            "reconciled command history: uncertain=%d expired=%d",
+            len(report["uncertain_commands"]), len(report["expired_commands"]),
+        )
+        return report
+    finally:
+        if injected is None:
+            engine.dispose()
 
 
 def get_db_engine(request: Request) -> Engine:
@@ -135,16 +179,9 @@ def get_db_engine(request: Request) -> Engine:
     if engine is not None:
         return engine
 
-    db_url = os.environ.get("DATABASE_URL")
-    if not db_url:
-        from coldguard_backend.config import ColdGuardConfig
-
-        config = ColdGuardConfig.load()
-        db_url = config.database_url
-
     cached = getattr(request.app.state, "_cached_engine", None)
     if cached is None:
-        cached = create_engine(db_url)
+        cached = create_engine(_database_url())
         request.app.state._cached_engine = cached
     return cached
 
@@ -157,6 +194,25 @@ def health() -> dict[str, str]:
 @app.get("/api/metrics")
 def read_runtime_metrics() -> dict:
     return runtime_metrics.snapshot()
+
+
+@app.get("/api/runtime/readiness")
+def read_runtime_readiness(request: Request) -> dict:
+    ingest_consumer = request.app.state.mqtt_consumer
+    ack_consumer = request.app.state.ack_consumer
+    telemetry_readiness = ingest_consumer.snapshot() if ingest_consumer else {}
+    return {
+        "telemetry_broker_connected": telemetry_readiness.get("broker_connected", False),
+        "telemetry_subscribed": telemetry_readiness.get("subscribed", False),
+        "ack_subscribed": ack_consumer.snapshot()["subscribed"] if ack_consumer else False,
+        "startup_reconciliation": request.app.state.command_recovery is not None,
+    }
+
+
+@app.get("/api/devices/{device_id}/recovery")
+def read_device_recovery(device_id: str, engine: Engine = Depends(get_db_engine)) -> dict:
+    with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+        return device_recovery_snapshot(connection, device_id)
 
 
 @app.get("/api/commands/{command_id}/timing")
@@ -250,6 +306,49 @@ def read_s2_timeline(
     return Response(content, media_type="application/json", headers=headers)
 
 
+@app.get("/audit/runs/{run_id}/shadow", response_class=HTMLResponse)
+def read_shadow_audit(
+    run_id: str,
+    limit: int = Query(default=20, ge=1, le=50),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> HTMLResponse:
+    return HTMLResponse(render_shadow_audit(read_shadow_trace(run_id, limit, offset, engine)))
+
+
+@app.get("/api/runs/{run_id}/shadow-trace")
+def read_shadow_trace(
+    run_id: str,
+    limit: int = Query(default=20, ge=1, le=50),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> dict:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            return shadow_trace(connection, runs.get_run(connection, run_id), limit=limit, offset=offset)
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+
+
+@app.get("/api/runs/{run_id}/controller-b-trace")
+def read_controller_b_trace(
+    run_id: str,
+    limit: int = Query(default=10, ge=1, le=25),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    download: bool = False,
+    engine: Engine = Depends(get_db_engine),
+) -> Response:
+    try:
+        with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+            content = encode_evidence(controller_b_trace(
+                connection, runs.get_run(connection, run_id), limit=limit, offset=offset,
+            ))
+    except runs.RunNotFound as exc:
+        raise HTTPException(status_code=404, detail="Run not found") from exc
+    headers = {"Content-Disposition": 'attachment; filename="controller-b-trace.json"'} if download else None
+    return Response(content, media_type="application/json", headers=headers)
+
+
 @app.get("/api/runs/{run_id}/{kind}")
 def read_run_page(
     run_id: str,
@@ -301,7 +400,7 @@ def get_device_state(
         "twin_version": twin_row["twin_version"],
         "reported_state": twin_row["reported_state"],
         "desired_state": twin_row["desired_state"],
-        "derived_state": twin_row["derived_state"],
+        "derived_state": derived_prediction_view(twin_row["derived_state"], datetime.now(timezone.utc)),
         "connectivity_state": twin_row["connectivity_state"],
         "device_mode": twin_row["device_mode"],
         "last_boot_id": twin_row["last_boot_id"],
@@ -325,6 +424,38 @@ def get_device_state(
             twin_row["updated_at"].isoformat() if twin_row["updated_at"] else None
         ),
     }
+
+
+@app.get("/api/devices/{device_id}/predictions/current")
+def read_current_prediction(
+    device_id: str, run_id: str | None = None, engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect() as connection:
+        return current_prediction(connection, device_id, run_id)
+
+
+@app.get("/api/devices/{device_id}/predictions")
+def read_prediction_history(
+    device_id: str,
+    run_id: str | None = None,
+    limit: int = Query(default=50, ge=1, le=100),
+    offset: int = Query(default=0, ge=0, le=100_000),
+    engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect() as connection:
+        items = prediction_history(connection, device_id, run_id, limit, offset)
+    return {"device_id": device_id, "run_id": run_id, "items": items, "limit": limit, "offset": offset}
+
+
+@app.get("/api/devices/{device_id}/predictions/{prediction_id}")
+def read_prediction_details(
+    device_id: str, prediction_id: str, engine: Engine = Depends(get_db_engine),
+) -> dict:
+    with engine.connect().execution_options(isolation_level="REPEATABLE READ") as connection:
+        item = prediction_details(connection, device_id, prediction_id)
+    if item is None:
+        raise HTTPException(status_code=404, detail="Prediction not found")
+    return item
 
 
 @app.get("/api/devices/{device_id}/telemetry")
@@ -508,3 +639,6 @@ def get_device_telemetry(
         "offset": offset,
         "device_id": cleaned_id,
     }
+
+
+app.include_router(campaign_router(get_db_engine))

@@ -1,0 +1,755 @@
+{
+  "schema": "coldguard-w24-handover-manifest-v1",
+  "package_id": "coldguard-b-w24-final-handover",
+  "repository": "minhqng/predictive-cold-chain-aiot",
+  "source_revision": "c0d8b247291c05cce308feae25b3fedd329af494",
+  "revision_semantics": "W24_PARENT_COMMIT_NOT_DELIVERY_COMMIT",
+  "hash_semantics": {
+    "FILE_CONTENT_SHA256": "SHA-256 over committed file bytes",
+    "SELF_REFERENCE": "This manifest does not hash itself",
+    "DETERMINISM": "Stable key order; no timestamps; no absolute local paths in generated fields"
+  },
+  "completion_states": {
+    "MEMBER_B_SOFTWARE_HANDOVER": "READY",
+    "FINAL_PREDICTIVE_SCIENTIFIC_ACCEPTANCE": "INCOMPLETE"
+  },
+  "canonical_items": [
+    {
+      "item": "dataset_card",
+      "name": "Dataset card",
+      "paths": [
+        {
+          "path": "ml/reports/W23/dataset-card-W23.md",
+          "sha256": "5892a7f1422fae0fda0b66dbc6003146fd1beafb453445fd79243e454a473d92",
+          "role": "canonical dataset card"
+        }
+      ],
+      "purpose": "Dataset identities, evidence classes, counts and permitted uses",
+      "evidence_class": "SOFTWARE_EVIDENCE_PACKAGE",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Static verified document; hash-bound by artifact-checksums-W24.json",
+      "limitations": "Synthetic dataset is not physical; recorded physical data has 0 predictive-eligible runs",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "split_manifest",
+      "name": "Split manifest",
+      "paths": [
+        {
+          "path": "ml/reports/W11/cv-fold-manifest.yaml",
+          "sha256": "702623f12e04cdc0162cb5517e691fbf62cee85d25b0c651a267ff46cc91e8c6",
+          "role": "grouped development/locked-test membership"
+        },
+        {
+          "path": "ml/reports/W11/benchmark-manifest-W11.json",
+          "sha256": "855c5beb55f15c6e5bcd38640ff3a6ff02a41a525bf3f1601722abdeca2d47f0",
+          "role": "split population and bindings"
+        }
+      ],
+      "purpose": "Grouped split by run_id + pair_id; 8 effective development groups, 4 folds",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Inspect hashes; W11 benchmark driver can regenerate the synthetic fixture",
+      "limitations": "Synthetic split only; no physical predictive split approved; locked test not opened",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "feature_registry",
+      "name": "Feature registry",
+      "paths": [
+        {
+          "path": "ml/feature-registry-v1.yaml",
+          "sha256": "f1c716a61c1d5c8eeaf0ff6e9596320c6df0bb47bce11ece0e67c038c72ffdbb",
+          "role": "CG-FEAT-1.0 definitions and role map"
+        },
+        {
+          "path": "ml/xgb-v1-config.yaml",
+          "sha256": "01e48a55a116045233fd90da0d79bd0360e201c7ad310b60eb715b7b5009cb7a",
+          "role": "development model configuration"
+        }
+      ],
+      "purpose": "Frozen feature schema, causal definitions, order and T2 exclusion",
+      "evidence_class": "SOFTWARE_CONTRACT",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Verify SHA-256 and registry schema hash; run tests/test_feature_registry.py",
+      "limitations": "Definitions frozen only; target, horizon, threshold and persistence are not",
+      "disposition": "COMPLETE_AND_VERIFIED"
+    },
+    {
+      "item": "model_card",
+      "name": "Model card",
+      "paths": [
+        {
+          "path": "ml/reports/W15/model-card-W15.md",
+          "sha256": "1ea2488a9d79693fc80789f2f7a17b69a0cfb917cd408489af3b0fa2ce1be2dc",
+          "role": "W15 model card"
+        },
+        {
+          "path": "ml/reports/W23/model-card-W23.md",
+          "sha256": "59858fef63b8aec0a9afda606e0c9be23032c5634f37cdb0da15e69a1f875875",
+          "role": "W23 consolidated model card"
+        }
+      ],
+      "purpose": "Training population, intended/prohibited uses and non-deployable status",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Static verified documents; hash-bound in artifact-checksums-W24.json",
+      "limitations": "Not a release candidate; risk score only; physical Controller B prohibited",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "model_artifact",
+      "name": "Model artifact",
+      "paths": [
+        {
+          "path": "ml/reports/W15/model/model.ubj",
+          "sha256": "25a8ef7a71817d4d45a2d9bc3b4d6889c2dbf576c4da514d59fab1f6fc263f7f",
+          "role": "native model bytes"
+        },
+        {
+          "path": "ml/reports/W15/model/model.json",
+          "sha256": "67eef303104bca00a8a1669dcacf6b7ff08219fff493a99280d27086875f2efd",
+          "role": "secondary JSON serialization"
+        },
+        {
+          "path": "ml/reports/W15/model/model-manifest-W15.json",
+          "sha256": "85960c821b6286fd18b0d012de20ddd58912d9d1bb965c5b9191b9cf4653107e",
+          "role": "model metadata and prohibited uses"
+        }
+      ],
+      "purpose": "W15 XGBoost synthetic candidate, risk score only",
+      "evidence_class": "SYNTHETIC_SOFTWARE_CONTROL_ONLY",
+      "verification_status": "VERIFIED_SHA256_MATCH",
+      "how_to_reproduce": "sha256sum reports/W15/model/model.ubj; do NOT refit",
+      "limitations": "Non-deployable; 27/28 features unused; time_since_open shortcut",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "locked_test_report",
+      "name": "Locked-test report",
+      "paths": [
+        {
+          "path": "ml/reports/W16/locked-test-manifest-W16.json",
+          "sha256": "6e7e7f23881785f76463344663e08f0cf626f5ee137aa1f98a99772e1a1fe165",
+          "role": "pre-registration and refusal record"
+        },
+        {
+          "path": "ml/reports/W16/locked-test-result.md",
+          "sha256": "a52d6bea2f3621f5fadd98f4ab2f4456522b8a2535acb42111c38d8ae971436b",
+          "role": "refusal report"
+        },
+        {
+          "path": "ml/reports/W16/holdout-readiness-W16.md",
+          "sha256": "5460a1c053f939a399aa0979cacdc6a79e5999d6bf5c5ed7797c8fcc83ae7858",
+          "role": "holdout readiness and G4 assessment"
+        }
+      ],
+      "purpose": "Records that the locked test is NOT_OPENED and NOT_RUN",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED_REFUSAL_RECORD",
+      "how_to_reproduce": "uv run ... w16-preflight-W16.py --out <tmp>; expect REFUSED_PREREQUISITES_UNMET",
+      "limitations": "No locked-test metrics exist; this is not a completed evaluation",
+      "scientific_result": "NOT_PRODUCED",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "ab_statistics",
+      "name": "A/B statistics",
+      "paths": [
+        {
+          "path": "ml/reports/W22/w22-manifest.json",
+          "sha256": "a027dbdda4f36de9cda87516719fe0e2aeb92076d00b67651934a50023bd01e2",
+          "role": "statistics software contract and statuses"
+        },
+        {
+          "path": "ml/reports/W22/paired-statistics-contract-W22.md",
+          "sha256": "5478aa4f39d1101f4f58a27da5c3b30e966e8a0202dcad6bc40ca6c596a29eb4",
+          "role": "paired analysis contract"
+        },
+        {
+          "path": "ml/reports/W22/uncertainty-and-tests-W22.md",
+          "sha256": "e4474e5cd571a15df392d6291626e0d5cb0b53b2044dca3f68632017835a3367",
+          "role": "CI and test-family specification"
+        },
+        {
+          "path": "ml/reports/W22/test-only-pair-plot-W22.svg",
+          "sha256": "e8b22bbc2cc3b1a9f2c0680d3f12f22255815c7cad5f2ca27ae607ab0c0303e3",
+          "role": "TEST_ONLY toy pair plot"
+        }
+      ],
+      "purpose": "Executable paired statistics engine with toy fixtures only",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "uv run ... w22-statistics-contract-W22.py --out <tmp>",
+      "limitations": "Toy fixtures only; no real A/B outcomes; final effect, CI and p-value NOT_COMPUTED",
+      "real_outcomes": "NOT_PRODUCED",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "analysis_scripts",
+      "name": "Analysis scripts",
+      "paths": [
+        {
+          "script_id": "baselines",
+          "path": "ml/scripts/baseline-evaluation-W09.py",
+          "purpose": "deterministic baselines",
+          "sha256": "3a0ade525a8101bab5c4c836390c4befe9b4b91c7178c4181c2f390adb6a0cd0"
+        },
+        {
+          "script_id": "event-alignment",
+          "path": "ml/scripts/event-alignment-W06.py",
+          "purpose": "timing/event alignment",
+          "sha256": "54c83e1b6fcb9e81c6db02a781af8cf6b7bd4127a1a8c76a37719f01aea5f697"
+        },
+        {
+          "script_id": "feature-pipeline",
+          "path": "ml/scripts/feature-pipeline-W10.py",
+          "purpose": "causal feature generation",
+          "sha256": "4d4b7bf9b271c66e5ca3c715dc238dc072a45dfe38714313f06b48361afbcd7c"
+        },
+        {
+          "script_id": "gate-b",
+          "path": "ml/scripts/gate-b-readiness-W08.py",
+          "purpose": "Gate B readiness validator",
+          "sha256": "c234a5bbfd392991b64cbb6b2f60fb012da0bd0a557f60fc838ce939a02c4be4"
+        },
+        {
+          "script_id": "horizon",
+          "path": "ml/scripts/horizon-study-W13.py",
+          "purpose": "horizon engineering study",
+          "sha256": "e144bc5ab7f6ebf5b4a4f59be02b9174226180264ca3b7997d7edc0682b16390"
+        },
+        {
+          "script_id": "plant-eda",
+          "path": "ml/scripts/plant-eda-W07.py",
+          "purpose": "physical exploratory analysis",
+          "sha256": "a1dc06e31e9388838c0898df89072798df98d94f84e75e5712243ce41e75ebfc"
+        },
+        {
+          "script_id": "real-data-qa",
+          "path": "ml/scripts/real-data-qa-v1.py",
+          "purpose": "physical QA and schema intake",
+          "sha256": "17fec358cae1db5b304deee604d67578f202cd1cd956d6afb51b81f5475e8daa"
+        },
+        {
+          "script_id": "recovery",
+          "path": "ml/scripts/existing-data-recovery.py",
+          "purpose": "existing physical data recovery",
+          "sha256": "8f8ae1cae775122efb5e0c1bf2e3a88ba8a1e3370b8be5592dd13b0950cc9fca"
+        },
+        {
+          "script_id": "w11-benchmark",
+          "path": "ml/scripts/xgb-benchmark-W11.py",
+          "purpose": "grouped XGBoost benchmark",
+          "sha256": "43b40ea40445cafffb06d6af288195da0ba477f71dbfab4016183d5e0d5ea75d"
+        },
+        {
+          "script_id": "w14-ablation",
+          "path": "ml/scripts/w14-ablation-W14.py",
+          "purpose": "grouped ablation/calibration",
+          "sha256": "832e4d74715495729be32f02e960beee5d49aa7a91a886ac076650cb00f51607"
+        },
+        {
+          "script_id": "w15-ablation",
+          "path": "ml/scripts/w15-electrical-ablation-W15.py",
+          "purpose": "electrical ablation and fit (not run in W24)",
+          "sha256": "c331c7d360f991569112a1a20bd70d7b593519167d69622bde0f92cf76458fc9"
+        },
+        {
+          "script_id": "w16-preflight",
+          "path": "ml/scripts/w16-preflight-W16.py",
+          "purpose": "locked-test readiness refusal",
+          "sha256": "3ed09dbdcd44d1d64be9cc34b01d926af78a40617db2baa37d9b741f941fdf95"
+        },
+        {
+          "script_id": "w17-shadow",
+          "path": "ml/scripts/w17-shadow-replay-W17.py",
+          "purpose": "offline shadow parity",
+          "sha256": "daed99a03d2167034fca38f6f531ce953824b9c1b624a3595740d1ff202e8f59"
+        },
+        {
+          "script_id": "w18-runtime",
+          "path": "ml/scripts/w18-runtime-audit-W18.py",
+          "purpose": "runtime monitoring audit",
+          "sha256": "e5a01675d77c2105d6c307b41ab218ad0dc6696f0c8427ef578ee6c0db887011"
+        },
+        {
+          "script_id": "w19-campaign",
+          "path": "ml/scripts/w19-campaign-audit-W19.py",
+          "purpose": "paired campaign integrity",
+          "sha256": "f656f53ccab9a0ad3f33e222b1d45e197ebef8d88f8fb625807f5cae8b822148"
+        },
+        {
+          "script_id": "w20-preflight",
+          "path": "ml/scripts/w20-campaign-preflight-W20.py",
+          "purpose": "analysis authorization gate",
+          "sha256": "e9b57941324c2047dd36fd1fa9bc757d20928973ba913ed6860213e8a5ebd747"
+        },
+        {
+          "script_id": "w21-resilience",
+          "path": "ml/scripts/w21-resilience-audit-W21.py",
+          "purpose": "diagnosis/resilience assessment",
+          "sha256": "b5cba83b3d35f68c2f8bff99f27af0e44ceb86b87cf7d567b6416cb78ab37582"
+        },
+        {
+          "script_id": "w22-statistics",
+          "path": "ml/scripts/w22-statistics-contract-W22.py",
+          "purpose": "paired statistics engine",
+          "sha256": "e61ebcfd7e4063141d228255b6324047695e0fdc0db1016a80d74a1c8aa11c0c"
+        },
+        {
+          "script_id": "w23-audit",
+          "path": "ml/scripts/w23-evidence-audit-W23.py",
+          "purpose": "evidence package verifier",
+          "sha256": "31a8378dd34f3b2239abf6891c8301cb3e564ca0304ec84d5d78c95cd4226278"
+        }
+      ],
+      "purpose": "Indexed list of the scripts needed to verify and reproduce Member B work",
+      "evidence_class": "SOFTWARE_VERIFICATION",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "See reproduction-runbook-W24.md; run from ml/ with the locked environment",
+      "limitations": "W15 fitting script must not be executed; W13 CLI needs the pinned A export",
+      "disposition": "COMPLETE_AND_VERIFIED"
+    },
+    {
+      "item": "figures",
+      "name": "Figures",
+      "paths": [
+        {
+          "path": "ml/reports/W05/physical-state-W05.svg",
+          "sha256": "c52f72d628122407dfa35d81f46c75d2c2512f1e0e4e6350c3f199c376b4b068",
+          "role": "W05 diagnostic physical-state plot"
+        },
+        {
+          "path": "ml/reports/W07/phase-trajectories-W07.svg",
+          "sha256": "f7a09a4d597c1703ed3ef4866a4f4194999d594b223dcd4f5a5b72cfe83628ad",
+          "role": "W07 physical phase trajectories"
+        },
+        {
+          "path": "ml/reports/W09/baseline-comparison-W09.svg",
+          "sha256": "63071abc1454cbca99286e11e77276275244c9f278cddccd7f15c0ace4ab2c10",
+          "role": "W09 baseline comparison (physical diagnostic)"
+        },
+        {
+          "path": "ml/reports/W10/feature-audit-W10.svg",
+          "sha256": "5fb7fd372b5dd4952f94ec31d24e77811e844807e41f3904fd9e8dab6e900e16",
+          "role": "W10 feature audit"
+        },
+        {
+          "path": "ml/reports/W10/real-diagnostic-W10.svg",
+          "sha256": "5e716c2210098203e4864441cd638cb40c62be5f723eaeced2a25cbc642a8c01",
+          "role": "W10 real diagnostic"
+        },
+        {
+          "path": "ml/reports/W22/test-only-pair-plot-W22.svg",
+          "sha256": "e8b22bbc2cc3b1a9f2c0680d3f12f22255815c7cad5f2ca27ae607ab0c0303e3",
+          "role": "W22 TEST_ONLY toy pair plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-trial2.svg",
+          "sha256": "b3b41f3276df58572b374126e6b8ed915c9ff18bfc4f4f26361ee7e19cc10550",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/chamber-air-a20261107-w10-03-run1.svg",
+          "sha256": "a2788e204916e00aa73e28514e7bc72f03ab86251a37fd8794f917b48ff90488",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-a-w07-03-trial-2-be89bf4a.svg",
+          "sha256": "8e17498c77e2164f3e677fbfcc56d62000a529802d75f37fa87fc9c19a69b2b5",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-c-600s-tec-100pct.svg",
+          "sha256": "716a9925475d2e78439644d380ccc806dda9d30dc3d611655c292b3a6207a52b",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/cooling-a20261107-h8-e-1800s-tec-100pct.svg",
+          "sha256": "152fa879eb67af8ef706271f6d5daa65754ec1cfbf9a200c42f4d53ed18488b3",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-02.svg",
+          "sha256": "87d980e801c39bed6c95a8086869c30e26d990027fbbb1a75c0224b53a9439a7",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run1.svg",
+          "sha256": "d21c2c16b55d8da7986aaef2fcc7dfcc0a65a80c7c69541a91323d0477379648",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run2.svg",
+          "sha256": "aaba23872eb5e4d40f4934faf4a9b9ad6c4d70472a7ded3d0a352d75d8d008f2",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run3.svg",
+          "sha256": "810e1d418a955fd0d375a45c6ed21c12bd16ab52238cf2936caed0d4fb55f30e",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/door-a20261107-w10-03-run4.svg",
+          "sha256": "5a43a1d3a00d38ccbae0e381ae871fe56210c7ad1e98d422a375dd2b10435e39",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/missingness-inventory.svg",
+          "sha256": "fe3f5022d9595d849a98f55f87f1498b7857c97192069657397d295247dc75b3",
+          "role": "real physical descriptive plot"
+        },
+        {
+          "path": "ml/reports/DataRecovery/real-physical-plots/w05-diagnostic.svg",
+          "sha256": "5d6c60ddf9f74a68b3f147be222ad9cd599554719163bafd87e82c2d0b537054",
+          "role": "real physical descriptive plot"
+        }
+      ],
+      "purpose": "W05-W23 figure inventory plus 12 real recorded-data plots",
+      "evidence_class": "MIXED_SOFTWARE_AND_PHYSICAL_RECORDED",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Replay W05/W07/W09/W10/W22 drivers; regenerate DataRecovery plots per runbook",
+      "limitations": "Final physical predictive/A/B figures are withheld; no substitutes exist",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS"
+    },
+    {
+      "item": "limitations",
+      "name": "Limitations",
+      "paths": [
+        {
+          "path": "ml/reports/W24/scientific-gaps-and-owners-W24.md",
+          "sha256": "8eb6a0acd2f3ab309dc5b581d7653e0d4ab82b2e129bc70b27be80d95ee1574a",
+          "role": "consolidated gaps and owners"
+        },
+        {
+          "path": "ml/reports/W22/scientific-limitations-W22.md",
+          "sha256": "df50359106d5d86825f5d976f5fea67248cd44e836803453fe7fbe4839ea2b1e",
+          "role": "statistical limitations"
+        },
+        {
+          "path": "ml/reports/W23/figure-availability-W23.md",
+          "sha256": "73def61dcc036244aea4e863d3675518669789eb55fcd3fb86a6393b7d973514",
+          "role": "withheld figure rationale"
+        }
+      ],
+      "purpose": "Consolidated scientific limitations and ownership",
+      "evidence_class": "SOFTWARE_EVIDENCE_PACKAGE",
+      "verification_status": "VERIFIED",
+      "how_to_reproduce": "Static documents; link checks are covered by the W24 tests",
+      "limitations": "Limitations describe missing external evidence; they are not W24 defects",
+      "disposition": "COMPLETE_AND_VERIFIED"
+    }
+  ],
+  "readiness_matrix": [
+    {
+      "artifact_id": "MEMBER_B_SOFTWARE_PACKAGE",
+      "artifact": "Member B W01-W24 software package",
+      "disposition": "COMPLETE_AND_VERIFIED",
+      "evidence": "artifact-checksums-W24.json; reproduction-result-W24.md"
+    },
+    {
+      "artifact_id": "DATASET_CARD",
+      "artifact": "W23 dataset card",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W23/dataset-card-W23.md"
+    },
+    {
+      "artifact_id": "SPLIT_MANIFEST",
+      "artifact": "W11 grouped split manifest",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W11/cv-fold-manifest.yaml"
+    },
+    {
+      "artifact_id": "FEATURE_REGISTRY",
+      "artifact": "W10 feature registry",
+      "disposition": "COMPLETE_AND_VERIFIED",
+      "evidence": "feature-registry-v1.yaml"
+    },
+    {
+      "artifact_id": "MODEL_CARD",
+      "artifact": "W15/W23 model cards",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W15/model-card-W15.md; reports/W23/model-card-W23.md"
+    },
+    {
+      "artifact_id": "MODEL_ARTIFACT",
+      "artifact": "W15 model artifact",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W15/model/model.ubj"
+    },
+    {
+      "artifact_id": "LOCKED_TEST_REPORT",
+      "artifact": "W16 refusal report",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W16/locked-test-result.md"
+    },
+    {
+      "artifact_id": "AB_STATISTICS",
+      "artifact": "W22 paired statistics engine",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W22/w22-manifest.json"
+    },
+    {
+      "artifact_id": "ANALYSIS_SCRIPTS",
+      "artifact": "Indexed analysis scripts",
+      "disposition": "COMPLETE_AND_VERIFIED",
+      "evidence": "handover-manifest-W24.json canonical_items.analysis_scripts"
+    },
+    {
+      "artifact_id": "FIGURES",
+      "artifact": "Figure inventory and 12 real plots",
+      "disposition": "AVAILABLE_WITH_LIMITATIONS",
+      "evidence": "reports/W23/figure-availability-W23.md; reports/DataRecovery/real-physical-plots"
+    },
+    {
+      "artifact_id": "LIMITATIONS",
+      "artifact": "Consolidated limitations",
+      "disposition": "COMPLETE_AND_VERIFIED",
+      "evidence": "reports/W24/scientific-gaps-and-owners-W24.md"
+    },
+    {
+      "artifact_id": "FINAL_PREDICTIVE_RESULT_CSV",
+      "artifact": "Final predictive result table",
+      "disposition": "NOT_PRODUCED",
+      "evidence": "W16 NOT_OPENED; no locked-test evaluation"
+    },
+    {
+      "artifact_id": "FINAL_PHYSICAL_AB_RESULT_CSV",
+      "artifact": "Final physical A/B table",
+      "disposition": "NOT_PRODUCED",
+      "evidence": "W20 NOT_RUN; no valid pairs"
+    },
+    {
+      "artifact_id": "REAL_EWT_AIW",
+      "artifact": "Real EWT and AIW",
+      "disposition": "NOT_PRODUCED",
+      "evidence": "W14 NOT_ESTIMABLE; no qualified trajectory or latency chain"
+    },
+    {
+      "artifact_id": "INDEPENDENT_HUMAN_REPLAY",
+      "artifact": "Independent human replay",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "independent-replay-receipt-template-W24.json is unfilled"
+    },
+    {
+      "artifact_id": "TEAM_REHEARSAL",
+      "artifact": "Live team rehearsal",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "No real rehearsal record exists"
+    },
+    {
+      "artifact_id": "GATE_B",
+      "artifact": "Gate B physical data",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "RED; 12 physical reason codes"
+    },
+    {
+      "artifact_id": "G3",
+      "artifact": "Gate G3",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "NO-GO / FIX DATA"
+    },
+    {
+      "artifact_id": "G4",
+      "artifact": "Gate G4",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "NOT_READY; team-owned prerequisites unmet"
+    },
+    {
+      "artifact_id": "G5",
+      "artifact": "Gate G5",
+      "disposition": "BLOCKED_BY_EXTERNAL_EVIDENCE",
+      "evidence": "NOT_ESTABLISHED"
+    },
+    {
+      "artifact_id": "HARDWARE_ACCEPTANCE",
+      "artifact": "Hardware acceptance",
+      "disposition": "REQUIRES_TEAM_REVIEW",
+      "evidence": "Not a Member B deliverable"
+    },
+    {
+      "artifact_id": "BACKEND_DEPLOYMENT",
+      "artifact": "Backend deployment",
+      "disposition": "REQUIRES_TEAM_REVIEW",
+      "evidence": "Not a Member B deliverable"
+    },
+    {
+      "artifact_id": "FIRMWARE_RELEASE_BUILD",
+      "artifact": "Firmware release build",
+      "disposition": "REQUIRES_TEAM_REVIEW",
+      "evidence": "Not a Member B deliverable"
+    },
+    {
+      "artifact_id": "CONTROLLER_B_PHYSICAL_AUTHORIZATION",
+      "artifact": "Controller B physical authorization",
+      "disposition": "REQUIRES_TEAM_REVIEW",
+      "evidence": "D/A/leader policy and signoff absent"
+    },
+    {
+      "artifact_id": "FINAL_PROJECT_RELEASE",
+      "artifact": "Final project release",
+      "disposition": "REQUIRES_TEAM_REVIEW",
+      "evidence": "Leader-owned integration and release"
+    }
+  ],
+  "capabilities": [
+    "Data dictionary and research mapping",
+    "Synthetic dataset generation",
+    "Time-window and label generation",
+    "Leakage-safe grouped splitting",
+    "Statistical analysis plan",
+    "Physical data QA and schema intake",
+    "Timing/event alignment",
+    "Physical exploratory data analysis",
+    "Dataset readiness verification",
+    "Deterministic baseline evaluation",
+    "Causal feature generation",
+    "XGBoost grouped benchmark",
+    "Model evaluation and ablation tools",
+    "Calibration assessment",
+    "Model artifact and model card",
+    "Locked-test readiness checks",
+    "Offline shadow parity",
+    "Runtime monitoring",
+    "Paired campaign integrity controls",
+    "Final analysis authorization gate",
+    "Diagnosis/resilience evidence assessment",
+    "Paired statistical computation engine",
+    "Evidence package and clean-room replay",
+    "Existing physical-data analysis and real figures"
+  ],
+  "scientific_status": {
+    "GATE_B_PHYSICAL_DATA": "RED",
+    "PREDICTIVE_DATASET_READINESS": "NOT_READY",
+    "G3": "NO-GO / FIX DATA",
+    "PRIMARY_HORIZON": "NOT_FROZEN",
+    "REAL_PREDICTIVE_BENCHMARK": "NOT_ESTABLISHED",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "W15_MODEL": "SYNTHETIC_NON_DEPLOYABLE_CANDIDATE",
+    "W16_LOCKED_TEST": "NOT_OPENED",
+    "CONTROLLER_B_PHYSICAL_READINESS": "NOT_READY",
+    "FINAL_PHYSICAL_AB_ANALYSIS": "NOT_RUN",
+    "FINAL_PHYSICAL_P_VALUE": "NOT_COMPUTED",
+    "FINAL_PHYSICAL_CI": "NOT_COMPUTED",
+    "G4": "NOT_READY",
+    "G5": "NOT_ESTABLISHED",
+    "SCIENTIFIC_ACCEPTANCE": "INCOMPLETE"
+  },
+  "scientific_absences": {
+    "FINAL_PREDICTIVE_RESULT_CSV": "NOT_PRODUCED",
+    "FINAL_PHYSICAL_AB_RESULT_CSV": "NOT_PRODUCED",
+    "REAL_LOCKED_PREDICTIVE_TEST": "NOT_RUN",
+    "REAL_EWT": "NOT_ESTIMABLE",
+    "REAL_AIW": "NOT_ESTIMABLE",
+    "FINAL_PHYSICAL_EFFECT": "NOT_ESTABLISHED",
+    "FINAL_PHYSICAL_CI": "NOT_COMPUTED",
+    "FINAL_PHYSICAL_P_VALUE": "NOT_COMPUTED",
+    "INDEPENDENT_TEAM_MEMBER_REPLAY": "PENDING",
+    "LIVE_TEAM_REHEARSAL": "PENDING"
+  },
+  "external_dependencies": [
+    {
+      "dependency": "A physical run identity, clock, calibration, device identity, accepted runs",
+      "owner": "A",
+      "state": "MISSING",
+      "effect": "Gate B RED"
+    },
+    {
+      "dependency": "A W21 raw diagnostic log",
+      "owner": "A",
+      "state": "SOURCE_UNAVAILABLE",
+      "effect": "W21 checks NOT_VERIFIED"
+    },
+    {
+      "dependency": "A PR #95 supplement",
+      "owner": "A",
+      "state": "OPEN_UNMERGED",
+      "effect": "Not canonical evidence"
+    },
+    {
+      "dependency": "C telemetry time provenance, shadow trace, Controller B lifecycle, broker resilience",
+      "owner": "C",
+      "state": "OPEN_UNMERGED_OR_NOT_ESTABLISHED",
+      "effect": "G4 NOT_READY"
+    },
+    {
+      "dependency": "D target/threshold/persistence/safety policy",
+      "owner": "D",
+      "state": "NOT_FROZEN",
+      "effect": "No valid label or authorization"
+    },
+    {
+      "dependency": "Leader approvals, release authorization, team rehearsal",
+      "owner": "Leader",
+      "state": "NOT_ISSUED",
+      "effect": "No final acceptance or release"
+    },
+    {
+      "dependency": "Independent human replay",
+      "owner": "Team member",
+      "state": "PENDING",
+      "effect": "Software handover lacks second human receipt"
+    }
+  ],
+  "reproduction": {
+    "runbook": "ml/reports/W24/reproduction-runbook-W24.md",
+    "result": "ml/reports/W24/reproduction-result-W24.md",
+    "receipt_template": "ml/reports/W24/independent-replay-receipt-template-W24.json",
+    "deterministic": true,
+    "independent_human_replay": "PENDING"
+  },
+  "w24_outputs": [
+    {
+      "path": "ml/reports/W24/artifact-checksums-W24.json",
+      "purpose": "W24 deliverable",
+      "sha256": "e58113e2db9916a71d413b5151a9b42b0e7067c8109a79be9904318baa80e278"
+    },
+    {
+      "path": "ml/reports/W24/artifact-integrity-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "eb006c76684be3e37333ea8f479736260db6e5a2f0478f460decf4ea44f61288"
+    },
+    {
+      "path": "ml/reports/W24/reproduction-runbook-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "ff1dc21e6caa833d81428628a40bfa25e6608fe52e57517702e8866bb41a5139"
+    },
+    {
+      "path": "ml/reports/W24/reproduction-result-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "8bf0bb89015e6078deff868c4323a80d080cf46248750e0cb97fe064622657c5"
+    },
+    {
+      "path": "ml/reports/W24/oral-defense-vi-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "57b252a7383ea02bdd3b4be12c010a5483264ddbd0a16bf89bdad38ed6de35c0"
+    },
+    {
+      "path": "ml/reports/W24/defense-questions-vi-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "e97c9c7a3f3bd037cb390bab4aab52646cf41c69131d8e45145f617b6d264be1"
+    },
+    {
+      "path": "ml/reports/W24/FINAL-HANDOVER-MEMBER-B.md",
+      "purpose": "W24 deliverable",
+      "sha256": "bbef95be1321fa2358e21d3ac7fea3abb19e7a9095999cc245855775f3086466"
+    },
+    {
+      "path": "ml/reports/W24/scientific-gaps-and-owners-W24.md",
+      "purpose": "W24 deliverable",
+      "sha256": "8eb6a0acd2f3ab309dc5b581d7653e0d4ab82b2e129bc70b27be80d95ee1574a"
+    },
+    {
+      "path": "ml/reports/W24/independent-replay-receipt-template-W24.json",
+      "purpose": "W24 deliverable",
+      "sha256": "04445ad1230658fcd0c7403b4268962e962227ab533f606d807e57e6217b1655"
+    },
+    {
+      "path": "ml/tests/test_w24_handover.py",
+      "purpose": "W24 deliverable",
+      "sha256": "1969c41e4fef0a6f03439867b004f9ecb07cd59b8e2790763452b3501c1ff4ac"
+    }
+  ]
+}
