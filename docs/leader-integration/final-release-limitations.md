@@ -29,6 +29,11 @@ Member A/B/C/D contributions:
   unchanged; door-aware policy semantics preserved.
 - Member B frozen W15 XGBoost artifact used for the experimental +60 s forecast
   display, with honest blocked/stale/unavailable reporting.
+- Verified hardware-working commissioning firmware preserved as a labelled
+  artifact (`firmware/commissioning/staging-ai-final-20261113/`,
+  `SUPERVISED_DEMO_COMMISSIONING`, image `def89390`, 7.91 A live on 2026-11-13),
+  so the release can reproduce the hardware demo. The inert Member baseline
+  firmware stays unchanged; host ARM defaults OFF (see hardware-baseline.md §4).
 
 ## B. Physically demonstrated
 
@@ -71,9 +76,11 @@ closed-loop physical control.
 - XGBoost production-ready prediction is not proven (persistence beat the
   experimental model on holdout; the forecast is experimental demo only).
 - Cold-face temperature is not proven (no cold-side probe fitted).
-- The excluded Leader firmware components and Member A working-tree diffs were
-  not re-verified on hardware; their host harness tests need a host C compiler
-  that is unavailable, so they are `NOT RUN` offline.
+- The included commissioning firmware (`def89390`) is `HARDWARE_BENCH_VERIFIED`
+  historically (7.91 A live on 2026-11-13), but the **release stack** running it
+  end-to-end was not physically trialled. The diverged worktree Leader firmware
+  components and Member A diffs were not re-verified on hardware; their host
+  harness tests need a host C compiler that is unavailable, so `NOT RUN` offline.
 
 All physical hardware tests are recorded `NOT RUN — PHYSICAL HARDWARE
 UNAVAILABLE`. No `PHYSICAL TEC PASS` or `RUNTIME FIRMWARE VERIFIED` is claimed.
@@ -99,9 +106,13 @@ not redesign physical control:
    lets decisions be observed offline with zero physical dispatch; it does not
    redefine the product as shadow-only.
 4. **Hardware-facing firmware is preserved, not refactored.** The committed
-   Member A firmware baseline is unchanged in the release. Unverified Leader
-   firmware components and Member A diffs are preserved in the worktree and
-   excluded pending hardware validation and an explicit Leader decision.
+   Member A firmware baseline (inert by design) is unchanged in the release.
+   By explicit Leader decision (2026-11-15) the release also includes the
+   **verified** hardware-working commissioning source as a labelled
+   `SUPERVISED_DEMO_COMMISSIONING` artifact (image `def89390`, 7.91 A live), so
+   the hardware demo is reproducible without redesigning physical control. The
+   **diverged** worktree Leader components and Member A diffs (not byte-identical
+   to the verified source) remain excluded pending hardware validation.
 
 ## F. Security restrictions
 

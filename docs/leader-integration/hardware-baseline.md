@@ -66,25 +66,49 @@ firmware semantics must not be redesigned without hardware evidence.
 - `NOT_PROVEN` — cold-face temperature (no cold-side probe is fitted).
 - `NOT_PROVEN` — runtime image safety limits beyond the historical bench record.
 
-## 4. Hardware-facing work preserved, not released
+## 4. Included commissioning firmware (Leader decision 2026-11-15)
 
-The following hardware-facing changes exist in the worktree but are **excluded
-from the release commits** so the previously verified firmware baseline remains
-unchanged (freeze §11.2). They are `REQUIRES_PHYSICAL_VALIDATION` and need an
-explicit Leader decision plus hardware evidence before they can be released:
+The release **includes** the verified hardware-working firmware as a distinct,
+labelled artifact: `firmware/commissioning/staging-ai-final-20261113/`
+(`SUPERVISED_DEMO_COMMISSIONING`, **not production**). This is the exact source
+that built the live-verified actuating image, preserved byte-for-byte:
 
-- Member A working-tree diffs: `firmware/main/cg_commission.c` (T2 hot-side
-  admission), `cg_tec_control.c` / `cg_tec_control.h` (paired-enable,
-  `cold_side_required`), `cg_tec_platform.h` (paired-enable contract).
+| Item | Value |
+| --- | --- |
+| Verified image SHA-256 | `def89390f102fe248eb177d9a8349b9e297e7413cc928d3896892f0aeebf5623` |
+| Live actuation evidence | supervised TEC1000, measured **7.91 A** on 2026-11-13 |
+| Source manifest | 223 file hashes, all verified matching the committed source |
+| Commissioning gates | `CG_ACTUATOR_ENABLE_ALLOWED=1`, `CG_TEC_OUTPUT_STAGE_ENABLED=1`, `CG_TEC_HARDWARE_GATES_VERIFIED=1`, door polarity confirmed |
+| Actuator route | H8_DUAL_ENABLE paired-enable (R_EN=GPIO6, L_EN=GPIO10, RPWM=GPIO5) |
+| Cold probe | NOT FITTED (`SUPERVISED_NO_COLD_PROBE`); only the cold-presence check omitted |
+
+This is the same firmware logic as the portable demo package
+(`tec100-demo`); the staging tree is the commissioning-applied source. It is
+`HARDWARE_BENCH_VERIFIED` **historically** (the 2026-11-13 live session on this
+image). Including it does **not** auto-energize anything: host ARM defaults OFF
+and physical actuation still requires separate operator authorization +
+prechecks. The release stack end-to-end on hardware remains
+`PHYSICAL_END_TO_END_NOT_RUN`. Full provenance and reproduction:
+`firmware/commissioning/staging-ai-final-20261113/README.md`.
+
+## 4b. Hardware-facing work still preserved, not released
+
+The following **diverged** worktree changes remain **excluded** from the release
+commits (they differ from the verified commissioning source above and were not
+re-verified on hardware). They are `REQUIRES_PHYSICAL_VALIDATION`:
+
+- Member A working-tree diffs: `firmware/main/cg_commission.c`,
+  `cg_tec_control.c` / `cg_tec_control.h`, `cg_tec_platform.h` (a diverged
+  paired-enable variant, not byte-identical to the verified staging source).
 - Coupled Member A harness diffs: `firmware/tools/tests/cg_tec_harness.c`,
   `test_cg_tec_state_machine.py`, `firmware/tools/cg_check_firmware_w04.py`.
-- New Leader firmware components: `firmware/components/cg_leader_ingress/`,
-  `firmware/components/cg_leader_tec_hw/`, and the Leader host harnesses under
-  `firmware/tools/tests/`.
+- Diverged worktree Leader components `firmware/components/cg_leader_ingress/`,
+  `cg_leader_tec_hw/` and the Leader host harnesses under `firmware/tools/tests/`
+  (coupled to the diverged worktree sources).
 
-These align to the H8 as-built record but were **not** re-verified on hardware
-for this release. The host harness tests additionally require a host C compiler
-that is unavailable in this environment, so they are `NOT RUN` offline.
+The host harness tests require a host C compiler that is unavailable in this
+environment, so they are `NOT RUN` offline. The verified firmware is preserved
+in the commissioning artifact (section 4), not in these diverged worktree files.
 
 ## 5. Confidence and limitations
 
@@ -92,6 +116,10 @@ that is unavailable in this environment, so they are `NOT RUN` offline.
   shadow control and inference display are `INTEGRATION_OFFLINE_VERIFIED`
   (backend 857 pass / 94 skip / 0 fail with disposable PostgreSQL; Member D
   control 770 pass; Member B ML focused 57 pass).
+- The release also **preserves the verified hardware-working commissioning
+  firmware** (section 4, `SUPERVISED_DEMO_COMMISSIONING`, image `def89390`,
+  7.91 A live on 2026-11-13) so the hardware demo can be reproduced. This is
+  historical bench evidence on that image, not a release-stack physical trial.
 - Physical control authority remains with Member D and the Leader orchestrator
   behind the existing boot-scoped admission. Shadow mode dispatches nothing.
 - Do not infer a combined physical acceptance from the separate bench records.
