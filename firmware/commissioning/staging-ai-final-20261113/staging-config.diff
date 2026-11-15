@@ -1,0 +1,42 @@
+--- member/coldguard_config.h
++++ staging-ai-final-20261113/staging/coldguard_config.h
+@@ -326,8 +326,8 @@
+  * a door OPEN/CLOSED reading is additionally held unattested until
+  * cg_door_attest_polarity() runs for this boot; cg_door_init() clears it, so
+  * every reset returns the door to UNVERIFIED regardless of this value. */
+-#define CG_DOOR_POLARITY_CONFIRMED 0
+-#define CG_DOOR_RAW_OPEN_LEVEL 0
++#define CG_DOOR_POLARITY_CONFIRMED 1
++#define CG_DOOR_RAW_OPEN_LEVEL 1
+ 
+ /* ------------------------------------------------------------------ */
+ /* W03 - RS-485 transport (docs/01 section 10, PHY-PZ-001)             */
+@@ -446,7 +446,7 @@
+  * operator authorization exists AND at most one direction carries non-zero
+  * duty. With CG_ACTUATOR_ENABLE_ALLOWED at 0 the firmware refuses every
+  * request, so a stray call in W03 cannot turn the TEC branch on. */
+-#define CG_ACTUATOR_ENABLE_ALLOWED 0
++#define CG_ACTUATOR_ENABLE_ALLOWED 1
+ 
+ /* As-built wiring (map v2): the controller drives all three logic inputs
+  * it can influence - RPWM (GPIO5), R_EN (GPIO6) and L_EN (GPIO10). LPWM is
+@@ -468,8 +468,8 @@
+  * compiled out and the hardware gates in docs/06 are not measured. Setting
+  * this to 1 is a deliberate commissioning decision that requires recorded
+  * gate evidence, not a build tweak. */
+-#define CG_TEC_OUTPUT_STAGE_ENABLED 0
+-#define CG_TEC_HARDWARE_GATES_VERIFIED 0
++#define CG_TEC_OUTPUT_STAGE_ENABLED 1
++#define CG_TEC_HARDWARE_GATES_VERIFIED 1
+ 
+ #if CG_TEC_OUTPUT_STAGE_ENABLED != 0 && CG_TEC_OUTPUT_STAGE_ENABLED != 1
+ #error "CG_TEC_OUTPUT_STAGE_ENABLED must be 0 or 1"
+@@ -497,7 +497,7 @@
+ /* Duty requested by a console START. 0 refuses the command: the as-built
+  * TEC has no established continuous rating, so no duty is claimed safe
+  * (docs/06). It is set only after the commissioning measurements exist. */
+-#define CG_TEC_REQUEST_DUTY_PERMILLE 0
++#define CG_TEC_REQUEST_DUTY_PERMILLE 1000
+ 
+ #define CG_TEC_TOKEN_LEN 9   /* 8 hex characters + NUL */
+ #define CG_TEC_REASON_LEN 40

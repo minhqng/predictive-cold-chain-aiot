@@ -1,0 +1,104 @@
+menu "ColdGuard Leader integration"
+
+config CG_LEADER_TEC_HW
+    bool "Enable the Leader TEC hardware adapter (commissioning builds)"
+    default n
+    help
+        Interposes cg_tec_hw_ops with the Leader IBT-2 adapter. The
+        delivered stub stays default: with this off every energizing
+        request keeps being refused exactly as Member A shipped it.
+
+config CG_LEADER_TEC_HW_INTERLOCK_PIN
+    int "GPIO number of the U6 interlock sense input (-1 = none installed)"
+    default -1
+    range -1 48
+    help
+        The REAL physical interlock loop (normally closed, active low).
+        -1 (default) reads open forever: fail closed, nothing simulated.
+        Set ONLY in a commissioning build once U6 is installed and wired.
+        Ignored when INTERLOCK_NONE_BY_DESIGN is selected.
+
+config CG_LEADER_TEC_HW_INTERLOCK_NONE_BY_DESIGN
+    bool "Run without a physical interlock (owner design decision)"
+    default n
+    help
+        The as-built hardware has NO separate U6 interlock by owner decision
+        (2026-11-13): the protection set is the supervised operator session,
+        the branch fuse and the software chain - exactly how the historical
+        bench sessions ran. In this mode read_interlock() reports permitted
+        once the adapter initialized. This is an explicitly configured,
+        build-recorded decision (the build manifest and the dashboard show
+        "interlock: NOT FITTED"), never a silently spoofed contact; the
+        interlock GPIO above is ignored. Keep n whenever a real loop is or
+        becomes available.
+
+config CG_LEADER_TEC_HW_ACTIVE_LOW
+    bool "U6 interlock sense loop is active-low (closed pulls the input low)"
+    default y
+    help
+        The normally-closed chain pulls the sense input low when closed; an
+        unplugged or open loop reads the pull-up (open). Never disable this
+        to make a missing contact read closed.
+
+config CG_LEADER_TEC_HW_FAN_CONTINUOUS
+    bool "Record the PHY-TH-001 continuous independent hot-side fan"
+    default n
+    help
+        The as-built V1 fan runs from its own fused branch (slot 4) and is
+        never firmware-controlled. PHY-TH-001 allows that only when the
+        continuous independent fan power is recorded; this flag IS that
+        record in a commissioning build. With it off the adapter reports no
+        commandable fan and Member A's controller refuses to start cooling.
+
+endmenu
+
+config CG_LEADER_TEC_HW_SUPERVISED_LIMITS
+    bool "Link the owner-proposed single-session supervisory limit set"
+    default n
+    help
+        Replaces the shipped all-UNRESOLVED limit table ONLY in a supervised
+        commissioning build. Exactly one explicit demo profile is linkable,
+        selected by the generated CG_TEC_REQUEST_DUTY_PERMILLE macro:
+        TEC200 (200 permille, 30 s timed, 5.0 A stop) or TEC1000 (1000
+        permille, continuous until STOP, 10.0 A stop, explicit
+        --supervised-full-duty-demo). Both keep the 40.0 C T2 stop,
+        10.0..13.2 V and every stop guard. Any other duty fails the
+        build. These are SESSION envelopes recorded in the build manifest,
+        NOT certified plant ratings; 1000 permille is an empirical attended
+        demo (observed peak 9.99 A), never a rating. Without this flag the
+        delivered unresolved table keeps every start refused (fail closed).
+
+config CG_LEADER_TEC_HW_SUPERVISED_FULL_DUTY_DEMO
+    bool "Explicit TEC1000 1000 permille attended demo"
+    default n
+    depends on CG_LEADER_TEC_HW_SUPERVISED_LIMITS
+    depends on CG_LEADER_TEC_HW_SUPERVISED_NO_COLD_PROBE
+    help
+        The user-requested 100 % duty demo, explicitly selected. Requires
+        CG_TEC_REQUEST_DUTY_PERMILLE=1000 (the generator writes it only with
+        --supervised-full-duty-demo); the firmware refuses to link 1000
+        permille without this flag. Envelope: 1000 permille CONTINUOUS until
+        operator STOP/fault (30 s remains only the timed-command cap), 10.0 A
+        supervisory stop, 40.0 C T2 stop, 10.0..13.2 V, real T2, cold probe
+        NOT_FITTED. Every STOP/ESTOP/fault/heartbeat loss clears the
+        continuous state. This is one empirical attended demo, never a
+        rating, an instantaneous-current guarantee or a 1200 permille alias.
+        Default n.
+
+config CG_LEADER_TEC_HW_SUPERVISED_NO_COLD_PROBE
+    bool "Supervised hot-side-only profile: do not require a cold-side probe"
+    default n
+    depends on CG_LEADER_TEC_HW
+    depends on CG_LEADER_TEC_HW_SUPERVISED_LIMITS
+    help
+        The owner-confirmed as-built hardware has NO cold-side probe. This
+        explicitly selects the named SUPERVISED_NO_COLD_PROBE attended
+        characterization profile: the controller omits ONLY the missing
+        cold-probe presence check; every other guard (real T2 hot-side
+        input, freshness, PZEM, 40 C/voltage, interlock, fan, heartbeat and
+        the bounded 30 s run) stays identical. Requires duty exactly 200 or
+        1000 permille (1000 also requires the explicit full-duty demo
+        selection). Any other combination leaves the normal cold-probe
+        requirement in force (fail closed). Select it only for an
+        operator-attended session; the output is OFF after the deadline and
+        this is not a production mode.

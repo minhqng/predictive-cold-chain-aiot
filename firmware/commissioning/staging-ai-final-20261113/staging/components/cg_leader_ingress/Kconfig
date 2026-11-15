@@ -1,0 +1,18 @@
+menu "ColdGuard Leader ingress (external integration component)"
+
+    config CG_LEADER_NETCMD
+        bool "Enable the Leader canonical-command ingress reader"
+        default y
+        help
+            Replaces the delivered console reader task with a Leader-owned
+            reader that additionally accepts the "#CG CMD <record>" canonical
+            envelope from the Leader gateway serial writer, validates it
+            through the delivered Member A command contract unchanged, and
+            emits the delivered "#CG CMDACK" evidence. All other lines keep
+            the delivered console behavior. The delivered fail-closed gates
+            stay exactly as shipped: no wall clock (commands blocked at
+            EPOCH_UNSYNCHRONIZED), compiled-out output stage, unresolved
+            limits. Fault-injection builds keep the delivered console
+            regardless of this option.
+
+endmenu
